@@ -19,7 +19,7 @@ android {
 }
 
 dependencies {
-    compile project(':library')
+    compile project(':RLibrary:library')
 }
 
 //apply from: '../bintray.gradle'
