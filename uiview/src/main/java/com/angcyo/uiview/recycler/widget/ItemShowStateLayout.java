@@ -72,6 +72,16 @@ public class ItemShowStateLayout extends FrameLayout implements IShowState {
         }
     }
 
+    public void animToHide(final Runnable endRunnable) {
+        ViewCompat.animate(this).scaleX(1.2f).scaleY(1.2f).alpha(0).withEndAction(new Runnable() {
+            @Override
+            public void run() {
+                endRunnable.run();
+                setVisibility(GONE);
+            }
+        }).setInterpolator(new DecelerateInterpolator()).setDuration(UIIViewImpl.DEFAULT_ANIM_TIME).start();
+    }
+
     @Override
     public int getShowState() {
         return mShowState;
