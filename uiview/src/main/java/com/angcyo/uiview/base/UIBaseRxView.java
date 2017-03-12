@@ -27,11 +27,6 @@ public abstract class UIBaseRxView extends UIBaseDataView {
         mSubscriptions = new CompositeSubscription();
     }
 
-    @Override
-    public void onViewLoad() {
-        super.onViewLoad();
-    }
-
     @CallSuper
     @Override
     public void onViewUnload() {

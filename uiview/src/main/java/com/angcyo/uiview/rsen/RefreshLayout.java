@@ -172,10 +172,12 @@ public class RefreshLayout extends ViewGroup {
     @Override
     protected void onAttachedToWindow() {
         super.onAttachedToWindow();
-//        if (getChildCount() != 1) {
-//            throw new IllegalArgumentException("必须包含一个子View");
-//        }
         mTouchSlop = 0;//ViewConfiguration.get(getContext()).getScaledTouchSlop();
+        if (getChildCount() != 1) {
+            throw new IllegalArgumentException("必须包含一个子View");
+        }
+        mTouchSlop = 0;//ViewConfiguration.get(getContext()).getScaledTouchSlop();
+        mTargetView = getChildAt(0);
         mScroller = new OverScroller(getContext(), new DecelerateInterpolator());
         if (!isInEditMode()) {
             initRefreshView();

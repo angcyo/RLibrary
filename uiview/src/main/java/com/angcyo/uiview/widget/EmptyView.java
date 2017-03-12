@@ -42,7 +42,6 @@ public class EmptyView extends View {
      */
     int mVSpace = 10;//px
 
-
     /**
      * 圆角大小
      */

@@ -197,6 +197,10 @@ public class DeviceUtils {
     /**
      * 重启
      * <p>需要root权限或者系统权限 {@code <android:sharedUserId="android.uid.system"/>}</p>
+<<<<<<< HEAD
+=======
+     *
+>>>>>>> init commit
      */
     public static void reboot() {
         ShellUtils.execCmd("reboot", true);
@@ -211,7 +215,7 @@ public class DeviceUtils {
      * 重启
      * <p>需系统权限 {@code <android:sharedUserId="android.uid.system"/>}</p>
      *
-     * @param reason 传递给内核来请求特殊的引导模式，如"recovery"
+     * @param reason  传递给内核来请求特殊的引导模式，如"recovery"
      */
     public static void reboot(String reason) {
         PowerManager mPowerManager = (PowerManager) Utils.getContext().getSystemService(Context.POWER_SERVICE);
