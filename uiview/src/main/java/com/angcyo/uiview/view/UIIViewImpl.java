@@ -144,10 +144,16 @@ public abstract class UIIViewImpl implements IView {
 
     @CallSuper
     @Override
+    @Deprecated
     public void onViewCreate(View rootView) {
         L.d(this.getClass().getSimpleName(), "onViewCreate: ");
         mRootView = rootView;
         mViewHolder = new RBaseViewHolder(mRootView);
+    }
+
+    @Override
+    public void onViewCreate(View rootView, UIParam param) {
+        L.d(this.getClass().getSimpleName(), "onViewCreate 2: ");
     }
 
     @CallSuper

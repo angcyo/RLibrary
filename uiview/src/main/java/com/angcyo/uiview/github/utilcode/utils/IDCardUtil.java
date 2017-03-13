@@ -27,7 +27,7 @@ public class IDCardUtil {
      * 功能：身份证的有效验证
      *
      * @param IDStr 身份证号
-     * @return 有效：返回"" 无效：返回String信息
+     * @return 有效：返回"YES" , 无效：返回String信息
      */
     public static String IDCardValidate(String IDStr) {
         String errorInfo = "";// 记录错误信息

@@ -308,7 +308,7 @@ public class UILayoutImpl extends SwipeBackLayout implements ILayout<UIParam>, U
                 ViewPattern viewPatternByIView = findViewPatternByClass(iView.getClass());
                 if (viewPatternByIView == null) {
                     //这个IView 还不存在
-                    final ViewPattern newViewPattern = startIViewInternal(iView);
+                    final ViewPattern newViewPattern = startIViewInternal(iView, param);
 //                    startIViewAnim(oldViewPattern, newViewPattern, param);
                     viewPatternByIView = newViewPattern;
                     startIViewAnim(oldViewPattern, viewPatternByIView, param, false);
@@ -325,7 +325,7 @@ public class UILayoutImpl extends SwipeBackLayout implements ILayout<UIParam>, U
             }
         } else {
             //正常的启动模式
-            final ViewPattern newViewPattern = startIViewInternal(iView);
+            final ViewPattern newViewPattern = startIViewInternal(iView, param);
             startIViewAnim(oldViewPattern, newViewPattern, param, false);
         }
     }
@@ -335,13 +335,13 @@ public class UILayoutImpl extends SwipeBackLayout implements ILayout<UIParam>, U
         startIView(iView, new UIParam());
     }
 
-    private ViewPattern startIViewInternal(final IView iView) {
+    private ViewPattern startIViewInternal(final IView iView, UIParam param) {
         hideSoftInput();
 
         iView.onAttachedToILayout(this);
 
         //1:inflateContentView, 会返回对应IView的RootLayout
-        View rawView = loadViewInternal(iView);
+        View rawView = loadViewInternal(iView, param);
         //2:loadContentView
         iView.loadContentView(rawView);
 
@@ -366,7 +366,7 @@ public class UILayoutImpl extends SwipeBackLayout implements ILayout<UIParam>, U
         iView.onAttachedToILayout(this);
 
         //1:inflateContentView, 会返回对应IView的RootLayout
-        View rawView = loadViewInternal(iView);
+        View rawView = loadViewInternal(iView, null);
         //2:loadContentView
         iView.loadContentView(rawView);
 
@@ -402,7 +402,7 @@ public class UILayoutImpl extends SwipeBackLayout implements ILayout<UIParam>, U
     /**
      * 加载IView
      */
-    private View loadViewInternal(IView iView) {
+    private View loadViewInternal(IView iView, UIParam uiParam) {
 
         //首先调用IView接口的inflateContentView方法,(inflateContentView请不要初始化View)
         //其次会调用loadContentView方法,用来初始化View.(此方法调用之后, 就支持ButterKnife了)
@@ -420,6 +420,7 @@ public class UILayoutImpl extends SwipeBackLayout implements ILayout<UIParam>, U
 
         //2:
         iView.onViewCreate(view);
+        iView.onViewCreate(view, uiParam);
 
         return rawView;
     }
@@ -781,7 +782,7 @@ public class UILayoutImpl extends SwipeBackLayout implements ILayout<UIParam>, U
             @Override
             public void run() {
                 final ViewPattern oldViewPattern = getLastViewPattern();
-                final ViewPattern newViewPattern = startIViewInternal(iView);
+                final ViewPattern newViewPattern = startIViewInternal(iView, param);
 
                 //3:
                 newViewPattern.mIView.onViewLoad();
