@@ -176,4 +176,37 @@ public class RGroupItemDecoration extends RecyclerView.ItemDecoration {
          */
         void onGroupOverDraw(Canvas canvas, View view, int position, int offset);
     }
+
+    public static class SingleGroupCallBack implements GroupCallBack {
+        @Override
+        public int getGroupHeight(int position) {
+            return 0;
+        }
+
+        @Override
+        public String getGroupText(int position) {
+            return null;
+        }
+
+        @Override
+        public void onItemOffsets(Rect outRect, int position) {
+
+        }
+
+        @Override
+        public void onItemDraw(Canvas canvas, View view, int position) {
+
+        }
+
+        @Override
+        public void onGroupDraw(Canvas canvas, View view, int position) {
+
+        }
+
+        @Override
+        public void onGroupOverDraw(Canvas canvas, View view, int position, int offset) {
+
+        }
+    }
+
 }
