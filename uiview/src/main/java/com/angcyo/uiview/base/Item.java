@@ -8,6 +8,7 @@ import android.view.View;
 import com.angcyo.uiview.recycler.RBaseViewHolder;
 
 /**
+ * 用来实现{@link UIItemUIView}界面中, 每个Item的布局
  * Created by angcyo on 2017-03-12.
  */
 

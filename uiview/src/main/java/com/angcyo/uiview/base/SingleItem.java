@@ -11,6 +11,7 @@ import com.angcyo.uiview.R;
 import com.angcyo.uiview.RApplication;
 
 /**
+ * 可以设置top分割线, 和中间分割线样式的{@link Item}
  * Created by angcyo on 2017-03-12.
  */
 
