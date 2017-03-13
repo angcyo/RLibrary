@@ -10,6 +10,7 @@ import android.graphics.Color;
 import android.graphics.Rect;
 import android.os.Build;
 import android.os.Bundle;
+import android.support.v4.view.ViewCompat;
 import android.text.TextUtils;
 import android.util.AttributeSet;
 import android.view.LayoutInflater;
@@ -1287,6 +1288,7 @@ public class UILayoutImpl extends SwipeBackLayout implements ILayout<UIParam>, U
         interruptSet.remove(viewPattern.mIView);
         viewPattern.mIView.onViewUnload();
         final View view = viewPattern.mView;
+        ViewCompat.setAlpha(view, 0);
         view.setVisibility(GONE);
         post(new Runnable() {
             @Override

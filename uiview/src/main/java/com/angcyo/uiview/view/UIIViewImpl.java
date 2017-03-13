@@ -6,6 +6,9 @@ import android.content.res.Resources;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.support.annotation.CallSuper;
+import android.support.annotation.ColorInt;
+import android.support.annotation.ColorRes;
+import android.support.annotation.DimenRes;
 import android.support.annotation.StringRes;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -37,7 +40,8 @@ import butterknife.ButterKnife;
 public abstract class UIIViewImpl implements IView {
 
     public static final int DEFAULT_ANIM_TIME = 300;
-    public static final int DEFAULT_FINISH_ANIM_TIME = 150;
+    public static final int DEFAULT_FINISH_ANIM_TIME = 300;
+    public static final int DEFAULT_DIALOG_FINISH_ANIM_TIME = 150;
     public static final int STATE_NORMAL = 1;
     public static final int STATE_VIEW_SHOW = 3;
     public static final int STATE_VIEW_HIDE = 4;
@@ -545,4 +549,27 @@ public abstract class UIIViewImpl implements IView {
             decorView.setSystemUiVisibility(decorView.getSystemUiVisibility() & ~View.SYSTEM_UI_FLAG_FULLSCREEN);
         }
     }
+
+    //星期一 2017-3-13
+    @ColorInt
+    public int getColor(@ColorRes int id) {
+        return getResources().getColor(id);
+    }
+
+    public int getDimensionPixelOffset(@DimenRes int id) {
+        return getResources().getDimensionPixelOffset(id);
+    }
+
+    public float density() {
+        return getResources().getDisplayMetrics().density;
+    }
+
+    public int widthPixels() {
+        return getResources().getDisplayMetrics().widthPixels;
+    }
+
+    public int heightPixels() {
+        return getResources().getDisplayMetrics().heightPixels;
+    }
+
 }

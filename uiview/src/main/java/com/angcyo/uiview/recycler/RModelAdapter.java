@@ -77,12 +77,16 @@ public abstract class RModelAdapter<T> extends RBaseAdapter<T> {
     /**
      * 只在选择模式下,会执行
      */
-    protected abstract void onBindModelView(int model, boolean isSelector, RBaseViewHolder holder, int position, T bean);
+    protected void onBindModelView(int model, boolean isSelector, RBaseViewHolder holder, int position, T bean) {
+
+    }
 
     /**
      * 只在正常模式下,会执行
      */
-    protected abstract void onBindNormalView(RBaseViewHolder holder, int position, T bean);
+    protected void onBindNormalView(RBaseViewHolder holder, int position, T bean) {
+
+    }
 
     /**
      * 在单选模式下, 选择其他项时, 将要先取消之前的选中项. 此时会执行此方法, 取消之前按钮的状态
@@ -424,5 +428,18 @@ public abstract class RModelAdapter<T> extends RBaseAdapter<T> {
         void onModelChange(@Model int fromModel, @Model int toModel);
 
         void onSelectorChange(List<Integer> selectorList);
+    }
+
+    public static class SingleChangeListener implements OnModelChangeListener {
+
+        @Override
+        public void onModelChange(@Model int fromModel, @Model int toModel) {
+
+        }
+
+        @Override
+        public void onSelectorChange(List<Integer> selectorList) {
+
+        }
     }
 }

@@ -52,6 +52,17 @@ public abstract class UIItemUIView<T extends Item> extends UIRecyclerUIView<Stri
     }
 
     /**
+     * 更新布局
+     */
+    public void refreshLayout() {
+        mItems.clear();
+        createItems(mItems);
+        if (mExBaseAdapter != null) {
+            mExBaseAdapter.notifyDataSetChanged();
+        }
+    }
+
+    /**
      * 返回布局
      */
     protected abstract int getItemLayoutId(int viewType);
