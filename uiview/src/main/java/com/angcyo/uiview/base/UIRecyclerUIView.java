@@ -5,8 +5,8 @@ import android.view.LayoutInflater;
 import android.view.ViewGroup;
 import android.widget.RelativeLayout;
 
-import com.angcyo.uiview.recycler.RBaseAdapter;
-import com.angcyo.uiview.recycler.RExBaseAdapter;
+import com.angcyo.uiview.recycler.adapter.RBaseAdapter;
+import com.angcyo.uiview.recycler.adapter.RExBaseAdapter;
 import com.angcyo.uiview.recycler.RRecyclerView;
 import com.angcyo.uiview.rsen.RefreshLayout;
 

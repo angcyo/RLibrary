@@ -2,15 +2,14 @@ package com.angcyo.uiview.base;
 
 import android.graphics.Canvas;
 import android.graphics.Rect;
-import android.support.v7.widget.LinearLayoutManager;
 import android.text.TextPaint;
 import android.view.View;
 import android.widget.RelativeLayout;
 
 import com.angcyo.uiview.R;
 import com.angcyo.uiview.recycler.RBaseViewHolder;
-import com.angcyo.uiview.recycler.RExBaseAdapter;
 import com.angcyo.uiview.recycler.RExItemDecoration;
+import com.angcyo.uiview.recycler.adapter.RExBaseAdapter;
 import com.angcyo.uiview.rsen.PlaceholderView;
 import com.angcyo.uiview.rsen.RefreshLayout;
 
@@ -82,13 +81,11 @@ public abstract class UIItemUIView<T extends Item> extends UIRecyclerUIView<Stri
         mExBaseAdapter.setEnableLoadMore(false);
         mRecyclerView.setHasFixedSize(true);
         mRecyclerView.setOverScrollMode(View.OVER_SCROLL_NEVER);
-        mRecyclerView.addItemDecoration(new RExItemDecoration(new RExItemDecoration.ItemDecorationCallback() {
+        mRecyclerView.addItemDecoration(new RExItemDecoration(new RExItemDecoration.SingleItemCallback() {
             @Override
-            public Rect getItemOffsets(LinearLayoutManager layoutManager, int position) {
-                Rect rect = new Rect(0, 0, 0, 0);
+            public void getItemOffsets(Rect outRect, int position) {
                 T t = mItems.get(position);
-                t.setItemOffsets(rect);
-                return rect;
+                t.setItemOffsets(outRect);
             }
 
             @Override
