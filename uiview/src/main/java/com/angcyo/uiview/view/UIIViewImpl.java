@@ -57,7 +57,7 @@ public abstract class UIIViewImpl implements IView {
     protected View mRootView;
 
     /**
-     * 用来管理rootview
+     * 用来管理rootView
      */
     protected RBaseViewHolder mViewHolder;
     protected int mIViewStatus = STATE_NORMAL;
@@ -578,4 +578,12 @@ public abstract class UIIViewImpl implements IView {
         return getResources().getDisplayMetrics().heightPixels;
     }
 
+    /**
+     * 冻结界面, 拦截所有Touch事件
+     */
+    public void setLayoutFrozen(boolean frozen) {
+        if (mRootView != null) {
+            mRootView.setEnabled(frozen);
+        }
+    }
 }
