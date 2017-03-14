@@ -20,5 +20,4 @@
         android:scaleType="centerInside"
         android:src="@drawable/base_delete"
         android:visibility="gone"/>
-
 </RelativeLayout>
