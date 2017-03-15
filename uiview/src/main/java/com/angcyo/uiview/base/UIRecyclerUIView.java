@@ -2,12 +2,15 @@ package com.angcyo.uiview.base;
 
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
+import android.view.View;
 import android.view.ViewGroup;
 import android.widget.RelativeLayout;
 
+import com.angcyo.uiview.R;
+import com.angcyo.uiview.container.UIParam;
+import com.angcyo.uiview.recycler.RRecyclerView;
 import com.angcyo.uiview.recycler.adapter.RBaseAdapter;
 import com.angcyo.uiview.recycler.adapter.RExBaseAdapter;
-import com.angcyo.uiview.recycler.RRecyclerView;
 import com.angcyo.uiview.rsen.RefreshLayout;
 
 /**
@@ -25,6 +28,16 @@ public class UIRecyclerUIView<H, T, F> extends UIContentView implements RefreshL
      */
     protected RRecyclerView mRecyclerView;
     protected RExBaseAdapter<H, T, F> mExBaseAdapter;
+
+    protected int mBaseOffsetSize;
+    protected int mBaseLineSize;
+
+    @Override
+    public void onViewCreate(View rootView, UIParam param) {
+        super.onViewCreate(rootView, param);
+        mBaseOffsetSize = getDimensionPixelOffset(R.dimen.base_xhdpi);
+        mBaseLineSize = getDimensionPixelOffset(R.dimen.base_line);
+    }
 
     @Override
     final protected void inflateContentLayout(RelativeLayout baseContentLayout, LayoutInflater inflater) {

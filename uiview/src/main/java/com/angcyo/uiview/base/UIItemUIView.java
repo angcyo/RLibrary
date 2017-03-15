@@ -9,6 +9,7 @@ import android.view.ViewGroup;
 import android.widget.RelativeLayout;
 
 import com.angcyo.uiview.R;
+import com.angcyo.uiview.model.TitleBarPattern;
 import com.angcyo.uiview.recycler.RBaseViewHolder;
 import com.angcyo.uiview.recycler.RExItemDecoration;
 import com.angcyo.uiview.recycler.adapter.RExBaseAdapter;
@@ -30,6 +31,11 @@ public abstract class UIItemUIView<T extends Item> extends UIRecyclerUIView<Stri
     @Override
     public int getDefaultBackgroundColor() {
         return getColor(R.color.base_chat_bg_color);
+    }
+
+    @Override
+    protected TitleBarPattern getTitleBar() {
+        return super.getTitleBar().setShowBackImageView(true);
     }
 
     @Override
