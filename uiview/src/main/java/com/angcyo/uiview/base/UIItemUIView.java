@@ -2,6 +2,7 @@ package com.angcyo.uiview.base;
 
 import android.graphics.Canvas;
 import android.graphics.Rect;
+import android.support.v7.widget.LinearLayoutManager;
 import android.text.TextPaint;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -19,6 +20,9 @@ import com.angcyo.uiview.widget.RSoftInputLayout;
 
 import java.util.ArrayList;
 import java.util.List;
+
+import retrofit2.http.HEAD;
+
 
 /**
  * Created by angcyo on 2017-03-12.

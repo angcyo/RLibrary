@@ -419,8 +419,8 @@ public class UILayoutImpl extends SwipeBackLayout implements ILayout<UIParam>, U
         }
 
         //2:
-        iView.onViewCreate(rawView);
-        iView.onViewCreate(rawView, uiParam);
+        iView.onViewCreate(view);
+        iView.onViewCreate(view, uiParam);
 
         return rawView;
     }
