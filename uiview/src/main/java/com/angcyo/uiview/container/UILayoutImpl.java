@@ -190,7 +190,7 @@ public class UILayoutImpl extends SwipeBackLayout implements ILayout<UIParam>, U
      */
     @Override
     protected boolean canTryCaptureView(View child) {
-        if (mLastShowViewPattern == null || mLastShowViewPattern.isAnimToStart) {
+        if (isBackPress || mLastShowViewPattern == null || mLastShowViewPattern.isAnimToStart) {
             return false;
         }
 
@@ -419,8 +419,8 @@ public class UILayoutImpl extends SwipeBackLayout implements ILayout<UIParam>, U
         }
 
         //2:
-        iView.onViewCreate(view);
-        iView.onViewCreate(view, uiParam);
+        iView.onViewCreate(rawView);
+        iView.onViewCreate(rawView, uiParam);
 
         return rawView;
     }
@@ -1662,6 +1662,8 @@ public class UILayoutImpl extends SwipeBackLayout implements ILayout<UIParam>, U
             }
             stringBuilder.append(" visibility-->");
             stringBuilder.append(vis);
+            stringBuilder.append(" alpha-->");
+            stringBuilder.append(viewPattern.mView.getAlpha());
             stringBuilder.append("\n");
         }
         String string = stringBuilder.toString();
