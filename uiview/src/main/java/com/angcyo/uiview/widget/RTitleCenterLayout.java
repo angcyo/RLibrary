@@ -47,11 +47,15 @@ public class RTitleCenterLayout extends RelativeLayout {
         if (mLoadingView != null) {
             int loadViewWidth = mLoadingView.getMeasuredWidth();
             if (mTitleView != null) {
-                mTitleView.measure(MeasureSpec.makeMeasureSpec(width - 2 * loadViewWidth, MeasureSpec.EXACTLY), heightMeasureSpec);
+                mTitleView.measure(
+                        MeasureSpec.makeMeasureSpec(Math.min(width - 2 * loadViewWidth,
+                                mTitleView.getMeasuredWidth()), MeasureSpec.EXACTLY),
+                        heightMeasureSpec);
             }
         } else {
             if (mTitleView != null) {
-                mTitleView.measure(MeasureSpec.makeMeasureSpec(width, MeasureSpec.EXACTLY), heightMeasureSpec);
+                mTitleView.measure(MeasureSpec.makeMeasureSpec(Math.min(width, mTitleView.getMeasuredWidth()),
+                        MeasureSpec.EXACTLY), heightMeasureSpec);
             }
         }
     }
