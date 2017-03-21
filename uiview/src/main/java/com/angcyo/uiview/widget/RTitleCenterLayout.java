@@ -62,6 +62,7 @@ public class RTitleCenterLayout extends RelativeLayout {
 
     @Override
     protected void onLayout(boolean changed, int l, int t, int r, int b) {
+        super.onLayout(changed, l, t, r, b);
         int width = getMeasuredWidth();
         int height = getMeasuredHeight();
         if (mTitleView != null && mLoadingView != null) {
@@ -79,8 +80,6 @@ public class RTitleCenterLayout extends RelativeLayout {
                     layoutCenter(mLoadingView);
                 }
             }
-        } else {
-            super.onLayout(changed, l, t, r, b);
         }
     }
 
