@@ -78,7 +78,7 @@ public class UIRecyclerUIView<H, T, F> extends UIContentView
      * 自动监听滚动事件, 设置标题栏的透明度
      */
     protected boolean hasScrollListener() {
-        return true;
+        return false;
     }
 
     /**
