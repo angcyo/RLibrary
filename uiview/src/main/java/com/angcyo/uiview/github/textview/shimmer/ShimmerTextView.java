@@ -3,8 +3,8 @@ package com.angcyo.uiview.github.textview.shimmer;
 import android.content.Context;
 import android.content.res.ColorStateList;
 import android.graphics.Canvas;
+import android.support.v7.widget.AppCompatTextView;
 import android.util.AttributeSet;
-import android.widget.TextView;
 
 /**
  * Shimmer
@@ -17,7 +17,7 @@ import android.widget.TextView;
  *
  * https://github.com/RomainPiel/Shimmer-android
  */
-public class ShimmerTextView extends TextView implements ShimmerViewBase {
+public class ShimmerTextView extends AppCompatTextView implements ShimmerViewBase {
 
     private ShimmerViewHelper shimmerViewHelper;
 
