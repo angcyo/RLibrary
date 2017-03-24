@@ -20,9 +20,9 @@ import java.util.List;
  */
 public abstract class RExBaseAdapter<H, T, F> extends RModelAdapter<T> {
 
-    public static final int TYPE_HEADER = 10;
-    public static final int TYPE_FOOTER = 12;
-    public static final int TYPE_DATA = 11;
+    public static final int TYPE_HEADER = 0x100000;
+    public static final int TYPE_FOOTER = 0x200000;
+    public static final int TYPE_DATA   = 0x300000;
 
     /**
      * 头部数据集合
@@ -237,6 +237,12 @@ public abstract class RExBaseAdapter<H, T, F> extends RModelAdapter<T> {
         notifyItemRangeChanged(startPosition, getItemCount());
     }
 
+    public void appendHeaderData(H headerData) {
+        List<H> heads = new ArrayList<>();
+        heads.add(headerData);
+        appendHeaderData(heads);
+    }
+
     /**
      * 重置尾部数据
      */
@@ -273,6 +279,12 @@ public abstract class RExBaseAdapter<H, T, F> extends RModelAdapter<T> {
         notifyItemRangeChanged(startPosition, getItemCount());
     }
 
+    public void appendFooterData(F footerData) {
+        List<F> heads = new ArrayList<>();
+        heads.add(footerData);
+        appendFooterData(heads);
+    }
+
     /**
      * 重置中间标准数据
      */
@@ -285,6 +297,12 @@ public abstract class RExBaseAdapter<H, T, F> extends RModelAdapter<T> {
      */
     public void appendAllData(List<T> allDatas) {
         appendData(allDatas);
+    }
+
+    public void appendData(T data) {
+        List<T> heads = new ArrayList<>();
+        heads.add(data);
+        appendAllData(heads);
     }
 
 

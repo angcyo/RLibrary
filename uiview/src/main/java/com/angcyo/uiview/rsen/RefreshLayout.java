@@ -69,7 +69,7 @@ public class RefreshLayout extends ViewGroup {
      * 正常
      */
     public static final int NORMAL = 0;
-    float downY, lastY;
+    float downY, downX, lastY;
     private View mTopView, mBottomView, mTargetView;
     private OverScroller mScroller;
     private int mTouchSlop;
@@ -235,29 +235,38 @@ public class RefreshLayout extends ViewGroup {
         int action = event.getActionMasked();
         if (action == MotionEvent.ACTION_DOWN) {
             downY = event.getY();
+            downX = event.getX();
             lastY = downY;
         } else if (action == MotionEvent.ACTION_MOVE) {
             float y = event.getY();
+            float x = event.getX();
             float dy = y - downY;
-            if (Math.abs(dy) > mTouchSlop) {
+            float dx = x - downX;
+            if ((Math.abs(dy) > Math.abs(dx)) && Math.abs(dy) > mTouchSlop) {
                 int scrollY = getScrollY();
                 if (mCurState == TOP && dy < 0 && scrollY < 0) {
                     //如果已经处理加载状态, 通过滚动, View 隐藏, 使得内容全屏显示
                     scrollTo(0, (int) Math.min(0, (scrollY - dy)));
                     downY = event.getY();
+                    downX = event.getX();
+                    //L.e("call: onInterceptTouchEvent([event])-> 1");
                     return super.onInterceptTouchEvent(event);
                 } else if (mCurState == BOTTOM && dy > 0 && scrollY > 0) {
                     scrollTo(0, (int) Math.max(0, scrollY - dy));
                     downY = event.getY();
+                    downX = event.getX();
+                    //L.e("call: onInterceptTouchEvent([event])-> 2");
                     return super.onInterceptTouchEvent(event);
                 } else {
                     if (dy > 0 && canScrollDown() &&
                             !innerCanChildScrollVertically(mTargetView, -1, event.getRawX(), event.getRawY())) {
                         order = TOP;
+                        //L.e("call: onInterceptTouchEvent([event])-> 3");
                         return true;
                     } else if (dy < 0 && canScrollUp() &&
                             !innerCanChildScrollVertically(mTargetView, 1, event.getRawX(), event.getRawY())) {
                         order = BOTTOM;
+                        //L.e("call: onInterceptTouchEvent([event])-> 4");
                         return true;
                     }
                 }
@@ -266,6 +275,7 @@ public class RefreshLayout extends ViewGroup {
             boolean interceptTouchEvent = super.onInterceptTouchEvent(event);
             if (!interceptTouchEvent) {
                 handleTouchUp();
+                //L.e("call: onInterceptTouchEvent([event])-> 5 " + interceptTouchEvent);
                 return interceptTouchEvent;
             }
         }
