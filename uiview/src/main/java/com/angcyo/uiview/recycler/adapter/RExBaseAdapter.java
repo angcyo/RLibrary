@@ -22,7 +22,7 @@ public abstract class RExBaseAdapter<H, T, F> extends RModelAdapter<T> {
 
     public static final int TYPE_HEADER = 0x100000;
     public static final int TYPE_FOOTER = 0x200000;
-    public static final int TYPE_DATA   = 0x300000;
+    public static final int TYPE_DATA = 0x300000;
 
     /**
      * 头部数据集合
@@ -122,7 +122,7 @@ public abstract class RExBaseAdapter<H, T, F> extends RModelAdapter<T> {
             position -= getHeaderCount();
             onBindDataView(holder, position, mAllDatas.size() > position ? mAllDatas.get(position) : null);
         } else if (isInFooter(position)) {
-            position -= getHeaderCount() - getDataCount();
+            position -= getHeaderCount() + getDataCount();
             onBindFooterView(holder, position, mAllFooterDatas.size() > position ? mAllFooterDatas.get(position) : null);
         }
     }

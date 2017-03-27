@@ -191,6 +191,12 @@ public class RRetrofit {
     }
 
     public enum CacheType {
+        /**
+         * 在OKHttp开发中我们常见到的有下面几个：
+         * max-age     缓存多长时间, 超过时间才请求
+         * no-cache
+         * max-stale   在这个时长之内的请求, 使用缓存.
+         * */
         NO_CACHE, MAX_AGE, MAX_STALE
     }
 
