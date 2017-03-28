@@ -198,8 +198,12 @@ public class RefreshLayout extends ViewGroup {
         if (mBottomView == null) {
             mBottomView = new BaseRefreshBottomView(getContext());
         }
-        addView(mTopView);
-        addView(mBottomView);
+        if (mTopView.getParent() == null) {
+            addView(mTopView);
+        }
+        if (mBottomView.getParent() == null) {
+            addView(mBottomView);
+        }
     }
 
     public void setTopView(View topView) {
@@ -213,6 +217,20 @@ public class RefreshLayout extends ViewGroup {
     @Override
     protected void onFinishInflate() {
         super.onFinishInflate();
+        View topView = findViewWithTag("top_view");
+        if (topView != null) {
+            setTopView(topView);
+        }
+
+        View bottomView = findViewWithTag("bottom_view");
+        if (bottomView != null) {
+            setBottomView(bottomView);
+        }
+
+        View targetView = findViewWithTag("target_view");
+        if (targetView != null) {
+            mTargetView = targetView;
+        }
     }
 
     @Override

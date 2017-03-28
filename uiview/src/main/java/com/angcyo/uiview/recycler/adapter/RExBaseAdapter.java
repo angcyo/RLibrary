@@ -90,6 +90,36 @@ public abstract class RExBaseAdapter<H, T, F> extends RModelAdapter<T> {
     }
 
     /**
+     * position 是否是头部的第一个
+     */
+    public boolean isHeaderFirst(int position) {
+        return position == 0;
+    }
+
+    /**
+     * position 是否是头部的最后一个
+     */
+    public boolean isHeaderLast(int position) {
+        return position == getHeaderCount() - 1;
+    }
+
+    public boolean isDataFirst(int position) {
+        return position == getHeaderCount();
+    }
+
+    public boolean isDataLast(int position) {
+        return position == getHeaderCount() + getDataCount() - 1;
+    }
+
+    public boolean isFooterFirst(int position) {
+        return position == getHeaderCount() + getDataCount();
+    }
+
+    public boolean isFooterLast(int position) {
+        return position == getHeaderCount() + getDataCount() + getFooterCount() - 1;
+    }
+
+    /**
      * 获取头部数据数量
      */
     public int getHeaderCount() {
