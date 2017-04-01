@@ -26,6 +26,7 @@ import com.angcyo.library.utils.L;
 import com.angcyo.uiview.base.UILayoutActivity;
 import com.angcyo.uiview.model.ViewPattern;
 import com.angcyo.uiview.resources.AnimUtil;
+import com.angcyo.uiview.skin.ISkin;
 import com.angcyo.uiview.view.ILifecycle;
 import com.angcyo.uiview.view.IView;
 import com.angcyo.uiview.view.UIIViewImpl;
@@ -45,7 +46,7 @@ import static com.angcyo.uiview.view.UIIViewImpl.DEFAULT_ANIM_TIME;
 
 public class UILayoutImpl extends SwipeBackLayout implements ILayout<UIParam>, UIViewPager.OnPagerShowListener {
 
-    private static final String TAG = "UILayoutWrapper";
+    private static final String TAG = "UILayoutImpl";
     /**
      * 已经追加到内容层的View
      */
@@ -225,6 +226,7 @@ public class UILayoutImpl extends SwipeBackLayout implements ILayout<UIParam>, U
     private void initLayout() {
         mLayoutActivity = (UILayoutActivity) getContext();
         interruptSet = new HashSet<>();
+        setTag(TAG);
     }
 
     @Override
@@ -599,6 +601,7 @@ public class UILayoutImpl extends SwipeBackLayout implements ILayout<UIParam>, U
         needDragClose = false;
         isBackPress = false;
         isFinishing = false;
+        isSwipeDrag = false;
     }
 
     @Override
@@ -1578,6 +1581,13 @@ public class UILayoutImpl extends SwipeBackLayout implements ILayout<UIParam>, U
     public void finish() {
         finishAll();
         mLayoutActivity.onBackPressed();
+    }
+
+    @Override
+    public void onSkinChanged(ISkin skin) {
+        for (ViewPattern pattern : mAttachViews) {
+            pattern.mIView.onSkinChanged(skin);
+        }
     }
 
     /**

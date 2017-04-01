@@ -9,6 +9,7 @@ import android.telephony.TelephonyManager;
 import android.text.TextUtils;
 
 import com.angcyo.library.facebook.DraweeViewUtil;
+import com.angcyo.uiview.skin.SkinHelper;
 import com.angcyo.uiview.utils.Debug;
 import com.angcyo.uiview.utils.T_;
 import com.bumptech.glide.Glide;
@@ -165,6 +166,8 @@ public class RApplication extends Application {
             onInit();
 
             Debug.logTimeEnd("RApplication 正在初始化:isInitOnce()");
+
+            SkinHelper.init(this);
         }
     }
 
