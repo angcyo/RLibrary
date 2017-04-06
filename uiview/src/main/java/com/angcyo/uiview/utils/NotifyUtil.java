@@ -16,7 +16,9 @@ import android.widget.Toast;
 
 import java.util.ArrayList;
 
-/***/
+/**
+ * https://github.com/wenmingvs/NotifyUtil
+ */
 @SuppressLint("NewApi")
 public class NotifyUtil {
 
