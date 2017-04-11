@@ -29,15 +29,29 @@ public interface ISkin {
     /**
      * 波纹无限制, 默认是个圆形波纹
      */
-    Drawable getThemeBackgroundSelector();
+    Drawable getThemeTranBackgroundSelector();
 
     /**
      * 波纹有限制
      */
-    Drawable getThemeMaskBackgroundSelector();
+    Drawable getThemeTranMaskBackgroundSelector();
 
     /**
      * 圆角波纹背景
      */
     Drawable getThemeMaskBackgroundRoundSelector();
+
+    Drawable getThemeBackgroundSelector();
+
+    Drawable getThemeBackgroundSelector(int pressColor);
+
+    /**
+     * 带mask
+     */
+    Drawable getThemeMaskBackgroundSelector(int pressColor);
+
+    /**
+     * 圆角带Mask
+     */
+    Drawable getThemeMaskBackgroundRoundSelector(int pressColor);
 }
