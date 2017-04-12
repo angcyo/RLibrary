@@ -89,6 +89,11 @@ public class SkinImpl implements ISkin {
     }
 
     @Override
+    public Drawable getThemeMaskBackgroundSelector() {
+        return null;
+    }
+
+    @Override
     public Drawable getThemeMaskBackgroundSelector(int pressColor) {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
             return ResUtil.generateRippleMaskDrawable(getThemeSubColor());

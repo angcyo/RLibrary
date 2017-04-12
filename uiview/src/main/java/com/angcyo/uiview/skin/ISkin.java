@@ -48,6 +48,8 @@ public interface ISkin {
     /**
      * 带mask
      */
+    Drawable getThemeMaskBackgroundSelector();
+
     Drawable getThemeMaskBackgroundSelector(int pressColor);
 
     /**
