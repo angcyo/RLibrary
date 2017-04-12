@@ -107,6 +107,7 @@ public class UILayoutImpl extends SwipeBackLayout implements ILayout<UIParam>, U
 
         }
     };
+
     /**
      * 是否正在退出
      */
@@ -135,7 +136,6 @@ public class UILayoutImpl extends SwipeBackLayout implements ILayout<UIParam>, U
      * 是否正在拖拽返回.
      */
     private boolean isSwipeDrag = false;
-
     /**
      * 是否需要滑动返回, 如果正在滑动返回,则阻止onLayout的进行
      */
@@ -1417,10 +1417,23 @@ public class UILayoutImpl extends SwipeBackLayout implements ILayout<UIParam>, U
 
     @Override
     protected void onLayout(boolean changed, int left, int top, int right, int bottom) {
-        if (isWantSwipeBack) {
-            return;
+        int l = 0;
+        if (isWantSwipeBack /*&& !requestLayout*/) {
+            if (getChildCount() > 0) {
+                View childAt = getChildAt(getChildCount() - 1);
+
+                l = childAt.getLeft();
+            }
         }
         super.onLayout(changed, left, top, right, bottom);
+        if (isWantSwipeBack /*&& !requestLayout*/) {
+            if (getChildCount() > 0) {
+                View childAt = getChildAt(getChildCount() - 1);
+
+                childAt.layout(l, childAt.getTop(),
+                        l + childAt.getMeasuredWidth(), childAt.getTop() + childAt.getMeasuredHeight());
+            }
+        }
     }
 
     @Override
