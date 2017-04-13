@@ -157,7 +157,10 @@ public class UILayoutImpl extends SwipeBackLayout implements ILayout<UIParam>, U
     public UILayoutImpl(Context context, IView iView) {
         super(context);
         initLayout();
-        startIView(iView, new UIParam(false));
+
+        UIParam uiParam = new UIParam(false);
+        final ViewPattern newViewPattern = startIViewInternal(iView, uiParam);
+        startIViewAnim(mLastShowViewPattern, newViewPattern, uiParam, false);
     }
 
     public UILayoutImpl(Context context, AttributeSet attrs) {
@@ -308,6 +311,16 @@ public class UILayoutImpl extends SwipeBackLayout implements ILayout<UIParam>, U
     }
 
     private void startInner(final IView iView, final UIParam param) {
+        if (!isAttachedToWindow) {
+            post(new Runnable() {
+                @Override
+                public void run() {
+                    startInner(iView, param);
+                }
+            });
+            return;
+        }
+
         final ViewPattern oldViewPattern = getLastViewPattern();
 
         if (param.start_mode == UIParam.SINGLE_TOP) {
@@ -865,24 +878,24 @@ public class UILayoutImpl extends SwipeBackLayout implements ILayout<UIParam>, U
 
     private void startIViewAnim(final ViewPattern oldViewPattern, final ViewPattern newViewPattern,
                                 final UIParam param, boolean reLoad) {
-        if (isAttachedToWindow) {
-            mLastShowViewPattern = newViewPattern;
+//        if (isAttachedToWindow) {
+        mLastShowViewPattern = newViewPattern;
 
-            if (!reLoad) {
-                newViewPattern.mIView.onViewLoad();
-            }
+        if (!reLoad) {
+            newViewPattern.mIView.onViewLoad();
+        }
 
-            clearOldViewFocus(oldViewPattern);
+        clearOldViewFocus(oldViewPattern);
 
-            //startViewPatternAnim(newViewPattern, oldViewPattern, false, true);
-            //startViewPatternAnim(newViewPattern, oldViewPattern, true, false);
-            bottomViewFinish(oldViewPattern, newViewPattern, param);//先执行Bottom
-            topViewStart(newViewPattern, param);//后执行Top
-        } else {
+        //startViewPatternAnim(newViewPattern, oldViewPattern, false, true);
+        //startViewPatternAnim(newViewPattern, oldViewPattern, true, false);
+        bottomViewFinish(oldViewPattern, newViewPattern, param);//先执行Bottom
+        topViewStart(newViewPattern, param);//后执行Top
+//        } else {
 //            for (ViewPattern viewPattern : mAttachViews) {
 //                viewPattern.mView.setVisibility(INVISIBLE);
 //            }
-        }
+//        }
     }
 
     /**
@@ -1348,6 +1361,9 @@ public class UILayoutImpl extends SwipeBackLayout implements ILayout<UIParam>, U
 
     @Override
     public void onShowInPager(final UIViewPager viewPager) {
+        if (mLastShowViewPattern == null) {
+            return;
+        }
         if (runnableCount > 0) {
             post(new Runnable() {
                 @Override
@@ -1362,6 +1378,9 @@ public class UILayoutImpl extends SwipeBackLayout implements ILayout<UIParam>, U
 
     @Override
     public void onHideInPager(final UIViewPager viewPager) {
+        if (mLastShowViewPattern == null) {
+            return;
+        }
         if (runnableCount > 0) {
             post(new Runnable() {
                 @Override

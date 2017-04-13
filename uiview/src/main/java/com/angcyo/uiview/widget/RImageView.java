@@ -5,6 +5,7 @@ import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.PorterDuff;
 import android.graphics.drawable.Drawable;
+import android.graphics.drawable.LayerDrawable;
 import android.support.annotation.ColorInt;
 import android.support.annotation.DrawableRes;
 import android.support.v4.content.ContextCompat;
@@ -30,6 +31,7 @@ public class RImageView extends AppCompatImageView {
      */
     Drawable mPlayDrawable;
     private boolean isAttachedToWindow;
+    private boolean mShowMask;//显示click时的蒙层
 
     public RImageView(Context context) {
         super(context);
@@ -58,13 +60,49 @@ public class RImageView extends AppCompatImageView {
                 break;
         }
 
-        return super.onTouchEvent(event);
+        super.onTouchEvent(event);
+        return true;
     }
 
     public void setColor(@ColorInt int color) {
-        Drawable drawable = getDrawable();
+        setColor(getDrawable(), color);
+    }
+
+    private void setColor(Drawable drawable, @ColorInt int color) {
         if (drawable != null) {
-            drawable.mutate().setColorFilter(color, PorterDuff.Mode.MULTIPLY);
+            if (drawable instanceof LayerDrawable) {
+//                LayerDrawable layerDrawable = (LayerDrawable) drawable;
+//                int numberOfLayers = layerDrawable.getNumberOfLayers();
+////                if (numberOfLayers > 0) {
+////                    setColor((layerDrawable).getDrawable(numberOfLayers - 1), color);
+////                }
+//                for (int i = 0; i < numberOfLayers; i++) {
+//                    setColor((layerDrawable).getDrawable(i), color);
+//                }
+
+                mShowMask = true;
+                postInvalidate();
+//                layerDrawable.setColorFilter(color, PorterDuff.Mode.MULTIPLY);
+            } else {
+                drawable.mutate().setColorFilter(color, PorterDuff.Mode.MULTIPLY);
+            }
+        }
+    }
+
+    private void clearColor(Drawable drawable) {
+        if (drawable != null) {
+            if (drawable instanceof LayerDrawable) {
+//                LayerDrawable layerDrawable = (LayerDrawable) drawable;
+//                int numberOfLayers = layerDrawable.getNumberOfLayers();
+//                if (numberOfLayers > 0) {
+//                    clearColor((layerDrawable).getDrawable(numberOfLayers - 1));
+//                }
+                mShowMask = false;
+                postInvalidate();
+//                layerDrawable.clearColorFilter();
+            } else {
+                drawable.mutate().clearColorFilter();
+            }
         }
     }
 
@@ -76,10 +114,7 @@ public class RImageView extends AppCompatImageView {
     }
 
     public void clearColor() {
-        Drawable drawableUp = getDrawable();
-        if (drawableUp != null) {
-            drawableUp.mutate().clearColorFilter();
-        }
+        clearColor(getDrawable());
     }
 
     @Override
@@ -106,6 +141,9 @@ public class RImageView extends AppCompatImageView {
             int h = mPlayDrawable.getIntrinsicHeight() / 2;
             mPlayDrawable.setBounds(width - w, height - h, width + w, height + h);
             mPlayDrawable.draw(canvas);
+        }
+        if (mShowMask) {
+            canvas.drawColor(Color.parseColor("#80000000"));
         }
     }
 
