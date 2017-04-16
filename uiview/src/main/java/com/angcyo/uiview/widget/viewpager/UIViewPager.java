@@ -75,7 +75,11 @@ public class UIViewPager extends ViewPager implements Runnable, StickLayout.CanS
             }
         });
         //setCurrentItem(defaultShowItem);
+    }
 
+    @Override
+    protected void onSizeChanged(int w, int h, int oldw, int oldh) {
+        super.onSizeChanged(w, h, oldw, oldh);
         ensureGlow(this, SkinHelper.getSkin().getThemeSubColor());
     }
 

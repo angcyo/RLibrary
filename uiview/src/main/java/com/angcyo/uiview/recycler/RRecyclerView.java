@@ -154,13 +154,12 @@ public class RRecyclerView extends RecyclerView {
         removeOnScrollListener(mScrollListener);
         //添加滚动事件监听
         addOnScrollListener(mScrollListener);
+    }
 
-        post(new Runnable() {
-            @Override
-            public void run() {
-                ensureGlow(RRecyclerView.this, SkinHelper.getSkin().getThemeSubColor());
-            }
-        });
+    @Override
+    protected void onSizeChanged(int w, int h, int oldw, int oldh) {
+        super.onSizeChanged(w, h, oldw, oldh);
+        ensureGlow(RRecyclerView.this, SkinHelper.getSkin().getThemeSubColor());
     }
 
     //-----------获取 默认的adapter, 获取 RBaseAdapter, 获取 AnimationAdapter----------//
