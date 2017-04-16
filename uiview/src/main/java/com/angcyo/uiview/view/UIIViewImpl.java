@@ -4,7 +4,6 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.res.Resources;
 import android.graphics.Color;
-import android.graphics.Paint;
 import android.graphics.drawable.Drawable;
 import android.os.Build;
 import android.os.Bundle;
@@ -15,6 +14,7 @@ import android.support.annotation.DimenRes;
 import android.support.annotation.DrawableRes;
 import android.support.annotation.StringRes;
 import android.support.v4.content.ContextCompat;
+import android.support.v4.view.ViewPager;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -32,10 +32,10 @@ import com.angcyo.uiview.container.UILayoutImpl;
 import com.angcyo.uiview.container.UIParam;
 import com.angcyo.uiview.model.TitleBarPattern;
 import com.angcyo.uiview.recycler.RBaseViewHolder;
+import com.angcyo.uiview.recycler.RRecyclerView;
 import com.angcyo.uiview.resources.AnimUtil;
 import com.angcyo.uiview.resources.ResUtil;
 import com.angcyo.uiview.skin.ISkin;
-import com.angcyo.uiview.utils.Reflect;
 import com.angcyo.uiview.widget.viewpager.UIViewPager;
 
 import butterknife.ButterKnife;
@@ -396,7 +396,6 @@ public abstract class UIIViewImpl implements IView {
         finishIView(iView, true);
     }
 
-
     public void finishIView(final IView iView, final UIParam param) {
         if (iView == null) {
             return;
@@ -630,7 +629,10 @@ public abstract class UIIViewImpl implements IView {
                 ((UILayoutImpl) view).onSkinChanged(skin);
             }
             if (view instanceof RecyclerView) {
-                setEdgeEffect(((RecyclerView) view), skin.getThemeSubColor());
+                RRecyclerView.ensureGlow(((RecyclerView) view), skin.getThemeSubColor());
+            }
+            if (view instanceof ViewPager) {
+                UIViewPager.ensureGlow((ViewPager) view, skin.getThemeSubColor());
             }
             if (view instanceof ViewGroup) {
                 ViewGroup viewGroup = (ViewGroup) view;
@@ -638,25 +640,6 @@ public abstract class UIIViewImpl implements IView {
                     notifySkinChanged(viewGroup.getChildAt(i), skin);
                 }
             }
-        }
-    }
-
-    protected void setEdgeEffect(RecyclerView recyclerView, int color) {
-        Object mTopGlow = Reflect.getMember(RecyclerView.class, recyclerView, "mTopGlow");
-        setEdgetEffect(mTopGlow, color);
-        mTopGlow = Reflect.getMember(RecyclerView.class, recyclerView, "mLeftGlow");
-        setEdgetEffect(mTopGlow, color);
-        mTopGlow = Reflect.getMember(RecyclerView.class, recyclerView, "mRightGlow");
-        setEdgetEffect(mTopGlow, color);
-        mTopGlow = Reflect.getMember(RecyclerView.class, recyclerView, "mBottomGlow");
-        setEdgetEffect(mTopGlow, color);
-    }
-
-    protected void setEdgetEffect(Object edgeEffectCompat, @ColorInt int color) {
-        Object mEdgeEffect = Reflect.getMember(edgeEffectCompat, "mEdgeEffect");
-        Object mPaint = Reflect.getMember(mEdgeEffect, "mPaint");
-        if (mPaint instanceof Paint) {
-            ((Paint) mPaint).setColor(color);
         }
     }
 
