@@ -3,6 +3,7 @@ package com.angcyo.uiview.widget;
 import android.content.Context;
 import android.os.Build;
 import android.util.AttributeSet;
+import android.view.View;
 import android.widget.LinearLayout;
 
 import com.angcyo.uiview.R;
@@ -49,8 +50,13 @@ public class TitleBarLayout extends LinearLayout {
             if (!isInEditMode() && Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
                 statusBarHeight = getResources().getDimensionPixelSize(R.dimen.status_bar_height);
                 setPadding(getPaddingLeft(), statusBarHeight, getPaddingRight(), getPaddingBottom());
+                View childAt = getChildAt(0);
+                int height = getMeasuredHeight();
+                if (childAt != null) {
+                    height = childAt.getMeasuredHeight();
+                }
                 super.onMeasure(widthMeasureSpec,
-                        MeasureSpec.makeMeasureSpec(getMeasuredHeight() + statusBarHeight, MeasureSpec.EXACTLY));
+                        MeasureSpec.makeMeasureSpec(height + statusBarHeight, MeasureSpec.EXACTLY));
             }
 
 //            int width = MeasureSpec.getSize(widthMeasureSpec);
