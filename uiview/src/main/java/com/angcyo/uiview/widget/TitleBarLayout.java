@@ -28,8 +28,10 @@ public class TitleBarLayout extends LinearLayout {
 
     @Override
     protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
+        super.onMeasure(widthMeasureSpec, heightMeasureSpec);
+
         if (getChildCount() == 0) {
-            super.onMeasure(widthMeasureSpec, heightMeasureSpec);
+
         } else {
 //        Context context = getContext();
 //        if (context instanceof Activity) {
@@ -47,8 +49,9 @@ public class TitleBarLayout extends LinearLayout {
             if (!isInEditMode() && Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
                 statusBarHeight = getResources().getDimensionPixelSize(R.dimen.status_bar_height);
                 setPadding(getPaddingLeft(), statusBarHeight, getPaddingRight(), getPaddingBottom());
+                super.onMeasure(widthMeasureSpec,
+                        MeasureSpec.makeMeasureSpec(getMeasuredHeight() + statusBarHeight, MeasureSpec.EXACTLY));
             }
-            super.onMeasure(widthMeasureSpec, heightMeasureSpec);
 
 //            int width = MeasureSpec.getSize(widthMeasureSpec);
 //            int height = MeasureSpec.getSize(heightMeasureSpec);
