@@ -97,6 +97,30 @@ public class RTitleCenterLayout extends RelativeLayout {
         return left;
     }
 
+
+    //    @Override
+//    protected void onLayout(boolean changed, int l, int t, int r, int b) {
+//        super.onLayout(changed, l, t, r, b);
+//        int width = getMeasuredWidth();
+//        int height = getMeasuredHeight();
+//        if (mTitleView != null && mLoadingView != null) {
+//            if (mTitleView.getVisibility() == VISIBLE) {
+//                layoutCenter(mTitleView);
+//                if (mLoadingView.getVisibility() == VISIBLE) {
+//                    float offset = getResources().getDisplayMetrics().density * 4;
+//                    mLoadingView.layout((int) (mTitleView.getLeft() - mLoadingView.getMeasuredWidth() - offset),
+//                            (height - mLoadingView.getMeasuredHeight()) / 2,
+//                            (int) (mTitleView.getLeft() - offset), height / 2 + mLoadingView.getMeasuredHeight() / 2);
+//                }
+//                //mTitleView.setBackgroundColor(Color.BLUE);
+//            } else {
+//                if (mLoadingView.getVisibility() == VISIBLE) {
+//                    layoutCenter(mLoadingView);
+//                }
+//            }
+//        }
+//    }
+//
     @Override
     protected void onAttachedToWindow() {
         super.onAttachedToWindow();
