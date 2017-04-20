@@ -135,6 +135,7 @@ public abstract class UIItemUIView<T extends Item> extends UIRecyclerUIView<Stri
                 new RExItemDecoration(
                         new RExItemDecoration.SingleItemCallback() {
 
+
                             @Override
                             public void getItemOffsets2(Rect outRect, int position, int edge) {
                                 T t = mItems.get(position);
