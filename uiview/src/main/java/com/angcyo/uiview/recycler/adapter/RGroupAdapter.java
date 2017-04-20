@@ -19,6 +19,7 @@ import java.util.List;
  * 修改备注：
  * Version: 1.0.0
  */
+
 public class RGroupAdapter<H, G extends RGroupData, F> extends RExBaseAdapter<H, G, F> {
 
     public static final int TYPE_GROUP_HEAD = 0x11000;
