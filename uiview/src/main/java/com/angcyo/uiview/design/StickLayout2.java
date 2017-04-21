@@ -61,7 +61,7 @@ public class StickLayout2 extends RelativeLayout {
                             return false;
                         }
 
-                        if (isFloat() && velocityY > 0) {
+                        if (isFloat() /*&& velocityY < 0*/) {
                             return false;
                         }
                         fling(velocityY);
@@ -72,7 +72,12 @@ public class StickLayout2 extends RelativeLayout {
 
     private void fling(float velocityY) {
         isFling = true;
-        mOverScroller.fling(0, getScrollY(), 0, (int) -velocityY, 0, 0, 0, maxScrollY);
+        int maxY = getMeasuredHeight();
+        final RecyclerView recyclerView = mScrollTarget.getRecyclerView();
+        if (recyclerView != null) {
+            maxY = recyclerView.computeVerticalScrollRange();
+        }
+        mOverScroller.fling(0, getScrollY(), 0, (int) -velocityY, 0, 0, 0, maxY);
         postInvalidate();
     }
 
@@ -87,13 +92,23 @@ public class StickLayout2 extends RelativeLayout {
                         recyclerView.post(new Runnable() {
                             @Override
                             public void run() {
+                                //recyclerView.fling(0, Math.max(0, 1000));
+
+
                                 final float lastVelocity = getLastVelocity();
-                                int velocityDecay = getChildAt(0).getMeasuredHeight() * 3;//速度衰减值
-                                recyclerView.fling(0, Math.max(0, (int) lastVelocity - velocityDecay));
+                                recyclerView.fling(0, (int) Math.max(0, Math.abs(lastVelocity)));
+
+//                                int velocityDecay = getChildAt(0).getMeasuredHeight() * 3;//速度衰减值
+//                                if (lastVelocity < velocityDecay) {
+//                                    recyclerView.fling(0, Math.max(0, (int) Math.abs(lastVelocity)));
+//                                } else {
+//                                    recyclerView.fling(0, Math.max(0, (int) lastVelocity - velocityDecay));
+//                                }
                             }
                         });
                     }
                 }
+                isFling = false;
             }
             scrollTo(0, currY);
             postInvalidate();

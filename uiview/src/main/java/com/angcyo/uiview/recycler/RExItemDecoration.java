@@ -1,9 +1,9 @@
 package com.angcyo.uiview.recycler;
 
 import android.graphics.Canvas;
-import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.Rect;
+import android.support.v4.content.ContextCompat;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -11,6 +11,8 @@ import android.support.v7.widget.RecyclerView.LayoutManager;
 import android.support.v7.widget.StaggeredGridLayoutManager;
 import android.text.TextPaint;
 import android.view.View;
+
+import com.angcyo.uiview.R;
 
 /**
  * 自定制超强的分割线
@@ -242,7 +244,7 @@ public class RExItemDecoration extends RecyclerView.ItemDecoration {
 
         @Override
         public void draw(Canvas canvas, TextPaint paint, View itemView, Rect offsetRect, int itemCount, int position) {
-            paint.setColor(Color.GRAY);
+            paint.setColor(ContextCompat.getColor(itemView.getContext(), R.color.base_chat_bg_color));
             offsetRect.set(0, itemView.getTop() - offsetRect.top, itemView.getRight(), itemView.getTop());
             canvas.drawRect(offsetRect, paint);
         }
