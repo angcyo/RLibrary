@@ -197,19 +197,20 @@ public class ResUtil {
 
     public static Drawable generateRoundBorderDrawable(float radii, float borderWidth, int pressColor, int defaultColor) {
 
-        //外环的圆角矩形
-        float[] outRadii = new float[]{radii, 0, radii, 0, radii, 0, radii, 0};//四个角的 圆角幅度,8个可以设置的值,每个角都有2个边 2*4=8个
+        //外环的圆角矩形,
+        // 左上 右上   左下 右下
+        float[] outRadii = new float[]{radii, radii, radii, radii, radii, radii, radii, radii};//四个角的 圆角幅度,8个可以设置的值,每个角都有2个边 2*4=8个
 
         //与内环的距离
         RectF inset = new RectF(borderWidth, borderWidth, borderWidth, borderWidth);
 
         //按下状态
-        Shape roundRectShape = new RoundRectShape(outRadii, inset, null);//圆角背景
+        Shape roundRectShape = new RoundRectShape(outRadii, inset, outRadii);//圆角背景
         ShapeDrawable shopDrawablePress = new ShapeDrawable(roundRectShape);//圆角shape
         shopDrawablePress.getPaint().setColor(pressColor);//设置颜色
 
         //正常状态
-        Shape roundRectShapeNormal = new RoundRectShape(outRadii, inset, null);
+        Shape roundRectShapeNormal = new RoundRectShape(outRadii, inset, outRadii);
         ShapeDrawable shopDrawableNormal = new ShapeDrawable(roundRectShapeNormal);
         shopDrawableNormal.getPaint().setColor(defaultColor);
 
