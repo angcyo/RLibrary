@@ -63,7 +63,7 @@ public class RefreshLayout extends ViewGroup {
      */
     public static final int MOVE = 4;
     /**
-     * 刷新,上拉 完成
+     * 刷新,上拉 完成, 但是手指还在拖动
      */
     public static final int FINISH = 5;
     /**
@@ -95,7 +95,7 @@ public class RefreshLayout extends ViewGroup {
     /**
      * 刷新的意向, 比如刷新的时候抓起了View, 那么不允许上拉加载
      */
-    private int order = TOP;
+    private int order = NONE;
 
     /**
      * 是否激活延迟加载, 防止刷新太快,就结束了.
@@ -292,6 +292,11 @@ public class RefreshLayout extends ViewGroup {
                 }
             }
         } else if (action == MotionEvent.ACTION_UP || action == MotionEvent.ACTION_CANCEL) {
+            int count = event.getPointerCount();
+            if (count == 1) {
+                isTouchDown = false;
+            }
+
             boolean interceptTouchEvent = super.onInterceptTouchEvent(event);
             if (!interceptTouchEvent) {
                 handleTouchUp();
@@ -316,16 +321,19 @@ public class RefreshLayout extends ViewGroup {
             float y = event.getY();
             float dy = lastY - y;
             isTouchDown = true;
-            if (dy > 0) {
-                order = BOTTOM;
-            } else {
-                order = TOP;
+
+            if (order == NONE) {
+                if (dy > 0) {
+                    order = BOTTOM;
+                } else {
+                    order = TOP;
+                }
             }
 
             if (Math.abs(dy) > mTouchSlop) {
                 scrollBy(0, (int) (dy * (1 - 0.4 - Math.abs(getScrollY()) * 1.f / getMeasuredHeight())));
                 lastY = y;
-                if (mCurState == NORMAL || mCurState == FINISH) {
+                if (mCurState == NORMAL /*|| mCurState == FINISH*/) {
                     mCurState = MOVE;
                 }
             }
@@ -344,6 +352,8 @@ public class RefreshLayout extends ViewGroup {
      * 释放手指之后的处理
      */
     private void handleTouchUp() {
+        order = NONE;
+
         if (!mNotifyListener) {
             resetScroll();
             return;
@@ -393,7 +403,7 @@ public class RefreshLayout extends ViewGroup {
      * 设置当前刷新的状态
      */
     public void setRefreshState(@State int state) {
-        if (mCurState == NORMAL) {
+        if (mCurState == NORMAL || mCurState == FINISH) {
             if (state == TOP) {
                 if (mDirection == TOP || mDirection == BOTH) {
                     refreshTop();
@@ -404,6 +414,12 @@ public class RefreshLayout extends ViewGroup {
                 }
             }
         } else {
+            if (mCurState == TOP && TOP == state) {
+                refreshTop();
+            }
+            if (mCurState == BOTTOM && BOTTOM == state) {
+                refreshBottom();
+            }
             return;
         }
     }
@@ -423,17 +439,17 @@ public class RefreshLayout extends ViewGroup {
             return;
         }
 
-        if (mCurState == FINISH || mCurState == NORMAL /*|| mCurState == MOVE*/) {
-            return;
-        }
-
-        if (mCurState == MOVE && isTouchDown) {
-            return;
-        }
+//        if (mCurState == FINISH || mCurState == NORMAL /*|| mCurState == MOVE*/) {
+//            return;
+//        }
+//
+//        if (mCurState == MOVE && isTouchDown) {
+//            return;
+//        }
 
         mCurState = FINISH;
         if (isTouchDown) {
-            scrollTo(getScrollX(), getScrollY());
+            //scrollTo(getScrollX(), getScrollY());
         } else {
             startScroll(0);
         }
@@ -446,9 +462,15 @@ public class RefreshLayout extends ViewGroup {
             mCurState = TOP;
             startScroll(-mTopView.getMeasuredHeight());
 
-            for (OnRefreshListener listener : mRefreshListeners) {
-                listener.onRefresh(TOP);
-            }
+            //防止还没回到刷新位置, 就已经调用了刷新结束的方法
+            postDelayed(new Runnable() {
+                @Override
+                public void run() {
+                    for (OnRefreshListener listener : mRefreshListeners) {
+                        listener.onRefresh(TOP);
+                    }
+                }
+            }, 100);
         }
     }
 
@@ -459,9 +481,15 @@ public class RefreshLayout extends ViewGroup {
             mCurState = BOTTOM;
             startScroll(mBottomView.getMeasuredHeight());
 
-            for (OnRefreshListener listener : mRefreshListeners) {
-                listener.onRefresh(BOTTOM);
-            }
+            postDelayed(new Runnable() {
+                @Override
+                public void run() {
+                    for (OnRefreshListener listener : mRefreshListeners) {
+                        listener.onRefresh(BOTTOM);
+                    }
+                }
+            }, 100);
+
         }
     }
 
@@ -469,7 +497,7 @@ public class RefreshLayout extends ViewGroup {
      * 恢复到默认的滚动状态
      */
     private void resetScroll() {
-        if (mCurState != TOP && mCurState != BOTTOM && mCurState != FINISH) {
+        if (mCurState != TOP && mCurState != BOTTOM /*&& mCurState != FINISH*/) {
             mCurState = NORMAL;
         }
         startScroll(0);
@@ -500,13 +528,32 @@ public class RefreshLayout extends ViewGroup {
 
     @Override
     public void scrollTo(int x, int y) {
+        if (getScrollY() == 0) {
+            if (y < 0) {
+                //需要滚动刷新, 判断刷新的方向是否支持刷新. 不支持不处理滚动
+                if (mDirection == TOP || mDirection == BOTH) {
+
+                } else {
+                    return;
+                }
+            }
+            if (y > 0) {
+                //需要上拉加载
+                if (mDirection == BOTTOM || mDirection == BOTH) {
+
+                } else {
+                    return;
+                }
+            }
+        }
+
         if (mCurState == TOP) {
             y = Math.min(y, 0);
         } else if (mCurState == BOTTOM) {
             y = Math.max(y, 0);
         }
 
-        super.scrollTo(x, y);
+        super.scrollTo(0, y);
 
         int scrollY = getScrollY();
         int rawY = Math.abs(scrollY);
