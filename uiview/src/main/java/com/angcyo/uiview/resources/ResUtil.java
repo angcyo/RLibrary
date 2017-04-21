@@ -17,7 +17,9 @@ import android.graphics.drawable.shapes.ArcShape;
 import android.graphics.drawable.shapes.RoundRectShape;
 import android.graphics.drawable.shapes.Shape;
 import android.os.Build;
+import android.support.annotation.DrawableRes;
 import android.support.annotation.RequiresApi;
+import android.support.v4.content.ContextCompat;
 import android.util.TypedValue;
 import android.view.View;
 
@@ -469,5 +471,13 @@ public class ResUtil {
         } else {
             return drawable;
         }
+    }
+
+    public static Drawable generateClickDrawable(Context context, @DrawableRes int defaultRes, @DrawableRes int pressRes) {
+        StateListDrawable bgStateDrawable = new StateListDrawable();//状态shape
+        bgStateDrawable.addState(new int[]{android.R.attr.state_pressed}, ContextCompat.getDrawable(context, pressRes));//按下状态
+        bgStateDrawable.addState(new int[]{android.R.attr.state_checked}, ContextCompat.getDrawable(context, pressRes));//按下状态
+        bgStateDrawable.addState(new int[]{}, ContextCompat.getDrawable(context, defaultRes));//其他状态
+        return bgStateDrawable;
     }
 }

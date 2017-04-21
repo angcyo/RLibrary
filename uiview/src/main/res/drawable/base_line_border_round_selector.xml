@@ -2,14 +2,13 @@
 <selector xmlns:android="http://schemas.android.com/apk/res/android">
     <item android:state_pressed="true">
         <shape android:shape="rectangle">
-            <corners android:radius="@dimen/base_line"/>
+            <corners android:radius="@dimen/base_100dpi"/>
             <stroke android:width="@dimen/base_line" android:color="@color/default_base_border"/>
-            <solid android:color="@color/default_base_bg_press"/>
         </shape>
     </item>
     <item>
         <shape android:shape="rectangle">
-            <corners android:radius="@dimen/base_line"/>
+            <corners android:radius="@dimen/base_100dpi"/>
             <stroke android:width="@dimen/base_line" android:color="@color/default_base_line"/>
         </shape>
     </item>

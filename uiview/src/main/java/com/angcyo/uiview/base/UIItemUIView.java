@@ -107,6 +107,10 @@ public abstract class UIItemUIView<T extends Item> extends UIRecyclerUIView<Stri
      */
     protected abstract void createItems(List<T> items);
 
+    protected boolean isLast(int position) {
+        return mExBaseAdapter.isLast(position);
+    }
+
     @Override
     protected RefreshLayout createRefreshLayout(RelativeLayout baseContentLayout, LayoutInflater inflater) {
         //为软键盘弹出提供支持

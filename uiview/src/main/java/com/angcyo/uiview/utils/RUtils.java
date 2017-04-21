@@ -610,28 +610,32 @@ public class RUtils {
      * 缩短很大的数字
      */
     public static String getShortString(long number) {
+        return getShortString(String.valueOf(number), "");
+    }
+
+    public static String getShortString(String number) {
         return getShortString(number, "");
     }
 
-    public static String getShortString(long number, String suffix) {
+    public static String getShortString(String number, String suffix) {
+        if (TextUtils.isEmpty(number)) {
+            return "";
+        }
+
         String unit;
-        long num;
-        if (number / 10_000_000 > 0) {
+        String num;
+        if (number.length() > 7) {
             unit = "千万";
-            num = number % 10_000_000;
-
-        } else if (number / 1_000_000 > 0) {
+            num = number.substring(0, number.length() - 7);
+        } else if (number.length() > 6) {
             unit = "百万";
-            num = number / 1_000_000;
-
-        } else if (number / 100_000 > 0) {
+            num = number.substring(0, number.length() - 6);
+        } else if (number.length() > 5) {
             unit = "十万";
-
-            num = number % 100_000;
-        } else if (number / 10_000 > 0) {
+            num = number.substring(0, number.length() - 5);
+        } else if (number.length() > 4) {
             unit = "万";
-            num = number % 10_000;
-
+            num = number.substring(0, number.length() - 4);
         } else {
             unit = "";
             num = number;

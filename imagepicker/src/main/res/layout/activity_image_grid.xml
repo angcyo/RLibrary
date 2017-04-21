@@ -60,6 +60,7 @@
                 android:paddingLeft="16dp"
                 android:paddingRight="16dp"
                 android:singleLine="true"
+                android:maxLines="1"
                 android:text="全部图片"
                 android:textAllCaps="false"
                 android:textColor="#FFFFFF"

@@ -356,6 +356,26 @@ public class RRecyclerView extends RecyclerView {
         return currVelocity;
     }
 
+    public void scrollTo(int position, boolean anim) {
+        LayoutManager manager = getLayoutManager();
+        if (manager == null) {
+            return;
+        }
+        if (manager instanceof LinearLayoutManager) {
+            if (anim) {
+                smoothScrollToPosition(position);
+            } else {
+                ((LinearLayoutManager) manager).scrollToPositionWithOffset(position, 0);
+            }
+        } else {
+            if (anim) {
+                smoothScrollToPosition(position);
+            } else {
+                ((StaggeredGridLayoutManager) manager).scrollToPositionWithOffset(position, 0);
+            }
+        }
+    }
+
     /**
      * RecyclerView滚动结束后的回调
      */

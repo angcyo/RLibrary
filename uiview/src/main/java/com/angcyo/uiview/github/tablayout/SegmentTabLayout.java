@@ -204,14 +204,20 @@ public class SegmentTabLayout extends FrameLayout implements ValueAnimator.Anima
             tabView.setTag(i);
             addTab(i, tabView);
         }
-
         updateTabStyles();
+    }
+
+    public View getTabView(int position) {
+        if (mTabCount > position) {
+            return mTabsContainer.getChildAt(position);
+        }
+        return null;
     }
 
     /**
      * 创建并添加tab
      */
-    private void addTab(final int position, View tabView) {
+    private void addTab(final int position, final View tabView) {
         TextView tv_tab_title = (TextView) tabView.findViewById(R.id.tv_tab_title);
         tv_tab_title.setText(mTitles[position]);
 
@@ -227,6 +233,9 @@ public class SegmentTabLayout extends FrameLayout implements ValueAnimator.Anima
                 } else {
                     if (mListener != null) {
                         mListener.onTabReselect(position);
+                        if (mListener instanceof OnTabSelectListenerEx) {
+                            ((OnTabSelectListenerEx) mListener).onTabReselect(position, tabView);
+                        }
                     }
                 }
             }
@@ -240,6 +249,10 @@ public class SegmentTabLayout extends FrameLayout implements ValueAnimator.Anima
             lp_tab = new LinearLayout.LayoutParams((int) mTabWidth, LayoutParams.MATCH_PARENT);
         }
         mTabsContainer.addView(tabView, position, lp_tab);
+
+        if (mListener instanceof OnTabSelectListenerEx) {
+            ((OnTabSelectListenerEx) mListener).onTabAdd(position, tabView);
+        }
     }
 
     private void updateTabStyles() {
@@ -259,6 +272,10 @@ public class SegmentTabLayout extends FrameLayout implements ValueAnimator.Anima
             } else if (mTextBold == TEXT_BOLD_NONE) {
                 tv_tab_title.getPaint().setFakeBoldText(false);
             }
+
+            if (mListener instanceof OnTabSelectListenerEx) {
+                ((OnTabSelectListenerEx) mListener).onUpdateTabStyles(i, i == mCurrentTab, tabView);
+            }
         }
     }
 
@@ -270,6 +287,10 @@ public class SegmentTabLayout extends FrameLayout implements ValueAnimator.Anima
             tab_title.setTextColor(isSelect ? mTextSelectColor : mTextUnselectColor);
             if (mTextBold == TEXT_BOLD_WHEN_SELECT) {
                 tab_title.getPaint().setFakeBoldText(isSelect);
+            }
+
+            if (mListener instanceof OnTabSelectListenerEx) {
+                ((OnTabSelectListenerEx) mListener).onUpdateTabStyles(i, i == mCurrentTab, tabView);
             }
         }
     }
@@ -437,6 +458,10 @@ public class SegmentTabLayout extends FrameLayout implements ValueAnimator.Anima
 
     //setter and getter
     public void setCurrentTab(int currentTab) {
+        setCurrentTab(currentTab, false);
+    }
+
+    public void setCurrentTab(int currentTab, boolean notify) {
         mLastTab = this.mCurrentTab;
         this.mCurrentTab = currentTab;
         updateTabSelection(currentTab);
@@ -447,6 +472,12 @@ public class SegmentTabLayout extends FrameLayout implements ValueAnimator.Anima
             calcOffset();
         } else {
             invalidate();
+        }
+
+        if (notify) {
+            if (mListener != null) {
+                mListener.onTabSelect(currentTab);
+            }
         }
     }
 
@@ -742,6 +773,20 @@ public class SegmentTabLayout extends FrameLayout implements ValueAnimator.Anima
     protected int sp2px(float sp) {
         final float scale = this.mContext.getResources().getDisplayMetrics().scaledDensity;
         return (int) (sp * scale + 0.5f);
+    }
+
+    public static abstract class OnTabSelectListenerEx implements OnTabSelectListener {
+
+        @Override
+        public void onTabReselect(int position) {
+
+        }
+
+        public abstract void onTabAdd(int position, View tabView);
+
+        public abstract void onTabReselect(int position, View tabView);
+
+        public abstract void onUpdateTabStyles(int position, boolean isSelector, View tabView);
     }
 
     class IndicatorPoint {
