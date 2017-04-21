@@ -304,7 +304,7 @@ public class RefreshLayout extends ViewGroup {
 
     @Override
     public boolean onTouchEvent(MotionEvent event) {
-        int action = event.getActionMasked();
+        int action = MotionEventCompat.getActionMasked(event);
 
         if (action == MotionEvent.ACTION_UP || action == MotionEvent.ACTION_CANCEL) {
             int count = event.getPointerCount();
@@ -316,16 +316,26 @@ public class RefreshLayout extends ViewGroup {
             float y = event.getY();
             float dy = lastY - y;
             isTouchDown = true;
+            if (dy > 0) {
+                order = BOTTOM;
+            } else {
+                order = TOP;
+            }
+
             if (Math.abs(dy) > mTouchSlop) {
                 scrollBy(0, (int) (dy * (1 - 0.4 - Math.abs(getScrollY()) * 1.f / getMeasuredHeight())));
                 lastY = y;
-                if (mCurState == NORMAL) {
+                if (mCurState == NORMAL || mCurState == FINISH) {
                     mCurState = MOVE;
                 }
             }
         } else if (action == MotionEvent.ACTION_POINTER_DOWN) {
             //多个手指按下
             lastY = event.getY();
+        } else if (action == MotionEvent.ACTION_DOWN) {
+            downY = event.getY();
+            downX = event.getX();
+            lastY = downY;
         }
         return true;
     }

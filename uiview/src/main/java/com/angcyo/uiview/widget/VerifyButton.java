@@ -6,6 +6,8 @@ import android.util.AttributeSet;
 import android.view.Gravity;
 import android.view.View;
 
+import com.angcyo.uiview.skin.SkinHelper;
+
 /**
  * Copyright (C) 2016,深圳市红鸟网络科技股份有限公司 All rights reserved.
  * 项目名称：
@@ -36,6 +38,12 @@ public class VerifyButton extends AppCompatTextView implements View.OnClickListe
 
     public VerifyButton(Context context, AttributeSet attrs, int defStyleAttr) {
         super(context, attrs, defStyleAttr);
+    }
+
+    @Override
+    protected void onAttachedToWindow() {
+        super.onAttachedToWindow();
+        setTextColor(SkinHelper.getSkin().getThemeSubColor());
     }
 
     @Override

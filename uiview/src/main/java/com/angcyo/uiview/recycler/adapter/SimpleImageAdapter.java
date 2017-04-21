@@ -136,7 +136,7 @@ public class SimpleImageAdapter extends RBaseAdapter<SimpleImageAdapter.Image> {
         clickView.setLayoutParams(new RelativeLayout.LayoutParams(-1, -1));
 //        clickView.setBackgroundResource(R.drawable.default_bg_selector);
 
-        Drawable drawable = ResUtil.generateRoundBorderDrawable(0, Color.parseColor("#60000000"), Color.TRANSPARENT);
+        Drawable drawable = ResUtil.generateRoundDrawable(0, Color.parseColor("#60000000"), Color.TRANSPARENT);
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN) {
             clickView.setBackground(drawable);
         } else {

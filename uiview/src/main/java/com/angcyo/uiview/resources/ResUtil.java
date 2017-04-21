@@ -82,7 +82,7 @@ public class ResUtil {
      * @param defaultColor the default color
      * @return the drawable
      */
-    public static Drawable generateRoundBorderDrawable(float radii, int pressColor, int defaultColor) {
+    public static Drawable generateRoundDrawable(float radii, int pressColor, int defaultColor) {
         //圆角
         Shape roundRectShape = new RoundRectShape(new float[]{radii, radii, radii, radii, radii, radii, radii, radii}, null, null);//圆角背景
 
@@ -101,7 +101,7 @@ public class ResUtil {
         return bgStateDrawable;
     }
 
-    public static Drawable generateRoundBorderDrawable(float radii, int pressColor, int disableColor, int defaultColor) {
+    public static Drawable generateRoundDrawable(float radii, int pressColor, int disableColor, int defaultColor) {
         //圆角
         Shape roundRectShape = new RoundRectShape(new float[]{radii, radii, radii, radii, radii, radii, radii, radii}, null, null);//圆角背景
 
@@ -133,7 +133,7 @@ public class ResUtil {
      * @param defaultColor the default color
      * @return the drawable
      */
-    public static Drawable generateRoundBorderDrawable(Resources res, float radii, int pressColor, int defaultColor) {
+    public static Drawable generateRoundDrawable(Resources res, float radii, int pressColor, int defaultColor) {
 
         radii = dpToPx(res, radii);
 
@@ -195,7 +195,33 @@ public class ResUtil {
         return bgStateDrawable;
     }
 
-    public static Drawable generateRoundBorderDrawable(float rL1, float rL2, float rT1, float rT2,
+    public static Drawable generateRoundBorderDrawable(float radii, float borderWidth, int pressColor, int defaultColor) {
+
+        //外环的圆角矩形
+        float[] outRadii = new float[]{radii, 0, radii, 0, radii, 0, radii, 0};//四个角的 圆角幅度,8个可以设置的值,每个角都有2个边 2*4=8个
+
+        //与内环的距离
+        RectF inset = new RectF(borderWidth, borderWidth, borderWidth, borderWidth);
+
+        //按下状态
+        Shape roundRectShape = new RoundRectShape(outRadii, inset, null);//圆角背景
+        ShapeDrawable shopDrawablePress = new ShapeDrawable(roundRectShape);//圆角shape
+        shopDrawablePress.getPaint().setColor(pressColor);//设置颜色
+
+        //正常状态
+        Shape roundRectShapeNormal = new RoundRectShape(outRadii, inset, null);
+        ShapeDrawable shopDrawableNormal = new ShapeDrawable(roundRectShapeNormal);
+        shopDrawableNormal.getPaint().setColor(defaultColor);
+
+        StateListDrawable bgStateDrawable = new StateListDrawable();//状态shape
+        bgStateDrawable.addState(new int[]{android.R.attr.state_pressed}, shopDrawablePress);//按下状态
+        bgStateDrawable.addState(new int[]{android.R.attr.state_focused}, shopDrawablePress);//焦点状态
+        bgStateDrawable.addState(new int[]{}, shopDrawableNormal);//其他状态
+
+        return bgStateDrawable;
+    }
+
+    public static Drawable generateRoundDrawable(float rL1, float rL2, float rT1, float rT2,
                                                        float rR1, float rR2, float rB1, float rB2,
                                                        int pressColor, int defaultColor) {
         //外环的圆角矩形
@@ -221,7 +247,7 @@ public class ResUtil {
         return bgStateDrawable;
     }
 
-    public static Drawable generateRoundBorderDrawable(float radiiL, float radiiR, int pressColor, int defaultColor) {
+    public static Drawable generateRoundDrawable(float radiiL, float radiiR, int pressColor, int defaultColor) {
         //外环的圆角矩形
         float[] outRadii = new float[]{radiiL, radiiL, radiiR, radiiR, radiiR, radiiR, radiiL, radiiL};//四个角的 圆角幅度,8个可以设置的值,每个角都有2个边 2*4=8个
 
@@ -438,7 +464,7 @@ public class ResUtil {
     }
 
     public static Drawable generateRippleRoundMaskDrawable(float radius, int rippleColor, int pressColor, int defaultColor) {
-        Drawable drawable = ResUtil.generateRoundBorderDrawable(radius, pressColor, defaultColor);
+        Drawable drawable = ResUtil.generateRoundDrawable(radius, pressColor, defaultColor);
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
             return ResUtil.generateRippleMaskDrawable(rippleColor, drawable);
         } else {
@@ -447,7 +473,7 @@ public class ResUtil {
     }
 
     public static Drawable generateRippleRoundMaskDrawable(float radius, int rippleColor, int pressColor, int disableColor, int defaultColor) {
-        Drawable drawable = ResUtil.generateRoundBorderDrawable(radius, pressColor, disableColor, defaultColor);
+        Drawable drawable = ResUtil.generateRoundDrawable(radius, pressColor, disableColor, defaultColor);
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
             return ResUtil.generateRippleMaskDrawable(rippleColor, drawable);
         } else {
