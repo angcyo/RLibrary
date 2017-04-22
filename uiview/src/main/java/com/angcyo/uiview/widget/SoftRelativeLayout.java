@@ -224,6 +224,18 @@ public class SoftRelativeLayout extends RelativeLayout implements ILifecycle {
         }
     }
 
+    public void fixInsertsTitleTop() {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+            setPadding(getPaddingLeft(),
+                    getResources().getDimensionPixelSize(R.dimen.status_bar_height)
+                            + getResources().getDimensionPixelSize(R.dimen.action_bar_height),
+                    getPaddingRight(), getPaddingBottom());
+        } else {
+            setPadding(getPaddingLeft(), getResources().getDimensionPixelSize(R.dimen.action_bar_height),
+                    getPaddingRight(), getPaddingBottom());
+        }
+    }
+
     /**
      * 获取底部装饰物的高度 , 通常是键盘的高度
      */
