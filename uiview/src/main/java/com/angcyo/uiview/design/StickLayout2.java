@@ -11,6 +11,7 @@ import android.view.View;
 import android.widget.OverScroller;
 import android.widget.RelativeLayout;
 
+import com.angcyo.library.utils.L;
 import com.angcyo.uiview.recycler.RRecyclerView;
 import com.angcyo.uiview.utils.Reflect;
 
@@ -75,7 +76,7 @@ public class StickLayout2 extends RelativeLayout {
         int maxY = getMeasuredHeight();
         final RecyclerView recyclerView = mScrollTarget.getRecyclerView();
         if (recyclerView != null) {
-            maxY = recyclerView.computeVerticalScrollRange();
+            maxY = Math.max(maxY, recyclerView.computeVerticalScrollRange());
         }
         mOverScroller.fling(0, getScrollY(), 0, (int) -velocityY, 0, 0, 0, maxY);
         postInvalidate();
@@ -256,12 +257,16 @@ public class StickLayout2 extends RelativeLayout {
                 boolean wantV;
                 if (Math.abs(offsetX) > Math.abs(offsetY)) {
                     wantV = false;
-                } else {
+                } else if (Math.abs(offsetY) > Math.abs(offsetX)) {
                     wantV = true;
+                } else {
+                    break;
                 }
 
                 boolean first = isFirst;
                 isFirst = false;
+
+                L.e("dispatchTouchEvent() -> " + offsetX + " " + offsetY + " w:" + wantV + "  f:" + first);
 
                 if (first) {
                     if (!wantV) {
