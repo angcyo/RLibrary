@@ -171,6 +171,18 @@ public class RefreshLayout extends ViewGroup {
     }
 
     @Override
+    protected void onSizeChanged(int w, int h, int oldw, int oldh) {
+        super.onSizeChanged(w, h, oldw, oldh);
+        if (mCurState == TOP) {
+            scrollToTop(false);
+        } else if (mCurState == BOTTOM) {
+            scrollToBottom(false);
+        } else {
+            resetScroll(false);
+        }
+    }
+
+    @Override
     protected void onAttachedToWindow() {
         super.onAttachedToWindow();
         mTouchSlop = 0;//ViewConfiguration.get(getContext()).getScaledTouchSlop();
@@ -352,6 +364,10 @@ public class RefreshLayout extends ViewGroup {
      * 释放手指之后的处理
      */
     private void handleTouchUp() {
+        if (order == NONE) {
+            return;
+        }
+
         order = NONE;
 
         if (!mNotifyListener) {
@@ -455,12 +471,43 @@ public class RefreshLayout extends ViewGroup {
         }
     }
 
+    public void setRefreshEnd(boolean anim) {
+        if (anim) {
+            setRefreshEnd();
+        } else {
+            mCurState = FINISH;
+            if (!isTouchDown) {
+                scrollTo(0, 0);
+            }
+        }
+    }
+
+    private void scrollToTop(boolean anim) {
+        if (mTopView != null) {
+            if (anim) {
+                startScroll(-mTopView.getMeasuredHeight());
+            } else {
+                scrollTo(0, -mTopView.getMeasuredHeight());
+            }
+        }
+    }
+
+    private void scrollToBottom(boolean anim) {
+        if (mBottomView != null) {
+            if (anim) {
+                startScroll(mBottomView.getMeasuredHeight());
+            } else {
+                scrollTo(0, mBottomView.getMeasuredHeight());
+            }
+        }
+    }
+
     private void refreshTop() {
         refreshTime = System.currentTimeMillis();
         if (mTopView != null) {
             //设置正在刷新
             mCurState = TOP;
-            startScroll(-mTopView.getMeasuredHeight());
+            scrollToTop(true);
 
             //防止还没回到刷新位置, 就已经调用了刷新结束的方法
             postDelayed(new Runnable() {
@@ -479,7 +526,7 @@ public class RefreshLayout extends ViewGroup {
         if (mBottomView != null) {
             //设置正在上拉
             mCurState = BOTTOM;
-            startScroll(mBottomView.getMeasuredHeight());
+            scrollToBottom(true);
 
             postDelayed(new Runnable() {
                 @Override
@@ -497,10 +544,19 @@ public class RefreshLayout extends ViewGroup {
      * 恢复到默认的滚动状态
      */
     private void resetScroll() {
+        resetScroll(true);
+    }
+
+    private void resetScroll(boolean anim) {
+        mScroller.abortAnimation();
         if (mCurState != TOP && mCurState != BOTTOM /*&& mCurState != FINISH*/) {
             mCurState = NORMAL;
         }
-        startScroll(0);
+        if (anim) {
+            startScroll(0);
+        } else {
+            scrollTo(0, 0);
+        }
     }
 
     private void startScroll(int to) {

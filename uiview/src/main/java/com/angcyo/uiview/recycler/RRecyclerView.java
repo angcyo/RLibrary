@@ -377,6 +377,56 @@ public class RRecyclerView extends RecyclerView {
     }
 
     /**
+     * 滚动到底部
+     */
+    public void scrollToLastBottom(boolean anim) {
+
+        final LayoutManager manager = getLayoutManager();
+        if (manager == null) {
+            return;
+        }
+        int itemCount = manager.getItemCount();
+        if (itemCount < 1) {
+            return;
+        }
+        final int position = itemCount - 1;
+
+        if (manager instanceof LinearLayoutManager) {
+            if (anim) {
+                smoothScrollToPosition(position);
+            } else {
+                ((LinearLayoutManager) manager).scrollToPositionWithOffset(position, 0);
+                post(new Runnable() {
+                    @Override
+                    public void run() {
+                        View target = manager.findViewByPosition(position);//然后才能拿到这个View
+                        if (target != null) {
+                            ((LinearLayoutManager) manager).scrollToPositionWithOffset(position,
+                                    getMeasuredHeight() - target.getMeasuredHeight());//滚动偏移到底部
+                        }
+                    }
+                });
+            }
+        } else {
+            if (anim) {
+                smoothScrollToPosition(position);
+            } else {
+                ((StaggeredGridLayoutManager) manager).scrollToPositionWithOffset(position, 0);
+                post(new Runnable() {
+                    @Override
+                    public void run() {
+                        View target = manager.findViewByPosition(position);//然后才能拿到这个View
+                        if (target != null) {
+                            ((StaggeredGridLayoutManager) manager).scrollToPositionWithOffset(position,
+                                    getMeasuredHeight() - target.getMeasuredHeight());//滚动偏移到底部
+                        }
+                    }
+                });
+            }
+        }
+    }
+
+    /**
      * RecyclerView滚动结束后的回调
      */
     public interface OnScrollEndListener {
