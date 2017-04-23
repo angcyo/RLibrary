@@ -57,7 +57,7 @@ public class UITitleBarContainer extends FrameLayout {
     protected ArrayList<View> mRightViews = new ArrayList<>();
     private int mStatusBarHeight;
     private boolean mLayoutFullscreen;
-
+    private OnClickListener mOnBackListener;
 
     public UITitleBarContainer(Context context) {
         super(context);
@@ -171,6 +171,13 @@ public class UITitleBarContainer extends FrameLayout {
         }
     }
 
+    /**
+     * 返回按钮事件设置
+     */
+    public void setOnBackListener(OnClickListener onBackListener) {
+        mOnBackListener = onBackListener;
+    }
+
     private void loadTitleBar() {
         if (mTitleBarPattern == null) {
             mLeftControlLayout.removeAllViews();
@@ -196,8 +203,8 @@ public class UITitleBarContainer extends FrameLayout {
             mBackImageView.setOnClickListener(new OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    if (mILayout != null) {
-                        mILayout.requestBackPressed(new UIParam(true, true, false));
+                    if (mOnBackListener != null) {
+                        mOnBackListener.onClick(v);
                     }
                 }
             });

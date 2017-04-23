@@ -1,6 +1,7 @@
 package com.angcyo.uiview.widget;
 
 import android.content.Context;
+import android.graphics.Canvas;
 import android.graphics.Rect;
 import android.os.Build;
 import android.support.v4.view.ViewCompat;
@@ -14,6 +15,7 @@ import android.widget.RelativeLayout;
 
 import com.angcyo.uiview.R;
 import com.angcyo.uiview.container.IWindowInsetsListener;
+import com.angcyo.uiview.utils.ClipHelper;
 import com.angcyo.uiview.view.ILifecycle;
 
 import java.util.ArrayList;
@@ -32,6 +34,7 @@ import java.util.ArrayList;
 public class SoftRelativeLayout extends RelativeLayout implements ILifecycle {
     boolean isViewShow = false;
     boolean mFitSystemWindow = false;
+    ClipHelper mClipHelper;
     private ArrayList<IWindowInsetsListener> mOnWindowInsetsListeners;
     private int[] mInsets = new int[4];
     /**
@@ -61,6 +64,8 @@ public class SoftRelativeLayout extends RelativeLayout implements ILifecycle {
 //
 //            }
 //        });
+
+        mClipHelper = new ClipHelper(this);
     }
 
     public void fitsSystemWindows(boolean fit) {
@@ -296,5 +301,27 @@ public class SoftRelativeLayout extends RelativeLayout implements ILifecycle {
             return true;
         }
         return super.onInterceptTouchEvent(ev);
+    }
+
+    @Override
+    public void draw(Canvas canvas) {
+        mClipHelper.draw(canvas);
+        super.draw(canvas);
+    }
+
+    public void setEnableClip(boolean enableClip) {
+        mClipHelper.setEnableClip(enableClip);
+    }
+
+    public boolean isClipEnd() {
+        return mClipHelper.isClipEnd();
+    }
+
+    public void startEnterClip(View view, ClipHelper.OnEndListener listener) {
+        mClipHelper.startEnterClip(view, listener);
+    }
+
+    public void startExitClip(ClipHelper.OnEndListener listener) {
+        mClipHelper.startExitClip(listener);
     }
 }

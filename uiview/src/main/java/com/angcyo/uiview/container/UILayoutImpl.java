@@ -504,6 +504,7 @@ public class UILayoutImpl extends SwipeBackLayout implements ILayout<UIParam>, U
             }
         }
 
+        boolean isOnTop = viewPattern == mLastShowViewPattern;
 
 //        if (!param.isSwipeBack && !viewPattern.mIView.onBackPressed()) {
 //            //如果不是滑动返回, 并且不能退出
@@ -512,10 +513,10 @@ public class UILayoutImpl extends SwipeBackLayout implements ILayout<UIParam>, U
 //        }
 
         topViewFinish(lastViewPattern, viewPattern, param.mAnim);
-        if (viewPattern != mLastShowViewPattern) {
-            //如果要关闭的IView不是顶上的,比如是下层的
-        } else {
+        if (isOnTop) {
             bottomViewStart(lastViewPattern, viewPattern, param.mAnim, param.isQuiet);
+        } else {
+            //如果要关闭的IView不是顶上的,比如是下层的
         }
 
 //        if (param.mAnim) {

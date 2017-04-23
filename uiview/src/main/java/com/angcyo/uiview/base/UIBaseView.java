@@ -26,6 +26,7 @@ import android.widget.TextView;
 
 import com.angcyo.uiview.R;
 import com.angcyo.uiview.container.UILayoutImpl;
+import com.angcyo.uiview.container.UIParam;
 import com.angcyo.uiview.container.UITitleBarContainer;
 import com.angcyo.uiview.model.TitleBarPattern;
 import com.angcyo.uiview.resources.ResUtil;
@@ -117,6 +118,12 @@ public abstract class UIBaseView extends UIIViewImpl {
             mUITitleBarContainer.setId(mUITitleBarId);
             mUITitleBarContainer.setTitleBarPattern(titleBarPattern);
             mUITitleBarContainer.onAttachToLayout(mILayout);//note
+            mUITitleBarContainer.setOnBackListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    UIBaseView.this.onTitleBackListener();
+                }
+            });
         }
 
         //内容根布局, 包含空布局,加载布局等
@@ -513,6 +520,12 @@ public abstract class UIBaseView extends UIIViewImpl {
         super.onSkinChanged(skin);
         if (mUITitleBarContainer != null) {
             mUITitleBarContainer.setBackgroundColor(skin.getThemeColor());
+        }
+    }
+
+    protected void onTitleBackListener() {
+        if (mILayout != null) {
+            mILayout.requestBackPressed(new UIParam(true, true, false));
         }
     }
 

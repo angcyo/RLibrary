@@ -12,7 +12,7 @@ import com.angcyo.uiview.RApplication;
 /**
  * Copyright (C) 2016,深圳市红鸟网络科技股份有限公司 All rights reserved.
  * 项目名称：
- * 类的描述：
+ * 类的描述：用来绘制文本的画笔, 坐标自动从文本的左下角开始计算
  * 创建人员：Robi
  * 创建时间：2017/04/11 17:03
  * 修改人员：Robi
