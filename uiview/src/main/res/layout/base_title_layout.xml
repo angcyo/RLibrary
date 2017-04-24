@@ -64,7 +64,7 @@
             android:tag="title"
             android:textColor="@color/default_base_white"
             android:textSize="@dimen/base_title_size"
-            tools:text="标题"/>
+            tools:content="标题"/>
 
         <!--</LinearLayout>-->
     </com.angcyo.uiview.widget.RTitleCenterLayout>

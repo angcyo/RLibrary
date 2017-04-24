@@ -42,7 +42,7 @@ public class ClipHelper {
         int height = view.getMeasuredHeight();
         int width = view.getMeasuredWidth();
 
-        int r = Math.max(width, height) / 2;
+        int r = Math.min(width, height);// / 2;
         int x = rect.left + width / 2;
         int y = rect.top + height / 2;
 

@@ -20,7 +20,7 @@
         android:minHeight="@dimen/base_xxxhdpi"
         android:textColor="@android:color/white"
         android:textSize="@dimen/default_text_size"
-        tools:text="别怕, 马上就好..."/>
+        tools:content="别怕, 马上就好..."/>
 
     <com.angcyo.uiview.widget.LoadingImageView
         android:id="@+id/base_load_view"

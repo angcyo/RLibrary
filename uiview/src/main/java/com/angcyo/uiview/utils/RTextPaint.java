@@ -21,6 +21,7 @@ import com.angcyo.uiview.RApplication;
  * Version: 1.0.0
  */
 public class RTextPaint {
+    final Rect tempRect = new Rect();
     TextPaint mTextPaint;
     float mTextSize;
     int mTextColor = Color.WHITE;
@@ -37,18 +38,23 @@ public class RTextPaint {
         return Holder.instance;
     }
 
-    public int getTextHeight() {
-        return getTextBounds("我").height();
+    /**
+     * 获取文本的高度
+     */
+    public static double getTextHeight(Paint paint) {
+        Paint.FontMetricsInt fontMetricsInt = paint.getFontMetricsInt();
+        double height = Math.ceil(fontMetricsInt.descent - fontMetricsInt.ascent) + 2;
+        return height;
     }
 
     public Rect getTextBounds(String text) {
+        tempRect.set(0, 0, 0, 0);
         if (TextUtils.isEmpty(text)) {
-            return null;
+            return tempRect;
         }
         initPaint();
-        final Rect rect = new Rect();
-        mTextPaint.getTextBounds(text, 0, text.length(), rect);
-        return rect;
+        mTextPaint.getTextBounds(text, 0, text.length(), tempRect);
+        return tempRect;
     }
 
     /**

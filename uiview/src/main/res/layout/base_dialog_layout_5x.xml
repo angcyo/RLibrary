@@ -20,14 +20,14 @@
         android:padding="@dimen/base_xhdpi"
         android:textSize="@dimen/default_text_size16"
         android:textStyle="bold"
-        tools:text="对话框标题"/>
+        tools:content="对话框标题"/>
 
     <com.angcyo.uiview.widget.RTextView
         android:id="@+id/base_dialog_content_view"
         style="@style/BaseDialogTextStyle"
         android:gravity="left"
         android:lineSpacingExtra="@dimen/base_ldpi"
-        tools:text="对话框内容对话框内容对话框内容"/>
+        tools:content="对话框内容对话框内容对话框内容"/>
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -43,7 +43,7 @@
             android:layout_marginEnd="@dimen/base_xhdpi"
             android:background="@drawable/base_round_bg_selector_5x"
             android:clickable="true"
-            tools:text="@string/base_cancel"
+            tools:content="@string/base_cancel"
             tools:textColor="@android:color/white"/>
 
         <TextView
@@ -52,7 +52,7 @@
             android:background="@drawable/base_round_bg_selector_5x"
             android:clickable="true"
             android:textColor="@color/theme_color_accent"
-            tools:text="@string/base_ok"
+            tools:content="@string/base_ok"
             tools:textColor="@android:color/white"/>
     </LinearLayout>
 
