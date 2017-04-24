@@ -8,7 +8,6 @@ import android.graphics.Path;
 import android.graphics.Rect;
 import android.view.View;
 import android.view.animation.AccelerateInterpolator;
-import android.view.animation.LinearInterpolator;
 
 /**
  * Created by angcyo on 2017-04-23.
@@ -16,7 +15,7 @@ import android.view.animation.LinearInterpolator;
 
 public class ClipHelper {
 
-    private static final long ANIM_TIME = 500;
+    public static int ANIM_TIME = 2000;
     ValueAnimator mClipEnterValueAnimator, mClipExitValueAnimator;
     /**
      * 开始的坐标, 和半径
@@ -30,6 +29,41 @@ public class ClipHelper {
 
     public ClipHelper(View targetView) {
         mTargetView = targetView;
+    }
+
+    public static int[] init(View view) {
+        if (view == null) {
+            return null;
+        }
+
+        Rect rect = new Rect();
+        view.getGlobalVisibleRect(rect);
+
+        int height = view.getMeasuredHeight();
+        int width = view.getMeasuredWidth();
+
+        int r = Math.max(width, height) / 2;
+        int x = rect.left + width / 2;
+        int y = rect.top + height / 2;
+
+        return new int[]{x, y, r};
+    }
+
+    public static float calcEndRadius(int maxWidth, int maxHeight, float x, float y) {
+        int viewWidth = maxWidth;
+        int viewHeight = maxHeight;
+        //开始点与左上角的距离
+        float rLT = c(Math.abs(x), Math.abs(y));
+        float rRT = c(Math.abs(viewWidth - x), Math.abs(y));
+        float rLB = c(Math.abs(x), Math.abs(viewHeight - y));
+        float rRB = c(Math.abs(viewWidth - x), Math.abs(viewHeight - y));
+
+        return Math.max(Math.max(Math.max(rLT, rRT), rLB), rRB);
+    }
+
+    //勾股定理
+    private static float c(float a, float b) {
+        return (float) Math.sqrt(a * a + b * b);
     }
 
     /**
@@ -47,15 +81,19 @@ public class ClipHelper {
      * @param view 自动计算view位置, 开始clip动画
      */
     public void startEnterClip(View view, OnEndListener listener) {
-        Rect rect = new Rect();
-        view.getGlobalVisibleRect(rect);
-
-        int height = view.getMeasuredHeight();
-        int width = view.getMeasuredWidth();
-
-        int r = Math.max(width, height) / 2;
-        int x = rect.left + width / 2;
-        int y = rect.top + height / 2;
+        int x;
+        int y;
+        int r;
+        if (view == null) {
+            x = mTargetView.getMeasuredWidth() / 2;
+            y = mTargetView.getMeasuredHeight() / 2;
+            r = (int) clipStartRadius;
+        } else {
+            int[] init = init(view);
+            x = init[0];
+            y = init[1];
+            r = init[2];
+        }
 
         startEnterClip(x, y, r, listener);
     }
@@ -74,6 +112,29 @@ public class ClipHelper {
 
         initEnterAnimator();
         mClipEnterValueAnimator.start();
+    }
+
+    public void initXYR(float startX, float startY, float startR) {
+        clipStartRadius = startR;
+        clipStartX = startX;
+        clipStartY = startY;
+    }
+
+    public void initXYR(View view) {
+        int x;
+        int y;
+        int r;
+        if (view == null) {
+            x = mTargetView.getMeasuredWidth() / 2;
+            y = mTargetView.getMeasuredHeight() / 2;
+            r = (int) clipStartRadius;
+        } else {
+            int[] init = init(view);
+            x = init[0];
+            y = init[1];
+            r = init[2];
+        }
+        initXYR(x, y, r);
     }
 
     /**
@@ -104,11 +165,6 @@ public class ClipHelper {
         return isClipEnd;
     }
 
-    //勾股定理
-    private float c(float a, float b) {
-        return (float) Math.sqrt(a * a + b * b);
-    }
-
     private void updateClipPath(float radius) {
         clipPath.reset();
         clipPath.addCircle(clipStartX, clipStartY, radius, Path.Direction.CW);
@@ -118,13 +174,8 @@ public class ClipHelper {
     private float calcEndRadius() {
         int viewWidth = mTargetView.getMeasuredWidth();
         int viewHeight = mTargetView.getMeasuredHeight();
-        //开始点与左上角的距离
-        float rLT = c(Math.abs(clipStartX), Math.abs(clipStartY));
-        float rRT = c(Math.abs(viewWidth - clipStartX), Math.abs(clipStartY));
-        float rLB = c(Math.abs(clipStartX), Math.abs(viewHeight - clipStartY));
-        float rRB = c(Math.abs(viewWidth - clipStartX), Math.abs(viewHeight - clipStartY));
 
-        return Math.max(Math.max(Math.max(rLT, rRT), rLB), rRB);
+        return calcEndRadius(viewWidth, viewHeight, clipStartX, clipStartY);
     }
 
     private void initEnterAnimator() {

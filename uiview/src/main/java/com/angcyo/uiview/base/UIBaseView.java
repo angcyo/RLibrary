@@ -15,6 +15,7 @@ import android.support.v4.view.ViewCompat;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.animation.AlphaAnimation;
 import android.view.animation.Animation;
 import android.view.animation.DecelerateInterpolator;
 import android.view.animation.LinearInterpolator;
@@ -32,6 +33,8 @@ import com.angcyo.uiview.model.TitleBarPattern;
 import com.angcyo.uiview.resources.ResUtil;
 import com.angcyo.uiview.skin.ISkin;
 import com.angcyo.uiview.skin.SkinHelper;
+import com.angcyo.uiview.utils.ClipHelper;
+import com.angcyo.uiview.utils.ScreenUtil;
 import com.angcyo.uiview.view.UIIViewImpl;
 import com.angcyo.uiview.widget.EmptyView;
 import com.angcyo.uiview.widget.SoftRelativeLayout;
@@ -85,6 +88,9 @@ public abstract class UIBaseView extends UIIViewImpl {
     protected LayoutState mLayoutState = LayoutState.NORMAL;
     protected View.OnClickListener mNonetSettingClickListener, mNonetRefreshClickListener;
     private Animation mLoadingAnimation;
+    private ClipMode mClipMode;
+    private boolean mEnableClip = false;
+    private int[] clipXYR = null;//clip 开始的坐标
 
     public static void safeSetVisibility(final View view, final int visibility) {
         if (view != null) {
@@ -105,6 +111,8 @@ public abstract class UIBaseView extends UIIViewImpl {
     protected View inflateBaseView(FrameLayout container, LayoutInflater inflater) {
         //包含标题栏的根布局
         mBaseRootLayout = new SoftRelativeLayout(mActivity);
+        mBaseRootLayout.setEnableClip(mEnableClip && enableEnterClip());
+
         mBaseRootId = R.id.base_root_layout_id;//View.generateViewId();
         mBaseRootLayout.setId(mBaseRootId);
 
@@ -523,10 +531,185 @@ public abstract class UIBaseView extends UIIViewImpl {
         }
     }
 
-    protected void onTitleBackListener() {
+    @Override
+    public Animation loadStartAnimation() {
+        if (mEnableClip && enableEnterClip()) {
+            //为了不影响之前的动画逻辑, 这里使用一个效果不明显的动画
+            return createClipEnterAnim(0.8f);
+        }
+        return super.loadStartAnimation();
+    }
+
+    @Override
+    public Animation loadFinishAnimation() {
+        if (mEnableClip && enableExitClip()) {
+            //为了不影响之前的动画逻辑, 这里使用一个效果不明显的动画
+            return createClipExitAnim(0.6f);
+        }
+        return super.loadFinishAnimation();
+    }
+
+    @Override
+    public Animation loadOtherExitAnimation() {
+        if (mEnableClip && enableEnterClip()) {
+            return createClipExitAnim(1f);
+        }
+        return super.loadOtherExitAnimation();
+    }
+
+    @Override
+    public Animation loadOtherEnterAnimation() {
+        if (mEnableClip && enableExitClip()) {
+            //为了不影响之前的动画逻辑, 这里使用一个效果不明显的动画
+            return createClipEnterAnim(1f);
+        }
+        return super.loadOtherEnterAnimation();
+    }
+
+    private Animation createClipEnterAnim(float f) {
+        AlphaAnimation animation = new AlphaAnimation(f, 1f);
+        setDefaultConfig(animation, false);
+        animation.setDuration(initClipTime());
+        return animation;
+    }
+
+    private Animation createClipExitAnim(float t) {
+        AlphaAnimation animation = new AlphaAnimation(1f, t);
+        setDefaultConfig(animation, true);
+        animation.setDuration(initClipTime());
+        return animation;
+    }
+
+    private boolean enableEnterClip() {
+        return mClipMode == ClipMode.CLIP_BOTH || mClipMode == ClipMode.CLIP_START;
+    }
+
+    private boolean enableExitClip() {
+        return mClipMode == ClipMode.CLIP_BOTH || mClipMode == ClipMode.CLIP_EXIT;
+    }
+
+    @Override
+    public boolean canTryCaptureView() {
+        return mBaseRootLayout.isClipEnd();
+    }
+
+    @Override
+    public boolean canSwipeBackPressed() {
+        return super.canSwipeBackPressed();
+    }
+
+    protected void backPressed() {
         if (mILayout != null) {
             mILayout.requestBackPressed(new UIParam(true, true, false));
         }
+    }
+
+    /**
+     * 标题栏中, 点击了返回按钮
+     */
+    protected void onTitleBackListener() {
+        if (mEnableClip && enableExitClip()) {
+            if (mClipMode == ClipMode.CLIP_EXIT) {
+                mBaseRootLayout.setEnableClip(true);
+                mBaseRootLayout.getClipHelper().initXYR(null);
+            }
+            mBaseRootLayout.startExitClip(new ClipHelper.OnEndListener() {
+                @Override
+                public void onEnd() {
+                    //backPressed();
+                    onClipEnd(ClipMode.CLIP_EXIT);
+                }
+            });
+        } else {
+        }
+        backPressed();
+    }
+
+    @Override
+    public boolean onBackPressed() {
+        if (mEnableClip) {
+            onTitleBackListener();
+            return false;
+        }
+        return super.onBackPressed();
+    }
+
+    @Override
+    public void onViewLoad() {
+        super.onViewLoad();
+        if (enableEnterClip()) {
+            if (clipXYR == null) {
+                mBaseRootLayout.startEnterClip(null,
+                        new ClipHelper.OnEndListener() {
+                            @Override
+                            public void onEnd() {
+                                onClipEnd(ClipMode.CLIP_START);
+                            }
+                        });
+            } else {
+                mBaseRootLayout.startEnterClip(clipXYR[0], clipXYR[1], clipXYR[2],
+                        new ClipHelper.OnEndListener() {
+                            @Override
+                            public void onEnd() {
+                                onClipEnd(ClipMode.CLIP_START);
+                            }
+                        });
+            }
+        }
+    }
+
+
+    /**
+     * Clip结束之后的回调
+     *
+     * @param clipEndMode 是开始之后的回调, 还是结束之后的回调
+     */
+    protected void onClipEnd(ClipMode clipEndMode) {
+
+    }
+
+    /**
+     * 是否使用clip效果
+     */
+    public UIBaseView setEnableClipMode(ClipMode mode) {
+        return setEnableClipMode(mode, null);
+    }
+
+    public UIBaseView setEnableClipMode(ClipMode mode, View view) {
+        this.mClipMode = mode;
+        this.mEnableClip = true;
+        clipXYR = ClipHelper.init(view);
+        initClipTime();
+        return this;
+    }
+
+    /**
+     * 计算clip需要的时间
+     */
+    private int initClipTime() {
+        float endRadius;
+        int maxWidth = ScreenUtil.screenWidth;
+        int maxHeight = ScreenUtil.screenHeight;
+        if (clipXYR == null) {
+            endRadius = ClipHelper.calcEndRadius(maxWidth,
+                    maxHeight,
+                    maxWidth / 2,
+                    maxHeight / 2);
+        } else {
+            endRadius = ClipHelper.calcEndRadius(maxWidth,
+                    maxHeight, clipXYR[0], clipXYR[1]);
+        }
+
+        int value = Math.max(maxWidth, maxHeight);
+        int time;
+        if (endRadius >= value / 2) {
+            time = 500;
+        } else {
+            time = 300;
+        }
+        ClipHelper.ANIM_TIME = time;
+        return time;
+//        return ClipHelper.ANIM_TIME;
     }
 
     /**
@@ -538,5 +721,23 @@ public abstract class UIBaseView extends UIIViewImpl {
         LOAD,//装载布局
         NONET,//无网络
         CONTENT //内容
+    }
+
+    /**
+     * clip模式
+     */
+    public enum ClipMode {
+        /**
+         * 启动的时候, 使用clip
+         */
+        CLIP_START,
+        /**
+         * 退出的时候, 使用clip
+         */
+        CLIP_EXIT,
+        /**
+         * 2者都使用
+         */
+        CLIP_BOTH
     }
 }

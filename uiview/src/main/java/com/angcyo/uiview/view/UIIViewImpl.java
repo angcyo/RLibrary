@@ -195,12 +195,12 @@ public abstract class UIIViewImpl implements IView {
     }
 
     public void onViewShowFirst(Bundle bundle) {
-        L.d(this.getClass().getSimpleName(), "onViewShowFirst: ");
+        L.v(this.getClass().getSimpleName(), "onViewShowFirst: ");
     }
 
     //星期五 2017-2-17
     public void onViewShow(long viewShowCount) {
-        L.d(this.getClass().getSimpleName(), "onViewShowCount " + viewShowCount);
+        L.v(this.getClass().getSimpleName(), "onViewShowCount " + viewShowCount);
     }
 
     @CallSuper

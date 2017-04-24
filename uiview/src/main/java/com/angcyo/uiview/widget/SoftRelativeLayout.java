@@ -309,6 +309,10 @@ public class SoftRelativeLayout extends RelativeLayout implements ILifecycle {
         super.draw(canvas);
     }
 
+    public ClipHelper getClipHelper() {
+        return mClipHelper;
+    }
+
     public void setEnableClip(boolean enableClip) {
         mClipHelper.setEnableClip(enableClip);
     }
@@ -319,6 +323,10 @@ public class SoftRelativeLayout extends RelativeLayout implements ILifecycle {
 
     public void startEnterClip(View view, ClipHelper.OnEndListener listener) {
         mClipHelper.startEnterClip(view, listener);
+    }
+
+    public void startEnterClip(float startX, float startY, float startR, ClipHelper.OnEndListener listener) {
+        mClipHelper.startEnterClip(startX, startY, startR, listener);
     }
 
     public void startExitClip(ClipHelper.OnEndListener listener) {
