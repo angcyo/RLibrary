@@ -702,7 +702,7 @@ public abstract class UIBaseView extends UIIViewImpl {
 
         int value = Math.max(maxWidth, maxHeight);
         int time;
-        if (endRadius >= value / 2) {
+        if (endRadius - clipXYR[2] >= value / 2) {
             time = 500;
         } else {
             time = 300;

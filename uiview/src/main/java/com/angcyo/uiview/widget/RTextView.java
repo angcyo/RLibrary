@@ -8,11 +8,9 @@ import android.graphics.Rect;
 import android.graphics.drawable.Drawable;
 import android.support.annotation.ColorInt;
 import android.support.annotation.DrawableRes;
-import android.support.v4.text.util.LinkifyCompat;
 import android.support.v7.widget.AppCompatTextView;
 import android.text.InputFilter;
 import android.text.TextUtils;
-import android.text.util.Linkify;
 import android.util.AttributeSet;
 
 import com.angcyo.uiview.R;
@@ -89,9 +87,9 @@ public class RTextView extends AppCompatTextView {
     protected void onAttachedToWindow() {
         super.onAttachedToWindow();
         isAttached = true;
-        if (getContentDescription() != null) {
-            LinkifyCompat.addLinks(this, Linkify.ALL);
-        }
+//        if (getContentDescription() != null) {
+//            LinkifyCompat.addLinks(this, Linkify.ALL);
+//        }
     }
 
     @Override

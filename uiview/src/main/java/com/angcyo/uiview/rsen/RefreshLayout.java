@@ -266,9 +266,7 @@ public class RefreshLayout extends ViewGroup {
         int action = MotionEventCompat.getActionMasked(event);//event.getActionMasked();
 
         if (action == MotionEvent.ACTION_DOWN) {
-            downY = event.getY();
-            downX = event.getX();
-            lastY = downY;
+            handleTouchDown(event);
         } else if (action == MotionEvent.ACTION_MOVE) {
             float y = event.getY();
             float x = event.getX();
@@ -353,11 +351,16 @@ public class RefreshLayout extends ViewGroup {
             //多个手指按下
             lastY = event.getY();
         } else if (action == MotionEvent.ACTION_DOWN) {
-            downY = event.getY();
-            downX = event.getX();
-            lastY = downY;
+            handleTouchDown(event);
         }
         return true;
+    }
+
+    private void handleTouchDown(MotionEvent event) {
+        downY = event.getY();
+        downX = event.getX();
+        lastY = downY;
+        mScroller.abortAnimation();
     }
 
     /**
