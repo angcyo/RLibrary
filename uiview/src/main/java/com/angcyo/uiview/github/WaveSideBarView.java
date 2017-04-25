@@ -71,6 +71,7 @@ public class WaveSideBarView extends View {
 
     // 圆形中心点X
     private float mBallCentreX;
+    private boolean isTouchDown;
 
     public WaveSideBarView(Context context) {
         this(context, null);
@@ -93,7 +94,7 @@ public class WaveSideBarView extends View {
         mTextColorChoose = SkinHelper.getSkin().getThemeSubColor();//context.getResources().getColor(android.R.color.white);
         mTextSize = context.getResources().getDimensionPixelSize(R.dimen.textSize_sidebar);
         mLargeTextSize = context.getResources().getDimensionPixelSize(R.dimen.large_textSize_sidebar);
-        mPadding = context.getResources().getDimensionPixelSize(R.dimen.textSize_sidebar_padding);
+        mPadding = context.getResources().getDimensionPixelSize(R.dimen.textSize_sidebar_choose);
         if (attrs != null) {
             TypedArray a = getContext().obtainStyledAttributes(attrs, R.styleable.WaveSideBarView);
             mTextColor = a.getColor(R.styleable.WaveSideBarView_sidebarTextColor, mTextColor);
@@ -132,6 +133,7 @@ public class WaveSideBarView extends View {
                 if (x < mWidth - 2 * mRadius) {
                     return false;
                 }
+                isTouchDown = true;
                 startAnimator(mRatio, 1.0f);
                 break;
             case MotionEvent.ACTION_MOVE:
@@ -149,7 +151,7 @@ public class WaveSideBarView extends View {
                 break;
             case MotionEvent.ACTION_CANCEL:
             case MotionEvent.ACTION_UP:
-
+                isTouchDown = false;
                 startAnimator(mRatio, 0f);
                 mChoose = -1;
                 break;
@@ -164,7 +166,8 @@ public class WaveSideBarView extends View {
         super.onMeasure(widthMeasureSpec, heightMeasureSpec);
         mHeight = MeasureSpec.getSize(heightMeasureSpec);
         mWidth = getMeasuredWidth();
-        mItemHeight = (mHeight - mPadding) / mLetters.size();
+//        mItemHeight = (mHeight - mPadding) / mLetters.size();
+        mItemHeight = (int) mTextSize + mPadding;
         mPosX = mWidth - 1.6f * mTextSize;
     }
 
@@ -187,25 +190,28 @@ public class WaveSideBarView extends View {
 
     private void drawLetters(Canvas canvas) {
 
-        RectF rectF = new RectF();
-        rectF.left = mPosX - mTextSize;
-        rectF.right = mPosX + mTextSize;
-        rectF.top = mTextSize / 2;
-        rectF.bottom = mHeight - mTextSize / 2;
+        if (isTouchDown) {
+            RectF rectF = new RectF();
+            rectF.left = mPosX - mTextSize;
+            rectF.right = mPosX + mTextSize;
+            rectF.top = mTextSize / 2;
+            rectF.bottom = mHeight - mTextSize / 2;
 
-        mLettersPaint.reset();
-        mLettersPaint.setStyle(Paint.Style.FILL);
-        mLettersPaint.setColor(Color.parseColor("#F9F9F9"));
-        mLettersPaint.setAntiAlias(true);
-        canvas.drawRoundRect(rectF, mTextSize, mTextSize, mLettersPaint);
+            mLettersPaint.reset();
+            mLettersPaint.setStyle(Paint.Style.FILL);
+            mLettersPaint.setColor(Color.parseColor("#F9F9F9"));
+            mLettersPaint.setAntiAlias(true);
+            canvas.drawRoundRect(rectF, mTextSize, mTextSize, mLettersPaint);
 
-        mLettersPaint.reset();
-        mLettersPaint.setStyle(Paint.Style.STROKE);
-        mLettersPaint.setColor(mTextColor);
-        mLettersPaint.setAntiAlias(true);
-        canvas.drawRoundRect(rectF, mTextSize, mTextSize, mLettersPaint);
+            mLettersPaint.reset();
+            mLettersPaint.setStyle(Paint.Style.STROKE);
+            mLettersPaint.setColor(mTextColor);
+            mLettersPaint.setAntiAlias(true);
+            canvas.drawRoundRect(rectF, mTextSize, mTextSize, mLettersPaint);
+        }
 
         for (int i = 0; i < mLetters.size(); i++) {
+
             mLettersPaint.reset();
             mLettersPaint.setColor(mTextColor);
             mLettersPaint.setAntiAlias(true);
@@ -215,7 +221,14 @@ public class WaveSideBarView extends View {
             Paint.FontMetrics fontMetrics = mLettersPaint.getFontMetrics();
             float baseline = Math.abs(-fontMetrics.bottom - fontMetrics.top);
 
-            float posY = mItemHeight * i + baseline / 2 + mPadding;
+//            float posY = mItemHeight * i + baseline / 2 + mPadding;
+
+            float centerY = mHeight / 2;
+
+            int centerPos = mLetters.size() / 2;
+
+            float posY = mItemHeight * (i - centerPos) + centerY;
+
 
             if (i == mChoose) {
                 mPosY = posY;

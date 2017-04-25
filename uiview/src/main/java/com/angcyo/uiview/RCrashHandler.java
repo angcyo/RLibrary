@@ -321,7 +321,10 @@ public class RCrashHandler implements Thread.UncaughtExceptionHandler {
     }
 
     private static int getStartIntentFlags() {
-        return Intent.FLAG_ACTIVITY_NO_ANIMATION | Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK;
+        return Intent.FLAG_ACTIVITY_NO_ANIMATION |
+                Intent.FLAG_ACTIVITY_NEW_TASK |
+                Intent.FLAG_ACTIVITY_CLEAR_TASK |
+                Intent.FLAG_ACTIVITY_RESET_TASK_IF_NEEDED;
     }
 
     //-----------------------------------------------start------------------------------------------//
@@ -463,6 +466,8 @@ public class RCrashHandler implements Thread.UncaughtExceptionHandler {
     @Override
     public void uncaughtException(Thread thread, Throwable ex) {
 //        boolean isShow = false;
+        ex.printStackTrace();
+
         try {
             Class<? extends Activity> restartClass = getRestartActivityClassWithIntentFilter(context);
             if (restartClass != null) {
@@ -477,8 +482,6 @@ public class RCrashHandler implements Thread.UncaughtExceptionHandler {
         } catch (Exception e) {
             e.printStackTrace();
         }
-
-        ex.printStackTrace();
 
         try {
             saveToSDCard(ex);

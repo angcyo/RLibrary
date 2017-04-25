@@ -26,6 +26,13 @@
         android:allowBackup="true"
         android:supportsRtl="true">
 
+<!--        <activity android:name=".base.RCrashActivity">
+            <intent-filter>
+                <action android:name="com.angcyo.crash"/>
+                <category android:name="android.intent.category.DEFAULT"/>
+            </intent-filter>
+        </activity>-->
+
         <!--网络状态监听-->
         <receiver
             android:name=".receiver.NetworkStateReceiver"

@@ -8,6 +8,8 @@ import android.view.GestureDetector;
 import android.view.MotionEvent;
 import android.widget.LinearLayout;
 
+import com.angcyo.uiview.skin.SkinHelper;
+
 /**
  * Created by angcyo on 2017-01-14.
  */
@@ -74,6 +76,12 @@ public class RViewPager extends ViewPager {
             ex.printStackTrace();
         }
         return false;
+    }
+
+    @Override
+    protected void onSizeChanged(int w, int h, int oldw, int oldh) {
+        super.onSizeChanged(w, h, oldw, oldh);
+        UIViewPager.ensureGlow(this, SkinHelper.getSkin().getThemeSubColor());
     }
 
     @Override

@@ -11,11 +11,12 @@
     <dimen name="large_textSize_sidebar">32sp</dimen>
     <dimen name="textSize_sidebar_choose">12sp</dimen>
     <dimen name="textSize_sidebar_padding">20sp</dimen>
-    <dimen name="radius_sidebar">20dp</dimen>
+    <dimen name="radius_sidebar">22dp</dimen>
     <dimen name="ball_radius_sidebar">24dp</dimen>
 
     <!--默认文本大小-->
     <dimen name="default_text_size">14sp</dimen>
+    <dimen name="default_text_size_15">15sp</dimen>
     <dimen name="default_text_little_size">12sp</dimen>
     <dimen name="default_text_size16">16sp</dimen>
     <dimen name="default_text_size9">9sp</dimen>
@@ -55,8 +56,10 @@
     <dimen name="base_hdpi">8dp</dimen>
     <dimen name="base_hdpi_">-8dp</dimen>
     <dimen name="base_xhdpi">10dp</dimen>
+    <dimen name="base_xhdpi_15">15dp</dimen>
     <dimen name="base_xhdpi_">-10dp</dimen>
     <dimen name="base_xxhdpi">20dp</dimen>
+    <dimen name="base_xxhdpi_24">24dp</dimen>
     <dimen name="base_xxxhdpi">30dp</dimen>
     <dimen name="base_35dpi">35dp</dimen>
     <dimen name="base_40dpi">40dp</dimen>
@@ -65,6 +68,7 @@
     <dimen name="base_60dpi">60dp</dimen>
     <dimen name="base_65dpi">65dp</dimen>
     <dimen name="base_70dpi">70dp</dimen>
+    <dimen name="base_75dpi">75dp</dimen>
     <dimen name="base_60dpi_">-60dp</dimen>
     <dimen name="base_80dpi">80dp</dimen>
     <dimen name="base_80dpi_">-80dp</dimen>
