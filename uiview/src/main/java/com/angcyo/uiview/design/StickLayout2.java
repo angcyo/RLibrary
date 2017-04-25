@@ -11,7 +11,6 @@ import android.view.View;
 import android.widget.OverScroller;
 import android.widget.RelativeLayout;
 
-import com.angcyo.library.utils.L;
 import com.angcyo.uiview.recycler.RRecyclerView;
 import com.angcyo.uiview.utils.Reflect;
 
@@ -266,7 +265,7 @@ public class StickLayout2 extends RelativeLayout {
                 boolean first = isFirst;
                 isFirst = false;
 
-                L.e("dispatchTouchEvent() -> " + offsetX + " " + offsetY + " w:" + wantV + "  f:" + first);
+                //L.e("dispatchTouchEvent() -> " + offsetX + " " + offsetY + " w:" + wantV + "  f:" + first);
 
                 if (first) {
                     if (!wantV) {

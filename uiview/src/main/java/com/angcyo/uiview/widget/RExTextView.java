@@ -57,6 +57,8 @@ public class RExTextView extends RTextView {
      */
     public final static Pattern patternNumber = Pattern.compile("^\\d+$");
 
+    private ImageTextSpan.OnImageSpanClick mOnImageSpanClick;
+
     public RExTextView(Context context) {
         super(context);
     }
@@ -80,6 +82,10 @@ public class RExTextView extends RTextView {
         return ImageClickMethod.getInstance();
     }
 
+    public void setOnImageSpanClick(ImageTextSpan.OnImageSpanClick onImageSpanClick) {
+        mOnImageSpanClick = onImageSpanClick;
+    }
+
     @Override
     public void setText(CharSequence text, BufferType type) {
         if (TextUtils.isEmpty(text)) {
@@ -88,10 +94,21 @@ public class RExTextView extends RTextView {
             SpannableStringBuilder spanBuilder = new SpannableStringBuilder(text);
             patternUrl(spanBuilder, text);
             patternMention(spanBuilder, text);
+            afterPattern(spanBuilder, text);
             super.setText(spanBuilder, type);
         }
     }
 
+    /**
+     * 子类处理
+     */
+    protected void afterPattern(SpannableStringBuilder spanBuilder, CharSequence text) {
+
+    }
+
+    /**
+     * 匹配Url链接
+     */
     protected void patternUrl(SpannableStringBuilder builder, CharSequence input) {
         Matcher matcher = patternUrl.matcher(input);
 
@@ -101,11 +118,17 @@ public class RExTextView extends RTextView {
             CharSequence text = matcher.group();//input.subSequence(start, end);
 
             builder.setSpan(new ImageTextSpan(getContext(),
-                            ImageTextSpan.initDrawable(getContext(), R.drawable.base_link_ico, getTextSize()), "网页链接", text.toString()),
+                            ImageTextSpan.initDrawable(getContext(),
+                                    R.drawable.base_link_ico, getTextSize()),
+                            getContext().getString(R.string.url_link_tip),
+                            text.toString()).setOnImageSpanClick(mOnImageSpanClick),
                     start, end, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
         }
     }
 
+    /**
+     * 匹配@联系人
+     */
     protected void patternMention(SpannableStringBuilder builder, CharSequence input) {
         //<m id='60763'>@爱你是一种习惯i<\/m> <m id='61145'>@爱情水深王八多<\/m> <m id='61536'>@爱苦、但亦甜<\/m>
 
@@ -116,7 +139,8 @@ public class RExTextView extends RTextView {
             int start = matcher.start();
             int end = matcher.end();
 
-            builder.setSpan(new ImageTextSpan(getContext(), ImageTextSpan.initDrawable(getTextSize()), matcher.group(2), matcher.group(1)),
+            builder.setSpan(new ImageTextSpan(getContext(), ImageTextSpan.initDrawable(getTextSize()), matcher.group(2), matcher.group(1))
+                            .setOnImageSpanClick(mOnImageSpanClick),
                     start, end, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
         }
     }
@@ -128,6 +152,7 @@ public class RExTextView extends RTextView {
     public static class ImageTextSpan extends ImageSpan {
         static float downX = -1, downY = -1;
         static boolean isTouchDown = false;
+        OnImageSpanClick mOnImageSpanClick;
         private String mShowContent = "";//需要绘制的文本
         private Context mContext;
         private int mImageSize;//保存计算出来的图片宽度
@@ -163,7 +188,7 @@ public class RExTextView extends RTextView {
             textPaint.setTextSize(textSize);
             int textHeight = (int) RTextPaint.getTextHeight(textPaint);
 
-            drawable.setBounds(0, 0, drawable.getIntrinsicWidth(), Math.max(height, textHeight));
+            drawable.setBounds(0, 0, drawable.getIntrinsicWidth(), Math.max(height, height));
             return drawable;
         }
 
@@ -179,6 +204,11 @@ public class RExTextView extends RTextView {
             return drawable;
         }
 
+        public ImageTextSpan setOnImageSpanClick(OnImageSpanClick onImageSpanClick) {
+            mOnImageSpanClick = onImageSpanClick;
+            return this;
+        }
+
         private void init(Context context) {
             mContext = context;
             space = (int) (2 * mContext.getResources().getDisplayMetrics().density);
@@ -188,35 +218,44 @@ public class RExTextView extends RTextView {
 
         @Override
         public int getSize(Paint paint, CharSequence text, int start, int end, Paint.FontMetricsInt fm) {
-            String string = mShowContent;
-            mTextBounds = getTextBounds(paint, string);
-
-            mImageSize = super.getSize(paint, text, start, end, fm);
-            mSpanWidth = mImageSize + space + mTextBounds.width();
-            return mSpanWidth;
+            if (TextUtils.isEmpty(mShowContent)) {
+                mImageSize = super.getSize(paint, text, start, end, fm);
+                mSpanWidth = mImageSize;
+                return mSpanWidth;
+            } else {
+                String string = mShowContent;
+                mTextBounds = getTextBounds(paint, string);
+                mImageSize = super.getSize(paint, text, start, end, fm);
+                mSpanWidth = mImageSize + space + mTextBounds.width() + space;
+                return mSpanWidth;
+            }
         }
 
         @Override
         public void draw(Canvas canvas, CharSequence text, int start, int end, float x, int top, int y, int bottom, Paint paint) {
-            tempRect.set((int) x, top, ((int) (x + mSpanWidth + space)), bottom);
-            if (isTouchDown && tempRect.contains(((int) downX), (int) downY)) {
-                paint.setColor(SkinHelper.getTranColor(textColor, 0x80));
-                canvas.drawRect(tempRect, paint);
+            if (TextUtils.isEmpty(mShowContent)) {
+                super.draw(canvas, text, start, end, x, top, y, bottom, paint);
+            } else {
+                tempRect.set((int) x, top, ((int) (x + mSpanWidth + space + space)), bottom);
+                if (isTouchDown && tempRect.contains(((int) downX), (int) downY)) {
+                    paint.setColor(SkinHelper.getTranColor(textColor, 0x80));
+                    canvas.drawRect(tempRect, paint);
+                }
+
+                super.draw(canvas, text, start, end, x, top, y, bottom, paint);
+                paint.setColor(textColor);//默认是黑色
+
+                int height = bottom - top;//绘制区域的高度
+
+                String string = mShowContent;
+                int textHeight = (int) RTextPaint.getTextHeight(paint);
+
+                //文本在图片的中间绘制
+                canvas.drawText(string,
+                        x + mImageSize + space,
+                        top + textHeight / 2 + height / 2 - paint.getFontMetricsInt().descent,
+                        paint);
             }
-
-            super.draw(canvas, text, start, end, x, top, y, bottom, paint);
-            paint.setColor(textColor);//默认是黑色
-
-            int height = bottom - top;//绘制区域的高度
-
-            String string = mShowContent;
-            int textHeight = (int) RTextPaint.getTextHeight(paint);
-
-            //文本在图片的中间绘制
-            canvas.drawText(string,
-                    x + mImageSize + space,
-                    top + textHeight / 4 + height / 2/* + paint.getFontMetricsInt().descent*/,
-                    paint);
         }
 
 
@@ -224,21 +263,35 @@ public class RExTextView extends RTextView {
          * 单击事件
          */
         public void onClick(TextView view) {
-            L.e("call: onClick([view])-> " + url +
-                    " isUrl:" + patternUrl.matcher(url).matches() +
-                    " isNumber:" + patternNumber.matcher(url).matches());
+//            L.e("call: onClick([view])-> " + url +
+//                    " isUrl:" + patternUrl.matcher(url).matches() +
+//                    " isNumber:" + patternNumber.matcher(url).matches());
+            if (mOnImageSpanClick != null) {
+                if (patternUrl.matcher(url).matches()) {
+                    mOnImageSpanClick.onUrlClick(view, url);
+                } else if (patternNumber.matcher(url).matches()) {
+                    mOnImageSpanClick.onMentionClick(view, url);
+                }
+            }
         }
 
-        public void onTouchUp(TextView view) {
+        public void onTouchUp(final TextView view) {
             isTouchDown = false;
             downX = -1;
             downY = -1;
+            view.postInvalidate();//解决在RecyclerView中, 会出现点击背景不消失的BUG
         }
 
-        public void onTouchDown(TextView view, float x, float y) {
+        public void onTouchDown(final TextView view, float x, float y) {
             isTouchDown = true;
             downX = x;
             downY = y;
+            view.postDelayed(new Runnable() {
+                @Override
+                public void run() {
+                    onTouchUp(view);
+                }
+            }, 300);//300毫秒后,自动取消
         }
 
         public void onTouchCancel(TextView view, float x, float y) {
@@ -257,6 +310,12 @@ public class RExTextView extends RTextView {
         @Override
         public String getSource() {
             return mShowContent;
+        }
+
+        public interface OnImageSpanClick {
+            void onUrlClick(TextView view, String url);
+
+            void onMentionClick(TextView view, String mention);
         }
     }
 
@@ -305,8 +364,10 @@ public class RExTextView extends RTextView {
                                 buffer.getSpanEnd(link[0]));
                     } else if (action == MotionEvent.ACTION_MOVE) {
                         //link[0].onTouchMove(widget, event.getX(), event.getY());
+                        return super.onTouchEvent(widget, buffer, event);
                     } else if (action == MotionEvent.ACTION_CANCEL) {
                         link[0].onTouchCancel(widget, event.getX(), event.getY());
+                        return super.onTouchEvent(widget, buffer, event);
                     }
 
                     return true;
