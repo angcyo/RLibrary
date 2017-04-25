@@ -139,7 +139,7 @@ public class RUtils {
     /**
      * Gets now time.
      *
-     * @param pattern the pattern
+     * @param pattern the patternUrl
      * @return the now time
      */
     public static String getNowTime(String pattern) {

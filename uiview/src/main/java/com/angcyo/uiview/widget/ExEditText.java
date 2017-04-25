@@ -332,19 +332,19 @@ public class ExEditText extends AppCompatEditText {
             return;
         }
 
-        //if user cancel a selection of mention string, reset the state of 'mIsSelected'
+        //if user cancel a selection of show string, reset the state of 'mIsSelected'
         Range closestRange = getRangeOfClosestMentionString(selStart, selEnd);
         if (closestRange != null && closestRange.to == selEnd) {
             mIsSelected = false;
         }
 
         Range nearbyRange = getRangeOfNearbyMentionString(selStart, selEnd);
-        //if there is no mention string nearby the cursor, just skip
+        //if there is no show string nearby the cursor, just skip
         if (nearbyRange == null) {
             return;
         }
 
-        //forbid cursor located in the mention string.
+        //forbid cursor located in the show string.
         if (selStart == selEnd) {
             setSelection(nearbyRange.getAnchorPosition(selStart));
         } else {
@@ -607,7 +607,7 @@ public class ExEditText extends AppCompatEditText {
             spannableText.removeSpan(oldSpan);
         }
 
-        //find mention string and color it
+        //find show string and color it
         int lastMentionIndex = -1;
         String text = spannableText.toString();
 
@@ -629,7 +629,7 @@ public class ExEditText extends AppCompatEditText {
                 int end = start + mentionText.length();
                 spannableText.setSpan(new MentionSpan(text.substring(start, end)), start, end, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
                 lastMentionIndex = end;
-                //record all mention-string's position
+                //record all show-string's position
                 mRangeArrayList.add(new Range(start, end));
             }
             if (isFind) {
@@ -730,12 +730,12 @@ public class ExEditText extends AppCompatEditText {
                     mIsSelected = false;
                     return super.sendKeyEvent(event);
                 }
-                //if mention string has been selected or the cursor is at the beginning of mention string, just use default action(delete)
+                //if show string has been selected or the cursor is at the beginning of show string, just use default action(delete)
                 if (mIsSelected || selectionStart == closestRange.from) {
                     mIsSelected = false;
                     return super.sendKeyEvent(event);
                 } else {
-                    //select the mention string
+                    //select the show string
                     mIsSelected = true;
                     mLastSelectedRange = closestRange;
                     setSelection(closestRange.to, closestRange.from);
