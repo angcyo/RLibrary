@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <attr name="r_background" format="color"/>
+
+    <declare-styleable name="RLinearLayout">
+        <attr name="r_background"/>
+    </declare-styleable>
+</resources>

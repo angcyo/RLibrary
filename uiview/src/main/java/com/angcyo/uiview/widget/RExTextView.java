@@ -7,6 +7,7 @@ import android.graphics.Paint;
 import android.graphics.Rect;
 import android.graphics.drawable.ColorDrawable;
 import android.graphics.drawable.Drawable;
+import android.graphics.drawable.InsetDrawable;
 import android.support.annotation.DrawableRes;
 import android.support.v4.content.ContextCompat;
 import android.text.Layout;
@@ -60,11 +61,13 @@ public class RExTextView extends RTextView {
      */
     public final static Pattern patternNumber = Pattern.compile("^\\d+$");
 
-    private ImageTextSpan.OnImageSpanClick mOnImageSpanClick;
+    protected ImageTextSpan.OnImageSpanClick mOnImageSpanClick;
 
     private int maxShowLine = -1;//最大显示多少行, 当超过时, 会显示...全部
 
     private String foldString;
+
+    private int mImageSpanTextColor = ImageTextSpan.getDefaultColor();
 
     public RExTextView(Context context) {
         super(context);
@@ -76,6 +79,10 @@ public class RExTextView extends RTextView {
 
     public RExTextView(Context context, AttributeSet attrs, int defStyleAttr) {
         super(context, attrs, defStyleAttr);
+    }
+
+    public void setImageSpanTextColor(int imageSpanTextColor) {
+        mImageSpanTextColor = imageSpanTextColor;
     }
 
     @Override
@@ -224,7 +231,9 @@ public class RExTextView extends RTextView {
                             ImageTextSpan.initDrawable(getContext(),
                                     R.drawable.base_link_ico, getTextSize()),
                             getContext().getString(R.string.url_link_tip),
-                            text.toString()).setOnImageSpanClick(mOnImageSpanClick),
+                            text.toString())
+                            .setOnImageSpanClick(mOnImageSpanClick)
+                            .setTextColor(mImageSpanTextColor),
                     start, end, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
         }
     }
@@ -243,13 +252,14 @@ public class RExTextView extends RTextView {
             int end = matcher.end();
 
             builder.setSpan(new ImageTextSpan(getContext(), ImageTextSpan.initDrawable(getTextSize()), matcher.group(2), matcher.group(1))
-                            .setOnImageSpanClick(mOnImageSpanClick),
+                            .setOnImageSpanClick(mOnImageSpanClick)
+                            .setTextColor(mImageSpanTextColor),
                     start, end, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
         }
     }
 
     /**
-     * 支持显示图片,支持显示文本, 支持点击的Span,
+     * 支持只显示图片, 只显示文本, 支持图片混合显示, 支持点击事件.
      * 需要配合 {@link ImageClickMethod} 才能实现点击
      */
     public static class ImageTextSpan extends ImageSpan {
@@ -309,12 +319,21 @@ public class RExTextView extends RTextView {
         public static Drawable initDrawable(Context context, @DrawableRes int resourceId, float textSize) {
             Drawable drawable = ContextCompat.getDrawable(context, resourceId);
             int height = drawable.getIntrinsicHeight();
+            int width = drawable.getIntrinsicWidth();
+
             TextPaint textPaint = new TextPaint(Paint.ANTI_ALIAS_FLAG);
             textPaint.setTextSize(textSize);
             int textHeight = (int) RTextPaint.getTextHeight(textPaint);
 
-            drawable.setBounds(0, 0, drawable.getIntrinsicWidth(), Math.max(height, height));
-            return drawable;
+            if (textHeight > height) {
+                int offset = textHeight - height + textPaint.getFontMetricsInt().descent / 2;
+                InsetDrawable insetDrawable = new InsetDrawable(drawable, 0, offset, 0, 0);
+                insetDrawable.setBounds(0, 0, width, textHeight);
+                return insetDrawable;
+            } else {
+                drawable.setBounds(0, 0, width, height);
+                return drawable;
+            }
         }
 
         /**
@@ -327,6 +346,10 @@ public class RExTextView extends RTextView {
             int textHeight = (int) RTextPaint.getTextHeight(textPaint);
             drawable.setBounds(0, 1, 0, textHeight);
             return drawable;
+        }
+
+        public static int getDefaultColor() {
+            return Color.parseColor("#507daf");
         }
 
         public ImageTextSpan setOnImageSpanClick(OnImageSpanClick onImageSpanClick) {
@@ -390,7 +413,7 @@ public class RExTextView extends RTextView {
         }
 
         public ImageTextSpan setDefaultTextColor() {
-            setTextColor(Color.parseColor("#507daf"));//默认的文本颜色
+            setTextColor(getDefaultColor());//默认的文本颜色
             return this;
         }
 
@@ -412,14 +435,13 @@ public class RExTextView extends RTextView {
          * 单击事件
          */
         public void onClick(TextView view) {
-//            L.e("call: onClick([view])-> " + url +
-//                    " isUrl:" + patternUrl.matcher(url).matches() +
-//                    " isNumber:" + patternNumber.matcher(url).matches());
             if (mOnImageSpanClick != null) {
-                if (patternUrl.matcher(url).matches()) {
-                    mOnImageSpanClick.onUrlClick(view, url);
-                } else if (patternNumber.matcher(url).matches()) {
-                    mOnImageSpanClick.onMentionClick(view, url);
+                if (!mOnImageSpanClick.onClick(view, mShowContent, url)) {
+                    if (patternUrl.matcher(url).matches()) {
+                        mOnImageSpanClick.onUrlClick(view, url);
+                    } else if (patternNumber.matcher(url).matches()) {
+                        mOnImageSpanClick.onMentionClick(view, url);
+                    }
                 }
             }
         }
@@ -461,10 +483,22 @@ public class RExTextView extends RTextView {
             return mShowContent;
         }
 
-        public interface OnImageSpanClick {
-            void onUrlClick(TextView view, String url);
+        public static abstract class OnImageSpanClick {
+            public void onUrlClick(TextView view, String url) {
 
-            void onMentionClick(TextView view, String mention);
+            }
+
+            public void onMentionClick(TextView view, String mention) {
+
+            }
+
+            /**
+             * @return 返回false 时, {@link OnImageSpanClick#onUrlClick(TextView, String)}
+             * 和{@link OnImageSpanClick#onMentionClick(TextView, String)}才会回调
+             */
+            public boolean onClick(TextView view, String showContent, String url) {
+                return false;
+            }
         }
     }
 
