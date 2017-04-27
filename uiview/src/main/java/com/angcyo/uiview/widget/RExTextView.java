@@ -13,10 +13,12 @@ import android.text.Layout;
 import android.text.Selection;
 import android.text.Spannable;
 import android.text.SpannableStringBuilder;
+import android.text.Spanned;
 import android.text.TextPaint;
 import android.text.TextUtils;
 import android.text.method.LinkMovementMethod;
 import android.text.method.MovementMethod;
+import android.text.style.CharacterStyle;
 import android.text.style.ClickableSpan;
 import android.text.style.ImageSpan;
 import android.util.AttributeSet;
@@ -36,7 +38,7 @@ import java.util.regex.Pattern;
 /**
  * Copyright (C) 2016,深圳市红鸟网络科技股份有限公司 All rights reserved.
  * 项目名称：
- * 类的描述：支持显示@显示, 支持显示 带logo的网页链接, 支持显示表情
+ * 类的描述：支持显示@显示, 支持显示 带logo的网页链接, 支持显示表情, 支持折叠显示.
  * 创建人员：Robi
  * 创建时间：2017/04/24 15:48
  * 修改人员：Robi
@@ -60,6 +62,10 @@ public class RExTextView extends RTextView {
 
     private ImageTextSpan.OnImageSpanClick mOnImageSpanClick;
 
+    private int maxShowLine = -1;//最大显示多少行, 当超过时, 会显示...全部
+
+    private String foldString;
+
     public RExTextView(Context context) {
         super(context);
     }
@@ -73,6 +79,12 @@ public class RExTextView extends RTextView {
     }
 
     @Override
+    protected void initView() {
+        super.initView();
+        foldString = getResources().getString(R.string.see_all);
+    }
+
+    @Override
     protected void onAttachedToWindow() {
         super.onAttachedToWindow();
         //setMovementMethod(ImageClickMethod.getInstance());
@@ -81,6 +93,42 @@ public class RExTextView extends RTextView {
     @Override
     protected MovementMethod getDefaultMovementMethod() {
         return ImageClickMethod.getInstance();
+    }
+
+    @Override
+    public boolean onTouchEvent(MotionEvent event) {
+        super.onTouchEvent(event);
+        return ImageClickMethod.isTouchInSpan;
+    }
+
+    /**
+     * 设置允许显示的最大行数
+     */
+    public void setMaxShowLine(int maxShowLine) {
+        this.maxShowLine = maxShowLine;
+        if (maxShowLine < 0) {
+            setMaxLines(Integer.MAX_VALUE);
+        } else {
+            setEllipsize(TextUtils.TruncateAt.END);
+            setMaxLines(maxShowLine);
+        }
+    }
+
+    @Override
+    protected void onDraw(Canvas canvas) {
+        super.onDraw(canvas);
+
+//        Layout layout = getLayout();
+//        if (layout != null) {
+//            int lines = layout.getLineCount();
+//            L.e("call: onDraw([canvas])-> line Count:" + lines);
+//            if (lines > 0) {
+//                //返回折叠的字符数
+//                if (layout.getEllipsisCount(lines - 1) > 0) {
+//                    L.e("call: onDraw([canvas])-> getEllipsisCount:");
+//                }
+//            }
+//        }
     }
 
     public void setOnImageSpanClick(ImageTextSpan.OnImageSpanClick onImageSpanClick) {
@@ -98,6 +146,60 @@ public class RExTextView extends RTextView {
             afterPattern(spanBuilder, text);
             super.setText(spanBuilder, type);
         }
+    }
+
+    @Override
+    protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
+        super.onMeasure(widthMeasureSpec, heightMeasureSpec);
+
+        Layout layout = getLayout();
+        if (maxShowLine > 0 && layout != null) {
+            int lines = layout.getLineCount();
+            if (lines > 0) {
+                if (lines > maxShowLine) {
+                    //需要折叠
+                    CharSequence sequence = getText();
+                    if (sequence instanceof Spannable) {
+                        Spannable spannable = (Spannable) sequence;
+                        int lineStart = layout.getLineStart(maxShowLine);
+
+                        String temp = "...";
+                        String foldString = getFoldString();
+                        int start = findStartPosition(spannable, lineStart - 1 - foldString.length());
+
+                        spannable.setSpan(new ImageTextSpan(getContext(), getTextSize(), getCurrentTextColor(), temp),
+                                start, start + 3, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
+                        spannable.setSpan(new ImageTextSpan(getContext(), getTextSize(), foldString),
+                                start + 3, spannable.length(), Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
+                    }
+
+                }
+            }
+        }
+    }
+
+    private int findStartPosition(Spannable spannable, int startWidthPosition) {
+        CharacterStyle[] oldSpans = spannable.getSpans(startWidthPosition, spannable.length(), CharacterStyle.class);
+        int position = startWidthPosition;
+        for (CharacterStyle oldSpan : oldSpans) {
+            int spanStart = spannable.getSpanStart(oldSpan);
+            int spanEnd = spannable.getSpanEnd(oldSpan);
+            if (spanStart <= startWidthPosition && spanEnd > startWidthPosition) {
+                position = spanStart;
+            }
+            if (spanEnd >= startWidthPosition) {
+                spannable.removeSpan(oldSpan);
+            }
+        }
+        return position;
+    }
+
+    private String getFoldString() {
+        return foldString;
+    }
+
+    public void setFoldString(String foldString) {
+        this.foldString = foldString;
     }
 
     /**
@@ -163,6 +265,28 @@ public class RExTextView extends RTextView {
         private String url;//链接
         private Rect mTextBounds;
         private int mSpanWidth;
+        /**
+         * 是否可以点击
+         */
+        private boolean canClick = true;
+
+        /**
+         * 构造一个只用来显示文本的ImageSpan
+         */
+        public ImageTextSpan(Context context, float textSize, String showContent) {
+            this(context, textSize, -1, showContent);
+        }
+
+        public ImageTextSpan(Context context, float textSize, int textColor, String showContent) {
+            super(initDrawable(textSize), ALIGN_BASELINE);
+            this.mShowContent = showContent;
+            init(context);
+
+            setCanClick(false);
+            if (textColor != -1) {
+                setTextColor(textColor);
+            }
+        }
 
         public ImageTextSpan(Context context, Drawable d, String showContent, String url) {
             super(d, ALIGN_BASELINE);
@@ -201,7 +325,7 @@ public class RExTextView extends RTextView {
             TextPaint textPaint = new TextPaint(Paint.ANTI_ALIAS_FLAG);
             textPaint.setTextSize(textSize);
             int textHeight = (int) RTextPaint.getTextHeight(textPaint);
-            drawable.setBounds(0, 0, 0, textHeight);
+            drawable.setBounds(0, 1, 0, textHeight);
             return drawable;
         }
 
@@ -214,7 +338,7 @@ public class RExTextView extends RTextView {
             mContext = context;
             space = (int) (2 * mContext.getResources().getDisplayMetrics().density);
 
-            textColor = Color.parseColor("#507daf");//默认的文本颜色
+            setDefaultTextColor();
         }
 
         @Override
@@ -252,13 +376,37 @@ public class RExTextView extends RTextView {
                 int textHeight = (int) RTextPaint.getTextHeight(paint);
 
                 //文本在图片的中间绘制
+                float textY;
+                if (paint.getFontMetricsInt().descent > 0) {
+                    textY = top + textHeight / 2 + height / 2 - paint.getFontMetricsInt().descent / 2;
+                } else {
+                    textY = top + textHeight / 2 + height / 2 - paint.getFontMetricsInt().descent;
+                }
                 canvas.drawText(string,
                         x + mImageSize + space,
-                        top + textHeight / 2 + height / 2 - paint.getFontMetricsInt().descent,
+                        textY,
                         paint);
             }
         }
 
+        public ImageTextSpan setDefaultTextColor() {
+            setTextColor(Color.parseColor("#507daf"));//默认的文本颜色
+            return this;
+        }
+
+        public ImageTextSpan setTextColor(int textColor) {
+            this.textColor = textColor;
+            return this;
+        }
+
+        public boolean isCanClick() {
+            return canClick;
+        }
+
+        public ImageTextSpan setCanClick(boolean canClick) {
+            this.canClick = canClick;
+            return this;
+        }
 
         /**
          * 单击事件
@@ -322,6 +470,10 @@ public class RExTextView extends RTextView {
 
     public static class ImageClickMethod extends LinkMovementMethod {
 
+        /**
+         * 是否在Span上点击了
+         */
+        public static boolean isTouchInSpan = false;
         private static ImageClickMethod sInstance;
 
         public static ImageClickMethod getInstance() {
@@ -354,11 +506,13 @@ public class RExTextView extends RTextView {
 
                 ImageTextSpan[] link = buffer.getSpans(off, off, ImageTextSpan.class);
 
-                if (link.length != 0) {
+                if (link.length != 0 && link[0].isCanClick()) {
                     if (action == MotionEvent.ACTION_UP) {
                         link[0].onTouchUp(widget);
                         link[0].onClick(widget);
+                        isTouchInSpan = false;
                     } else if (action == MotionEvent.ACTION_DOWN) {
+                        isTouchInSpan = true;
                         link[0].onTouchDown(widget, event.getX(), event.getY());
                         Selection.setSelection(buffer,
                                 buffer.getSpanStart(link[0]),
@@ -367,6 +521,7 @@ public class RExTextView extends RTextView {
                         //link[0].onTouchMove(widget, event.getX(), event.getY());
                         return super.onTouchEvent(widget, buffer, event);
                     } else if (action == MotionEvent.ACTION_CANCEL) {
+                        isTouchInSpan = false;
                         link[0].onTouchCancel(widget, event.getX(), event.getY());
                         return super.onTouchEvent(widget, buffer, event);
                     }

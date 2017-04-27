@@ -56,6 +56,10 @@ public class RTextView extends AppCompatTextView {
 
         typedArray.recycle();
 
+        initView();
+    }
+
+    protected void initView() {
         initLeftRes();
     }
 

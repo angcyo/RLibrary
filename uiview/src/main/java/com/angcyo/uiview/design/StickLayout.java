@@ -32,7 +32,7 @@ public class StickLayout extends RelativeLayout {
     private GestureDetectorCompat mGestureDetectorCompat;
     private int mTouchSlop, mTouchCheckSlop;
     private int maxScrollY, topHeight;
-    private RRecyclerView.OnScrollEndListener mOnScrollEndListener;
+    private RRecyclerView.OnFlingEndListener mOnFlingEndListener;
     private boolean mIntercept;
     private float mInterceptDownY;
     private float mInterceptDownX;
@@ -182,8 +182,8 @@ public class StickLayout extends RelativeLayout {
 
     private void initScrollTarget() {
         if (mScrollTarget != null && mScrollTarget.getRecyclerView() instanceof RRecyclerView) {
-            if (mOnScrollEndListener == null) {
-                mOnScrollEndListener = new RRecyclerView.OnScrollEndListener() {
+            if (mOnFlingEndListener == null) {
+                mOnFlingEndListener = new RRecyclerView.OnFlingEndListener() {
                     @Override
                     public void onScrollTopEnd(float currVelocity) {
 //                        if (!(currVelocity > 0)) {
@@ -194,7 +194,7 @@ public class StickLayout extends RelativeLayout {
                     }
                 };
             }
-            ((RRecyclerView) mScrollTarget.getRecyclerView()).setOnScrollEndListener(mOnScrollEndListener);
+            ((RRecyclerView) mScrollTarget.getRecyclerView()).setOnFlingEndListener(mOnFlingEndListener);
         }
     }
 

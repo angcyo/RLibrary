@@ -31,11 +31,16 @@ public class StickLayout2 extends RelativeLayout {
     private OverScroller mOverScroller;
     private GestureDetectorCompat mGestureDetectorCompat;
     private int maxScrollY, topHeight;
-    private RRecyclerView.OnScrollEndListener mOnScrollEndListener;
+    private RRecyclerView.OnFlingEndListener mOnFlingEndListener;
     private boolean handleTouch = true;
     private float lastOffsetY;
     private float mLastVelocity = 0f;
     private boolean isFling;
+
+    /**
+     * 滚动顶部后, 是否可以继续滚动, 增益效果
+     */
+    private boolean edgeScroll = false;
 
     public StickLayout2(Context context) {
         this(context, null);
@@ -48,6 +53,10 @@ public class StickLayout2 extends RelativeLayout {
     public StickLayout2(Context context, AttributeSet attrs, int defStyleAttr) {
         super(context, attrs, defStyleAttr);
         initLayout();
+    }
+
+    public void setEdgeScroll(boolean edgeScroll) {
+        this.edgeScroll = edgeScroll;
     }
 
     private void initLayout() {
@@ -117,7 +126,7 @@ public class StickLayout2 extends RelativeLayout {
 
     @Override
     public void scrollTo(@Px int x, @Px int y) {
-        int offset = Math.min(maxScrollY, Math.max(0, y));
+        int offset = Math.min(maxScrollY, edgeScroll ? y : Math.max(0, y));
         boolean layout = false;
         if (getScrollY() != offset) {
             layout = true;
@@ -195,8 +204,8 @@ public class StickLayout2 extends RelativeLayout {
 
     private void initScrollTarget() {
         if (mScrollTarget != null && mScrollTarget.getRecyclerView() instanceof RRecyclerView) {
-            if (mOnScrollEndListener == null) {
-                mOnScrollEndListener = new RRecyclerView.OnScrollEndListener() {
+            if (mOnFlingEndListener == null) {
+                mOnFlingEndListener = new RRecyclerView.OnFlingEndListener() {
                     @Override
                     public void onScrollTopEnd(float currVelocity) {
 //                        if (!(currVelocity > 0)) {
@@ -207,7 +216,7 @@ public class StickLayout2 extends RelativeLayout {
                     }
                 };
             }
-            ((RRecyclerView) mScrollTarget.getRecyclerView()).setOnScrollEndListener(mOnScrollEndListener);
+            ((RRecyclerView) mScrollTarget.getRecyclerView()).setOnFlingEndListener(mOnFlingEndListener);
         }
     }
 
@@ -223,6 +232,15 @@ public class StickLayout2 extends RelativeLayout {
     public boolean onTouchEvent(MotionEvent event) {
         super.onTouchEvent(event);
         return true;
+    }
+
+    @Override
+    public boolean onInterceptTouchEvent(MotionEvent ev) {
+        if (ev.getAction() == MotionEvent.ACTION_UP || ev.getAction() == MotionEvent.ACTION_CANCEL) {
+            onTouchUp();
+            onTouchEnd();
+        }
+        return super.onInterceptTouchEvent(ev);
     }
 
     @Override
@@ -273,7 +291,9 @@ public class StickLayout2 extends RelativeLayout {
                         break;
                     }
                 } else {
-                    ev.setLocation(lastX, moveY);
+                    if (!inTopTouch) {
+                        ev.setLocation(lastX, moveY);
+                    }
                 }
                 offsetTo(offsetY);
 
@@ -283,6 +303,7 @@ public class StickLayout2 extends RelativeLayout {
             case MotionEvent.ACTION_CANCEL:
             case MotionEvent.ACTION_UP:
                 onTouchUp();
+                onTouchEnd();
                 break;
         }
         return super.dispatchTouchEvent(ev);
@@ -307,11 +328,28 @@ public class StickLayout2 extends RelativeLayout {
         handleTouch = true;
     }
 
+    private void onTouchEnd() {
+        if (getScrollY() < 0) {
+            startScrollTo(0);
+        }
+    }
+
+    private void startScrollTo(int to) {
+        int scrollY = getScrollY();
+        mOverScroller.startScroll(0, scrollY, 0, to - scrollY);
+        postInvalidate();
+    }
+
     private boolean offsetTo(float offsetY) {
         if (Math.abs(offsetY) > 0) {
             if (offsetY < 0) {
                 //手指下滑
                 boolean scrollVertically = mScrollTarget.canChildScrollUp();
+
+                if (getScrollY() < 0) {
+                    offsetY *= (1 - 0.4 - Math.abs(getScrollY()) * 1.f / getMeasuredHeight());
+                }
+
                 if (!scrollVertically) {
                     scrollBy(0, (int) (offsetY));
                 } else {

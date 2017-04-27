@@ -4,7 +4,7 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:id="@+id/tab_layout"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
+    android:layout_height="@dimen/base_title_bar_item_size"
     android:clipChildren="false"
     android:clipToPadding="false"
     app:tl_indicator_height="0dp"
@@ -12,4 +12,5 @@
     app:tl_textSelectColor="@color/base_text_color"
     app:tl_textUnselectColor="@color/base_text_color_dark"
     app:tl_textsize="@dimen/default_text_size"
+    app:tl_indicator_corner_radius="1.5dp"
     app:tl_underline_height="0dp"/>

@@ -21,6 +21,8 @@
     <dimen name="default_text_size16">16sp</dimen>
     <dimen name="default_text_size9">9sp</dimen>
     <dimen name="default_text_size10">10sp</dimen>
+    <dimen name="default_text_size18">18sp</dimen>
+    <dimen name="default_text_size50">50sp</dimen>
     <!--默认按钮高度-->
     <dimen name="default_button_height">45dp</dimen>
 
@@ -57,12 +59,15 @@
     <dimen name="base_hdpi_">-8dp</dimen>
     <dimen name="base_xhdpi">10dp</dimen>
     <dimen name="base_xhdpi_15">15dp</dimen>
+    <dimen name="base_xhdpi_5">5dp</dimen>
     <dimen name="base_xhdpi_">-10dp</dimen>
     <dimen name="base_xxhdpi">20dp</dimen>
+    <dimen name="base_25dpi">25dp</dimen>
     <dimen name="base_xxhdpi_24">24dp</dimen>
     <dimen name="base_xxxhdpi">30dp</dimen>
     <dimen name="base_35dpi">35dp</dimen>
     <dimen name="base_40dpi">40dp</dimen>
+    <dimen name="base_45dpi">45dp</dimen>
     <dimen name="base_40dpi_">-40dp</dimen>
     <dimen name="base_50dpi">50dp</dimen>
     <dimen name="base_60dpi">60dp</dimen>
@@ -71,8 +76,10 @@
     <dimen name="base_75dpi">75dp</dimen>
     <dimen name="base_60dpi_">-60dp</dimen>
     <dimen name="base_80dpi">80dp</dimen>
+    <dimen name="base_85dpi">85dp</dimen>
     <dimen name="base_80dpi_">-80dp</dimen>
     <dimen name="base_90dpi">90dp</dimen>
     <dimen name="base_100dpi">100dp</dimen>
     <dimen name="base_120dpi">120dp</dimen>
+    <dimen name="base_160dpi">160dp</dimen>
 </resources>

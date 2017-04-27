@@ -42,8 +42,10 @@ public class RTextPaint {
      * 获取文本的高度
      */
     public static double getTextHeight(Paint paint) {
-        Paint.FontMetricsInt fontMetricsInt = paint.getFontMetricsInt();
-        double height = Math.ceil(fontMetricsInt.descent - fontMetricsInt.ascent) + 2;
+        //Paint.FontMetricsInt fontMetricsInt = paint.getFontMetricsInt();
+        //结果和fontMetricsInt.descent - fontMetricsInt.ascent是相同的
+        int height = paint.getFontMetricsInt(null);
+        //double height = Math.ceil(fontMetricsInt.descent - fontMetricsInt.ascent);//+ 2;
         return height;
     }
 

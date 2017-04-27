@@ -46,7 +46,7 @@ public class RRecyclerView extends RecyclerView {
     protected boolean isFirstAnim = true;//布局动画只执行一次
     protected boolean layoutAnim = false;//是否使用布局动画
     OnTouchListener mInterceptTouchListener;
-    OnScrollEndListener mOnScrollEndListener;
+    OnFlingEndListener mOnFlingEndListener;
     private OnScrollListener mScrollListener = new OnScrollListener() {
         @Override
         public void onScrollStateChanged(RecyclerView recyclerView, int newState) {
@@ -68,6 +68,7 @@ public class RRecyclerView extends RecyclerView {
     };
     private float mLastVelocity;
     private int mLastScrollOffset;
+    private boolean isFling;
 
     public RRecyclerView(Context context) {
         this(context, null);
@@ -276,7 +277,19 @@ public class RRecyclerView extends RecyclerView {
     }
 
     @Override
+    public boolean fling(int velocityX, int velocityY) {
+        if (Math.abs(velocityY) > 200) {
+            isFling = true;
+        }
+        return super.fling(velocityX, velocityY);
+    }
+
+    @Override
     public boolean onInterceptTouchEvent(MotionEvent e) {
+        if (e.getAction() == MotionEvent.ACTION_DOWN) {
+            isFling = false;
+        }
+
         if (mInterceptTouchListener != null) {
             mInterceptTouchListener.onTouch(this, e);
         }
@@ -319,14 +332,13 @@ public class RRecyclerView extends RecyclerView {
     public void onScrollStateChanged(int state) {
         //L.e("call: onScrollStateChanged([state])-> " + state + " :" + getLastVelocity());
         final int scrollOffset = computeVerticalScrollOffset();
-        if (state == SCROLL_STATE_IDLE) {
+        if (state == SCROLL_STATE_IDLE && isFling && scrollOffset == 0) {
             post(new Runnable() {
                 @Override
                 public void run() {
-                    if (mLastScrollOffset != scrollOffset && mOnScrollEndListener != null) {
-                        if (scrollOffset == 0
-                                && UI.canChildScrollDown(RRecyclerView.this)) {
-                            mOnScrollEndListener.onScrollTopEnd(getLastVelocity());
+                    if (mLastScrollOffset != scrollOffset && mOnFlingEndListener != null) {
+                        if (UI.canChildScrollDown(RRecyclerView.this)) {
+                            mOnFlingEndListener.onScrollTopEnd(getLastVelocity());
                         }
                     }
                     mLastScrollOffset = -1;
@@ -337,8 +349,8 @@ public class RRecyclerView extends RecyclerView {
         }
     }
 
-    public void setOnScrollEndListener(OnScrollEndListener onScrollEndListener) {
-        mOnScrollEndListener = onScrollEndListener;
+    public void setOnFlingEndListener(OnFlingEndListener onFlingEndListener) {
+        mOnFlingEndListener = onFlingEndListener;
     }
 
     /**
@@ -429,7 +441,7 @@ public class RRecyclerView extends RecyclerView {
     /**
      * RecyclerView滚动结束后的回调
      */
-    public interface OnScrollEndListener {
+    public interface OnFlingEndListener {
         /**
          * 突然滚动到顶部, 还剩余的滚动速率
          */

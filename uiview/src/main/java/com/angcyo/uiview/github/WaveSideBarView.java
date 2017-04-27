@@ -125,7 +125,27 @@ public class WaveSideBarView extends View {
         final float x = event.getX();
 
         final int oldChoose = mChoose;
-        final int newChoose = (int) (y / mHeight * mLetters.size());
+
+        int padding = mHeight - mLetters.size() * mItemHeight;
+        float dy = y - padding / 2;
+
+//        if (dy < 0) {
+//            startAnimator(mRatio, 0f);
+//            return true;
+//        }
+//
+//        if (dy > mLetters.size() * mItemHeight) {
+//            startAnimator(mRatio, 0f);
+//            return true;
+//        }
+
+        int newChoose = (int) (dy / mItemHeight);
+
+        if (newChoose < 0) {
+            newChoose = 0;
+        } else if(newChoose > mLetters.size() - 1) {
+            newChoose = mLetters.size() - 1;
+        }
 
         switch (event.getAction()) {
             case MotionEvent.ACTION_DOWN:

@@ -25,6 +25,7 @@ import android.widget.FrameLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
+import com.angcyo.library.utils.L;
 import com.angcyo.uiview.R;
 import com.angcyo.uiview.container.UILayoutImpl;
 import com.angcyo.uiview.container.UIParam;
@@ -203,10 +204,17 @@ public abstract class UIBaseView extends UIIViewImpl {
     protected abstract void inflateContentLayout(RelativeLayout baseContentLayout, LayoutInflater inflater);
 
     /**
-     * 初始化内容, 当你的 默认布局状态不等于 {@link LayoutState#CONTENT} 时,请使用以下方法初始化内容
+     * 初始化内容, 当你的 默认布局状态不等于 {@link LayoutState#CONTENT} 时,请使用以下方法初始化View
      */
     protected void initOnShowContentLayout() {
+        L.d("call: initOnShowContentLayout([])-> ");
+    }
 
+    /**
+     * 只要显示了内容, 就会调用此方法, 请在此方法中设置布局内容
+     */
+    protected void OnShowContentLayout() {
+        L.d("call: OnShowContentLayout([])-> ");
     }
 
     protected void inflate(@LayoutRes int layoutId) {
@@ -368,6 +376,7 @@ public abstract class UIBaseView extends UIIViewImpl {
             ButterKnife.bind(this, mBaseContentLayout);
             initOnShowContentLayout();
         }
+        OnShowContentLayout();
         changeState(mLayoutState, LayoutState.CONTENT);
     }
 

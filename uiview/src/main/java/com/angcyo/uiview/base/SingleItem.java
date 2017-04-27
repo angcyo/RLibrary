@@ -21,12 +21,12 @@ public abstract class SingleItem implements Item {
     /**
      * 左边绘制距离
      */
-    int leftOffset = 0;
+    protected int leftOffset = 0;
     /**
      * 上边留出距离
      */
-    int topOffset = 0;
-    int lineColor = -1;
+    protected int topOffset = 0;
+    protected int lineColor = -1;
     Type mType;
 
     public SingleItem() {
