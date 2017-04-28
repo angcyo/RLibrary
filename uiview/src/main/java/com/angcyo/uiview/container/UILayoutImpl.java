@@ -293,7 +293,7 @@ public class UILayoutImpl extends SwipeBackLayout implements ILayout<UIParam>, U
         };
         if (isFinishing || (mLastShowViewPattern != null
                 && mLastShowViewPattern.mIView.isDialog()
-                && !iView.isDialog())) {
+                && !iView.showOnDialog())) {
             //如果在对话框上,启动一个IView的时候, 切启动的iView不是对话框
             runnableCount--;
             postDelayed(new Runnable() {

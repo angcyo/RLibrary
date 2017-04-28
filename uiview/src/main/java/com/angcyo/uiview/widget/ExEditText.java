@@ -492,12 +492,19 @@ public class ExEditText extends AppCompatEditText {
      * @param auto 如果为true时, 自动上屏和去重
      */
     public void addMention(String mention, boolean auto) {
+        int start = getSelectionStart();
+        boolean insetAt = false;
+        if (start == 0 || (start > 0 && '@' != getText().charAt(start - 1))) {
+            // mention = "@" + mention;//同时@多个人时, 自动补齐@字符
+            insetAt = true;
+        }
+
         if (auto) {
             if (isContains(mention)) {
                 deleteLast();
             } else {
                 mAllMention.add(mention);
-                insert(mention + ' ');
+                insert((insetAt ? '@' : "") + mention + ' ');
             }
         } else {
             mAllMention.add(mention);
@@ -632,12 +639,28 @@ public class ExEditText extends AppCompatEditText {
                 //record all show-string's position
                 mRangeArrayList.add(new Range(start, end));
             }
+            if (!isFind) {
+                //有特殊字符比如:()会匹配不到
+                String temp = "@" + mention;
+                if (text.contains(temp)) {
+                    int start = text.indexOf(temp);
+                    int end = start + temp.length();
+                    spannableText.setSpan(new MentionSpan(text.substring(start, end)), start, end, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
+                    mRangeArrayList.add(new Range(start, end));
+                    isFind = true;
+                }
+            }
+
             if (isFind) {
                 mentions.add(mention);
             }
         }
         mAllMention.clear();
         mAllMention.addAll(mentions);
+
+        if (mOnMentionInputListener != null) {
+            mOnMentionInputListener.onMentionTextChanged(mAllMention);
+        }
     }
 
     /**
@@ -648,6 +671,11 @@ public class ExEditText extends AppCompatEditText {
          * call when '@' character is inserted into EditText, 当输入@字符之后, 会回调
          */
         void onMentionCharacterInput();
+
+        /**
+         * 所有@的成员
+         */
+        void onMentionTextChanged(List<String> allMention);
     }
 
     /**

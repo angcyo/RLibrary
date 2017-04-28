@@ -3,6 +3,7 @@ package com.angcyo.uiview.viewgroup;
 import android.content.Context;
 import android.content.res.TypedArray;
 import android.graphics.Canvas;
+import android.graphics.drawable.Drawable;
 import android.support.annotation.Nullable;
 import android.util.AttributeSet;
 import android.widget.LinearLayout;
@@ -22,7 +23,7 @@ import com.angcyo.uiview.R;
  */
 public class RLinearLayout extends LinearLayout {
 
-    private int mBackgroundColor;
+    private Drawable mBackgroundDrawable;
 
     public RLinearLayout(Context context) {
         this(context, null);
@@ -36,19 +37,20 @@ public class RLinearLayout extends LinearLayout {
         super(context, attrs, defStyleAttr);
 
         TypedArray typedArray = context.obtainStyledAttributes(attrs, R.styleable.RLinearLayout);
-        mBackgroundColor = typedArray.getColor(R.styleable.RLinearLayout_r_background, -1);
+        mBackgroundDrawable = typedArray.getDrawable(R.styleable.RLinearLayout_r_background);
         typedArray.recycle();
         initLayout();
     }
 
     private void initLayout() {
-
+        setWillNotDraw(false);
     }
 
     @Override
     public void draw(Canvas canvas) {
-        if (mBackgroundColor != -1) {
-            canvas.drawColor(mBackgroundColor);
+        if (mBackgroundDrawable != null) {
+            mBackgroundDrawable.setBounds(canvas.getClipBounds());
+            mBackgroundDrawable.draw(canvas);
         }
         super.draw(canvas);
     }

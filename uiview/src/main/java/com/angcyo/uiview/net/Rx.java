@@ -153,6 +153,59 @@ public class Rx<Rx> extends Observable<Rx> {
                         .observeOn(AndroidSchedulers.mainThread());
             }
         };
+    }public static <T> Observable.Transformer<ResponseBody, T> transformRedPacket(final Class<T> type) {
+        return new Observable.Transformer<ResponseBody, T>() {
+
+            @Override
+            public Observable<T> call(Observable<ResponseBody> responseObservable) {
+                return responseObservable.unsubscribeOn(Schedulers.io())
+                        .subscribeOn(Schedulers.io())
+                        .map(new Func1<ResponseBody, T>() {
+                            @Override
+                            public T call(ResponseBody stringResponse) {
+                                T bean;
+                                String body;
+                                try {
+                                    body = stringResponse.string();
+
+                                    //"接口返回数据-->\n" +
+                                    L.json(body);
+
+                                    JSONObject jsonObject = new JSONObject(body);
+                                    int result = -1;
+                                    try {
+                                        result = jsonObject.getInt("code");
+                                    } catch (Exception e) {
+
+                                    }
+
+                                    if (result == 0) {
+                                        //请求成功
+                                        String data = jsonObject.getString("data");
+                                        if (!TextUtils.isEmpty(data)) {
+                                            bean = Json.from(data, type);
+                                            return bean;
+                                        }
+                                    } else {
+                                        //请求成功, 但是有错误
+                                        JSONObject errorObject = jsonObject.getJSONObject("error");
+
+                                        throw new RException(errorObject.getInt("code"),
+                                                errorObject.getString("msg"),
+                                                errorObject.getString("more"));
+                                    }
+                                } catch (JSONException | IOException e) {
+                                    e.printStackTrace();
+                                    //throw new RException(-1000, "服务器数据异常.", e.getMessage());
+                                }
+                                //throw new NullPointerException("无数据.");
+                                return null;
+                            }
+                        })
+                        .retry(RETRY_COUNT)
+                        .observeOn(AndroidSchedulers.mainThread());
+            }
+        };
     }
 
     public static <T> Observable.Transformer<ResponseBody, List<T>> transformerList(final Class<T> type) {

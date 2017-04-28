@@ -201,4 +201,9 @@ public interface IView {
      * 当皮肤更改时回调
      */
     void onSkinChanged(ISkin skin);//星期六 2017-4-1
+
+    /**
+     * 是否需要在对话框上显示
+     */
+    boolean showOnDialog();//星期五 2017-4-28
 }

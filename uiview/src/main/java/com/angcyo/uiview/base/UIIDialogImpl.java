@@ -110,6 +110,11 @@ public abstract class UIIDialogImpl extends UIIViewImpl {
     protected abstract View inflateDialogView(RelativeLayout dialogRootLayout, LayoutInflater inflater);
 
     @Override
+    public boolean showOnDialog() {
+        return isDialog();
+    }
+
+    @Override
     public boolean isDialog() {
         return true;
     }

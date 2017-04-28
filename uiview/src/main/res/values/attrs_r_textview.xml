@@ -9,5 +9,8 @@
         <attr name="r_left_margin" format="dimension"/>
         <!--是否有下划线-->
         <attr name="r_has_underline" format="boolean"/>
+
+        <attr name="r_background"/>
+
     </declare-styleable>
 </resources>

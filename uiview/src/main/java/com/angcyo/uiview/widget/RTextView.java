@@ -38,10 +38,12 @@ public class RTextView extends AppCompatTextView {
     boolean hasUnderline = false;
 
     boolean isAttached = false;
+    private Drawable mBackgroundDrawable;
 
     public RTextView(Context context) {
         this(context, null);
     }
+
 
     public RTextView(Context context, AttributeSet attrs) {
         this(context, attrs, 0);
@@ -53,10 +55,19 @@ public class RTextView extends AppCompatTextView {
         leftColor = typedArray.getColor(R.styleable.RTextView_r_left_color, SkinHelper.getSkin().getThemeColor());
         leftWidth = typedArray.getDimensionPixelOffset(R.styleable.RTextView_r_left_width, 0);
         hasUnderline = typedArray.getBoolean(R.styleable.RTextView_r_has_underline, false);
+        mBackgroundDrawable = typedArray.getDrawable(R.styleable.RTextView_r_background);
 
         typedArray.recycle();
 
         initView();
+    }
+
+    @Override
+    public void draw(Canvas canvas) {
+        if (mBackgroundDrawable != null) {
+            mBackgroundDrawable.draw(canvas);
+        }
+        super.draw(canvas);
     }
 
     protected void initView() {

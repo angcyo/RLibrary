@@ -251,12 +251,16 @@ public abstract class RModelAdapter<T> extends RBaseAdapter<T> {
      * 选中所有
      */
     public void setSelectorAll(@NonNull RRecyclerView recyclerView, @IdRes int viewId) {
+        setSelectedList(recyclerView,viewId,getAllDatas());
+    }
+
+    public void setSelectIndexs(@NonNull RRecyclerView recyclerView,@IdRes int viewId,List<Integer> indexList) {
         if (mModel != MODEL_MULTI) {
             return;
         }
 
-        for (int i = 0; i < getAllDatas().size(); i++) {
-            mSelector.add(i);
+        for (int i = 0; i < indexList.size(); i++) {
+            mSelector.add(indexList.get(i));
         }
 
         boolean notify = false;
@@ -276,6 +280,21 @@ public abstract class RModelAdapter<T> extends RBaseAdapter<T> {
             //防止在视图还没有加载的时候,通知事件
             notifySelectorChange();
         }
+    }
+
+    /**
+     * 选中指定item
+     */
+    public void setSelectedList(@NonNull RRecyclerView recyclerView, @IdRes int viewId,List<T> selectedList) {
+        List<Integer> indexs = new ArrayList<>();
+        for (int i = 0; i < selectedList.size(); i++) {
+            int index = mAllDatas.indexOf(selectedList.get(i));
+            if (index != -1) {
+                indexs.add(i);
+            }
+        }
+
+        setSelectIndexs(recyclerView,viewId,indexs);
     }
 
     public void addOnModelChangeListener(OnModelChangeListener listener) {

@@ -3,6 +3,8 @@ package com.angcyo.uiview.base;
 import android.support.annotation.CallSuper;
 import android.view.View;
 
+import com.angcyo.uiview.receiver.NetworkStateReceiver;
+
 import rx.Subscription;
 import rx.subscriptions.CompositeSubscription;
 
@@ -44,5 +46,9 @@ public abstract class UIBaseRxView extends UIBaseDataView {
 
     public void add(Subscription subscription) {
         mSubscriptions.add(subscription);
+        if (NetworkStateReceiver.getNetType().value() < 2) {
+            //2G网络以下, 取消网络请求
+            onCancel();
+        }
     }
 }
