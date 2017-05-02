@@ -48,4 +48,6 @@
     <color name="base_chat_bg_color">#F0F0F5</color>
 
     <color name="base_color_disable">#CBCBCB</color>
+
+    <color name="base_main_color_bg_color">#F1F1F5</color>
 </resources>
