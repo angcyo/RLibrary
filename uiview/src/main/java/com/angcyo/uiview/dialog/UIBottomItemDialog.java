@@ -35,7 +35,7 @@ public class UIBottomItemDialog extends UIItemDialog {
     /**
      * 使用微信的样式
      */
-    boolean useWxStyle = false;
+    boolean useWxStyle = true;
 
     public UIBottomItemDialog() {
     }
@@ -72,7 +72,16 @@ public class UIBottomItemDialog extends UIItemDialog {
     @Override
     public void loadContentView(View rootView) {
         super.loadContentView(rootView);
-        if (useWxStyle || !showCancelButton) {
+        if (showCancelButton) {
+            if (useWxStyle) {
+                mViewHolder.v(R.id.line).setVisibility(View.GONE);
+
+                TextView cancelView = mViewHolder.tv(R.id.cancel_view);
+                cancelView.setTextColor(getWxStyleTextColor());
+                cancelView.setGravity(Gravity.START | Gravity.CENTER_VERTICAL);
+                cancelView.setPadding(getWxStylePaddingLeft(), 0, 0, 0);
+            }
+        } else {
             mViewHolder.v(R.id.cancel_control_layout).setVisibility(View.GONE);
         }
 
@@ -98,7 +107,7 @@ public class UIBottomItemDialog extends UIItemDialog {
             ItemInfo info = mItemInfos.get(i);
             TextView textView = getItem(info);
             if (useWxStyle) {
-                textView.setTextColor(Color.parseColor("#999999"));
+                textView.setTextColor(getWxStyleTextColor());
             } else {
                 textView.setTextColor(mActivity.getResources().getColor(R.color.base_text_color));
             }
@@ -109,10 +118,14 @@ public class UIBottomItemDialog extends UIItemDialog {
         }
     }
 
+    private int getWxStyleTextColor() {
+        return Color.parseColor("#999999");
+    }
+
     @Override
     protected TextView getItem(ItemInfo info) {
         TextView item = super.getItem(info);
-        int offset = getResources().getDimensionPixelOffset(R.dimen.base_xxhdpi);
+        int offset = getWxStylePaddingLeft();
         if (info.leftRes != 0) {
             item.setCompoundDrawablePadding(offset);
             item.setCompoundDrawablesWithIntrinsicBounds(info.leftRes, 0, 0, 0);
@@ -122,5 +135,9 @@ public class UIBottomItemDialog extends UIItemDialog {
             item.setPadding(offset, 0, 0, 0);
         }
         return item;
+    }
+
+    private int getWxStylePaddingLeft() {
+        return getResources().getDimensionPixelOffset(R.dimen.base_xxhdpi);
     }
 }

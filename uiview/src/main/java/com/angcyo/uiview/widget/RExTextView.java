@@ -281,6 +281,11 @@ public class RExTextView extends RTextView {
         private boolean canClick = true;
 
         /**
+         * 是否激活点击效果
+         */
+        private boolean enableTouchEffect = false;
+
+        /**
          * 构造一个只用来显示文本的ImageSpan
          */
         public ImageTextSpan(Context context, float textSize, String showContent) {
@@ -386,8 +391,13 @@ public class RExTextView extends RTextView {
             } else {
                 tempRect.set((int) x, top, ((int) (x + mSpanWidth + space + space)), bottom);
                 if (isTouchDown && tempRect.contains(((int) downX), (int) downY)) {
-                    paint.setColor(SkinHelper.getTranColor(textColor, 0x80));
-                    canvas.drawRect(tempRect, paint);
+                    if (enableTouchEffect) {
+                        paint.setColor(SkinHelper.getTranColor(textColor, 0x80));
+                        canvas.drawRect(tempRect, paint);
+                    } else {
+                        paint.setColor(Color.TRANSPARENT);
+                        canvas.drawRect(tempRect, paint);
+                    }
                 }
 
                 super.draw(canvas, text, start, end, x, top, y, bottom, paint);

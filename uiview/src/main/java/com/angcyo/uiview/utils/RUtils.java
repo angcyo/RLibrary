@@ -684,6 +684,21 @@ public class RUtils {
         return downLoadId;
     }
 
+    /**
+     * 删除特殊字符
+     */
+    public static String fixName(String name) {
+        String result = "-";
+        if (TextUtils.isEmpty(name)) {
+            return result;
+        }
+        String all = name.replaceAll("\\+", "").replaceAll("=", "").replaceAll("/", "").replaceAll("&", "");
+        if (TextUtils.isEmpty(all)) {
+            return result;
+        }
+        return all;
+    }
+
     interface OnPutValue {
         void onValue(String key, String value);
     }

@@ -10,11 +10,14 @@ import android.support.annotation.ColorInt;
 import android.support.annotation.DrawableRes;
 import android.support.v7.widget.AppCompatTextView;
 import android.text.InputFilter;
+import android.text.SpannableStringBuilder;
+import android.text.Spanned;
 import android.text.TextUtils;
 import android.util.AttributeSet;
 
 import com.angcyo.uiview.R;
 import com.angcyo.uiview.skin.SkinHelper;
+import com.angcyo.uiview.utils.Reflect;
 
 import java.util.Locale;
 
@@ -109,16 +112,47 @@ public class RTextView extends AppCompatTextView {
 
     @Override
     public void setText(CharSequence text, BufferType type) {
-        if (getTag() != null && !TextUtils.isEmpty(text)) {
+        if (getTag() != null
+                && !"title".equalsIgnoreCase(getTag().toString()) /**当出现在TitleBar中, 会有这个标志*/
+                && !TextUtils.isEmpty(text)) {
             try {
                 final String format = String.format(Locale.CHINA, getTag().toString(), text);
-                super.setText(format, type);
+                setTextEx(format, type);
             } catch (Exception e) {
-                super.setText(text, type);
+                setTextEx(text, type);
             }
         } else {
-            super.setText(text, type);
+            setTextEx(text, type);
         }
+    }
+
+    /**
+     * 系统的省略号, 有时不会显示, 采用Span手动处理
+     */
+    private void setTextEx(CharSequence text, BufferType type) {
+        if (TextUtils.isEmpty(text)) {
+            super.setText(text, type);
+            return;
+        }
+
+        SpannableStringBuilder spanBuilder = new SpannableStringBuilder(text);
+        if (getMaxLines() == 1 && getEllipsize() == TextUtils.TruncateAt.END) {
+
+            int maxLength = Integer.MAX_VALUE;
+            InputFilter[] filters = getFilters();
+            for (InputFilter filter : filters) {
+                if (filter instanceof InputFilter.LengthFilter) {
+                    maxLength = (int) Reflect.getMember(InputFilter.LengthFilter.class, filter, "mMax");
+                }
+            }
+
+            if (text.length() > maxLength) {
+                spanBuilder.setSpan(new RExTextView.ImageTextSpan(getContext(), getTextSize(), getCurrentTextColor(), "..."),
+                        maxLength - 3, maxLength, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
+            }
+        }
+
+        super.setText(spanBuilder, type);
     }
 
     public void addFilter(InputFilter filter) {

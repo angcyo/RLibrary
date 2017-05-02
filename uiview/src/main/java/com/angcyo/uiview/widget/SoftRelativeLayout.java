@@ -300,7 +300,8 @@ public class SoftRelativeLayout extends RelativeLayout implements ILifecycle {
         if (!isEnabled()) {
             return true;
         }
-        return super.onInterceptTouchEvent(ev);
+        boolean touchEvent = super.onInterceptTouchEvent(ev);
+        return touchEvent;
     }
 
     @Override

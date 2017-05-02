@@ -278,7 +278,8 @@
     <style name="BaseNameTextStyle" parent="BaseMainTextStyle">
         <item name="android:singleLine">true</item>
         <item name="android:maxLines">1</item>
-        <item name="android:maxLength">@integer/code_count</item>
+        <item name="android:ellipsize">end</item>
+        <item name="android:maxLength">@integer/name_show_count</item>
     </style>
 
     <style name="BaseSingleDarkTextStyle" parent="BaseDarkTextStyle">

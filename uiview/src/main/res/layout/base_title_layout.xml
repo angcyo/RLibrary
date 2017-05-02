@@ -51,7 +51,7 @@
             android:layout_height="@dimen/base_load_view_size"
             android:visibility="gone"/>
 
-        <TextView
+        <com.angcyo.uiview.widget.RTextView
             android:id="@+id/base_title_view"
             android:layout_width="wrap_content"
             android:layout_height="match_parent"
@@ -64,7 +64,7 @@
             android:tag="title"
             android:textColor="@color/default_base_white"
             android:textSize="@dimen/base_title_size"
-            tools:content="标题"/>
+            tools:text="标题"/>
 
         <!--</LinearLayout>-->
     </com.angcyo.uiview.widget.RTitleCenterLayout>
