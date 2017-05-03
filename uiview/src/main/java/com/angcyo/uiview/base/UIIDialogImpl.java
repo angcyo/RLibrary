@@ -55,6 +55,8 @@ public abstract class UIIDialogImpl extends UIIViewImpl {
      */
     protected boolean canCanceledOnOutside = true;
 
+    protected boolean canDoubleCancel = false;
+
     /**
      * 对话框外, 是否变暗
      */
@@ -155,6 +157,11 @@ public abstract class UIIDialogImpl extends UIIViewImpl {
 
     public UIIDialogImpl setLayoutAnimation(Animation layoutAnimation) {
         this.layoutAnimation = layoutAnimation;
+        return this;
+    }
+
+    public UIIDialogImpl setCanDoubleCancel(boolean canDoubleCancel) {
+        this.canDoubleCancel = canDoubleCancel;
         return this;
     }
 
@@ -261,6 +268,11 @@ public abstract class UIIDialogImpl extends UIIViewImpl {
     @Override
     public View getAnimView() {
         return mDialogRootLayout.getChildAt(0);
+    }
+
+    @Override
+    public boolean canDoubleCancel() {
+        return canDoubleCancel;
     }
 
     public UIIDialogImpl addDismissListener(OnDismissListener dismissListener) {

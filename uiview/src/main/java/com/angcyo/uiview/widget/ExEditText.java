@@ -501,7 +501,9 @@ public class ExEditText extends AppCompatEditText {
 
         if (auto) {
             if (isContains(mention)) {
-                deleteLast();
+                if ('@' == getText().charAt(start - 1)) {
+                    deleteLast(start);
+                }
             } else {
                 mAllMention.add(mention);
                 insert((insetAt ? '@' : "") + mention + ' ');
@@ -524,6 +526,7 @@ public class ExEditText extends AppCompatEditText {
 
         if (start == end) {
             getText().insert(where, text);
+            setSelection(where + length, where + length);
         } else {
             getText().replace(start, end, text, 0, length);
             setSelection(start + length, start + length);
@@ -548,10 +551,10 @@ public class ExEditText extends AppCompatEditText {
     /**
      * 删除最后一个字符,用来当@的人, 已经存在时,调用
      */
-    public void deleteLast() {
+    public void deleteLast(int position) {
         Editable text = getText();
-        if (text != null && text.length() > 0) {
-            text.delete(text.length() - 1, text.length());
+        if (text != null && text.length() >= position) {
+            text.delete(position - 1, position);
         }
     }
 
@@ -661,6 +664,27 @@ public class ExEditText extends AppCompatEditText {
         if (mOnMentionInputListener != null) {
             mOnMentionInputListener.onMentionTextChanged(mAllMention);
         }
+    }
+
+    /**
+     * 替换@功能的文本信息
+     */
+    public String fixMentionString(getIdFromUserName getIdFromUserName) {
+        String string = string();
+        List<String> allMention = getAllMention();
+        for (String s : allMention) {
+            string = string.replaceAll("@" + s.replaceAll("\\(", "\\\\(").replaceAll("\\)", "\\\\)"),
+                    createStringWithUserName(getIdFromUserName.userId(s)));
+        }
+        return string;
+    }
+
+    private String createStringWithUserName(String id) {
+        return "<m>" + id + "</m>";
+    }
+
+    public interface getIdFromUserName {
+        String userId(String userName);
     }
 
     /**

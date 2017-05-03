@@ -24,6 +24,7 @@ import android.util.TypedValue;
 import android.view.View;
 
 import com.angcyo.uiview.R;
+import com.angcyo.uiview.RApplication;
 
 
 /**
@@ -72,6 +73,12 @@ public class ResUtil {
     public static ColorStateList generateTextColor(int pressColor, int checkColor, int defaultColor) {
         ColorStateList stateList = new ColorStateList(new int[][]{{android.R.attr.state_pressed}, {android.R.attr.state_checked}, {}},
                 new int[]{pressColor, checkColor, defaultColor});
+        return stateList;
+    }
+
+    public static ColorStateList generateTextColor(int pressColor, int checkColor, int disableColor, int defaultColor) {
+        ColorStateList stateList = new ColorStateList(new int[][]{{-android.R.attr.state_enabled}, {android.R.attr.state_pressed}, {android.R.attr.state_checked}, {}},
+                new int[]{disableColor, pressColor, checkColor, defaultColor});
         return stateList;
     }
 
@@ -195,7 +202,8 @@ public class ResUtil {
         return bgStateDrawable;
     }
 
-    public static Drawable generateRoundBorderDrawable(float radii, float borderWidth, int pressColor, int defaultColor) {
+    public static Drawable generateRoundBorderDrawable(float radii, float borderWidth,
+                                                       int pressColor, int disableColor, int defaultColor) {
 
         //外环的圆角矩形,
         // 左上 右上   左下 右下
@@ -209,12 +217,17 @@ public class ResUtil {
         ShapeDrawable shopDrawablePress = new ShapeDrawable(roundRectShape);//圆角shape
         shopDrawablePress.getPaint().setColor(pressColor);//设置颜色
 
+        ShapeDrawable shopDrawableEnable = new ShapeDrawable(roundRectShape);
+        shopDrawableEnable.getPaint().setColor(disableColor);
+
         //正常状态
         Shape roundRectShapeNormal = new RoundRectShape(outRadii, inset, outRadii);
         ShapeDrawable shopDrawableNormal = new ShapeDrawable(roundRectShapeNormal);
         shopDrawableNormal.getPaint().setColor(defaultColor);
 
         StateListDrawable bgStateDrawable = new StateListDrawable();//状态shape
+        bgStateDrawable.addState(new int[]{-android.R.attr.state_enabled}, shopDrawableEnable);//按下状态
+        bgStateDrawable.addState(new int[]{android.R.attr.state_checked}, shopDrawablePress);//按下状态
         bgStateDrawable.addState(new int[]{android.R.attr.state_pressed}, shopDrawablePress);//按下状态
         bgStateDrawable.addState(new int[]{android.R.attr.state_focused}, shopDrawablePress);//焦点状态
         bgStateDrawable.addState(new int[]{}, shopDrawableNormal);//其他状态
@@ -222,9 +235,16 @@ public class ResUtil {
         return bgStateDrawable;
     }
 
-    public static Drawable generateRoundDrawable(float rL1, float rL2, float rT1, float rT2,
-                                                       float rR1, float rR2, float rB1, float rB2,
+    public static Drawable generateRoundBorderDrawable(float radii, float borderWidth,
                                                        int pressColor, int defaultColor) {
+
+        return generateRoundBorderDrawable(radii, borderWidth, pressColor,
+                ContextCompat.getColor(RApplication.getApp(), R.color.default_base_bg_disable2), defaultColor);
+    }
+
+    public static Drawable generateRoundDrawable(float rL1, float rL2, float rT1, float rT2,
+                                                 float rR1, float rR2, float rB1, float rB2,
+                                                 int pressColor, int defaultColor) {
         //外环的圆角矩形
         float[] outRadii = new float[]{rL1, rL2, rT1, rT2, rR1, rR2, rB1, rB2};//四个角的 圆角幅度,8个可以设置的值,每个角都有2个边 2*4=8个
 

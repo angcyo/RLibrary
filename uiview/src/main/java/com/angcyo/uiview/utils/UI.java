@@ -1,6 +1,7 @@
 package com.angcyo.uiview.utils;
 
 import android.content.Context;
+import android.graphics.drawable.Drawable;
 import android.support.annotation.DrawableRes;
 import android.support.v4.view.ViewCompat;
 import android.support.v7.widget.RecyclerView;
@@ -172,4 +173,30 @@ public class UI {
     public static void setCursorDrawableRes(TextView textView, @DrawableRes int res) {
         Reflect.setMember(TextView.class, textView, "mCursorDrawableRes", res);
     }
+
+    public static void setHorizontalTrackDrawable(View view, Drawable drawable) {
+        Object mScrollCache = Reflect.getMember(View.class, view, "mScrollCache");
+        Object scrollBar = Reflect.getMember(mScrollCache, "scrollBar");
+        Reflect.invokeMethod(scrollBar, "setHorizontalTrackDrawable", new Class<?>[]{Drawable.class}, drawable);
+    }
+
+    public static void setHorizontalThumbDrawable(View view, Drawable drawable) {
+        Object mScrollCache = Reflect.getMember(View.class, view, "mScrollCache");
+        Object scrollBar = Reflect.getMember(mScrollCache, "scrollBar");
+        Reflect.invokeMethod(scrollBar, "setHorizontalThumbDrawable", new Class<?>[]{Drawable.class}, drawable);
+    }
+
+    public static void setVerticalTrackDrawable(View view, Drawable drawable) {
+        Object mScrollCache = Reflect.getMember(View.class, view, "mScrollCache");
+        Object scrollBar = Reflect.getMember(mScrollCache, "scrollBar");
+        Reflect.invokeMethod(scrollBar, "setVerticalTrackDrawable", new Class<?>[]{Drawable.class}, drawable);
+    }
+
+    public static void setVerticalThumbDrawable(View view, Drawable drawable) {
+        Object mScrollCache = Reflect.getMember(View.class, view, "mScrollCache");
+        Object scrollBar = Reflect.getMember(mScrollCache, "scrollBar");
+        Reflect.invokeMethod(scrollBar, "setVerticalThumbDrawable", new Class<?>[]{Drawable.class}, drawable);
+    }
+
+
 }

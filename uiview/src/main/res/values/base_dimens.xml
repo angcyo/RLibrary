@@ -20,6 +20,7 @@
     <dimen name="default_text_little_size">12sp</dimen>
     <dimen name="default_text_size16">16sp</dimen>
     <dimen name="default_text_size9">9sp</dimen>
+    <dimen name="default_text_size8">8sp</dimen>
     <dimen name="default_text_size10">10sp</dimen>
     <dimen name="default_text_size18">18sp</dimen>
     <dimen name="default_text_size50">50sp</dimen>

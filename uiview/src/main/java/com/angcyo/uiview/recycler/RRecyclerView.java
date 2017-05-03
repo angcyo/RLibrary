@@ -159,6 +159,15 @@ public class RRecyclerView extends RecyclerView {
     }
 
     @Override
+    protected void onMeasure(int widthSpec, int heightSpec) {
+        super.onMeasure(widthSpec, heightSpec);
+        if (TextUtils.equals("aequilate", getContentDescription())) {
+            /**自动设置等宽的RecyclerView*/
+            setMeasuredDimension(getMeasuredWidth(), Math.min(getMeasuredWidth(), getMeasuredHeight()));
+        }
+    }
+
+    @Override
     protected void onSizeChanged(int w, int h, int oldw, int oldh) {
         super.onSizeChanged(w, h, oldw, oldh);
         ensureGlow(RRecyclerView.this, SkinHelper.getSkin().getThemeSubColor());

@@ -26,6 +26,7 @@ import com.angcyo.library.utils.L;
 import com.angcyo.uiview.base.UILayoutActivity;
 import com.angcyo.uiview.model.ViewPattern;
 import com.angcyo.uiview.resources.AnimUtil;
+import com.angcyo.uiview.rsen.RGestureDetector;
 import com.angcyo.uiview.skin.ISkin;
 import com.angcyo.uiview.view.ILifecycle;
 import com.angcyo.uiview.view.IView;
@@ -1223,6 +1224,17 @@ public class UILayoutImpl extends SwipeBackLayout implements ILayout<UIParam>, U
             dialogPattern.mView.setOnClickListener(new OnClickListener() {
                 @Override
                 public void onClick(View v) {
+                    if (dialogPattern.mIView.canCanceledOnOutside()) {
+                        finishIView(dialogPattern.mView);
+                    }
+                }
+            });
+        }
+
+        if (dialogPattern.mIView.canDoubleCancel()) {
+            RGestureDetector.onDoubleTap(dialogPattern.mView, new RGestureDetector.OnDoubleTapListener() {
+                @Override
+                public void onDoubleTap() {
                     if (dialogPattern.mIView.canCanceledOnOutside()) {
                         finishIView(dialogPattern.mView);
                     }

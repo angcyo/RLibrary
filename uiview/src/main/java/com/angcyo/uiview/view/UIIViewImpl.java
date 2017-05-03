@@ -627,6 +627,11 @@ public abstract class UIIViewImpl implements IView {
     }
 
     @Override
+    public boolean canDoubleCancel() {
+        return false;
+    }
+
+    @Override
     public void onSkinChanged(ISkin skin) {
         L.v(this.getClass().getSimpleName(), "onSkinChanged: " + skin.skinName());
         notifySkinChanged(mRootView, skin);

@@ -136,6 +136,11 @@ public interface IView {
     boolean canTouchOnOutside();
 
     /**
+     * 双击是否可以关闭对话框
+     */
+    boolean canDoubleCancel();
+
+    /**
      * 是否可以关闭对话框
      */
     boolean canCancel();

@@ -72,6 +72,15 @@ public class Reflect {
         return invokeMethod(clazz, methodName, methodName, params);
     }
 
+    public static Object invokeMethod(Object obj, String methodName, Class<?>[] paramTypes, Object... params) {
+        if (obj == null || TextUtils.isEmpty(methodName)) {
+            return null;
+        }
+
+        Class<?> clazz = obj.getClass();
+        return invokeMethod(clazz, obj, methodName, paramTypes, params);
+    }
+
     public static Object invokeMethod(Class<?> cls, Object obj, String methodName, Object... params) {
         if (obj == null || TextUtils.isEmpty(methodName)) {
             return null;
@@ -85,6 +94,22 @@ public class Reflect {
                     paramTypes[i] = params[i].getClass();
                 }
             }
+            Method method = cls.getDeclaredMethod(methodName, paramTypes);
+            method.setAccessible(true);
+            Object invoke = method.invoke(obj, params);
+            return invoke;
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
+
+    public static Object invokeMethod(Class<?> cls, Object obj, String methodName, Class<?>[] paramTypes, Object... params) {
+        if (obj == null || TextUtils.isEmpty(methodName)) {
+            return null;
+        }
+
+        try {
             Method method = cls.getDeclaredMethod(methodName, paramTypes);
             method.setAccessible(true);
             Object invoke = method.invoke(obj, params);

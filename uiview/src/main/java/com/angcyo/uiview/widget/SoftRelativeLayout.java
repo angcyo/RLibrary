@@ -35,6 +35,7 @@ public class SoftRelativeLayout extends RelativeLayout implements ILifecycle {
     boolean isViewShow = false;
     boolean mFitSystemWindow = false;
     ClipHelper mClipHelper;
+    OnInterceptTouchListener mOnInterceptTouchListener;
     private ArrayList<IWindowInsetsListener> mOnWindowInsetsListeners;
     private int[] mInsets = new int[4];
     /**
@@ -42,6 +43,8 @@ public class SoftRelativeLayout extends RelativeLayout implements ILifecycle {
      */
     private boolean lockHeight = false;//自动根据页面隐藏显示, 决定是否固定高度
     private boolean fixHeight = false;//固定高度
+    private boolean mInterceptKeyboard;//拦截touch down事件, 自动隐藏键盘
+    private boolean isTouchDown;
 
     public SoftRelativeLayout(Context context) {
         super(context);
@@ -77,6 +80,9 @@ public class SoftRelativeLayout extends RelativeLayout implements ILifecycle {
     protected void onAttachedToWindow() {
         super.onAttachedToWindow();
         setFitsSystemWindows(mFitSystemWindow);
+        setClickable(true);
+        setFocusable(true);
+        setFocusableInTouchMode(true);
 //        requestFocus();
     }
 
@@ -290,8 +296,34 @@ public class SoftRelativeLayout extends RelativeLayout implements ILifecycle {
 
     @Override
     public boolean onTouchEvent(MotionEvent event) {
-        super.onTouchEvent(event);
-        hideSoftInput();
+        //super.onTouchEvent(event);
+//        Object mListenerInfo = Reflect.getMember(View.class, this, "mListenerInfo");
+//        if (mListenerInfo != null) {
+//            Object mOnTouchListener = Reflect.getMember(mListenerInfo, "mOnTouchListener");
+//            if (mOnTouchListener != null) {
+//                ((OnTouchListener) mOnTouchListener).onTouch(this, event);
+//            }
+//        }
+
+        int action = event.getAction();
+        if (action == MotionEvent.ACTION_DOWN) {
+            isTouchDown = true;
+        } else if (action == MotionEvent.ACTION_UP) {
+            if (isTouchDown) {
+                performClick();
+            }
+            isTouchDown = false;
+        } else if (action == MotionEvent.ACTION_CANCEL) {
+            isTouchDown = false;
+        }
+
+        if (mOnInterceptTouchListener == null) {
+            hideSoftInput();
+        } else {
+            if (action == MotionEvent.ACTION_DOWN) {
+                mOnInterceptTouchListener.onTouchDown(event);
+            }
+        }
         return true;
     }
 
@@ -299,6 +331,15 @@ public class SoftRelativeLayout extends RelativeLayout implements ILifecycle {
     public boolean onInterceptTouchEvent(MotionEvent ev) {
         if (!isEnabled()) {
             return true;
+        }
+
+        if (ev.getAction() == MotionEvent.ACTION_DOWN) {
+            if (mInterceptKeyboard) {
+                hideSoftInput();
+            }
+            if (mOnInterceptTouchListener != null) {
+                mOnInterceptTouchListener.onInterceptTouchDown(ev);
+            }
         }
         boolean touchEvent = super.onInterceptTouchEvent(ev);
         return touchEvent;
@@ -332,5 +373,19 @@ public class SoftRelativeLayout extends RelativeLayout implements ILifecycle {
 
     public void startExitClip(ClipHelper.OnEndListener listener) {
         mClipHelper.startExitClip(listener);
+    }
+
+    public void setAutoInterceptKeyboard(boolean interceptKeyboard) {
+        mInterceptKeyboard = interceptKeyboard;
+    }
+
+    public void setOnInterceptTouchListener(OnInterceptTouchListener onInterceptTouchListener) {
+        mOnInterceptTouchListener = onInterceptTouchListener;
+    }
+
+    public interface OnInterceptTouchListener {
+        void onInterceptTouchDown(MotionEvent event);
+
+        void onTouchDown(MotionEvent event);
     }
 }
