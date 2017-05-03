@@ -27,6 +27,7 @@ import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
 import android.widget.TextView;
 
+import com.angcyo.library.utils.Anim;
 import com.angcyo.library.utils.L;
 import com.angcyo.uiview.R;
 import com.angcyo.uiview.RApplication;
@@ -681,6 +682,24 @@ public class ExEditText extends AppCompatEditText {
 
     private String createStringWithUserName(String id) {
         return "<m>" + id + "</m>";
+    }
+
+    @Override
+    public void setError(CharSequence error) {
+        super.setError(error);
+    }
+
+    @Override
+    public void setError(CharSequence error, Drawable icon) {
+        requestFocus();
+        super.setError(error, icon);
+    }
+
+    /**
+     * 错误提示
+     */
+    public void error() {
+        Anim.band(this);
     }
 
     public interface getIdFromUserName {

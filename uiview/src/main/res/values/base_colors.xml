@@ -9,6 +9,8 @@
     <color name="transparent">#00000000</color>
 
     <color name="base_red">#FC3C38</color>
+    <color name="base_dark_red">#E85757</color>
+    <color name="base_dark_red_tran">#80E85757</color>
     <color name="base_orange">#FD9C27</color>
     <color name="base_gray">#C7C7CD</color>
 

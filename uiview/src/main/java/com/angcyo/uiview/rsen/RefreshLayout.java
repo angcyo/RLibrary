@@ -298,6 +298,8 @@ public class RefreshLayout extends ViewGroup {
                         order = BOTTOM;
                         //L.e("call: onInterceptTouchEvent([event])-> 4");
                         return true;
+                    } else {
+                        return getScrollY() != 0;
                     }
                 }
             }
@@ -368,6 +370,10 @@ public class RefreshLayout extends ViewGroup {
      */
     private void handleTouchUp() {
         if (order == NONE) {
+            if (getScrollY() != 0 &&
+                    (mCurState == FINISH || mCurState == NORMAL)) {
+                resetScroll();
+            }
             return;
         }
 
