@@ -299,7 +299,12 @@ public class RefreshLayout extends ViewGroup {
                         //L.e("call: onInterceptTouchEvent([event])-> 4");
                         return true;
                     } else {
-                        return getScrollY() != 0;
+                        if (getScrollY() > 0 && dy > 0) {
+                            return true;
+                        }
+                        if (getScrollY() < 0 && dy < 0) {
+                            return true;
+                        }
                     }
                 }
             }

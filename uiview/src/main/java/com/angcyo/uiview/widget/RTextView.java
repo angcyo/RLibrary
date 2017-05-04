@@ -10,9 +10,11 @@ import android.support.annotation.ColorInt;
 import android.support.annotation.DrawableRes;
 import android.support.v7.widget.AppCompatTextView;
 import android.text.InputFilter;
+import android.text.Spannable;
 import android.text.SpannableStringBuilder;
 import android.text.Spanned;
 import android.text.TextUtils;
+import android.text.style.ForegroundColorSpan;
 import android.util.AttributeSet;
 
 import com.angcyo.uiview.R;
@@ -20,6 +22,8 @@ import com.angcyo.uiview.skin.SkinHelper;
 import com.angcyo.uiview.utils.Reflect;
 
 import java.util.Locale;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 /**
  * 通过Tag属性, 得到text格式化模板, 然后重写setText实现格式化
@@ -42,6 +46,7 @@ public class RTextView extends AppCompatTextView {
 
     boolean isAttached = false;
     private Drawable mBackgroundDrawable;
+    private CharSequence mRawText;
 
     public RTextView(Context context) {
         this(context, null);
@@ -131,11 +136,17 @@ public class RTextView extends AppCompatTextView {
      */
     private void setTextEx(CharSequence text, BufferType type) {
         if (TextUtils.isEmpty(text)) {
-            super.setText(text, type);
+            setSuperText(text, type);
             return;
         }
 
-        SpannableStringBuilder spanBuilder = new SpannableStringBuilder(text);
+        SpannableStringBuilder spanBuilder;
+        if (text instanceof SpannableStringBuilder) {
+            spanBuilder = (SpannableStringBuilder) text;
+        } else {
+            spanBuilder = new SpannableStringBuilder(text);
+        }
+
         if (getMaxLines() == 1 && getEllipsize() == TextUtils.TruncateAt.END) {
 
             int maxLength = Integer.MAX_VALUE;
@@ -147,12 +158,25 @@ public class RTextView extends AppCompatTextView {
             }
 
             if (text.length() > maxLength) {
-                spanBuilder.setSpan(new RExTextView.ImageTextSpan(getContext(), getTextSize(), getCurrentTextColor(), "..."),
-                        maxLength - 3, maxLength, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
+                spanBuilder.setSpan(new RExTextView.ImageTextSpan(getContext(), getTextSize(),
+                                getTextColors().getColorForState(new int[]{}, getTextColors().getDefaultColor()), "..."),
+                        maxLength - 3/*兼容末尾是emoji表情*/, text.length(), Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
             }
         }
 
-        super.setText(spanBuilder, type);
+        setSuperText(spanBuilder, type);
+    }
+
+    private void setSuperText(CharSequence text, BufferType type) {
+        mRawText = text;
+        super.setText(text, type);
+    }
+
+    /**
+     * 没有被折叠的文本
+     */
+    public CharSequence getRawText() {
+        return mRawText;
     }
 
     public void addFilter(InputFilter filter) {
@@ -163,6 +187,9 @@ public class RTextView extends AppCompatTextView {
         setFilters(newFilters);
     }
 
+    /**
+     * 需要预留3个'...'字符的数量
+     */
     public void setMaxLength(int length) {
         InputFilter[] filters = getFilters();
         boolean have = false;
@@ -179,6 +206,10 @@ public class RTextView extends AppCompatTextView {
         if (!have) {
             addFilter(lengthFilter);
         }
+
+        setMaxLines(1);
+        //setSingleLine();
+        setEllipsize(TextUtils.TruncateAt.END);
     }
 
     public void setText(Object... args) {
@@ -268,5 +299,35 @@ public class RTextView extends AppCompatTextView {
 //        if (isAttached) {
 //            postInvalidate();
 //        }
+    }
+
+    /**
+     * 设置高亮的关键字
+     */
+    public void setHighlightWord(String word) {
+        CharSequence text = getText();
+        if (TextUtils.isEmpty(text) || TextUtils.isEmpty(word)) {
+            return;
+        }
+
+        SpannableStringBuilder builder;
+        if (text instanceof SpannableStringBuilder) {
+            builder = (SpannableStringBuilder) text;
+        } else {
+            builder = new SpannableStringBuilder(text);
+        }
+
+        Matcher matcher = Pattern.compile(word).matcher(text);
+
+        while (matcher.find()) {
+            int start = matcher.start();
+            int end = matcher.end();
+            //CharSequence text = matcher.group();//input.subSequence(start, end);
+
+            builder.setSpan(new ForegroundColorSpan(SkinHelper.getSkin().getThemeSubColor()),
+                    start, end, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
+        }
+
+        setTextEx(builder, BufferType.NORMAL);
     }
 }

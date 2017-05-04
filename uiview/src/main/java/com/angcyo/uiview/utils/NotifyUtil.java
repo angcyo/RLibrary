@@ -14,6 +14,8 @@ import android.support.v7.app.NotificationCompat;
 import android.widget.RemoteViews;
 import android.widget.Toast;
 
+import com.angcyo.uiview.RApplication;
+
 import java.util.ArrayList;
 
 /**
@@ -31,7 +33,6 @@ public class NotifyUtil {
     private Notification.Builder nBuilder;
     private Context mContext;
 
-
     public NotifyUtil(Context context, int ID) {
         this.NOTIFICATION_ID = ID;
         mContext = context;
@@ -39,6 +40,13 @@ public class NotifyUtil {
         nm = (NotificationManager) mContext
                 .getSystemService(Activity.NOTIFICATION_SERVICE);
         cBuilder = new NotificationCompat.Builder(mContext);
+    }
+
+    /**
+     * 构建一个Notify
+     */
+    public static NotifyUtil build(int ID) {
+        return new NotifyUtil(RApplication.getApp(), ID);
     }
 
     public static void clear(Context context) {
