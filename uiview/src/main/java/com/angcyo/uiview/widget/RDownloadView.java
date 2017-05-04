@@ -9,7 +9,6 @@ import android.graphics.drawable.Drawable;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.widget.AppCompatImageView;
 import android.util.AttributeSet;
-import android.view.View;
 
 import com.angcyo.uiview.R;
 import com.angcyo.uiview.skin.SkinHelper;
@@ -75,13 +74,6 @@ public class RDownloadView extends AppCompatImageView implements Runnable {
 //        mPaint.setStrokeJoin(Paint.Join.ROUND);//设置连接模式, 在绘制矩形各个角的时候有效果
 
         oval = new RectF();
-
-        setOnClickListener(new OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                setDownloadState(DownloadState.DOWNING);
-            }
-        });
     }
 
     @Override

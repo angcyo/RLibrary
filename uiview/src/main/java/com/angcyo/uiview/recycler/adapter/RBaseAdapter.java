@@ -61,7 +61,7 @@ public abstract class RBaseAdapter<T> extends RecyclerView.Adapter<RBaseViewHold
         return list.size();
     }
 
-    public RBaseAdapter setLoadMoreListener(OnAdapterLoadMoreListener loadMoreListener) {
+    public RBaseAdapter setOnLoadMoreListener(OnAdapterLoadMoreListener loadMoreListener) {
         mLoadMoreListener = loadMoreListener;
         return this;
     }

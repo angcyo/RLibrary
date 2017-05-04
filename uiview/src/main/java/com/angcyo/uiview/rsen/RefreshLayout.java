@@ -677,7 +677,7 @@ public class RefreshLayout extends ViewGroup {
         return this;
     }
 
-    public RefreshLayout addRefreshListener(OnRefreshListener listener) {
+    public RefreshLayout addOnRefreshListener(OnRefreshListener listener) {
         mRefreshListeners.add(listener);
         return this;
     }

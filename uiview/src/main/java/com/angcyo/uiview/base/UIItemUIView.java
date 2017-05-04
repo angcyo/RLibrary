@@ -117,7 +117,7 @@ public abstract class UIItemUIView<T extends Item> extends UIRecyclerUIView<Stri
         mSoftInputLayout = new RSoftInputLayout(mActivity);
         RefreshLayout refreshLayout = new RefreshLayout(mActivity);
         refreshLayout.setRefreshDirection(RefreshLayout.TOP);
-        refreshLayout.addRefreshListener(this);
+        refreshLayout.addOnRefreshListener(this);
         mSoftInputLayout.addView(refreshLayout, new ViewGroup.LayoutParams(-1, -1));
         baseContentLayout.addView(mSoftInputLayout, new ViewGroup.LayoutParams(-1, -1));
         return refreshLayout;

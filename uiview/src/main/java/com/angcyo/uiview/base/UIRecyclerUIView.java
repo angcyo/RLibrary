@@ -117,7 +117,7 @@ public class UIRecyclerUIView<H, T, F> extends UIContentView
         recyclerView.setAdapter(mExBaseAdapter);
 
         if (mExBaseAdapter != null) {
-            mExBaseAdapter.setLoadMoreListener(this);
+            mExBaseAdapter.setOnLoadMoreListener(this);
         }
 
         if (mRefreshLayout == null) {
@@ -143,7 +143,7 @@ public class UIRecyclerUIView<H, T, F> extends UIContentView
     protected RefreshLayout createRefreshLayout(RelativeLayout baseContentLayout, LayoutInflater inflater) {
         RefreshLayout refreshLayout = new RefreshLayout(mActivity);
         refreshLayout.setRefreshDirection(RefreshLayout.TOP);
-        refreshLayout.addRefreshListener(this);
+        refreshLayout.addOnRefreshListener(this);
         baseContentLayout.addView(refreshLayout, new ViewGroup.LayoutParams(-1, -1));
         return refreshLayout;
     }
