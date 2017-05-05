@@ -28,4 +28,5 @@
     <integer name="max_video_record_length">30</integer>
     <!--最大标签选中数量-->
     <integer name="max_tags_count">3</integer>
+    <integer name="max_music_name_show_count">20</integer>
 </resources>

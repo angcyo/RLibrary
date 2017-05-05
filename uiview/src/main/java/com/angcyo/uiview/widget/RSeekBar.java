@@ -217,6 +217,10 @@ public class RSeekBar extends View {
         mOnProgressChangeListeners.remove(listener);
     }
 
+    public int getCurProgress() {
+        return curProgress;
+    }
+
     public interface OnProgressChangeListener {
         void onProgress(int progress);
     }
