@@ -93,10 +93,6 @@ public class RSeekBar extends View {
         curProgress = typedArray.getInteger(R.styleable.RSeekBar_r_cur_progress, curProgress);
         curProgress = ensureProgress(curProgress);
 
-        if (curProgress != 0) {
-            notifyListener();
-        }
-
         typedArray.recycle();
 
         initView();
@@ -106,6 +102,14 @@ public class RSeekBar extends View {
         mPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
 
         mRectF = new RectF();
+    }
+
+    @Override
+    protected void onAttachedToWindow() {
+        super.onAttachedToWindow();
+        if (curProgress != 0) {
+            notifyListener();
+        }
     }
 
     @Override
