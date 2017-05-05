@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <declare-styleable name="RSeekBar">
+        <attr name="r_cur_progress" format="integer"/>
+        <attr name="r_track_color" format="color"/>
+        <attr name="r_track_bg_color" format="color"/>
+        <attr name="r_thumb_color" format="color"/>
+        <attr name="r_thumb_width" format="dimension"/>
+        <attr name="r_thumb_height" format="dimension"/>
+        <attr name="r_thumb_round_size" format="dimension"/>
+        <attr name="r_track_height" format="dimension"/>
+    </declare-styleable>
+</resources>

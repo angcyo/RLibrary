@@ -1,6 +1,7 @@
 package com.angcyo.uiview.widget;
 
 import android.content.Context;
+import android.content.res.TypedArray;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
@@ -9,6 +10,8 @@ import android.support.v4.view.MotionEventCompat;
 import android.util.AttributeSet;
 import android.view.MotionEvent;
 import android.view.View;
+
+import com.angcyo.uiview.R;
 
 import java.util.HashSet;
 import java.util.Set;
@@ -66,10 +69,8 @@ public class RSeekBar extends View {
 
     public RSeekBar(Context context, AttributeSet attrs, int defStyleAttr) {
         super(context, attrs, defStyleAttr);
-        initView();
-    }
 
-    private void initView() {
+        TypedArray typedArray = context.obtainStyledAttributes(attrs, R.styleable.RSeekBar);
         mDensity = getResources().getDisplayMetrics().density;
 
         mTrackBgColor = Color.parseColor("#cccccc");
@@ -81,6 +82,24 @@ public class RSeekBar extends View {
         mThumbHeight = (int) (10 * mDensity);
         mThumbWidth = (int) (20 * mDensity);
         mThumbRoundSize = (int) (10 * mDensity);
+
+        mTrackBgColor = typedArray.getColor(R.styleable.RSeekBar_r_track_bg_color, mTrackBgColor);
+        mTrackColor = typedArray.getColor(R.styleable.RSeekBar_r_track_color, mTrackColor);
+
+        mTrackHeight = typedArray.getDimensionPixelOffset(R.styleable.RSeekBar_r_track_height, mTrackHeight);
+        mThumbHeight = typedArray.getDimensionPixelOffset(R.styleable.RSeekBar_r_thumb_height, mThumbHeight);
+        mThumbWidth = typedArray.getDimensionPixelOffset(R.styleable.RSeekBar_r_thumb_width, mThumbWidth);
+        mThumbRoundSize = typedArray.getDimensionPixelOffset(R.styleable.RSeekBar_r_thumb_round_size, mThumbRoundSize);
+        curProgress = typedArray.getInteger(R.styleable.RSeekBar_r_cur_progress, curProgress);
+        curProgress = ensureProgress(curProgress);
+
+        typedArray.recycle();
+
+        initView();
+    }
+
+    private void initView() {
+
 
         mPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
 
@@ -168,7 +187,7 @@ public class RSeekBar extends View {
         float x = touchX - getPaddingLeft() - mThumbWidth / 2;
         int old = this.curProgress;
         if (x > 0) {
-            this.curProgress = Math.max(0, Math.min(100, (int) (x / getMaxLength() * 100)));
+            this.curProgress = ensureProgress((int) (x / getMaxLength() * 100));
             if (old != curProgress) {
                 for (OnProgressChangeListener listener : mOnProgressChangeListeners) {
                     listener.onProgress(curProgress);
@@ -176,6 +195,10 @@ public class RSeekBar extends View {
             }
             postInvalidate();
         }
+    }
+
+    private int ensureProgress(int progress) {
+        return Math.max(0, Math.min(100, progress));
     }
 
     public void addOnProgressChangeListener(OnProgressChangeListener listener) {
