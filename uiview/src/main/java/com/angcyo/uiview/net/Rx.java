@@ -130,6 +130,10 @@ public class Rx<Rx> extends Observable<Rx> {
                                         //请求成功
                                         String data = jsonObject.getString("data");
                                         if (!TextUtils.isEmpty(data)) {
+                                            if (type == String.class) {
+                                                bean = (T) data;
+                                                return bean;
+                                            }
                                             bean = Json.from(data, type);
                                             return bean;
                                         }
@@ -196,9 +200,7 @@ public class Rx<Rx> extends Observable<Rx> {
                                     }
                                 } catch (JSONException | IOException e) {
                                     e.printStackTrace();
-                                    //throw new RException(-1000, "服务器数据异常.", e.getMessage());
                                 }
-                                //throw new NullPointerException("无数据.");
                                 return null;
                             }
                         })
