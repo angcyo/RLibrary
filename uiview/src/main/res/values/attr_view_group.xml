@@ -6,4 +6,8 @@
         <attr name="r_background"/>
     </declare-styleable>
 
+    <declare-styleable name="RRelativeLayout">
+        <attr name="r_background"/>
+    </declare-styleable>
+
 </resources>
