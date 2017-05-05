@@ -38,7 +38,7 @@ public class RDownloadView extends AppCompatImageView implements Runnable {
     /**
      * 不明确的进度
      */
-    boolean indeterminate = false;
+    boolean indeterminate = true;
     private float mStrokeWidth;
 
     private int startAngle = -90;

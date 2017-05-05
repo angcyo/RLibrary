@@ -9,12 +9,16 @@ import android.graphics.Paint;
 import android.graphics.Rect;
 import android.graphics.Shader;
 import android.os.Build;
+import android.support.v4.content.ContextCompat;
 import android.support.v4.view.ViewCompat;
 import android.support.v4.widget.ViewDragHelper;
 import android.util.AttributeSet;
 import android.view.MotionEvent;
 import android.view.View;
 import android.widget.FrameLayout;
+
+import com.angcyo.uiview.R;
+import com.angcyo.uiview.utils.ScreenUtil;
 
 /**
  * 支持滑动退出的父布局
@@ -24,6 +28,7 @@ import android.widget.FrameLayout;
 public abstract class SwipeBackLayout extends FrameLayout {
 
     protected int mViewDragState = ViewDragHelper.STATE_IDLE;
+    Paint mStatusPaint;
     private ViewDragHelper mDragHelper;
     private OnPanelSlideListener mListener;
     private int mScreenWidth;
@@ -141,7 +146,7 @@ public abstract class SwipeBackLayout extends FrameLayout {
         }
 
     };
-
+    private boolean mDimStatusBar = false;
 
     public SwipeBackLayout(Context context) {
         super(context);
@@ -188,6 +193,9 @@ public abstract class SwipeBackLayout extends FrameLayout {
         mDimRect = new Rect();
         mPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
         dimWidth = (int) (20 * getResources().getDisplayMetrics().density);
+
+        //状态栏遮罩
+        setDimStatusBar(false);
     }
 
     @Override
@@ -199,6 +207,15 @@ public abstract class SwipeBackLayout extends FrameLayout {
             mPaint.setShader(new LinearGradient(mDimRect.left, 0, mDimRect.right, 0,
                     new int[]{Color.TRANSPARENT, Color.parseColor("#40000000")}, null, Shader.TileMode.CLAMP));
             canvas.drawRect(mDimRect, mPaint);
+        }
+
+        if (mDimStatusBar &&
+                getMeasuredHeight() == ScreenUtil.screenHeight) {
+            canvas.drawRect(0, 0,
+                    getMeasuredWidth(),
+                    getResources().getDimensionPixelOffset(R.dimen.status_bar_height),
+                    mStatusPaint
+            );
         }
     }
 
@@ -331,6 +348,17 @@ public abstract class SwipeBackLayout extends FrameLayout {
      */
     protected void onStateIdle() {
 
+    }
+
+    /**
+     * 状态栏是否变暗, 5.0以上有效
+     */
+    public void setDimStatusBar(boolean dim) {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+            mDimStatusBar = dim;
+            mStatusPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
+            mStatusPaint.setColor(ContextCompat.getColor(getContext(), R.color.base_status_bar_dim));
+        }
     }
 
     protected void onViewDragStateChanged(int state) {

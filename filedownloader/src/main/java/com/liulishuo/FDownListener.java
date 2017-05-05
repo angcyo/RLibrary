@@ -15,7 +15,7 @@ import com.liulishuo.filedownloader.FileDownloadSampleListener;
  * 修改备注：
  * Version: 1.0.0
  */
-public class FDownListener extends FileDownloadSampleListener {
+public abstract class FDownListener extends FileDownloadSampleListener {
 
     /**
      * 1:
@@ -23,6 +23,7 @@ public class FDownListener extends FileDownloadSampleListener {
     @Override
     protected void pending(BaseDownloadTask task, int soFarBytes, int totalBytes) {
         super.pending(task, soFarBytes, totalBytes);
+        L.d("call: pending([task, soFarBytes, totalBytes])-> soFarBytes:" + soFarBytes + " totalBytes:" + totalBytes);
     }
 
     /**
@@ -114,13 +115,14 @@ public class FDownListener extends FileDownloadSampleListener {
      * 下载进度
      */
     protected void onProgress(BaseDownloadTask task, int soFarBytes, int totalBytes, String scale /*80% 比例*/) {
-        L.i("下载进度:" + task.getUrl() + " -> total:" + totalBytes + " :" + scale);
+        //L.d("下载进度:" + task.getUrl() + " -> total:" + totalBytes + " :" + scale);
     }
 
     /**
      * 下载失败
      */
     protected void onError(BaseDownloadTask task, Throwable e) {
-        L.e("下载失败:" + task.getUrl() + " ->" + e.getMessage());
+        L.e("下载失败:" + task.getUrl());
+        e.printStackTrace();
     }
 }

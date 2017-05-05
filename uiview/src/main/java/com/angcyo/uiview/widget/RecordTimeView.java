@@ -52,6 +52,12 @@ public class RecordTimeView extends RTextView {
         super(context, attrs, defStyleAttr);
     }
 
+    public static String formatMMSS(long time) {
+        long s = time % 60;
+        long m = time / 60;
+        return String.format(Locale.CHINA, "%02d:%02d", m, s);
+    }
+
     @Override
     protected void onAttachedToWindow() {
         super.onAttachedToWindow();
@@ -72,15 +78,12 @@ public class RecordTimeView extends RTextView {
     private void setTime(long time) {
         mTime = time;
 
-        long s = mTime % 60;
-        long m = mTime / 60;
-
         if (isRecording) {
             setTextColor(ContextCompat.getColor(getContext(), R.color.base_dark_red));
         } else {
             setTextColor(ContextCompat.getColor(getContext(), R.color.base_text_color_dark));
         }
-        setText(String.format(Locale.CHINA, "%02d:%02d", m, s));
+        setText(formatMMSS(time));
     }
 
     /**

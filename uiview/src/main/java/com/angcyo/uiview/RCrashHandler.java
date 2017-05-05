@@ -19,6 +19,8 @@ import android.os.StatFs;
 import android.text.format.Formatter;
 import android.util.Log;
 
+import com.angcyo.library.utils.L;
+
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.File;
@@ -468,20 +470,23 @@ public class RCrashHandler implements Thread.UncaughtExceptionHandler {
 //        boolean isShow = false;
         ex.printStackTrace();
 
-        try {
-            Class<? extends Activity> restartClass = getRestartActivityClassWithIntentFilter(context);
-            if (restartClass != null) {
-                Intent intent = new Intent(context, restartClass);
-                intent.addFlags(getStartIntentFlags());
-                Bundle args = new Bundle();
-                args.putString("msg", getMsgFromThrowable(ex));
-                intent.putExtras(args);
-                context.startActivity(intent);
+        if (!L.LOG_DEBUG) {
+            try {
+                Class<? extends Activity> restartClass = getRestartActivityClassWithIntentFilter(context);
+                if (restartClass != null) {
+                    Intent intent = new Intent(context, restartClass);
+                    intent.addFlags(getStartIntentFlags());
+                    Bundle args = new Bundle();
+                    args.putString("msg", getMsgFromThrowable(ex));
+                    intent.putExtras(args);
+                    context.startActivity(intent);
 //                isShow = true;
+                }
+            } catch (Exception e) {
+                e.printStackTrace();
             }
-        } catch (Exception e) {
-            e.printStackTrace();
         }
+
 
         try {
             saveToSDCard(ex);
@@ -516,7 +521,7 @@ public class RCrashHandler implements Thread.UncaughtExceptionHandler {
 
     private void saveToSDCard(Throwable ex) throws Exception {
         String saveFolder = Environment.getExternalStorageDirectory().getAbsoluteFile() +
-                File.separator + "DValley" + File.separator + DEFAULT_LOG_DIR;
+                File.separator + Root.APP_FOLDER + File.separator + DEFAULT_LOG_DIR;
         File folder = new File(saveFolder);
         if (!folder.exists()) {
             if (!folder.mkdirs()) {

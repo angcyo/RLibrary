@@ -696,6 +696,15 @@ public class ExEditText extends AppCompatEditText {
     }
 
     /**
+     * 设置文本, 并且自动获取焦点和自动选择到最后
+     */
+    public void setExText(CharSequence text) {
+        requestFocus();
+        setText(text);
+        setSelection(TextUtils.isEmpty(text) ? 0 : text.length());
+    }
+
+    /**
      * 错误提示
      */
     public void error() {

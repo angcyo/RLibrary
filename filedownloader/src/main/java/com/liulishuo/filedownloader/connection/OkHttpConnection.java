@@ -110,5 +110,7 @@ public class OkHttpConnection implements FileDownloadConnection {
     @Override
     public void ending() {
         Log.e("", "ending");
+        mRequest = null;
+        mResponse = null;
     }
 }

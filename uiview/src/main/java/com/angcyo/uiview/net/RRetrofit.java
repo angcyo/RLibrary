@@ -5,6 +5,7 @@ import android.os.Environment;
 import com.angcyo.library.utils.L;
 import com.angcyo.uiview.RApplication;
 import com.angcyo.uiview.RCrashHandler;
+import com.angcyo.uiview.Root;
 import com.angcyo.uiview.github.utilcode.utils.NetworkUtils;
 import com.angcyo.uiview.net.cookie.CookieJarImpl;
 import com.angcyo.uiview.net.cookie.store.PersistentCookieStore;
@@ -172,7 +173,7 @@ public class RRetrofit {
      */
     public static void saveToSDCard(String data) throws Exception {
         String saveFolder = Environment.getExternalStorageDirectory().getAbsoluteFile() +
-                File.separator + "DValley" + File.separator + "log";
+                File.separator + Root.APP_FOLDER + File.separator + "log";
         File folder = new File(saveFolder);
         if (!folder.exists()) {
             if (!folder.mkdirs()) {

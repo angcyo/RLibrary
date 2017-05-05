@@ -7,6 +7,7 @@
     <color name="theme_color_primary_dark_tran3">#400BD1A0</color>
     <color name="theme_color_accent">#0BD1A0</color>
     <color name="transparent">#00000000</color>
+    <color name="base_status_bar_dim">#20000000</color>
 
     <color name="base_red">#FC3C38</color>
     <color name="base_dark_red">#E85757</color>
@@ -35,6 +36,7 @@
     <color name="default_base_bg_dark">#333333</color>
     <color name="default_base_bg_dark2">#F0F0F5</color>
     <color name="default_base_white">#ffffff</color>
+    <color name="base_white">#ffffff</color>
     <color name="default_base_white_tran">#80ffffff</color>
     <color name="default_base_white_dark">#C0FBEC</color>
 

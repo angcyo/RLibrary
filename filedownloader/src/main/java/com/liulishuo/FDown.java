@@ -8,6 +8,7 @@ import com.liulishuo.filedownloader.FileDownloadQueueSet;
 import com.liulishuo.filedownloader.FileDownloader;
 import com.liulishuo.filedownloader.connection.FileDownloadUrlConnection;
 import com.liulishuo.filedownloader.services.DownloadMgrInitialParams;
+import com.liulishuo.filedownloader.util.FileDownloadLog;
 import com.liulishuo.filedownloader.util.FileDownloadUtils;
 
 import java.io.File;
@@ -39,7 +40,11 @@ public class FDown {
 
     }
 
-    public static void init(Context context) {
+    public static void unInit() {
+        FileDownloader.getImpl().unBindServiceIfIdle();
+    }
+
+    public static void init(Context context, boolean debug) {
         /**
          * just for cache Application's Context, and ':filedownloader' progress will NOT be launched
          * by below code, so please do not worry about performance.
@@ -54,7 +59,16 @@ public class FDown {
                         .proxy(Proxy.NO_PROXY) // set proxy
                 )));
 
+        FileDownloadLog.NEED_LOG = debug;
+
+        checkServiceConnect();
         //FileDownloader.getImpl().setMaxNetworkThreadCount(3);
+    }
+
+    private static void checkServiceConnect() {
+        if (!FileDownloader.getImpl().isServiceConnected()) {
+            FileDownloader.getImpl().bindService();
+        }
     }
 
     public static Builder build(String url) {
@@ -77,6 +91,33 @@ public class FDown {
      */
     public static int generateId(final String url, final String path) {
         return FileDownloadUtils.generateId(url, path);
+    }
+
+
+    /**
+     * @see com.liulishuo.filedownloader.model.FileDownloadStatus#INVALID_STATUS    0
+     * @see com.liulishuo.filedownloader.model.FileDownloadStatus#pending           1
+     * @see com.liulishuo.filedownloader.model.FileDownloadStatus#connected         2
+     * @see com.liulishuo.filedownloader.model.FileDownloadStatus#progress          3
+     * @see com.liulishuo.filedownloader.model.FileDownloadStatus#blockComplete     4
+     * @see com.liulishuo.filedownloader.model.FileDownloadStatus#retry             5
+     * @see com.liulishuo.filedownloader.model.FileDownloadStatus#started           6
+     * <p/>
+     * @see com.liulishuo.filedownloader.model.FileDownloadStatus#error             -1
+     * @see com.liulishuo.filedownloader.model.FileDownloadStatus#paused            -2
+     * @see com.liulishuo.filedownloader.model.FileDownloadStatus#completed         -3
+     * @see com.liulishuo.filedownloader.model.FileDownloadStatus#warn              -4
+     */
+    public static int getStatus(final String url, final String path) {
+        return FileDownloader.getImpl().getStatus(url, path);
+    }
+
+    public static int getStatusIgnoreCompleted(final int id) {
+        return FileDownloader.getImpl().getStatusIgnoreCompleted(id);
+    }
+
+    public static int getStatusIgnoreCompleted(final String url, final String path) {
+        return FileDownloader.getImpl().getStatusIgnoreCompleted(generateId(url, path));
     }
 
     /**
@@ -127,6 +168,7 @@ public class FDown {
         String url;
         String fullPath;
         Object tag;
+        boolean isForceReDownload;
 
         private Builder(String url) {
             this.url = url;
@@ -145,6 +187,11 @@ public class FDown {
             return this;
         }
 
+        public Builder setForceReDownload(boolean forceReDownload) {
+            isForceReDownload = forceReDownload;
+            return this;
+        }
+
         /**
          * @return 返回任务id, 可以用来取消下载
          */
@@ -154,8 +201,9 @@ public class FDown {
                     .setCallbackProgressTimes(mCallbackProgressTimes)/**每隔多少毫秒回调一次进度*/
                     .setMinIntervalUpdateSpeed(mCallbackProgressMinIntervalMillis)/**每隔多少毫秒回调一次速度*/
                     .setTag(tag)/**附加对象*/
-                    .setListener(listener).start();
-
+                    .setForceReDownload(isForceReDownload)/**如果文件存在是否重新下载*/
+                    .setListener(listener)
+                    .start();
         }
     }
 }

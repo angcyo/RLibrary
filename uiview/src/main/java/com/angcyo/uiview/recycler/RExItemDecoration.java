@@ -1,6 +1,8 @@
 package com.angcyo.uiview.recycler;
 
+import android.content.Context;
 import android.graphics.Canvas;
+import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.Rect;
 import android.support.v4.content.ContextCompat;
@@ -244,9 +246,37 @@ public class RExItemDecoration extends RecyclerView.ItemDecoration {
 
         @Override
         public void draw(Canvas canvas, TextPaint paint, View itemView, Rect offsetRect, int itemCount, int position) {
-            paint.setColor(ContextCompat.getColor(itemView.getContext(), R.color.base_chat_bg_color));
+            drawTopLine(canvas, paint, itemView, offsetRect, itemCount, position);
+        }
+
+        /**
+         * 简单的在顶部绘制一根线
+         */
+        protected void drawTopLine(Canvas canvas, TextPaint paint, View itemView, Rect offsetRect, int itemCount, int position) {
+            paint.setColor(getPaintColor(itemView.getContext()));
             offsetRect.set(0, itemView.getTop() - offsetRect.top, itemView.getRight(), itemView.getTop());
             canvas.drawRect(offsetRect, paint);
+        }
+
+        /**
+         * 在左边绘制一个偏移距离的线
+         */
+        protected void drawLeftTopLine(Canvas canvas, TextPaint paint, View itemView, Rect offsetRect, int itemCount, int position) {
+            paint.setColor(getOffsetPaintColor(itemView.getContext()));
+            offsetRect.set(0, itemView.getTop() - offsetRect.top, getLeftOffset(itemView.getContext()), itemView.getTop());
+            canvas.drawRect(offsetRect, paint);
+        }
+
+        protected int getPaintColor(Context context) {
+            return ContextCompat.getColor(context, R.color.base_chat_bg_color);
+        }
+
+        protected int getOffsetPaintColor(Context context) {
+            return Color.WHITE;
+        }
+
+        protected int getLeftOffset(Context context) {
+            return context.getResources().getDimensionPixelOffset(R.dimen.base_xhdpi);
         }
     }
 }
