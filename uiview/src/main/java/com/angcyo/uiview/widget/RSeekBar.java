@@ -99,8 +99,6 @@ public class RSeekBar extends View {
     }
 
     private void initView() {
-
-
         mPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
 
         mRectF = new RectF();
@@ -186,15 +184,13 @@ public class RSeekBar extends View {
     private void calcProgress(float touchX) {
         float x = touchX - getPaddingLeft() - mThumbWidth / 2;
         int old = this.curProgress;
-        if (x > 0) {
-            this.curProgress = ensureProgress((int) (x / getMaxLength() * 100));
-            if (old != curProgress) {
-                for (OnProgressChangeListener listener : mOnProgressChangeListeners) {
-                    listener.onProgress(curProgress);
-                }
+        this.curProgress = ensureProgress((int) (x / getMaxLength() * 100));
+        if (old != curProgress) {
+            for (OnProgressChangeListener listener : mOnProgressChangeListeners) {
+                listener.onProgress(curProgress);
             }
-            postInvalidate();
         }
+        postInvalidate();
     }
 
     private int ensureProgress(int progress) {
