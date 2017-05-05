@@ -93,6 +93,10 @@ public class RSeekBar extends View {
         curProgress = typedArray.getInteger(R.styleable.RSeekBar_r_cur_progress, curProgress);
         curProgress = ensureProgress(curProgress);
 
+        if (curProgress != 0) {
+            notifyListener();
+        }
+
         typedArray.recycle();
 
         initView();
@@ -186,11 +190,15 @@ public class RSeekBar extends View {
         int old = this.curProgress;
         this.curProgress = ensureProgress((int) (x / getMaxLength() * 100));
         if (old != curProgress) {
-            for (OnProgressChangeListener listener : mOnProgressChangeListeners) {
-                listener.onProgress(curProgress);
-            }
+            notifyListener();
         }
         postInvalidate();
+    }
+
+    private void notifyListener() {
+        for (OnProgressChangeListener listener : mOnProgressChangeListeners) {
+            listener.onProgress(curProgress);
+        }
     }
 
     private int ensureProgress(int progress) {
