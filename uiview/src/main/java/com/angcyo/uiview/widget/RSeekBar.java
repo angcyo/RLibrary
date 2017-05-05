@@ -5,8 +5,13 @@ import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.RectF;
+import android.support.v4.view.MotionEventCompat;
 import android.util.AttributeSet;
+import android.view.MotionEvent;
 import android.view.View;
+
+import java.util.HashSet;
+import java.util.Set;
 
 /**
  * Copyright (C) 2016,深圳市红鸟网络科技股份有限公司 All rights reserved.
@@ -44,9 +49,10 @@ public class RSeekBar extends View {
     int mThumbRoundSize;
     Paint mPaint;
     /**
-     * 当前进度
+     * 当前进度(0-100)
      */
-    int curPorgress = 0;
+    int curProgress = 0;
+    Set<OnProgressChangeListener> mOnProgressChangeListeners = new HashSet<>();
     private float mDensity;
     private RectF mRectF;
 
@@ -111,7 +117,8 @@ public class RSeekBar extends View {
 
         //绘制轨道
         mPaint.setColor(mTrackColor);
-        canvas.drawRect(trackLeft, trackTop, trackRight, trackBottom, mPaint);
+        canvas.drawRect(trackLeft, trackTop,
+                trackLeft + curProgress / 100f * getMaxLength(), trackBottom, mPaint);
 
         //绘制浮子
         mPaint.setColor(mThumbColor);
@@ -119,9 +126,68 @@ public class RSeekBar extends View {
         canvas.drawRoundRect(mRectF, mThumbRoundSize, mThumbRoundSize, mPaint);
     }
 
+    /**
+     * 允许移动的最大距离
+     */
+    private int getMaxLength() {
+        return getMeasuredWidth() - getPaddingLeft() - getPaddingRight() - mThumbWidth;
+    }
+
     private void updateProgress() {
-        int left = getPaddingLeft();
+        int left = (int) (getPaddingLeft() + curProgress / 100f * getMaxLength());
         mRectF.set(left, (getMeasuredHeight() - mThumbHeight) / 2,
                 left + mThumbWidth, getMeasuredHeight() / 2 + mThumbHeight / 2);
     }
+
+    @Override
+    public boolean onTouchEvent(MotionEvent event) {
+        int action = MotionEventCompat.getActionMasked(event);
+        float eventX = event.getX();
+        //L.e("call: onTouchEvent([event])-> " + action + " x:" + eventX);
+        switch (action) {
+            case MotionEvent.ACTION_DOWN:
+                //L.e("call: onTouchEvent([event])-> DOWN:" + " x:" + eventX);
+                calcProgress(eventX);
+                getParent().requestDisallowInterceptTouchEvent(true);
+                break;
+            case MotionEvent.ACTION_MOVE:
+                calcProgress(eventX);
+                break;
+            case MotionEvent.ACTION_UP:
+            case MotionEvent.ACTION_CANCEL:
+                getParent().requestDisallowInterceptTouchEvent(false);
+                break;
+        }
+        return true;
+    }
+
+    /**
+     * 根据touch坐标, 计算进度
+     */
+    private void calcProgress(float touchX) {
+        float x = touchX - getPaddingLeft() - mThumbWidth / 2;
+        int old = this.curProgress;
+        if (x > 0) {
+            this.curProgress = Math.max(0, Math.min(100, (int) (x / getMaxLength() * 100)));
+            if (old != curProgress) {
+                for (OnProgressChangeListener listener : mOnProgressChangeListeners) {
+                    listener.onProgress(curProgress);
+                }
+            }
+            postInvalidate();
+        }
+    }
+
+    public void addOnProgressChangeListener(OnProgressChangeListener listener) {
+        mOnProgressChangeListeners.add(listener);
+    }
+
+    public void removeOnProgressChangeListener(OnProgressChangeListener listener) {
+        mOnProgressChangeListeners.remove(listener);
+    }
+
+    public interface OnProgressChangeListener {
+        void onProgress(int progress);
+    }
+
 }
