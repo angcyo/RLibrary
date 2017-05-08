@@ -108,6 +108,18 @@ public abstract class UIBaseView extends UIIViewImpl {
         }
     }
 
+    public static Animation createClipEnterAnim(float fromAlpha) {
+        AlphaAnimation animation = new AlphaAnimation(fromAlpha, 1f);
+        setDefaultConfig(animation, false);
+        return animation;
+    }
+
+    public static Animation createClipExitAnim(float toAlpha) {
+        AlphaAnimation animation = new AlphaAnimation(1f, toAlpha);
+        setDefaultConfig(animation, true);
+        return animation;
+    }
+
     @Override
     protected View inflateBaseView(FrameLayout container, LayoutInflater inflater) {
         //包含标题栏的根布局
@@ -342,6 +354,9 @@ public abstract class UIBaseView extends UIIViewImpl {
         changeState(mLayoutState, LayoutState.NONET);
     }
 
+
+    //-----------------以下私有方法------------------//
+
     public void showNonetLayout(View.OnClickListener refreshListener) {
         final View.OnClickListener settingListener = new View.OnClickListener() {
             @Override
@@ -379,9 +394,6 @@ public abstract class UIBaseView extends UIIViewImpl {
         OnShowContentLayout();
         changeState(mLayoutState, LayoutState.CONTENT);
     }
-
-
-    //-----------------以下私有方法------------------//
 
     protected Animation loadLoadingAnimation() {
         RotateAnimation rotateAnimation = new RotateAnimation(0, 360,
@@ -518,7 +530,6 @@ public abstract class UIBaseView extends UIIViewImpl {
         return screenHeight - visibleBottom;
     }
 
-
     @ColorInt
     public int getDefaultBackgroundColor() {
         return Color.TRANSPARENT;
@@ -561,7 +572,9 @@ public abstract class UIBaseView extends UIIViewImpl {
     @Override
     public Animation loadOtherExitAnimation() {
         if (mEnableClip && enableEnterClip()) {
-            return createClipExitAnim(1f);
+            Animation animation = createClipExitAnim(1f);
+            animation.setDuration(initClipTime());
+            return animation;
         }
         return super.loadOtherExitAnimation();
     }
@@ -570,23 +583,11 @@ public abstract class UIBaseView extends UIIViewImpl {
     public Animation loadOtherEnterAnimation() {
         if (mEnableClip && enableExitClip()) {
             //为了不影响之前的动画逻辑, 这里使用一个效果不明显的动画
-            return createClipEnterAnim(1f);
+            Animation animation = createClipEnterAnim(1f);
+            animation.setDuration(initClipTime());
+            return animation;
         }
         return super.loadOtherEnterAnimation();
-    }
-
-    private Animation createClipEnterAnim(float f) {
-        AlphaAnimation animation = new AlphaAnimation(f, 1f);
-        setDefaultConfig(animation, false);
-        animation.setDuration(initClipTime());
-        return animation;
-    }
-
-    private Animation createClipExitAnim(float t) {
-        AlphaAnimation animation = new AlphaAnimation(1f, t);
-        setDefaultConfig(animation, true);
-        animation.setDuration(initClipTime());
-        return animation;
     }
 
     private boolean enableEnterClip() {
