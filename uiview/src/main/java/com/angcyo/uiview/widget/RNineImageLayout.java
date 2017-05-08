@@ -1,10 +1,15 @@
 package com.angcyo.uiview.widget;
 
 import android.content.Context;
+import android.graphics.Canvas;
+import android.graphics.Color;
+import android.graphics.LinearGradient;
+import android.graphics.Paint;
+import android.graphics.Shader;
 import android.util.AttributeSet;
 import android.view.View;
-import android.widget.FrameLayout;
 import android.widget.ImageView;
+import android.widget.RelativeLayout;
 
 import com.angcyo.library.R;
 import com.angcyo.library.utils.L;
@@ -23,7 +28,7 @@ import java.util.List;
  * 修改备注：
  * Version: 1.0.0
  */
-public class RNineImageLayout extends FrameLayout implements View.OnClickListener {
+public class RNineImageLayout extends RelativeLayout implements View.OnClickListener {
 
     /**
      * 需要加载的图片列表
@@ -39,6 +44,9 @@ public class RNineImageLayout extends FrameLayout implements View.OnClickListene
     int space = 6;//dp, 间隙
 
     boolean canItemClick = true;
+    private boolean drawMask = false;
+    private Paint mPaint;
+    private float mDensity;
 
     public RNineImageLayout(Context context, AttributeSet attrs) {
         super(context, attrs);
@@ -260,6 +268,39 @@ public class RNineImageLayout extends FrameLayout implements View.OnClickListene
         if (mNineImageConfig != null) {
             final int position = (int) v.getTag(R.id.tag_position);
             mNineImageConfig.onImageItemClick((ImageView) v, mImagesList, mImageViews, position);
+        }
+    }
+
+    @Override
+    protected void dispatchDraw(Canvas canvas) {
+        super.dispatchDraw(canvas);
+        if (drawMask) {
+            int height = getMeasuredHeight();
+            LinearGradient linearGradient = new LinearGradient(0, height, 0,
+                    height - 40 * mDensity,
+                    new int[]{Color.BLACK, Color.TRANSPARENT /*Color.parseColor("#40000000")*/},
+                    null, Shader.TileMode.CLAMP);
+            mPaint.setShader(linearGradient);
+            canvas.drawPaint(mPaint);
+        }
+    }
+
+    /**
+     * 是否绘制蒙层
+     */
+    public void setDrawMask(boolean drawMask) {
+        this.drawMask = drawMask;
+        if (drawMask) {
+            ensurePaint();
+            postInvalidate();
+        }
+    }
+
+    private void ensurePaint() {
+        if (mPaint == null) {
+            mPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
+            mPaint.setFlags(Paint.FILTER_BITMAP_FLAG);
+            mDensity = getResources().getDisplayMetrics().density;
         }
     }
 

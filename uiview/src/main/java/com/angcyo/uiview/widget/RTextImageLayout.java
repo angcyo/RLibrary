@@ -32,6 +32,7 @@ public class RTextImageLayout extends ViewGroup {
     private TextView mTextView;
     private List<ImageView> mImageViews = new ArrayList<>();
     private List<String> mImages;
+    private boolean isAttachedToWindow;
 
     public RTextImageLayout(Context context) {
         super(context);
@@ -53,11 +54,13 @@ public class RTextImageLayout extends ViewGroup {
     protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
         int width = MeasureSpec.getSize(widthMeasureSpec);
         int height = MeasureSpec.getSize(heightMeasureSpec);
+        int width_UNSPECIFIED = MeasureSpec.makeMeasureSpec(width, MeasureSpec.UNSPECIFIED);
+        int height_UNSPECIFIED = MeasureSpec.makeMeasureSpec(height, MeasureSpec.UNSPECIFIED);
         if (mImageViews.isEmpty()) {
             if (mTextView == null) {
                 setMeasuredDimension(width, getPaddingTop() + getPaddingBottom());
             } else {
-                mTextView.measure(widthMeasureSpec, heightMeasureSpec);
+                mTextView.measure(width_UNSPECIFIED, height_UNSPECIFIED);
                 setMeasuredDimension(width, getPaddingTop() + getPaddingBottom() + mTextView.getMeasuredHeight());
             }
         } else {
@@ -66,7 +69,7 @@ public class RTextImageLayout extends ViewGroup {
                 imageSize = mConfigCallback.getImageSize(0);
             }
             if (imageSize == null) {
-                int size = MeasureSpec.makeMeasureSpec(width / 3 - space * 2 - getPaddingLeft() + getPaddingRight(), MeasureSpec.EXACTLY);
+                int size = MeasureSpec.makeMeasureSpec((width - space * 2) / 3 - getPaddingLeft() + getPaddingRight(), MeasureSpec.EXACTLY);
                 imageSize = new int[]{size, size};
             }
 
@@ -84,11 +87,11 @@ public class RTextImageLayout extends ViewGroup {
                             MeasureSpec.EXACTLY), heightMeasureSpec);
                     setMeasuredDimension(width, getPaddingTop() + getPaddingBottom() + Math.max(mTextView.getMeasuredHeight(), imageView.getMeasuredHeight()));
                 }
-            } else if (mImageViews.size() < MAX_IMAGE_SIZE) {
+            } else if (mImageViews.size() > 1) {
                 if (mTextView == null) {
                     setMeasuredDimension(width, getPaddingTop() + getPaddingBottom() + imageView.getMeasuredHeight());
                 } else {
-                    mTextView.measure(widthMeasureSpec, heightMeasureSpec);
+                    mTextView.measure(width_UNSPECIFIED, height_UNSPECIFIED);
                     setMeasuredDimension(width, getPaddingTop() + getPaddingBottom() + mTextView.getMeasuredHeight() + imageView.getMeasuredHeight());
                 }
             } else {
@@ -118,15 +121,15 @@ public class RTextImageLayout extends ViewGroup {
                 imageView.layout(r - imageView.getMeasuredWidth(), t, r, t + imageView.getMeasuredHeight());
 
                 //displayImage(mImageViews.get(0), mImages.get(0));
-            } else if (mImageViews.size() < MAX_IMAGE_SIZE) {
+            } else if (mImageViews.size() > 1) {
                 int offsetTop = 0;
                 if (mTextView != null) {
                     offsetTop = mTextView.getMeasuredHeight();
-                    mTextView.layout(l, t, r, b);
+                    mTextView.layout(l, t, r, t + offsetTop);
                 }
 
                 ImageView imageView;
-                for (int i = 0; i < mImageViews.size(); i++) {
+                for (int i = 0; i < Math.min(mImageViews.size(), MAX_IMAGE_SIZE); i++) {
                     imageView = mImageViews.get(i);
                     int measuredWidth = imageView.getMeasuredWidth();
                     int left = l + i * (measuredWidth + space);
@@ -142,11 +145,27 @@ public class RTextImageLayout extends ViewGroup {
     @Override
     protected void onSizeChanged(int w, int h, int oldw, int oldh) {
         super.onSizeChanged(w, h, oldw, oldh);
+        notifyLoadImage();
+    }
+
+    private void notifyLoadImage() {
         ImageView imageView;
-        for (int i = 0; i < mImageViews.size(); i++) {
+        for (int i = 0; i < Math.min(mImageViews.size(), MAX_IMAGE_SIZE); i++) {
             imageView = mImageViews.get(i);
             displayImage(imageView, mImages.get(i));
         }
+    }
+
+    @Override
+    protected void onAttachedToWindow() {
+        super.onAttachedToWindow();
+        isAttachedToWindow = true;
+    }
+
+    @Override
+    protected void onDetachedFromWindow() {
+        super.onDetachedFromWindow();
+        isAttachedToWindow = false;
     }
 
     /**
@@ -181,19 +200,26 @@ public class RTextImageLayout extends ViewGroup {
         mImages = images;
         int imageSize = mImages.size();
         int imageViewSize = mImageViews.size();
-        for (int i = 0; i < imageViewSize - imageSize; i++) {
-            removeView(mImageViews.remove(0));
+
+        for (int i = imageViewSize - 1; i >= imageSize; i++) {
+            removeView(mImageViews.remove(i));
         }
+
         //最大显示3张图片
         for (int i = mImageViews.size(); i < Math.min(MAX_IMAGE_SIZE, imageSize); i++) {
             ImageView imageView = createImageView();
             addView(imageView, new LayoutParams(-2, -2));
             mImageViews.add(imageView);
         }
-        if (imageSize != imageViewSize && !(imageViewSize >= MAX_IMAGE_SIZE && imageSize >= MAX_IMAGE_SIZE)) {
-            requestLayout();
+
+        int newImageViewSize = mImageViews.size();
+
+        if ((imageViewSize >= MAX_IMAGE_SIZE && newImageViewSize >= MAX_IMAGE_SIZE) || imageViewSize == newImageViewSize) {
+            if (isAttachedToWindow) {
+                notifyLoadImage();
+            }
         } else {
-            onSizeChanged(0, 0, 0, 0);
+            //requestLayout();
         }
     }
 
