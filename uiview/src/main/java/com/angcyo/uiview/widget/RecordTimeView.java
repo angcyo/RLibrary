@@ -11,7 +11,7 @@ import java.util.Locale;
 /**
  * Copyright (C) 2016,深圳市红鸟网络科技股份有限公司 All rights reserved.
  * 项目名称：
- * 类的描述：录制语音时间显示
+ * 类的描述：录制语音时间显示, 当设置了总时间效果就是 00:10/10:10, 否则就是00:10
  * 创建人员：Robi
  * 创建时间：2017/05/03 16:26
  * 修改人员：Robi
@@ -20,8 +20,17 @@ import java.util.Locale;
  * Version: 1.0.0
  */
 public class RecordTimeView extends RTextView {
-    long mTime = 0, mMaxTime = Integer.MAX_VALUE;
+
+    /**
+     * 进度时间
+     */
+    long mTime = -1, mMaxTime = Integer.MAX_VALUE;
     boolean isRecording = false;
+
+    /**
+     * 总时间
+     */
+    long mSumTime = -1;
 
     OnMaxTimeListener mOnMaxTimeListener;
 
@@ -61,8 +70,6 @@ public class RecordTimeView extends RTextView {
     @Override
     protected void onAttachedToWindow() {
         super.onAttachedToWindow();
-        setTextSize(25);
-        setTime(0);
     }
 
     /**
@@ -75,15 +82,34 @@ public class RecordTimeView extends RTextView {
     /**
      * 设置时间
      */
-    private void setTime(long time) {
+    public void setTime(long time) {
         mTime = time;
 
-        if (isRecording) {
-            setTextColor(ContextCompat.getColor(getContext(), R.color.base_dark_red));
+        resetText();
+    }
+
+    private void resetText() {
+        String mmss = formatMMSS(mTime);
+        if (mSumTime < 0) {
+            if (isRecording) {
+                setTextColor(ContextCompat.getColor(getContext(), R.color.base_dark_red));
+            } else {
+                setTextColor(ContextCompat.getColor(getContext(), R.color.base_text_color_dark));
+            }
+            setText(mmss);
         } else {
-            setTextColor(ContextCompat.getColor(getContext(), R.color.base_text_color_dark));
+            if (mTime < 0) {
+                setText(formatMMSS(mSumTime));
+            } else {
+                setText(mmss + "/" + formatMMSS(mSumTime));
+                setHighlightWord(mmss);
+            }
         }
-        setText(formatMMSS(time));
+    }
+
+    public void setSumTime(long sumTime) {
+        mSumTime = sumTime;
+        resetText();
     }
 
     /**
