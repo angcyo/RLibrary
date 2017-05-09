@@ -5,5 +5,5 @@ package com.angcyo.uiview;
  */
 
 public class Root {
-    public static final String APP_FOLDER = "DValley";
+    public static String APP_FOLDER = "DValley";
 }

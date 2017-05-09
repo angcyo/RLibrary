@@ -4,6 +4,7 @@ import rx.Observable;
 import rx.android.schedulers.AndroidSchedulers;
 import rx.schedulers.Schedulers;
 
+@Deprecated
 public class TransformUtils {
     public static <T> Observable.Transformer<T, T> defaultSchedulers() {
         return new Observable.Transformer<T, T>() {

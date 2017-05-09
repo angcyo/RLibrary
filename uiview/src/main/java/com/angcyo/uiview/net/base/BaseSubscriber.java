@@ -15,6 +15,7 @@ import rx.Subscriber;
  * 修改备注：
  * Version: 1.0.0
  */
+@Deprecated
 public class BaseSubscriber<T> extends Subscriber<T> {
     @Override
     public void onStart() {

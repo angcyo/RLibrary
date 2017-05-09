@@ -711,6 +711,37 @@ public class ExEditText extends AppCompatEditText {
         Anim.band(this);
     }
 
+    public boolean checkEmpty() {
+        if (isEmpty()) {
+            error();
+            requestFocus();
+            return true;
+        }
+        return false;
+    }
+
+    /**
+     * 设置是否是密码类型
+     */
+    public void setIsPassword(boolean isPassword) {
+        int inputType = getInputType();
+        if (isPassword) {
+            setInputType(inputType | EditorInfo.TYPE_CLASS_TEXT | EditorInfo.TYPE_TEXT_VARIATION_PASSWORD);
+        } else {
+            setInputType(inputType & ~EditorInfo.TYPE_TEXT_VARIATION_PASSWORD);
+        }
+    }
+
+    public void setIsText(boolean isText) {
+        int inputType = getInputType();
+        if (isText) {
+            setIsPassword(false);
+            setInputType(EditorInfo.TYPE_TEXT_VARIATION_EMAIL_ADDRESS);
+        } else {
+            setInputType(inputType & ~EditorInfo.TYPE_TEXT_VARIATION_EMAIL_ADDRESS);
+        }
+    }
+
     public interface getIdFromUserName {
         String userId(String userName);
     }

@@ -11,6 +11,7 @@ package com.angcyo.uiview.net.base;
  * 修改备注：
  * Version: 1.0.0
  */
+@Deprecated
 public class BaseResponse<T> {
 
 }

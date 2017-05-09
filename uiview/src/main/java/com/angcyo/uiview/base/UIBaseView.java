@@ -555,7 +555,9 @@ public abstract class UIBaseView extends UIIViewImpl {
     public Animation loadStartAnimation() {
         if (mEnableClip && enableEnterClip()) {
             //为了不影响之前的动画逻辑, 这里使用一个效果不明显的动画
-            return createClipEnterAnim(0.8f);
+            Animation animation = createClipEnterAnim(0.8f);
+            animation.setDuration(initClipTime());
+            return animation;
         }
         return super.loadStartAnimation();
     }
@@ -564,7 +566,9 @@ public abstract class UIBaseView extends UIIViewImpl {
     public Animation loadFinishAnimation() {
         if (mEnableClip && enableExitClip()) {
             //为了不影响之前的动画逻辑, 这里使用一个效果不明显的动画
-            return createClipExitAnim(0.6f);
+            Animation animation = createClipExitAnim(0.6f);
+            animation.setDuration(initClipTime());
+            return animation;
         }
         return super.loadFinishAnimation();
     }
@@ -648,23 +652,46 @@ public abstract class UIBaseView extends UIIViewImpl {
     public void onViewLoad() {
         super.onViewLoad();
         if (enableEnterClip()) {
+            Runnable runnable;
             if (clipXYR == null) {
-                mBaseRootLayout.startEnterClip(null,
-                        new ClipHelper.OnEndListener() {
-                            @Override
-                            public void onEnd() {
-                                onClipEnd(ClipMode.CLIP_START);
-                            }
-                        });
+                runnable = new Runnable() {
+                    @Override
+                    public void run() {
+                        mBaseRootLayout.startEnterClip(null,
+                                new ClipHelper.OnEndListener() {
+                                    @Override
+                                    public void onEnd() {
+                                        onClipEnd(ClipMode.CLIP_START);
+                                    }
+                                });
+                    }
+                };
             } else {
-                mBaseRootLayout.startEnterClip(clipXYR[0], clipXYR[1], clipXYR[2],
-                        new ClipHelper.OnEndListener() {
-                            @Override
-                            public void onEnd() {
-                                onClipEnd(ClipMode.CLIP_START);
-                            }
-                        });
+                runnable = new Runnable() {
+                    @Override
+                    public void run() {
+                        mBaseRootLayout.startEnterClip(clipXYR[0], clipXYR[1], clipXYR[2],
+                                new ClipHelper.OnEndListener() {
+                                    @Override
+                                    public void onEnd() {
+                                        onClipEnd(ClipMode.CLIP_START);
+                                    }
+                                });
+                    }
+                };
             }
+
+            checkDelayClip(runnable);
+        }
+    }
+
+    private void checkDelayClip(Runnable runnable) {
+        if (mBaseRootLayout == null ||
+                mBaseRootLayout.getMeasuredWidth() == 0 ||
+                mBaseRootLayout.getMeasuredHeight() == 0) {
+            post(runnable);
+        } else {
+            runnable.run();
         }
     }
 
@@ -712,9 +739,9 @@ public abstract class UIBaseView extends UIIViewImpl {
         int value = Math.max(maxWidth, maxHeight);
         int time;
         if (endRadius - clipXYR[2] >= value / 2) {
-            time = 500;
-        } else {
             time = 300;
+        } else {
+            time = 200;
         }
         ClipHelper.ANIM_TIME = time;
         return time;

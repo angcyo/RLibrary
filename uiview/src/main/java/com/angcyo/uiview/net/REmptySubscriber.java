@@ -15,6 +15,7 @@ import rx.Subscriber;
  * 修改备注：
  * Version: 1.0.0
  */
+@Deprecated
 public class REmptySubscriber<T> extends Subscriber<T> {
 
     public static <T> REmptySubscriber<T> build() {

@@ -5,7 +5,6 @@ import android.content.res.ColorStateList;
 import android.graphics.Color;
 import android.graphics.drawable.Drawable;
 import android.support.annotation.ColorInt;
-import android.support.v4.content.ContextCompat;
 
 import com.angcyo.uiview.R;
 import com.angcyo.uiview.RApplication;
@@ -31,6 +30,10 @@ public class SkinHelper {
         if (mSkin == null) {
             createDefaultSkin(context);
         }
+    }
+
+    public static void init(ISkin skin) {
+        mSkin = skin;
     }
 
     private static void createDefaultSkin(Context context) {

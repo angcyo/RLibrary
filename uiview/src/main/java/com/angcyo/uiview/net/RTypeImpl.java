@@ -3,6 +3,7 @@ package com.angcyo.uiview.net;
 import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
 
+@Deprecated
 public class RTypeImpl implements ParameterizedType {
     private final Class raw;
     private final Type[] args;
