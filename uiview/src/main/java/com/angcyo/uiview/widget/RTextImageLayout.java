@@ -201,7 +201,7 @@ public class RTextImageLayout extends ViewGroup {
         int imageSize = mImages.size();
         int imageViewSize = mImageViews.size();
 
-        for (int i = imageViewSize - 1; i >= imageSize; i++) {
+        for (int i = imageViewSize - 1; i >= imageSize; i--) {
             removeView(mImageViews.remove(i));
         }
 
