@@ -21,9 +21,6 @@
     <color name="base_red_d85940">#D85940</color>
     <color name="base_red_c8381f">#C8381F</color>
 
-    <color name="yellow_ffe2b1">#FFE2B1</color>
-    <color name="yellow_fccd82">#FCCD82</color>
-
     <color name="base_red_tran">#80FC3C38</color>
     <color name="base_orange_tran">#80FD9C27</color>
     <color name="base_gray_tran">#80C7C7CD</color>

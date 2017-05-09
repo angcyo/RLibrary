@@ -114,11 +114,13 @@ public class RefreshLayout extends ViewGroup {
     private ArrayList<OnRefreshListener> mRefreshListeners = new ArrayList<>();
 
     public RefreshLayout(Context context) {
-        super(context);
+        this(context, null);
     }
 
     public RefreshLayout(Context context, AttributeSet attrs) {
         super(context, attrs);
+
+        initRefreshView();
     }
 
     @Override
@@ -187,8 +189,14 @@ public class RefreshLayout extends ViewGroup {
         super.onAttachedToWindow();
         mTouchSlop = 0;//ViewConfiguration.get(getContext()).getScaledTouchSlop();
         mScroller = new OverScroller(getContext(), new DecelerateInterpolator());
+
         if (!isInEditMode()) {
-            initRefreshView();
+            if (mTopView.getParent() == null) {
+                addView(mTopView);
+            }
+            if (mBottomView.getParent() == null) {
+                addView(mBottomView);
+            }
         }
     }
 
@@ -197,25 +205,25 @@ public class RefreshLayout extends ViewGroup {
         super.addView(child, index, params);
         for (int i = 0; i < getChildCount() && mTargetView == null; i++) {
             final View childAt = getChildAt(i);
-            if (!(childAt instanceof BaseRefreshView)) {
+            if (childAt instanceof OnBottomViewMoveListener) {
+                mBottomView = childAt;
+            } else if (childAt instanceof OnTopViewMoveListener) {
+                mTopView = childAt;
+            } else {
                 mTargetView = childAt;
-                break;
             }
         }
     }
 
     protected void initRefreshView() {
+        if (isInEditMode()) {
+            return;
+        }
         if (mTopView == null) {
             mTopView = new BaseRefreshTopView(getContext());
         }
         if (mBottomView == null) {
             mBottomView = new BaseRefreshBottomView(getContext());
-        }
-        if (mTopView.getParent() == null) {
-            addView(mTopView);
-        }
-        if (mBottomView.getParent() == null) {
-            addView(mBottomView);
         }
     }
 
@@ -427,6 +435,11 @@ public class RefreshLayout extends ViewGroup {
      */
     public void setRefreshDirection(@Direction int direction) {
         mDirection = direction;
+        if (mDirection == TOP) {
+            setBottomView(new PlaceholderView(getContext()));
+        } else if (mDirection == BOTTOM) {
+            setTopView(new PlaceholderView(getContext()));
+        }
     }
 
     /**

@@ -221,6 +221,12 @@ public class RSeekBar extends View {
         return curProgress;
     }
 
+    public void setCurProgress(int curProgress) {
+        this.curProgress = curProgress;
+        postInvalidate();
+        notifyListener();
+    }
+
     public interface OnProgressChangeListener {
         void onProgress(int progress);
     }
