@@ -668,7 +668,6 @@ public abstract class UIBaseView extends UIIViewImpl {
         }
     }
 
-
     /**
      * Clip结束之后的回调
      *
