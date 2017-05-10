@@ -70,6 +70,9 @@ public class RefreshLayout extends ViewGroup {
      * 正常
      */
     public static final int NORMAL = 0;
+    public static final String TOP_VIEW = "top_view";
+    public static final String BOTTOM_VIEW = "bottom_view";
+    public static final String TARGET_VIEW = "target_view";
     float downY, downX, lastY;
     private View mTopView, mBottomView, mTargetView;
     private OverScroller mScroller;
@@ -205,6 +208,12 @@ public class RefreshLayout extends ViewGroup {
         super.addView(child, index, params);
         for (int i = 0; i < getChildCount() && mTargetView == null; i++) {
             final View childAt = getChildAt(i);
+
+            if (childAt instanceof OnBottomViewMoveListener &&
+                    childAt instanceof OnTopViewMoveListener) {
+                continue;
+            }
+
             if (childAt instanceof OnBottomViewMoveListener) {
                 mBottomView = childAt;
             } else if (childAt instanceof OnTopViewMoveListener) {
@@ -221,34 +230,38 @@ public class RefreshLayout extends ViewGroup {
         }
         if (mTopView == null) {
             mTopView = new BaseRefreshTopView(getContext());
+            mTopView.setTag(TOP_VIEW);
         }
         if (mBottomView == null) {
             mBottomView = new BaseRefreshBottomView(getContext());
+            mBottomView.setTag(TOP_VIEW);
         }
     }
 
     public void setTopView(View topView) {
         mTopView = topView;
+        mTopView.setTag(TOP_VIEW);
     }
 
     public void setBottomView(View bottomView) {
         mBottomView = bottomView;
+        mBottomView.setTag(TOP_VIEW);
     }
 
     @Override
     protected void onFinishInflate() {
         super.onFinishInflate();
-        View topView = findViewWithTag("top_view");
+        View topView = findViewWithTag(TOP_VIEW);
         if (topView != null) {
             setTopView(topView);
         }
 
-        View bottomView = findViewWithTag("bottom_view");
+        View bottomView = findViewWithTag(BOTTOM_VIEW);
         if (bottomView != null) {
             setBottomView(bottomView);
         }
 
-        View targetView = findViewWithTag("target_view");
+        View targetView = findViewWithTag(TARGET_VIEW);
         if (targetView != null) {
             mTargetView = targetView;
         }

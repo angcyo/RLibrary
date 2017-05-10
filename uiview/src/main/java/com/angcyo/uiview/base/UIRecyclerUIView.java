@@ -44,8 +44,10 @@ public class UIRecyclerUIView<H, T, F> extends UIContentView
     @Override
     final protected void inflateContentLayout(RelativeLayout baseContentLayout, LayoutInflater inflater) {
         beforeInflateView(baseContentLayout);
+
         mRefreshLayout = createRefreshLayout(baseContentLayout, inflater);
         mRecyclerView = createRecyclerView(baseContentLayout, inflater);
+
         afterInflateView(baseContentLayout);
 
         baseInitLayout();
@@ -109,6 +111,14 @@ public class UIRecyclerUIView<H, T, F> extends UIContentView
      */
     protected RRecyclerView createRecyclerView(RelativeLayout baseContentLayout, LayoutInflater inflater) {
         RRecyclerView recyclerView = new RRecyclerView(mActivity);
+        initRecyclerView(recyclerView, baseContentLayout);
+        return recyclerView;
+    }
+
+    protected RRecyclerView initRecyclerView(RRecyclerView recyclerView, RelativeLayout baseContentLayout) {
+        if (recyclerView == null) {
+            return recyclerView;
+        }
         final RecyclerView.ItemDecoration itemDecoration = createItemDecoration();
         if (itemDecoration != null) {
             recyclerView.addItemDecoration(itemDecoration);
@@ -121,13 +131,15 @@ public class UIRecyclerUIView<H, T, F> extends UIContentView
         }
 
         if (mRefreshLayout == null) {
-            baseContentLayout.addView(recyclerView, new ViewGroup.LayoutParams(-1, -1));
+            if (recyclerView.getParent() == null) {
+                baseContentLayout.addView(recyclerView, new ViewGroup.LayoutParams(-1, -1));
+            }
         } else {
             mRefreshLayout.addView(recyclerView, new ViewGroup.LayoutParams(-1, -1));
         }
-
         return recyclerView;
     }
+
 
     protected RExBaseAdapter<H, T, F> createAdapter() {
         return null;
@@ -142,9 +154,19 @@ public class UIRecyclerUIView<H, T, F> extends UIContentView
      */
     protected RefreshLayout createRefreshLayout(RelativeLayout baseContentLayout, LayoutInflater inflater) {
         RefreshLayout refreshLayout = new RefreshLayout(mActivity);
+        initRefreshLayout(refreshLayout, baseContentLayout);
+        return refreshLayout;
+    }
+
+    protected RefreshLayout initRefreshLayout(RefreshLayout refreshLayout, RelativeLayout baseContentLayout) {
+        if (refreshLayout == null) {
+            return refreshLayout;
+        }
         refreshLayout.setRefreshDirection(RefreshLayout.TOP);
         refreshLayout.addOnRefreshListener(this);
-        baseContentLayout.addView(refreshLayout, new ViewGroup.LayoutParams(-1, -1));
+        if (refreshLayout.getParent() == null) {
+            baseContentLayout.addView(refreshLayout, new ViewGroup.LayoutParams(-1, -1));
+        }
         return refreshLayout;
     }
 

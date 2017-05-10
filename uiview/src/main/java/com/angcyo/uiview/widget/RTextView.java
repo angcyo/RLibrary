@@ -73,6 +73,7 @@ public class RTextView extends AppCompatTextView {
     @Override
     public void draw(Canvas canvas) {
         if (mBackgroundDrawable != null) {
+            mBackgroundDrawable.setBounds(canvas.getClipBounds());
             mBackgroundDrawable.draw(canvas);
         }
         super.draw(canvas);

@@ -16,7 +16,7 @@
         android:gravity="center"
         android:maxLines="1"
         android:singleLine="true"
-        tools:content="测试"/>
+        tools:text="测试"/>
 
     <com.angcyo.uiview.github.tablayout.MsgView
         xmlns:mv="http://schemas.android.com/apk/res-auto"

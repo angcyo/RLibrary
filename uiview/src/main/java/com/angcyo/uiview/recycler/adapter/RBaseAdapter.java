@@ -111,32 +111,32 @@ public abstract class RBaseAdapter<T> extends RecyclerView.Adapter<RBaseViewHold
 
     @Override
     public RBaseViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-        View item;
+        View itemView;
         if (mEnableShowState && viewType == ITEM_TYPE_SHOW_STATE) {
-            item = LayoutInflater.from(mContext)
+            itemView = LayoutInflater.from(mContext)
                     .inflate(R.layout.base_item_show_state_layout, parent, false);
-            mIShowState = (IShowState) item;
+            mIShowState = (IShowState) itemView;
         } else if (mEnableLoadMore && viewType == ITEM_TYPE_LOAD_MORE) {
-            item = LayoutInflater.from(mContext)
+            itemView = LayoutInflater.from(mContext)
                     .inflate(R.layout.base_item_load_more_layout, parent, false);
-            mLoadMore = (ILoadMore) item;
+            mLoadMore = (ILoadMore) itemView;
         } else {
             int itemLayoutId = getItemLayoutId(viewType);
             if (itemLayoutId == 0) {
-                item = createContentView(parent, viewType);
+                itemView = createContentView(parent, viewType);
             } else {
-                item = LayoutInflater.from(mContext).inflate(itemLayoutId, parent, false);
+                itemView = LayoutInflater.from(mContext).inflate(itemLayoutId, parent, false);
             }
         }
-//        if (item == null) {
+//        if (itemView == null) {
 //            return createItemViewHolder(parent, viewType);
 //        }
-        return createBaseViewHolder(viewType, item);
+        return createBaseViewHolder(viewType, itemView);
     }
 
     @NonNull
-    protected RBaseViewHolder createBaseViewHolder(int viewType, View item) {
-        return new RBaseViewHolder(item, viewType);
+    protected RBaseViewHolder createBaseViewHolder(int viewType, View itemView) {
+        return new RBaseViewHolder(itemView, viewType);
     }
 
 //    /**用来实现...*/

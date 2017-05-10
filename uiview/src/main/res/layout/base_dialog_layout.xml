@@ -15,12 +15,12 @@
         android:id="@+id/base_dialog_title_view"
         style="@style/BaseDialogTextStyle"
         android:textStyle="bold"
-        tools:content="对话框标题"/>
+        tools:text="对话框标题"/>
 
     <TextView
         android:id="@+id/base_dialog_content_view"
         style="@style/BaseDialogTextStyle"
-        tools:content="对话框内容对话框内容对话框内容"/>
+        tools:text="对话框内容对话框内容对话框内容"/>
 
     <View
         android:id="@+id/line_layout"
@@ -41,14 +41,14 @@
             style="@style/BaseAvgHTextStyle"
             android:background="@drawable/base_left_button_round_selector"
             android:clickable="true"
-            tools:content="@string/base_cancel"/>
+            tools:text="@string/base_cancel"/>
 
         <TextView
             android:id="@+id/base_dialog_ok_view"
             style="@style/BaseAvgHTextStyle"
             android:background="@drawable/base_right_button_round_selector"
             android:clickable="true"
-            tools:content="@string/base_ok"
+            tools:text="@string/base_ok"
             android:textColor="@color/theme_color_accent"/>
     </LinearLayout>
 
