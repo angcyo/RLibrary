@@ -83,6 +83,17 @@ public class RSoftInputLayout extends FrameLayout {
         super(context, attrs, defStyleAttr, defStyleRes);
     }
 
+    public static void hideSoftInput(View view) {
+        InputMethodManager manager = (InputMethodManager) view.getContext().getSystemService(Context.INPUT_METHOD_SERVICE);
+        manager.hideSoftInputFromWindow(view.getWindowToken(), 0);
+    }
+
+    public static void showSoftInput(View view) {
+        view.requestFocus();
+        InputMethodManager manager = (InputMethodManager) view.getContext().getSystemService(Context.INPUT_METHOD_SERVICE);
+        manager.showSoftInput(view, 0);
+    }
+
     public void setAnimToShow(boolean animToShow) {
         isAnimToShow = animToShow;
     }
@@ -288,7 +299,7 @@ public class RSoftInputLayout extends FrameLayout {
         isEmojiShow = height > 0;
         this.showEmojiHeight = height;
         if (keyboardShow) {
-            hideSoftInput();
+            hideSoftInput(this);
         } else {
             requestLayout();
             if (isAnimToShow) {
@@ -383,17 +394,6 @@ public class RSoftInputLayout extends FrameLayout {
         while (iterator.hasNext()) {
             iterator.next().onEmojiLayoutChange(isEmojiShow, isKeyboardShow, height);
         }
-    }
-
-    public void hideSoftInput() {
-        InputMethodManager manager = (InputMethodManager) getContext().getSystemService(Context.INPUT_METHOD_SERVICE);
-        manager.hideSoftInputFromWindow(getWindowToken(), 0);
-    }
-
-    public void showSoftInput(View view) {
-        view.requestFocus();
-        InputMethodManager manager = (InputMethodManager) getContext().getSystemService(Context.INPUT_METHOD_SERVICE);
-        manager.showSoftInput(view, 0);
     }
 
     /**

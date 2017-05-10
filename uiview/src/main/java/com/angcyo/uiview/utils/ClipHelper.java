@@ -15,7 +15,7 @@ import android.view.animation.AccelerateInterpolator;
 
 public class ClipHelper {
 
-    public static int ANIM_TIME = 2000;
+    public static int ANIM_TIME = 500;
     ValueAnimator mClipEnterValueAnimator, mClipExitValueAnimator;
     /**
      * 开始的坐标, 和半径
