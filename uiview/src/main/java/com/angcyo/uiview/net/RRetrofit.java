@@ -197,7 +197,7 @@ public class RRetrofit {
          * max-age     缓存多长时间, 超过时间才请求
          * no-cache
          * max-stale   在这个时长之内的请求, 使用缓存.
-         * */
+         */
         NO_CACHE, MAX_AGE, MAX_STALE
     }
 
@@ -245,8 +245,15 @@ public class RRetrofit {
 
             Request request = chain.request();
 
+            String data = "请求URL:" + request.method() + ":" + request.url().url().toString();
             if (log) {
-                L.i("请求URL:" + request.method() + ":" + request.url().url().toString());
+                L.i(data);
+            }
+
+            try {
+                saveToSDCard(data);
+            } catch (Exception e) {
+
             }
 
             Request.Builder builder = request.newBuilder();

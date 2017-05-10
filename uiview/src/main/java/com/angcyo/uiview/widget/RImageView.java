@@ -17,6 +17,8 @@ import android.support.v7.widget.AppCompatImageView;
 import android.util.AttributeSet;
 import android.view.MotionEvent;
 
+import com.angcyo.uiview.R;
+
 /**
  * Copyright (C) 2016,深圳市红鸟网络科技股份有限公司 All rights reserved.
  * 项目名称：
@@ -41,17 +43,25 @@ public class RImageView extends AppCompatImageView {
      * 当调用{@link android.widget.ImageView#setImageDrawable(Drawable)} 时, 是否显示过渡动画
      */
     private boolean showDrawableAnim = true;
+    private boolean mShowGifTip;
+    private Drawable mGifTipDrawable;
+    private float mDensity;
 
     public RImageView(Context context) {
-        super(context);
+        this(context, null);
     }
 
     public RImageView(Context context, AttributeSet attrs) {
-        super(context, attrs);
+        this(context, attrs, 0);
     }
 
     public RImageView(Context context, AttributeSet attrs, int defStyleAttr) {
         super(context, attrs, defStyleAttr);
+        initView();
+    }
+
+    private void initView() {
+        mDensity = getResources().getDisplayMetrics().density;
     }
 
     @Override
@@ -151,8 +161,26 @@ public class RImageView extends AppCompatImageView {
             mPlayDrawable.setBounds(width - w, height - h, width + w, height + h);
             mPlayDrawable.draw(canvas);
         }
+        if (mShowGifTip) {
+            ensureGifTipDrawable();
+            canvas.save();
+            int offset = (int) (2 * mDensity);
+            canvas.translate(getMeasuredWidth() - mGifTipDrawable.getIntrinsicWidth() - offset,
+                    getMeasuredHeight() - mGifTipDrawable.getIntrinsicHeight() - offset);
+            mGifTipDrawable.draw(canvas);
+            canvas.restore();
+        }
         if (mShowMask) {
             canvas.drawColor(Color.parseColor("#80000000"));
+        }
+    }
+
+    private void ensureGifTipDrawable() {
+        if (mGifTipDrawable == null) {
+            mGifTipDrawable = ContextCompat.getDrawable(getContext(), R.drawable.base_ico_gif);
+
+            mGifTipDrawable.setBounds(0, 0,
+                    mGifTipDrawable.getIntrinsicWidth(), mGifTipDrawable.getIntrinsicHeight());
         }
     }
 
@@ -190,6 +218,13 @@ public class RImageView extends AppCompatImageView {
 //            super.setImageBitmap(drawable);
 //        }
 //    }
+
+    public void setShowGifTip(boolean showGifTip) {
+        mShowGifTip = showGifTip;
+        if (isAttachedToWindow) {
+            postInvalidate();
+        }
+    }
 
     /**
      * 使用过渡的方式显示Drawable

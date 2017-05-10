@@ -7,6 +7,8 @@ import android.text.TextUtils;
 import android.widget.ImageView;
 import android.widget.Toast;
 
+import com.angcyo.library.okhttp.Ok;
+import com.angcyo.library.utils.L;
 import com.bumptech.glide.DrawableRequestBuilder;
 import com.bumptech.glide.GifRequestBuilder;
 import com.bumptech.glide.Glide;
@@ -118,23 +120,11 @@ public class ImagePickerHelper {
     public static class GlideImageLoader implements ImageLoader {
 
         @Override
-        public void displayImage(Activity activity, String path, String thumbPath, String url, ImageView imageView, int width, int height) {
+        public void displayImage(Activity activity, String path, String thumbPath,
+                                 String url, ImageView imageView, int width, int height) {
 
             if (TextUtils.isEmpty(path)) {
-                final DrawableRequestBuilder<String> drawableRequestBuilder = Glide.with(activity)                             //配置上下文
-                        .load(url)                                       //设置图片路径(fix #8,文件名包含%符号 无法识别和显示)
-                        //.error(R.mipmap.default_image)                    //设置错误图片
-                        //.fitCenter()
-                        //.centerCrop()
-                        .diskCacheStrategy(DiskCacheStrategy.ALL);
-
-                if (TextUtils.isEmpty(thumbPath)) {
-                    drawableRequestBuilder.placeholder(R.mipmap.default_image)     //设置占位图片
-                            .into(imageView);
-                } else {
-                    drawableRequestBuilder.placeholder(new BitmapDrawable(activity.getResources(), thumbPath))
-                            .into(imageView);
-                }
+                loadUrlImage(activity, thumbPath, url, imageView);
             } else {
                 File file = new File(path);
                 if ("GIF".equalsIgnoreCase(ImageUtils.getImageType(file))) {
@@ -144,8 +134,7 @@ public class ImagePickerHelper {
                             //.fitCenter()
                             .asGif()
                             //.centerCrop()
-                            .diskCacheStrategy(DiskCacheStrategy.NONE)
-                            ;
+                            .diskCacheStrategy(DiskCacheStrategy.NONE);
 
                     if (TextUtils.isEmpty(thumbPath)) {
                         gifRequestBuilder.placeholder(R.mipmap.default_image)     //设置占位图片
@@ -173,6 +162,48 @@ public class ImagePickerHelper {
             }
 
 
+        }
+
+        protected void loadUrlImage(final Activity activity, final String thumbPath, final String url, final ImageView imageView) {
+            Ok.instance().type(url, new Ok.OnImageTypeListener() {
+                @Override
+                public void onImageType(Ok.ImageType imageType) {
+                    L.e("call: onImageType([imageType])-> " + url + " : " + imageType);
+
+                    if (imageType != Ok.ImageType.UNKNOWN) {
+                        if (imageType == Ok.ImageType.GIF) {
+                            imageView.setScaleType(ImageView.ScaleType.FIT_XY);
+                            Glide.with(imageView.getContext())
+                                    .load(url)
+                                    .asGif()
+                                    .placeholder(R.mipmap.default_image)
+                                    .diskCacheStrategy(DiskCacheStrategy.SOURCE)
+                                    .into(imageView);
+                        } else {
+                            final DrawableRequestBuilder<String> drawableRequestBuilder = Glide.with(activity)                             //配置上下文
+                                    .load(url)                                       //设置图片路径(fix #8,文件名包含%符号 无法识别和显示)
+                                    //.error(R.mipmap.default_image)                    //设置错误图片
+                                    //.fitCenter()
+                                    //.centerCrop()
+                                    .diskCacheStrategy(DiskCacheStrategy.ALL);
+
+                            if (TextUtils.isEmpty(thumbPath)) {
+                                drawableRequestBuilder.placeholder(R.mipmap.default_image)     //设置占位图片
+                                        .into(imageView);
+                            } else {
+                                drawableRequestBuilder.placeholder(new BitmapDrawable(activity.getResources(), thumbPath))
+                                        .into(imageView);
+                            }
+                        }
+                    }
+                }
+
+                @Override
+                public void onLoadStart() {
+                    imageView.setScaleType(ImageView.ScaleType.CENTER_CROP);
+                    imageView.setImageResource(R.mipmap.default_image);
+                }
+            });
         }
 
         @Override
