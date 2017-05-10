@@ -160,7 +160,7 @@ public class RTextView extends AppCompatTextView {
             if (text.length() > maxLength) {
                 spanBuilder.setSpan(new RExTextView.ImageTextSpan(getContext(), getTextSize(),
                                 getTextColors().getColorForState(new int[]{}, getTextColors().getDefaultColor()), "..."),
-                        maxLength - 3/*兼容末尾是emoji表情*/, text.length(), Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
+                        maxLength - ((text.length() % 2 == 0) ? 4 : 3)/*兼容末尾是emoji表情*/, text.length(), Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
             }
         }
 
