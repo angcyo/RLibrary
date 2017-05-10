@@ -21,7 +21,7 @@
     <!--个性签名的最大字符数-->
     <integer name="signature_count">100</integer>
     <!--标题最大字符数-->
-    <integer name="title_text_count">16</integer>
+    <integer name="title_text_count">18</integer>
     <!--动态字符长度限制-->
     <integer name="dynamic_status_text_count">2000</integer>
     <!--最大录制视频长度-->
