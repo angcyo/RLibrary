@@ -5,7 +5,9 @@ import android.content.res.Resources;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.media.MediaMetadataRetriever;
+import android.media.ThumbnailUtils;
 import android.os.Build;
+import android.provider.MediaStore;
 
 import com.angcyo.uiview.utils.ScreenUtil;
 import com.angcyo.uiview.utils.file.AttachmentStore;
@@ -259,7 +261,7 @@ public class BitmapDecoder {
 
     public static boolean extractThumbnail(String videoPath, String thumbPath) {
         if (!AttachmentStore.isFileExist(thumbPath)) {
-            //Bitmap thumbnail = ThumbnailUtils.createVideoThumbnail(videoPath, MediaStore.Images.Thumbnails.MINI_KIND);
+//            Bitmap thumbnail = ThumbnailUtils.createVideoThumbnail(videoPath, MediaStore.Images.Thumbnails.MINI_KIND);
             Bitmap thumbnail = createVideoThumbnail(videoPath);
             if (thumbnail != null) {
                 AttachmentStore.saveBitmap(thumbnail, thumbPath, true);

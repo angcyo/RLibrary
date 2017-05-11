@@ -118,7 +118,7 @@ public class Ok {
     public enum ImageType {
         JPEG, GIF, PNG, BMP, UNKNOWN;
 
-        static ImageType of(String type) {
+        public static ImageType of(String type) {
             if ("JPEG".equalsIgnoreCase(type)) {
                 return JPEG;
             }

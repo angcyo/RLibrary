@@ -103,6 +103,7 @@ public class ResUtil {
 
         StateListDrawable bgStateDrawable = new StateListDrawable();//状态shape
         bgStateDrawable.addState(new int[]{android.R.attr.state_pressed}, shopDrawablePress);//按下状态
+        bgStateDrawable.addState(new int[]{-android.R.attr.state_enabled},shopDrawablePress);
         bgStateDrawable.addState(new int[]{}, shopDrawableNormal);//其他状态
 
         return bgStateDrawable;
@@ -235,12 +236,42 @@ public class ResUtil {
         return bgStateDrawable;
     }
 
+    public static Drawable generateStrokeDrawable(float radii, float borderWidth,int pressColor, int defaultColor, int disableColor) {
+        float[] outRadii = new float[]{radii, radii, radii, radii, radii, radii, radii, radii};//四个角的 圆角幅度,8个可以设置的值,每个角都有2个边 2*4=8个
+
+        //与内环的距离
+        RectF inset = new RectF(borderWidth, borderWidth, borderWidth, borderWidth);
+
+        //按下状态
+        Shape roundRectShape = new RoundRectShape(outRadii, inset, outRadii);//圆角背景
+        ShapeDrawable shopDrawablePress = new ShapeDrawable(roundRectShape);//圆角shape
+        shopDrawablePress.getPaint().setColor(pressColor);//设置颜色
+
+        ShapeDrawable shopDrawableEnable = new ShapeDrawable(roundRectShape);
+        shopDrawableEnable.getPaint().setColor(disableColor);
+
+        //正常状态
+        Shape roundRectShapeNormal = new RoundRectShape(outRadii, inset, outRadii);
+        ShapeDrawable shopDrawableNormal = new ShapeDrawable(roundRectShapeNormal);
+        shopDrawableNormal.getPaint().setColor(defaultColor);
+
+        StateListDrawable bgStateDrawable = new StateListDrawable();//状态shape
+        bgStateDrawable.addState(new int[]{-android.R.attr.state_enabled}, shopDrawableEnable);//按下状态
+        bgStateDrawable.addState(new int[]{android.R.attr.state_checked}, shopDrawablePress);//按下状态
+        bgStateDrawable.addState(new int[]{android.R.attr.state_pressed}, shopDrawablePress);//按下状态
+        bgStateDrawable.addState(new int[]{android.R.attr.state_focused}, shopDrawablePress);//焦点状态
+        bgStateDrawable.addState(new int[]{}, shopDrawableNormal);//其他状态
+
+        return bgStateDrawable;
+    }
+
     public static Drawable generateRoundBorderDrawable(float radii, float borderWidth,
                                                        int pressColor, int defaultColor) {
 
         return generateRoundBorderDrawable(radii, borderWidth, pressColor,
                 ContextCompat.getColor(RApplication.getApp(), R.color.default_base_bg_disable2), defaultColor);
     }
+
 
     public static Drawable generateRoundDrawable(float rL1, float rL2, float rT1, float rT2,
                                                  float rR1, float rR2, float rB1, float rB2,
