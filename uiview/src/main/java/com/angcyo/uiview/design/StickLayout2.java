@@ -41,6 +41,7 @@ public class StickLayout2 extends RelativeLayout {
      * 滚动顶部后, 是否可以继续滚动, 增益效果
      */
     private boolean edgeScroll = false;
+    private int viewMaxHeight;
 
     public StickLayout2(Context context) {
         this(context, null);
@@ -81,7 +82,7 @@ public class StickLayout2 extends RelativeLayout {
 
     private void fling(float velocityY) {
         isFling = true;
-        int maxY = getMeasuredHeight();
+        int maxY = viewMaxHeight;
         final RecyclerView recyclerView = mScrollTarget.getRecyclerView();
         if (recyclerView != null) {
             maxY = Math.max(maxY, recyclerView.computeVerticalScrollRange());
@@ -165,7 +166,7 @@ public class StickLayout2 extends RelativeLayout {
         }
         mFloatView = getChildAt(2);
 
-        measureChild(topView, widthMeasureSpec, heightMeasureSpec);
+        measureChild(topView, widthMeasureSpec, MeasureSpec.makeMeasureSpec(heightSize, MeasureSpec.UNSPECIFIED));
         measureChild(mFloatView, widthMeasureSpec, heightMeasureSpec);
         measureChild(scrollView, widthMeasureSpec,
                 MeasureSpec.makeMeasureSpec(heightSize - mFloatView.getMeasuredHeight() - floatTopOffset, MeasureSpec.EXACTLY));
@@ -174,6 +175,7 @@ public class StickLayout2 extends RelativeLayout {
         maxScrollY = floatTop - floatTopOffset;
         topHeight = floatTop + mFloatView.getMeasuredHeight();
 
+        viewMaxHeight = floatTop + mFloatView.getMeasuredHeight() + scrollView.getMeasuredHeight();
         setMeasuredDimension(widthMeasureSpec, heightMeasureSpec);
     }
 

@@ -16,7 +16,7 @@ import com.angcyo.uiview.recycler.RRecyclerView;
 /**
  * Created by angcyo on 2017-03-15.
  */
-
+@Deprecated
 public class StickLayout extends RelativeLayout {
 
     View mFloatView;

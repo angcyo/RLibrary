@@ -61,6 +61,11 @@ public class RExTextView extends RTextView {
      */
     public final static Pattern patternNumber = Pattern.compile("^\\d+$");
 
+    /**
+     * 电话号码正则
+     */
+    public final static Pattern patternPhone = Pattern.compile("\\d{3}-\\d{8}|\\d{3}-\\d{7}|\\d{4}-\\d{8}|\\d{4}-\\d{7}|1+[34578]+\\d{9}|\\d{8}|\\d{7}");
+
     protected ImageTextSpan.OnImageSpanClick mOnImageSpanClick;
 
     private int maxShowLine = -1;//最大显示多少行, 当超过时, 会显示...全部
@@ -148,8 +153,9 @@ public class RExTextView extends RTextView {
             super.setText(text, type);
         } else {
             SpannableStringBuilder spanBuilder = new SpannableStringBuilder(text);
-            patternUrl(spanBuilder, text);
+            patternPhone(spanBuilder, text);
             patternMention(spanBuilder, text);
+            patternUrl(spanBuilder, text);
             afterPattern(spanBuilder, text);
             super.setText(spanBuilder, type);
         }
@@ -172,12 +178,15 @@ public class RExTextView extends RTextView {
 
                         String temp = "...";
                         String foldString = getFoldString();
-                        int start = findStartPosition(spannable, lineStart - 1 - foldString.length());
+                        int startPosition = lineStart - temp.length() - foldString.length();
+                        int start = findStartPosition(spannable, startPosition);
+
+                        int offset = (sequence.length() % 2 == 0) ? 4 : 3;
 
                         spannable.setSpan(new ImageTextSpan(getContext(), getTextSize(), getCurrentTextColor(), temp),
-                                start, start + 3, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
+                                start, start + offset, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
                         spannable.setSpan(new ImageTextSpan(getContext(), getTextSize(), foldString),
-                                start + 3, spannable.length(), Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
+                                start + offset, spannable.length(), Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
                     }
 
                 }
@@ -252,6 +261,24 @@ public class RExTextView extends RTextView {
             int end = matcher.end();
 
             builder.setSpan(new ImageTextSpan(getContext(), ImageTextSpan.initDrawable(getTextSize()), matcher.group(2), matcher.group(1))
+                            .setOnImageSpanClick(mOnImageSpanClick)
+                            .setTextColor(mImageSpanTextColor),
+                    start, end, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
+        }
+    }
+
+    /**
+     * 匹配 电话号码
+     */
+    protected void patternPhone(SpannableStringBuilder builder, CharSequence input) {
+        Matcher matcher = patternPhone.matcher(input);
+
+        while (matcher.find()) {
+            int start = matcher.start();
+            int end = matcher.end();
+
+            builder.setSpan(new ImageTextSpan(getContext(), ImageTextSpan.initDrawable(getTextSize()),
+                            matcher.group(), matcher.group())
                             .setOnImageSpanClick(mOnImageSpanClick)
                             .setTextColor(mImageSpanTextColor),
                     start, end, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
@@ -450,6 +477,8 @@ public class RExTextView extends RTextView {
                 if (!mOnImageSpanClick.onClick(view, mShowContent, url)) {
                     if (patternUrl.matcher(url).matches()) {
                         mOnImageSpanClick.onUrlClick(view, url);
+                    } else if (patternPhone.matcher(url).matches()) {
+                        mOnImageSpanClick.onPhoneClick(view, url);
                     } else if (patternNumber.matcher(url).matches()) {
                         mOnImageSpanClick.onMentionClick(view, url);
                     }
@@ -500,6 +529,10 @@ public class RExTextView extends RTextView {
             }
 
             public void onMentionClick(TextView view, String mention) {
+
+            }
+
+            public void onPhoneClick(TextView view, String phone) {
 
             }
 

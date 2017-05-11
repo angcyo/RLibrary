@@ -20,6 +20,7 @@
             android:gravity="center"
             android:padding="@dimen/base_xhdpi"
             android:visibility="gone"
+            tools:visibility="visible"
             tools:text="我是测试的标题我是测试的标题我是测试的标题我是测试的标题"/>
 
         <!--Item填充-->
