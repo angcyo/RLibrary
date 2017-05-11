@@ -3,6 +3,7 @@ package com.angcyo.uiview.recycler.adapter;
 import android.content.Context;
 import android.support.annotation.NonNull;
 import android.view.Gravity;
+import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.FrameLayout;
@@ -81,6 +82,14 @@ public abstract class RBaseSwipeAdapter<H, T, F> extends RExBaseAdapter<H, T, F>
      * 重写此方法, 创建菜单
      */
     protected View onCreateMenuView(ViewGroup parent, int viewType) {
-        return null;
+        int itemLayoutId = getMenuItemLayoutId(viewType);
+        if (itemLayoutId == -1) {
+            return null;
+        }
+        return LayoutInflater.from(mContext).inflate(itemLayoutId, parent, false);
+    }
+
+    protected int getMenuItemLayoutId(int viewType) {
+        return -1;
     }
 }
