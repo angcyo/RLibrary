@@ -119,9 +119,10 @@ public class RTextView extends AppCompatTextView {
 
     @Override
     public void setText(CharSequence text, BufferType type) {
-        if (getTag() != null
-                && !"title".equalsIgnoreCase(getTag().toString()) /**当出现在TitleBar中, 会有这个标志*/
-                && !TextUtils.isEmpty(text)) {
+        if (getTag() != null &&
+                getTag().toString().contains("%") &&
+                !"title".equalsIgnoreCase(getTag().toString()) /**当出现在TitleBar中, 会有这个标志*/ &&
+                !TextUtils.isEmpty(text)) {
             try {
                 final String format = String.format(Locale.CHINA, getTag().toString(), text);
                 setTextEx(format, type);

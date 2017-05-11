@@ -6,6 +6,7 @@ import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
+import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.PorterDuff;
 import android.graphics.PorterDuffXfermode;
@@ -17,14 +18,21 @@ import android.support.v4.view.ViewCompat;
 import android.support.v7.widget.RecyclerView;
 import android.util.AttributeSet;
 import android.util.TypedValue;
+import android.view.Gravity;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.animation.Animation;
 import android.view.animation.DecelerateInterpolator;
 import android.view.animation.LinearInterpolator;
+import android.view.animation.ScaleAnimation;
 import android.widget.OverScroller;
+import android.widget.TextView;
 
 import com.angcyo.uiview.R;
+import com.angcyo.uiview.skin.SkinHelper;
+import com.angcyo.uiview.utils.T_;
+import com.angcyo.uiview.widget.RTextView;
 
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
@@ -73,45 +81,53 @@ public class RefreshLayout extends ViewGroup {
     public static final String TOP_VIEW = "top_view";
     public static final String BOTTOM_VIEW = "bottom_view";
     public static final String TARGET_VIEW = "target_view";
+    public static final String TIP_VIEW = "tip_view";
+    public static final long ANIM_TIME = 300;
     float downY, downX, lastY;
-    private View mTopView, mBottomView, mTargetView;
+    private View mTopView, mBottomView, mTargetView, mTipView;
     private OverScroller mScroller;
     private int mTouchSlop;
-
     /**
      * 支持的滚动方向
      */
     @Direction
     private int mDirection = BOTH;
-
     /**
      * 当前刷新的状态
      */
     @State
     private int mCurState = NORMAL;
-
     /**
      * 手指未离屏
      */
     private boolean isTouchDown = false;
-
     /**
      * 刷新的意向, 比如刷新的时候抓起了View, 那么不允许上拉加载
      */
     private int order = NONE;
-
     /**
      * 是否激活延迟加载, 防止刷新太快,就结束了.
      */
     private boolean delayLoadEnd = true;
-
     private long refreshTime = 0;
-
     /**
      * 是否需要通知事件, 如果为false, 那么只有滑动效果, 没有事件监听
      */
     private boolean mNotifyListener = true;
+    private boolean mShowTip = false;
+    Runnable hideTipRunnable = new Runnable() {
+        @Override
+        public void run() {
+            mShowTip = false;
 
+            mTipView.clearAnimation();
+            ScaleAnimation scaleAnimation = new ScaleAnimation(1, 1, 1, 0,
+                    Animation.RELATIVE_TO_SELF, 0.5f, Animation.RELATIVE_TO_SELF, 0f);
+            scaleAnimation.setDuration(ANIM_TIME);
+            scaleAnimation.setFillAfter(true);
+            mTipView.startAnimation(scaleAnimation);
+        }
+    };
     private ArrayList<OnTopViewMoveListener> mTopViewMoveListeners = new ArrayList<>();
     private ArrayList<OnBottomViewMoveListener> mBottomViewMoveListeners = new ArrayList<>();
     private ArrayList<OnRefreshListener> mRefreshListeners = new ArrayList<>();
@@ -150,6 +166,10 @@ public class RefreshLayout extends ViewGroup {
             mBottomView.measure(MeasureSpec.makeMeasureSpec(widthSize, MeasureSpec.EXACTLY),
                     MeasureSpec.makeMeasureSpec(heightSize, MeasureSpec.AT_MOST));
         }
+        if (mTipView != null) {
+            mTipView.measure(MeasureSpec.makeMeasureSpec(widthSize, MeasureSpec.EXACTLY),
+                    MeasureSpec.makeMeasureSpec(heightSize, MeasureSpec.AT_MOST));
+        }
     }
 
     @Override
@@ -172,6 +192,19 @@ public class RefreshLayout extends ViewGroup {
             //自动居中布局
             mBottomView.layout((r - l) / 2 - mBottomView.getMeasuredWidth() / 2, b,
                     (r - l) / 2 + mBottomView.getMeasuredWidth() / 2, b + mBottomView.getMeasuredHeight());
+        }
+
+        layoutTipView();
+    }
+
+    private void layoutTipView() {
+        if (!mShowTip) {
+            return;
+        }
+        if (mTipView != null) {
+            mTipView.bringToFront();
+            int top = getScrollY();
+            mTipView.layout(0, top, getMeasuredWidth(), top + mTipView.getMeasuredHeight());
         }
     }
 
@@ -200,6 +233,9 @@ public class RefreshLayout extends ViewGroup {
             if (mBottomView.getParent() == null) {
                 addView(mBottomView);
             }
+            if (mTipView.getParent() == null) {
+                addView(mTipView);
+            }
         }
     }
 
@@ -218,6 +254,7 @@ public class RefreshLayout extends ViewGroup {
                 mBottomView = childAt;
             } else if (childAt instanceof OnTopViewMoveListener) {
                 mTopView = childAt;
+            } else if (childAt == mTipView) {
             } else {
                 mTargetView = childAt;
             }
@@ -235,6 +272,26 @@ public class RefreshLayout extends ViewGroup {
         if (mBottomView == null) {
             mBottomView = new BaseRefreshBottomView(getContext());
             mBottomView.setTag(TOP_VIEW);
+        }
+        if (mTipView == null) {
+            RTextView textView = new RTextView(getContext());
+            textView.setGravity(Gravity.CENTER);
+            textView.setTextColor(Color.WHITE);
+            textView.setRBackgroundColor(SkinHelper.getSkin().getThemeSubColor());
+            textView.setBackgroundResource(R.drawable.base_bg_selector);
+            textView.setText("测试专用...");
+            textView.setTag(TIP_VIEW);
+            int left = getResources().getDimensionPixelOffset(R.dimen.base_xhdpi);
+            int top = getResources().getDimensionPixelOffset(R.dimen.base_ldpi);
+            textView.setPadding(left, top, left, top);
+            mTipView = textView;
+
+            mTipView.setOnClickListener(new OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    T_.show("Test");
+                }
+            });
         }
     }
 
@@ -652,6 +709,8 @@ public class RefreshLayout extends ViewGroup {
 
         super.scrollTo(0, y);
 
+        layoutTipView();
+
         int scrollY = getScrollY();
         int rawY = Math.abs(scrollY);
 
@@ -708,7 +767,6 @@ public class RefreshLayout extends ViewGroup {
         mRefreshListeners.add(listener);
         return this;
     }
-
 
     public RefreshLayout removeTopViewMoveListener(OnTopViewMoveListener listener) {
         mTopViewMoveListeners.remove(listener);
@@ -805,6 +863,23 @@ public class RefreshLayout extends ViewGroup {
 
     public void setNotifyListener(boolean notifyListener) {
         this.mNotifyListener = notifyListener;
+    }
+
+    public void setShowTip(String tip) {
+        boolean oldShow = mShowTip;
+        mShowTip = true;
+        ((TextView) mTipView).setText(tip);
+
+        if (oldShow) {
+            mTipView.removeCallbacks(hideTipRunnable);
+        } else {
+            mTipView.clearAnimation();
+            ScaleAnimation scaleAnimation = new ScaleAnimation(0.6f, 1, 1, 1,
+                    Animation.RELATIVE_TO_SELF, 0.5f, Animation.RELATIVE_TO_SELF, 0.5f);
+            scaleAnimation.setDuration(ANIM_TIME);
+            mTipView.startAnimation(scaleAnimation);
+        }
+        mTipView.postDelayed(hideTipRunnable, 1000);
     }
 
     /**
