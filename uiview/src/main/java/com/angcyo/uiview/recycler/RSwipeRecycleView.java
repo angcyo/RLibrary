@@ -178,7 +178,7 @@ public class RSwipeRecycleView extends RRecyclerView {
     /**
      * 关闭所有侧滑按钮
      */
-    private void closeAllSwipeItem() {
+    public void closeAllSwipeItem() {
         final int count = getChildCount();
         for (int i = count - 1; i >= 0; i--) {
             final View child = getChildAt(i);

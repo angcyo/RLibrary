@@ -5,10 +5,14 @@ import android.graphics.Rect;
 import android.support.annotation.NonNull;
 import android.support.v4.widget.ViewDragHelper;
 import android.util.AttributeSet;
+import android.view.Gravity;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.FrameLayout;
+import android.widget.LinearLayout;
+
+import com.angcyo.uiview.viewgroup.RLinearLayout;
 
 /**
  * Created by yukuoyuan on 2017/3/10.
@@ -19,8 +23,8 @@ import android.widget.FrameLayout;
 public class SwipeRecycleViewItemLayout extends FrameLayout {
 
     private final ViewDragHelper dragHelper;
-    private View menu;
-    private View content;
+    private RLinearLayout menuView;
+    private View contentView;
     private boolean isOpen;
     private int currentState;
     private ViewDragHelper.Callback rightCallback = new ViewDragHelper.Callback() {
@@ -29,7 +33,10 @@ public class SwipeRecycleViewItemLayout extends FrameLayout {
         // return true表示抓取这个View。
         @Override
         public boolean tryCaptureView(View child, int pointerId) {
-            return menu != null && menu.getMeasuredWidth() != 0 && content == child;
+            return menuView != null &&
+                    menuView.getMeasuredWidth() != 0 &&
+                    menuView.getChildCount() > 0 &&
+                    contentView == child;
         }
 
         /**
@@ -41,7 +48,7 @@ public class SwipeRecycleViewItemLayout extends FrameLayout {
          */
         @Override
         public int clampViewPositionHorizontal(View child, int left, int dx) {
-            return left > 0 ? 0 : left < -menu.getWidth() ? -menu.getWidth() : left;
+            return left > 0 ? 0 : left < -menuView.getWidth() ? -menuView.getWidth() : left;
         }
 
         /**
@@ -55,13 +62,13 @@ public class SwipeRecycleViewItemLayout extends FrameLayout {
 
             // x轴移动速度大于菜单一半，或者已经移动到菜单的一般之后，展开菜单
             if (isOpen) {
-                if (xvel > menu.getWidth() || -content.getLeft() < menu.getWidth() / 2) {
+                if (xvel > menuView.getWidth() || -contentView.getLeft() < menuView.getWidth() / 2) {
                     close();
                 } else {
                     open();
                 }
             } else {
-                if (-xvel > menu.getWidth() || -content.getLeft() > menu.getWidth() / 2) {
+                if (-xvel > menuView.getWidth() || -contentView.getLeft() > menuView.getWidth() / 2) {
                     open();
                 } else {
                     close();
@@ -117,6 +124,13 @@ public class SwipeRecycleViewItemLayout extends FrameLayout {
          * 初始化我们自定义处理触摸事件的方法
          */
         dragHelper = ViewDragHelper.create(this, rightCallback);
+
+        /**用来容纳菜单的布局*/
+        menuView = new RLinearLayout(context);
+        menuView.setOrientation(LinearLayout.HORIZONTAL);
+        FrameLayout.LayoutParams menuParams = new FrameLayout.LayoutParams(-2, -1);
+        menuParams.gravity = Gravity.END | Gravity.CENTER_VERTICAL;
+        addView(menuView, menuParams);
     }
 
     /**
@@ -152,7 +166,7 @@ public class SwipeRecycleViewItemLayout extends FrameLayout {
     }
 
     public Rect getMenuRect() {
-        menu.getHitRect(outRect);
+        menuView.getHitRect(outRect);
         return outRect;
     }
 
@@ -166,11 +180,8 @@ public class SwipeRecycleViewItemLayout extends FrameLayout {
     }
 
     private void ensureChildView() {
-        if (getChildCount() > 0) {
-            menu = getChildAt(0);
-        }
         if (getChildCount() > 1) {
-            content = getChildAt(1);
+            contentView = getChildAt(1);
         }
     }
 
@@ -184,7 +195,7 @@ public class SwipeRecycleViewItemLayout extends FrameLayout {
      * 这是一个关闭菜单的方法
      */
     public void close() {
-        dragHelper.smoothSlideViewTo(content, 0, 0);
+        dragHelper.smoothSlideViewTo(contentView, 0, 0);
         isOpen = false;
         invalidate();
     }
@@ -193,7 +204,7 @@ public class SwipeRecycleViewItemLayout extends FrameLayout {
      * 这是一个打开菜单的方法
      */
     public void open() {
-        dragHelper.smoothSlideViewTo(content, -menu.getWidth(), 0);
+        dragHelper.smoothSlideViewTo(contentView, -menuView.getWidth(), 0);
         isOpen = true;
         invalidate();
     }
@@ -209,6 +220,10 @@ public class SwipeRecycleViewItemLayout extends FrameLayout {
         }
     }
 
+    public ViewGroup getMenuView() {
+        return menuView;
+    }
+
     /**
      * 设置点击事件
      *
@@ -216,7 +231,7 @@ public class SwipeRecycleViewItemLayout extends FrameLayout {
      */
     @Override
     public void setOnClickListener(OnClickListener l) {
-        content.setOnClickListener(l);
+        contentView.setOnClickListener(l);
     }
 
     public boolean isOpen() {

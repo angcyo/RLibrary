@@ -43,6 +43,7 @@
             android:layout_marginEnd="@dimen/base_xhdpi"
             android:background="@drawable/base_round_bg_selector_5x"
             android:clickable="true"
+            android:textColor="@color/default_base_border"
             tools:text="@string/base_cancel"
             tools:textColor="@android:color/white"/>
 

@@ -442,6 +442,10 @@ public class RUtils {
      */
     public static void openFile(Context context, File file) throws ActivityNotFoundException {
 
+        if (file == null || !file.exists()) {
+            return;
+        }
+
         Intent intent = new Intent();
         intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
         //设置intent的Action属性

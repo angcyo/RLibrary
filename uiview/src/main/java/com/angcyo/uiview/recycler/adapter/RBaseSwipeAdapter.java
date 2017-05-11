@@ -2,13 +2,11 @@ package com.angcyo.uiview.recycler.adapter;
 
 import android.content.Context;
 import android.support.annotation.NonNull;
-import android.view.Gravity;
-import android.view.LayoutInflater;
 import android.view.View;
-import android.view.ViewGroup;
-import android.widget.FrameLayout;
 
 import com.angcyo.uiview.recycler.RBaseViewHolder;
+import com.angcyo.uiview.recycler.RSwipeRecycleView;
+import com.angcyo.uiview.recycler.widget.MenuBuilder;
 import com.angcyo.uiview.recycler.widget.SwipeRecycleViewItemLayout;
 
 import java.util.List;
@@ -48,14 +46,6 @@ public abstract class RBaseSwipeAdapter<H, T, F> extends RExBaseAdapter<H, T, F>
 
         } else {
             SwipeRecycleViewItemLayout swipeRecycleViewItemLayout = new SwipeRecycleViewItemLayout(mContext);
-            View menuView = onCreateMenuView(swipeRecycleViewItemLayout, viewType);
-            if (menuView == null) {
-                menuView = new SwipeRecycleViewItemLayout.EmptyView(mContext);
-            }
-            FrameLayout.LayoutParams menuParams = new FrameLayout.LayoutParams(-2, -1);
-            menuParams.gravity = Gravity.END | Gravity.CENTER_VERTICAL;
-            swipeRecycleViewItemLayout.addView(menuView, menuParams);
-
             itemView.setClickable(true);//防止穿透内容布局, 直接点到了menu上
             swipeRecycleViewItemLayout.addView(itemView);
             swipeRecycleViewItemLayout.setLayoutParams(itemView.getLayoutParams());
@@ -68,28 +58,26 @@ public abstract class RBaseSwipeAdapter<H, T, F> extends RExBaseAdapter<H, T, F>
     @Override
     public void onBindViewHolder(RBaseViewHolder holder, int position) {
         super.onBindViewHolder(holder, position);
-        onBindMenuView(holder, position);
+
+        MenuBuilder menuBuilder = new MenuBuilder(mContext);
+        onBindMenuView(menuBuilder, holder.getViewType(), position);
+        menuBuilder.build((SwipeRecycleViewItemLayout) holder.itemView);
+    }
+
+    /**
+     * 关闭所有侧滑按钮
+     */
+    public void closeAllMenu(RSwipeRecycleView swipeRecycleView) {
+        if (swipeRecycleView != null) {
+            swipeRecycleView.closeAllSwipeItem();
+        }
     }
 
     /**
      * 重写此方法, 设置菜单
      */
-    protected void onBindMenuView(RBaseViewHolder holder, int position) {
+    protected void onBindMenuView(MenuBuilder menuBuilder, int viewType, int position) {
 
     }
 
-    /**
-     * 重写此方法, 创建菜单
-     */
-    protected View onCreateMenuView(ViewGroup parent, int viewType) {
-        int itemLayoutId = getMenuItemLayoutId(viewType);
-        if (itemLayoutId == -1) {
-            return null;
-        }
-        return LayoutInflater.from(mContext).inflate(itemLayoutId, parent, false);
-    }
-
-    protected int getMenuItemLayoutId(int viewType) {
-        return -1;
-    }
 }

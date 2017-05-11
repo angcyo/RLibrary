@@ -5,6 +5,7 @@ import android.content.res.TypedArray;
 import android.graphics.Canvas;
 import android.graphics.Paint;
 import android.graphics.Rect;
+import android.graphics.drawable.ColorDrawable;
 import android.graphics.drawable.Drawable;
 import android.support.annotation.ColorInt;
 import android.support.annotation.DrawableRes;
@@ -300,6 +301,10 @@ public class RTextView extends AppCompatTextView {
 //        if (isAttached) {
 //            postInvalidate();
 //        }
+    }
+
+    public void setRBackgroundColor(int color) {
+        mBackgroundDrawable = new ColorDrawable(color);
     }
 
     /**

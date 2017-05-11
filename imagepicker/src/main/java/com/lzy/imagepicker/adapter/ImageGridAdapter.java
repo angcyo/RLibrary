@@ -31,6 +31,7 @@ import java.util.ArrayList;
  * 修订历史：2016-12-13
  * ================================================
  */
+@Deprecated
 public class ImageGridAdapter extends BaseAdapter {
 
     private static final int ITEM_TYPE_CAMERA = 0;  //第一个条目是相机

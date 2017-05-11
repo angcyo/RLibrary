@@ -20,6 +20,7 @@ import android.text.format.Formatter;
 import android.util.Log;
 
 import com.angcyo.library.utils.L;
+import com.orhanobut.hawk.Hawk;
 
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
@@ -46,6 +47,9 @@ import java.util.zip.ZipFile;
 public class RCrashHandler implements Thread.UncaughtExceptionHandler {
 
     public static final String INTENT_ACTION_RESTART_ACTIVITY = "com.angcyo.crash";
+    public static final String KEY_IS_CRASH = "is_crash";
+    public static final String KEY_CRASH_FILE = "crash_file";
+    public static final String KEY_CRASH_MESSAGE = "crash_message";
     private static final String DEFAULT_LOG_DIR = "crash";
     // log文件的后缀名
     private static final String FILE_NAME_SUFFIX = ".log";
@@ -468,6 +472,7 @@ public class RCrashHandler implements Thread.UncaughtExceptionHandler {
     @Override
     public void uncaughtException(Thread thread, Throwable ex) {
 //        boolean isShow = false;
+
         ex.printStackTrace();
 
         if (!L.LOG_DEBUG) {
@@ -530,6 +535,11 @@ public class RCrashHandler implements Thread.UncaughtExceptionHandler {
         }
         String dataTime = getDataTime("yyyy-MM-dd-HH-mm-ss");
         File file = new File(saveFolder, dataTime + FILE_NAME_SUFFIX);
+
+        Hawk.put(KEY_IS_CRASH, true);//异常退出
+        Hawk.put(KEY_CRASH_FILE, file.getAbsolutePath());//异常文件
+        Hawk.put(KEY_CRASH_MESSAGE, ex.getMessage());
+
         PrintWriter pw = new PrintWriter(new BufferedWriter(new FileWriter(file)));
         // 导出发生异常的时间
         pw.println(dataTime);
