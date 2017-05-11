@@ -891,7 +891,7 @@ public class FileUtils {
      * @return 字符串
      */
     public static String readFile2String(File file, String charsetName) {
-        if (file == null) return null;
+        if (file == null || !file.exists()) return null;
         BufferedReader reader = null;
         try {
             StringBuilder sb = new StringBuilder();
