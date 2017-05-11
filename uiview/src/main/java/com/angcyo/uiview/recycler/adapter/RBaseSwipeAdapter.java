@@ -55,10 +55,7 @@ public abstract class RBaseSwipeAdapter<H, T, F> extends RExBaseAdapter<H, T, F>
             menuParams.gravity = Gravity.END | Gravity.CENTER_VERTICAL;
             swipeRecycleViewItemLayout.addView(menuView, menuParams);
 
-
-//            ViewGroup.LayoutParams layoutParams = itemView.getLayoutParams();
-//            FrameLayout.LayoutParams contentParams = new FrameLayout.LayoutParams(layoutParams);
-
+            itemView.setClickable(true);//防止穿透内容布局, 直接点到了menu上
             swipeRecycleViewItemLayout.addView(itemView);
             swipeRecycleViewItemLayout.setLayoutParams(itemView.getLayoutParams());
 

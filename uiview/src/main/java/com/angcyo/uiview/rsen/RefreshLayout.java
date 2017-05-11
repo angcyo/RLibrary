@@ -395,10 +395,21 @@ public class RefreshLayout extends ViewGroup {
      * 释放手指之后的处理
      */
     private void handleTouchUp() {
+        int scrollY = getScrollY();
+        int rawY = Math.abs(scrollY);
+
+        int topHeight = mTopView.getMeasuredHeight();
+        int bottomHeight = mBottomView.getMeasuredHeight();
+
         if (order == NONE) {
-            if (getScrollY() != 0 &&
-                    (mCurState == FINISH || mCurState == NORMAL)) {
-                resetScroll();
+            if (scrollY != 0) {
+                if (mCurState == FINISH || mCurState == NORMAL) {
+                    resetScroll();
+                } else if (mCurState == TOP && scrollY > -topHeight) {
+                    resetScroll();
+                } else if (mCurState == BOTTOM && scrollY < bottomHeight) {
+                    resetScroll();
+                }
             }
             return;
         }
@@ -410,9 +421,6 @@ public class RefreshLayout extends ViewGroup {
             return;
         }
 
-        int scrollY = getScrollY();
-        int rawY = Math.abs(scrollY);
-
         if (scrollY < 0) {
             //处理刷新
             if (mTopView == null || mCurState == FINISH) {
@@ -420,8 +428,7 @@ public class RefreshLayout extends ViewGroup {
                 return;
             }
 
-            int height = mTopView.getMeasuredHeight();
-            if (rawY >= height) {
+            if (rawY >= topHeight) {
                 refreshTop();
             } else {
                 resetScroll();
@@ -433,8 +440,7 @@ public class RefreshLayout extends ViewGroup {
                 return;
             }
 
-            int height = mBottomView.getMeasuredHeight();
-            if (rawY >= height) {
+            if (rawY >= bottomHeight) {
                 refreshBottom();
             } else {
                 resetScroll();
@@ -448,11 +454,6 @@ public class RefreshLayout extends ViewGroup {
      */
     public void setRefreshDirection(@Direction int direction) {
         mDirection = direction;
-        if (mDirection == TOP) {
-            setBottomView(new PlaceholderView(getContext()));
-        } else if (mDirection == BOTTOM) {
-            setTopView(new PlaceholderView(getContext()));
-        }
     }
 
     /**
