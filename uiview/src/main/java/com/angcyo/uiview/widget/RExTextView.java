@@ -386,6 +386,11 @@ public class RExTextView extends RTextView {
 
         public ImageTextSpan setOnImageSpanClick(OnImageSpanClick onImageSpanClick) {
             mOnImageSpanClick = onImageSpanClick;
+            if (mOnImageSpanClick == null) {
+                canClick = false;
+            } else {
+                canClick = true;
+            }
             return this;
         }
 

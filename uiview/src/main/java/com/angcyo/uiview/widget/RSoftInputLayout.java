@@ -64,7 +64,7 @@ public class RSoftInputLayout extends FrameLayout {
     /**
      * 使用动画的形式展开表情布局
      */
-    private boolean isAnimToShow = true;
+    private boolean isAnimToShow = false;
 
     public RSoftInputLayout(Context context) {
         super(context);
