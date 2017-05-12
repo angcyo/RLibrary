@@ -483,6 +483,8 @@ public class RCrashHandler implements Thread.UncaughtExceptionHandler {
 
     public static void checkCrash(final ILayout iLayout) {
         if (Hawk.get(RCrashHandler.KEY_IS_CRASH, false)) {
+            ClipboardUtils.copyText(FileUtils.readFile2String(Hawk.get(RCrashHandler.KEY_CRASH_FILE, "-"), "utf8"));
+
             //异常退出了
             UIDialog.build()
                     .setDialogTitle("发生了什么啊^_^")
@@ -499,7 +501,6 @@ public class RCrashHandler implements Thread.UncaughtExceptionHandler {
                         @Override
                         public void onClick(View v) {
                             try {
-                                ClipboardUtils.copyText(FileUtils.readFile2String(Hawk.get(RCrashHandler.KEY_CRASH_FILE, "-"), "utf8"));
 
                                 if (CmdUtil.checkApkExist(iLayout.getLayout().getContext(), "com.tencent.mobileqq")) {
                                     String url = "mqqwpa://im/chat?chat_type=wpa&uin=" + QQ;
