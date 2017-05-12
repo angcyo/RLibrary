@@ -4,12 +4,14 @@ import android.app.Activity;
 import android.app.ActivityManager;
 import android.app.AlarmManager;
 import android.app.PendingIntent;
+import android.content.ActivityNotFoundException;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.ApplicationInfo;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
 import android.content.pm.ResolveInfo;
+import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Debug;
@@ -18,8 +20,15 @@ import android.os.Process;
 import android.os.StatFs;
 import android.text.format.Formatter;
 import android.util.Log;
+import android.view.View;
 
 import com.angcyo.library.utils.L;
+import com.angcyo.uiview.container.ILayout;
+import com.angcyo.uiview.dialog.UIDialog;
+import com.angcyo.uiview.github.utilcode.utils.ClipboardUtils;
+import com.angcyo.uiview.github.utilcode.utils.CmdUtil;
+import com.angcyo.uiview.github.utilcode.utils.FileUtils;
+import com.angcyo.uiview.utils.T_;
 import com.orhanobut.hawk.Hawk;
 
 import java.io.BufferedReader;
@@ -468,6 +477,60 @@ public class RCrashHandler implements Thread.UncaughtExceptionHandler {
 
     //-----------------------------------------------end------------------------------------------//
 
+    public static void checkCrash(final ILayout iLayout) {
+        if (Hawk.get(RCrashHandler.KEY_IS_CRASH, false)) {
+            //异常退出了
+            UIDialog.build()
+                    .setDialogTitle("发生了什么啊^_^")
+                    .setDialogContent(Hawk.get(RCrashHandler.KEY_CRASH_MESSAGE, "-"))
+                    .setOkText("粘贴给作者?")
+                    .setCancelText("加入QQ群")
+                    .setCancelListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View v) {
+                            joinQQGroup(iLayout.getLayout().getContext(), "TO1ybOZnKQHSLcUlwsVfOt6KQMGLmuAW");
+                        }
+                    })
+                    .setOkListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View v) {
+                            try {
+                                ClipboardUtils.copyText(FileUtils.readFile2String(Hawk.get(RCrashHandler.KEY_CRASH_FILE, "-"), "utf8"));
+
+                                String qq = "664738095";
+                                if (CmdUtil.checkApkExist(iLayout.getLayout().getContext(), "com.tencent.mobileqq")) {
+                                    String url = "mqqwpa://im/chat?chat_type=wpa&uin=" + qq;
+                                    Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse(url));
+                                    intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                                    iLayout.getLayout().getContext().startActivity(intent);
+                                } else {
+                                    T_.error("您没有安装腾讯QQ");
+                                }
+                            } catch (ActivityNotFoundException e) {
+                                e.printStackTrace();
+                            }
+                        }
+                    })
+                    .showDialog(iLayout);
+        }
+
+        Hawk.put(RCrashHandler.KEY_IS_CRASH, false);
+    }
+
+    private static boolean joinQQGroup(Context context, String key) {
+        Intent intent = new Intent();
+        intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+        intent.setData(Uri.parse("mqqopensdkapi://bizAgent/qm/qr?url=http%3A%2F%2Fqm.qq.com%2Fcgi-bin%2Fqm%2Fqr%3Ffrom%3Dapp%26p%3Dandroid%26k%3D" + key));
+        // 此Flag可根据具体产品需要自定义，如设置，则在加群界面按返回，返回手Q主界面，不设置，按返回会返回到呼起产品界面    //intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+        try {
+            context.startActivity(intent);
+            return true;
+        } catch (Exception e) {
+            // 未安装手Q或安装的版本不支持
+            T_.error("您没有安装腾讯QQ");
+            return false;
+        }
+    }
 
     @Override
     public void uncaughtException(Thread thread, Throwable ex) {
