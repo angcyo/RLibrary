@@ -296,8 +296,7 @@ public class RTextView extends AppCompatTextView {
     public void setDefaultSKin(String text) {
         setPadding(getResources().getDimensionPixelOffset(R.dimen.base_hdpi), getPaddingTop(),
                 getPaddingRight(), getPaddingBottom());
-        this.leftColor = SkinHelper.getSkin().getThemeSubColor();
-        this.leftWidth = getResources().getDimensionPixelOffset(R.dimen.base_mdpi);
+        setLeftColor(SkinHelper.getSkin().getThemeSubColor(), getResources().getDimensionPixelOffset(R.dimen.base_mdpi));
         setText(text);
 //        if (isAttached) {
 //            postInvalidate();

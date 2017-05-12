@@ -40,7 +40,7 @@
     <!--对话框默认两边的距离-->
     <dimen name="base_dialog_margin">30dp</dimen>
     <!--线的大小-->
-    <dimen name="base_line">1dp</dimen>
+    <dimen name="base_line">1px</dimen>
     <!--默认的线框大小-->
     <dimen name="base_border_size">2dp</dimen>
     <!--下滑线的高度-->
