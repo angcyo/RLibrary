@@ -34,7 +34,7 @@ public class RecordTimeView extends RTextView {
 
     OnMaxTimeListener mOnMaxTimeListener;
 
-    Runnable record = new Runnable() {
+    Runnable recordRunnable = new Runnable() {
         @Override
         public void run() {
             mTime++;
@@ -44,7 +44,7 @@ public class RecordTimeView extends RTextView {
                     mOnMaxTimeListener.onMaxTime(mTime);
                 }
             } else {
-                postDelayed(record, 1000);
+                postDelayed(recordRunnable, 1000);
             }
         }
     };
@@ -125,17 +125,23 @@ public class RecordTimeView extends RTextView {
             return;
         }
         isRecording = true;
-        postDelayed(record, 1000);
+        postDelayed(recordRunnable, 1000);
     }
 
     /**
      * 停止
      */
     public void stopRecord() {
+        stopRecord(true);
+    }
+
+    public void stopRecord(boolean resetTime) {
         if (isRecording) {
             isRecording = false;
-            removeCallbacks(record);
-            setTime(0);
+            removeCallbacks(recordRunnable);
+            if (resetTime) {
+                setTime(0);
+            }
         }
     }
 

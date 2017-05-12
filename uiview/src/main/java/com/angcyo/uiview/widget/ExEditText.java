@@ -640,7 +640,7 @@ public class ExEditText extends AppCompatEditText {
                 int end = start + mentionText.length();
                 spannableText.setSpan(new MentionSpan(text.substring(start, end)), start, end, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
                 lastMentionIndex = end;
-                //record all show-string's position
+                //recordRunnable all show-string's position
                 mRangeArrayList.add(new Range(start, end));
             }
             if (!isFind) {

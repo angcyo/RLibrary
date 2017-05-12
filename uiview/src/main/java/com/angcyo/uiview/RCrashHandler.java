@@ -62,6 +62,10 @@ public class RCrashHandler implements Thread.UncaughtExceptionHandler {
     private static final String DEFAULT_LOG_DIR = "crash";
     // log文件的后缀名
     private static final String FILE_NAME_SUFFIX = ".log";
+    //qq一键加群
+    public static String QQ_GROUP_KEY = "TO1ybOZnKQHSLcUlwsVfOt6KQMGLmuAW";
+    //qq帐号咨询, 需要开通咨询服务
+    public static String QQ = "664738095";
     private static DecimalFormat fileIntegerFormat = new DecimalFormat("#0");
     private static DecimalFormat fileDecimalFormat = new DecimalFormat("#0.#");
     private final Thread.UncaughtExceptionHandler defaultUncaughtExceptionHandler;
@@ -488,7 +492,7 @@ public class RCrashHandler implements Thread.UncaughtExceptionHandler {
                     .setCancelListener(new View.OnClickListener() {
                         @Override
                         public void onClick(View v) {
-                            joinQQGroup(iLayout.getLayout().getContext(), "TO1ybOZnKQHSLcUlwsVfOt6KQMGLmuAW");
+                            joinQQGroup(iLayout.getLayout().getContext(), QQ_GROUP_KEY);
                         }
                     })
                     .setOkListener(new View.OnClickListener() {
@@ -497,9 +501,8 @@ public class RCrashHandler implements Thread.UncaughtExceptionHandler {
                             try {
                                 ClipboardUtils.copyText(FileUtils.readFile2String(Hawk.get(RCrashHandler.KEY_CRASH_FILE, "-"), "utf8"));
 
-                                String qq = "664738095";
                                 if (CmdUtil.checkApkExist(iLayout.getLayout().getContext(), "com.tencent.mobileqq")) {
-                                    String url = "mqqwpa://im/chat?chat_type=wpa&uin=" + qq;
+                                    String url = "mqqwpa://im/chat?chat_type=wpa&uin=" + QQ;
                                     Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse(url));
                                     intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
                                     iLayout.getLayout().getContext().startActivity(intent);

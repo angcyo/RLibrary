@@ -422,6 +422,8 @@ public abstract class RBaseAdapter<T> extends RecyclerView.Adapter<RBaseViewHold
 
     /**
      * 设置布局显示状态
+     *
+     * @see IShowState
      */
     public void setShowState(int showState) {
         if (mShowState == showState) {

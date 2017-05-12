@@ -1,7 +1,5 @@
 package com.angcyo.library.okhttp;
 
-import com.angcyo.library.utils.ThreadExecutor;
-
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;

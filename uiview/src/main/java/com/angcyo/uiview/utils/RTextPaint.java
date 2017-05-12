@@ -13,6 +13,10 @@ import com.angcyo.uiview.RApplication;
  * Copyright (C) 2016,深圳市红鸟网络科技股份有限公司 All rights reserved.
  * 项目名称：
  * 类的描述：用来绘制文本的画笔, 坐标自动从文本的左下角开始计算
+ * <p>
+ * 默认的笔,绘制坐标是文本的左下角.
+ * 这个笔, 绘制坐标是文本的左上角.
+ * <p>
  * 创建人员：Robi
  * 创建时间：2017/04/11 17:03
  * 修改人员：Robi
@@ -27,11 +31,11 @@ public class RTextPaint {
     int mTextColor = Color.WHITE;
 
     public RTextPaint() {
-        mTextSize = RApplication.getApp().getResources().getDisplayMetrics().density * 13;
+        this(13);
     }
 
     public RTextPaint(float textSize) {
-        mTextSize = textSize;
+        mTextSize = RApplication.getApp().getResources().getDisplayMetrics().density * textSize;
     }
 
     public static RTextPaint instance() {
@@ -47,6 +51,15 @@ public class RTextPaint {
         int height = paint.getFontMetricsInt(null);
         //double height = Math.ceil(fontMetricsInt.descent - fontMetricsInt.ascent);//+ 2;
         return height;
+    }
+
+    public double getTextHeight() {
+        return getTextHeight(mTextPaint);
+    }
+
+    public float getTextWidth(String text) {
+        initPaint();
+        return mTextPaint.measureText(text);
     }
 
     public Rect getTextBounds(String text) {
@@ -70,6 +83,14 @@ public class RTextPaint {
         initPaint();
         Rect bounds = getTextBounds(text);
         canvas.drawText(text, x, y + bounds.height(), mTextPaint);
+    }
+
+    public void drawOriginText(Canvas canvas, String text, float x, float y) {
+        if (TextUtils.isEmpty(text)) {
+            return;
+        }
+        initPaint();
+        canvas.drawText(text, x, y, mTextPaint);
     }
 
     private void initPaint() {

@@ -443,9 +443,9 @@ public class RExTextView extends RTextView {
                 //文本在图片的中间绘制
                 float textY;
                 if (paint.getFontMetricsInt().descent > 0) {
-                    textY = top + textHeight / 2 + height / 2 - paint.getFontMetricsInt().descent / 2;
-                } else {
                     textY = top + textHeight / 2 + height / 2 - paint.getFontMetricsInt().descent;
+                } else {
+                    textY = top + textHeight / 2 + height / 2 - paint.getFontMetricsInt().descent / 2;
                 }
                 canvas.drawText(string,
                         x + mImageSize + space,

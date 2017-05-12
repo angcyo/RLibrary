@@ -1,4 +1,4 @@
-package com.angcyo.library.utils;
+package com.angcyo.library.okhttp;
 
 import android.os.Handler;
 import android.os.Looper;
@@ -11,7 +11,7 @@ import java.util.concurrent.Executors;
  * 主线程调度器
  * Created by robi on 2016-06-02 20:47.
  */
-public class ThreadExecutor {
+class ThreadExecutor {
     static private ThreadExecutor instance;
     private final Executor mCallbackPoster;
     private final ExecutorService mExecutorService;
