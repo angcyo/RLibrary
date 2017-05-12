@@ -30,9 +30,9 @@ public class NetworkStateReceiver extends BroadcastReceiver {
      * 获取网络类型
      */
     public static NetworkUtils.NetworkType getNetType() {
-        if (netType == NetworkUtils.NetworkType.NETWORK_NO) {
+        //if (netType == NetworkUtils.NetworkType.NETWORK_NO) {
             netType = NetworkUtils.getNetworkType(RApplication.getApp());
-        }
+        //}
         return netType;
     }
 
