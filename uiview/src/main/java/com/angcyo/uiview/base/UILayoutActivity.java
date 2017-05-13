@@ -110,8 +110,12 @@ public abstract class UILayoutActivity extends StyleActivity {
     @Override
     public void onBackPressed() {
         if (mLayout.requestBackPressed()) {
-            super.onBackPressed();
+            onUIBackPressed();
         }
+    }
+
+    protected void onUIBackPressed() {
+        super.onBackPressed();
     }
 
     public void startIView(final IView iView, boolean needAnim) {
