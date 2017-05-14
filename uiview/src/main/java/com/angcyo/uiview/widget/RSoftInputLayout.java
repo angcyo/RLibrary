@@ -64,7 +64,7 @@ public class RSoftInputLayout extends FrameLayout {
     /**
      * 使用动画的形式展开表情布局
      */
-    private boolean isAnimToShow = false;
+    private boolean isAnimToShow = true;
 
     public RSoftInputLayout(Context context) {
         super(context);
@@ -188,7 +188,7 @@ public class RSoftInputLayout extends FrameLayout {
                 MeasureSpec.makeMeasureSpec(contentHeight, MeasureSpec.EXACTLY));
         if (emojiLayout != null) {
             emojiLayout.measure(MeasureSpec.makeMeasureSpec(widthSize, MeasureSpec.EXACTLY),
-                    MeasureSpec.makeMeasureSpec(emojiHeight, MeasureSpec.EXACTLY));
+                    MeasureSpec.makeMeasureSpec(keyboardHeight /*emojiHeight*/, MeasureSpec.EXACTLY));
         }
         setMeasuredDimension(widthSize, heightSize);
     }
