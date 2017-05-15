@@ -621,7 +621,7 @@ public abstract class UIBaseView extends UIIViewImpl {
     /**
      * 标题栏中, 点击了返回按钮
      */
-    protected void onTitleBackListener() {
+    protected boolean onTitleBackListener() {
         if (mEnableClip && enableExitClip()) {
             if (mClipMode == ClipMode.CLIP_EXIT) {
                 mBaseRootLayout.setEnableClip(true);
@@ -631,19 +631,20 @@ public abstract class UIBaseView extends UIIViewImpl {
                 @Override
                 public void onEnd() {
                     //backPressed();
+                    mEnableClip = false;
                     onClipEnd(ClipMode.CLIP_EXIT);
                 }
             });
-        } else {
+            backPressed();
+            return false;
         }
-        backPressed();
+        return true;
     }
 
     @Override
     public boolean onBackPressed() {
         if (mEnableClip) {
-            onTitleBackListener();
-            return false;
+            return onTitleBackListener();
         }
         return super.onBackPressed();
     }
@@ -719,6 +720,14 @@ public abstract class UIBaseView extends UIIViewImpl {
         return this;
     }
 
+    public UIBaseView setEnableClipMode(ClipMode mode, int x, int y, int r) {
+        this.mClipMode = mode;
+        this.mEnableClip = true;
+        clipXYR = new int[]{x, y, r};
+        initClipTime();
+        return this;
+    }
+
     /**
      * 计算clip需要的时间
      */
@@ -738,10 +747,10 @@ public abstract class UIBaseView extends UIIViewImpl {
 
         int value = Math.max(maxWidth, maxHeight);
         int time;
-        if (endRadius - clipXYR[2] >= value / 2) {
-            time = 300;
+        if (clipXYR != null && endRadius - clipXYR[2] >= value / 2) {
+            time = 500;
         } else {
-            time = 200;
+            time = 300;
         }
         ClipHelper.ANIM_TIME = time;
         return time;

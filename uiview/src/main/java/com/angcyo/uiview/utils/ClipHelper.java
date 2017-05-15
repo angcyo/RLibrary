@@ -15,12 +15,13 @@ import android.view.animation.AccelerateInterpolator;
 
 public class ClipHelper {
 
+    public static final int DEFAULT_RADIUS = 100;
     public static int ANIM_TIME = 500;
     ValueAnimator mClipEnterValueAnimator, mClipExitValueAnimator;
     /**
      * 开始的坐标, 和半径
      */
-    float clipStartX = 0f, clipStartY = 0f, clipStartRadius = 100f;
+    float clipStartX = 0f, clipStartY = 0f, clipStartRadius = DEFAULT_RADIUS;
     Path clipPath = new Path();
     boolean enableClip = false;
     OnEndListener mEndListener;
@@ -33,7 +34,7 @@ public class ClipHelper {
 
     public static int[] init(View view) {
         if (view == null) {
-            return null;
+            return new int[]{ScreenUtil.screenWidth / 2, ScreenUtil.screenHeight / 2, DEFAULT_RADIUS};
         }
 
         Rect rect = new Rect();
