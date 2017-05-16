@@ -34,6 +34,10 @@ public class RTextPaint {
         this(13);
     }
 
+    public RTextPaint(TextPaint textPaint) {
+        mTextPaint = new TextPaint(textPaint);
+    }
+
     public RTextPaint(float textSize) {
         mTextSize = RApplication.getApp().getResources().getDisplayMetrics().density * textSize;
     }
@@ -53,8 +57,8 @@ public class RTextPaint {
         return height;
     }
 
-    public double getTextHeight() {
-        return getTextHeight(mTextPaint);
+    public float getTextHeight() {
+        return (float) getTextHeight(mTextPaint);
     }
 
     public float getTextWidth(String text) {
@@ -90,23 +94,30 @@ public class RTextPaint {
             return;
         }
         initPaint();
-        canvas.drawText(text, x, y, mTextPaint);
+        canvas.drawText(text, x, y - mTextPaint.descent(), mTextPaint);
     }
 
     private void initPaint() {
         if (mTextPaint == null) {
             mTextPaint = new TextPaint(Paint.ANTI_ALIAS_FLAG);
+            mTextPaint.density = RApplication.getApp().getResources().getDisplayMetrics().density;
+            mTextPaint.setTextSize(mTextSize);
+            mTextPaint.setColor(mTextColor);
         }
-        mTextPaint.setTextSize(mTextSize);
-        mTextPaint.setColor(mTextColor);
     }
 
     public void setTextSize(float textSize) {
         mTextSize = textSize;
+        if (mTextPaint != null) {
+            mTextPaint.setTextSize(mTextSize);
+        }
     }
 
     public void setTextColor(int textColor) {
         mTextColor = textColor;
+        if (mTextPaint != null) {
+            mTextPaint.setColor(mTextColor);
+        }
     }
 
     private static class Holder {

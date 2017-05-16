@@ -1,6 +1,8 @@
 package com.angcyo.uiview.widget;
 
 import android.content.Context;
+import android.content.res.TypedArray;
+import android.graphics.Canvas;
 import android.graphics.Rect;
 import android.graphics.drawable.Drawable;
 import android.support.v4.content.res.ResourcesCompat;
@@ -31,6 +33,7 @@ import com.angcyo.library.utils.Anim;
 import com.angcyo.library.utils.L;
 import com.angcyo.uiview.R;
 import com.angcyo.uiview.RApplication;
+import com.angcyo.uiview.utils.RTextPaint;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -71,6 +74,11 @@ public class ExEditText extends AppCompatEditText {
      * 是否激活@功能, 当调用{@link #setOnMentionInputListener(OnMentionInputListener)}后, 自动激活
      */
     private boolean enableMention = false;
+    private RTextPaint mTextPaint;
+    private String mLeftString;
+    private int mLeftOffset;
+    private int mDrawLeftOffset;
+    private int mPaddingLeft;
 
     public ExEditText(Context context) {
         super(context);
@@ -78,10 +86,12 @@ public class ExEditText extends AppCompatEditText {
 
     public ExEditText(Context context, AttributeSet attrs) {
         super(context, attrs);
+        initView(context, attrs);
     }
 
     public ExEditText(Context context, AttributeSet attrs, int defStyleAttr) {
         super(context, attrs, defStyleAttr);
+        initView(context, attrs);
     }
 
     /**
@@ -136,8 +146,41 @@ public class ExEditText extends AppCompatEditText {
         return (scrollY > 0) || (scrollY < scrollDifference - 1);
     }
 
+    private void initView(Context context, AttributeSet attrs) {
+        mPaddingLeft = getPaddingLeft();
+
+        ensurePaint();
+        TypedArray typedArray = context.obtainStyledAttributes(attrs, R.styleable.ExEditText);
+        int color = typedArray.getColor(R.styleable.ExEditText_r_left_text_color, getCurrentTextColor());
+        mTextPaint.setTextColor(color);
+
+        mLeftOffset = typedArray.getDimensionPixelOffset(R.styleable.ExEditText_r_left_text_offset,
+                getResources().getDimensionPixelOffset(R.dimen.base_ldpi));
+
+        String string = typedArray.getString(R.styleable.ExEditText_r_left_text);
+        setLeftString(string);
+        typedArray.recycle();
+    }
+
     public boolean canVerticalScroll() {
         return canVerticalScroll(this);
+    }
+
+    @Override
+    protected void onDraw(Canvas canvas) {
+        super.onDraw(canvas);
+
+        if (!TextUtils.isEmpty(mLeftString)) {
+            //底部绘制文本
+            //mTextPaint.drawOriginText(canvas, mLeftString, getPaddingLeft(), getMeasuredHeight() - getPaddingBottom());
+            //居中绘制文本
+            canvas.save();
+            canvas.translate(-getPaddingLeft() + getScrollX(), 0);
+            mTextPaint.drawOriginText(canvas, mLeftString, getPaddingLeft() + mPaddingLeft,
+                    (getMeasuredHeight() - getPaddingBottom() - getPaddingTop()) / 2 +
+                            getPaddingTop() + mTextPaint.getTextHeight() / 2);
+            canvas.restore();
+        }
     }
 
     @Override
@@ -149,12 +192,19 @@ public class ExEditText extends AppCompatEditText {
     protected void onAttachedToWindow() {
         super.onAttachedToWindow();
         initView();
+        ensurePaint();
     }
 
     @Override
     public void setTag(Object tag) {
         super.setTag(tag);
         initView();
+    }
+
+    private void ensurePaint() {
+        if (mTextPaint == null) {
+            mTextPaint = new RTextPaint(getPaint());
+        }
     }
 
     public void setInputText(String text) {
@@ -194,6 +244,10 @@ public class ExEditText extends AppCompatEditText {
                     getResources(),
                     R.drawable.base_edit_delete_selector,
                     getContext().getTheme());
+
+            if (getCompoundDrawablePadding() == 0) {
+                setCompoundDrawablePadding((int) (4 * getResources().getDisplayMetrics().density));
+            }
         }
         return clearDrawable;
     }
@@ -741,6 +795,17 @@ public class ExEditText extends AppCompatEditText {
             setInputType(EditorInfo.TYPE_TEXT_VARIATION_EMAIL_ADDRESS);
         } else {
             setInputType(inputType & ~EditorInfo.TYPE_TEXT_VARIATION_EMAIL_ADDRESS);
+        }
+    }
+
+    public void setLeftString(String leftString) {
+        mLeftString = leftString;
+        if (!TextUtils.isEmpty(mLeftString)) {
+            float textWidth = mTextPaint.getTextWidth(mLeftString);
+            mDrawLeftOffset = (int) textWidth + mLeftOffset;
+            setPadding(mPaddingLeft + mDrawLeftOffset, getPaddingTop(), getPaddingRight(), getPaddingBottom());
+        } else {
+            setPadding(mPaddingLeft, getPaddingTop(), getPaddingRight(), getPaddingBottom());
         }
     }
 

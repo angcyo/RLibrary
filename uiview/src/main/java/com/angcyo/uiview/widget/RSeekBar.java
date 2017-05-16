@@ -69,6 +69,10 @@ public class RSeekBar extends View {
 
     public RSeekBar(Context context, AttributeSet attrs, int defStyleAttr) {
         super(context, attrs, defStyleAttr);
+//
+//        if (isInEditMode()) {
+//            return;
+//        }
 
         TypedArray typedArray = context.obtainStyledAttributes(attrs, R.styleable.RSeekBar);
         mDensity = getResources().getDisplayMetrics().density;
@@ -132,6 +136,10 @@ public class RSeekBar extends View {
 
     @Override
     protected void onDraw(Canvas canvas) {
+//        if (isInEditMode()) {
+//            canvas.drawColor(Color.BLACK);
+//            return;
+//        }
         //绘制轨道背景
         mPaint.setColor(mTrackBgColor);
         int trackLeft = getPaddingLeft();

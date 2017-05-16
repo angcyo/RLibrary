@@ -60,6 +60,11 @@ public class RTextView extends AppCompatTextView {
 
     public RTextView(Context context, AttributeSet attrs, int defStyleAttr) {
         super(context, attrs, defStyleAttr);
+
+        if (isInEditMode()) {
+            return;
+        }
+
         TypedArray typedArray = context.obtainStyledAttributes(attrs, R.styleable.RTextView);
         leftColor = typedArray.getColor(R.styleable.RTextView_r_left_color, SkinHelper.getSkin().getThemeColor());
         leftWidth = typedArray.getDimensionPixelOffset(R.styleable.RTextView_r_left_width, 0);
