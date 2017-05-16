@@ -37,6 +37,7 @@ import com.angcyo.uiview.utils.RTextPaint;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Locale;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -736,8 +737,22 @@ public class ExEditText extends AppCompatEditText {
         return string;
     }
 
+    public String fixShowMentionString(getIdFromUserName getIdFromUserName) {
+        String string = string();
+        List<String> allMention = getAllMention();
+        for (String s : allMention) {
+            string = string.replaceAll("@" + s.replaceAll("\\(", "\\\\(").replaceAll("\\)", "\\\\)"),
+                    createShowString(getIdFromUserName.userId(s), s));
+        }
+        return string;
+    }
+
     private String createStringWithUserName(String id) {
         return "<m>" + id + "</m>";
+    }
+
+    private String createShowString(String id, String name) {
+        return String.format(Locale.CHINA, "<m id='%s'>%s</m>", id, name);//  "<m>" + id + "</m>";//<m id='60763'>@爱你是一种习惯i<\/m>
     }
 
     @Override

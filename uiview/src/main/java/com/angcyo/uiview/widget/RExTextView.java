@@ -149,6 +149,10 @@ public class RExTextView extends RTextView {
 
     @Override
     public void setText(CharSequence text, BufferType type) {
+        if (isInEditMode()) {
+            super.setText(text, type);
+            return;
+        }
         if (TextUtils.isEmpty(text)) {
             super.setText(text, type);
         } else {
@@ -442,11 +446,12 @@ public class RExTextView extends RTextView {
 
                 //文本在图片的中间绘制
                 float textY;
-                if (paint.getFontMetricsInt().descent > 0) {
-                    textY = top + textHeight / 2 + height / 2 - paint.getFontMetricsInt().descent / 2;
-                } else {
-                    textY = top + textHeight / 2 + height / 2 - paint.getFontMetricsInt().descent;
-                }
+                textY = y /*+ textHeight / 2 + height / 2 */ /*- paint.getFontMetricsInt().descent*/;
+//                if (paint.getFontMetricsInt().descent > 0) {
+//                    textY = top + textHeight / 2 + height / 2 - paint.getFontMetricsInt().descent / 2;
+//                } else {
+//                    textY = top + textHeight / 2 + height / 2 - paint.getFontMetricsInt().descent;
+//                }
                 canvas.drawText(string,
                         x + mImageSize + space,
                         textY,

@@ -67,7 +67,11 @@ public class RNineImageLayout extends RelativeLayout implements View.OnClickList
 
     @Override
     protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
-        //super.onMeasure(widthMeasureSpec, heightMeasureSpec);
+        if (isInEditMode()) {
+            super.onMeasure(widthMeasureSpec, heightMeasureSpec);
+            return;
+        }
+
         int measureWidth = MeasureSpec.getSize(widthMeasureSpec);
         int measureHeight = MeasureSpec.getSize(heightMeasureSpec);
 
@@ -115,7 +119,11 @@ public class RNineImageLayout extends RelativeLayout implements View.OnClickList
 
     @Override
     protected void onLayout(boolean changed, int left, int top, int right, int bottom) {
-        //super.onLayout(changed, left, top, right, bottom);
+        if (isInEditMode()) {
+            super.onLayout(changed, left, top, right, bottom);
+            return;
+        }
+
         if (mImageViews.isEmpty()) {
             L.w("don't have image list , skip layout.");
         } else if (mNineImageConfig == null) {

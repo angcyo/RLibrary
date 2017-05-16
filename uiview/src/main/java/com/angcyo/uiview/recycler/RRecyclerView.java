@@ -170,7 +170,9 @@ public class RRecyclerView extends RecyclerView {
     @Override
     protected void onSizeChanged(int w, int h, int oldw, int oldh) {
         super.onSizeChanged(w, h, oldw, oldh);
-        ensureGlow(RRecyclerView.this, SkinHelper.getSkin().getThemeSubColor());
+        if (!isInEditMode()) {
+            ensureGlow(RRecyclerView.this, SkinHelper.getSkin().getThemeSubColor());
+        }
     }
 
     //-----------获取 默认的adapter, 获取 RBaseAdapter, 获取 AnimationAdapter----------//

@@ -11,6 +11,7 @@ import android.widget.CompoundButton;
 import com.angcyo.uiview.recycler.RBaseViewHolder;
 import com.angcyo.uiview.recycler.RRecyclerView;
 import com.angcyo.uiview.utils.Reflect;
+import com.angcyo.uiview.widget.RCheckGroup;
 
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
@@ -168,8 +169,12 @@ public abstract class RModelAdapter<T> extends RBaseAdapter<T> {
             RBaseViewHolder vh = (RBaseViewHolder) recyclerView.findViewHolderForAdapterPosition(pos);
             if (vh != null) {
                 final View view = vh.v(viewId);
-                if (view != null && view instanceof CompoundButton) {
-                    checkedButton((CompoundButton) view, false);
+                if (view != null) {
+                    if (view instanceof CompoundButton) {
+                        checkedButton((CompoundButton) view, false);
+                    } else if (view instanceof RCheckGroup.ICheckView) {
+                        ((RCheckGroup.ICheckView) view).setChecked(false);
+                    }
                 }
             }
         }
@@ -251,10 +256,10 @@ public abstract class RModelAdapter<T> extends RBaseAdapter<T> {
      * 选中所有
      */
     public void setSelectorAll(@NonNull RRecyclerView recyclerView, @IdRes int viewId) {
-        setSelectedList(recyclerView,viewId,getAllDatas());
+        setSelectedList(recyclerView, viewId, getAllDatas());
     }
 
-    public void setSelectIndexs(@NonNull RRecyclerView recyclerView,@IdRes int viewId,List<Integer> indexList) {
+    public void setSelectIndexs(@NonNull RRecyclerView recyclerView, @IdRes int viewId, List<Integer> indexList) {
         if (mModel != MODEL_MULTI) {
             return;
         }
@@ -269,8 +274,12 @@ public abstract class RModelAdapter<T> extends RBaseAdapter<T> {
             RBaseViewHolder vh = (RBaseViewHolder) recyclerView.findViewHolderForAdapterPosition(pos);
             if (vh != null) {
                 final View view = vh.v(viewId);
-                if (view != null && view instanceof CompoundButton) {
-                    checkedButton((CompoundButton) view, true);
+                if (view != null) {
+                    if (view instanceof CompoundButton) {
+                        checkedButton((CompoundButton) view, true);
+                    } else if (view instanceof RCheckGroup.ICheckView) {
+                        ((RCheckGroup.ICheckView) view).setChecked(true);
+                    }
                 }
                 notify = true;
             }
@@ -285,7 +294,7 @@ public abstract class RModelAdapter<T> extends RBaseAdapter<T> {
     /**
      * 选中指定item
      */
-    public void setSelectedList(@NonNull RRecyclerView recyclerView, @IdRes int viewId,List<T> selectedList) {
+    public void setSelectedList(@NonNull RRecyclerView recyclerView, @IdRes int viewId, List<T> selectedList) {
         List<Integer> indexs = new ArrayList<>();
         for (int i = 0; i < selectedList.size(); i++) {
             int index = mAllDatas.indexOf(selectedList.get(i));
@@ -294,7 +303,7 @@ public abstract class RModelAdapter<T> extends RBaseAdapter<T> {
             }
         }
 
-        setSelectIndexs(recyclerView,viewId,indexs);
+        setSelectIndexs(recyclerView, viewId, indexs);
     }
 
     public void addOnModelChangeListener(OnModelChangeListener listener) {

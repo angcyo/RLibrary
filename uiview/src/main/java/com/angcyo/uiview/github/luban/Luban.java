@@ -734,6 +734,12 @@ public class Luban {
         public ImageItem() {
         }
 
+        public ImageItem(String path, String thumbPath, String url) {
+            this.path = path;
+            this.thumbPath = thumbPath;
+            this.url = url;
+        }
+
         public ImageItem(String path, String thumbPath) {
             this.path = path;
             this.thumbPath = thumbPath;

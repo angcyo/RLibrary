@@ -131,6 +131,11 @@ public class RTextView extends AppCompatTextView {
 
     @Override
     protected void onDraw(Canvas canvas) {
+        if (isInEditMode()) {
+            super.onDraw(canvas);
+            return;
+        }
+
         if (hasUnderline) {
             getPaint().setFlags(Paint.UNDERLINE_TEXT_FLAG);
             getPaint().setAntiAlias(true);
@@ -170,6 +175,10 @@ public class RTextView extends AppCompatTextView {
 
     @Override
     public void setText(CharSequence text, BufferType type) {
+        if (isInEditMode()) {
+            super.setText(text, type);
+            return;
+        }
         if (getTag() != null &&
                 getTag().toString().contains("%") &&
                 !"title".equalsIgnoreCase(getTag().toString()) /**当出现在TitleBar中, 会有这个标志*/ &&

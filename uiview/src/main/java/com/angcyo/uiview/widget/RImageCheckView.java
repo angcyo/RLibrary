@@ -1,11 +1,16 @@
 package com.angcyo.uiview.widget;
 
 import android.content.Context;
+import android.content.res.ColorStateList;
+import android.support.v4.content.ContextCompat;
+import android.support.v4.graphics.drawable.DrawableCompat;
 import android.support.v7.widget.AppCompatImageView;
 import android.text.TextUtils;
 import android.util.AttributeSet;
 import android.view.View;
-import android.widget.ImageView;
+
+import com.angcyo.uiview.R;
+import com.angcyo.uiview.skin.SkinHelper;
 
 /**
  * 实现了 checked 状态的 ImageView
@@ -35,6 +40,13 @@ public class RImageCheckView extends AppCompatImageView implements View.OnClickL
         setScaleType(ScaleType.CENTER_INSIDE);
         if (getTag() != null && TextUtils.equals("checked", getTag().toString())) {
             setChecked(true);
+        }
+
+        if (!isInEditMode()) {
+            ColorStateList stateList = new ColorStateList(
+                    new int[][]{{android.R.attr.state_checked}, {}},
+                    new int[]{SkinHelper.getSkin().getThemeSubColor(), ContextCompat.getColor(getContext(), R.color.default_base_bg_disable)});
+            DrawableCompat.setTintList(getDrawable(), stateList);
         }
     }
 

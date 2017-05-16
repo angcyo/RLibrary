@@ -413,6 +413,14 @@ public class UITitleBarContainer extends FrameLayout {
         return mRightControlLayout;
     }
 
+    public <T extends View> T getRightView(int index) {
+        return (T) getRightControlLayout().getChildAt(index);
+    }
+
+    public <T extends View> T getLeftView(int index) {
+        return (T) getLeftControlLayout().getChildAt(index);
+    }
+
     /**
      * 显示右边第几个Item的View, 从0开始
      */
