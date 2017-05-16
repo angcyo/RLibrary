@@ -20,6 +20,7 @@ import android.util.AttributeSet;
 
 import com.angcyo.uiview.R;
 import com.angcyo.uiview.skin.SkinHelper;
+import com.angcyo.uiview.utils.RTextPaint;
 import com.angcyo.uiview.utils.Reflect;
 
 import java.util.Locale;
@@ -48,6 +49,10 @@ public class RTextView extends AppCompatTextView {
     boolean isAttached = false;
     private Drawable mBackgroundDrawable;
     private CharSequence mRawText;
+    private int mPaddingLeft;
+    private RTextPaint mTextPaint;
+    private int mLeftOffset;
+    private String mLeftString;
 
     public RTextView(Context context) {
         this(context, null);
@@ -65,16 +70,45 @@ public class RTextView extends AppCompatTextView {
             return;
         }
 
+        //绘制左边的提示竖线
         TypedArray typedArray = context.obtainStyledAttributes(attrs, R.styleable.RTextView);
         leftColor = typedArray.getColor(R.styleable.RTextView_r_left_color, SkinHelper.getSkin().getThemeColor());
         leftWidth = typedArray.getDimensionPixelOffset(R.styleable.RTextView_r_left_width, 0);
         hasUnderline = typedArray.getBoolean(R.styleable.RTextView_r_has_underline, false);
         mBackgroundDrawable = typedArray.getDrawable(R.styleable.RTextView_r_background);
 
+        //绘制左边的提示文本
+        mPaddingLeft = getPaddingLeft();
+        ensurePaint();
+        int color = typedArray.getColor(R.styleable.RTextView_r_left_text_color, getCurrentTextColor());
+        mTextPaint.setTextColor(color);
+
+        mLeftOffset = typedArray.getDimensionPixelOffset(R.styleable.RTextView_r_left_text_offset,
+                getResources().getDimensionPixelOffset(R.dimen.base_ldpi));
+
+        String string = typedArray.getString(R.styleable.RTextView_r_left_text);
+        setLeftString(string);
         typedArray.recycle();
 
         initView();
     }
+
+    public void setLeftString(String leftString) {
+        mLeftString = leftString;
+        if (!TextUtils.isEmpty(mLeftString)) {
+            float textWidth = mTextPaint.getTextWidth(mLeftString);
+            setPadding((int) (mPaddingLeft + textWidth + mLeftOffset), getPaddingTop(), getPaddingRight(), getPaddingBottom());
+        } else {
+            setPadding(mPaddingLeft, getPaddingTop(), getPaddingRight(), getPaddingBottom());
+        }
+    }
+
+    private void ensurePaint() {
+        if (mTextPaint == null) {
+            mTextPaint = new RTextPaint(getPaint());
+        }
+    }
+
 
     @Override
     public void draw(Canvas canvas) {
@@ -104,6 +138,18 @@ public class RTextView extends AppCompatTextView {
         super.onDraw(canvas);
         if (leftWidth > 0) {
             canvas.drawRect(leftColorRect, colorPaint);
+        }
+
+        if (!TextUtils.isEmpty(mLeftString)) {
+            //底部绘制文本
+            //mTextPaint.drawOriginText(canvas, mLeftString, getPaddingLeft(), getMeasuredHeight() - getPaddingBottom());
+            //居中绘制文本
+            canvas.save();
+            canvas.translate(-getPaddingLeft() + getScrollX(), 0);
+            mTextPaint.drawOriginText(canvas, mLeftString, getPaddingLeft() + mPaddingLeft,
+                    (getMeasuredHeight() - getPaddingBottom() - getPaddingTop()) / 2 +
+                            getPaddingTop() + mTextPaint.getTextHeight() / 2);
+            canvas.restore();
         }
     }
 

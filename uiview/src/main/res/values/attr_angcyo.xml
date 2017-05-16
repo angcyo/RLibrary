@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <!--View Group-->
+    <attr name="r_background" format="reference"/>
+
+    <declare-styleable name="RLinearLayout">
+        <attr name="r_background"/>
+    </declare-styleable>
+
+    <declare-styleable name="RRelativeLayout">
+        <attr name="r_background"/>
+    </declare-styleable>
+
+    <!--View-->
+    <attr name="r_left_text" format="string"/>
+    <attr name="r_left_text_color" format="color"/>
+    <attr name="r_left_text_offset" format="dimension"/>
+
+    <declare-styleable name="RTextView">
+        <!--左边竖线的颜色-->
+        <attr name="r_left_color" format="color"/>
+        <!--左边竖线的宽度-->
+        <attr name="r_left_width" format="dimension"/>
+        <!--距离view左边的距离-->
+        <attr name="r_left_margin" format="dimension"/>
+        <!--是否有下划线-->
+        <attr name="r_has_underline" format="boolean"/>
+
+        <attr name="r_background"/>
+
+        <attr name="r_left_text"/>
+        <attr name="r_left_text_color"/>
+        <attr name="r_left_text_offset"/>
+
+    </declare-styleable>
+
+    <declare-styleable name="ExEditText">
+        <attr name="r_left_text"/>
+        <attr name="r_left_text_color"/>
+        <attr name="r_left_text_offset"/>
+    </declare-styleable>
+
+</resources>
