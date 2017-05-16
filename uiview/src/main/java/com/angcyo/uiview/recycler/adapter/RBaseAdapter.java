@@ -152,6 +152,7 @@ public abstract class RBaseAdapter<T> extends RecyclerView.Adapter<RBaseViewHold
 
     @Override
     public void onBindViewHolder(RBaseViewHolder holder, int position) {
+//        L.e("call: onBindViewHolder([holder, position])-> " + position);
         if (isStateLayout()) {
             if (mIShowState != null) {
                 mIShowState.setShowState(mShowState);

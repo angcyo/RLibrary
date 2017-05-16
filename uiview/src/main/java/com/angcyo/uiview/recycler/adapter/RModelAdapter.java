@@ -122,6 +122,8 @@ public abstract class RModelAdapter<T> extends RBaseAdapter<T> {
                 if (view != null && view instanceof CompoundButton) {
                     checkedButton((CompoundButton) view, false);
                 }
+            } else {
+                notifyItemChanged(pos);
             }
         }
     }
@@ -133,6 +135,8 @@ public abstract class RModelAdapter<T> extends RBaseAdapter<T> {
             if (view != null && view instanceof CompoundButton) {
                 checkedButton((CompoundButton) view, false);
             }
+        } else {
+            notifyItemChanged(position);
         }
     }
 
@@ -147,6 +151,8 @@ public abstract class RModelAdapter<T> extends RBaseAdapter<T> {
                 if (view != null && view instanceof CompoundButton) {
                     checkedButton((CompoundButton) view, false);
                 }
+            } else {
+                notifyItemChanged(pos);
             }
         }
     }
@@ -158,13 +164,15 @@ public abstract class RModelAdapter<T> extends RBaseAdapter<T> {
             if (view != null && view instanceof CompoundButton) {
                 checkedButton((CompoundButton) view, false);
             }
+        } else {
+            notifyItemChanged(position);
         }
     }
 
     /**
      * 取消所有选择
      */
-    public void unselectorAll(@NonNull RRecyclerView recyclerView, @IdRes int viewId) {
+    public void unSelectorAll(@NonNull RRecyclerView recyclerView, @IdRes int viewId) {
         for (Integer pos : getAllSelectorList()) {
             RBaseViewHolder vh = (RBaseViewHolder) recyclerView.findViewHolderForAdapterPosition(pos);
             if (vh != null) {
@@ -176,6 +184,8 @@ public abstract class RModelAdapter<T> extends RBaseAdapter<T> {
                         ((RCheckGroup.ICheckView) view).setChecked(false);
                     }
                 }
+            } else {
+                notifyItemChanged(pos);
             }
         }
         unSelectorAll(true);
@@ -202,6 +212,8 @@ public abstract class RModelAdapter<T> extends RBaseAdapter<T> {
                 if (view != null && view instanceof CompoundButton) {
                     checkedButton((CompoundButton) view, false);
                 }
+            } else {
+                notifyItemChanged(pos);
             }
         }
         unSelectorAll(true);
@@ -243,6 +255,8 @@ public abstract class RModelAdapter<T> extends RBaseAdapter<T> {
                     checkedButton((CompoundButton) view, true);
                 }
                 notify = true;
+            } else {
+                notifyItemChanged(pos);
             }
         }
 
@@ -282,6 +296,8 @@ public abstract class RModelAdapter<T> extends RBaseAdapter<T> {
                     }
                 }
                 notify = true;
+            } else {
+                notifyItemChanged(pos);
             }
         }
 
