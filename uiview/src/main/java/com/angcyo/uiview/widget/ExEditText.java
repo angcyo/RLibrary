@@ -5,6 +5,7 @@ import android.content.res.TypedArray;
 import android.graphics.Canvas;
 import android.graphics.Rect;
 import android.graphics.drawable.Drawable;
+import android.support.design.widget.TextInputLayout;
 import android.support.v4.content.res.ResourcesCompat;
 import android.support.v7.widget.AppCompatEditText;
 import android.text.Editable;
@@ -27,6 +28,7 @@ import android.view.inputmethod.InputConnection;
 import android.view.inputmethod.InputConnectionWrapper;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
+import android.widget.FrameLayout;
 import android.widget.TextView;
 
 import com.angcyo.library.utils.Anim;
@@ -786,6 +788,19 @@ public class ExEditText extends AppCompatEditText {
         if (isEmpty()) {
             error();
             requestFocus();
+            if (!isSoftKeyboardShow()) {
+                if (getParent() instanceof FrameLayout &&
+                        getParent().getParent() instanceof TextInputLayout) {
+                    postDelayed(new Runnable() {
+                        @Override
+                        public void run() {
+                            RSoftInputLayout.showSoftInput(ExEditText.this);
+                        }
+                    }, 200);
+                } else {
+                    RSoftInputLayout.showSoftInput(ExEditText.this);
+                }
+            }
             return true;
         }
         return false;

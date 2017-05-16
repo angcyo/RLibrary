@@ -1,6 +1,5 @@
 package com.angcyo.uiview.resources;
 
-import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.content.Context;
 import android.content.res.ColorStateList;
@@ -20,6 +19,7 @@ import android.os.Build;
 import android.support.annotation.DrawableRes;
 import android.support.annotation.RequiresApi;
 import android.support.v4.content.ContextCompat;
+import android.support.v4.view.ViewCompat;
 import android.util.TypedValue;
 import android.view.View;
 
@@ -103,7 +103,7 @@ public class ResUtil {
 
         StateListDrawable bgStateDrawable = new StateListDrawable();//状态shape
         bgStateDrawable.addState(new int[]{android.R.attr.state_pressed}, shopDrawablePress);//按下状态
-        bgStateDrawable.addState(new int[]{-android.R.attr.state_enabled},shopDrawablePress);
+        bgStateDrawable.addState(new int[]{-android.R.attr.state_enabled}, shopDrawablePress);
         bgStateDrawable.addState(new int[]{}, shopDrawableNormal);//其他状态
 
         return bgStateDrawable;
@@ -236,7 +236,7 @@ public class ResUtil {
         return bgStateDrawable;
     }
 
-    public static Drawable generateStrokeDrawable(float radii, float borderWidth,int pressColor, int defaultColor, int disableColor) {
+    public static Drawable generateStrokeDrawable(float radii, float borderWidth, int pressColor, int defaultColor, int disableColor) {
         float[] outRadii = new float[]{radii, radii, radii, radii, radii, radii, radii, radii};//四个角的 圆角幅度,8个可以设置的值,每个角都有2个边 2*4=8个
 
         //与内环的距离
@@ -397,13 +397,8 @@ public class ResUtil {
         return bgStateDrawable;
     }
 
-    @SuppressLint("NewApi")
     public static void setBgDrawable(View view, Drawable drawable) {
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN) {
-            view.setBackground(drawable);
-        } else {
-            view.setBackgroundDrawable(drawable);
-        }
+        ViewCompat.setBackground(view, drawable);
     }
 
     /**

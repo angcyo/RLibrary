@@ -157,7 +157,9 @@ public class Rx<Rx> extends Observable<Rx> {
                         .observeOn(AndroidSchedulers.mainThread());
             }
         };
-    }public static <T> Observable.Transformer<ResponseBody, T> transformRedPacket(final Class<T> type) {
+    }
+
+    public static <T> Observable.Transformer<ResponseBody, T> transformRedPacket(final Class<T> type) {
         return new Observable.Transformer<ResponseBody, T>() {
 
             @Override
