@@ -56,6 +56,21 @@ public abstract class RModelAdapter<T> extends RBaseAdapter<T> {
         super(context, datas);
     }
 
+    public static void checkedButton(CompoundButton compoundButton, boolean checked) {
+        if (compoundButton == null) {
+            return;
+        }
+        if (compoundButton.isChecked() == checked) {
+            return;
+        }
+        CompoundButton.OnCheckedChangeListener onCheckedChangeListener =
+                (CompoundButton.OnCheckedChangeListener) Reflect.getMember(CompoundButton.class,
+                        compoundButton, "mOnCheckedChangeListener");
+        compoundButton.setOnCheckedChangeListener(null);
+        compoundButton.setChecked(checked);
+        compoundButton.setOnCheckedChangeListener(onCheckedChangeListener);
+    }
+
     @Override
     protected int getItemLayoutId(int viewType) {
         return 0;
@@ -114,58 +129,109 @@ public abstract class RModelAdapter<T> extends RBaseAdapter<T> {
     /**
      * 在执行 {@link #onUnSelectorPosition(RBaseViewHolder, int, boolean)}后, 调用此方法, 可以便捷的取消 CompoundButton 的状态
      */
-    public void unselector(@NonNull List<Integer> list, @NonNull RRecyclerView recyclerView, @NonNull String viewTag) {
+    public void unSelector(@NonNull List<Integer> list, @NonNull RRecyclerView recyclerView, @NonNull String viewTag) {
+        boolean notify = false;
+
         for (Integer pos : list) {
+            removeSelectorPosition(pos);
             RBaseViewHolder vh = (RBaseViewHolder) recyclerView.findViewHolderForAdapterPosition(pos);
             if (vh != null) {
                 final View view = vh.tag(viewTag);
-                if (view != null && view instanceof CompoundButton) {
-                    checkedButton((CompoundButton) view, false);
+                if (view != null) {
+                    if (view instanceof CompoundButton) {
+                        checkedButton((CompoundButton) view, false);
+                    } else if (view instanceof RCheckGroup.ICheckView) {
+                        ((RCheckGroup.ICheckView) view).setChecked(false);
+                    }
+                    notify = true;
                 }
             } else {
                 notifyItemChanged(pos);
             }
         }
+        if (notify) {
+            //防止在视图还没有加载的时候,通知事件
+            notifySelectorChange();
+        }
     }
 
-    public void unselector(int position, @NonNull RRecyclerView recyclerView, @NonNull String viewTag) {
+    public void unSelector(int position, @NonNull RRecyclerView recyclerView, @NonNull String viewTag) {
+        boolean notify = false;
+        removeSelectorPosition(position);
         RBaseViewHolder vh = (RBaseViewHolder) recyclerView.findViewHolderForAdapterPosition(position);
         if (vh != null) {
             final View view = vh.tag(viewTag);
-            if (view != null && view instanceof CompoundButton) {
-                checkedButton((CompoundButton) view, false);
+            if (view != null) {
+                if (view instanceof CompoundButton) {
+                    checkedButton((CompoundButton) view, false);
+                } else if (view instanceof RCheckGroup.ICheckView) {
+                    ((RCheckGroup.ICheckView) view).setChecked(false);
+                }
+                notify = true;
             }
         } else {
             notifyItemChanged(position);
+        }
+
+        if (notify) {
+            //防止在视图还没有加载的时候,通知事件
+            notifySelectorChange();
         }
     }
 
     /**
      * 在执行 {@link #onUnSelectorPosition(RBaseViewHolder, int, boolean)}后, 调用此方法, 可以便捷的取消 CompoundButton 的状态
      */
-    public void unselector(@NonNull List<Integer> list, @NonNull RRecyclerView recyclerView, @IdRes int viewId) {
+    public void unSelector(@NonNull List<Integer> list, @NonNull RRecyclerView recyclerView, @IdRes int viewId) {
+        boolean notify = false;
+
         for (Integer pos : list) {
+            removeSelectorPosition(pos);
             RBaseViewHolder vh = (RBaseViewHolder) recyclerView.findViewHolderForAdapterPosition(pos);
             if (vh != null) {
                 final View view = vh.v(viewId);
-                if (view != null && view instanceof CompoundButton) {
-                    checkedButton((CompoundButton) view, false);
+                if (view != null) {
+                    if (view instanceof CompoundButton) {
+                        checkedButton((CompoundButton) view, false);
+                    } else if (view instanceof RCheckGroup.ICheckView) {
+                        ((RCheckGroup.ICheckView) view).setChecked(false);
+                    }
+                    notify = true;
                 }
             } else {
                 notifyItemChanged(pos);
             }
         }
+
+        if (notify) {
+            //防止在视图还没有加载的时候,通知事件
+            notifySelectorChange();
+        }
     }
 
-    public void unselector(int position, @NonNull RRecyclerView recyclerView, @IdRes int viewId) {
+    public void unSelector(int position, @NonNull RRecyclerView recyclerView, @IdRes int viewId) {
         RBaseViewHolder vh = (RBaseViewHolder) recyclerView.findViewHolderForAdapterPosition(position);
+
+        boolean notify = false;
+        removeSelectorPosition(position);
+
         if (vh != null) {
             final View view = vh.v(viewId);
-            if (view != null && view instanceof CompoundButton) {
-                checkedButton((CompoundButton) view, false);
+            if (view != null) {
+                if (view instanceof CompoundButton) {
+                    checkedButton((CompoundButton) view, false);
+                } else if (view instanceof RCheckGroup.ICheckView) {
+                    ((RCheckGroup.ICheckView) view).setChecked(false);
+                }
+                notify = true;
             }
         } else {
             notifyItemChanged(position);
+        }
+
+        if (notify) {
+            //防止在视图还没有加载的时候,通知事件
+            notifySelectorChange();
         }
     }
 
@@ -209,8 +275,12 @@ public abstract class RModelAdapter<T> extends RBaseAdapter<T> {
             RBaseViewHolder vh = (RBaseViewHolder) recyclerView.findViewHolderForAdapterPosition(pos);
             if (vh != null) {
                 final View view = vh.tag(viewTag);
-                if (view != null && view instanceof CompoundButton) {
-                    checkedButton((CompoundButton) view, false);
+                if (view != null) {
+                    if (view instanceof CompoundButton) {
+                        checkedButton((CompoundButton) view, false);
+                    } else if (view instanceof RCheckGroup.ICheckView) {
+                        ((RCheckGroup.ICheckView) view).setChecked(false);
+                    }
                 }
             } else {
                 notifyItemChanged(pos);
@@ -251,8 +321,12 @@ public abstract class RModelAdapter<T> extends RBaseAdapter<T> {
             RBaseViewHolder vh = (RBaseViewHolder) recyclerView.findViewHolderForAdapterPosition(pos);
             if (vh != null) {
                 final View view = vh.tag(viewTag);
-                if (view != null && view instanceof CompoundButton) {
-                    checkedButton((CompoundButton) view, true);
+                if (view != null) {
+                    if (view instanceof CompoundButton) {
+                        checkedButton((CompoundButton) view, true);
+                    } else if (view instanceof RCheckGroup.ICheckView) {
+                        ((RCheckGroup.ICheckView) view).setChecked(true);
+                    }
                 }
                 notify = true;
             } else {
@@ -271,6 +345,12 @@ public abstract class RModelAdapter<T> extends RBaseAdapter<T> {
      */
     public void setSelectorAll(@NonNull RRecyclerView recyclerView, @IdRes int viewId) {
         setSelectedList(recyclerView, viewId, getAllDatas());
+    }
+
+    public void setSelectorPosition(int position, @NonNull RRecyclerView recyclerView, @IdRes int viewId) {
+        List<Integer> indexs = new ArrayList<>();
+        indexs.add(position);
+        setSelectIndexs(recyclerView, viewId, indexs);
     }
 
     public void setSelectIndexs(@NonNull RRecyclerView recyclerView, @IdRes int viewId, List<Integer> indexList) {
@@ -362,7 +442,7 @@ public abstract class RModelAdapter<T> extends RBaseAdapter<T> {
     /**
      * 互斥的操作, 选择item, 并且自动设置CompoundButton的状态
      */
-    public void setSelectorPosition(int position, CompoundButton compoundButton) {
+    public void setSelectorPosition(int position, Object view) {
         if (mModel == MODEL_NORMAL) {
             return;
         }
@@ -408,29 +488,34 @@ public abstract class RModelAdapter<T> extends RBaseAdapter<T> {
             }
         }
 
-        if (compoundButton == null) {
+        if (view instanceof Integer) {
+            view = viewHolder.v((Integer) view);
+        }
 
-        } else {
-            checkedButton(compoundButton, !selector);
+        if (view instanceof CompoundButton) {
+            checkedButton((CompoundButton) view, !selector);
+        } else if (view instanceof RCheckGroup.ICheckView) {
+            ((RCheckGroup.ICheckView) view).setChecked(!selector);
         }
 
         notifySelectorChange();
     }
 
-    private void checkedButton(CompoundButton compoundButton, boolean checked) {
-        if (compoundButton == null) {
-            return;
-        }
-        CompoundButton.OnCheckedChangeListener onCheckedChangeListener =
-                (CompoundButton.OnCheckedChangeListener) Reflect.getMember(CompoundButton.class,
-                        compoundButton, "mOnCheckedChangeListener");
-        compoundButton.setOnCheckedChangeListener(null);
-        compoundButton.setChecked(checked);
-        compoundButton.setOnCheckedChangeListener(onCheckedChangeListener);
-    }
-
     public boolean isPositionSelector(int position) {
         return mSelector.contains(position);
+    }
+
+    /**
+     * 添加选中位置, 不做任何其他操作
+     */
+    public void addSelectorPosition(int position) {
+        mSelector.add(position);
+        notifySelectorChange();
+    }
+
+    public void removeSelectorPosition(int position) {
+        mSelector.remove(position);
+        notifySelectorChange();
     }
 
     public int getModel() {
@@ -461,6 +546,7 @@ public abstract class RModelAdapter<T> extends RBaseAdapter<T> {
             }
             notifyDataSetChanged();
         }
+        notifySelectorChange();
     }
 
     public RBaseViewHolder getViewHolderFromPosition(int position) {
@@ -478,7 +564,7 @@ public abstract class RModelAdapter<T> extends RBaseAdapter<T> {
         void onSelectorChange(List<Integer> selectorList);
     }
 
-    public static class SingleChangeListener implements OnModelChangeListener {
+    public static abstract class SingleChangeListener implements OnModelChangeListener {
 
         @Override
         public void onModelChange(@Model int fromModel, @Model int toModel) {

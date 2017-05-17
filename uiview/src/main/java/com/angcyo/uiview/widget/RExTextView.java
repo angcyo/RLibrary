@@ -183,6 +183,13 @@ public class RExTextView extends RTextView {
                         String temp = "...";
                         String foldString = getFoldString();
                         int startPosition = lineStart - temp.length() - foldString.length();
+
+                        if (startPosition < 0) {
+                            spannable.setSpan(new ImageTextSpan(getContext(), getTextSize(), getCurrentTextColor(), temp),
+                                    lineStart - 1, lineStart, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
+                            return;
+                        }
+
                         int start = findStartPosition(spannable, startPosition);
 
                         int offset = (sequence.length() % 2 == 0) ? 4 : 3;

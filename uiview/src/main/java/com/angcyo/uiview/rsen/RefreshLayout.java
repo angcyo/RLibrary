@@ -701,6 +701,14 @@ public class RefreshLayout extends ViewGroup {
             }
         }
 
+        //修正滚动y值
+        if (mDirection == TOP) {
+            y = Math.min(y, 0);
+        }
+        if (mDirection == BOTTOM) {
+            y = Math.max(y, 0);
+        }
+
         if (mCurState == TOP) {
             y = Math.min(y, 0);
         } else if (mCurState == BOTTOM) {

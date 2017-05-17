@@ -430,6 +430,12 @@ public class UITitleBarContainer extends FrameLayout {
         }
     }
 
+    public void hideRightItem(int index) {
+        if (mRightControlLayout.getChildCount() > index) {
+            mRightControlLayout.getChildAt(index).setVisibility(GONE);
+        }
+    }
+
     @Override
     public boolean onTouchEvent(MotionEvent event) {
         if (mTitleBarPattern == null) {

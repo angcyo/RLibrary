@@ -176,6 +176,10 @@ public class RNineImageLayout extends RelativeLayout implements View.OnClickList
 
     @Override
     protected void onSizeChanged(int w, int h, int oldw, int oldh) {
+        displayImage();
+    }
+
+    private void displayImage() {
         if (mNineImageConfig != null) {
             for (int i = 0; i < mImageViews.size(); i++) {
                 RImageView imageView = mImageViews.get(i);
@@ -223,7 +227,10 @@ public class RNineImageLayout extends RelativeLayout implements View.OnClickList
             }
         }
         requestLayout();
-        onSizeChanged(0, 0, 0, 0);
+
+        if (getMeasuredWidth() != 0 && getMeasuredHeight() != 0) {
+            displayImage();
+        }
 
 //        mImageViews.clear();
 //        removeAllViews();
@@ -238,11 +245,11 @@ public class RNineImageLayout extends RelativeLayout implements View.OnClickList
 //            imageView.setBackgroundColor(Color.BLUE);
         imageView.setTag(R.id.tag_position, i);
         imageView.setScaleType(ImageView.ScaleType.CENTER_CROP);
-        addViewInLayout(imageView, i, new LayoutParams(-2, -2));
         mImageViews.add(imageView);
         if (canItemClick) {
             imageView.setOnClickListener(this);
         }
+        addViewInLayout(imageView, i, new LayoutParams(-2, -2));
     }
 
     /**
