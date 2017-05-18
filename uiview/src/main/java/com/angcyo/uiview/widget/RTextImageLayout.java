@@ -214,13 +214,27 @@ public class RTextImageLayout extends ViewGroup {
 
         int newImageViewSize = mImageViews.size();
 
-        if ((imageViewSize >= MAX_IMAGE_SIZE && newImageViewSize >= MAX_IMAGE_SIZE) || imageViewSize == newImageViewSize) {
-            if (isAttachedToWindow) {
-                notifyLoadImage();
-            }
-        } else {
-            //requestLayout();
+        if (newImageViewSize <= 0) {
+            return;
         }
+
+        if (isAttachedToWindow) {
+            notifyLoadImage();
+        } else {
+            post(new Runnable() {
+                @Override
+                public void run() {
+                    notifyLoadImage();
+                }
+            });
+        }
+
+//        if ((imageViewSize >= MAX_IMAGE_SIZE && newImageViewSize >= MAX_IMAGE_SIZE) ||
+//                imageViewSize == newImageViewSize) {
+//
+//        } else {
+//            //requestLayout();
+//        }
     }
 
     private void displayImage(ImageView imageView, String url) {

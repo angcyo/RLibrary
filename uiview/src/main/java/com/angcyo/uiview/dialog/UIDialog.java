@@ -46,7 +46,7 @@ public class UIDialog extends UIIDialogImpl {
     /**
      * 2个监听事件
      */
-    View.OnClickListener cancelListener, okListener;
+    View.OnClickListener cancelListener, okListener, contentListener;
 
     private UIDialog() {
         cancelText = RApplication.getApp().getString(R.string.base_cancel);
@@ -103,6 +103,11 @@ public class UIDialog extends UIIDialogImpl {
         return this;
     }
 
+    public UIDialog setContentListener(View.OnClickListener contentListener) {
+        this.contentListener = contentListener;
+        return this;
+    }
+
     @Override
     public void loadContentView(View rootView) {
         super.loadContentView(rootView);
@@ -138,6 +143,10 @@ public class UIDialog extends UIIDialogImpl {
                 finishDialog();
             }
         });
+
+        if (contentListener != null) {
+            mBaseDialogContentView.setOnClickListener(contentListener);
+        }
 
         mBaseDialogTitleView.setVisibility(TextUtils.isEmpty(dialogTitle) ? View.GONE : View.VISIBLE);
         mBaseDialogContentView.setVisibility(TextUtils.isEmpty(dialogContent) ? View.GONE : View.VISIBLE);

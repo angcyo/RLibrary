@@ -2,7 +2,6 @@ package com.angcyo.uiview.utils;
 
 import android.app.Activity;
 import android.app.DownloadManager;
-import android.content.ActivityNotFoundException;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageInfo;
@@ -15,6 +14,7 @@ import android.text.TextUtils;
 import android.util.DisplayMetrics;
 import android.view.WindowManager;
 
+import com.angcyo.library.utils.L;
 import com.angcyo.uiview.github.utilcode.utils.RegexUtils;
 
 import java.io.File;
@@ -440,7 +440,7 @@ public class RUtils {
      *
      * @param file
      */
-    public static void openFile(Context context, File file) throws ActivityNotFoundException {
+    public static void openFile(Context context, File file) {
 
         if (file == null || !file.exists()) {
             return;
@@ -455,7 +455,11 @@ public class RUtils {
         //设置intent的data和Type属性。
         intent.setDataAndType(/*uri*/Uri.fromFile(file), type);
         //跳转
-        context.startActivity(intent);     //这里最好try一下，有可能会报错。 //比如说你的MIME类型是打开邮箱，但是你手机里面没装邮箱客户端，就会报错。
+        try {
+            context.startActivity(intent);     //这里最好try一下，有可能会报错。 //比如说你的MIME类型是打开邮箱，但是你手机里面没装邮箱客户端，就会报错。
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 
     /**
@@ -701,6 +705,27 @@ public class RUtils {
             return result;
         }
         return all;
+    }
+
+    /**
+     * 打印Map
+     */
+    public static void logMap(Map<String, String> map) {
+        if (map == null || map.isEmpty()) {
+            L.e("map is null or empty. ");
+            return;
+        }
+
+        StringBuilder builder = new StringBuilder("\n");
+        for (Map.Entry<String, String> p : map.entrySet()) {
+            String key = p.getKey();
+            String value = p.getValue();
+            builder.append(key);
+            builder.append(":");
+            builder.append(value);
+            builder.append("\n");
+        }
+        L.e(builder.toString());
     }
 
     interface OnPutValue {

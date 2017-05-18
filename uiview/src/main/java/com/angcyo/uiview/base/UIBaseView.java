@@ -142,7 +142,8 @@ public abstract class UIBaseView extends UIIViewImpl {
             mUITitleBarContainer.setOnBackListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    UIBaseView.this.onTitleBackListener();
+                    //UIBaseView.this.onTitleBackListener();
+                    mILayout.requestBackPressed();
                 }
             });
         }

@@ -28,6 +28,7 @@ import com.angcyo.uiview.dialog.UIDialog;
 import com.angcyo.uiview.github.utilcode.utils.ClipboardUtils;
 import com.angcyo.uiview.github.utilcode.utils.CmdUtil;
 import com.angcyo.uiview.github.utilcode.utils.FileUtils;
+import com.angcyo.uiview.utils.RUtils;
 import com.angcyo.uiview.utils.T_;
 import com.orhanobut.hawk.Hawk;
 
@@ -491,6 +492,13 @@ public class RCrashHandler implements Thread.UncaughtExceptionHandler {
                     .setDialogContent(Hawk.get(RCrashHandler.KEY_CRASH_MESSAGE, "-"))
                     .setOkText("粘贴给作者?")
                     .setCancelText("加入QQ群")
+                    .setContentListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View v) {
+                            RUtils.openFile(iLayout.getLayout().getContext(),
+                                    new File(Hawk.get(RCrashHandler.KEY_CRASH_FILE, "-")));
+                        }
+                    })
                     .setCancelListener(new View.OnClickListener() {
                         @Override
                         public void onClick(View v) {

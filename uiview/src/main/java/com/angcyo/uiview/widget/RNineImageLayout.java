@@ -293,7 +293,7 @@ public class RNineImageLayout extends RelativeLayout implements View.OnClickList
             int height = getMeasuredHeight();
             LinearGradient linearGradient = new LinearGradient(0, height, 0,
                     height - 40 * mDensity,
-                    new int[]{Color.BLACK, Color.TRANSPARENT /*Color.parseColor("#40000000")*/},
+                    new int[]{Color.parseColor("#80000000"), Color.TRANSPARENT /*Color.parseColor("#40000000")*/},
                     null, Shader.TileMode.CLAMP);
             mPaint.setShader(linearGradient);
             canvas.drawPaint(mPaint);
