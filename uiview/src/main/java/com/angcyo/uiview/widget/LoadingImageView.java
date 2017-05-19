@@ -23,6 +23,15 @@ import com.angcyo.uiview.R;
 public class LoadingImageView extends AppCompatImageView {
 
     float degrees = 0;
+    boolean isLoading = false;
+
+    Runnable loadRunnable = new Runnable() {
+        @Override
+        public void run() {
+            postInvalidate();
+            postDelayed(loadRunnable, 16);//40 = 24 帧, 16 = 60 帧
+        }
+    };
 
     public LoadingImageView(Context context) {
         this(context, null);
@@ -50,10 +59,6 @@ public class LoadingImageView extends AppCompatImageView {
         }
 
         degrees += 10;
-
-        if (getVisibility() == VISIBLE) {
-            postInvalidate();
-        }
     }
 
     @Override
@@ -62,10 +67,31 @@ public class LoadingImageView extends AppCompatImageView {
     }
 
     @Override
+    protected void onDetachedFromWindow() {
+        super.onDetachedFromWindow();
+        endLoad();
+    }
+
+    @Override
     protected void onVisibilityChanged(View changedView, int visibility) {
         super.onVisibilityChanged(changedView, visibility);
         if (visibility == VISIBLE) {
-            postInvalidate();
+            if (isLoading) {
+                return;
+            }
+            startLoad();
+        } else {
+            endLoad();
         }
+    }
+
+    private void startLoad() {
+        post(loadRunnable);
+        isLoading = true;
+    }
+
+    private void endLoad() {
+        removeCallbacks(loadRunnable);
+        isLoading = false;
     }
 }

@@ -98,12 +98,14 @@ public class SwipeMenuRecyclerView extends RecyclerView {
         super(context, attrs, defStyle);
         mViewConfig = ViewConfiguration.get(getContext());
 
-        post(new Runnable() {
-            @Override
-            public void run() {
-                RRecyclerView.ensureGlow(SwipeMenuRecyclerView.this, SkinHelper.getSkin().getThemeSubColor());
-            }
-        });
+        if (!isInEditMode()) {
+            post(new Runnable() {
+                @Override
+                public void run() {
+                    RRecyclerView.ensureGlow(SwipeMenuRecyclerView.this, SkinHelper.getSkin().getThemeSubColor());
+                }
+            });
+        }
     }
 
     private void initializeItemTouchHelper() {
