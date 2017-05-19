@@ -218,15 +218,20 @@ public class RTextImageLayout extends ViewGroup {
             return;
         }
 
-        if (isAttachedToWindow) {
+//        if (isAttachedToWindow) {
+//            notifyLoadImage();
+//        } else {
+//            post(new Runnable() {
+//                @Override
+//                public void run() {
+//                    notifyLoadImage();
+//                }
+//            });
+//        }
+
+        if (imageViewSize == newImageViewSize ||
+                (imageViewSize >= MAX_IMAGE_SIZE && newImageViewSize >= MAX_IMAGE_SIZE)) {
             notifyLoadImage();
-        } else {
-            post(new Runnable() {
-                @Override
-                public void run() {
-                    notifyLoadImage();
-                }
-            });
         }
 
 //        if ((imageViewSize >= MAX_IMAGE_SIZE && newImageViewSize >= MAX_IMAGE_SIZE) ||

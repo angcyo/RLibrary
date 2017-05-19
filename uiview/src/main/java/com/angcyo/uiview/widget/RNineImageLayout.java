@@ -83,7 +83,7 @@ public class RNineImageLayout extends RelativeLayout implements View.OnClickList
             mImageViews.get(0).measure(getSize(measureWidth), getSize(measureWidth));
             setMeasuredDimension(measureWidth, measureWidth);
         } else {
-            final int size = mImagesList.size();
+            final int size = getImageSize();
             int width = MeasureSpec.getSize(widthMeasureSpec);
             int height;//需要计算布局的高度
             if (size == 1) {
@@ -135,7 +135,7 @@ public class RNineImageLayout extends RelativeLayout implements View.OnClickList
 //                mNineImageConfig.displayImage(firstView, mImagesList.get(0), getMeasuredWidth(), getMeasuredHeight());
 //            }
         } else {
-            final int size = mImagesList.size();
+            final int size = getImageSize();
             if (size == 1) {
                 //一张图片
                 final RImageView firstView = mImageViews.get(0);
@@ -176,6 +176,7 @@ public class RNineImageLayout extends RelativeLayout implements View.OnClickList
 
     @Override
     protected void onSizeChanged(int w, int h, int oldw, int oldh) {
+        super.onSizeChanged(w, h, oldw, oldh);
         displayImage();
     }
 
@@ -184,7 +185,7 @@ public class RNineImageLayout extends RelativeLayout implements View.OnClickList
             for (int i = 0; i < mImageViews.size(); i++) {
                 RImageView imageView = mImageViews.get(i);
                 mNineImageConfig.displayImage(imageView, mImagesList.get(i),
-                        imageView.getMeasuredWidth(), imageView.getMeasuredHeight());
+                        imageView.getMeasuredWidth(), imageView.getMeasuredHeight(), getImageSize());
             }
         }
     }
@@ -216,20 +217,27 @@ public class RNineImageLayout extends RelativeLayout implements View.OnClickList
 
     private void notifyDataChanged() {
         int oldSize = mImageViews.size();
-        int newSize = mImagesList.size();
+        int newSize = getImageSize();
         if (newSize > oldSize) {
             for (int i = oldSize; i < newSize; i++) {
                 createImageView(i);
             }
+            requestLayout();
         } else if (newSize < oldSize) {
             for (int i = oldSize - 1; i >= newSize; i--) {
                 removeView(mImageViews.remove(i));
             }
         }
-        requestLayout();
+        //        requestLayout();
+//
+//        if (getMeasuredWidth() != 0 && getMeasuredHeight() != 0) {
+//            displayImage();
+//        }
 
-        if (getMeasuredWidth() != 0 && getMeasuredHeight() != 0) {
+        if (oldSize == newSize) {
             displayImage();
+        } else {
+            requestLayout();
         }
 
 //        mImageViews.clear();
@@ -238,6 +246,13 @@ public class RNineImageLayout extends RelativeLayout implements View.OnClickList
 //            createImageView(i);
 //        }
 //        requestLayout();
+    }
+
+    private int getImageSize() {
+        if (mImagesList == null) {
+            return 0;
+        }
+        return mImagesList.size();
     }
 
     private void createImageView(int i) {
@@ -339,7 +354,10 @@ public class RNineImageLayout extends RelativeLayout implements View.OnClickList
          */
         int[] getWidthHeight(int imageSize);
 
-        void displayImage(ImageView imageView, String url, int width, int height);
+        /**
+         * @param imageSize 总共需要显示多少张图片, 根据图片数量的不同, 决定图片的 缩放类型
+         */
+        void displayImage(ImageView imageView, String url, int width, int height, int imageSize);
 
         void onImageItemClick(ImageView imageView, List<String> urlList, List<RImageView> imageList, int index);
     }

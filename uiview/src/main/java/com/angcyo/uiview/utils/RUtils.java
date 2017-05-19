@@ -9,6 +9,7 @@ import android.content.pm.PackageManager;
 import android.graphics.Point;
 import android.net.Uri;
 import android.os.Build;
+import android.os.Looper;
 import android.telephony.TelephonyManager;
 import android.text.TextUtils;
 import android.util.DisplayMetrics;
@@ -726,6 +727,13 @@ public class RUtils {
             builder.append("\n");
         }
         L.e(builder.toString());
+    }
+
+    /**
+     * 判断是否是主线程
+     */
+    public static boolean isMainThread() {
+        return Looper.myLooper() == Looper.getMainLooper();
     }
 
     interface OnPutValue {
