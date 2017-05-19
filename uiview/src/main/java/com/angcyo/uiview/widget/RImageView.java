@@ -1,9 +1,11 @@
 package com.angcyo.uiview.widget;
 
 import android.content.Context;
+import android.content.res.Resources;
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
 import android.graphics.Color;
+import android.graphics.Matrix;
 import android.graphics.PorterDuff;
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
@@ -58,6 +60,46 @@ public class RImageView extends AppCompatImageView {
     public RImageView(Context context, AttributeSet attrs, int defStyleAttr) {
         super(context, attrs, defStyleAttr);
         initView();
+    }
+
+    /**
+     * 居中剪切图片
+     */
+    public static Bitmap centerCrop(Resources res, Bitmap bitmap, int width, int height) {
+        if (bitmap == null) {
+            return null;
+        }
+        Bitmap result = Bitmap.createBitmap(width, height, Bitmap.Config.ARGB_8888);
+
+        Matrix matrix = new Matrix();
+
+        float scale;
+        float dx = 0, dy = 0;
+
+        final int dwidth = bitmap.getWidth();
+        final int dheight = bitmap.getHeight();
+
+        final int vwidth = width;
+        final int vheight = height;
+
+        if (dwidth * vheight > vwidth * dheight) {
+            scale = (float) vheight / (float) dheight;
+            dx = (vwidth - dwidth * scale) * 0.5f;
+        } else {
+            scale = (float) vwidth / (float) dwidth;
+            dy = (vheight - dheight * scale) * 0.5f;
+        }
+
+        matrix.setScale(scale, scale);
+        matrix.postTranslate(Math.round(dx), Math.round(dy));
+
+        Canvas canvas = new Canvas(result);
+        canvas.concat(matrix);
+        BitmapDrawable bitmapDrawable = new BitmapDrawable(res, bitmap);
+        bitmapDrawable.setBounds(0, 0, dwidth, dheight);
+        bitmapDrawable.draw(canvas);
+
+        return result;
     }
 
     private void initView() {
@@ -191,10 +233,6 @@ public class RImageView extends AppCompatImageView {
         }
     }
 
-    public void setPlayDrawable(@DrawableRes int res) {
-        setPlayDrawable(ContextCompat.getDrawable(getContext(), res));
-    }
-
 //    @Override
 //    public void setImageResource(@DrawableRes int resId) {
 //        super.setImageResource(resId);
@@ -218,6 +256,10 @@ public class RImageView extends AppCompatImageView {
 //            super.setImageBitmap(drawable);
 //        }
 //    }
+
+    public void setPlayDrawable(@DrawableRes int res) {
+        setPlayDrawable(ContextCompat.getDrawable(getContext(), res));
+    }
 
     public void setShowGifTip(boolean showGifTip) {
         mShowGifTip = showGifTip;
