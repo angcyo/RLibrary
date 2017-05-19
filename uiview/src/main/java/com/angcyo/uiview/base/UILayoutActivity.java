@@ -40,7 +40,7 @@ public abstract class UILayoutActivity extends StyleActivity {
 
         setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);//竖屏
 
-        onLoadView();
+        onLoadView(getIntent());
         mRxPermissions = new RxPermissions(this);
         mRxPermissions.requestEach(needPermissions())
                 .map(new Func1<Permission, String>() {
@@ -105,7 +105,20 @@ public abstract class UILayoutActivity extends StyleActivity {
         //overridePendingTransition(R.anim.base_tran_to_top, R.anim.base_tran_to_bottom);
     }
 
-    protected abstract void onLoadView();
+    protected abstract void onLoadView(Intent intent);
+
+    /**
+     * 当Activity重新装载的时候调用
+     */
+    protected void onReLoadView(Intent intent) {
+        L.d("call: onReLoadView([intent])-> " + intent);
+    }
+
+    @Override
+    protected void onNewIntent(Intent intent) {
+        super.onNewIntent(intent);
+        onReLoadView(intent);
+    }
 
     @Override
     public void onBackPressed() {
