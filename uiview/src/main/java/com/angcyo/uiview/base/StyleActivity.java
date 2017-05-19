@@ -11,6 +11,7 @@ import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
 
+import com.angcyo.library.utils.L;
 import com.angcyo.uiview.R;
 
 /**
@@ -22,6 +23,7 @@ public abstract class StyleActivity extends AppCompatActivity {
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        L.e(getClass().getSimpleName() + " 任务栈:" + getTaskId());
         getWindow().setFormat(PixelFormat.TRANSLUCENT);//TBS X5
 
         loadActivityStyle();

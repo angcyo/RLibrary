@@ -26,12 +26,12 @@
         android:allowBackup="true"
         android:supportsRtl="true">
 
-<!--        <activity android:name=".base.RCrashActivity">
-            <intent-filter>
-                <action android:name="com.angcyo.crash"/>
-                <category android:name="android.intent.category.DEFAULT"/>
-            </intent-filter>
-        </activity>-->
+        <!--        <activity android:name=".base.RCrashActivity">
+                    <intent-filter>
+                        <action android:name="com.angcyo.crash"/>
+                        <category android:name="android.intent.category.DEFAULT"/>
+                    </intent-filter>
+                </activity>-->
 
         <!--网络状态监听-->
         <receiver
@@ -41,6 +41,17 @@
                 <action android:name="android.net.conn.CONNECTIVITY_CHANGE"/>
             </intent-filter>
         </receiver>
+
+        <!--Android7.0 文件权限-->
+        <provider
+            android:name="android.support.v4.content.FileProvider"
+            android:authorities="${PACKAGE_NAME}"
+            android:exported="false"
+            android:grantUriPermissions="true">
+            <meta-data
+                android:name="android.support.FILE_PROVIDER_PATHS"
+                android:resource="@xml/provider_paths"/>
+        </provider>
     </application>
 
 </manifest>

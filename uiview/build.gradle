@@ -9,6 +9,10 @@ android {
         targetSdkVersion Integer.parseInt(rootProject.T_SDK)
         versionCode 1
         versionName "1.0"
+
+        manifestPlaceholders = [
+                PACKAGE_NAME: "com.angcyo.uidemo"
+        ]
     }
     buildTypes {
         release {
