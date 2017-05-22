@@ -186,7 +186,7 @@ public class RSoftInputLayout extends FrameLayout {
 
         contentLayout.measure(MeasureSpec.makeMeasureSpec(widthSize, MeasureSpec.EXACTLY),
                 MeasureSpec.makeMeasureSpec(contentHeight, MeasureSpec.EXACTLY));
-        if (emojiLayout != null) {
+        if (isEmojiShow && emojiLayout != null) {
             emojiLayout.measure(MeasureSpec.makeMeasureSpec(widthSize, MeasureSpec.EXACTLY),
                     MeasureSpec.makeMeasureSpec(keyboardHeight /*emojiHeight*/, MeasureSpec.EXACTLY));
         }
@@ -211,7 +211,7 @@ public class RSoftInputLayout extends FrameLayout {
         int paddingTop = getPaddingTop();
         t += paddingTop;
         contentLayout.layout(l, t, r, contentLayout.getMeasuredHeight() + paddingTop);
-        if (emojiLayout != null) {
+        if (isEmojiShow && emojiLayout != null) {
             emojiLayout.layout(l, contentLayout.getMeasuredHeight() + paddingTop, r, getMeasuredHeight());
         }
     }

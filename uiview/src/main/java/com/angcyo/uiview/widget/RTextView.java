@@ -220,10 +220,19 @@ public class RTextView extends AppCompatTextView {
                 }
             }
 
+            /*请在设置 InputLengthFilter的时候, 预加上3个字符*/
             if (text.length() > maxLength) {
-                spanBuilder.setSpan(new RExTextView.ImageTextSpan(getContext(), getTextSize(),
-                                getTextColors().getColorForState(new int[]{}, getTextColors().getDefaultColor()), "..."),
-                        maxLength - ((text.length() % 2 == 0) ? 4 : 3)/*兼容末尾是emoji表情*/, text.length(), Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
+                String more = "...";
+                int offset = more.length();
+                int lastIndex = maxLength - offset;
+                if (lastIndex >= 0) {
+                    if (EmojiFilter.isEmojiCharacter(spanBuilder.charAt(lastIndex))) {
+                        offset = 4;/*兼容末尾是emoji表情*/
+                    }
+                    spanBuilder.setSpan(new RExTextView.ImageTextSpan(getContext(), getTextSize(),
+                                    getTextColors().getColorForState(new int[]{}, getTextColors().getDefaultColor()), more),
+                            maxLength - offset, text.length(), Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
+                }
             }
         }
 
