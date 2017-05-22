@@ -9,6 +9,7 @@ import android.graphics.drawable.ColorDrawable;
 import android.graphics.drawable.Drawable;
 import android.support.annotation.ColorInt;
 import android.support.annotation.DrawableRes;
+import android.support.annotation.NonNull;
 import android.support.v7.widget.AppCompatTextView;
 import android.text.InputFilter;
 import android.text.Spannable;
@@ -222,13 +223,13 @@ public class RTextView extends AppCompatTextView {
 
             /*请在设置 InputLengthFilter的时候, 预加上3个字符*/
             if (text.length() > maxLength) {
-                String more = "...";
+                String more = getMoreString();
                 int offset = more.length();
                 int lastIndex = maxLength - offset;
                 if (lastIndex >= 0) {
-                    if (EmojiFilter.isEmojiCharacter(spanBuilder.charAt(lastIndex))) {
-                        offset = 4;/*兼容末尾是emoji表情*/
-                    }
+//                    if (EmojiFilter.isEmojiCharacter(spanBuilder.charAt(lastIndex))) {
+//                        offset = 4;/*兼容末尾是emoji表情*/
+//                    }
                     spanBuilder.setSpan(new RExTextView.ImageTextSpan(getContext(), getTextSize(),
                                     getTextColors().getColorForState(new int[]{}, getTextColors().getDefaultColor()), more),
                             maxLength - offset, text.length(), Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
@@ -237,6 +238,11 @@ public class RTextView extends AppCompatTextView {
         }
 
         setSuperText(spanBuilder, type);
+    }
+
+    @NonNull
+    private String getMoreString() {
+        return "...";
     }
 
     private void setSuperText(CharSequence text, BufferType type) {
@@ -260,12 +266,12 @@ public class RTextView extends AppCompatTextView {
     }
 
     /**
-     * 需要预留3个'...'字符的数量
+     * 需要预留3个'...'字符的数量, 已自动处理
      */
     public void setMaxLength(int length) {
         InputFilter[] filters = getFilters();
         boolean have = false;
-        InputFilter.LengthFilter lengthFilter = new InputFilter.LengthFilter(length);
+        InputFilter.LengthFilter lengthFilter = new InputFilter.LengthFilter(length + getMoreString().length());
         for (int i = 0; i < filters.length; i++) {
             InputFilter filter = filters[i];
             if (filter instanceof InputFilter.LengthFilter) {

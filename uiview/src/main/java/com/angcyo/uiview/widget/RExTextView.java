@@ -177,24 +177,31 @@ public class RExTextView extends RTextView {
                     //需要折叠
                     CharSequence sequence = getText();
                     if (sequence instanceof Spannable) {
+
+                        String more = "...";
+                        String foldString = getFoldString();
+
+                        if (sequence.length() <= more.length() + foldString.length()) {
+                            setMaxShowLine(-1);//换行字符太多的情况
+                            return;
+                        }
+
                         Spannable spannable = (Spannable) sequence;
                         int lineStart = layout.getLineStart(maxShowLine);
 
-                        String temp = "...";
-                        String foldString = getFoldString();
-                        int startPosition = lineStart - temp.length() - foldString.length();
+                        int startPosition = lineStart - more.length() - foldString.length();
 
                         if (startPosition < 0) {
-                            spannable.setSpan(new ImageTextSpan(getContext(), getTextSize(), getCurrentTextColor(), temp),
+                            spannable.setSpan(new ImageTextSpan(getContext(), getTextSize(), getCurrentTextColor(), more),
                                     lineStart - 1, lineStart, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
                             return;
                         }
 
                         int start = findStartPosition(spannable, startPosition);
 
-                        int offset = (sequence.length() % 2 == 0) ? 4 : 3;
+                        int offset = more.length();//(sequence.length() % 2 == 0) ? 4 : 3;
 
-                        spannable.setSpan(new ImageTextSpan(getContext(), getTextSize(), getCurrentTextColor(), temp),
+                        spannable.setSpan(new ImageTextSpan(getContext(), getTextSize(), getCurrentTextColor(), more),
                                 start, start + offset, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
                         spannable.setSpan(new ImageTextSpan(getContext(), getTextSize(), foldString),
                                 start + offset, spannable.length(), Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
