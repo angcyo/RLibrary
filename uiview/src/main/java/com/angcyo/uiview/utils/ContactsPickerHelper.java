@@ -10,6 +10,7 @@ import android.text.TextUtils;
 import android.text.format.Formatter;
 
 import com.angcyo.library.utils.L;
+import com.angcyo.uiview.utils.string.StringUtil;
 import com.github.promeg.pinyinhelper.Pinyin;
 
 import java.util.ArrayList;
@@ -89,7 +90,7 @@ public class ContactsPickerHelper {
                                 ContactsInfo io = new ContactsInfo();
                                 io.contactId = contactId;
                                 io.name = name;
-                                io.phone = phone;
+                                io.phone = StringUtil.removeBlanks(phone);
                                 io.letter = String.valueOf(Pinyin.toPinyin(name.charAt(0)).toUpperCase().charAt(0));
                                 contactsInfos.add(io);
                             }

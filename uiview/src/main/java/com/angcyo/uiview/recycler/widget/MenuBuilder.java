@@ -8,6 +8,7 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 
 import com.angcyo.uiview.R;
+import com.angcyo.uiview.utils.string.StringUtil;
 import com.angcyo.uiview.widget.RTextView;
 
 import java.util.ArrayList;
@@ -36,6 +37,11 @@ public class MenuBuilder {
     public MenuBuilder addMenu(String title, int bgColor, View.OnClickListener clickListener) {
         mMenuList.add(new MenuItem(title, bgColor, clickListener)
                 .setPadding(mContext.getResources().getDimensionPixelOffset(R.dimen.base_xxhdpi)));
+        return this;
+    }
+
+    public MenuBuilder addMenu(MenuItem item) {
+        mMenuList.add(item.setPadding(mContext.getResources().getDimensionPixelOffset(R.dimen.base_xxhdpi)));
         return this;
     }
 
@@ -86,12 +92,21 @@ public class MenuBuilder {
         }
     }
 
-    static class MenuItem {
+    public static class MenuItem {
         String title;
         int bgColor, textColor;
         View.OnClickListener clickListener;
         int paddLeft, paddTop, paddBottom, paddRight;
         int gravity;
+        private Object tag;
+
+        public Object getTag() {
+            return tag;
+        }
+
+        public void setTag(Object tag) {
+            this.tag = tag;
+        }
 
         public MenuItem() {
         }
