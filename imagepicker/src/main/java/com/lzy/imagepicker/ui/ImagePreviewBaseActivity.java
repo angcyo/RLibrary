@@ -68,6 +68,7 @@ public abstract class ImagePreviewBaseActivity extends ImageBaseActivity {
 
         mViewPager = (ViewPagerFixed) findViewById(R.id.viewpager);
         mAdapter = new ImagePageAdapter(this, mImageItems);
+        mAdapter.setEnableMoveExit(false);
         mAdapter.setPhotoViewClickListener(new ImagePageAdapter.PhotoViewClickListener() {
             @Override
             public void OnPhotoTapListener(View view, float v, float v1) {

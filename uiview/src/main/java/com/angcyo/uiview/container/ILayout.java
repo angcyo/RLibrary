@@ -73,7 +73,8 @@ public interface ILayout<T extends UIParam> {
     View getLayout();
 
     /**
-     * 请求返回
+     * 请求返回, 最后面会调用 {@link #finishIView(IView, UIParam)},
+     * 你也可以直接后面的方法, 绕过 backPress检查逻辑
      */
     boolean requestBackPressed();
 

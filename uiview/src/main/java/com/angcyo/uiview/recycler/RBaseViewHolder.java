@@ -17,15 +17,9 @@ import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-import com.angcyo.library.facebook.DraweeViewUtil;
 import com.angcyo.library.utils.L;
-import com.angcyo.uiview.R;
-import com.angcyo.uiview.RApplication;
 import com.angcyo.uiview.widget.ItemInfoLayout;
 import com.angcyo.uiview.widget.ItemSubInfoLayout;
-import com.bumptech.glide.Glide;
-import com.bumptech.glide.load.engine.DiskCacheStrategy;
-import com.facebook.drawee.view.SimpleDraweeView;
 
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
@@ -275,19 +269,16 @@ public class RBaseViewHolder extends RecyclerView.ViewHolder {
                             view.setVisibility(View.VISIBLE);
                         }
                         ((TextView) view).setText(value);
-                    } else if (view instanceof SimpleDraweeView) {
-                        DraweeViewUtil.resize(((SimpleDraweeView) view), value,
-                                view.getMeasuredWidth(), view.getMeasuredHeight());
                     } else if (view instanceof AppCompatImageView) {
 
                     } else if (view instanceof ImageView) {
-                        Glide.with(RApplication.getApp())
-                                .load(value)
-                                .placeholder(R.drawable.default_image)
-                                .error(R.drawable.default_image)
-                                .diskCacheStrategy(DiskCacheStrategy.ALL)
-                                .centerCrop()
-                                .into(((ImageView) view));
+//                        Glide.with(RApplication.getApp())
+//                                .load(value)
+//                                .placeholder(R.drawable.default_image)
+//                                .error(R.drawable.default_image)
+//                                .diskCacheStrategy(DiskCacheStrategy.ALL)
+//                                .centerCrop()
+//                                .into(((ImageView) view));
                     }
                 }
             } catch (Exception e) {

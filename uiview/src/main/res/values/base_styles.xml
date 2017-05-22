@@ -115,44 +115,44 @@
         <item name="indicatorName">BallPulseIndicator</item>
     </style>
 
-    <!--图片-->
-    <style name="BaseImageStyle">
-        <item name="android:layout_height">match_parent</item>
-        <item name="android:layout_width">match_parent</item>
-        <item name="actualImageScaleType">centerCrop</item>
-        <item name="placeholderImageScaleType">centerCrop</item>
-    </style>
+    <!--&lt;!&ndash;图片&ndash;&gt;-->
+    <!--<style name="BaseImageStyle">-->
+        <!--<item name="android:layout_height">match_parent</item>-->
+        <!--<item name="android:layout_width">match_parent</item>-->
+        <!--<item name="actualImageScaleType">centerCrop</item>-->
+        <!--<item name="placeholderImageScaleType">centerCrop</item>-->
+    <!--</style>-->
 
-    <!--圆角图片-->
-    <style name="BaseCircleImageStyle" parent="BaseImageStyle">
-        <item name="roundAsCircle">true</item>
-    </style>
+    <!--&lt;!&ndash;圆角图片&ndash;&gt;-->
+    <!--<style name="BaseCircleImageStyle" parent="BaseImageStyle">-->
+        <!--<item name="roundAsCircle">true</item>-->
+    <!--</style>-->
 
-    <style name="BaseUserBigIcoStyle" parent="BaseCircleImageStyle">
-        <item name="android:layout_height">100dp</item>
-        <item name="android:layout_width">100dp</item>
-        <item name="android:padding">@dimen/base_dpi</item>
-    </style>
+    <!--<style name="BaseUserBigIcoStyle" parent="BaseCircleImageStyle">-->
+        <!--<item name="android:layout_height">100dp</item>-->
+        <!--<item name="android:layout_width">100dp</item>-->
+        <!--<item name="android:padding">@dimen/base_dpi</item>-->
+    <!--</style>-->
 
-    <style name="BaseUserMidIcoStyle" parent="BaseCircleImageStyle">
-        <item name="android:layout_height">60dp</item>
-        <item name="android:layout_width">60dp</item>
-    </style>
+    <!--<style name="BaseUserMidIcoStyle" parent="BaseCircleImageStyle">-->
+        <!--<item name="android:layout_height">60dp</item>-->
+        <!--<item name="android:layout_width">60dp</item>-->
+    <!--</style>-->
 
-    <style name="BaseUserLittleIcoStyle" parent="BaseCircleImageStyle">
-        <item name="android:layout_height">40dp</item>
-        <item name="android:layout_width">40dp</item>
-    </style>
+    <!--<style name="BaseUserLittleIcoStyle" parent="BaseCircleImageStyle">-->
+        <!--<item name="android:layout_height">40dp</item>-->
+        <!--<item name="android:layout_width">40dp</item>-->
+    <!--</style>-->
 
-    <style name="BaseMsgUserMidIcoStyle" parent="BaseUserMidIcoStyle">
-        <item name="android:padding">0dp</item>
-        <item name="android:layout_gravity">bottom</item>
-    </style>
+    <!--<style name="BaseMsgUserMidIcoStyle" parent="BaseUserMidIcoStyle">-->
+        <!--<item name="android:padding">0dp</item>-->
+        <!--<item name="android:layout_gravity">bottom</item>-->
+    <!--</style>-->
 
-    <style name="BaseMsgUserLittleIcoStyle" parent="BaseUserLittleIcoStyle">
-        <item name="android:padding">0dp</item>
-        <item name="android:layout_gravity">bottom</item>
-    </style>
+    <!--<style name="BaseMsgUserLittleIcoStyle" parent="BaseUserLittleIcoStyle">-->
+        <!--<item name="android:padding">0dp</item>-->
+        <!--<item name="android:layout_gravity">bottom</item>-->
+    <!--</style>-->
 
     <!--登录输入框的样式-->
     <style name="BaseEditStyle">

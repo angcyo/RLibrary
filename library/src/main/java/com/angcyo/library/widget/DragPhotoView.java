@@ -9,11 +9,11 @@ import android.graphics.Paint;
 import android.util.AttributeSet;
 import android.view.MotionEvent;
 
-import uk.co.senab.photoview.PhotoView;
+import com.github.chrisbanes.photoview.PhotoView;
 
 /**
  * https://github.com/githubwing/DragPhotoView
- * Created by wing on 2016/12/22.
+ * Created by wing on 2016/12/22.   by 1.0.2
  */
 
 public class DragPhotoView extends PhotoView {
@@ -39,6 +39,8 @@ public class DragPhotoView extends PhotoView {
     private OnTapListener mTapListener;
     private OnExitListener mExitListener;
 
+    private boolean enableMoveExit = true;
+
     public DragPhotoView(Context context) {
         this(context, null);
     }
@@ -55,10 +57,13 @@ public class DragPhotoView extends PhotoView {
 
     @Override
     protected void onDraw(Canvas canvas) {
-        mPaint.setAlpha(mAlpha);
-        canvas.drawRect(0, 0, 2000, 3000, mPaint);
+        //mPaint.setAlpha(mAlpha);
+        //canvas.drawRect(0, 0, mWidth, mHeight, mPaint);
         canvas.translate(mTranslateX, mTranslateY);
         canvas.scale(mScale, mScale, mWidth / 2, mHeight / 2);
+        if (isAnimate && mExitListener != null) {
+            mExitListener.onMoveExitCancelTo(this, mWidth, mHeight, mTranslateX, mTranslateY);
+        }
         super.onDraw(canvas);
     }
 
@@ -73,7 +78,7 @@ public class DragPhotoView extends PhotoView {
     @Override
     public boolean dispatchTouchEvent(MotionEvent event) {
         //only scale == 1 can drag
-        if (getScale() == 1) {
+        if (enableMoveExit && !isAnimate && getScale() == 1) {
 
             switch (event.getAction()) {
                 case MotionEvent.ACTION_DOWN:
@@ -125,7 +130,7 @@ public class DragPhotoView extends PhotoView {
                                 if (mTranslateX == 0 && mTranslateY == 0 && canFinish) {
 
                                     if (mTapListener != null) {
-                                        mTapListener.onTap(DragPhotoView.this);
+                                        mTapListener.onTap(DragPhotoView.this, mDownX, mDownY);
                                     }
                                 }
                                 canFinish = false;
@@ -139,12 +144,12 @@ public class DragPhotoView extends PhotoView {
     }
 
     private void onActionUp(MotionEvent event) {
-
         if (mTranslateY > MAX_TRANSLATE_Y) {
             if (mExitListener != null) {
                 mExitListener.onExit(this, mTranslateX, mTranslateY, mWidth, mHeight);
             } else {
-                throw new RuntimeException("DragPhotoView: onExitLister can't be null ! call setOnExitListener() ");
+                //throw new RuntimeException("DragPhotoView: onExitLister can't be null ! call setOnExitListener() ");
+                performAnimation();
             }
         } else {
             performAnimation();
@@ -180,6 +185,10 @@ public class DragPhotoView extends PhotoView {
         }
 
         invalidate();
+
+        if (mExitListener != null) {
+            mExitListener.onMoveTo(this, mWidth, mHeight, mTranslateX, mTranslateY);
+        }
     }
 
     private void performAnimation() {
@@ -199,6 +208,32 @@ public class DragPhotoView extends PhotoView {
             }
         });
 
+        animator.addListener(new Animator.AnimatorListener() {
+            @Override
+            public void onAnimationStart(Animator animator) {
+                isAnimate = true;
+            }
+
+            @Override
+            public void onAnimationEnd(Animator animator) {
+                isAnimate = false;
+                animator.removeAllListeners();
+
+                if (mExitListener != null) {
+                    mExitListener.onMoveExitCancel(DragPhotoView.this);
+                }
+            }
+
+            @Override
+            public void onAnimationCancel(Animator animator) {
+
+            }
+
+            @Override
+            public void onAnimationRepeat(Animator animator) {
+
+            }
+        });
         return animator;
     }
 
@@ -291,11 +326,21 @@ public class DragPhotoView extends PhotoView {
         invalidate();
     }
 
+    public void setEnableMoveExit(boolean enableMoveExit) {
+        this.enableMoveExit = enableMoveExit;
+    }
+
     public interface OnTapListener {
-        void onTap(DragPhotoView view);
+        void onTap(DragPhotoView view, float x, float y);
     }
 
     public interface OnExitListener {
+        void onMoveTo(DragPhotoView view, float w, float h, float translateX, float translateY);
+
         void onExit(DragPhotoView view, float translateX, float translateY, float w, float h);
+
+        void onMoveExitCancel(DragPhotoView view);
+
+        void onMoveExitCancelTo(DragPhotoView view, float w, float h, float translateX, float translateY);
     }
 }

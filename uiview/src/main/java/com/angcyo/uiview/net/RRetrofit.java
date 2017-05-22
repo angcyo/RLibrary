@@ -10,7 +10,6 @@ import com.angcyo.uiview.github.utilcode.utils.NetworkUtils;
 import com.angcyo.uiview.net.cookie.CookieJarImpl;
 import com.angcyo.uiview.net.cookie.store.PersistentCookieStore;
 import com.angcyo.uiview.receiver.NetworkStateReceiver;
-import com.github.simonpercic.oklog3.OkLogInterceptor;
 
 import java.io.BufferedWriter;
 import java.io.File;
@@ -118,17 +117,17 @@ public class RRetrofit {
 
     private static OkHttpClient defaultClient(CacheType cacheType) {
         // create an instance of OkLogInterceptor using a builder()
-        OkLogInterceptor okLogInterceptor;
-        OkLogInterceptor.Builder builder = OkLogInterceptor.builder();
+//        OkLogInterceptor okLogInterceptor;
+//        OkLogInterceptor.Builder builder = OkLogInterceptor.builder();
 
 //        builder.setBaseUrl(DEBUG_URL);
-        builder.useAndroidLog(false);
+//        builder.useAndroidLog(false);
 
-        if (DEBUG) {
-            okLogInterceptor = builder.withAllLogData().build();
-        } else {
-            okLogInterceptor = builder.withNoLogData().build();
-        }
+//        if (DEBUG) {
+//            okLogInterceptor = builder.withAllLogData().build();
+//        } else {
+//            okLogInterceptor = builder.withNoLogData().build();
+//        }
 
         // create an instance of OkHttpClient builder
         OkHttpClient.Builder okHttpBuilder = new OkHttpClient.Builder();

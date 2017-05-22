@@ -8,12 +8,10 @@ import android.support.multidex.MultiDex;
 import android.telephony.TelephonyManager;
 import android.text.TextUtils;
 
-import com.angcyo.library.facebook.DraweeViewUtil;
 import com.angcyo.uiview.skin.SkinHelper;
 import com.angcyo.uiview.utils.Debug;
 import com.angcyo.uiview.utils.T_;
 import com.bumptech.glide.Glide;
-import com.facebook.drawee.backends.pipeline.Fresco;
 import com.orhanobut.hawk.Hawk;
 
 import java.io.BufferedReader;
@@ -161,7 +159,6 @@ public class RApplication extends Application {
             /*Facebook图片加载库, 必须*/
             //Fresco.initialize(this);
 
-            DraweeViewUtil.init(this);
 
             onInit();
 
@@ -191,9 +188,9 @@ public class RApplication extends Application {
         }
         Glide.get(this).clearMemory();
         //Fresco.shutDown();
-        if (Fresco.hasBeenInitialized()) {
-            Fresco.getImagePipeline().clearMemoryCaches();
-        }
+//        if (Fresco.hasBeenInitialized()) {
+//            Fresco.getImagePipeline().clearMemoryCaches();
+//        }
     }
 
     @Override
@@ -204,8 +201,8 @@ public class RApplication extends Application {
 //        }
         Glide.get(this).trimMemory(level);
         Glide.get(this).clearMemory();
-        if (Fresco.hasBeenInitialized()) {
-            Fresco.getImagePipeline().clearMemoryCaches();
-        }
+//        if (Fresco.hasBeenInitialized()) {
+//            Fresco.getImagePipeline().clearMemoryCaches();
+//        }
     }
 }

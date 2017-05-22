@@ -13,11 +13,14 @@ import android.widget.ImageView;
 
 import com.angcyo.library.okhttp.Ok;
 import com.angcyo.library.utils.L;
+import com.angcyo.library.widget.DragPhotoView;
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.bumptech.glide.load.resource.gif.GifDrawable;
 import com.bumptech.glide.request.animation.GlideAnimation;
 import com.bumptech.glide.request.target.SimpleTarget;
+import com.github.chrisbanes.photoview.OnPhotoTapListener;
+import com.github.chrisbanes.photoview.PhotoView;
 import com.lzy.imagepicker.ImagePicker;
 import com.lzy.imagepicker.ImagePickerHelper;
 import com.lzy.imagepicker.Utils;
@@ -27,8 +30,6 @@ import com.lzy.imagepicker.view.MaterialProgressView;
 
 import java.util.ArrayList;
 
-import uk.co.senab.photoview.PhotoView;
-import uk.co.senab.photoview.PhotoViewAttacher;
 
 /**
  * ================================================
@@ -42,11 +43,13 @@ import uk.co.senab.photoview.PhotoViewAttacher;
 public class ImagePageAdapter extends PagerAdapter {
 
     public PhotoViewClickListener listener;
+    DragPhotoView.OnExitListener mOnExitListener;
     private int screenWidth;
     private int screenHeight;
     private ImagePicker imagePicker;
     private ArrayList<ImageItem> images = new ArrayList<>();
     private Activity mActivity;
+    private boolean enableMoveExit = true;
 
     public ImagePageAdapter(Activity activity, ArrayList<ImageItem> images) {
         this.mActivity = activity;
@@ -112,7 +115,8 @@ public class ImagePageAdapter extends PagerAdapter {
         FrameLayout itemLayout = new FrameLayout(mActivity);
 
         //支持手势的图片
-        final PhotoView photoView = new PhotoView(mActivity);
+        final DragPhotoView photoView = new DragPhotoView(mActivity);
+        photoView.setEnableMoveExit(enableMoveExit);
 
         //缩略图显示
         final ImageView imageView = new ImageView(mActivity);
@@ -148,18 +152,29 @@ public class ImagePageAdapter extends PagerAdapter {
             }
         });
 
-        photoView.setOnPhotoTapListener(new PhotoViewAttacher.OnPhotoTapListener() {
+        photoView.setOnTapListener(new DragPhotoView.OnTapListener() {
             @Override
-            public void onPhotoTap(View view, float x, float y) {
+            public void onTap(DragPhotoView view, float x, float y) {
                 if (listener != null) listener.OnPhotoTapListener(view, x, y);
             }
         });
+        photoView.setOnPhotoTapListener(new OnPhotoTapListener() {
+            @Override
+            public void onPhotoTap(ImageView view, float x, float y) {
+                if (listener != null) listener.OnPhotoTapListener(view, x, y);
+            }
+        });
+        photoView.setOnExitListener(mOnExitListener);
 
         itemLayout.addView(imageView);
         itemLayout.addView(photoView);
         itemLayout.addView(progressView, new FrameLayout.LayoutParams(-2, -2, Gravity.CENTER));
         container.addView(itemLayout);
         return itemLayout;
+    }
+
+    public void setEnableMoveExit(boolean enableMoveExit) {
+        this.enableMoveExit = enableMoveExit;
     }
 
     protected void loadImage(final PhotoView photoView, final ImageView imageView,
@@ -225,6 +240,10 @@ public class ImagePageAdapter extends PagerAdapter {
     @Override
     public void destroyItem(ViewGroup container, int position, Object object) {
         container.removeView((View) object);
+    }
+
+    public void setOnExitListener(DragPhotoView.OnExitListener onExitListener) {
+        mOnExitListener = onExitListener;
     }
 
     @Override
