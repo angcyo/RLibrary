@@ -1588,6 +1588,11 @@ public class UILayoutImpl extends SwipeBackLayout implements ILayout<UIParam>, U
         return mAttachViews.get(position);
     }
 
+    @Override
+    public ViewPattern getViewPatternAtLast(int lastCount) {
+        return getViewPattern(mAttachViews.size() - 1 - lastCount);
+    }
+
     /**
      * 通过类名, 返回最早添加的IView
      */

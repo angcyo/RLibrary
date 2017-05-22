@@ -33,6 +33,9 @@ import java.util.ArrayList;
  * Version: 1.0.0
  */
 public class ImagePickerHelper {
+
+    public static final int REQUEST_CODE = 100;
+
     public static void init() {
         ImagePicker imagePicker = ImagePicker.getInstance();
         imagePicker.setImageLoader(new GlideImageLoader());
@@ -61,7 +64,7 @@ public class ImagePickerHelper {
         imagePicker.setFocusHeight(600);
         Intent intent = new Intent(activity, ImageGridActivity.class);
         intent.putExtra(ImageGridActivity.CLEAR_SELECTOR, clear);
-        activity.startActivityForResult(intent, 100);
+        activity.startActivityForResult(intent, REQUEST_CODE);
     }
 
     /**

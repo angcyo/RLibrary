@@ -3,6 +3,7 @@ package com.angcyo.uiview.container;
 import android.os.Bundle;
 import android.view.View;
 
+import com.angcyo.uiview.model.ViewPattern;
 import com.angcyo.uiview.skin.ISkin;
 import com.angcyo.uiview.view.IView;
 
@@ -99,4 +100,9 @@ public interface ILayout<T extends UIParam> {
     void finish();//2016-12-16
 
     void onSkinChanged(ISkin skin);//星期六 2017-4-1
+
+    /**
+     * 返回倒数lastCount的ViewPattern
+     */
+    ViewPattern getViewPatternAtLast(int lastCount);
 }

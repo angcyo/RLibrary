@@ -222,11 +222,11 @@ public class RTextView extends AppCompatTextView {
             }
 
             /*请在设置 InputLengthFilter的时候, 预加上3个字符*/
-            if (text.length() > maxLength) {
-                String more = getMoreString();
-                int offset = more.length();
-                int lastIndex = maxLength - offset;
-                if (lastIndex >= 0) {
+            String more = getMoreString();
+            int offset = more.length();
+            int lastIndex = maxLength - offset;
+            if (lastIndex >= 0) {
+                if (text.length() > lastIndex) {
 //                    if (EmojiFilter.isEmojiCharacter(spanBuilder.charAt(lastIndex))) {
 //                        offset = 4;/*兼容末尾是emoji表情*/
 //                    }
@@ -266,7 +266,7 @@ public class RTextView extends AppCompatTextView {
     }
 
     /**
-     * 需要预留3个'...'字符的数量, 已自动处理
+     * 需要预留3个'...'字符的数量, <em></>已自动处理</em>
      */
     public void setMaxLength(int length) {
         InputFilter[] filters = getFilters();

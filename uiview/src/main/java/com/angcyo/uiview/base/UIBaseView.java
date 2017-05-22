@@ -59,6 +59,10 @@ public abstract class UIBaseView extends UIIViewImpl {
     public static int mBaseRootId = View.NO_ID;
     public static int mBaseContentRootId = View.NO_ID;
     /**
+     * 布局切换动画
+     */
+    public static boolean ENABLE_LAYOUT_CHANGE_ANIM = true;
+    /**
      * 根布局,和父类中的 {@link #mRootView} 相同, 包含标题栏
      */
     protected SoftRelativeLayout mBaseRootLayout;
@@ -96,12 +100,16 @@ public abstract class UIBaseView extends UIIViewImpl {
     public static void safeSetVisibility(final View view, final int visibility) {
         if (view != null) {
             if (view.getVisibility() == View.VISIBLE) {
-                ViewCompat.animate(view).scaleX(1.2f).scaleY(1.2f).alpha(0).withEndAction(new Runnable() {
-                    @Override
-                    public void run() {
-                        view.setVisibility(visibility);
-                    }
-                }).setInterpolator(new DecelerateInterpolator()).setDuration(UIIViewImpl.DEFAULT_ANIM_TIME).start();
+                if (ENABLE_LAYOUT_CHANGE_ANIM) {
+                    ViewCompat.animate(view).scaleX(1.2f).scaleY(1.2f).alpha(0).withEndAction(new Runnable() {
+                        @Override
+                        public void run() {
+                            view.setVisibility(visibility);
+                        }
+                    }).setInterpolator(new DecelerateInterpolator()).setDuration(UIIViewImpl.DEFAULT_ANIM_TIME).start();
+                } else {
+                    view.setVisibility(visibility);
+                }
             } else {
                 view.setVisibility(visibility);
             }

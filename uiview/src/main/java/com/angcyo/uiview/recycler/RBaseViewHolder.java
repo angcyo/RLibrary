@@ -232,6 +232,8 @@ public class RBaseViewHolder extends RecyclerView.ViewHolder {
     }
 
     /**
+     * 请勿在bean相当复杂的情况下, 使用此方法, 会消耗很多CPU性能.
+     *
      * @param clz           为了效率, 并不会遍历父类的字段, 所以可以指定类
      * @param hideForEmpty  如果数据为空时, 是否隐藏View
      * @param withGetMethod 是否通过get方法获取对象字段的值

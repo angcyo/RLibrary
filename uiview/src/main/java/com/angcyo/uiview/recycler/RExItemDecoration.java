@@ -259,11 +259,29 @@ public class RExItemDecoration extends RecyclerView.ItemDecoration {
         }
 
         /**
-         * 在左边绘制一个偏移距离的线
+         * 简单的在底部绘制一根线
+         */
+        protected void drawBottomLine(Canvas canvas, TextPaint paint, View itemView, Rect offsetRect, int itemCount, int position) {
+            paint.setColor(getPaintColor(itemView.getContext()));
+            offsetRect.set(0, itemView.getBottom(), itemView.getRight(), itemView.getBottom() + offsetRect.bottom);
+            canvas.drawRect(offsetRect, paint);
+        }
+
+        /**
+         * 在顶部左边绘制一个偏移距离的线
          */
         protected void drawLeftTopLine(Canvas canvas, TextPaint paint, View itemView, Rect offsetRect, int itemCount, int position) {
             paint.setColor(getOffsetPaintColor(itemView.getContext()));
             offsetRect.set(0, itemView.getTop() - offsetRect.top, getLeftOffset(itemView.getContext()), itemView.getTop());
+            canvas.drawRect(offsetRect, paint);
+        }
+
+        /**
+         * 在底部左边绘制一个偏移距离的线
+         */
+        protected void drawLeftBottomLine(Canvas canvas, TextPaint paint, View itemView, Rect offsetRect, int itemCount, int position) {
+            paint.setColor(getOffsetPaintColor(itemView.getContext()));
+            offsetRect.set(0, itemView.getBottom(), getLeftOffset(itemView.getContext()), itemView.getBottom() + offsetRect.bottom);
             canvas.drawRect(offsetRect, paint);
         }
 
