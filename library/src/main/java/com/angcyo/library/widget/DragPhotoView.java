@@ -18,6 +18,7 @@ import com.github.chrisbanes.photoview.PhotoView;
 
 public class DragPhotoView extends PhotoView {
     private final static int MAX_TRANSLATE_Y = 500;
+    private final static int CANCEL_TRANSLATE_Y = 100;
     private final static long DURATION = 300;
     private Paint mPaint;
     // downX
@@ -40,6 +41,8 @@ public class DragPhotoView extends PhotoView {
     private OnExitListener mExitListener;
 
     private boolean enableMoveExit = true;
+
+    private boolean cancel_click = false;
 
     public DragPhotoView(Context context) {
         this(context, null);
@@ -122,6 +125,11 @@ public class DragPhotoView extends PhotoView {
                     //防止下拉的时候双手缩放
                     if (event.getPointerCount() == 1) {
                         onActionUp(event);
+
+                        if (mTranslateX != 0 || mTranslateY != 0) {
+                            event.setAction(MotionEvent.ACTION_CANCEL);
+                        }
+
                         isTouchEvent = false;
                         //judge finish or not
                         postDelayed(new Runnable() {
