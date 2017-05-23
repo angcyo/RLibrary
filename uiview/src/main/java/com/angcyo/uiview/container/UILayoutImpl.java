@@ -61,14 +61,16 @@ public class UILayoutImpl extends SwipeBackLayout implements ILayout<UIParam>, U
     Application.ActivityLifecycleCallbacks mCallbacks = new Application.ActivityLifecycleCallbacks() {
         @Override
         public void onActivityCreated(Activity activity, Bundle savedInstanceState) {
-
+            L.w("call: onActivityCreated([activity, savedInstanceState])-> " + activity.getClass().getSimpleName());
         }
 
         @Override
         public void onActivityStarted(Activity activity) {
+            L.w("call: onActivityStarted([activity])-> " + activity.getClass().getSimpleName());
             if (activity == mLayoutActivity) {
-                if (mLastShowViewPattern != null
-                        && mLastShowViewPattern.mView.getVisibility() != VISIBLE) {
+                if (mLastShowViewPattern != null &&
+                        !mLastShowViewPattern.mIView.haveOtherILayout() &&
+                        mLastShowViewPattern.mView.getVisibility() != VISIBLE) {
                     viewShow(mLastShowViewPattern, null);
                 }
             }
@@ -76,6 +78,7 @@ public class UILayoutImpl extends SwipeBackLayout implements ILayout<UIParam>, U
 
         @Override
         public void onActivityResumed(Activity activity) {
+            L.w("call: onActivityResumed([activity])-> " + activity.getClass().getSimpleName());
 //            if (activity == mLayoutActivity) {
 //                viewShow(mLastShowViewPattern, null);
 //            }
@@ -83,6 +86,7 @@ public class UILayoutImpl extends SwipeBackLayout implements ILayout<UIParam>, U
 
         @Override
         public void onActivityPaused(Activity activity) {
+            L.w("call: onActivityPaused([activity])-> " + activity.getClass().getSimpleName());
 //            if (activity == mLayoutActivity) {
 //                viewHide(mLastShowViewPattern);
 //            }
@@ -90,9 +94,11 @@ public class UILayoutImpl extends SwipeBackLayout implements ILayout<UIParam>, U
 
         @Override
         public void onActivityStopped(Activity activity) {
+            L.w("call: onActivityStopped([activity])-> " + activity.getClass().getSimpleName());
             if (activity == mLayoutActivity) {
-                if (mLastShowViewPattern != null
-                        && mLastShowViewPattern.mView.getVisibility() == VISIBLE) {
+                if (mLastShowViewPattern != null &&
+                        !mLastShowViewPattern.mIView.haveOtherILayout() &&
+                        mLastShowViewPattern.mView.getVisibility() == VISIBLE) {
                     viewHide(mLastShowViewPattern);
                 }
             }
@@ -150,6 +156,11 @@ public class UILayoutImpl extends SwipeBackLayout implements ILayout<UIParam>, U
      */
     private boolean needDragClose = false;
 
+    /**
+     * 管理子的ILayout, 用于在滑动的过程中控制显示和隐藏最后一个IView
+     */
+    private ILayout mChildILayout;
+
     public UILayoutImpl(Context context) {
         super(context);
         initLayout();
@@ -193,6 +204,24 @@ public class UILayoutImpl extends SwipeBackLayout implements ILayout<UIParam>, U
         } else {
             return childView;
         }
+    }
+
+    @Override
+    public void onLastViewReShow(Bundle bundle) {
+        if (mLastShowViewPattern != null) {
+            mLastShowViewPattern.mView.setVisibility(VISIBLE);
+            mLastShowViewPattern.mIView.onViewReShow(bundle);
+        }
+    }
+
+    @Override
+    public void onLastViewShow(Bundle bundle) {
+        viewShow(mLastShowViewPattern, bundle);
+    }
+
+    @Override
+    public void onLastViewHide() {
+        viewHide(mLastShowViewPattern, false);
     }
 
     /**
@@ -1087,7 +1116,8 @@ public class UILayoutImpl extends SwipeBackLayout implements ILayout<UIParam>, U
 
 
     private void viewHide(final ViewPattern viewPattern, boolean hide) {
-        if (viewPattern == null) {
+        if (viewPattern == null ||
+                viewPattern.mIView.getIViewShowState() == IView.IViewShowState.STATE_VIEW_HIDE) {
             return;
         }
         viewPattern.mIView.onViewHide();
@@ -1101,7 +1131,8 @@ public class UILayoutImpl extends SwipeBackLayout implements ILayout<UIParam>, U
     }
 
     private void viewShow(final ViewPattern viewPattern, final Bundle bundle) {
-        if (viewPattern == null) {
+        if (viewPattern == null ||
+                viewPattern.mIView.getIViewShowState() == IView.IViewShowState.STATE_VIEW_SHOW) {
             return;
         }
         viewPattern.mView.setVisibility(VISIBLE);
@@ -1671,6 +1702,12 @@ public class UILayoutImpl extends SwipeBackLayout implements ILayout<UIParam>, U
         if (viewPattern != null) {
             viewPattern.mView.setVisibility(GONE);
         }
+        if (mChildILayout != null) {
+            ViewPattern patternAtLast = mChildILayout.getViewPatternAtLast(0);
+            if (patternAtLast != null) {
+                patternAtLast.mView.setVisibility(GONE);
+            }
+        }
         printLog();
     }
 
@@ -1702,6 +1739,12 @@ public class UILayoutImpl extends SwipeBackLayout implements ILayout<UIParam>, U
             mTranslationOffsetX = getMeasuredWidth() * 0.3f;
             viewPattern.mView.setVisibility(VISIBLE);
             viewPattern.mView.setTranslationX(-mTranslationOffsetX);
+        }
+        if (mChildILayout != null) {
+            ViewPattern patternAtLast = mChildILayout.getViewPatternAtLast(0);
+            if (patternAtLast != null) {
+                patternAtLast.mView.setVisibility(VISIBLE);
+            }
         }
     }
 
@@ -1742,6 +1785,11 @@ public class UILayoutImpl extends SwipeBackLayout implements ILayout<UIParam>, U
 
     public boolean isSwipeDrag() {
         return isSwipeDrag;
+    }
+
+    @Override
+    public void setChildILayout(ILayout childILayout) {
+        mChildILayout = childILayout;
     }
 
     /**

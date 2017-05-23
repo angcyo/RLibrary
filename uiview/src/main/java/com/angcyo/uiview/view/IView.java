@@ -35,7 +35,7 @@ public interface IView {
 
     /**
      * 生命周期顺序: 2
-     * 当loadContentView完成之后会调用
+     * 当loadContentView完成之后会调用, mViewHolder在此方法中创建
      * 请使用{@link #onViewCreate(View, UIParam)}
      */
     @Deprecated
@@ -45,7 +45,7 @@ public interface IView {
 
     /**
      * 生命周期顺序: 3
-     * 此方法会在inflateContentView之后, 紧接着执行
+     * 此方法会在inflateContentView之后, 紧接着执行, ButterKnife在此初始化
      */
     void loadContentView(View rootView);
 
@@ -211,4 +211,26 @@ public interface IView {
      * 是否需要在对话框上显示
      */
     boolean showOnDialog();//星期五 2017-4-28
+
+    /**
+     * 绑定一个其他的ILayout, 用于嵌套使用ILayout
+     */
+    IView bindParentILayout(ILayout iLayout);//星期二 2017-5-23
+
+    boolean haveOtherILayout();//星期二 2017-5-23
+
+    /**
+     * 返回当前IView的视图显示状态
+     */
+    IViewShowState getIViewShowState();//星期二 2017-5-23
+
+    enum IViewShowState {
+        STATE_NORMAL,
+        STATE_VIEW_CREATE,
+        STATE_VIEW_SHOW,
+        STATE_VIEW_HIDE,
+        STATE_VIEW_LOAD,
+        STATE_VIEW_UNLOAD
+    }
+
 }

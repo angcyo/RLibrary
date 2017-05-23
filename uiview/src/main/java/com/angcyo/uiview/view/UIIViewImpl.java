@@ -52,14 +52,11 @@ public abstract class UIIViewImpl implements IView {
     public static final int DEFAULT_ANIM_TIME = 300;
     public static final int DEFAULT_FINISH_ANIM_TIME = 300;
     public static final int DEFAULT_DIALOG_FINISH_ANIM_TIME = 150;
-    public static final int STATE_NORMAL = 1;
-    public static final int STATE_VIEW_SHOW = 3;
-    public static final int STATE_VIEW_HIDE = 4;
-    public static final int STATE_VIEW_LOAD = 2;
-    public static final int STATE_VIEW_UNLOAD = 5;
+
 
     protected ILayout mILayout;
-    protected ILayout mOtherILayout;
+    protected ILayout mParentILayout;//上层ILayout,
+    protected ILayout mChildILayout;//用来管理上层IView的生命周期, 如果有值, 会等于mILayout
     protected UILayoutActivity mActivity;
     /**
      * 根布局
@@ -70,7 +67,7 @@ public abstract class UIIViewImpl implements IView {
      * 用来管理rootView
      */
     protected RBaseViewHolder mViewHolder;
-    protected int mIViewStatus = STATE_NORMAL;
+    protected IViewShowState mIViewStatus = IViewShowState.STATE_NORMAL;
     /**
      * 最后一次显示的时间
      */
@@ -101,8 +98,11 @@ public abstract class UIIViewImpl implements IView {
     @Override
     public void onAttachedToILayout(ILayout iLayout) {
         mILayout = iLayout;
-        if (mOtherILayout == null) {
-            mOtherILayout = iLayout;
+        if (mChildILayout != null) {
+            mILayout.setChildILayout(mChildILayout);
+        }
+        if (mParentILayout == null) {
+            mParentILayout = iLayout;
         }
     }
 
@@ -156,21 +156,22 @@ public abstract class UIIViewImpl implements IView {
     @Override
     @Deprecated
     public void onViewCreate(View rootView) {
-        L.d(this.getClass().getSimpleName(), "onViewCreate: ");
+        L.d(this.getClass().getSimpleName(), "onViewCreate: " + mIViewStatus);
+        mIViewStatus = IViewShowState.STATE_VIEW_CREATE;
         mRootView = rootView;
         mViewHolder = new RBaseViewHolder(mRootView);
     }
 
     @Override
     public void onViewCreate(View rootView, UIParam param) {
-        L.d(this.getClass().getSimpleName(), "onViewCreate 2: ");
+        L.d(this.getClass().getSimpleName(), "onViewCreate 2: " + mIViewStatus);
     }
 
     @CallSuper
     @Override
     public void onViewLoad() {
-        mIViewStatus = STATE_VIEW_LOAD;
-        L.d(this.getClass().getSimpleName(), "onViewLoad: ");
+        L.d(this.getClass().getSimpleName(), "onViewLoad: " + mIViewStatus);
+        mIViewStatus = IViewShowState.STATE_VIEW_LOAD;
     }
 
     @Deprecated
@@ -183,15 +184,21 @@ public abstract class UIIViewImpl implements IView {
     @CallSuper
     @Override
     public void onViewShow(Bundle bundle) {
-        L.d(this.getClass().getSimpleName(), "onViewShow: ");
+        L.d(this.getClass().getSimpleName(), "onViewShow: " + mIViewStatus);
+        mIViewStatus = IViewShowState.STATE_VIEW_SHOW;
         long lastShowTime = mLastShowTime;
         viewShowCount++;
-        mIViewStatus = STATE_VIEW_SHOW;
         mLastShowTime = System.currentTimeMillis();
+
         if (lastShowTime == 0) {
             onViewShowFirst(bundle);
         }
+
         onViewShow(viewShowCount);
+        if (mChildILayout != null) {
+            mChildILayout.onLastViewShow(bundle);
+        }
+
     }
 
     public void onViewShowFirst(Bundle bundle) {
@@ -206,26 +213,33 @@ public abstract class UIIViewImpl implements IView {
     @CallSuper
     @Override
     public void onViewReShow(Bundle bundle) {
-        L.d(this.getClass().getSimpleName(), "onViewReShow: ");
+        L.d(this.getClass().getSimpleName(), "onViewReShow: " + mIViewStatus);
+
+        if (mChildILayout != null) {
+            mChildILayout.onLastViewReShow(bundle);
+        }
     }
 
     @CallSuper
     @Override
     public void onViewHide() {
-        mIViewStatus = STATE_VIEW_HIDE;
-        L.d(this.getClass().getSimpleName(), "onViewHide: ");
+        L.d(this.getClass().getSimpleName(), "onViewHide: " + mIViewStatus);
+        mIViewStatus = IViewShowState.STATE_VIEW_HIDE;
+        if (mChildILayout != null) {
+            mChildILayout.onLastViewHide();
+        }
     }
 
     @CallSuper
     @Override
     public void onViewUnload() {
-        mIViewStatus = STATE_VIEW_UNLOAD;
-        L.d(this.getClass().getSimpleName(), "onViewUnload: ");
+        L.d(this.getClass().getSimpleName(), "onViewUnload: " + mIViewStatus);
+        mIViewStatus = IViewShowState.STATE_VIEW_UNLOAD;
     }
 
     @Override
     public Animation loadStartAnimation() {
-        L.v(this.getClass().getSimpleName(), "loadStartAnimation: ");
+        L.v(this.getClass().getSimpleName(), "loadStartAnimation: " + mIViewStatus);
         TranslateAnimation translateAnimation;
         if (mIsRightJumpLeft) {
             translateAnimation = new TranslateAnimation(Animation.RELATIVE_TO_SELF, -1f, Animation.RELATIVE_TO_SELF, 0,
@@ -526,9 +540,15 @@ public abstract class UIIViewImpl implements IView {
         return mRootView;
     }
 
-    public IView bindOtherILayout(ILayout otherILayout) {
-        mOtherILayout = otherILayout;
+    @Override
+    public IView bindParentILayout(ILayout otherILayout) {
+        mParentILayout = otherILayout;
         return this;
+    }
+
+    @Override
+    public boolean haveOtherILayout() {
+        return mParentILayout != mILayout;
     }
 
     @Override
@@ -635,6 +655,18 @@ public abstract class UIIViewImpl implements IView {
     public void onSkinChanged(ISkin skin) {
         L.v(this.getClass().getSimpleName(), "onSkinChanged: " + skin.skinName());
         notifySkinChanged(mRootView, skin);
+    }
+
+    @Override
+    public IViewShowState getIViewShowState() {
+        return mIViewStatus;
+    }
+
+    public void setChildILayout(ILayout childILayout) {
+        mChildILayout = childILayout;
+        if (mILayout != null) {
+            mILayout.setChildILayout(mChildILayout);
+        }
     }
 
     protected void notifySkinChanged(View view, ISkin skin) {

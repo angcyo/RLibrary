@@ -10,6 +10,7 @@ import android.graphics.Point;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Looper;
+import android.support.v4.content.FileProvider;
 import android.telephony.TelephonyManager;
 import android.text.TextUtils;
 import android.util.DisplayMetrics;
@@ -433,6 +434,7 @@ public class RUtils {
 
         Uri webPage = Uri.parse(url);
         Intent webIntent = new Intent(Intent.ACTION_VIEW, webPage);
+        webIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
         context.startActivity(webIntent);
     }
 
@@ -454,7 +456,8 @@ public class RUtils {
         //获取文件file的MIME类型
         String type = getMIMEType(file);
         //设置intent的data和Type属性。
-        intent.setDataAndType(/*uri*/Uri.fromFile(file), type);
+        intent.setDataAndType(/*uri*/getFileUri(context, file), type);
+        intent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
         //跳转
         try {
             context.startActivity(intent);     //这里最好try一下，有可能会报错。 //比如说你的MIME类型是打开邮箱，但是你手机里面没装邮箱客户端，就会报错。
@@ -727,6 +730,17 @@ public class RUtils {
             builder.append("\n");
         }
         L.e(builder.toString());
+    }
+
+    public static Uri getFileUri(Context context, File file) {
+        Uri uri;
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
+            uri = FileProvider.getUriForFile(context, context.getPackageName(), file);
+        } else {
+            uri = Uri.fromFile(file);
+        }
+        //intent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
+        return uri;
     }
 
     /**

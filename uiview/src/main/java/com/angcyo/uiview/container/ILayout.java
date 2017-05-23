@@ -106,4 +106,12 @@ public interface ILayout<T extends UIParam> {
      * 返回倒数lastCount的ViewPattern
      */
     ViewPattern getViewPatternAtLast(int lastCount);
+
+    void onLastViewReShow(Bundle bundle);//星期二 2017-5-23
+
+    void onLastViewShow(Bundle bundle);//星期二 2017-5-23
+
+    void onLastViewHide();//星期二 2017-5-23
+
+    void setChildILayout(ILayout iLayout);//星期二 2017-5-23
 }
