@@ -140,7 +140,7 @@ public class ImagePickerHelper {
                             .diskCacheStrategy(DiskCacheStrategy.NONE);
 
                     if (TextUtils.isEmpty(thumbPath)) {
-                        gifRequestBuilder.placeholder(R.mipmap.default_image)     //设置占位图片
+                        gifRequestBuilder.placeholder(R.mipmap.base_zhanweitu_klg)     //设置占位图片
                                 .into(imageView);
                     } else {
                         gifRequestBuilder.placeholder(new BitmapDrawable(activity.getResources(), thumbPath))
@@ -155,7 +155,7 @@ public class ImagePickerHelper {
                             .diskCacheStrategy(DiskCacheStrategy.NONE);
 
                     if (TextUtils.isEmpty(thumbPath)) {
-                        requestBuilder.placeholder(R.mipmap.default_image)     //设置占位图片
+                        requestBuilder.placeholder(R.mipmap.base_zhanweitu_klg)     //设置占位图片
                                 .into(imageView);
                     } else {
                         requestBuilder.placeholder(new BitmapDrawable(activity.getResources(), thumbPath))
@@ -175,11 +175,11 @@ public class ImagePickerHelper {
 
                     if (imageType != Ok.ImageType.UNKNOWN) {
                         if (imageType == Ok.ImageType.GIF) {
-                            imageView.setScaleType(ImageView.ScaleType.FIT_XY);
+                            //imageView.setScaleType(ImageView.ScaleType.FIT_XY);
                             Glide.with(imageView.getContext())
                                     .load(url)
                                     .asGif()
-                                    .placeholder(R.mipmap.default_image)
+                                    .placeholder(R.mipmap.base_zhanweitu_klg)
                                     .diskCacheStrategy(DiskCacheStrategy.SOURCE)
                                     .into(imageView);
                         } else {
@@ -191,7 +191,7 @@ public class ImagePickerHelper {
                                     .diskCacheStrategy(DiskCacheStrategy.ALL);
 
                             if (TextUtils.isEmpty(thumbPath)) {
-                                drawableRequestBuilder.placeholder(R.mipmap.default_image)     //设置占位图片
+                                drawableRequestBuilder.placeholder(R.mipmap.base_zhanweitu_klg)     //设置占位图片
                                         .into(imageView);
                             } else {
                                 drawableRequestBuilder.placeholder(new BitmapDrawable(activity.getResources(), thumbPath))
@@ -203,8 +203,8 @@ public class ImagePickerHelper {
 
                 @Override
                 public void onLoadStart() {
-                    imageView.setScaleType(ImageView.ScaleType.CENTER_CROP);
-                    imageView.setImageResource(R.mipmap.default_image);
+                    imageView.setScaleType(ImageView.ScaleType.FIT_CENTER);
+                    imageView.setImageResource(R.mipmap.base_zhanweitu_klg);
                 }
             });
         }

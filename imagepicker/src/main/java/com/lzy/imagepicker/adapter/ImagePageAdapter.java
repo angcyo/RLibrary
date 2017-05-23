@@ -117,6 +117,7 @@ public class ImagePageAdapter extends PagerAdapter {
         //支持手势的图片
         final DragPhotoView photoView = new DragPhotoView(mActivity);
         photoView.setEnableMoveExit(enableMoveExit);
+        photoView.setScaleType(ImageView.ScaleType.FIT_CENTER);
 
         //缩略图显示
         final ImageView imageView = new ImageView(mActivity);

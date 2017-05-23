@@ -43,6 +43,18 @@ public class DragPhotoView extends PhotoView {
     private boolean enableMoveExit = true;
 
     private boolean cancel_click = false;
+    private Runnable mCheckTapRunnable = new Runnable() {
+        @Override
+        public void run() {
+            if (mTranslateX == 0 && mTranslateY == 0 && canFinish) {
+
+                if (mTapListener != null) {
+                    mTapListener.onTap(DragPhotoView.this, mDownX, mDownY);
+                }
+            }
+            canFinish = false;
+        }
+    };
 
     public DragPhotoView(Context context) {
         this(context, null);
@@ -85,6 +97,8 @@ public class DragPhotoView extends PhotoView {
 
             switch (event.getAction()) {
                 case MotionEvent.ACTION_DOWN:
+                    removeCallbacks(mCheckTapRunnable);
+
                     onActionDown(event);
 
                     //change the canFinish flag
@@ -132,18 +146,7 @@ public class DragPhotoView extends PhotoView {
 
                         isTouchEvent = false;
                         //judge finish or not
-                        postDelayed(new Runnable() {
-                            @Override
-                            public void run() {
-                                if (mTranslateX == 0 && mTranslateY == 0 && canFinish) {
-
-                                    if (mTapListener != null) {
-                                        mTapListener.onTap(DragPhotoView.this, mDownX, mDownY);
-                                    }
-                                }
-                                canFinish = false;
-                            }
-                        }, 300);
+                        //postDelayed(mCheckTapRunnable, 300);
                     }
             }
         }
