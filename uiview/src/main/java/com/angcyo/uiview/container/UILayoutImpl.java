@@ -1054,6 +1054,7 @@ public class UILayoutImpl extends SwipeBackLayout implements ILayout<UIParam>, U
             }
         };
         bottomViewPattern.mView.setVisibility(VISIBLE);
+        showChildLayoutLastView();
 
         if (bottomViewPattern.mView instanceof ILifecycle) {
             ((ILifecycle) bottomViewPattern.mView).onLifeViewShow();
@@ -1702,12 +1703,7 @@ public class UILayoutImpl extends SwipeBackLayout implements ILayout<UIParam>, U
         if (viewPattern != null) {
             viewPattern.mView.setVisibility(GONE);
         }
-        if (mChildILayout != null) {
-            ViewPattern patternAtLast = mChildILayout.getViewPatternAtLast(0);
-            if (patternAtLast != null) {
-                patternAtLast.mView.setVisibility(GONE);
-            }
-        }
+        //hideChildLayoutLastView();
         printLog();
     }
 
@@ -1740,10 +1736,26 @@ public class UILayoutImpl extends SwipeBackLayout implements ILayout<UIParam>, U
             viewPattern.mView.setVisibility(VISIBLE);
             viewPattern.mView.setTranslationX(-mTranslationOffsetX);
         }
+        showChildLayoutLastView();
+    }
+
+    /**
+     * child layout
+     */
+    private void showChildLayoutLastView() {
         if (mChildILayout != null) {
             ViewPattern patternAtLast = mChildILayout.getViewPatternAtLast(0);
             if (patternAtLast != null) {
                 patternAtLast.mView.setVisibility(VISIBLE);
+            }
+        }
+    }
+
+    private void hideChildLayoutLastView() {
+        if (mChildILayout != null) {
+            ViewPattern patternAtLast = mChildILayout.getViewPatternAtLast(0);
+            if (patternAtLast != null) {
+                patternAtLast.mView.setVisibility(GONE);
             }
         }
     }
