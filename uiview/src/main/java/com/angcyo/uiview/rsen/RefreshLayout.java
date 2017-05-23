@@ -84,7 +84,7 @@ public class RefreshLayout extends ViewGroup {
     public static final String TIP_VIEW = "tip_view";
     public static final long ANIM_TIME = 300;
     float downY, downX, lastY;
-    private View mTopView, mBottomView, mTargetView, mTipView;
+    protected View mTopView, mBottomView, mTargetView, mTipView;
     private OverScroller mScroller;
     private int mTouchSlop;
     /**
