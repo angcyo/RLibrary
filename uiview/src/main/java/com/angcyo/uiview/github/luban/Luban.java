@@ -450,7 +450,8 @@ public class Luban {
 
         if (scale <= 1 && scale > 0.5625) {
             if (height < 1664) {
-                if (file.length() / 1024 < 150) return file;
+                if (file.length() / 1024 < 150)
+                    return copyTo(file, thumb, width, height);
 
                 size = (width * height) / Math.pow(1664, 2) * 150;
                 size = size < 60 ? 60 : size;
@@ -472,7 +473,8 @@ public class Luban {
                 size = size < 100 ? 100 : size;
             }
         } else if (scale <= 0.5625 && scale > 0.5) {
-            if (height < 1280 && file.length() / 1024 < 200) return file;
+            if (height < 1280 && file.length() / 1024 < 200)
+                return copyTo(file, thumb, width, height);
 
             int multiple = height / 1280 == 0 ? 1 : height / 1280;
             thumbW = width / multiple;
@@ -677,6 +679,42 @@ public class Luban {
         }
 
         return new File(filePath);
+    }
+
+    private File copyTo(File file, String toPath, int width, int height) {
+        String filePath = toPath;
+        File targetFile = file;
+        try {
+            filePath += "_s_" + width + "x" + height + ".png";
+
+            FileInputStream input = new FileInputStream(file);
+            BufferedInputStream inBuff = new BufferedInputStream(input);
+
+            // 新建文件输出流并对它进行缓冲
+            targetFile = new File(filePath);
+            FileOutputStream output = new FileOutputStream(targetFile);
+            BufferedOutputStream outBuff = new BufferedOutputStream(output);
+
+            // 缓冲数组
+            byte[] b = new byte[1024 * 5];
+            int len;
+            while ((len = inBuff.read(b)) != -1) {
+                outBuff.write(b, 0, len);
+            }
+            // 刷新此缓冲的输出流
+            outBuff.flush();
+
+            //关闭流
+            inBuff.close();
+            outBuff.close();
+
+            output.close();
+            input.close();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+        return targetFile;
     }
 
     /**

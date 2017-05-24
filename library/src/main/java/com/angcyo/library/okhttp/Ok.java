@@ -1,5 +1,7 @@
 package com.angcyo.library.okhttp;
 
+import android.text.TextUtils;
+
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
@@ -93,13 +95,14 @@ public class Ok {
                 @Override
                 public void onResponse(Call call, Response response) throws IOException {
                     final String imageType = ImageTypeUtil.getImageType(response.body().byteStream());
-                    imageTypeCache.put(url, ImageType.valueOf(imageType));
+                    final ImageType imageType1 = ImageType.valueOf(imageType);
+                    imageTypeCache.put(url, imageType1);
                     if (listener != null) {
                         ThreadExecutor.instance().onMain(new Runnable() {
                             @Override
                             public void run() {
                                 if (listener != null) {
-                                    listener.onImageType(ImageType.of(imageType));
+                                    listener.onImageType(imageType1);
                                 }
                             }
                         });
@@ -117,6 +120,9 @@ public class Ok {
         JPEG, GIF, PNG, BMP, UNKNOWN;
 
         public static ImageType of(String type) {
+            if (TextUtils.isEmpty(type)){
+                    return UNKNOWN;
+            }
             if ("JPEG".equalsIgnoreCase(type)) {
                 return JPEG;
             }

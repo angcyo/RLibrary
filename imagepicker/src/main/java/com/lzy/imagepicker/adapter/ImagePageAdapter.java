@@ -24,6 +24,7 @@ import com.github.chrisbanes.photoview.PhotoView;
 import com.lzy.imagepicker.ImagePicker;
 import com.lzy.imagepicker.ImagePickerHelper;
 import com.lzy.imagepicker.Utils;
+import com.lzy.imagepicker.YImageControl;
 import com.lzy.imagepicker.bean.ImageItem;
 import com.lzy.imagepicker.loader.ImageLoader;
 import com.lzy.imagepicker.view.MaterialProgressView;
@@ -135,15 +136,20 @@ public class ImagePageAdapter extends PagerAdapter {
             imageView.setVisibility(View.VISIBLE);
             progressView.setVisibility(View.VISIBLE);
 
-            progressView.start();
-            if (imageItem.placeholderDrawable instanceof TransitionDrawable) {
-                TransitionDrawable transitionDrawable = (TransitionDrawable) imageItem.placeholderDrawable;
-                imageView.setImageDrawable(transitionDrawable.getDrawable(transitionDrawable.getNumberOfLayers() - 1));
+            if (YImageControl.isYellowImage(imageItem.url)) {
+                YImageControl.showYellowImageXiao(photoView);
+                photoView.setScaleType(ImageView.ScaleType.CENTER);
             } else {
-                imageView.setImageDrawable(imageItem.placeholderDrawable);
-            }
+                progressView.start();
+                if (imageItem.placeholderDrawable instanceof TransitionDrawable) {
+                    TransitionDrawable transitionDrawable = (TransitionDrawable) imageItem.placeholderDrawable;
+                    imageView.setImageDrawable(transitionDrawable.getDrawable(transitionDrawable.getNumberOfLayers() - 1));
+                } else {
+                    imageView.setImageDrawable(imageItem.placeholderDrawable);
+                }
 
-            loadImage(photoView, imageView, progressView, imageItem);
+                loadImage(photoView, imageView, progressView, imageItem);
+            }
         }
 
         itemLayout.setOnClickListener(new View.OnClickListener() {

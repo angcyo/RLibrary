@@ -165,10 +165,11 @@ public class RSoftInputLayout extends FrameLayout {
         int emojiHeight;
 
         if (isEmojiShow) {
-            if (getShowEmojiHeight() == 0) {
+            int showEmojiHeight = getShowEmojiHeight();
+            if (showEmojiHeight == 0) {
                 emojiHeight = keyboardHeight;
             } else {
-                emojiHeight = getShowEmojiHeight();
+                emojiHeight = showEmojiHeight;
             }
         } else {
             emojiHeight = 0;
@@ -211,8 +212,12 @@ public class RSoftInputLayout extends FrameLayout {
         int paddingTop = getPaddingTop();
         t += paddingTop;
         contentLayout.layout(l, t, r, contentLayout.getMeasuredHeight() + paddingTop);
-        if (isEmojiShow && emojiLayout != null) {
-            emojiLayout.layout(l, contentLayout.getMeasuredHeight() + paddingTop, r, getMeasuredHeight());
+        if (emojiLayout != null) {
+            if (isEmojiShow) {
+                emojiLayout.layout(l, contentLayout.getMeasuredHeight() + paddingTop, r, getMeasuredHeight());
+            } else {
+                emojiLayout.layout(l, b, r, b);
+            }
         }
     }
 
@@ -298,10 +303,11 @@ public class RSoftInputLayout extends FrameLayout {
 
         isEmojiShow = height > 0;
         this.showEmojiHeight = height;
+
+        requestLayout();
         if (keyboardShow) {
             hideSoftInput(this);
         } else {
-            requestLayout();
             if (isAnimToShow) {
                 animToShow(height, oldHeight);
             } else {

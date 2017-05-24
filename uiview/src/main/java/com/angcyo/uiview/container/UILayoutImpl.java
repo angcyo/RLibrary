@@ -120,7 +120,7 @@ public class UILayoutImpl extends SwipeBackLayout implements ILayout<UIParam>, U
      */
     private boolean isFinishing = false;
     /**
-     * 按下返回键
+     * 已经按下返回键
      */
     private boolean isBackPress = false;
     private ArrayList<IWindowInsetsListener> mIWindowInsetsListeners;

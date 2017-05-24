@@ -93,7 +93,7 @@ public class RNineImageLayout extends RelativeLayout implements View.OnClickList
                     mImageViews.get(0).measure(getSize(width), getSize(width));
                     setMeasuredDimension(width, width);
                 } else if (widthHeight[0] == 0) {
-                    int defaultSize = (int) (getResources().getDisplayMetrics().density * 150);
+                    int defaultSize = (int) (getResources().getDisplayMetrics().density * 150);//为0时, 采用默认大小
                     mImageViews.get(0).measure(getSize(defaultSize), getSize(defaultSize));
                     setMeasuredDimension(defaultSize, defaultSize);
                 } else {

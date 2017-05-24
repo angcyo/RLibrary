@@ -168,45 +168,49 @@ public class ImagePickerHelper {
         }
 
         protected void loadUrlImage(final Activity activity, final String thumbPath, final String url, final ImageView imageView) {
-            Ok.instance().type(url, new Ok.OnImageTypeListener() {
-                @Override
-                public void onImageType(Ok.ImageType imageType) {
-                    L.e("call: onImageType([imageType])-> " + url + " : " + imageType);
+            if (YImageControl.isYellowImage(url)) {
+                YImageControl.showYellowImageXiao(imageView);
+            } else {
+                Ok.instance().type(url, new Ok.OnImageTypeListener() {
+                    @Override
+                    public void onImageType(Ok.ImageType imageType) {
+                        L.e("call: onImageType([imageType])-> " + url + " : " + imageType);
 
-                    if (imageType != Ok.ImageType.UNKNOWN) {
-                        if (imageType == Ok.ImageType.GIF) {
-                            //imageView.setScaleType(ImageView.ScaleType.FIT_XY);
-                            Glide.with(imageView.getContext())
-                                    .load(url)
-                                    .asGif()
-                                    .placeholder(R.mipmap.base_zhanweitu_klg)
-                                    .diskCacheStrategy(DiskCacheStrategy.SOURCE)
-                                    .into(imageView);
-                        } else {
-                            final DrawableRequestBuilder<String> drawableRequestBuilder = Glide.with(activity)                             //配置上下文
-                                    .load(url)                                       //设置图片路径(fix #8,文件名包含%符号 无法识别和显示)
-                                    //.error(R.mipmap.default_image)                    //设置错误图片
-                                    //.fitCenter()
-                                    //.centerCrop()
-                                    .diskCacheStrategy(DiskCacheStrategy.ALL);
-
-                            if (TextUtils.isEmpty(thumbPath)) {
-                                drawableRequestBuilder.placeholder(R.mipmap.base_zhanweitu_klg)     //设置占位图片
+                        if (imageType != Ok.ImageType.UNKNOWN) {
+                            if (imageType == Ok.ImageType.GIF) {
+                                //imageView.setScaleType(ImageView.ScaleType.FIT_XY);
+                                Glide.with(imageView.getContext())
+                                        .load(url)
+                                        .asGif()
+                                        .placeholder(R.mipmap.base_zhanweitu_klg)
+                                        .diskCacheStrategy(DiskCacheStrategy.SOURCE)
                                         .into(imageView);
                             } else {
-                                drawableRequestBuilder.placeholder(new BitmapDrawable(activity.getResources(), thumbPath))
-                                        .into(imageView);
+                                final DrawableRequestBuilder<String> drawableRequestBuilder = Glide.with(activity)                             //配置上下文
+                                        .load(url)                                       //设置图片路径(fix #8,文件名包含%符号 无法识别和显示)
+                                        //.error(R.mipmap.default_image)                    //设置错误图片
+                                        //.fitCenter()
+                                        //.centerCrop()
+                                        .diskCacheStrategy(DiskCacheStrategy.ALL);
+
+                                if (TextUtils.isEmpty(thumbPath)) {
+                                    drawableRequestBuilder.placeholder(R.mipmap.base_zhanweitu_klg)     //设置占位图片
+                                            .into(imageView);
+                                } else {
+                                    drawableRequestBuilder.placeholder(new BitmapDrawable(activity.getResources(), thumbPath))
+                                            .into(imageView);
+                                }
                             }
                         }
                     }
-                }
 
-                @Override
-                public void onLoadStart() {
-                    imageView.setScaleType(ImageView.ScaleType.FIT_CENTER);
-                    imageView.setImageResource(R.mipmap.base_zhanweitu_klg);
-                }
-            });
+                    @Override
+                    public void onLoadStart() {
+                        imageView.setScaleType(ImageView.ScaleType.FIT_CENTER);
+                        imageView.setImageResource(R.mipmap.base_zhanweitu_klg);
+                    }
+                });
+            }
         }
 
         @Override
