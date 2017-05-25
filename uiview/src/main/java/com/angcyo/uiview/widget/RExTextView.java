@@ -7,7 +7,6 @@ import android.graphics.Paint;
 import android.graphics.Rect;
 import android.graphics.drawable.ColorDrawable;
 import android.graphics.drawable.Drawable;
-import android.graphics.drawable.InsetDrawable;
 import android.support.annotation.DrawableRes;
 import android.support.v4.content.ContextCompat;
 import android.text.Layout;
@@ -375,15 +374,18 @@ public class RExTextView extends RTextView {
             textPaint.setTextSize(textSize);
             int textHeight = (int) RTextPaint.getTextHeight(textPaint);
 
-            if (textHeight > height) {
-                int offset = textHeight - height + textPaint.getFontMetricsInt().descent / 2;
-                InsetDrawable insetDrawable = new InsetDrawable(drawable, 0, offset, 0, 0);
-                insetDrawable.setBounds(0, 0, width, textHeight);
-                return insetDrawable;
-            } else {
-                drawable.setBounds(0, 0, width, height);
-                return drawable;
-            }
+//            if (textHeight > height) {
+//                int offset = textHeight - height + textPaint.getFontMetricsInt().descent / 2;
+//                InsetDrawable insetDrawable = new InsetDrawable(drawable, 0, offset, 0, 0);
+//                insetDrawable.setBounds(0, 0, width, textHeight);
+//                return insetDrawable;
+//            } else {
+//                drawable.setBounds(0, 0, width, height);
+//                return drawable;
+//            }
+
+            drawable.setBounds(0, 0, width, height);
+            return drawable;
         }
 
         /**
