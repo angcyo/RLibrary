@@ -261,9 +261,14 @@ public abstract class RModelAdapter<T> extends RBaseAdapter<T> {
      * 通知选中数量改变了
      */
     private void notifySelectorChange() {
+        List<Integer> allSelectorList = getAllSelectorList();
+        if (getModel() == MODEL_SINGLE && allSelectorList.isEmpty()) {
+            //单选模式下, 未选中, 不回调
+            return;
+        }
         final Iterator<OnModelChangeListener> iterator = mChangeListeners.iterator();
         while (iterator.hasNext()) {
-            iterator.next().onSelectorChange(getAllSelectorList());
+            iterator.next().onSelectorChange(allSelectorList);
         }
     }
 

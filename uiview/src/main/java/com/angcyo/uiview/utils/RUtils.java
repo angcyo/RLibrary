@@ -17,7 +17,7 @@ import android.util.DisplayMetrics;
 import android.view.WindowManager;
 
 import com.angcyo.library.utils.L;
-import com.angcyo.uiview.github.utilcode.utils.RegexUtils;
+import com.angcyo.uiview.widget.RExTextView;
 
 import java.io.File;
 import java.lang.reflect.Field;
@@ -28,6 +28,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Random;
+import java.util.regex.Matcher;
 
 /**
  * Created by angcyo on 15-12-16 016 15:41 下午.
@@ -606,9 +607,11 @@ public class RUtils {
      * 判断是否是网址
      */
     public static boolean isHttpUrl(String url) {
-        return RegexUtils.isMatch(
-                "(http|ftp|https):\\/\\/[\\w\\-_]+(\\.[\\w\\-_]+)+([\\w\\-\\.,@?^=%&amp;:/~\\+#]*[\\w\\-\\@?^=%&amp;/~\\+#])?",
-                url);
+//        return RegexUtils.isMatch(
+//                "(http|ftp|https):\\/\\/[\\w\\-_]+(\\.[\\w\\-_]+)+([\\w\\-\\.,@?^=%&amp;:/~\\+#]*[\\w\\-\\@?^=%&amp;/~\\+#])?",
+//                url);
+        Matcher matcher = RExTextView.patternUrl.matcher(url);
+        return matcher.find();
     }
 
     public static boolean isLast(List data, int position) {
