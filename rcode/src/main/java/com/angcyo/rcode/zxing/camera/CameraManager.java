@@ -39,6 +39,8 @@ public final class CameraManager {
     // private static final int MAX_FRAME_WIDTH = 960; // = 1920/2
     // private static final int MAX_FRAME_HEIGHT = 540; // = 1080/2
 
+    public static int FRAME_WIDTH = -1, FRAME_HEIGHT = -1;
+
     private final Context context;
     private final CameraConfigurationManager configManager;
     /**
@@ -225,15 +227,20 @@ public final class CameraManager {
 
 			/* 扫描框修改 */
             DisplayMetrics metrics = context.getResources().getDisplayMetrics();
-            int width = (int) (metrics.widthPixels * 0.6);
-            int height = (int) (width * 0.9);
+            if (FRAME_WIDTH == -1 || FRAME_HEIGHT == -1) {
+                int width = (int) (metrics.widthPixels * 0.6);
+                int height = (int) (width * 0.9);
 
-            int leftOffset = (screenResolution.x - width) / 2;
-            int topOffset = (screenResolution.y - height) / 4;
+                int leftOffset = (screenResolution.x - width) / 2;
+                int topOffset = (screenResolution.y - height) / 4;
 //			framingRect = new Rect(leftOffset, topOffset, leftOffset + width,
 //					topOffset + height);
-            framingRect = new Rect(leftOffset - 100, topOffset + 100, leftOffset + width + 100,
-                    topOffset + height + 300);
+                framingRect = new Rect(leftOffset - 100, topOffset + 100, leftOffset + width + 100,
+                        topOffset + height + 300);
+            } else {
+                framingRect = new Rect(metrics.widthPixels / 2 - FRAME_WIDTH / 2, metrics.heightPixels / 4,
+                        metrics.widthPixels / 2 + FRAME_WIDTH / 2, metrics.heightPixels / 4 + FRAME_HEIGHT);
+            }
             Log.d(TAG, "Calculated framing rect: " + framingRect);
         }
         return framingRect;

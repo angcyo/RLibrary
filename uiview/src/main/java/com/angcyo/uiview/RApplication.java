@@ -8,6 +8,7 @@ import android.support.multidex.MultiDex;
 import android.telephony.TelephonyManager;
 import android.text.TextUtils;
 
+import com.angcyo.library.utils.L;
 import com.angcyo.uiview.skin.SkinHelper;
 import com.angcyo.uiview.utils.Debug;
 import com.angcyo.uiview.utils.T_;
@@ -54,12 +55,19 @@ public class RApplication extends Application {
     private static RApplication app;
 
     /**
-     * 获取设备唯一标识码
+     * 获取设备唯一标识码, 需要权限 android.permission.READ_PHONE_STATE
      */
     public static String getIMEI() {
-        return ((TelephonyManager) getApp()
-                .getSystemService(Context.TELEPHONY_SERVICE))
-                .getDeviceId();
+        String imei = "Unknown";
+        try {
+            imei = ((TelephonyManager) getApp()
+                    .getSystemService(Context.TELEPHONY_SERVICE))
+                    .getDeviceId();
+            L.e("call: getIMEI([])-> " + imei);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return imei;
     }
 
     /**

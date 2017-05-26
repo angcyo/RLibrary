@@ -30,7 +30,7 @@ public class Rx<Rx> extends Observable<Rx> {
     /**
      * 网络请求错误, 重试的次数
      */
-    public static final long RETRY_COUNT = 3;
+    public static final long RETRY_COUNT = 0;
     public static final Observable.Transformer<T, T> ioSchedulersTransformer = new Observable.Transformer<T, T>() {
         @Override
         public Observable<T> call(Observable<T> tObservable) {

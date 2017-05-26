@@ -85,6 +85,16 @@ public class RExTextView extends RTextView {
         super(context, attrs, defStyleAttr);
     }
 
+    /**
+     * 判断 str是否是数字
+     */
+    public static boolean isNumber(String str) {
+        Pattern compile = Pattern.compile("^\\d+$");
+        Matcher matcher = compile.matcher(str);
+        //matcher.group(matcher.groupCount())
+        return matcher.find();
+    }
+
     public void setImageSpanTextColor(int imageSpanTextColor) {
         mImageSpanTextColor = imageSpanTextColor;
     }

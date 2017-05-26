@@ -785,6 +785,10 @@ public class ExEditText extends AppCompatEditText {
     }
 
     public boolean checkEmpty() {
+        return checkEmpty(false);
+    }
+
+    public boolean checkEmpty(boolean checkPhone) {
         if (isEmpty()) {
             error();
             requestFocus();
@@ -801,6 +805,27 @@ public class ExEditText extends AppCompatEditText {
                     RSoftInputLayout.showSoftInput(ExEditText.this);
                 }
             }
+            return true;
+        }
+        if (checkPhone) {
+            if (isPhone()) {
+
+            } else {
+                error();
+                requestFocus();
+                return true;
+            }
+        }
+        return false;
+    }
+
+    public boolean checkMinLength(int minLength) {
+        if (checkEmpty()) {
+            return true;
+        }
+        if (string().length() < minLength) {
+            error();
+            requestFocus();
             return true;
         }
         return false;
@@ -827,6 +852,22 @@ public class ExEditText extends AppCompatEditText {
             setInputType(inputType & ~EditorInfo.TYPE_TEXT_VARIATION_EMAIL_ADDRESS);
         }
     }
+
+    public void setIsPhone(boolean isPhone, int maxLength) {
+        int inputType = getInputType();
+        if (isPhone) {
+            setInputType(inputType | EditorInfo.TYPE_CLASS_TEXT | EditorInfo.TYPE_CLASS_NUMBER);
+        } else {
+            setInputType(inputType & ~EditorInfo.TYPE_CLASS_NUMBER);
+        }
+
+        if (maxLength < 0) {
+            maxLength = Integer.MAX_VALUE;
+        }
+
+        setMaxLength(maxLength);
+    }
+
 
     public void setLeftString(String leftString) {
         mLeftString = leftString;

@@ -19,6 +19,7 @@ import android.view.WindowManager;
  *     desc  : 屏幕相关工具类
  * </pre>
  */
+@Deprecated
 public class ScreenUtils {
 
     private ScreenUtils() {
@@ -50,6 +51,15 @@ public class ScreenUtils {
     }
 
     /**
+     * 判断是否横屏
+     *
+     * @return {@code true}: 是<br>{@code false}: 否
+     */
+    public static boolean isLandscape() {
+        return Utils.getContext().getResources().getConfiguration().orientation == Configuration.ORIENTATION_LANDSCAPE;
+    }
+
+    /**
      * 设置屏幕为横屏
      * <p>还有一种就是在Activity中加属性android:screenOrientation="landscape"</p>
      * <p>不设置Activity的android:configChanges时，切屏会重新调用各个生命周期，切横屏时会执行一次，切竖屏时会执行两次</p>
@@ -64,30 +74,21 @@ public class ScreenUtils {
     }
 
     /**
-     * 设置屏幕为竖屏
-     *
-     * @param activity activity
-     */
-    public static void setPortrait(Activity activity) {
-        activity.setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
-    }
-
-    /**
-     * 判断是否横屏
-     *
-     * @return {@code true}: 是<br>{@code false}: 否
-     */
-    public static boolean isLandscape() {
-        return Utils.getContext().getResources().getConfiguration().orientation == Configuration.ORIENTATION_LANDSCAPE;
-    }
-
-    /**
      * 判断是否竖屏
      *
      * @return {@code true}: 是<br>{@code false}: 否
      */
     public static boolean isPortrait() {
         return Utils.getContext().getResources().getConfiguration().orientation == Configuration.ORIENTATION_PORTRAIT;
+    }
+
+    /**
+     * 设置屏幕为竖屏
+     *
+     * @param activity activity
+     */
+    public static void setPortrait(Activity activity) {
+        activity.setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
     }
 
     /**
