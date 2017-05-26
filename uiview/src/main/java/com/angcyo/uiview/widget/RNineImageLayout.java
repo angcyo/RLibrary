@@ -228,6 +228,11 @@ public class RNineImageLayout extends RelativeLayout implements View.OnClickList
                 removeView(mImageViews.remove(i));
             }
         }
+
+        for (View view : mImageViews) {
+            view.setTag(null);
+        }
+
         //        requestLayout();
 //
 //        if (getMeasuredWidth() != 0 && getMeasuredHeight() != 0) {

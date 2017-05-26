@@ -3,6 +3,7 @@ package com.angcyo.uiview.widget;
 import android.content.Context;
 import android.text.TextUtils;
 import android.util.AttributeSet;
+import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
@@ -228,6 +229,10 @@ public class RTextImageLayout extends ViewGroup {
 //                }
 //            });
 //        }
+
+        for (View view : mImageViews) {
+            view.setTag(null);
+        }
 
         if (imageViewSize == newImageViewSize ||
                 (imageViewSize >= MAX_IMAGE_SIZE && newImageViewSize >= MAX_IMAGE_SIZE)) {
