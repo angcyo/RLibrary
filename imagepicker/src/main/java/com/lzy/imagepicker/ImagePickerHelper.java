@@ -2,23 +2,13 @@ package com.lzy.imagepicker;
 
 import android.app.Activity;
 import android.content.Intent;
-import android.graphics.drawable.BitmapDrawable;
 import android.text.TextUtils;
-import android.widget.ImageView;
 import android.widget.Toast;
 
-import com.angcyo.library.okhttp.Ok;
-import com.angcyo.library.utils.L;
-import com.bumptech.glide.DrawableRequestBuilder;
-import com.bumptech.glide.GifRequestBuilder;
-import com.bumptech.glide.Glide;
-import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.lzy.imagepicker.bean.ImageItem;
-import com.lzy.imagepicker.loader.ImageLoader;
 import com.lzy.imagepicker.ui.ImageGridActivity;
 import com.lzy.imagepicker.ui.ImagePreviewActivity;
 
-import java.io.File;
 import java.util.ArrayList;
 
 /**
@@ -118,123 +108,5 @@ public class ImagePickerHelper {
             }
         }
         return false;
-    }
-
-    public static class GlideImageLoader implements ImageLoader {
-
-        @Override
-        public void displayImage(Activity activity, String path, String thumbPath,
-                                 String url, ImageView imageView, int width, int height) {
-
-            if (TextUtils.isEmpty(path)) {
-                loadUrlImage(activity, thumbPath, url, imageView);
-            } else {
-                File file = new File(path);
-                if ("GIF".equalsIgnoreCase(ImageUtils.getImageType(file))) {
-                    GifRequestBuilder<File> gifRequestBuilder = Glide.with(activity)                             //配置上下文
-                            .load(file)      //设置图片路径(fix #8,文件名包含%符号 无法识别和显示)
-                            //.error(R.mipmap.default_image)           //设置错误图片
-                            //.fitCenter()
-                            .asGif()
-                            //.centerCrop()
-                            .diskCacheStrategy(DiskCacheStrategy.NONE);
-
-                    if (TextUtils.isEmpty(thumbPath)) {
-                        gifRequestBuilder.placeholder(R.mipmap.base_zhanweitu_klg)     //设置占位图片
-                                .into(imageView);
-                    } else {
-                        gifRequestBuilder.placeholder(new BitmapDrawable(activity.getResources(), thumbPath))
-                                .into(imageView);
-                    }
-                } else {
-                    final DrawableRequestBuilder<File> requestBuilder = Glide.with(activity)                             //配置上下文
-                            .load(file)      //设置图片路径(fix #8,文件名包含%符号 无法识别和显示)
-                            //.error(R.mipmap.default_image)           //设置错误图片
-                            //.fitCenter()
-                            //.centerCrop()
-                            .diskCacheStrategy(DiskCacheStrategy.NONE);
-
-                    if (TextUtils.isEmpty(thumbPath)) {
-                        requestBuilder.placeholder(R.mipmap.base_zhanweitu_klg)     //设置占位图片
-                                .into(imageView);
-                    } else {
-                        requestBuilder.placeholder(new BitmapDrawable(activity.getResources(), thumbPath))
-                                .into(imageView);
-                    }
-                }
-            }
-
-
-        }
-
-        protected void loadUrlImage(final Activity activity, final String thumbPath, final String url, final ImageView imageView) {
-            if (YImageControl.isYellowImage(url)) {
-                YImageControl.showYellowImageXiao(imageView);
-            } else {
-                Ok.instance().type(url, new Ok.OnImageTypeListener() {
-                    @Override
-                    public void onImageType(Ok.ImageType imageType) {
-                        L.e("call: onImageType([imageType])-> " + url + " : " + imageType);
-
-                        if (imageType != Ok.ImageType.UNKNOWN) {
-                            if (imageType == Ok.ImageType.GIF) {
-                                //imageView.setScaleType(ImageView.ScaleType.FIT_XY);
-                                Glide.with(imageView.getContext())
-                                        .load(url)
-                                        .asGif()
-                                        .placeholder(R.mipmap.base_zhanweitu_klg)
-                                        .diskCacheStrategy(DiskCacheStrategy.SOURCE)
-                                        .into(imageView);
-                            } else {
-                                final DrawableRequestBuilder<String> drawableRequestBuilder = Glide.with(activity)                             //配置上下文
-                                        .load(url)                                       //设置图片路径(fix #8,文件名包含%符号 无法识别和显示)
-                                        //.error(R.mipmap.default_image)                    //设置错误图片
-                                        //.fitCenter()
-                                        //.centerCrop()
-                                        .diskCacheStrategy(DiskCacheStrategy.ALL);
-
-                                if (TextUtils.isEmpty(thumbPath)) {
-                                    drawableRequestBuilder.placeholder(R.mipmap.base_zhanweitu_klg)     //设置占位图片
-                                            .into(imageView);
-                                } else {
-                                    drawableRequestBuilder.placeholder(new BitmapDrawable(activity.getResources(), thumbPath))
-                                            .into(imageView);
-                                }
-                            }
-                        }
-                    }
-
-                    @Override
-                    public void onLoadStart() {
-                        imageView.setScaleType(ImageView.ScaleType.FIT_CENTER);
-                        imageView.setImageResource(R.mipmap.base_zhanweitu_klg);
-                    }
-                });
-            }
-        }
-
-        @Override
-        public void clearMemoryCache() {
-            //这里是清除缓存的方法,根据需要自己实现
-        }
-    }
-
-    public static class PicassoImageLoader implements ImageLoader {
-
-        @Override
-        public void displayImage(Activity activity, String path, String thumbPath, String url, ImageView imageView, int width, int height) {
-//            Picasso.with(activity)//
-//                    .load(new File(path))//
-//                    .placeholder(R.mipmap.default_image)//
-//                    .error(R.mipmap.default_image)//
-//                    .resize(width, height)//
-//                    .centerInside()//
-//                    .memoryPolicy(MemoryPolicy.NO_CACHE, MemoryPolicy.NO_STORE)//
-//                    .into(imageView);
-        }
-
-        @Override
-        public void clearMemoryCache() {
-        }
     }
 }

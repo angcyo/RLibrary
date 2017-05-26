@@ -60,7 +60,7 @@ public class Ok {
 
     protected Call getCall(String url) {
         ensureClient();
-        Request mRequest = new Request.Builder().url(url).build();
+        Request mRequest = new Request.Builder().url(url).build();//如果url不是 网址, 会报错
         return sOkHttpClient.newCall(mRequest);
     }
 
@@ -95,7 +95,7 @@ public class Ok {
                 @Override
                 public void onResponse(Call call, Response response) throws IOException {
                     final String imageType = ImageTypeUtil.getImageType(response.body().byteStream());
-                    final ImageType imageType1 = ImageType.valueOf(imageType);
+                    final ImageType imageType1 = ImageType.of(imageType);
                     imageTypeCache.put(url, imageType1);
                     if (listener != null) {
                         ThreadExecutor.instance().onMain(new Runnable() {

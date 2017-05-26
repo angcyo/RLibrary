@@ -193,18 +193,20 @@ public abstract class RExBaseAdapter<H, T, F> extends RModelAdapter<T> {
 
 
     public RExBaseAdapter<H, T, F> setAllFooterDatas(List<F> allFooterDatas) {
-        mAllFooterDatas = allFooterDatas;
         if (mAllFooterDatas == null) {
             mAllFooterDatas = new ArrayList<>();
         }
+        mAllFooterDatas.clear();
+        mAllFooterDatas.addAll(allFooterDatas);
         return this;
     }
 
     public RExBaseAdapter<H, T, F> setAllHeaderDatas(List<H> allHeaderDatas) {
-        mAllHeaderDatas = allHeaderDatas;
         if (mAllHeaderDatas == null) {
             mAllHeaderDatas = new ArrayList<>();
         }
+        mAllHeaderDatas.clear();
+        mAllHeaderDatas.addAll(allHeaderDatas);
         return this;
     }
 
@@ -212,6 +214,7 @@ public abstract class RExBaseAdapter<H, T, F> extends RModelAdapter<T> {
         if (mAllFooterDatas == null) {
             mAllFooterDatas = new ArrayList<>();
         }
+        mAllFooterDatas.clear();
         mAllFooterDatas.add(footerData);
         return this;
     }
@@ -220,15 +223,26 @@ public abstract class RExBaseAdapter<H, T, F> extends RModelAdapter<T> {
         if (mAllHeaderDatas == null) {
             mAllHeaderDatas = new ArrayList<>();
         }
+        mAllHeaderDatas.clear();
         mAllHeaderDatas.add(headerData);
         return this;
     }
 
-    public RExBaseAdapter<H, T, F> setAllDatas(List<T> allDatas) {
-        mAllDatas = allDatas;
+    public RExBaseAdapter<H, T, F> setData(T data) {
         if (mAllDatas == null) {
             mAllDatas = new ArrayList<>();
         }
+        mAllDatas.clear();
+        mAllDatas.add(data);
+        return this;
+    }
+
+    public RExBaseAdapter<H, T, F> setAllDatas(List<T> allDatas) {
+        if (mAllDatas == null) {
+            mAllDatas = new ArrayList<>();
+        }
+        mAllDatas.clear();
+        mAllDatas.addAll(allDatas);
         return this;
     }
 

@@ -177,9 +177,19 @@ public class UIRecyclerUIView<H, T, F> extends UIContentView
     public void onRefresh(@RefreshLayout.Direction int direction) {
         if (direction == RefreshLayout.TOP) {
             //刷新事件
+            onBaseLoadData();
         } else if (direction == RefreshLayout.BOTTOM) {
             //加载更多事件
+            onBaseLoadMore();
         }
+    }
+
+    public void onBaseLoadMore() {
+
+    }
+
+    public void onBaseLoadData() {
+
     }
 
     /**
@@ -187,6 +197,6 @@ public class UIRecyclerUIView<H, T, F> extends UIContentView
      */
     @Override
     public void onAdapterLodeMore(RBaseAdapter baseAdapter) {
-
+        onBaseLoadMore();
     }
 }
