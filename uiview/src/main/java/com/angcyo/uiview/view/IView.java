@@ -46,6 +46,7 @@ public interface IView {
     /**
      * 生命周期顺序: 3
      * 此方法会在inflateContentView之后, 紧接着执行, ButterKnife在此初始化
+     * 请在此方法中, 使用mViewHolder进行视图初始化
      */
     void loadContentView(View rootView);
 

@@ -38,9 +38,14 @@ public abstract class UILayoutActivity extends StyleActivity {
         mLayout = new UILayoutImpl(this);
         setContentView(mLayout.getLayout());
 
+        onAfterCreateView();
+    }
+
+    protected void onAfterCreateView() {
         setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);//竖屏
 
         onLoadView(getIntent());
+
         mRxPermissions = new RxPermissions(this);
         mRxPermissions.requestEach(needPermissions())
                 .map(new Func1<Permission, String>() {
@@ -84,7 +89,6 @@ public abstract class UILayoutActivity extends StyleActivity {
 //                        }
 //                    }
 //                });
-
     }
 
     protected String[] needPermissions() {
@@ -129,6 +133,10 @@ public abstract class UILayoutActivity extends StyleActivity {
 
     protected void onUIBackPressed() {
         super.onBackPressed();
+    }
+
+    protected void moveTaskToBack() {
+        super.moveTaskToBack(true);
     }
 
     public void startIView(final IView iView, boolean needAnim) {
