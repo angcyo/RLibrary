@@ -36,6 +36,8 @@ import java.lang.reflect.Constructor;
  * Created by angcyo on 16-03-01-001.
  */
 public class RRecyclerView extends RecyclerView {
+    public static final long AUTO_SCROLL_TIME = 1500;
+
     protected LayoutManager layoutManager;
     protected int spanCount = 2;
     protected int orientation = LinearLayout.VERTICAL;
@@ -47,6 +49,7 @@ public class RRecyclerView extends RecyclerView {
     protected boolean layoutAnim = false;//是否使用布局动画
     OnTouchListener mInterceptTouchListener;
     OnFlingEndListener mOnFlingEndListener;
+    boolean isAutoStart = false;
     private OnScrollListener mScrollListener = new OnScrollListener() {
         @Override
         public void onScrollStateChanged(RecyclerView recyclerView, int newState) {
@@ -69,6 +72,33 @@ public class RRecyclerView extends RecyclerView {
     private float mLastVelocity;
     private int mLastScrollOffset;
     private boolean isFling;
+    /**
+     * 是否自动滚动
+     */
+    private boolean isEnableAutoScroll = false;
+    /**
+     * 当前自动滚动到的位置
+     */
+    private int curScrollPosition = 0;
+    private Runnable autoScrollRunnable = new Runnable() {
+        @Override
+        public void run() {
+            curScrollPosition++;
+            if (getAdapter() != null) {
+                int maxItemCount = getAdapter().getItemCount();
+                if (curScrollPosition >= maxItemCount) {
+                    curScrollPosition = 0;
+                    scrollTo(0, false);
+                } else {
+                    scrollTo(curScrollPosition, true);
+                }
+            }
+
+            if (isEnableAutoScroll) {
+                postDelayed(autoScrollRunnable, AUTO_SCROLL_TIME);
+            }
+        }
+    };
 
     public RRecyclerView(Context context) {
         this(context, null);
@@ -221,6 +251,7 @@ public class RRecyclerView extends RecyclerView {
     public void setAdapter(Adapter adapter) {
         if (adapter instanceof RBaseAdapter) {
             mAdapterRaw = (RBaseAdapter) adapter;
+            addOnChildAttachStateChangeListener(mAdapterRaw);
         }
         mAnimationAdapter = getAnimationAdapter(adapter);
 
@@ -326,17 +357,52 @@ public class RRecyclerView extends RecyclerView {
     @Override
     protected void onDetachedFromWindow() {
         super.onDetachedFromWindow();
+        stopAutoScroll();
     }
 
     @Override
     protected void onAttachedToWindow() {
         super.onAttachedToWindow();
+        if (isEnableAutoScroll) {
+            startAutoScroll();
+        }
     }
 
     @Override
     public void onScrolled(int dx, int dy) {
         super.onScrolled(dx, dy);
         //L.e("call: onScrolled([dx, dy])-> " + getLastVelocity());
+    }
+
+
+    public void startAutoScroll() {
+        LayoutManager layoutManager = getLayoutManager();
+        if (layoutManager instanceof LinearLayoutManager) {
+            curScrollPosition = ((LinearLayoutManager) layoutManager).findFirstVisibleItemPosition();
+            autoScroll();
+        }
+    }
+
+    private void autoScroll() {
+        if (isAutoStart) {
+            return;
+        }
+        isAutoStart = true;
+        postDelayed(autoScrollRunnable, AUTO_SCROLL_TIME);
+    }
+
+    public void setEnableAutoScroll(boolean enableAutoScroll) {
+        isEnableAutoScroll = enableAutoScroll;
+        if (enableAutoScroll) {
+            startAutoScroll();
+        } else {
+            stopAutoScroll();
+        }
+    }
+
+    public void stopAutoScroll() {
+        isAutoStart = false;
+        removeCallbacks(autoScrollRunnable);
     }
 
     @Override

@@ -8,6 +8,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import com.angcyo.library.utils.L;
 import com.angcyo.uiview.R;
 import com.angcyo.uiview.recycler.RBaseViewHolder;
 import com.angcyo.uiview.recycler.widget.ILoadMore;
@@ -20,7 +21,8 @@ import java.util.List;
 /**
  * Created by angcyo on 16-01-18-018.
  */
-public abstract class RBaseAdapter<T> extends RecyclerView.Adapter<RBaseViewHolder> {
+public abstract class RBaseAdapter<T> extends RecyclerView.Adapter<RBaseViewHolder>
+        implements RecyclerView.OnChildAttachStateChangeListener {
 
     public static final int ITEM_TYPE_LOAD_MORE = 666;
     public static final int ITEM_TYPE_SHOW_STATE = 667;
@@ -467,6 +469,35 @@ public abstract class RBaseAdapter<T> extends RecyclerView.Adapter<RBaseViewHold
             }
         }
     }
+
+    @Override
+    public void onChildViewAttachedToWindow(View view) {
+        ViewGroup.LayoutParams layoutParams = view.getLayoutParams();
+        if (layoutParams instanceof RecyclerView.LayoutParams) {
+            int viewAdapterPosition = ((RecyclerView.LayoutParams) layoutParams).getViewAdapterPosition();
+            int viewLayoutPosition = ((RecyclerView.LayoutParams) layoutParams).getViewLayoutPosition();
+            onChildViewAttachedToWindow(view, viewAdapterPosition, viewLayoutPosition);
+        }
+    }
+
+    @Override
+    public void onChildViewDetachedFromWindow(View view) {
+        ViewGroup.LayoutParams layoutParams = view.getLayoutParams();
+        if (layoutParams instanceof RecyclerView.LayoutParams) {
+            int viewAdapterPosition = ((RecyclerView.LayoutParams) layoutParams).getViewAdapterPosition();
+            int viewLayoutPosition = ((RecyclerView.LayoutParams) layoutParams).getViewLayoutPosition();
+            onChildViewDetachedFromWindow(view, viewAdapterPosition, viewLayoutPosition);
+        }
+    }
+
+    protected void onChildViewAttachedToWindow(View view, int adapterPosition, int layoutPosition) {
+        L.d("call: onChildViewAttachedToWindow -> " + adapterPosition + " " + layoutPosition + " " + view);
+    }
+
+    protected void onChildViewDetachedFromWindow(View view, int adapterPosition, int layoutPosition) {
+        L.d("call: onChildViewDetachedFromWindow -> " + adapterPosition + " " + layoutPosition + " " + view);
+    }
+
 
     public interface OnAdapterLoadMoreListener {
         void onAdapterLodeMore(RBaseAdapter baseAdapter);

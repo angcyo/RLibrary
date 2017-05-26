@@ -51,7 +51,7 @@ public class GlideImageLoader implements ImageLoader {
                 Ok.instance().type(url, new Ok.OnImageTypeListener() {
                     @Override
                     public void onImageType(Ok.ImageType imageType) {
-                        L.e("call: onImageType([imageType])-> " + url + " : " + imageType);
+                        L.v("call: onImageType([imageType])-> " + url + " : " + imageType);
 
                         if (imageType != Ok.ImageType.UNKNOWN) {
                             if (imageType == Ok.ImageType.GIF) {
