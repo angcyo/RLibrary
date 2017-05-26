@@ -757,9 +757,9 @@ public abstract class UIBaseView extends UIIViewImpl {
         int value = Math.max(maxWidth, maxHeight);
         int time;
         if (clipXYR != null && endRadius - clipXYR[2] >= value / 2) {
-            time = 500;
-        } else {
             time = 300;
+        } else {
+            time = 200;
         }
         ClipHelper.ANIM_TIME = time;
         return time;
