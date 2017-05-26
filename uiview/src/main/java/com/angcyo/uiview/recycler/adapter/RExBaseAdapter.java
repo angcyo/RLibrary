@@ -228,7 +228,7 @@ public abstract class RExBaseAdapter<H, T, F> extends RModelAdapter<T> {
         return this;
     }
 
-    public RExBaseAdapter<H, T, F> setData(T data) {
+    public RExBaseAdapter<H, T, F> setDataData(T data) {
         if (mAllDatas == null) {
             mAllDatas = new ArrayList<>();
         }
