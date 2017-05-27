@@ -154,12 +154,14 @@ public class RApplication extends Application {
 
             Debug.logTimeStart("RApplication 正在初始化:isInitOnce()");
 
-            /*崩溃异常处理*/
-            RCrashHandler.init(this);
-
              /*sp持久化库*/
             Hawk.init(this)
                     .build();
+
+            /*崩溃异常处理*/
+            RCrashHandler.init(this);
+
+            SkinHelper.init(this);
 
             /*Realm数据库初始化*/
             //RRealm.init(this, "r_jcenter.realm", true);
@@ -167,15 +169,31 @@ public class RApplication extends Application {
             /*Facebook图片加载库, 必须*/
             //Fresco.initialize(this);
 
-
             onInit();
 
-            Debug.logTimeEnd("RApplication 正在初始化:isInitOnce()");
+            new Thread() {
+                @Override
+                public void run() {
+                    Debug.logTimeStart("RApplication 异步初始化:onAsyncInit()");
+                    onAsyncInit();
+                    Debug.logTimeEnd("RApplication 异步初始化结束:onAsyncInit()");
+                }
+            }.start();
 
-            SkinHelper.init(this);
+            Debug.logTimeEnd("RApplication 初始化结束:isInitOnce()");
         }
     }
 
+    /**
+     * 异步初始化
+     */
+    protected void onAsyncInit() {
+
+    }
+
+    /**
+     * 同步初始化
+     */
     protected void onInit() {
 
     }

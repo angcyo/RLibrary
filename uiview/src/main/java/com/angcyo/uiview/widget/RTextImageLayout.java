@@ -3,9 +3,13 @@ package com.angcyo.uiview.widget;
 import android.content.Context;
 import android.text.TextUtils;
 import android.util.AttributeSet;
+import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
+
+import com.angcyo.library.utils.L;
+import com.bumptech.glide.request.GenericRequest;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -166,6 +170,14 @@ public class RTextImageLayout extends ViewGroup {
     protected void onDetachedFromWindow() {
         super.onDetachedFromWindow();
         isAttachedToWindow = false;
+
+        for (View view : mImageViews) {
+            Object tag = view.getTag();
+            if (tag instanceof GenericRequest) {
+                ((GenericRequest) tag).clear();
+                L.d("onDetachedFromWindow() -> " + this.getClass().getSimpleName() + " GenericRequest Clear");
+            }
+        }
     }
 
     /**
@@ -201,26 +213,14 @@ public class RTextImageLayout extends ViewGroup {
         int imageSize = mImages.size();
         int imageViewSize = mImageViews.size();
 
-        for (ImageView imageView : mImageViews) {
-            removeView(imageView);
+        for (int i = imageViewSize - 1; i >= imageSize; i--) {
+            removeView(mImageViews.remove(i));
         }
-        mImageViews.clear();
-//        imageViewSize = 0;
-
-//        for (int i = imageViewSize - 1; i >= imageSize; i--) {
-//            removeView(mImageViews.remove(i));
-//        }
 
         //最大显示3张图片
-//        for (int i = mImageViews.size(); i < Math.min(MAX_IMAGE_SIZE, imageSize); i++) {
-//            ImageView imageView = createImageView();
-//            addView(imageView, new LayoutParams(-2, -2));
-//            mImageViews.add(imageView);
-//        }
-
-        for (int i = 0; i < Math.min(MAX_IMAGE_SIZE, imageSize); i++) {
+        for (int i = mImageViews.size(); i < Math.min(MAX_IMAGE_SIZE, imageSize); i++) {
             ImageView imageView = createImageView();
-            addView(imageView, new LayoutParams(-2, -2));
+            addViewInLayout(imageView, i, new LayoutParams(-2, -2));
             mImageViews.add(imageView);
         }
 
@@ -230,32 +230,12 @@ public class RTextImageLayout extends ViewGroup {
             return;
         }
 
-//        if (isAttachedToWindow) {
-//            notifyLoadImage();
-//        } else {
-//            post(new Runnable() {
-//                @Override
-//                public void run() {
-//                    notifyLoadImage();
-//                }
-//            });
-//        }
-
-//        for (View view : mImageViews) {
-//            view.setTag(null);
-//        }
-
         if (imageViewSize == newImageViewSize ||
                 (imageViewSize >= MAX_IMAGE_SIZE && newImageViewSize >= MAX_IMAGE_SIZE)) {
             notifyLoadImage();
+        } else {
+            requestLayout();
         }
-
-//        if ((imageViewSize >= MAX_IMAGE_SIZE && newImageViewSize >= MAX_IMAGE_SIZE) ||
-//                imageViewSize == newImageViewSize) {
-//
-//        } else {
-//            //requestLayout();
-//        }
     }
 
     private void displayImage(ImageView imageView, String url) {

@@ -13,6 +13,7 @@ import android.widget.RelativeLayout;
 
 import com.angcyo.library.R;
 import com.angcyo.library.utils.L;
+import com.bumptech.glide.request.GenericRequest;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -181,6 +182,7 @@ public class RNineImageLayout extends RelativeLayout implements View.OnClickList
     }
 
     private void displayImage() {
+        //L.e("displayImage() -> " + this.getClass().getSimpleName());
         if (mNineImageConfig != null) {
             for (int i = 0; i < mImageViews.size(); i++) {
                 RImageView imageView = mImageViews.get(i);
@@ -218,45 +220,34 @@ public class RNineImageLayout extends RelativeLayout implements View.OnClickList
     private void notifyDataChanged() {
         int oldSize = mImageViews.size();
         int newSize = getImageSize();
-
-        removeAllViews();
-        mImageViews.clear();
-//        oldSize = 0;
-
-//        if (newSize > oldSize) {
-        for (int i = 0; i < newSize; i++) {
-            createImageView(i);
+        if (newSize > oldSize) {
+            for (int i = oldSize; i < newSize; i++) {
+                createImageView(i);
+            }
+            requestLayout();
+        } else if (newSize < oldSize) {
+            for (int i = oldSize - 1; i >= newSize; i--) {
+                removeView(mImageViews.remove(i));
+            }
         }
-        requestLayout();
-//        } else if (newSize < oldSize) {
-//            for (int i = oldSize - 1; i >= newSize; i--) {
-//                removeView(mImageViews.remove(i));
-//            }
-//        }
 
-//        for (View view : mImageViews) {
-//            view.setTag(null);
-//        }
-
-        //        requestLayout();
-//
-//        if (getMeasuredWidth() != 0 && getMeasuredHeight() != 0) {
-//            displayImage();
-//        }
-
-//        if (oldSize == newSize) {
+        if (oldSize == newSize) {
             displayImage();
-//        }
-// else {
-//            requestLayout();
-//        }
+        } else {
+            requestLayout();
+        }
+    }
 
-//        mImageViews.clear();
-//        removeAllViews();
-//        for (int i = 0; i < newSize; i++) {
-//            createImageView(i);
-//        }
-//        requestLayout();
+    @Override
+    protected void onDetachedFromWindow() {
+        super.onDetachedFromWindow();
+        for (View view : mImageViews) {
+            Object tag = view.getTag();
+            if (tag instanceof GenericRequest) {
+                ((GenericRequest) tag).clear();
+                L.d("onDetachedFromWindow() ->" + this.getClass().getSimpleName() + "  GenericRequest Clear");
+            }
+        }
     }
 
     private int getImageSize() {
