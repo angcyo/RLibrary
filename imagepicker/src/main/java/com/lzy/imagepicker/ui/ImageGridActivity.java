@@ -96,6 +96,8 @@ public class ImageGridActivity extends ImageBaseActivity implements ImageDataSou
                 if (position % 3 != 2) {
                     rect.right = offset;
                     rect.bottom = offset;
+                } else {
+                    rect.bottom = offset;
                 }
                 return rect;
             }

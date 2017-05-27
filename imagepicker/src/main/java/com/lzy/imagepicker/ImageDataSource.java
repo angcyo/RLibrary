@@ -88,6 +88,12 @@ public class ImageDataSource implements LoaderManager.LoaderCallbacks<Cursor> {
                 int imageHeight = data.getInt(data.getColumnIndexOrThrow(IMAGE_PROJECTION[4]));
                 String imageMimeType = data.getString(data.getColumnIndexOrThrow(IMAGE_PROJECTION[5]));
                 long imageAddTime = data.getLong(data.getColumnIndexOrThrow(IMAGE_PROJECTION[6]));
+
+                File imageFile = new File(imagePath);
+                if (!imageFile.exists() || !imageFile.isFile()) {
+                    continue;
+                }
+
                 //封装实体
                 ImageItem imageItem = new ImageItem();
                 imageItem.name = imageName;
@@ -99,7 +105,6 @@ public class ImageDataSource implements LoaderManager.LoaderCallbacks<Cursor> {
                 imageItem.addTime = imageAddTime;
                 allImages.add(imageItem);
                 //根据父路径分类存放图片
-                File imageFile = new File(imagePath);
                 File imageParentFile = imageFile.getParentFile();
                 ImageFolder imageFolder = new ImageFolder();
                 imageFolder.name = imageParentFile.getName();
