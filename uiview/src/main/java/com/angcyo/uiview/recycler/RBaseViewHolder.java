@@ -200,6 +200,10 @@ public class RBaseViewHolder extends RecyclerView.ViewHolder {
         return (RecyclerView) v(resId);
     }
 
+    public void click(@IdRes int id, View.OnClickListener listener) {
+        v(id).setOnClickListener(listener);
+    }
+
     public View viewByName(String name) {
         View view = v(getIdByName(name, "id"));
         return view;

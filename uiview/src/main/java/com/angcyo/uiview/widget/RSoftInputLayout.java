@@ -15,6 +15,8 @@ import android.view.animation.DecelerateInterpolator;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.FrameLayout;
 
+import com.angcyo.uiview.view.ILifecycle;
+
 import java.util.HashSet;
 import java.util.Iterator;
 
@@ -29,7 +31,7 @@ import java.util.Iterator;
  * 修改备注：
  * Version: 1.0.0
  */
-public class RSoftInputLayout extends FrameLayout {
+public class RSoftInputLayout extends FrameLayout implements ILifecycle {
 
     private static final String TAG = "Robi";
     View contentLayout;
@@ -65,6 +67,11 @@ public class RSoftInputLayout extends FrameLayout {
      * 使用动画的形式展开表情布局
      */
     private boolean isAnimToShow = true;
+
+    /**
+     * 所在的界面,是否隐藏了. 隐藏了,不处理事件
+     */
+    private boolean isViewHide = false;
 
     public RSoftInputLayout(Context context) {
         super(context);
@@ -103,7 +110,7 @@ public class RSoftInputLayout extends FrameLayout {
         super.onAttachedToWindow();
 
         if (!isInEditMode() && isEnabled()) {
-            setFitsSystemWindows(true);
+            setFitsSystemWindows(isEnabled() && !isViewHide);
             setClipToPadding(false);
         }
     }
@@ -111,7 +118,11 @@ public class RSoftInputLayout extends FrameLayout {
     @Override
     public void setEnabled(boolean enabled) {
         super.setEnabled(enabled);
-        setFitsSystemWindows(enabled);
+        if (enabled) {
+            setFitsSystemWindows(!isViewHide);
+        } else {
+            setFitsSystemWindows(false);
+        }
     }
 
     @Override
@@ -130,7 +141,9 @@ public class RSoftInputLayout extends FrameLayout {
 
     @Override
     protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
-        if (contentLayout == null || !isEnabled()) {
+        if (isViewHide ||
+                contentLayout == null ||
+                !isEnabled()) {
             super.onMeasure(widthMeasureSpec, heightMeasureSpec);
             return;
         }
@@ -196,7 +209,9 @@ public class RSoftInputLayout extends FrameLayout {
 
     @Override
     protected void onLayout(boolean changed, int l, int t, int r, int b) {
-        if (contentLayout == null || !isEnabled()) {
+        if (isViewHide ||
+                contentLayout == null ||
+                !isEnabled()) {
             super.onLayout(changed, l, t, r, b);
             return;
         }
@@ -242,14 +257,27 @@ public class RSoftInputLayout extends FrameLayout {
      */
     @Override
     protected boolean fitSystemWindows(Rect insets) {
-        boolean result = super.fitSystemWindows(insets);
-        post(mCheckSizeChanged);
+        boolean result = false;
+        if (getFitsSystemWindows()) {
+            result = super.fitSystemWindows(insets);
+            post(mCheckSizeChanged);
+        } else {
+            insets.set(0, 0, 0, 0);
+        }
         return result;
     }
 
     @Override
     public WindowInsets onApplyWindowInsets(WindowInsets insets) {
-        return super.onApplyWindowInsets(insets);
+        if (getFitsSystemWindows()) {
+            return super.onApplyWindowInsets(insets);
+        } else {
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+                return insets.replaceSystemWindowInsets(0, 0, 0, 0);
+            } else {
+                return super.onApplyWindowInsets(insets);
+            }
+        }
     }
 
     @Override
@@ -259,7 +287,7 @@ public class RSoftInputLayout extends FrameLayout {
         }
 
         removeCallbacks(mCheckSizeChanged);
-        if (isSoftKeyboardShow()) {
+        if (isKeyboardShow = isSoftKeyboardShow()) {
             isEmojiShow = false;
         }
         notifyEmojiLayoutChangeListener(isEmojiShow, isKeyboardShow,
@@ -440,6 +468,18 @@ public class RSoftInputLayout extends FrameLayout {
             return false;
         }
         return true;
+    }
+
+    @Override
+    public void onLifeViewShow() {
+        isViewHide = false;
+        setFitsSystemWindows(isEnabled() && !isViewHide);
+    }
+
+    @Override
+    public void onLifeViewHide() {
+        isViewHide = true;
+        setFitsSystemWindows(false);
     }
 
     public interface OnEmojiLayoutChangeListener {

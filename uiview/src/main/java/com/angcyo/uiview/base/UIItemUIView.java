@@ -122,6 +122,7 @@ public abstract class UIItemUIView<T extends Item> extends UIRecyclerUIView<Stri
     protected RefreshLayout createRefreshLayout(RelativeLayout baseContentLayout, LayoutInflater inflater) {
         //为软键盘弹出提供支持
         mSoftInputLayout = new RSoftInputLayout(mActivity);
+        registerLifecycler(mSoftInputLayout);//隐藏的时候, 不处理键盘事件
         RefreshLayout refreshLayout = new RefreshLayout(mActivity);
         refreshLayout.setRefreshDirection(RefreshLayout.TOP);
         refreshLayout.addOnRefreshListener(this);

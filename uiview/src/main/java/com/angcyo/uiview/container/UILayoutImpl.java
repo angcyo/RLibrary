@@ -28,6 +28,7 @@ import com.angcyo.uiview.model.ViewPattern;
 import com.angcyo.uiview.resources.AnimUtil;
 import com.angcyo.uiview.rsen.RGestureDetector;
 import com.angcyo.uiview.skin.ISkin;
+import com.angcyo.uiview.utils.UI;
 import com.angcyo.uiview.view.ILifecycle;
 import com.angcyo.uiview.view.IView;
 import com.angcyo.uiview.view.UIIViewImpl;
@@ -1394,12 +1395,13 @@ public class UILayoutImpl extends SwipeBackLayout implements ILayout<UIParam>, U
         interruptSet.remove(viewPattern.mIView);
         viewPattern.mIView.onViewUnload();
         final View view = viewPattern.mView;
-        ViewCompat.setAlpha(view, 0);
+        //ViewCompat.setAlpha(view, 0);
         view.setVisibility(GONE);
         post(new Runnable() {
             @Override
             public void run() {
                 try {
+                    //UI.setView(view, 0, 0);
                     removeView(view);
                 } catch (Exception e) {
                     e.printStackTrace();
@@ -1505,8 +1507,10 @@ public class UILayoutImpl extends SwipeBackLayout implements ILayout<UIParam>, U
             if (getChildCount() > 0) {
                 View childAt = getChildAt(getChildCount() - 1);
 
-                childAt.layout(l, childAt.getTop(),
-                        l + childAt.getMeasuredWidth(), childAt.getTop() + childAt.getMeasuredHeight());
+                if (childAt.getVisibility() == VISIBLE && childAt.getAlpha() == 1) {
+                    childAt.layout(l, childAt.getTop(),
+                            l + childAt.getMeasuredWidth(), childAt.getTop() + childAt.getMeasuredHeight());
+                }
             }
         }
     }
@@ -1694,6 +1698,7 @@ public class UILayoutImpl extends SwipeBackLayout implements ILayout<UIParam>, U
             mLayoutActivity.overridePendingTransition(0, 0);
         } else {
             needDragClose = true;
+            mLastShowViewPattern.mView.setVisibility(GONE);
             finishIView(mLastShowViewPattern.mIView, new UIParam(false, true, false));
         }
         printLog();

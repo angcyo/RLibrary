@@ -12,6 +12,7 @@ import android.support.annotation.ColorInt;
 import android.support.annotation.ColorRes;
 import android.support.annotation.DimenRes;
 import android.support.annotation.DrawableRes;
+import android.support.annotation.IdRes;
 import android.support.annotation.StringRes;
 import android.support.v4.content.ContextCompat;
 import android.support.v4.view.ViewPager;
@@ -37,6 +38,9 @@ import com.angcyo.uiview.resources.AnimUtil;
 import com.angcyo.uiview.resources.ResUtil;
 import com.angcyo.uiview.skin.ISkin;
 import com.angcyo.uiview.widget.viewpager.UIViewPager;
+
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * 接口的实现, 仅处理了一些动画, 其他实现都为空
@@ -70,6 +74,7 @@ public abstract class UIIViewImpl implements IView {
      * 最后一次显示的时间
      */
     protected long mLastShowTime = 0;
+    protected List<ILifecycle> mILifecycleList = new ArrayList<>();
     /**
      * 当{@link #onViewShow(Bundle)}被调用一次, 计数器就会累加
      */
@@ -190,6 +195,10 @@ public abstract class UIIViewImpl implements IView {
         viewShowCount++;
         mLastShowTime = System.currentTimeMillis();
 
+        for (ILifecycle life : mILifecycleList) {
+            life.onLifeViewShow();
+        }
+
         if (lastShowTime == 0) {
             onViewShowFirst(bundle);
         }
@@ -225,6 +234,11 @@ public abstract class UIIViewImpl implements IView {
     public void onViewHide() {
         L.d(this.getClass().getSimpleName(), "onViewHide: " + mIViewStatus);
         mIViewStatus = IViewShowState.STATE_VIEW_HIDE;
+
+        for (ILifecycle life : mILifecycleList) {
+            life.onLifeViewHide();
+        }
+
         if (mChildILayout != null) {
             mChildILayout.onLastViewHide();
         }
@@ -662,6 +676,17 @@ public abstract class UIIViewImpl implements IView {
         return mIViewStatus;
     }
 
+    public <T extends View> T v(@IdRes int id) {
+        if (mViewHolder == null) {
+            return null;
+        }
+        return mViewHolder.v(id);
+    }
+
+    public void click(@IdRes int id, View.OnClickListener listener) {
+        v(id).setOnClickListener(listener);
+    }
+
     public void setChildILayout(ILayout childILayout) {
         mChildILayout = childILayout;
         if (mILayout != null) {
@@ -695,6 +720,15 @@ public abstract class UIIViewImpl implements IView {
             return density * 65f;
         } else {
             return density * 40f;
+        }
+    }
+
+    /**
+     * 注册IView生命周期的回调
+     */
+    public void registerLifecycler(ILifecycle lifecycle) {
+        if (!mILifecycleList.contains(lifecycle)) {
+            mILifecycleList.add(lifecycle);
         }
     }
 }
