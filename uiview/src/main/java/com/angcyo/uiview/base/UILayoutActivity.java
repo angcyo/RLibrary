@@ -46,11 +46,13 @@ public abstract class UILayoutActivity extends StyleActivity {
 
         onLoadView(getIntent());
 
-        checkPermissions();
+        //checkPermissions();
     }
 
     protected void checkPermissions() {
-        mRxPermissions = new RxPermissions(this);
+        if (mRxPermissions == null) {
+            mRxPermissions = new RxPermissions(this);
+        }
         mRxPermissions.requestEach(needPermissions())
                 .map(new Func1<Permission, String>() {
                     @Override
