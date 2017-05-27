@@ -5,6 +5,7 @@ import android.graphics.Paint;
 import android.graphics.Rect;
 import android.support.annotation.ColorInt;
 import android.support.annotation.Nullable;
+import android.support.v4.view.MotionEventCompat;
 import android.support.v4.widget.ScrollerCompat;
 import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.GridLayoutManager;
@@ -327,11 +328,25 @@ public class RRecyclerView extends RecyclerView {
     }
 
     @Override
-    public boolean onInterceptTouchEvent(MotionEvent e) {
-        if (e.getAction() == MotionEvent.ACTION_DOWN) {
+    public boolean dispatchTouchEvent(MotionEvent ev) {
+        int actionMasked = MotionEventCompat.getActionMasked(ev);
+        if (actionMasked == MotionEvent.ACTION_DOWN) {
             isFling = false;
-        }
 
+            if (isEnableAutoScroll) {
+                stopAutoScroll();
+            }
+        } else if (actionMasked == MotionEvent.ACTION_UP ||
+                actionMasked == MotionEvent.ACTION_CANCEL) {
+            if (isEnableAutoScroll) {
+                startAutoScroll();
+            }
+        }
+        return super.dispatchTouchEvent(ev);
+    }
+
+    @Override
+    public boolean onInterceptTouchEvent(MotionEvent e) {
         if (mInterceptTouchListener != null) {
             mInterceptTouchListener.onTouch(this, e);
         }

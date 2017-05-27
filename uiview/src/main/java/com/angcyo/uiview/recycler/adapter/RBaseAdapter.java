@@ -8,7 +8,6 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
-import com.angcyo.library.utils.L;
 import com.angcyo.uiview.R;
 import com.angcyo.uiview.recycler.RBaseViewHolder;
 import com.angcyo.uiview.recycler.widget.ILoadMore;
@@ -491,11 +490,11 @@ public abstract class RBaseAdapter<T> extends RecyclerView.Adapter<RBaseViewHold
     }
 
     protected void onChildViewAttachedToWindow(View view, int adapterPosition, int layoutPosition) {
-        L.d("call: onChildViewAttachedToWindow -> " + adapterPosition + " " + layoutPosition + " " + view);
+        //L.v("call: onChildViewAttachedToWindow -> " + adapterPosition + " " + layoutPosition + " " + view);
     }
 
     protected void onChildViewDetachedFromWindow(View view, int adapterPosition, int layoutPosition) {
-        L.d("call: onChildViewDetachedFromWindow -> " + adapterPosition + " " + layoutPosition + " " + view);
+       //L.v("call: onChildViewDetachedFromWindow -> " + adapterPosition + " " + layoutPosition + " " + view);
     }
 
 
