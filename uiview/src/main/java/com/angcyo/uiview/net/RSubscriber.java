@@ -9,6 +9,7 @@ import java.net.SocketException;
 import java.net.SocketTimeoutException;
 import java.net.UnknownHostException;
 
+import retrofit2.HttpException;
 import rx.Subscriber;
 
 /**
@@ -24,7 +25,7 @@ import rx.Subscriber;
  */
 public abstract class RSubscriber<T> extends Subscriber<T> {
 
-    public static final int NO_NETWORK = 40000;
+    public static final int NO_NETWORK = -50000;
 
     @Override
     public void onStart() {
@@ -36,6 +37,7 @@ public abstract class RSubscriber<T> extends Subscriber<T> {
     public void onCompleted() {
         L.d("订阅完成->" + this.getClass().getSimpleName());
         onEnd();
+        onEnd(false, false, null);
     }
 
     @Override
@@ -57,11 +59,13 @@ public abstract class RSubscriber<T> extends Subscriber<T> {
         L.e("----------------------------------------异常处理----------------------------------------");
         int errorCode;
         String errorMsg;
+        boolean error = true, nonet = false;
 
         if (e instanceof UnknownHostException ||
                 e instanceof SocketTimeoutException ||
-                e instanceof SocketException ||
-                e instanceof NonetException) {
+                e instanceof SocketException /*无网络*/ ||
+                e instanceof NonetException ||
+                e instanceof HttpException) {
             L.e(e.getMessage());
             errorMsg = "请检查网络连接!";
             errorCode = NO_NETWORK;
@@ -79,32 +83,41 @@ public abstract class RSubscriber<T> extends Subscriber<T> {
         e.printStackTrace();
 
         L.d("订阅异常->" + this.getClass().getSimpleName() + " " + errorCode);
+        L.e("-----------------------------------------End-------------------------------------------");
+
         onError(errorCode, errorMsg);
         if (errorCode == RSubscriber.NO_NETWORK) {
             onNoNetwork();
+            nonet = true;
         }
+
         onEnd();
+        onEnd(error, nonet, e);
         if (L.LOG_DEBUG) {
             T_.error("[" + errorCode + "]" + errorMsg);
         }
-        L.e("-----------------------------------------End-------------------------------------------");
     }
 
     /**
      * 统一错误处理
      */
     public void onError(int code, String msg) {
-
+        L.w("call: onError([code, msg])-> " + code + " " + msg);
     }
 
     /**
      * 不管是成功订阅,还是异常,都会执行的方法
      */
+    @Deprecated
     public void onEnd() {
         L.d("订阅结束->onEnd()");
     }
 
-    public void onNoNetwork() {
+    public void onEnd(boolean isError, boolean isNoNetwork, Throwable e) {
+        L.d("订阅结束->onEnd() " + isError + " " + isNoNetwork + " " + e);
+    }
 
+    public void onNoNetwork() {
+        L.w("call: onNoNetwork([])-> ");
     }
 }

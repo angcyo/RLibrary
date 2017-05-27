@@ -29,7 +29,7 @@ public class LoadingImageView extends AppCompatImageView {
         @Override
         public void run() {
             postInvalidate();
-            postDelayed(loadRunnable, 16);//40 = 24 帧, 16 = 60 帧
+            postDelayed(loadRunnable, 40);//40 = 24 帧, 16 = 60 帧
         }
     };
 

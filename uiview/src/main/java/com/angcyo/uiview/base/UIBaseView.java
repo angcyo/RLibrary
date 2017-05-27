@@ -6,7 +6,6 @@ import android.graphics.Color;
 import android.graphics.Rect;
 import android.graphics.drawable.ColorDrawable;
 import android.graphics.drawable.Drawable;
-import android.os.Build;
 import android.provider.Settings;
 import android.support.annotation.ColorInt;
 import android.support.annotation.LayoutRes;
@@ -328,6 +327,7 @@ public abstract class UIBaseView extends UIIViewImpl {
      * 显示装载布局
      */
     public void showLoadLayout() {
+        removeOtherView(LayoutState.LOAD);
         if (mBaseLoadLayout == null) {
             mBaseLoadLayout = UILayoutImpl.safeAssignView(mBaseContentRootLayout,
                     inflateLoadLayout(mBaseContentRootLayout, LayoutInflater.from(mActivity)));//填充加载布局
@@ -339,6 +339,7 @@ public abstract class UIBaseView extends UIIViewImpl {
      * 显示空布局
      */
     public void showEmptyLayout() {
+        removeOtherView(LayoutState.EMPTY);
         if (mBaseEmptyLayout == null) {
             mBaseEmptyLayout = UILayoutImpl.safeAssignView(mBaseContentRootLayout,
                     inflateEmptyLayout(mBaseContentRootLayout, LayoutInflater.from(mActivity)));//填充空布局
@@ -356,6 +357,7 @@ public abstract class UIBaseView extends UIIViewImpl {
     public void showNonetLayout(View.OnClickListener settingListener, View.OnClickListener refreshListener) {
         mNonetSettingClickListener = settingListener;
         mNonetRefreshClickListener = refreshListener;
+        removeOtherView(LayoutState.NONET);
         if (mBaseNonetLayout == null) {
             mBaseNonetLayout = UILayoutImpl.safeAssignView(mBaseContentRootLayout,
                     inflateNonetLayout(mBaseContentRootLayout, LayoutInflater.from(mActivity)));//填充无网络布局
@@ -366,25 +368,74 @@ public abstract class UIBaseView extends UIIViewImpl {
 
     //-----------------以下私有方法------------------//
 
+    private void removeOtherView(LayoutState needShowState) {
+        if (needShowState == LayoutState.CONTENT) {
+            if (mBaseLoadLayout != null) {
+                mBaseContentRootLayout.removeView(mBaseLoadLayout);
+                mBaseLoadLayout = null;
+            }
+            if (mBaseEmptyLayout != null) {
+                mBaseContentRootLayout.removeView(mBaseEmptyLayout);
+                mBaseEmptyLayout = null;
+            }
+            if (mBaseNonetLayout != null) {
+                mBaseContentRootLayout.removeView(mBaseNonetLayout);
+                mBaseNonetLayout = null;
+            }
+        } else {
+            if (mBaseContentLayout != null) {
+                mBaseContentLayout.removeAllViews();
+            }
+            if (needShowState == LayoutState.EMPTY) {
+                if (mBaseLoadLayout != null) {
+                    mBaseContentRootLayout.removeView(mBaseLoadLayout);
+                    mBaseLoadLayout = null;
+                }
+                if (mBaseNonetLayout != null) {
+                    mBaseContentRootLayout.removeView(mBaseNonetLayout);
+                    mBaseNonetLayout = null;
+                }
+            } else if (needShowState == LayoutState.LOAD) {
+                if (mBaseEmptyLayout != null) {
+                    mBaseContentRootLayout.removeView(mBaseEmptyLayout);
+                    mBaseEmptyLayout = null;
+                }
+                if (mBaseNonetLayout != null) {
+                    mBaseContentRootLayout.removeView(mBaseNonetLayout);
+                    mBaseNonetLayout = null;
+                }
+            } else if (needShowState == LayoutState.NONET) {
+                if (mBaseLoadLayout != null) {
+                    mBaseContentRootLayout.removeView(mBaseLoadLayout);
+                    mBaseLoadLayout = null;
+                }
+                if (mBaseEmptyLayout != null) {
+                    mBaseContentRootLayout.removeView(mBaseEmptyLayout);
+                    mBaseEmptyLayout = null;
+                }
+            }
+        }
+    }
+
     public void showNonetLayout(View.OnClickListener refreshListener) {
         final View.OnClickListener settingListener = new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent intent = null;
-                // 判断手机系统的版本 即API大于10 就是3.0或以上版本及魅族手机
-                if (Build.VERSION.SDK_INT > 10 && !Build.MANUFACTURER.equals("Meizu")) {
-                    intent = new Intent(Settings.ACTION_WIRELESS_SETTINGS);
-                } else if (Build.VERSION.SDK_INT > 17 && Build.MANUFACTURER.equals("Meizu")) {
-                    //魅族更高版本调转的方式与其它手机型号一致  可能之前的版本有些一样  所以另加条件(tsp)
-                    intent = new Intent(Settings.ACTION_WIRELESS_SETTINGS);
-                } else {
-                    intent = new Intent(Settings.ACTION_SETTINGS);
-//                    intent = new Intent(Settings.ACTION_WIFI_SETTINGS);
+                Intent intent = new Intent(Settings.ACTION_SETTINGS);
+//                // 判断手机系统的版本 即API大于10 就是3.0或以上版本及魅族手机
+//                if (Build.VERSION.SDK_INT > 10 && !Build.MANUFACTURER.equals("Meizu")) {
 //                    intent = new Intent(Settings.ACTION_WIRELESS_SETTINGS);
-//                    ComponentName component = new ComponentName("com.android.settings", "com.android.settings.WirelessSettings");
-//                    intent.setComponent(component);
-//                    intent.setAction("android.intent.action.VIEW");
-                }
+//                } else if (Build.VERSION.SDK_INT > 17 && Build.MANUFACTURER.equals("Meizu")) {
+//                    //魅族更高版本调转的方式与其它手机型号一致  可能之前的版本有些一样  所以另加条件(tsp)
+//                    intent = new Intent(Settings.ACTION_WIRELESS_SETTINGS);
+//                } else {
+//                    intent = new Intent(Settings.ACTION_SETTINGS);
+////                    intent = new Intent(Settings.ACTION_WIFI_SETTINGS);
+////                    intent = new Intent(Settings.ACTION_WIRELESS_SETTINGS);
+////                    ComponentName component = new ComponentName("com.android.settings", "com.android.settings.WirelessSettings");
+////                    intent.setComponent(component);
+////                    intent.setAction("android.intent.action.VIEW");
+//                }
                 mActivity.startActivity(intent);
             }
         };
@@ -395,6 +446,7 @@ public abstract class UIBaseView extends UIIViewImpl {
      * 显示内容布局
      */
     public void showContentLayout() {
+        removeOtherView(LayoutState.CONTENT);
         if (mBaseContentLayout.getChildCount() == 0) {
             inflateContentLayout(mBaseContentLayout, LayoutInflater.from(mActivity));
             ButterKnife.bind(this, mBaseContentLayout);

@@ -256,11 +256,13 @@ public class RRetrofit {
             }
 
             Request.Builder builder = request.newBuilder();
-            if (NetworkStateReceiver.getNetType().value() <= NetworkUtils.NetworkType.NETWORK_UNKNOWN.value()) {
+            if (NetworkStateReceiver.getNetType().value() <=
+                    NetworkUtils.NetworkType.NETWORK_UNKNOWN.value()) {
                 //没网络,强制使用缓存
                 request = builder
                         .cacheControl(CacheControl.FORCE_CACHE)
                         .build();
+                //request = builder.cacheControl(new CacheControl.Builder().noCache().build()).build();
             } else {
                 //有网的情况下
                 /**

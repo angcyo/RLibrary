@@ -15,8 +15,17 @@ import com.angcyo.uiview.RApplication;
  * Version: 1.0.0
  */
 public class NonetException extends RuntimeException {
-    @Override
-    public String getMessage() {
-        return RApplication.getApp().getString(R.string.no_network);
+
+    public NonetException() {
+        this(RApplication.getApp().getString(R.string.no_network));
     }
+
+    public NonetException(String message) {
+        super(message);
+    }
+
+//    @Override
+//    public String getMessage() {
+//        return RApplication.getApp().getString(R.string.no_network);
+//    }
 }

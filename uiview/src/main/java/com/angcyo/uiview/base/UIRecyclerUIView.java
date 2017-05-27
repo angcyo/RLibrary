@@ -1,5 +1,6 @@
 package com.angcyo.uiview.base;
 
+import android.support.annotation.NonNull;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -33,6 +34,12 @@ public class UIRecyclerUIView<H, T, F> extends UIContentView
 
     protected int mBaseOffsetSize;
     protected int mBaseLineSize;
+
+    @NonNull
+    @Override
+    protected LayoutState getDefaultLayoutState() {
+        return LayoutState.LOAD;
+    }
 
     @Override
     public void onViewCreate(View rootView, UIParam param) {

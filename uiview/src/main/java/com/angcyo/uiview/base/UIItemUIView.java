@@ -3,6 +3,7 @@ package com.angcyo.uiview.base;
 import android.graphics.Canvas;
 import android.graphics.Rect;
 import android.support.annotation.DrawableRes;
+import android.support.annotation.NonNull;
 import android.text.TextPaint;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -51,6 +52,12 @@ public abstract class UIItemUIView<T extends Item> extends UIRecyclerUIView<Stri
         infoLayout.setLeftDrawableRes(leftRes);
         infoLayout.setLeftDrawPadding(leftPadding);
         infoLayout.setOnClickListener(onClickListener);
+    }
+
+    @NonNull
+    @Override
+    protected LayoutState getDefaultLayoutState() {
+        return LayoutState.CONTENT;
     }
 
     @Override

@@ -3,9 +3,12 @@ package com.angcyo.uiview.base;
 import android.support.annotation.CallSuper;
 import android.view.View;
 
+import com.angcyo.uiview.net.NonetException;
+import com.angcyo.uiview.net.RSubscriber;
 import com.angcyo.uiview.receiver.NetworkStateReceiver;
 
 import rx.Subscription;
+import rx.observers.SafeSubscriber;
 import rx.subscriptions.CompositeSubscription;
 
 /**
@@ -49,6 +52,15 @@ public abstract class UIBaseRxView extends UIBaseDataView {
         if (NetworkStateReceiver.getNetType().value() < 2) {
             //2G网络以下, 取消网络请求
             onCancel();
+            try {
+                if (subscription instanceof SafeSubscriber) {
+                    if (((SafeSubscriber) subscription).getActual() instanceof RSubscriber) {
+                        ((SafeSubscriber) subscription).getActual().onError(new NonetException());
+                    }
+                }
+            } catch (Exception e) {
+
+            }
         }
     }
 }
