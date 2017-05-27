@@ -39,8 +39,6 @@ import com.angcyo.uiview.view.UIIViewImpl;
 import com.angcyo.uiview.widget.EmptyView;
 import com.angcyo.uiview.widget.SoftRelativeLayout;
 
-import butterknife.ButterKnife;
-
 import static android.view.View.GONE;
 import static android.view.View.VISIBLE;
 
@@ -368,7 +366,7 @@ public abstract class UIBaseView extends UIIViewImpl {
 
     //-----------------以下私有方法------------------//
 
-    private void removeOtherView(LayoutState needShowState) {
+    protected void removeOtherView(LayoutState needShowState) {
         if (needShowState == LayoutState.CONTENT) {
             if (mBaseLoadLayout != null) {
                 mBaseContentRootLayout.removeView(mBaseLoadLayout);
@@ -449,7 +447,8 @@ public abstract class UIBaseView extends UIIViewImpl {
         removeOtherView(LayoutState.CONTENT);
         if (mBaseContentLayout.getChildCount() == 0) {
             inflateContentLayout(mBaseContentLayout, LayoutInflater.from(mActivity));
-            ButterKnife.bind(this, mBaseContentLayout);
+            //不使用 butterknife
+            //ButterKnife.bind(this, mBaseContentLayout);
             initOnShowContentLayout();
         }
         OnShowContentLayout();
@@ -481,7 +480,7 @@ public abstract class UIBaseView extends UIIViewImpl {
     /**
      * 改变布局的状态
      */
-    private void changeState(LayoutState from, LayoutState to) {
+    protected void changeState(LayoutState from, LayoutState to) {
         if (from == to) {
             return;
         }

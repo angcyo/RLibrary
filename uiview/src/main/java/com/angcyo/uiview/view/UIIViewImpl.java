@@ -38,8 +38,6 @@ import com.angcyo.uiview.resources.ResUtil;
 import com.angcyo.uiview.skin.ISkin;
 import com.angcyo.uiview.widget.viewpager.UIViewPager;
 
-import butterknife.ButterKnife;
-
 /**
  * 接口的实现, 仅处理了一些动画, 其他实现都为空
  * 对对话框做了区分处理
@@ -119,10 +117,12 @@ public abstract class UIIViewImpl implements IView {
     @Override
     public void loadContentView(View rootView) {
         L.d(this.getClass().getSimpleName(), "loadContentView: ");
-        try {
-            ButterKnife.bind(this, rootView);
-        } catch (Exception e) {
-        }
+        //不使用 butterknife
+//        try {
+//            ButterKnife.bind(this, rootView);
+//        } catch (Exception e) {
+//            String message = e.getMessage();
+//        }
     }
 
     /**
