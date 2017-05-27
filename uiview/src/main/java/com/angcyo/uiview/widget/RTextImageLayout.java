@@ -3,7 +3,6 @@ package com.angcyo.uiview.widget;
 import android.content.Context;
 import android.text.TextUtils;
 import android.util.AttributeSet;
-import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
@@ -202,12 +201,24 @@ public class RTextImageLayout extends ViewGroup {
         int imageSize = mImages.size();
         int imageViewSize = mImageViews.size();
 
-        for (int i = imageViewSize - 1; i >= imageSize; i--) {
-            removeView(mImageViews.remove(i));
+        for (ImageView imageView : mImageViews) {
+            removeView(imageView);
         }
+        mImageViews.clear();
+//        imageViewSize = 0;
+
+//        for (int i = imageViewSize - 1; i >= imageSize; i--) {
+//            removeView(mImageViews.remove(i));
+//        }
 
         //最大显示3张图片
-        for (int i = mImageViews.size(); i < Math.min(MAX_IMAGE_SIZE, imageSize); i++) {
+//        for (int i = mImageViews.size(); i < Math.min(MAX_IMAGE_SIZE, imageSize); i++) {
+//            ImageView imageView = createImageView();
+//            addView(imageView, new LayoutParams(-2, -2));
+//            mImageViews.add(imageView);
+//        }
+
+        for (int i = 0; i < Math.min(MAX_IMAGE_SIZE, imageSize); i++) {
             ImageView imageView = createImageView();
             addView(imageView, new LayoutParams(-2, -2));
             mImageViews.add(imageView);
@@ -230,9 +241,9 @@ public class RTextImageLayout extends ViewGroup {
 //            });
 //        }
 
-        for (View view : mImageViews) {
-            view.setTag(null);
-        }
+//        for (View view : mImageViews) {
+//            view.setTag(null);
+//        }
 
         if (imageViewSize == newImageViewSize ||
                 (imageViewSize >= MAX_IMAGE_SIZE && newImageViewSize >= MAX_IMAGE_SIZE)) {

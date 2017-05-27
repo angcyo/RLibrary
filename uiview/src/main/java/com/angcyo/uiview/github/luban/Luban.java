@@ -24,6 +24,7 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.util.ArrayList;
+import java.util.UUID;
 
 import rx.Observable;
 import rx.android.schedulers.AndroidSchedulers;
@@ -431,7 +432,7 @@ public class Luban {
 
     private File thirdCompress(@NonNull File file) {
         String thumb = mCacheDir.getAbsolutePath() + File.separator +
-                (TextUtils.isEmpty(filename) ? System.currentTimeMillis() : filename) + ".jpg";
+                (TextUtils.isEmpty(filename) ? UUID.randomUUID().toString()/*System.currentTimeMillis()*/ : filename) + ".jpg";
 
         double size;
         String filePath = file.getAbsolutePath();

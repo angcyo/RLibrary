@@ -218,20 +218,25 @@ public class RNineImageLayout extends RelativeLayout implements View.OnClickList
     private void notifyDataChanged() {
         int oldSize = mImageViews.size();
         int newSize = getImageSize();
-        if (newSize > oldSize) {
-            for (int i = oldSize; i < newSize; i++) {
-                createImageView(i);
-            }
-            requestLayout();
-        } else if (newSize < oldSize) {
-            for (int i = oldSize - 1; i >= newSize; i--) {
-                removeView(mImageViews.remove(i));
-            }
-        }
 
-        for (View view : mImageViews) {
-            view.setTag(null);
+        removeAllViews();
+        mImageViews.clear();
+//        oldSize = 0;
+
+//        if (newSize > oldSize) {
+        for (int i = 0; i < newSize; i++) {
+            createImageView(i);
         }
+        requestLayout();
+//        } else if (newSize < oldSize) {
+//            for (int i = oldSize - 1; i >= newSize; i--) {
+//                removeView(mImageViews.remove(i));
+//            }
+//        }
+
+//        for (View view : mImageViews) {
+//            view.setTag(null);
+//        }
 
         //        requestLayout();
 //
@@ -239,11 +244,12 @@ public class RNineImageLayout extends RelativeLayout implements View.OnClickList
 //            displayImage();
 //        }
 
-        if (oldSize == newSize) {
+//        if (oldSize == newSize) {
             displayImage();
-        } else {
-            requestLayout();
-        }
+//        }
+// else {
+//            requestLayout();
+//        }
 
 //        mImageViews.clear();
 //        removeAllViews();
