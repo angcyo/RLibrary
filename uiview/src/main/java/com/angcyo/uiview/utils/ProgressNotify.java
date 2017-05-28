@@ -43,6 +43,7 @@ public class ProgressNotify {
         mNotificationManager = (NotificationManager) mContext
                 .getSystemService(Activity.NOTIFICATION_SERVICE);
         mBuilder = new NotificationCompat.Builder(mContext);
+        mBuilder.setPriority(NotificationCompat.PRIORITY_MAX);
 
         //设置自定义布局中按钮的跳转界面
         //如果是启动activity，那么就用PendingIntent.getActivity，如果是启动服务，那么是getService
@@ -92,6 +93,7 @@ public class ProgressNotify {
 
         mBuilder.setSmallIcon(logo);// 设置顶部状态栏的小图标, 必须设置.
         mBuilder.setContent(remoteViews);
+        mBuilder.setWhen(System.currentTimeMillis());
         mNotificationManager.notify(this.getClass().getSimpleName(), NOTIFICATION_ID, mBuilder.build());
 
         return NOTIFICATION_ID;
