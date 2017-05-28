@@ -9,6 +9,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.angcyo.library.utils.L;
+import com.angcyo.uiview.R;
 import com.bumptech.glide.request.GenericRequest;
 
 import java.util.ArrayList;
@@ -156,7 +157,11 @@ public class RTextImageLayout extends ViewGroup {
         ImageView imageView;
         for (int i = 0; i < Math.min(mImageViews.size(), MAX_IMAGE_SIZE); i++) {
             imageView = mImageViews.get(i);
-            displayImage(imageView, mImages.get(i));
+            //cancelRequest(imageView);
+
+            String url = mImages.get(i);
+            imageView.setTag(R.id.tag_url, url);
+            displayImage(imageView, url);
         }
     }
 
@@ -172,11 +177,18 @@ public class RTextImageLayout extends ViewGroup {
         isAttachedToWindow = false;
 
         for (View view : mImageViews) {
-            Object tag = view.getTag();
-            if (tag instanceof GenericRequest) {
-                ((GenericRequest) tag).clear();
-                L.d("onDetachedFromWindow() -> " + this.getClass().getSimpleName() + " GenericRequest Clear");
-            }
+            cancelRequest(view);
+        }
+    }
+
+    private void cancelRequest(View view) {
+        if (view == null) {
+            return;
+        }
+        Object tag = view.getTag();
+        if (tag instanceof GenericRequest) {
+            ((GenericRequest) tag).clear();
+            L.d("onDetachedFromWindow() -> " + this.getClass().getSimpleName() + " GenericRequest Clear");
         }
     }
 

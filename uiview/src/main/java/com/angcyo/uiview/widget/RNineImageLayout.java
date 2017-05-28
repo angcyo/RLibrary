@@ -186,7 +186,11 @@ public class RNineImageLayout extends RelativeLayout implements View.OnClickList
         if (mNineImageConfig != null) {
             for (int i = 0; i < mImageViews.size(); i++) {
                 RImageView imageView = mImageViews.get(i);
-                mNineImageConfig.displayImage(imageView, mImagesList.get(i),
+                //cancelRequest(imageView);
+
+                String url = mImagesList.get(i);
+                imageView.setTag(R.id.tag_url, url);
+                mNineImageConfig.displayImage(imageView, url,
                         imageView.getMeasuredWidth(), imageView.getMeasuredHeight(), getImageSize());
             }
         }
@@ -241,12 +245,23 @@ public class RNineImageLayout extends RelativeLayout implements View.OnClickList
     @Override
     protected void onDetachedFromWindow() {
         super.onDetachedFromWindow();
+        cancelAllRequest();
+    }
+
+    private void cancelAllRequest() {
         for (View view : mImageViews) {
-            Object tag = view.getTag();
-            if (tag instanceof GenericRequest) {
-                ((GenericRequest) tag).clear();
-                L.d("onDetachedFromWindow() ->" + this.getClass().getSimpleName() + "  GenericRequest Clear");
-            }
+            cancelRequest(view);
+        }
+    }
+
+    private void cancelRequest(View view) {
+        if (view == null) {
+            return;
+        }
+        Object tag = view.getTag();
+        if (tag instanceof GenericRequest) {
+            ((GenericRequest) tag).clear();
+            L.d("onDetachedFromWindow() ->" + this.getClass().getSimpleName() + "  GenericRequest Clear");
         }
     }
 
