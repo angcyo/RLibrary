@@ -64,6 +64,11 @@ public class ProgressNotify {
         return this;
     }
 
+    public ProgressNotify setTargetFilePath(String targetFilePath) {
+        this.targetFilePath = targetFilePath;
+        return this;
+    }
+
     public int show(String title, @DrawableRes int logo, int progress) {
         if (clickActivity != null) {
             Intent intent = new Intent(mContext, clickActivity);
