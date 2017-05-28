@@ -11,7 +11,9 @@ import android.widget.RemoteViews;
 
 import com.angcyo.uiview.R;
 import com.angcyo.uiview.RApplication;
+import com.angcyo.uiview.github.utilcode.utils.IntentUtils;
 
+import java.io.File;
 import java.util.Random;
 
 /**
@@ -23,11 +25,14 @@ public class ProgressNotify {
 
     private final int NOTIFICATION_ID;
     private final NotificationCompat.Builder mBuilder;
-    private final RemoteViews mRemoteViews;
+    private final RemoteViews mProgressRemoteViews;
+    private final RemoteViews mFinishRemoteViews;
     NotificationManager mNotificationManager;
     private Context mContext;
     private Class<?> clickActivity;
     private int requestCode = 10011;
+
+    private String targetFilePath = "";
 
     private ProgressNotify() {
         mContext = RApplication.getApp();
@@ -43,7 +48,8 @@ public class ProgressNotify {
         //如果是启动activity，那么就用PendingIntent.getActivity，如果是启动服务，那么是getService
 
         // 自定义布局
-        mRemoteViews = new RemoteViews(mContext.getPackageName(), R.layout.base_progress_notify_layout);
+        mProgressRemoteViews = new RemoteViews(mContext.getPackageName(), R.layout.base_progress_notify_layout);
+        mFinishRemoteViews = new RemoteViews(mContext.getPackageName(), R.layout.base_progress_finish_notify_layout);
 
         //实例化工具类，并且调用接口
     }
@@ -64,15 +70,28 @@ public class ProgressNotify {
             mBuilder.setContentIntent(PendingIntent.getActivity(mContext, requestCode, intent, PendingIntent.FLAG_UPDATE_CURRENT));// 该通知要启动的Intent
         }
 
-        mRemoteViews.setImageViewResource(R.id.image_view, logo);
-        mRemoteViews.setTextViewText(R.id.text_view, title);
-        if (progress < 0) {
-            mRemoteViews.setProgressBar(R.id.progressBar, 0, 0, false);
+        RemoteViews remoteViews;
+
+        if (progress >= 100) {
+            remoteViews = mFinishRemoteViews;
+
+            File targetFile = new File(targetFilePath);
+            if (targetFile.exists()) {
+
+                mBuilder.setContentIntent(PendingIntent.getActivity(mContext, requestCode,
+                        IntentUtils.getInstallAppIntent(targetFile), PendingIntent.FLAG_UPDATE_CURRENT));// 该通知要启动的Intent
+            }
         } else {
-            mRemoteViews.setProgressBar(R.id.progressBar, 100, progress, false);
+            mProgressRemoteViews.setProgressBar(R.id.progressBar, 100, progress, false);
+
+            remoteViews = mProgressRemoteViews;
         }
 
+        remoteViews.setImageViewResource(R.id.image_view, logo);
+        remoteViews.setTextViewText(R.id.text_view, title);
+
         mBuilder.setSmallIcon(logo);// 设置顶部状态栏的小图标, 必须设置.
+        mBuilder.setContent(remoteViews);
         mNotificationManager.notify(this.getClass().getSimpleName(), NOTIFICATION_ID, mBuilder.build());
 
         return NOTIFICATION_ID;
