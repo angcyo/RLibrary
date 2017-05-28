@@ -22,6 +22,15 @@
         style="@style/BaseDialogTextStyle"
         tools:text="对话框内容对话框内容对话框内容"/>
 
+    <com.angcyo.uiview.widget.SimpleProgressBar
+        android:id="@+id/progress_bar"
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/base_ldpi"
+        android:layout_marginBottom="@dimen/base_hdpi_"
+        android:layout_marginTop="@dimen/base_xhdpi"
+        android:visibility="gone"
+        tools:visibility="visible"/>
+
     <View
         android:id="@+id/line_layout"
         style="@style/BaseHLine"
@@ -48,8 +57,8 @@
             style="@style/BaseAvgHTextStyle"
             android:background="@drawable/base_right_button_round_selector"
             android:clickable="true"
-            tools:text="@string/base_ok"
-            android:textColor="@color/theme_color_accent"/>
+            android:textColor="@color/theme_color_accent"
+            tools:text="@string/base_ok"/>
     </LinearLayout>
 
 </LinearLayout>

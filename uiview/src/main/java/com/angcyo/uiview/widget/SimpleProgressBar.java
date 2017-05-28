@@ -2,6 +2,7 @@ package com.angcyo.uiview.widget;
 
 import android.content.Context;
 import android.graphics.Canvas;
+import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.Rect;
 import android.support.v4.view.ViewCompat;
@@ -31,6 +32,8 @@ public class SimpleProgressBar extends View {
     Paint mPaint;
     Rect mRect;
 
+    boolean autoHide = true;
+
     public SimpleProgressBar(Context context) {
         super(context);
         init();
@@ -42,7 +45,12 @@ public class SimpleProgressBar extends View {
     }
 
     private void init() {
-        mProgressColor = SkinHelper.getSkin().getThemeSubColor();//getResources().getColor(R.color.theme_color_accent);
+        if (isInEditMode()) {
+            mProgressColor = Color.BLUE;
+            mProgress = 100;
+        } else {
+            mProgressColor = SkinHelper.getSkin().getThemeSubColor();//getResources().getColor(R.color.theme_color_accent);
+        }
         mPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
         mPaint.setColor(mProgressColor);
         mPaint.setStyle(Paint.Style.FILL);
@@ -50,21 +58,26 @@ public class SimpleProgressBar extends View {
     }
 
     public void setProgress(int progress) {
-        if (progress >= 100 || progress <= 0) {
+        progress = Math.max(0, Math.min(100, progress));
+        if (autoHide && (progress >= 100 || progress <= 0)) {
 //            setVisibility(GONE);
             ViewCompat.animate(this).translationY(-getMeasuredHeight()).setDuration(300).start();
         } else {
             if (getTranslationY() == -getMeasuredHeight()) {
                 ViewCompat.animate(this).translationY(0).setDuration(300).start();
             }
-            mProgress = progress;
-            postInvalidate();
         }
+        mProgress = progress;
+        postInvalidate();
     }
 
     public void setProgressColor(int progressColor) {
         mProgressColor = progressColor;
         mPaint.setColor(mProgressColor);
+    }
+
+    public void setAutoHide(boolean autoHide) {
+        this.autoHide = autoHide;
     }
 
     @Override

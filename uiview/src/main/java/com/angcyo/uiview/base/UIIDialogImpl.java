@@ -69,6 +69,11 @@ public abstract class UIIDialogImpl extends UIIViewImpl {
 
     protected ArrayList<OnDismissListener> mOnDismissListeners = new ArrayList<>();
 
+    /**
+     * 点击按钮自动关闭对话框
+     */
+    protected boolean autoFinishDialog = true;
+
     @Override
     protected View inflateBaseView(FrameLayout container, LayoutInflater inflater) {
         mDialogRootLayout = new SoftRelativeLayout(mActivity);
@@ -162,6 +167,11 @@ public abstract class UIIDialogImpl extends UIIViewImpl {
 
     public UIIDialogImpl setCanDoubleCancel(boolean canDoubleCancel) {
         this.canDoubleCancel = canDoubleCancel;
+        return this;
+    }
+
+    public UIIDialogImpl setAutoFinishDialog(boolean autoFinishDialog) {
+        this.autoFinishDialog = autoFinishDialog;
         return this;
     }
 

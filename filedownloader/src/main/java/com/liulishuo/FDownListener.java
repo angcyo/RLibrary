@@ -49,12 +49,13 @@ public abstract class FDownListener extends FileDownloadSampleListener {
     @Override
     protected void progress(BaseDownloadTask task, int soFarBytes, int totalBytes) {
         super.progress(task, soFarBytes, totalBytes);
-        String scale = "0%";
+        float scale = 0;
         if (totalBytes != -1) {
             final float percent = soFarBytes / (float) totalBytes;
-            scale = percent * 100 + "%";
+            scale = percent * 100;
         }
         onProgress(task, soFarBytes, totalBytes, scale);
+        onProgress(task, soFarBytes, totalBytes, ((int) scale) + "%");
     }
 
     /**
@@ -100,28 +101,32 @@ public abstract class FDownListener extends FileDownloadSampleListener {
     /**
      * 开始下载
      */
-    protected void onStarted(BaseDownloadTask task) {
+    public void onStarted(BaseDownloadTask task) {
         L.i("开始下载:" + task.getUrl() + " ->" + task.getPath());
     }
 
     /**
      * 下载完成
      */
-    protected void onCompleted(BaseDownloadTask task) {
+    public void onCompleted(BaseDownloadTask task) {
         L.w("下载完成:" + task.getUrl() + " ->" + task.getPath());
     }
 
     /**
      * 下载进度
      */
-    protected void onProgress(BaseDownloadTask task, int soFarBytes, int totalBytes, String scale /*80% 比例*/) {
+    public void onProgress(BaseDownloadTask task, int soFarBytes, int totalBytes, float progress /*80 比例*/) {
+        //L.d("下载进度:" + task.getUrl() + " -> total:" + totalBytes + " :" + scale);
+    }
+
+    public void onProgress(BaseDownloadTask task, int soFarBytes, int totalBytes, String scale /*80% 比例*/) {
         //L.d("下载进度:" + task.getUrl() + " -> total:" + totalBytes + " :" + scale);
     }
 
     /**
      * 下载失败
      */
-    protected void onError(BaseDownloadTask task, Throwable e) {
+    public void onError(BaseDownloadTask task, Throwable e) {
         L.e("下载失败:" + task.getUrl());
         e.printStackTrace();
     }

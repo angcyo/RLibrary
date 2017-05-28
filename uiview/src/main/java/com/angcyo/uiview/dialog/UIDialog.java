@@ -12,6 +12,7 @@ import com.angcyo.uiview.R;
 import com.angcyo.uiview.RApplication;
 import com.angcyo.uiview.base.UIIDialogImpl;
 import com.angcyo.uiview.skin.SkinHelper;
+import com.angcyo.uiview.widget.SimpleProgressBar;
 
 /**
  * 标准形式的对话框
@@ -47,6 +48,13 @@ public class UIDialog extends UIIDialogImpl {
      * 2个监听事件
      */
     View.OnClickListener cancelListener, okListener, contentListener;
+    OnDialogClick cancelClick, okClick, contentClick;
+
+    /**
+     * 进度
+     */
+    int progress = 0;
+    private SimpleProgressBar mBaseProgressBar;
 
     private UIDialog() {
         cancelText = RApplication.getApp().getString(R.string.base_cancel);
@@ -72,6 +80,9 @@ public class UIDialog extends UIIDialogImpl {
      */
     public UIDialog setDialogTitle(String title) {
         this.dialogTitle = title;
+        if (mBaseDialogTitleView != null) {
+            mBaseDialogTitleView.setText(dialogTitle);
+        }
         return this;
     }
 
@@ -80,16 +91,27 @@ public class UIDialog extends UIIDialogImpl {
      */
     public UIDialog setDialogContent(String content) {
         this.dialogContent = content;
+        if (mBaseDialogContentView != null) {
+            mBaseDialogContentView.setText(dialogContent);
+        }
         return this;
     }
 
     public UIDialog setOkText(String text) {
         this.okText = text;
+        if (mBaseDialogOkView != null) {
+            mBaseDialogOkView.setText(okText);
+            mBaseDialogOkView.setVisibility(TextUtils.isEmpty(okText) ? View.GONE : View.VISIBLE);
+        }
         return this;
     }
 
     public UIDialog setCancelText(String text) {
         this.cancelText = text;
+        if (mBaseDialogCancelView != null) {
+            mBaseDialogCancelView.setText(cancelText);
+            mBaseDialogCancelView.setVisibility(TextUtils.isEmpty(cancelText) ? View.GONE : View.VISIBLE);
+        }
         return this;
     }
 
@@ -108,9 +130,27 @@ public class UIDialog extends UIIDialogImpl {
         return this;
     }
 
+    public UIDialog setCancelClick(OnDialogClick cancelClick) {
+        this.cancelClick = cancelClick;
+        return this;
+    }
+
+    public UIDialog setOkClick(OnDialogClick okClick) {
+        this.okClick = okClick;
+        return this;
+    }
+
+    public UIDialog setContentClick(OnDialogClick contentClick) {
+        this.contentClick = contentClick;
+        return this;
+    }
+
     @Override
     public void loadContentView(View rootView) {
         super.loadContentView(rootView);
+
+        mBaseProgressBar = (SimpleProgressBar) rootView.findViewById(R.id.progress_bar);
+        mBaseProgressBar.setProgressColor(SkinHelper.getSkin().getThemeTranColor(0x80));
 
         mBaseDialogTitleView = (TextView) rootView.findViewById(R.id.base_dialog_title_view);
         mBaseDialogContentView = (TextView) rootView.findViewById(R.id.base_dialog_content_view);
@@ -131,7 +171,12 @@ public class UIDialog extends UIIDialogImpl {
                 if (okListener != null) {
                     okListener.onClick(v);
                 }
-                finishDialog();
+                if (okClick != null) {
+                    okClick.onDialogClick(UIDialog.this, v);
+                }
+                if (autoFinishDialog) {
+                    finishDialog();
+                }
             }
         });
         mBaseDialogCancelView.setOnClickListener(new View.OnClickListener() {
@@ -140,12 +185,27 @@ public class UIDialog extends UIIDialogImpl {
                 if (cancelListener != null) {
                     cancelListener.onClick(v);
                 }
-                finishDialog();
+                if (cancelClick != null) {
+                    cancelClick.onDialogClick(UIDialog.this, v);
+                }
+                if (autoFinishDialog) {
+                    finishDialog();
+                }
             }
         });
 
-        if (contentListener != null) {
-            mBaseDialogContentView.setOnClickListener(contentListener);
+        if (contentListener != null || contentClick != null) {
+            mBaseDialogContentView.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    if (contentListener != null) {
+                        contentListener.onClick(v);
+                    }
+                    if (contentClick != null) {
+                        contentClick.onDialogClick(UIDialog.this, v);
+                    }
+                }
+            });
         }
 
         mBaseDialogTitleView.setVisibility(TextUtils.isEmpty(dialogTitle) ? View.GONE : View.VISIBLE);
@@ -171,5 +231,22 @@ public class UIDialog extends UIIDialogImpl {
         mDialogRootLayout.setGravity(gravity);
 
         mBaseDialogOkView.setTextColor(SkinHelper.getSkin().getThemeSubColor());
+
+
+    }
+
+    public UIDialog setProgress(int progress) {
+        this.progress = progress;
+        if (mBaseProgressBar != null) {
+            if (progress > 0) {
+                mBaseProgressBar.setVisibility(View.VISIBLE);
+            }
+            mBaseProgressBar.setProgress(progress);
+        }
+        return this;
+    }
+
+    public interface OnDialogClick {
+        void onDialogClick(UIDialog dialog, View clickView);
     }
 }
