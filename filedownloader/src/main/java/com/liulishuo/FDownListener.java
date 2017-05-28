@@ -49,13 +49,13 @@ public abstract class FDownListener extends FileDownloadSampleListener {
     @Override
     protected void progress(BaseDownloadTask task, int soFarBytes, int totalBytes) {
         super.progress(task, soFarBytes, totalBytes);
-        float scale = 0;
+        float progress = 0;
         if (totalBytes != -1) {
             final float percent = soFarBytes / (float) totalBytes;
-            scale = percent * 100;
+            progress = percent * 100;
         }
-        onProgress(task, soFarBytes, totalBytes, scale);
-        onProgress(task, soFarBytes, totalBytes, ((int) scale) + "%");
+        onProgress(task, soFarBytes, totalBytes, progress);
+        onProgress(task, soFarBytes, totalBytes, ((int) progress) + "%");
     }
 
     /**
@@ -64,6 +64,9 @@ public abstract class FDownListener extends FileDownloadSampleListener {
     @Override
     protected void completed(BaseDownloadTask task) {
         super.completed(task);
+        onProgress(task, task.getSmallFileSoFarBytes(), task.getSmallFileTotalBytes(), 100);
+        onProgress(task, task.getSmallFileSoFarBytes(), task.getSmallFileTotalBytes(), "100%");
+
         onCompleted(task);
     }
 
@@ -119,6 +122,7 @@ public abstract class FDownListener extends FileDownloadSampleListener {
         //L.d("下载进度:" + task.getUrl() + " -> total:" + totalBytes + " :" + scale);
     }
 
+    @Deprecated
     public void onProgress(BaseDownloadTask task, int soFarBytes, int totalBytes, String scale /*80% 比例*/) {
         //L.d("下载进度:" + task.getUrl() + " -> total:" + totalBytes + " :" + scale);
     }
