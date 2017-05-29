@@ -47,7 +47,7 @@ public class FingerPrinterView extends View {
     private boolean isScale = false; //判断是否要缩放
     private Paint mBitPaint;
     private Bitmap mFingerRed, mFingerGreen, mFingerGrey;
-    private Rect mSrcRect, mDestRect;
+    private Rect mSrcRect = new Rect(), mDestRect = new Rect();
     private int mBitWidth, mBitHeight;
     private int mWidth, mHeight;
 
@@ -84,6 +84,25 @@ public class FingerPrinterView extends View {
     }
 
     @Override
+    protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
+        //super.onMeasure(widthMeasureSpec, heightMeasureSpec);
+        int widthMode = MeasureSpec.getMode(widthMeasureSpec);
+        int heightMode = MeasureSpec.getMode(heightMeasureSpec);
+        int widthSize = MeasureSpec.getSize(widthMeasureSpec);
+        int heightSize = MeasureSpec.getSize(heightMeasureSpec);
+
+        if (heightMode == MeasureSpec.AT_MOST) {
+            heightSize = mBitHeight;
+        }
+
+        if (widthMode == MeasureSpec.AT_MOST) {
+            widthSize = mBitWidth;
+        }
+
+        setMeasuredDimension(widthSize, heightSize);
+    }
+
+    @Override
     protected void onSizeChanged(int w, int h, int oldw, int oldh) {
         super.onSizeChanged(w, h, oldw, oldh);
         mWidth = w;
@@ -99,13 +118,17 @@ public class FingerPrinterView extends View {
     protected void onDraw(Canvas canvas) {
         super.onDraw(canvas);
         mBitPaint.setAlpha(255);
-        mDestRect = new Rect((int) (mBitHeight * (1 - mFraction2)), (int) (mBitHeight * (1 - mFraction2)), (int) (mBitHeight * mFraction2), (int) (mBitHeight * mFraction2));
-        mSrcRect = new Rect(0, 0, mBitWidth, mBitHeight);
+        mDestRect.set((int) (mBitHeight * (1 - mFraction2)), (int) (mBitHeight * (1 - mFraction2)), (int) (mBitHeight * mFraction2), (int) (mBitHeight * mFraction2));
+        mSrcRect.set(0, 0, mBitWidth, mBitHeight);
         canvas.drawBitmap(mFingerGrey, mSrcRect, mDestRect, mBitPaint);
+        if (mCurrentState == STATE_NO_SCANING) {
+            return;
+        }
+
         if (true) {
             if (scaningCount == 0) {
-                mDestRect = new Rect(0, 0, mBitWidth, (int) (mBitHeight * mFraction));
-                mSrcRect = new Rect(0, 0, mBitWidth, (int) (mBitHeight * mFraction));
+                mDestRect.set(0, 0, mBitWidth, (int) (mBitHeight * mFraction));
+                mSrcRect.set(0, 0, mBitWidth, (int) (mBitHeight * mFraction));
                 canvas.drawBitmap(mFingerGreen, mSrcRect, mDestRect, mBitPaint);
             } else if (scaningCount % 2 == 0) {
                 if (mFraction <= 0.5) {
@@ -125,7 +148,6 @@ public class FingerPrinterView extends View {
                 }
 
             }
-
         }
         if (isScale) {
             if (mCurrentState == STATE_WRONG_PWD) {

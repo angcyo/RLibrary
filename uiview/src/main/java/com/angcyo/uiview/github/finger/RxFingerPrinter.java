@@ -95,7 +95,6 @@ public class RxFingerPrinter {
             @Override
             public void onAuthenticationSucceeded(FingerprintManager.AuthenticationResult result) {
                 publishSubject.onNext(true);
-
             }
 
             @Override
@@ -103,6 +102,13 @@ public class RxFingerPrinter {
                 publishSubject.onNext(false);
             }
         };
+    }
+
+    /**
+     * 再次认证
+     */
+    public void authAgain() {
+        startListening(null);
     }
 
     @SuppressLint("NewApi")
