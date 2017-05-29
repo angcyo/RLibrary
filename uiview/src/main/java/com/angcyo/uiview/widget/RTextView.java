@@ -110,6 +110,9 @@ public class RTextView extends AppCompatTextView {
         }
     }
 
+    public float density() {
+        return getResources().getDisplayMetrics().density;
+    }
 
     @Override
     public void draw(Canvas canvas) {

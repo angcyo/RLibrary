@@ -8,6 +8,7 @@ import android.graphics.Rect;
 import android.graphics.drawable.ColorDrawable;
 import android.graphics.drawable.Drawable;
 import android.support.annotation.DrawableRes;
+import android.support.annotation.Px;
 import android.support.v4.content.ContextCompat;
 import android.text.Layout;
 import android.text.Selection;
@@ -214,11 +215,29 @@ public class RExTextView extends RTextView {
                                 start, start + offset, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
                         spannable.setSpan(new ImageTextSpan(getContext(), getTextSize(), foldString),
                                 start + offset, spannable.length(), Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
+
+                        //setMeasuredDimension(getMeasuredWidth(), (int) (getMeasuredHeight() + density() * 4));
                     }
 
                 }
             }
         }
+    }
+
+    @Override
+    public boolean canScrollVertically(int direction) {
+        if (maxShowLine > 0) {
+            return false;
+        }
+        return super.canScrollVertically(direction);
+    }
+
+    @Override
+    public void scrollTo(@Px int x, @Px int y) {
+        if (maxShowLine > 0) {
+            return;
+        }
+        super.scrollTo(x, y);
     }
 
     private int findStartPosition(Spannable spannable, int startWidthPosition) {
@@ -405,7 +424,7 @@ public class RExTextView extends RTextView {
             Drawable drawable = new ColorDrawable(Color.WHITE);
             TextPaint textPaint = new TextPaint(Paint.ANTI_ALIAS_FLAG);
             textPaint.setTextSize(textSize);
-            int textHeight = (int) RTextPaint.getTextHeight(textPaint);
+            int textHeight = (int) (textPaint.descent());// - textPaint.ascent());//(int) RTextPaint.getTextHeight(textPaint);
             drawable.setBounds(0, 1, 0, textHeight);
             return drawable;
         }
