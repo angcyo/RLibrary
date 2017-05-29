@@ -197,6 +197,4 @@ public class UI {
         Object scrollBar = Reflect.getMember(mScrollCache, "scrollBar");
         Reflect.invokeMethod(scrollBar, "setVerticalThumbDrawable", new Class<?>[]{Drawable.class}, drawable);
     }
-
-
 }
