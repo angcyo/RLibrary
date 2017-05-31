@@ -101,6 +101,7 @@ public abstract class RSubscriber<T> extends Subscriber<T> {
     /**
      * 统一错误处理
      */
+    @Deprecated
     public void onError(int code, String msg) {
         L.w("call: onError([code, msg])-> " + code + " " + msg);
     }

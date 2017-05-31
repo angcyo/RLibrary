@@ -1,11 +1,15 @@
 package com.angcyo.uiview.utils;
 
+import android.Manifest;
 import android.content.ContentResolver;
 import android.content.Context;
+import android.content.pm.PackageManager;
 import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.os.Build;
 import android.provider.ContactsContract;
+import android.support.v4.app.ActivityCompat;
 import android.text.TextUtils;
 import android.text.format.Formatter;
 
@@ -58,9 +62,16 @@ public class ContactsPickerHelper {
      * 同步返回联系人列表
      */
     public static List<ContactsInfo> getContactsList(Context context) {
+
+        //检查权限
+        if (Build.VERSION.SDK_INT >= 23) {
+            if (ActivityCompat.checkSelfPermission(context, Manifest.permission.READ_CONTACTS) != PackageManager.PERMISSION_GRANTED) {
+                return  new ArrayList<>();
+            }
+        }
+
         final ContentResolver contentResolver = context.getContentResolver();
         Cursor cursor = contentResolver.query(ContactsContract.Contacts.CONTENT_URI, new String[]{"_id"}, null, null, null);
-
         List<ContactsInfo> contactsInfos = new ArrayList<>();
 
         if (cursor != null) {
