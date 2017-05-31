@@ -213,15 +213,18 @@ public class RExTextView extends RTextView {
 
                         int offset = more.length();//(sequence.length() % 2 == 0) ? 4 : 3;
 
-                        if (!TextUtils.isEmpty(more)) {
-                            spannable.setSpan(new ImageTextSpan(getContext(), getTextSize(), getCurrentTextColor(), more),
-                                    start, start + offset, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
-                        }
-                        if (!TextUtils.isEmpty(foldString)) {
+                        if (TextUtils.isEmpty(foldString)) {
+                            if (!TextUtils.isEmpty(more)) {
+                                spannable.setSpan(new ImageTextSpan(getContext(), getTextSize(), getCurrentTextColor(), more),
+                                        start, spannable.length(), Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
+                            }
+                        } else {
+                            if (!TextUtils.isEmpty(more)) {
+                                spannable.setSpan(new ImageTextSpan(getContext(), getTextSize(), getCurrentTextColor(), more),
+                                        start, start + offset, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
+                            }
                             spannable.setSpan(new ImageTextSpan(getContext(), getTextSize(), foldString),
                                     start + offset, spannable.length(), Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
-//                            spannable.setSpan(new ImageTextSpan(getContext(), getTextSize(), foldString),
-//                                    layout.getLineStart(maxShowLine - 1), layout.getLineStart(maxShowLine - 1) + foldString.length(), Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
                         }
 
                         //setMeasuredDimension(getMeasuredWidth(), (int) (getMeasuredHeight() + density() * 140));
