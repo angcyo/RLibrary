@@ -470,7 +470,7 @@ public class RExTextView extends RTextView {
 //            }
 
             //drawable.setBounds(0, 0, width, (int) Math.max(height, textHeight));
-            drawable.setBounds(0, 0, width, (int) Math.max(height, textHeight));
+            drawable.setBounds(0, 0, width, (int) -textPaint.ascent()/*(int) Math.max(height, textHeight)*/);
             return drawable;
         }
 
