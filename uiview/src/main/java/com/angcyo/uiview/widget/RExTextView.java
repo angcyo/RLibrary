@@ -33,6 +33,8 @@ import com.angcyo.uiview.R;
 import com.angcyo.uiview.skin.SkinHelper;
 import com.angcyo.uiview.utils.RTextPaint;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -167,9 +169,9 @@ public class RExTextView extends RTextView {
             super.setText(text, type);
         } else {
             SpannableStringBuilder spanBuilder = new SpannableStringBuilder(text);
-            patternPhone(spanBuilder, text);
+            patternUrl(spanBuilder, text);//优先匹配
             patternMention(spanBuilder, text);
-            patternUrl(spanBuilder, text);
+            patternPhone(spanBuilder, text);
             afterPattern(spanBuilder, text);
             super.setText(spanBuilder, type);
         }
@@ -197,7 +199,7 @@ public class RExTextView extends RTextView {
                         }
 
                         Spannable spannable = (Spannable) sequence;
-                        int lineStart = layout.getLineStart(maxShowLine);
+                        int lineStart = layout.getLineStart(maxShowLine);//返回第几行的第一个字符, 在字符串中的index
 
                         int startPosition = lineStart - more.length() - foldString.length();
 
@@ -211,17 +213,40 @@ public class RExTextView extends RTextView {
 
                         int offset = more.length();//(sequence.length() % 2 == 0) ? 4 : 3;
 
-                        spannable.setSpan(new ImageTextSpan(getContext(), getTextSize(), getCurrentTextColor(), more),
-                                start, start + offset, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
-                        spannable.setSpan(new ImageTextSpan(getContext(), getTextSize(), foldString),
-                                start + offset, spannable.length(), Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
+                        if (!TextUtils.isEmpty(more)) {
+                            spannable.setSpan(new ImageTextSpan(getContext(), getTextSize(), getCurrentTextColor(), more),
+                                    start, start + offset, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
+                        }
+                        if (!TextUtils.isEmpty(foldString)) {
+                            spannable.setSpan(new ImageTextSpan(getContext(), getTextSize(), foldString),
+                                    start + offset, spannable.length(), Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
+//                            spannable.setSpan(new ImageTextSpan(getContext(), getTextSize(), foldString),
+//                                    layout.getLineStart(maxShowLine - 1), layout.getLineStart(maxShowLine - 1) + foldString.length(), Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
+                        }
 
-                        //setMeasuredDimension(getMeasuredWidth(), (int) (getMeasuredHeight() + density() * 4));
+                        //setMeasuredDimension(getMeasuredWidth(), (int) (getMeasuredHeight() + density() * 140));
                     }
 
                 }
             }
         }
+
+        //int lastLineHeight = getLastLineHeight();
+        //float descent = getPaint().descent();
+
+        //setMeasuredDimension(getMeasuredWidth(), (int) (getMeasuredHeight() + density() * 40));
+    }
+
+    private int getLastLineHeight() {
+        Layout layout = getLayout();
+        if (layout != null) {
+            int lineCount = layout.getLineCount();
+            if (lineCount > 0) {
+                //行的底部距离view顶部的高度, 最后一行的LineTop通常会等于View的height
+                return layout.getLineTop(lineCount) - layout.getLineTop(lineCount - 1);
+            }
+        }
+        return 0;
     }
 
     @Override
@@ -249,7 +274,7 @@ public class RExTextView extends RTextView {
             if (spanStart <= startWidthPosition && spanEnd > startWidthPosition) {
                 position = spanStart;
             }
-            if (spanEnd >= startWidthPosition) {
+            if (spanStart >= startWidthPosition) {
                 spannable.removeSpan(oldSpan);
             }
         }
@@ -306,10 +331,12 @@ public class RExTextView extends RTextView {
             int start = matcher.start();
             int end = matcher.end();
 
-            builder.setSpan(new ImageTextSpan(getContext(), ImageTextSpan.initDrawable(getTextSize()), matcher.group(2), matcher.group(1))
-                            .setOnImageSpanClick(mOnImageSpanClick)
-                            .setTextColor(mImageSpanTextColor),
-                    start, end, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
+            if (!isInOtherSpan(builder, input.length(), start, end)) {
+                builder.setSpan(new ImageTextSpan(getContext(), ImageTextSpan.initDrawable(getTextSize()), matcher.group(2), matcher.group(1))
+                                .setOnImageSpanClick(mOnImageSpanClick)
+                                .setTextColor(mImageSpanTextColor),
+                        start, end, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
+            }
         }
     }
 
@@ -323,12 +350,41 @@ public class RExTextView extends RTextView {
             int start = matcher.start();
             int end = matcher.end();
 
-            builder.setSpan(new ImageTextSpan(getContext(), ImageTextSpan.initDrawable(getTextSize()),
-                            matcher.group(), matcher.group())
-                            .setOnImageSpanClick(mOnImageSpanClick)
-                            .setTextColor(mImageSpanTextColor),
-                    start, end, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
+            if (!isInOtherSpan(builder, input.length(), start, end)) {
+                builder.setSpan(new ImageTextSpan(getContext(), ImageTextSpan.initDrawable(getTextSize()),
+                                matcher.group(), matcher.group())
+                                .setOnImageSpanClick(mOnImageSpanClick)
+                                .setTextColor(mImageSpanTextColor),
+                        start, end, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
+            }
         }
+    }
+
+    /**
+     * 判断 需要检测的开始位置,结束位置, 是否已经在其他span中
+     */
+    private boolean isInOtherSpan(SpannableStringBuilder builder, int length, int startPosition, int endPosition) {
+        ImageTextSpan[] imageTextSpans = builder.getSpans(0, length, ImageTextSpan.class);
+        List<int[]> spanRange = new ArrayList<>();
+        for (ImageTextSpan span : imageTextSpans) {
+            int spanStart = builder.getSpanStart(span);
+            int spanEnd = builder.getSpanEnd(span);
+
+            spanRange.add(new int[]{spanStart, spanEnd});
+        }
+
+        boolean result = false;
+        for (int[] range : spanRange) {
+            if (startPosition >= range[0] && startPosition <= range[1]) {
+                result = true;
+                break;
+            }
+            if (endPosition >= range[0] && endPosition <= range[1]) {
+                result = true;
+                break;
+            }
+        }
+        return result;
     }
 
     /**
@@ -401,7 +457,7 @@ public class RExTextView extends RTextView {
 
             TextPaint textPaint = new TextPaint(Paint.ANTI_ALIAS_FLAG);
             textPaint.setTextSize(textSize);
-            int textHeight = (int) RTextPaint.getTextHeight(textPaint);
+            float textHeight = textPaint.descent() - textPaint.ascent(); //(int) RTextPaint.getTextHeight(textPaint);
 
 //            if (textHeight > height) {
 //                int offset = textHeight - height + textPaint.getFontMetricsInt().descent / 2;
@@ -413,7 +469,8 @@ public class RExTextView extends RTextView {
 //                return drawable;
 //            }
 
-            drawable.setBounds(0, 0, width, height);
+            //drawable.setBounds(0, 0, width, (int) Math.max(height, textHeight));
+            drawable.setBounds(0, 0, width, (int) Math.max(height, textHeight));
             return drawable;
         }
 
@@ -425,7 +482,8 @@ public class RExTextView extends RTextView {
             TextPaint textPaint = new TextPaint(Paint.ANTI_ALIAS_FLAG);
             textPaint.setTextSize(textSize);
             int textHeight = (int) (textPaint.descent());// - textPaint.ascent());//(int) RTextPaint.getTextHeight(textPaint);
-            drawable.setBounds(0, 1, 0, textHeight);
+            //drawable.setBounds(0, 0, 1, textHeight);
+            drawable.setBounds(0, 0, 0, 0);
             return drawable;
         }
 
@@ -492,15 +550,21 @@ public class RExTextView extends RTextView {
                 //文本在图片的中间绘制
                 float textY;
                 textY = y /*+ textHeight / 2 + height / 2 */ /*- paint.getFontMetricsInt().descent*/;
+                if (y == bottom) {
+                    textY = y - paint.descent();
+                }
 //                if (paint.getFontMetricsInt().descent > 0) {
 //                    textY = top + textHeight / 2 + height / 2 - paint.getFontMetricsInt().descent / 2;
 //                } else {
 //                    textY = top + textHeight / 2 + height / 2 - paint.getFontMetricsInt().descent;
 //                }
-                canvas.drawText(string,
-                        x + mImageSize + space,
-                        textY,
-                        paint);
+
+                if (top != y) {
+                    canvas.drawText(string,
+                            x + mImageSize + space,
+                            textY,
+                            paint);
+                }
             }
         }
 
@@ -512,6 +576,10 @@ public class RExTextView extends RTextView {
         public ImageTextSpan setTextColor(int textColor) {
             this.textColor = textColor;
             return this;
+        }
+
+        public int getShowTextLength() {
+            return mShowContent.length();
         }
 
         public boolean isCanClick() {
@@ -639,27 +707,41 @@ public class RExTextView extends RTextView {
 
                 ImageTextSpan[] link = buffer.getSpans(off, off, ImageTextSpan.class);
 
-                if (link.length != 0 && link[0].isCanClick()) {
-                    if (action == MotionEvent.ACTION_UP) {
-                        link[0].onTouchUp(widget);
-                        link[0].onClick(widget);
-                        isTouchInSpan = false;
-                    } else if (action == MotionEvent.ACTION_DOWN) {
-                        isTouchInSpan = true;
-                        link[0].onTouchDown(widget, event.getX(), event.getY());
-                        Selection.setSelection(buffer,
-                                buffer.getSpanStart(link[0]),
-                                buffer.getSpanEnd(link[0]));
-                    } else if (action == MotionEvent.ACTION_MOVE) {
-                        //link[0].onTouchMove(widget, event.getX(), event.getY());
-                        return super.onTouchEvent(widget, buffer, event);
-                    } else if (action == MotionEvent.ACTION_CANCEL) {
-                        isTouchInSpan = false;
-                        link[0].onTouchCancel(widget, event.getX(), event.getY());
-                        return super.onTouchEvent(widget, buffer, event);
-                    }
+                if (link.length > 0) {
+                    ImageTextSpan imageTextSpan = link[0];
+                    int spanStart = buffer.getSpanStart(imageTextSpan);
+                    int spanEnd = buffer.getSpanEnd(imageTextSpan);
+                    int showTextLength = imageTextSpan.getShowTextLength();
 
-                    return true;
+                    int top = layout.getLineTop(line);
+                    int bottom = layout.getLineTop(line + 1);
+                    float left = layout.getPrimaryHorizontal(spanStart);
+                    float right = layout.getPrimaryHorizontal(spanStart + showTextLength);
+
+                    if (imageTextSpan.isCanClick() && (x >= left && x <= right)   /*(off >= spanStart && off <= spanStart + showTextLength)*/) {
+                        if (action == MotionEvent.ACTION_UP) {
+                            imageTextSpan.onTouchUp(widget);
+                            imageTextSpan.onClick(widget);
+                            isTouchInSpan = false;
+                        } else if (action == MotionEvent.ACTION_DOWN) {
+                            isTouchInSpan = true;
+                            imageTextSpan.onTouchDown(widget, event.getX(), event.getY());
+                            Selection.setSelection(buffer,
+                                    spanStart,
+                                    spanEnd);
+                        } else if (action == MotionEvent.ACTION_MOVE) {
+                            //link[0].onTouchMove(widget, event.getX(), event.getY());
+                            return super.onTouchEvent(widget, buffer, event);
+                        } else if (action == MotionEvent.ACTION_CANCEL) {
+                            isTouchInSpan = false;
+                            imageTextSpan.onTouchCancel(widget, event.getX(), event.getY());
+                            return super.onTouchEvent(widget, buffer, event);
+                        }
+
+                        return true;
+                    } else {
+                        Selection.removeSelection(buffer);
+                    }
                 } else {
                     Selection.removeSelection(buffer);
                 }
