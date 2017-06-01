@@ -99,7 +99,7 @@ public class UIItemDialog extends UIIDialogImpl {
                 }
             }
 
-            textView.setTextColor(SkinHelper.getSkin().getThemeColor());
+            textView.setTextColor(SkinHelper.getSkin().getThemeSubColor());
 
             mItemContentLayout.addView(textView,
                     new ViewGroup.LayoutParams(-1,
