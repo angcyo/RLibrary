@@ -54,6 +54,12 @@ public class FPerException extends RuntimeException {
         }
     }
 
+    @Override
+    public String getMessage() {
+        //return super.getMessage();
+        return getDisplayMessage();
+    }
+
     public void setDisplayMessage(String displayMessage) {
         this.displayMessage = displayMessage;
     }
