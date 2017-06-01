@@ -103,7 +103,7 @@ public abstract class RSubscriber<T> extends Subscriber<T> {
      */
     @Deprecated
     public void onError(int code, String msg) {
-        L.w("call: onError([code, msg])-> " + code + " " + msg);
+        //L.w("call: onError([code, msg])-> " + code + " " + msg);
     }
 
     /**
@@ -111,14 +111,14 @@ public abstract class RSubscriber<T> extends Subscriber<T> {
      */
     @Deprecated
     public void onEnd() {
-        L.d("订阅结束->onEnd()");
+        //L.d("订阅结束->onEnd()");
     }
 
     public void onEnd(boolean isError, boolean isNoNetwork, Throwable e) {
-        L.d("订阅结束->onEnd() " + isError + " " + isNoNetwork + " " + e);
+        L.e("订阅结束-> isError:" + isError + " isNoNetwork:" + isNoNetwork + " Throwable:" + e);
     }
 
     public void onNoNetwork() {
-        L.w("call: onNoNetwork([])-> ");
+        //L.w("call: onNoNetwork([])-> ");
     }
 }
