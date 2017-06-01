@@ -6,6 +6,7 @@ import android.content.Context;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
+import android.graphics.drawable.Drawable;
 import android.util.AttributeSet;
 import android.view.MotionEvent;
 
@@ -55,6 +56,7 @@ public class DragPhotoView extends PhotoView {
             canFinish = false;
         }
     };
+    private boolean isLargeBitmap;
 
     public DragPhotoView(Context context) {
         this(context, null);
@@ -72,6 +74,12 @@ public class DragPhotoView extends PhotoView {
 
     @Override
     protected void onDraw(Canvas canvas) {
+        if (isLargeBitmap) {
+            setLayerType(LAYER_TYPE_SOFTWARE, mPaint);
+        } else {
+            setLayerType(LAYER_TYPE_HARDWARE, mPaint);
+        }
+
         //mPaint.setAlpha(mAlpha);
         //canvas.drawRect(0, 0, mWidth, mHeight, mPaint);
         canvas.translate(mTranslateX, mTranslateY);
@@ -80,6 +88,19 @@ public class DragPhotoView extends PhotoView {
             mExitListener.onMoveExitCancelTo(this, mWidth, mHeight, mTranslateX, mTranslateY);
         }
         super.onDraw(canvas);
+    }
+
+    @Override
+    public void setImageDrawable(Drawable drawable) {
+        super.setImageDrawable(drawable);
+        isLargeBitmap = false;
+        if (drawable != null) {
+            int width = drawable.getIntrinsicWidth();
+            int height = drawable.getIntrinsicHeight();
+            if (width > 2000 || height > 2000) {
+                isLargeBitmap = true;
+            }
+        }
     }
 
     @Override
@@ -106,6 +127,10 @@ public class DragPhotoView extends PhotoView {
 
                     break;
                 case MotionEvent.ACTION_MOVE:
+                    float moveY = event.getY();
+                    float moveX = event.getX();
+                    float dx = moveX - mDownX;
+                    float dy = moveY - mDownY;
 
                     //in viewpager
                     if (mTranslateY == 0 && mTranslateX != 0) {
@@ -118,7 +143,9 @@ public class DragPhotoView extends PhotoView {
                     }
 
                     //single finger drag  down
-                    if (mTranslateY >= 0 && event.getPointerCount() == 1) {
+                    if (Math.abs(dy) > Math.abs(dx) &&
+                            mTranslateY >= 0 &&
+                            event.getPointerCount() == 1) {
                         onActionMove(event);
 
                         //如果有上下位移 则不交给viewpager
