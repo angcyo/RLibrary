@@ -208,7 +208,6 @@ public class RApplication extends Application {
 
     @Override
     public void onLowMemory() {
-        super.onLowMemory();
         if (BuildConfig.DEBUG) {
             T_.show("请注意, 内存过低!");
         }
@@ -217,11 +216,11 @@ public class RApplication extends Application {
 //        if (Fresco.hasBeenInitialized()) {
 //            Fresco.getImagePipeline().clearMemoryCaches();
 //        }
+        super.onLowMemory();
     }
 
     @Override
     public void onTrimMemory(int level) {
-        super.onTrimMemory(level);
 //        if (BuildConfig.DEBUG) {
 //            T_.show("请求释放内存..." + level);
 //        }
@@ -230,5 +229,6 @@ public class RApplication extends Application {
 //        if (Fresco.hasBeenInitialized()) {
 //            Fresco.getImagePipeline().clearMemoryCaches();
 //        }
+        super.onTrimMemory(level);
     }
 }

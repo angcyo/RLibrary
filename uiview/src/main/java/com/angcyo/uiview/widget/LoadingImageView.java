@@ -5,6 +5,7 @@ import android.graphics.Canvas;
 import android.graphics.drawable.Drawable;
 import android.support.v7.widget.AppCompatImageView;
 import android.util.AttributeSet;
+import android.view.Choreographer;
 import android.view.View;
 
 import com.angcyo.uiview.R;
@@ -20,7 +21,7 @@ import com.angcyo.uiview.R;
  * 修改备注：
  * Version: 1.0.0
  */
-public class LoadingImageView extends AppCompatImageView {
+public class LoadingImageView extends AppCompatImageView implements Choreographer.FrameCallback {
 
     float degrees = 0;
     boolean isLoading = false;
@@ -32,6 +33,8 @@ public class LoadingImageView extends AppCompatImageView {
             postDelayed(loadRunnable, 40);//40 = 24 帧, 16 = 60 帧
         }
     };
+
+    Choreographer mChoreographer = Choreographer.getInstance();
 
     public LoadingImageView(Context context) {
         this(context, null);
@@ -59,6 +62,10 @@ public class LoadingImageView extends AppCompatImageView {
         }
 
         degrees += 10;
+
+        if (isLoading) {
+            mChoreographer.postFrameCallback(this);
+        }
     }
 
     @Override
@@ -86,12 +93,19 @@ public class LoadingImageView extends AppCompatImageView {
     }
 
     private void startLoad() {
-        post(loadRunnable);
+        //post(loadRunnable);
+        mChoreographer.postFrameCallback(this);
         isLoading = true;
     }
 
     private void endLoad() {
-        removeCallbacks(loadRunnable);
+        //removeCallbacks(loadRunnable);
+        mChoreographer.removeFrameCallback(this);
         isLoading = false;
+    }
+
+    @Override
+    public void doFrame(long frameTimeNanos) {
+        postInvalidate();
     }
 }
