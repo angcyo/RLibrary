@@ -17,7 +17,7 @@
     <!--内容文本最大显示多少行-->
     <integer name="content_max_line">3</integer>
     <!--内容最大显示长度-->
-    <integer name="content_show_length">20</integer>
+    <integer name="content_show_length">18</integer>
     <!--手机号码最大长度-->
     <integer name="phone_number_count">11</integer>
     <!--个性签名的最大字符数-->
