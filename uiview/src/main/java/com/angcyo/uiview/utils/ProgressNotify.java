@@ -74,6 +74,7 @@ public class ProgressNotify {
         if (clickActivity != null) {
             Intent intent = new Intent(mContext, clickActivity);
             intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+            //intent.setFlags(Intent.FLAG_ACTIVITY_TASK_ON_HOME);
             mBuilder.setContentIntent(PendingIntent.getActivity(mContext, requestCode, intent, PendingIntent.FLAG_UPDATE_CURRENT));// 该通知要启动的Intent
         }
 
