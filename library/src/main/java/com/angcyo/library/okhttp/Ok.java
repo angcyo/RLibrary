@@ -16,6 +16,8 @@ import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.Response;
 
+import static android.os.Build.UNKNOWN;
+
 /**
  * Copyright (C) 2016,深圳市红鸟网络科技股份有限公司 All rights reserved.
  * 项目名称：
@@ -75,40 +77,25 @@ public class Ok {
         }
 
         if (type == null || type == ImageType.UNKNOWN) {
-            Call call = getCall(url);
-            call.enqueue(new Callback() {
-                @Override
-                public void onFailure(Call call, IOException e) {
-                    imageTypeCache.put(url, ImageType.UNKNOWN);
-                    if (listener != null) {
-                        ThreadExecutor.instance().onMain(new Runnable() {
-                            @Override
-                            public void run() {
-                                if (listener != null) {
-                                    listener.onImageType(ImageType.UNKNOWN);
-                                }
-                            }
-                        });
+            File file = new File(url);
+            if (file.exists()) {
+                String imageType = ImageTypeUtil.getImageType(file);
+                typeCheckEnd(url, imageType, listener);
+            } else {
+                Call call = getCall(url);
+                call.enqueue(new Callback() {
+                    @Override
+                    public void onFailure(Call call, IOException e) {
+                        typeCheckEnd(url, UNKNOWN, listener);
                     }
-                }
 
-                @Override
-                public void onResponse(Call call, Response response) throws IOException {
-                    final String imageType = ImageTypeUtil.getImageType(response.body().byteStream());
-                    final ImageType imageType1 = ImageType.of(imageType);
-                    imageTypeCache.put(url, imageType1);
-                    if (listener != null) {
-                        ThreadExecutor.instance().onMain(new Runnable() {
-                            @Override
-                            public void run() {
-                                if (listener != null) {
-                                    listener.onImageType(imageType1);
-                                }
-                            }
-                        });
+                    @Override
+                    public void onResponse(Call call, Response response) throws IOException {
+                        final String imageType = ImageTypeUtil.getImageType(response.body().byteStream());
+                        typeCheckEnd(url, imageType, listener);
                     }
-                }
-            });
+                });
+            }
         } else {
             if (listener != null) {
                 listener.onImageType(type);
@@ -116,12 +103,27 @@ public class Ok {
         }
     }
 
+    private void typeCheckEnd(String url, String imageType, final OnImageTypeListener listener) {
+        final ImageType imageType1 = ImageType.of(imageType);
+        imageTypeCache.put(url, imageType1);
+        if (listener != null) {
+            ThreadExecutor.instance().onMain(new Runnable() {
+                @Override
+                public void run() {
+                    if (listener != null) {
+                        listener.onImageType(imageType1);
+                    }
+                }
+            });
+        }
+    }
+
     public enum ImageType {
         JPEG, GIF, PNG, BMP, UNKNOWN;
 
         public static ImageType of(String type) {
-            if (TextUtils.isEmpty(type)){
-                    return UNKNOWN;
+            if (TextUtils.isEmpty(type)) {
+                return UNKNOWN;
             }
             if ("JPEG".equalsIgnoreCase(type)) {
                 return JPEG;
