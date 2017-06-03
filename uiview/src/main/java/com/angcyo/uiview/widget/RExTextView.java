@@ -421,7 +421,7 @@ public class RExTextView extends RTextView {
          * 构造一个只用来显示文本的ImageSpan
          */
         public ImageTextSpan(Context context, float textSize, String showContent) {
-            this(context, textSize, -1, showContent);
+            this(context, textSize, getDefaultColor(), showContent);
         }
 
         public ImageTextSpan(Context context, float textSize, int textColor, String showContent) {
@@ -430,9 +430,7 @@ public class RExTextView extends RTextView {
             init(context);
 
             setCanClick(false);
-            if (textColor != -1) {
-                setTextColor(textColor);
-            }
+            setTextColor(textColor);
         }
 
         public ImageTextSpan(Context context, Drawable d, String showContent, String url) {
@@ -563,10 +561,17 @@ public class RExTextView extends RTextView {
 //                }
 
                 if (top != y) {
+                    canvas.save();
+//                    canvas.saveLayer(x, top, x + x, bottom, null, Canvas.ALL_SAVE_FLAG);
+//                    paint.setStyle(Paint.Style.FILL_AND_STROKE);
+//                    paint.setColor(Color.RED);
+//                    canvas.drawRect(x, top, x + x, bottom, paint);
+//                    paint.setColor(textColor);
                     canvas.drawText(string,
                             x + mImageSize + space,
                             textY,
                             paint);
+                    canvas.restore();
                 }
             }
         }

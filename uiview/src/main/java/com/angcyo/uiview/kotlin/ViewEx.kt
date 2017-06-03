@@ -1,0 +1,13 @@
+package com.angcyo.uiview.kotlin
+
+import android.view.View
+
+/**
+ * Kotlin View的扩展
+ * Created by angcyo on 2017-06-03.
+ */
+
+@Suppress("UNCHECKED_CAST")
+public fun <V : View> View.v(id: Int): V {
+    return this.findViewById(id) as V
+}

@@ -52,12 +52,21 @@ public class UIRecyclerUIView<H, T, F> extends UIContentView
     final protected void inflateContentLayout(RelativeLayout baseContentLayout, LayoutInflater inflater) {
         beforeInflateView(baseContentLayout);
 
-        mRefreshLayout = createRefreshLayout(baseContentLayout, inflater);
-        mRecyclerView = createRecyclerView(baseContentLayout, inflater);
+        createRecyclerRootView(baseContentLayout, inflater);
 
         afterInflateView(baseContentLayout);
 
         baseInitLayout();
+    }
+
+    /**
+     * 复写此方法, 重写根布局
+     */
+    protected void createRecyclerRootView(RelativeLayout baseContentLayout, LayoutInflater inflater) {
+        mRefreshLayout = new RefreshLayout(mActivity);
+        initRefreshLayout(mRefreshLayout, baseContentLayout);
+        mRecyclerView = new RRecyclerView(mActivity);
+        initRecyclerView(mRecyclerView, baseContentLayout);
     }
 
     /**
@@ -113,15 +122,6 @@ public class UIRecyclerUIView<H, T, F> extends UIContentView
 
     }
 
-    /**
-     * 创建列表并添加到父视图
-     */
-    protected RRecyclerView createRecyclerView(RelativeLayout baseContentLayout, LayoutInflater inflater) {
-        RRecyclerView recyclerView = new RRecyclerView(mActivity);
-        initRecyclerView(recyclerView, baseContentLayout);
-        return recyclerView;
-    }
-
     protected RRecyclerView initRecyclerView(RRecyclerView recyclerView, RelativeLayout baseContentLayout) {
         if (recyclerView == null) {
             return recyclerView;
@@ -137,12 +137,12 @@ public class UIRecyclerUIView<H, T, F> extends UIContentView
             mExBaseAdapter.setOnLoadMoreListener(this);
         }
 
-        if (mRefreshLayout == null) {
-            if (recyclerView.getParent() == null) {
+        if (recyclerView.getParent() == null) {
+            if (mRefreshLayout == null) {
                 baseContentLayout.addView(recyclerView, new ViewGroup.LayoutParams(-1, -1));
+            } else {
+                mRefreshLayout.addView(recyclerView, new ViewGroup.LayoutParams(-1, -1));
             }
-        } else {
-            mRefreshLayout.addView(recyclerView, new ViewGroup.LayoutParams(-1, -1));
         }
         return recyclerView;
     }
@@ -156,14 +156,6 @@ public class UIRecyclerUIView<H, T, F> extends UIContentView
         return null;
     }
 
-    /**
-     * 创建刷新控件, 并添加试图
-     */
-    protected RefreshLayout createRefreshLayout(RelativeLayout baseContentLayout, LayoutInflater inflater) {
-        RefreshLayout refreshLayout = new RefreshLayout(mActivity);
-        initRefreshLayout(refreshLayout, baseContentLayout);
-        return refreshLayout;
-    }
 
     protected RefreshLayout initRefreshLayout(RefreshLayout refreshLayout, RelativeLayout baseContentLayout) {
         if (refreshLayout == null) {

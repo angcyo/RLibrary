@@ -28,6 +28,7 @@ import com.angcyo.uiview.model.TitleBarPattern;
 import com.angcyo.uiview.recycler.RBaseViewHolder;
 import com.angcyo.uiview.resources.ResUtil;
 import com.angcyo.uiview.skin.SkinHelper;
+import com.angcyo.uiview.widget.RTextView;
 import com.angcyo.uiview.widget.RTitleCenterLayout;
 
 import java.util.ArrayList;
@@ -47,7 +48,7 @@ public class UITitleBarContainer extends FrameLayout {
     protected ViewGroup mCenterControlLayout;
     protected LinearLayout mRightControlLayout;
     protected ImageView mBackImageView;
-    protected TextView mTitleView;
+    protected RTextView mTitleView;
     protected View mLoadView;
 
     protected TitleBarPattern mTitleBarPattern;

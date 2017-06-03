@@ -518,7 +518,7 @@ public class RUtils {
 
     public static List<String> split(String string, String regex) {
         final ArrayList<String> list = new ArrayList<>();
-        if (!TextUtils.isEmpty(string)) {
+        if (!"null".equalsIgnoreCase(string) && !TextUtils.isEmpty(string)) {
             final String[] split = string.split(regex);
             for (String s : split) {
                 if (!TextUtils.isEmpty(s)) {

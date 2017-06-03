@@ -3,6 +3,7 @@ package com.angcyo.uiview.widget;
 import android.content.Context;
 import android.content.res.TypedArray;
 import android.graphics.Canvas;
+import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.Rect;
 import android.graphics.drawable.ColorDrawable;
@@ -43,7 +44,6 @@ public class RTextView extends AppCompatTextView {
     int leftWidth = 0;
     @ColorInt
     int leftColor;
-    int leftMargin = 0;
 
     boolean hasUnderline = false;
 
@@ -67,13 +67,13 @@ public class RTextView extends AppCompatTextView {
     public RTextView(Context context, AttributeSet attrs, int defStyleAttr) {
         super(context, attrs, defStyleAttr);
 
-        if (isInEditMode()) {
-            return;
-        }
-
         //绘制左边的提示竖线
         TypedArray typedArray = context.obtainStyledAttributes(attrs, R.styleable.RTextView);
-        leftColor = typedArray.getColor(R.styleable.RTextView_r_left_color, SkinHelper.getSkin().getThemeColor());
+        if (isInEditMode()) {
+            leftColor = Color.GREEN;
+        } else {
+            leftColor = typedArray.getColor(R.styleable.RTextView_r_left_color, SkinHelper.getSkin().getThemeColor());
+        }
         leftWidth = typedArray.getDimensionPixelOffset(R.styleable.RTextView_r_left_width, 0);
         hasUnderline = typedArray.getBoolean(R.styleable.RTextView_r_has_underline, false);
         mBackgroundDrawable = typedArray.getDrawable(R.styleable.RTextView_r_background);
@@ -84,8 +84,7 @@ public class RTextView extends AppCompatTextView {
         int color = typedArray.getColor(R.styleable.RTextView_r_left_text_color, getCurrentTextColor());
         mTextPaint.setTextColor(color);
 
-        mLeftOffset = typedArray.getDimensionPixelOffset(R.styleable.RTextView_r_left_text_offset,
-                getResources().getDimensionPixelOffset(R.dimen.base_ldpi));
+        mLeftOffset = typedArray.getDimensionPixelOffset(R.styleable.RTextView_r_left_text_offset, 0);
 
         String string = typedArray.getString(R.styleable.RTextView_r_left_text);
         setLeftString(string);
@@ -135,11 +134,6 @@ public class RTextView extends AppCompatTextView {
 
     @Override
     protected void onDraw(Canvas canvas) {
-        if (isInEditMode()) {
-            super.onDraw(canvas);
-            return;
-        }
-
         if (hasUnderline) {
             getPaint().setFlags(Paint.UNDERLINE_TEXT_FLAG);
             getPaint().setAntiAlias(true);
@@ -179,10 +173,6 @@ public class RTextView extends AppCompatTextView {
 
     @Override
     public void setText(CharSequence text, BufferType type) {
-        if (isInEditMode()) {
-            super.setText(text, type);
-            return;
-        }
         if (getTag() != null &&
                 getTag().toString().contains("%") &&
                 !"title".equalsIgnoreCase(getTag().toString()) /**当出现在TitleBar中, 会有这个标志*/ &&
@@ -234,7 +224,7 @@ public class RTextView extends AppCompatTextView {
 //                        offset = 4;/*兼容末尾是emoji表情*/
 //                    }
                     spanBuilder.setSpan(new RExTextView.ImageTextSpan(getContext(), getTextSize(),
-                                    getTextColors().getColorForState(new int[]{}, getTextColors().getDefaultColor()), more),
+                                    getCurrentTextColor(), more),
                             maxLength - offset, text.length(), Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
                 }
             }
@@ -344,8 +334,8 @@ public class RTextView extends AppCompatTextView {
             colorPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
         }
         colorPaint.setColor(leftColor);
-        leftColorRect.set(leftMargin, getPaddingTop(),
-                leftMargin + leftWidth, viewHeight - getPaddingBottom());
+        leftColorRect.set(mLeftOffset, getPaddingTop(),
+                mLeftOffset + leftWidth, viewHeight - getPaddingBottom());
     }
 
     public RTextView setLeftWidth(int leftWidth) {

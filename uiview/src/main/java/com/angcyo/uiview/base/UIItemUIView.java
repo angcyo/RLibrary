@@ -14,6 +14,7 @@ import com.angcyo.uiview.R;
 import com.angcyo.uiview.model.TitleBarPattern;
 import com.angcyo.uiview.recycler.RBaseViewHolder;
 import com.angcyo.uiview.recycler.RExItemDecoration;
+import com.angcyo.uiview.recycler.RRecyclerView;
 import com.angcyo.uiview.recycler.adapter.RExBaseAdapter;
 import com.angcyo.uiview.rsen.PlaceholderView;
 import com.angcyo.uiview.rsen.RefreshLayout;
@@ -118,17 +119,20 @@ public abstract class UIItemUIView<T extends Item> extends UIRecyclerUIView<Stri
         return mExBaseAdapter.isLast(position);
     }
 
+
     @Override
-    protected RefreshLayout createRefreshLayout(RelativeLayout baseContentLayout, LayoutInflater inflater) {
+    protected void createRecyclerRootView(RelativeLayout baseContentLayout, LayoutInflater inflater) {
         //为软键盘弹出提供支持
         mSoftInputLayout = new RSoftInputLayout(mActivity);
         registerLifecycler(mSoftInputLayout);//隐藏的时候, 不处理键盘事件
-        RefreshLayout refreshLayout = new RefreshLayout(mActivity);
-        refreshLayout.setRefreshDirection(RefreshLayout.TOP);
-        refreshLayout.addOnRefreshListener(this);
-        mSoftInputLayout.addView(refreshLayout, new ViewGroup.LayoutParams(-1, -1));
+        mRefreshLayout = new RefreshLayout(mActivity);
+        mRefreshLayout.setRefreshDirection(RefreshLayout.TOP);
+        mRefreshLayout.addOnRefreshListener(this);
+        mSoftInputLayout.addView(mRefreshLayout, new ViewGroup.LayoutParams(-1, -1));
         baseContentLayout.addView(mSoftInputLayout, new ViewGroup.LayoutParams(-1, -1));
-        return refreshLayout;
+
+        mRecyclerView = new RRecyclerView(mActivity);
+        initRecyclerView(mRecyclerView, baseContentLayout);
     }
 
     @Override

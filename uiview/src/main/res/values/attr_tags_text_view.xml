@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <declare-styleable name="TagsTextView">
+        <!--需要显示的tag文本, 多个使用','分割-->
+        <attr name="r_tags" format="string"/>
+        <!--tag 的margin属性-->
+        <attr name="r_tag_margin" format="dimension"/>
+        <!--tag之间竖直方向的间隙-->
+        <attr name="r_tag_space_v" format="dimension"/>
+        <!--tag之间水平方向的间隙-->
+        <attr name="r_tag_space_h" format="dimension"/>
+    </declare-styleable>
+</resources>

@@ -15,11 +15,15 @@ public class RFlowLayout extends LinearLayout {
     /**
      * The M all views.
      */
-    List<List<View>> mAllViews;//保存所有行的所有View
+    List<List<View>> mAllViews = new ArrayList<>();
+    ;//保存所有行的所有View
     /**
      * The M line height.
      */
-    List<Integer> mLineHeight;//保存每一行的行高
+    List<Integer> mLineHeight = new ArrayList<>();
+    ;//保存每一行的行高
+
+    List<View> lineViews = new ArrayList<>();
 
     /**
      * Instantiates a new Flow radio group.
@@ -56,10 +60,10 @@ public class RFlowLayout extends LinearLayout {
         int lineWidth = 0, lineHeight = 0;
         int childWidth = 0, childHeight = 0;
 
-        mAllViews = new ArrayList<>();
-        mLineHeight = new ArrayList<>();
+        mAllViews.clear();
+        mLineHeight.clear();
+        lineViews.clear();
 
-        List<View> lineViews = new ArrayList<>();
         int count = getChildCount();
         for (int i = 0; i < count; i++) {
             View child = getChildAt(i);
