@@ -10,7 +10,6 @@ import android.graphics.Color;
 import android.graphics.Rect;
 import android.os.Build;
 import android.os.Bundle;
-import android.support.v4.view.ViewCompat;
 import android.support.v4.widget.ViewDragHelper;
 import android.text.TextUtils;
 import android.util.AttributeSet;
@@ -28,7 +27,6 @@ import com.angcyo.uiview.model.ViewPattern;
 import com.angcyo.uiview.resources.AnimUtil;
 import com.angcyo.uiview.rsen.RGestureDetector;
 import com.angcyo.uiview.skin.ISkin;
-import com.angcyo.uiview.utils.UI;
 import com.angcyo.uiview.view.ILifecycle;
 import com.angcyo.uiview.view.IView;
 import com.angcyo.uiview.view.UIIViewImpl;
@@ -261,6 +259,7 @@ public class UILayoutImpl extends SwipeBackLayout implements ILayout<UIParam>, U
         mLayoutActivity = (UILayoutActivity) getContext();
         interruptSet = new HashSet<>();
         setTag(TAG);
+        setPadding(-1, 0, -1, 0);
     }
 
     @Override
