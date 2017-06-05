@@ -12,6 +12,7 @@ import android.util.AttributeSet;
 import android.util.TypedValue;
 import android.view.Gravity;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
 
@@ -108,6 +109,12 @@ public class ItemInfoLayout extends RelativeLayout {
         array.recycle();
 
         initLayout();
+
+        if (isInEditMode()) {
+            setItemText("一条Item测试数据");
+            setRightDrawableRes(R.drawable.base_next);
+            setRedDotMode(true);
+        }
     }
 
     @TargetApi(Build.VERSION_CODES.LOLLIPOP)
@@ -115,11 +122,19 @@ public class ItemInfoLayout extends RelativeLayout {
         super(context, attrs, defStyleAttr, defStyleRes);
     }
 
+    static void resize(View view, int size, int margin) {
+        ViewGroup.MarginLayoutParams layoutParams = (ViewGroup.MarginLayoutParams) view.getLayoutParams();
+        layoutParams.rightMargin = margin;
+        layoutParams.width = size;
+        layoutParams.height = size;
+        view.setLayoutParams(layoutParams);
+    }
+
     @Override
     protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
-        int mode = MeasureSpec.getMode(heightMeasureSpec);
+        int heightMode = MeasureSpec.getMode(heightMeasureSpec);
         super.onMeasure(widthMeasureSpec, heightMeasureSpec);
-        if (mode == MeasureSpec.AT_MOST || mode == MeasureSpec.UNSPECIFIED) {
+        if (heightMode == MeasureSpec.AT_MOST || heightMode == MeasureSpec.UNSPECIFIED) {
             setMeasuredDimension(getMeasuredWidth(),
                     getResources().getDimensionPixelOffset(R.dimen.default_button_height));
         }
@@ -293,7 +308,25 @@ public class ItemInfoLayout extends RelativeLayout {
     }
 
     public ItemInfoLayout setRedDotMode(boolean redDotMode) {
+        boolean oldMode = isRedDotMode;
+
         isRedDotMode = redDotMode;
+
+        if (mImageView != null) {
+            if (isRedDotMode) {
+                int offset = getResources().getDimensionPixelOffset(R.dimen.base_hdpi);
+                if (rightDrawableRes == -1) {
+                    resize(mImageView, offset, 0);
+                } else {
+                    resize(mImageView, offset, offset * 3);
+                }
+                mImageView.setBackgroundResource(R.drawable.base_red_circle_shape);
+            } else {
+                if (oldMode) {
+                    mImageView.setBackground(null);
+                }
+            }
+        }
         return this;
     }
 }
