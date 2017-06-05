@@ -1,5 +1,8 @@
 package com.angcyo.uiview.widget
 
+import android.animation.ObjectAnimator
+import android.animation.TypeEvaluator
+import android.animation.ValueAnimator
 import android.content.Context
 import android.graphics.Canvas
 import android.graphics.Color
@@ -11,7 +14,12 @@ import android.util.AttributeSet
 import android.view.MotionEvent
 import android.view.MotionEvent.*
 import android.view.View
+import android.view.animation.LinearInterpolator
+import com.angcyo.library.utils.L
 import com.angcyo.uiview.R
+import kotlin.properties.ReadOnlyProperty
+import kotlin.properties.ReadWriteProperty
+import kotlin.reflect.KProperty
 
 /**
  * Copyright (C) 2016,深圳市红鸟网络科技股份有限公司 All rights reserved.
@@ -36,20 +44,8 @@ class TouchMoveView : View {
     /**需要绘制显示的文本*/
     var mShowText: String? = null
     var mShowTextSize = 12f
-    var mTextColorNormal = Color.GRAY
-        set(value) {
-            field = value
-            if (!mSelected) {
-                mPaint.color = value
-            }
-        }
-    var mTextColorSelected = Color.BLACK
-        set(value) {
-            field = value
-            if (mSelected) {
-                mPaint.color = value
-            }
-        }
+    var mTextColorNormal by ColorSetDelegate()
+    var mTextColorSelected by ColorSetDelegate(true)
 
     /**图片文本之间的间隙*/
     var mTextSpace = 4f
@@ -72,65 +68,49 @@ class TouchMoveView : View {
                 return mPaint.fontMetrics.descent - mPaint.fontMetrics.ascent
             }
         }
-    var imageWidth = 0
-        get() {
-            if (mSelected) {
-                if (mDrawableSelected == null) {
-                    return 0
-                } else {
-                    return mDrawableSelected!!.intrinsicWidth
-                }
-            } else {
-                if (mDrawableNormal == null) {
-                    return 0
-                } else {
-                    return mDrawableNormal!!.intrinsicWidth
-                }
-            }
-        }
-    var imageHeight = 0
-        get() {
-            if (mSelected) {
-                if (mDrawableSelected == null) {
-                    return 0
-                } else {
-                    return mDrawableSelected!!.intrinsicHeight
-                }
-            } else {
-                if (mDrawableNormal == null) {
-                    return 0
-                } else {
-                    return mDrawableNormal!!.intrinsicHeight
-                }
-            }
-        }
+    val imageWidth by DrawableWidthDelegate()
+    val imageHeight by DrawableHeightDelegate()
 
     /**需要绘制的Drawable*/
-    var mDrawableNormal: Drawable? = null
-        set(value) {
-            value?.setBounds(0, 0, value.intrinsicWidth, value.intrinsicHeight)
-            field = value
-        }
-    var mDrawableSelected: Drawable? = null
-        set(value) {
-            value?.setBounds(0, 0, value.intrinsicWidth, value.intrinsicHeight)
-            field = value
-        }
+    var mDrawableNormal: Drawable? by DrawableDelegate()
+
+    var mDrawableSelected: Drawable? by DrawableDelegate()
+
+    var mSubDrawableNormal: Drawable? by DrawableDelegate()
+
+    var mSubDrawableSelected: Drawable? by DrawableDelegate()
 
     var drawDrawable: Drawable? = null
         get() {
             return if (mSelected) mDrawableSelected else mDrawableNormal
         }
+    var subDrawDrawable: Drawable? = null
+        get() {
+            return if (mSelected) mSubDrawableSelected else mSubDrawableNormal
+        }
 
     /**最大允许图片移动的四向的距离*/
     var mMaxMoveOffset = 4 * density
+    var mSubMaxMoveOffset = 6 * density
 
     /**是否是选中状态*/
     var mSelected = false
+        set(value) {
+            field = value
+            if (value) {
+                mPaint.color = mTextColorSelected
+            } else {
+                mPaint.color = mTextColorNormal
+            }
+            postInvalidate()
+        }
 
     /**用来控制图片偏移的距离*/
     var mDrawOffsetX = 0f
     var mDrawOffsetY = 0f
+
+    var mSubDrawOffsetX = 0f
+    var mSubDrawOffsetY = 0f
 
     constructor(context: Context) : super(context) {
         initView(context, null)
@@ -150,6 +130,9 @@ class TouchMoveView : View {
 
         mDrawableNormal = typedArray.getDrawable(R.styleable.TouchMoveView_r_image_normal)
         mDrawableSelected = typedArray.getDrawable(R.styleable.TouchMoveView_r_image_selected)
+
+        mSubDrawableNormal = typedArray.getDrawable(R.styleable.TouchMoveView_r_sub_image_normal)
+        mSubDrawableSelected = typedArray.getDrawable(R.styleable.TouchMoveView_r_sub_image_selected)
 
         mTextSpace = typedArray.getDimension(R.styleable.TouchMoveView_r_text_space, mTextSpace)
         mMaxMoveOffset = typedArray.getDimension(R.styleable.TouchMoveView_r_max_draw_offset, mMaxMoveOffset)
@@ -203,12 +186,38 @@ class TouchMoveView : View {
         }
 
     var lastDegrees: Double? = null
+    var animScale = 1f
+        set(value) {
+            field = value
+            //L.e("scale:$field")
+            postInvalidate()
+        }
+
+    val scaleAnimation: ValueAnimator by lazy {
+        ObjectAnimator.ofObject(TypeEvaluator<Float> { fraction, startValue, endValue -> startValue + fraction * (endValue - startValue) }, 0.6f, 1.0f)
+                .apply {
+                    addUpdateListener { animation -> animScale = animation.animatedValue as Float }
+                    duration = 300
+                    interpolator = LinearInterpolator()
+                }
+    }
+
     override fun onTouchEvent(event: MotionEvent): Boolean {
         super.onTouchEvent(event)
+        val eventX = event.x
+        val eventY = event.y
+
         when (MotionEventCompat.getActionMasked(event)) {
-            ACTION_DOWN, ACTION_MOVE -> {
-                downX = event.x
-                downY = event.y
+            ACTION_DOWN -> {
+                scaleAnimation.cancel()
+
+                if (!mSelected) {
+                    scaleAnimation.start()
+                }
+            }
+            ACTION_MOVE -> {
+                downX = eventX
+                downY = eventY
 
                 val dx = downX - imageCenterX
                 val dy = downY - imageCenterY
@@ -230,21 +239,22 @@ class TouchMoveView : View {
                     mDrawOffsetX = (mMaxMoveOffset * Math.cos(atan)).toFloat()
                     mDrawOffsetY = (mMaxMoveOffset * Math.sin(atan)).toFloat()
 
+                    mSubDrawOffsetX = (mSubMaxMoveOffset * Math.cos(atan)).toFloat()
+                    mSubDrawOffsetY = (mSubMaxMoveOffset * Math.sin(atan)).toFloat()
+
                     //L.e("距离X:$dx  距离Y:$dy  弧度:$atan  角度:$degrees cos:${Math.cos(atan)} x:$mDrawOffsetX  y:$mDrawOffsetY max:$mMaxMoveOffset")
 
                     postInvalidate()
                 }
             }
-            ACTION_CANCEL, ACTION_UP -> {
-                downX = 0f
-                downY = 0f
-                mDrawOffsetX = 0f
-                mDrawOffsetY = 0f
-
-                lastDegrees = null
-
-                postInvalidate()
-
+            ACTION_UP -> {
+                onTouchUp()
+                if (eventX > 0 && eventX < measuredWidth &&
+                        eventY > 0 && eventY < measuredHeight) {
+                    if (parent is TouchMoveGroupLayout) {
+                        (parent as TouchMoveGroupLayout).updateSelector(this)
+                    }
+                }
 //                for (i in 0..720) {
 //                    val radians = Math.toRadians(i.toDouble())
 //                    L.e("角度:$i 弧度:$radians cos:${Math.cos(radians)} sin:${Math.sin(radians)}")
@@ -254,20 +264,50 @@ class TouchMoveView : View {
 //                    L.e("弧度:$i cos:${Math.cos()} sin:${Math.sin()}")
 //                }
             }
+            ACTION_CANCEL -> {
+                onTouchUp()
+            }
         }
 
-        return false
+        return true
+    }
+
+    private fun onTouchUp() {
+        downX = 0f
+        downY = 0f
+        mDrawOffsetX = 0f
+        mDrawOffsetY = 0f
+        mSubDrawOffsetX = 0f
+        mSubDrawOffsetY = 0f
+
+        lastDegrees = null
+
+        postInvalidate()
     }
 
     override fun onDraw(canvas: Canvas) {
+        canvas.save()
+
         //绘制图片
         if (drawDrawable != null) {
+            canvas.translate((measuredWidth / 2).toFloat(), measuredHeight / 2 - subHeight / 2 + imageHeight / 2)
+            canvas.scale(animScale, animScale)
+
             canvas.save()
-            canvas.translate(measuredWidth / 2 - imageWidth / 2 + mDrawOffsetX,
-                    measuredHeight / 2 - subHeight / 2 + mDrawOffsetY)
+            canvas.translate(-imageWidth / 2 + mDrawOffsetX,
+                    -imageHeight / 2 + mDrawOffsetY)
             drawDrawable!!.draw(canvas)
             canvas.restore()
+
+            if (subDrawDrawable != null) {
+                canvas.save()
+                canvas.translate(-imageWidth / 2 + mSubDrawOffsetX,
+                        -imageHeight / 2 + mSubDrawOffsetY)
+                subDrawDrawable!!.draw(canvas)
+                canvas.restore()
+            }
         }
+        canvas.restore()
 
         //绘制文本
         if (!mShowText.isNullOrEmpty()) {
@@ -275,6 +315,79 @@ class TouchMoveView : View {
                     (measuredWidth / 2 - textWidth / 2).toFloat(),
                     measuredHeight / 2 + subHeight / 2 - mPaint.descent(),
                     mPaint)
+        }
+    }
+}
+
+private class DrawableDelegate : ReadWriteProperty<TouchMoveView, Drawable?> {
+    private var value: Drawable? = null
+
+    override fun getValue(thisRef: TouchMoveView, property: KProperty<*>): Drawable? {
+        return value
+    }
+
+    override fun setValue(thisRef: TouchMoveView, property: KProperty<*>, value: Drawable?) {
+        this.value = value
+        value?.setBounds(0, 0, value.intrinsicWidth, value.intrinsicHeight)
+    }
+}
+
+private class DrawableWidthDelegate : ReadOnlyProperty<TouchMoveView, Int> {
+
+    override fun getValue(thisRef: TouchMoveView, property: KProperty<*>): Int {
+        if (thisRef.mSelected) {
+            if (thisRef.mDrawableSelected == null) {
+                return 0
+            } else {
+                return thisRef.mDrawableSelected!!.intrinsicWidth
+            }
+        } else {
+            if (thisRef.mDrawableNormal == null) {
+                return 0
+            } else {
+                return thisRef.mDrawableNormal!!.intrinsicWidth
+            }
+        }
+    }
+}
+
+private class DrawableHeightDelegate : ReadOnlyProperty<TouchMoveView, Int> {
+
+    override fun getValue(thisRef: TouchMoveView, property: KProperty<*>): Int {
+        if (thisRef.mSelected) {
+            if (thisRef.mDrawableSelected == null) {
+                return 0
+            } else {
+                return thisRef.mDrawableSelected!!.intrinsicHeight
+            }
+        } else {
+            if (thisRef.mDrawableNormal == null) {
+                return 0
+            } else {
+                return thisRef.mDrawableNormal!!.intrinsicHeight
+            }
+        }
+    }
+}
+
+private class ColorSetDelegate(var isSelectorColor: Boolean = false) : ReadWriteProperty<TouchMoveView, Int> {
+    private var value: Int? = null
+
+    init {
+        if (isSelectorColor) {
+            value = Color.parseColor("#3DB8FF")
+        } else {
+            value = Color.GRAY
+        }
+    }
+
+    override fun getValue(thisRef: TouchMoveView, property: KProperty<*>): Int {
+        return value!!
+    }
+
+    override fun setValue(thisRef: TouchMoveView, property: KProperty<*>, value: Int) {
+        if (isSelectorColor == thisRef.mSelected) {
+            thisRef.mPaint.color = value
         }
     }
 }

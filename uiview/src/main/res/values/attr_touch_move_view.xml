@@ -12,7 +12,15 @@
         <attr name="r_text_color_selected" format="color"/>
         <!--正常情况下的图片-->
         <attr name="r_image_normal" format="reference"/>
+        <!--内部正常情况下的图片-->
+        <attr name="r_sub_image_normal" format="reference"/>
         <!--选中情况下的图片-->
         <attr name="r_image_selected" format="reference"/>
+        <attr name="r_sub_image_selected" format="reference"/>
+    </declare-styleable>
+
+    <declare-styleable name="TouchMoveGroupLayout">
+        <!--默认选中第几页-->
+        <attr name="r_default_position" format="integer"/>
     </declare-styleable>
 </resources>
