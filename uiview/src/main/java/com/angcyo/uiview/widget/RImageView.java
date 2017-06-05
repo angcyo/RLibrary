@@ -287,4 +287,15 @@ public class RImageView extends AppCompatImageView {
         super.setImageDrawable(td);
         td.startTransition(300);
     }
+
+    public Drawable copyDrawable() {
+        Drawable result = null, drawable = getDrawable();
+        if (drawable != null) {
+            Drawable.ConstantState constantState = drawable.mutate().getConstantState();
+            if (constantState != null) {
+                result = constantState.newDrawable();
+            }
+        }
+        return result;
+    }
 }
