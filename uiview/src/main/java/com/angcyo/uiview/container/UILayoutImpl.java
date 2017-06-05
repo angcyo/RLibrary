@@ -259,7 +259,7 @@ public class UILayoutImpl extends SwipeBackLayout implements ILayout<UIParam>, U
         mLayoutActivity = (UILayoutActivity) getContext();
         interruptSet = new HashSet<>();
         setTag(TAG);
-        setPadding(-1, 0, -1, 0);
+        //setPadding(-2, 0, -2, 0);
     }
 
     @Override
@@ -931,8 +931,8 @@ public class UILayoutImpl extends SwipeBackLayout implements ILayout<UIParam>, U
 
         //startViewPatternAnim(newViewPattern, oldViewPattern, false, true);
         //startViewPatternAnim(newViewPattern, oldViewPattern, true, false);
-        bottomViewFinish(oldViewPattern, newViewPattern, param);//先执行Bottom
         topViewStart(newViewPattern, param);//后执行Top
+        bottomViewFinish(oldViewPattern, newViewPattern, param);//先执行Bottom
 //        } else {
 //            for (ViewPattern viewPattern : mAttachViews) {
 //                viewPattern.mView.setVisibility(INVISIBLE);
@@ -1502,6 +1502,10 @@ public class UILayoutImpl extends SwipeBackLayout implements ILayout<UIParam>, U
             }
         }
         super.onLayout(changed, left, top, right, bottom);
+//        for (int i = 0; i < getChildCount(); i++) {
+//            View childAt = getChildAt(i);
+//            childAt.layout(0, 0, getMeasuredWidth(), getMeasuredHeight());
+//        }
         if (isWantSwipeBack /*&& !requestLayout*/) {
             if (getChildCount() > 0) {
                 View childAt = getChildAt(getChildCount() - 1);
@@ -1516,6 +1520,12 @@ public class UILayoutImpl extends SwipeBackLayout implements ILayout<UIParam>, U
 
     @Override
     protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
+//        int widthSize = MeasureSpec.getSize(widthMeasureSpec);
+        //int widthMode = MeasureSpec.getMode(widthMeasureSpec);
+        //int heightSize = MeasureSpec.getSize(heightMeasureSpec);
+        //int heightMode = MeasureSpec.getMode(heightMeasureSpec);
+
+//        widthMeasureSpec = MeasureSpec.makeMeasureSpec(widthSize + 100, MeasureSpec.EXACTLY);
         super.onMeasure(widthMeasureSpec, heightMeasureSpec);
     }
 

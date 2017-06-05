@@ -13,6 +13,7 @@ import java.util.List;
  *
  * @author Dounray-Android01
  */
+@Deprecated
 public class XCFlowLayout extends ViewGroup {
 
     //存储所有子View
