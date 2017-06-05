@@ -48,6 +48,38 @@ public class RxFingerPrinter {
         this.context = context;
     }
 
+    /**
+     * 判断指纹是否可用, 1:有指纹模块, 2:录入了指纹
+     */
+    public static boolean isFingerAvailable(Context context) {
+        if (Build.VERSION.SDK_INT < 23) {
+            return false;
+        }
+
+        FingerprintManager manager = (FingerprintManager) context.getSystemService(Context.FINGERPRINT_SERVICE);
+        KeyguardManager mKeyManager = (KeyguardManager) context.getSystemService(Context.KEYGUARD_SERVICE);
+
+        //权限检查
+        if (ActivityCompat.checkSelfPermission(context, Manifest.permission.USE_FINGERPRINT)
+                != PackageManager.PERMISSION_GRANTED) {
+            return false;
+        }
+        //判断硬件是否支持指纹识别
+        if (!manager.isHardwareDetected()) {
+            return false;
+        }
+        //判断 是否开启锁屏密码
+        if (!mKeyManager.isKeyguardSecure()) {
+            return false;
+        }
+        //判断是否有指纹录入
+        if (!manager.hasEnrolledFingerprints()) {
+            return false;
+        }
+
+        return true;
+    }
+
     public PublishSubject<Boolean> begin() {
 
         if (publishSubject == null) {
