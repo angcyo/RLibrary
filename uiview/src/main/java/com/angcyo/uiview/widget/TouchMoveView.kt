@@ -15,7 +15,6 @@ import android.view.MotionEvent
 import android.view.MotionEvent.*
 import android.view.View
 import android.view.animation.LinearInterpolator
-import com.angcyo.library.utils.L
 import com.angcyo.uiview.R
 import kotlin.properties.ReadOnlyProperty
 import kotlin.properties.ReadWriteProperty
@@ -44,6 +43,10 @@ class TouchMoveView : View {
     /**需要绘制显示的文本*/
     var mShowText: String? = null
     var mShowTextSize = 12f
+        set(value) {
+            field = value
+            mPaint.textSize = value
+        }
     var mTextColorNormal by ColorSetDelegate()
     var mTextColorSelected by ColorSetDelegate(true)
 
