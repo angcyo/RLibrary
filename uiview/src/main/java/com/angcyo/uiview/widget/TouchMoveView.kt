@@ -126,7 +126,7 @@ class TouchMoveView : View {
     fun initView(context: Context, attr: AttributeSet?) {
         val typedArray = context.obtainStyledAttributes(attr, R.styleable.TouchMoveView)
         mShowText = typedArray.getString(R.styleable.TouchMoveView_r_show_text)
-        mShowTextSize = typedArray.getDimension(R.styleable.TouchMoveView_r_show_text_size, mShowTextSize)
+        mShowTextSize = typedArray.getDimension(R.styleable.TouchMoveView_r_show_text_size, mShowTextSize * scaledDensity)
 
         mTextColorNormal = typedArray.getColor(R.styleable.TouchMoveView_r_text_color_normal, mTextColorNormal)
         mTextColorSelected = typedArray.getColor(R.styleable.TouchMoveView_r_text_color_selected, mTextColorSelected)
@@ -200,7 +200,7 @@ class TouchMoveView : View {
         ObjectAnimator.ofObject(TypeEvaluator<Float> { fraction, startValue, endValue -> startValue + fraction * (endValue - startValue) }, 0.6f, 1.0f)
                 .apply {
                     addUpdateListener { animation -> animScale = animation.animatedValue as Float }
-                    duration = 300
+                    duration = 200
                     interpolator = LinearInterpolator()
                 }
     }
