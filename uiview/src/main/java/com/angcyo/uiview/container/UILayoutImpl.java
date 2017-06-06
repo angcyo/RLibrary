@@ -1524,10 +1524,33 @@ public class UILayoutImpl extends SwipeBackLayout implements ILayout<UIParam>, U
 
     @Override
     protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
+        //of java
 //        int widthSize = MeasureSpec.getSize(widthMeasureSpec);
         //int widthMode = MeasureSpec.getMode(widthMeasureSpec);
         //int heightSize = MeasureSpec.getSize(heightMeasureSpec);
         //int heightMode = MeasureSpec.getMode(heightMeasureSpec);
+
+        //of kotlin
+//        var widthSize = MeasureSpec.getSize(widthMeasureSpec)
+//        val widthMode = MeasureSpec.getMode(widthMeasureSpec)
+//        var heightSize = MeasureSpec.getSize(heightMeasureSpec)
+//        val heightMode = MeasureSpec.getMode(heightMeasureSpec)
+//
+//        var newWidthSpec = widthMeasureSpec
+//        var newHeightSpec = heightMeasureSpec
+//
+//        if (widthMode == MeasureSpec.AT_MOST) {
+//            widthSize = (steps.size * stepWidth).toInt()
+//            newWidthSpec = MeasureSpec.makeMeasureSpec(widthSize, MeasureSpec.EXACTLY)
+//        }
+//
+//        if (heightMode == MeasureSpec.AT_MOST) {
+//            heightSize = (textHeight * 2 + stepHeight).toInt()
+//            newHeightSpec = MeasureSpec.makeMeasureSpec(heightSize, MeasureSpec.EXACTLY)
+//        }
+//
+//        super.onMeasure(newWidthSpec, newHeightSpec)
+
 
 //        widthMeasureSpec = MeasureSpec.makeMeasureSpec(widthSize + 100, MeasureSpec.EXACTLY);
         super.onMeasure(widthMeasureSpec, heightMeasureSpec);

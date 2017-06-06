@@ -11,3 +11,10 @@ import android.view.View
 public fun <V : View> View.v(id: Int): V {
     return this.findViewById(id) as V
 }
+
+public val View.scaledDensity: Float get() {
+    return resources.displayMetrics.scaledDensity
+}
+public val View.density: Float get() {
+    return resources.displayMetrics.density
+}
