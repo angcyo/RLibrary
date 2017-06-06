@@ -34,7 +34,7 @@ public class LoadingImageView extends AppCompatImageView implements Choreographe
         }
     };
 
-    Choreographer mChoreographer = Choreographer.getInstance();
+    static Choreographer mChoreographer = Choreographer.getInstance();
 
     public LoadingImageView(Context context) {
         this(context, null);
