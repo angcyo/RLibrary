@@ -212,7 +212,7 @@ class TouchMoveView : View {
 
         when (MotionEventCompat.getActionMasked(event)) {
             ACTION_DOWN -> {
-                scaleAnimation.cancel()
+                //scaleAnimation.cancel()
 
                 if (!mSelected) {
                     scaleAnimation.start()
@@ -392,5 +392,6 @@ private class ColorSetDelegate(var isSelectorColor: Boolean = false) : ReadWrite
         if (isSelectorColor == thisRef.mSelected) {
             thisRef.mPaint.color = value
         }
+        this.value = value
     }
 }

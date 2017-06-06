@@ -256,7 +256,9 @@ public class UILayoutImpl extends SwipeBackLayout implements ILayout<UIParam>, U
     }
 
     private void initLayout() {
-        mLayoutActivity = (UILayoutActivity) getContext();
+        if (!isInEditMode()) {
+            mLayoutActivity = (UILayoutActivity) getContext();
+        }
         interruptSet = new HashSet<>();
         setTag(TAG);
         //setPadding(-2, 0, -2, 0);
@@ -265,7 +267,9 @@ public class UILayoutImpl extends SwipeBackLayout implements ILayout<UIParam>, U
     @Override
     protected void onAttachedToWindow() {
         super.onAttachedToWindow();
-        mLayoutActivity.getApplication().registerActivityLifecycleCallbacks(mCallbacks);
+        if (!isInEditMode()) {
+            mLayoutActivity.getApplication().registerActivityLifecycleCallbacks(mCallbacks);
+        }
         setFocusable(true);
         setFocusableInTouchMode(true);
         post(new Runnable() {

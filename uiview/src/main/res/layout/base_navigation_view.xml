@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <com.angcyo.uiview.widget.TouchMoveGroupLayout
+        android:id="@+id/navigation_bar_wrapper"
+        android:layout_width="match_parent"
+        android:layout_height="50dp"
+        android:layout_alignParentBottom="true"/>
+
+    <com.angcyo.uiview.container.UILayoutImpl
+        android:id="@+id/main_layout_imp"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_above="@id/navigation_bar_wrapper"
+        tools:background="@color/base_chat_bg_color"/>
+
+    <View
+        android:id="@+id/shadow_view"
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/base_toast_shadow_height"
+        android:layout_above="@id/navigation_bar_wrapper"
+        android:background="@drawable/base_shadow_shape_top"/>
+
+</RelativeLayout>

@@ -42,7 +42,14 @@ class TouchMoveGroupLayout(context: Context, attributeSet: AttributeSet? = null)
 
     override fun onAttachedToWindow() {
         super.onAttachedToWindow()
-        updateSelector(getChildAt(selectorPosition) as TouchMoveView)
+        updateSelectorStyle()
+    }
+
+    /**更新样式*/
+    fun updateSelectorStyle() {
+        if (childCount > selectorPosition) {
+            updateSelector(getChildAt(selectorPosition) as TouchMoveView)
+        }
     }
 
     /**选中targetView*/
@@ -70,5 +77,13 @@ class TouchMoveGroupLayout(context: Context, attributeSet: AttributeSet? = null)
     interface OnSelectorPositionListener {
         fun onSelectorPosition(targetView: TouchMoveView, position: Int)
         fun onRepeatSelectorPosition(targetView: TouchMoveView, position: Int)
+    }
+
+    override fun generateDefaultLayoutParams(): LayoutParams {
+        val params = super.generateDefaultLayoutParams()
+        params.width = 0
+        params.height = LinearLayout.LayoutParams.MATCH_PARENT
+        params.weight = 1f
+        return params
     }
 }
