@@ -6,6 +6,8 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
+import android.content.res.Configuration;
+import android.content.res.Resources;
 import android.graphics.Point;
 import android.net.Uri;
 import android.os.Build;
@@ -17,6 +19,7 @@ import android.util.DisplayMetrics;
 import android.view.WindowManager;
 
 import com.angcyo.library.utils.L;
+import com.angcyo.uiview.RApplication;
 import com.angcyo.uiview.widget.RExTextView;
 
 import java.io.File;
@@ -26,6 +29,7 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 import java.util.Random;
 import java.util.regex.Matcher;
@@ -619,6 +623,22 @@ public class RUtils {
             return true;
         }
         return data.size() - 1 == position;
+    }
+
+    public static String getLang() {
+        Resources resources = RApplication.getApp().getResources();
+        Configuration config = resources.getConfiguration();
+        // 应用用户选择语言
+        String language = config.locale.getLanguage();
+        return language;
+    }
+
+    public static void changeLang(Locale locale) {
+        Resources resources = RApplication.getApp().getResources();
+        DisplayMetrics dm = resources.getDisplayMetrics();
+        Configuration config = resources.getConfiguration();
+        config.locale = locale;
+        resources.updateConfiguration(config, dm);
     }
 
     /**
