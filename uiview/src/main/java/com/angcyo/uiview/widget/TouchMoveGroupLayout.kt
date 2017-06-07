@@ -64,6 +64,9 @@ class TouchMoveGroupLayout(context: Context, attributeSet: AttributeSet? = null)
                 childAt.mSelected = childAt == targetView
 
                 val newState = childAt.mSelected
+                if (newState) {
+                    selectorPosition = i
+                }
                 if (newState && !oldState) {
                     //L.e("selected : $i")
                     listener?.onSelectorPosition(childAt, i)
@@ -71,6 +74,14 @@ class TouchMoveGroupLayout(context: Context, attributeSet: AttributeSet? = null)
                     listener?.onRepeatSelectorPosition(childAt, i)
                 }
             }
+        }
+
+        (0..childCount).map {
+            val childAt: TouchMoveView? = getChildAt(it) as TouchMoveView?
+
+            if (it < selectorPosition) childAt?.mStartSubDrawOffsetRatioX = 0.3f
+            if (it > selectorPosition) childAt?.mStartSubDrawOffsetRatioX = -0.3f
+            if (it == selectorPosition) childAt?.mStartSubDrawOffsetRatioX = 0F
         }
     }
 
