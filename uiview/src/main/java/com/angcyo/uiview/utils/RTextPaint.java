@@ -55,7 +55,7 @@ public class RTextPaint {
 //        int height = paint.getFontMetricsInt(null);
         //double height = Math.ceil(fontMetricsInt.descent - fontMetricsInt.ascent);//+ 2;
 //        return height;
-        return -paint.ascent();
+        return paint.descent() - paint.ascent();
     }
 
     public float getTextHeight() {

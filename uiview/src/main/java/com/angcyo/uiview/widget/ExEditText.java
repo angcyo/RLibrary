@@ -4,6 +4,7 @@ import android.content.Context;
 import android.content.res.TypedArray;
 import android.graphics.Canvas;
 import android.graphics.Color;
+import android.graphics.Paint;
 import android.graphics.Rect;
 import android.graphics.drawable.Drawable;
 import android.support.design.widget.TextInputLayout;
@@ -37,6 +38,7 @@ import com.angcyo.library.utils.Anim;
 import com.angcyo.library.utils.L;
 import com.angcyo.uiview.R;
 import com.angcyo.uiview.RApplication;
+import com.angcyo.uiview.skin.SkinHelper;
 import com.angcyo.uiview.utils.RTextPaint;
 
 import java.util.ArrayList;
@@ -156,6 +158,17 @@ public class ExEditText extends AppCompatEditText {
         return (scrollY > 0) || (scrollY < scrollDifference - 1);
     }
 
+    /**
+     * 判断string是否是手机号码
+     */
+    public static boolean isPhone(String string) {
+        if (TextUtils.isEmpty(string)) {
+            return false;
+        }
+        final String phone = string.trim();
+        return !TextUtils.isEmpty(phone) && phone.matches("^1[3-8]\\d{9}$");
+    }
+
     private void initView(Context context, AttributeSet attrs) {
         mPaddingLeft = getPaddingLeft();
 
@@ -178,6 +191,30 @@ public class ExEditText extends AppCompatEditText {
 
     @Override
     protected void onDraw(Canvas canvas) {
+        canvas.drawColor(Color.GRAY);
+        Paint paint = new Paint(Paint.ANTI_ALIAS_FLAG);
+        paint.setColor(Color.parseColor("#40876111"));
+        canvas.drawRect(getPaddingLeft(), 0, getMeasuredWidth() - getPaddingRight(), getPaddingTop(), paint);
+        canvas.drawRect(getPaddingLeft(), getMeasuredHeight() - getPaddingBottom(), getMeasuredWidth() - getPaddingRight(), getMeasuredHeight(), paint);
+
+        paint.setColor(Color.GREEN);
+        canvas.drawRect(getPaddingLeft(), getPaddingTop(), getMeasuredWidth() - getPaddingRight(), getMeasuredHeight() - getPaddingBottom(), paint);
+
+        paint.setColor(Color.BLUE);
+        final TextPaint textPaint = getPaint();
+        float height = textPaint.descent() - textPaint.ascent();
+        canvas.drawRect(getPaddingLeft(), getMeasuredHeight() / 2 - height / 2, getMeasuredWidth() - getPaddingRight(),
+                getMeasuredHeight() / 2 + height / 2, paint);
+
+        paint.setColor(Color.RED);
+        canvas.drawRect(getPaddingLeft(), getMeasuredHeight() / 2 - 1, getMeasuredWidth() - getPaddingRight(),
+                getMeasuredHeight() / 2 + 1, paint);
+
+//        int lineHeight = getLayout().getLineDescent(0) - getLayout().getLineAscent(0);
+//        int top = getMeasuredHeight() / 2 - lineHeight / 2;
+//        canvas.drawRect(getPaddingLeft(), top, getMeasuredWidth() - getPaddingRight(),
+//                getMeasuredHeight() / 2 + lineHeight / 2, paint);
+
         super.onDraw(canvas);
 
         if (!TextUtils.isEmpty(mLeftString)) {
@@ -196,16 +233,54 @@ public class ExEditText extends AppCompatEditText {
             if (isInputTipPattern()) {
                 //只处理了竖直居中的情况
                 canvas.save();
-                final TextPaint textPaint = getPaint();
-                textPaint.setColor(Color.GRAY);
+                //final TextPaint textPaint = getPaint();
+                textPaint.setColor(SkinHelper.getTranColor(getCurrentTextColor(), 0x40));
+
+                int lineHeight = getLayout().getLineDescent(0) - getLayout().getLineAscent(0);
+                int top = getMeasuredHeight() / 2 - lineHeight / 2;
+                int bottom = getMeasuredHeight() / 2 + lineHeight / 2;
+
                 //只绘制末尾的文本区域
-                canvas.clipRect(textPaint.measureText(String.valueOf(getText()), 0, getText().length()) + getPaddingLeft(),
+                canvas.clipRect(textPaint.measureText(String.valueOf(getText()), 0, getText().length()) + getInputTipDrawLeft(),
                         0, getMeasuredWidth(), getMeasuredHeight());
-                canvas.drawText(mInputTipText, getPaddingLeft(),
-                        getMeasuredHeight() / 2 - textPaint.descent() / 2 - textPaint.ascent() / 2, textPaint);
+//                canvas.drawText(mInputTipText, getInputTipDrawLeft(),
+//                        getPaddingTop()
+//                        /*getMeasuredHeight() / 2 +
+//                                (textPaint.descent() - textPaint.ascent()) / 2 -
+//                                textPaint.descent() - getLayout().getTopPadding()*/,
+//                        textPaint);
+//                canvas.drawText(mInputTipText, getInputTipDrawLeft(),
+//                        getPaddingTop() + getLayout().getLineBaseline(0)
+//                        /*getMeasuredHeight() / 2 +
+//                                (textPaint.descent() - textPaint.ascent()) / 2 -
+//                                textPaint.descent() - getLayout().getTopPadding()*/,
+//                        textPaint);
+//                canvas.drawText(mInputTipText, getInputTipDrawLeft(),
+//                        getPaddingTop() + getLayout().getLineTop(1)
+//                        /*getMeasuredHeight() / 2 +
+//                                (textPaint.descent() - textPaint.ascent()) / 2 -
+//                                textPaint.descent() - getLayout().getTopPadding()*/,
+//                        textPaint);
+                canvas.drawText(mInputTipText, getInputTipDrawLeft(),
+                        bottom - textPaint.descent()
+                        /*getMeasuredHeight() / 2 +
+                                (textPaint.descent() - textPaint.ascent()) / 2 -
+                                textPaint.descent() - getLayout().getTopPadding()*/,
+                        textPaint);
+
                 canvas.restore();
             }
         }
+    }
+
+    private int getInputTipDrawLeft() {
+        int left = getPaddingLeft();
+        Drawable[] drawables = getCompoundDrawables();
+        if (drawables[0] != null) {
+            left += drawables[0].getIntrinsicWidth();
+            left += getCompoundDrawablePadding();
+        }
+        return left;
     }
 
     private boolean isCenterVertical() {
@@ -506,8 +581,7 @@ public class ExEditText extends AppCompatEditText {
      * 判断是否是手机号码
      */
     public boolean isPhone() {
-        final String phone = string().trim();
-        return !TextUtils.isEmpty(phone) && phone.matches("^1[3-8]\\d{9}$");
+        return isPhone(string());
     }
 
     /**
