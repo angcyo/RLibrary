@@ -235,7 +235,7 @@ public class UILayoutImpl extends SwipeBackLayout implements ILayout<UIParam>, U
             return false;
         }
 
-        if (mAttachViews.size() > 1) {
+        if (getAttachViewSize() > 1) {
             if (/*!mLastShowViewPattern.mIView.isDialog()//最前的不是对话框
                     &&*/ mLastShowViewPattern.mIView.canTryCaptureView()//激活滑动关闭
                     && mLastShowViewPattern.mView == child) {
@@ -819,10 +819,10 @@ public class UILayoutImpl extends SwipeBackLayout implements ILayout<UIParam>, U
         if (isBackPress) {
             return false;
         }
-        if (mAttachViews.size() <= 0) {
+        if (getAttachViewSize() <= 0) {
             return true;
         }
-        if (mAttachViews.size() == 1) {
+        if (getAttachViewSize() == 1) {
             if (mLastShowViewPattern == null) {
                 return true;
             } else {
@@ -845,6 +845,13 @@ public class UILayoutImpl extends SwipeBackLayout implements ILayout<UIParam>, U
         isBackPress = true;
         finishIView(mLastShowViewPattern.mIView, param);
         return false;
+    }
+
+    /**
+     * 返回追加了多个iView
+     */
+    public int getAttachViewSize() {
+        return mAttachViews.size();
     }
 
     @Override
@@ -1371,23 +1378,23 @@ public class UILayoutImpl extends SwipeBackLayout implements ILayout<UIParam>, U
     }
 
     public ViewPattern findLastShowViewPattern() {
-        return findViewPattern(mAttachViews.size() - 2);
+        return findViewPattern(getAttachViewSize() - 2);
     }
 
     public ViewPattern findLastShowViewPattern(final ViewPattern anchor) {
         if (anchor == mLastShowViewPattern) {
-            return findViewPattern(mAttachViews.size() - 2);
+            return findViewPattern(getAttachViewSize() - 2);
         } else {
             return mLastShowViewPattern;
         }
     }
 
     public ViewPattern findLastViewPattern() {
-        return findViewPattern(mAttachViews.size() - 1);
+        return findViewPattern(getAttachViewSize() - 1);
     }
 
     public ViewPattern findViewPattern(int position) {
-        if (mAttachViews.size() > position && position >= 0) {
+        if (getAttachViewSize() > position && position >= 0) {
             return mAttachViews.get(position);
         }
         return null;
@@ -1458,7 +1465,7 @@ public class UILayoutImpl extends SwipeBackLayout implements ILayout<UIParam>, U
         if (!isAttachedToWindow) {
             return true;
         }
-        if (mAttachViews.size() > 0 && mLastShowViewPattern == null) {
+        if (getAttachViewSize() > 0 && mLastShowViewPattern == null) {
             return true;
         }
         return false;
@@ -1663,7 +1670,7 @@ public class UILayoutImpl extends SwipeBackLayout implements ILayout<UIParam>, U
      * 根据位置, 返回IView
      */
     public ViewPattern getViewPattern(int position) {
-        if (position < 0 || position >= mAttachViews.size()) {
+        if (position < 0 || position >= getAttachViewSize()) {
             return null;
         }
         return mAttachViews.get(position);
@@ -1671,7 +1678,7 @@ public class UILayoutImpl extends SwipeBackLayout implements ILayout<UIParam>, U
 
     @Override
     public ViewPattern getViewPatternAtLast(int lastCount) {
-        return getViewPattern(mAttachViews.size() - 1 - lastCount);
+        return getViewPattern(getAttachViewSize() - 1 - lastCount);
     }
 
     /**
@@ -1842,7 +1849,7 @@ public class UILayoutImpl extends SwipeBackLayout implements ILayout<UIParam>, U
         if (mAttachViews == null || mAttachViews.isEmpty()) {
             return 0;
         }
-        return mAttachViews.size();
+        return getAttachViewSize();
     }
 
     public boolean isSwipeDrag() {
@@ -1859,7 +1866,7 @@ public class UILayoutImpl extends SwipeBackLayout implements ILayout<UIParam>, U
      */
     public String logLayoutInfo() {
         StringBuilder stringBuilder = new StringBuilder("\n");
-        for (int i = 0; i < mAttachViews.size(); i++) {
+        for (int i = 0; i < getAttachViewSize(); i++) {
             ViewPattern viewPattern = mAttachViews.get(i);
             stringBuilder.append(i);
             stringBuilder.append("-->");

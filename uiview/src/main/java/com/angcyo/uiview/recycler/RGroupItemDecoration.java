@@ -9,9 +9,10 @@ import android.view.View;
 
 /**
  * 支持分组的ItemDecoration, 暂且只支持LinearLayoutManager
+ * 请使用 {@link com.angcyo.uiview.recycler.RExGroupItemDecoration}
  * Created by angcyo on 2017-01-15.
  */
-
+@Deprecated
 public class RGroupItemDecoration extends RecyclerView.ItemDecoration {
 
     private GroupCallBack mGroupCallBack;
@@ -41,7 +42,7 @@ public class RGroupItemDecoration extends RecyclerView.ItemDecoration {
                 //第一个位置, 肯定是有分组信息的
                 mGroupCallBack.onGroupDraw(c, view, adapterPosition);
                 // 设置与第二个位置分割线
-                mGroupCallBack.onItemDraw(c,view,adapterPosition);
+                mGroupCallBack.onItemDraw(c, view, adapterPosition);
             } else {
                 //上一个分组信息
                 preGroupText = mGroupCallBack.getGroupText(adapterPosition - 1);
@@ -50,7 +51,7 @@ public class RGroupItemDecoration extends RecyclerView.ItemDecoration {
                     //如果和上一个分组信息不相等
                     mGroupCallBack.onGroupDraw(c, view, adapterPosition);
                     //设置与下一位置分割线
-                    mGroupCallBack.onItemDraw(c,view,adapterPosition);
+                    mGroupCallBack.onItemDraw(c, view, adapterPosition);
 
                 } else {
 

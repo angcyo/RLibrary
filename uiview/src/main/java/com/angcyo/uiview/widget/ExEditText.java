@@ -217,29 +217,8 @@ public class ExEditText extends AppCompatEditText {
                 //只绘制末尾的文本区域
                 canvas.clipRect(textPaint.measureText(String.valueOf(getText()), 0, getText().length()) + getInputTipDrawLeft(),
                         0, getMeasuredWidth(), getMeasuredHeight());
-//                canvas.drawText(mInputTipText, getInputTipDrawLeft(),
-//                        getPaddingTop()
-//                        /*getMeasuredHeight() / 2 +
-//                                (textPaint.descent() - textPaint.ascent()) / 2 -
-//                                textPaint.descent() - getLayout().getTopPadding()*/,
-//                        textPaint);
-//                canvas.drawText(mInputTipText, getInputTipDrawLeft(),
-//                        getPaddingTop() + getLayout().getLineBaseline(0)
-//                        /*getMeasuredHeight() / 2 +
-//                                (textPaint.descent() - textPaint.ascent()) / 2 -
-//                                textPaint.descent() - getLayout().getTopPadding()*/,
-//                        textPaint);
-//                canvas.drawText(mInputTipText, getInputTipDrawLeft(),
-//                        getPaddingTop() + getLayout().getLineTop(1)
-//                        /*getMeasuredHeight() / 2 +
-//                                (textPaint.descent() - textPaint.ascent()) / 2 -
-//                                textPaint.descent() - getLayout().getTopPadding()*/,
-//                        textPaint);
                 canvas.drawText(mInputTipText, getInputTipDrawLeft(),
-                        bottom - getLayout().getLineDescent(0)
-                        /*getMeasuredHeight() / 2 +
-                                (textPaint.descent() - textPaint.ascent()) / 2 -
-                                textPaint.descent() - getLayout().getTopPadding()*/,
+                        bottom - getLayout().getLineDescent(0),
                         textPaint);
 
                 canvas.restore();
