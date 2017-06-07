@@ -3,8 +3,6 @@ package com.angcyo.uiview.widget;
 import android.content.Context;
 import android.content.res.TypedArray;
 import android.graphics.Canvas;
-import android.graphics.Color;
-import android.graphics.Paint;
 import android.graphics.Rect;
 import android.graphics.drawable.Drawable;
 import android.support.design.widget.TextInputLayout;
@@ -191,30 +189,6 @@ public class ExEditText extends AppCompatEditText {
 
     @Override
     protected void onDraw(Canvas canvas) {
-        canvas.drawColor(Color.GRAY);
-        Paint paint = new Paint(Paint.ANTI_ALIAS_FLAG);
-        paint.setColor(Color.parseColor("#40876111"));
-        canvas.drawRect(getPaddingLeft(), 0, getMeasuredWidth() - getPaddingRight(), getPaddingTop(), paint);
-        canvas.drawRect(getPaddingLeft(), getMeasuredHeight() - getPaddingBottom(), getMeasuredWidth() - getPaddingRight(), getMeasuredHeight(), paint);
-
-        paint.setColor(Color.GREEN);
-        canvas.drawRect(getPaddingLeft(), getPaddingTop(), getMeasuredWidth() - getPaddingRight(), getMeasuredHeight() - getPaddingBottom(), paint);
-
-        paint.setColor(Color.BLUE);
-        final TextPaint textPaint = getPaint();
-        float height = textPaint.descent() - textPaint.ascent();
-        canvas.drawRect(getPaddingLeft(), getMeasuredHeight() / 2 - height / 2, getMeasuredWidth() - getPaddingRight(),
-                getMeasuredHeight() / 2 + height / 2, paint);
-
-        paint.setColor(Color.RED);
-        canvas.drawRect(getPaddingLeft(), getMeasuredHeight() / 2 - 1, getMeasuredWidth() - getPaddingRight(),
-                getMeasuredHeight() / 2 + 1, paint);
-
-//        int lineHeight = getLayout().getLineDescent(0) - getLayout().getLineAscent(0);
-//        int top = getMeasuredHeight() / 2 - lineHeight / 2;
-//        canvas.drawRect(getPaddingLeft(), top, getMeasuredWidth() - getPaddingRight(),
-//                getMeasuredHeight() / 2 + lineHeight / 2, paint);
-
         super.onDraw(canvas);
 
         if (!TextUtils.isEmpty(mLeftString)) {
@@ -233,12 +207,12 @@ public class ExEditText extends AppCompatEditText {
             if (isInputTipPattern()) {
                 //只处理了竖直居中的情况
                 canvas.save();
-                //final TextPaint textPaint = getPaint();
+                final TextPaint textPaint = getPaint();
                 textPaint.setColor(SkinHelper.getTranColor(getCurrentTextColor(), 0x40));
 
                 int lineHeight = getLayout().getLineDescent(0) - getLayout().getLineAscent(0);
                 int top = getMeasuredHeight() / 2 - lineHeight / 2;
-                int bottom = getMeasuredHeight() / 2 + lineHeight / 2;
+                int bottom = getPaddingTop() + (getMeasuredHeight() - getPaddingTop() - getPaddingBottom()) / 2 + lineHeight / 2;
 
                 //只绘制末尾的文本区域
                 canvas.clipRect(textPaint.measureText(String.valueOf(getText()), 0, getText().length()) + getInputTipDrawLeft(),
@@ -262,7 +236,7 @@ public class ExEditText extends AppCompatEditText {
 //                                textPaint.descent() - getLayout().getTopPadding()*/,
 //                        textPaint);
                 canvas.drawText(mInputTipText, getInputTipDrawLeft(),
-                        bottom - textPaint.descent()
+                        bottom - getLayout().getLineDescent(0)
                         /*getMeasuredHeight() / 2 +
                                 (textPaint.descent() - textPaint.ascent()) / 2 -
                                 textPaint.descent() - getLayout().getTopPadding()*/,
