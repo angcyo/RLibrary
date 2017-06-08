@@ -7,6 +7,7 @@ import android.content.Context
 import android.graphics.Canvas
 import android.graphics.Color
 import android.graphics.Paint
+import android.graphics.Path
 import android.graphics.drawable.Drawable
 import android.support.v4.content.ContextCompat
 import android.support.v4.view.MotionEventCompat
@@ -150,6 +151,9 @@ class TouchMoveView : View {
         drawable.setBounds(0, 0, drawable.intrinsicWidth, drawable.intrinsicHeight)
         drawable
     }
+
+    /**贝塞尔曲线的path*/
+    val besselPath = Path()
 
     constructor(context: Context) : super(context) {
         initView(context, null)
@@ -391,6 +395,20 @@ class TouchMoveView : View {
             }
         }
         canvas.restore()
+
+//        //绘制贝塞尔取消
+//        canvas.save()
+//        val besselCircleRadius = 8 * density
+//        besselPath.reset()
+//        besselPath.moveTo((measuredWidth / 2).toFloat(), measuredHeight.toFloat())
+//        besselPath.quadTo((measuredWidth / 2).toFloat() + besselCircleRadius, (measuredHeight / 2).toFloat(), (measuredWidth / 2).toFloat(), 0f)
+//        besselPath.lineTo(measuredWidth / 2 + besselCircleRadius * 2, 0f)
+//        besselPath.quadTo((measuredWidth / 2).toFloat() + besselCircleRadius / 2, (measuredHeight / 2).toFloat(), (measuredWidth / 2).toFloat() + besselCircleRadius * 2, measuredHeight.toFloat())
+//        mPaint.style = Paint.Style.STROKE
+//        mPaint.strokeWidth = 2 * density
+//        mPaint.color = Color.RED
+//        canvas.drawPath(besselPath, mPaint)
+//        canvas.restore()
     }
 }
 
