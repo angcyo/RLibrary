@@ -1,11 +1,9 @@
 package com.angcyo.uiview.widget;
 
-import android.annotation.TargetApi;
 import android.content.Context;
 import android.content.res.TypedArray;
 import android.graphics.Color;
 import android.graphics.drawable.Drawable;
-import android.os.Build;
 import android.support.annotation.DrawableRes;
 import android.text.TextUtils;
 import android.util.AttributeSet;
@@ -17,6 +15,7 @@ import android.widget.ImageView;
 import android.widget.RelativeLayout;
 
 import com.angcyo.uiview.R;
+import com.angcyo.uiview.viewgroup.RRelativeLayout;
 
 /**
  * Copyright (C) 2016,深圳市红鸟网络科技股份有限公司 All rights reserved.
@@ -29,7 +28,7 @@ import com.angcyo.uiview.R;
  * 修改备注：
  * Version: 1.0.0
  */
-public class ItemInfoLayout extends RelativeLayout {
+public class ItemInfoLayout extends RRelativeLayout {
 
     public static int DEFAULT_TEXT_SIZE = 15;//sp
     public static int DEFAULT_DARK_TEXT_SIZE = 14;//sp
@@ -111,15 +110,12 @@ public class ItemInfoLayout extends RelativeLayout {
         initLayout();
 
         if (isInEditMode()) {
-            setItemText("一条Item测试数据");
-            setRightDrawableRes(R.drawable.base_next);
-            setRedDotMode(true);
+            if (TextUtils.isEmpty(itemText)) {
+                setItemText("一条Item测试数据");
+            }
+            //setRightDrawableRes(R.drawable.base_next);
+            //setRedDotMode(true);
         }
-    }
-
-    @TargetApi(Build.VERSION_CODES.LOLLIPOP)
-    public ItemInfoLayout(Context context, AttributeSet attrs, int defStyleAttr, int defStyleRes) {
-        super(context, attrs, defStyleAttr, defStyleRes);
     }
 
     static void resize(View view, int size, int margin) {

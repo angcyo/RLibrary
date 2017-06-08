@@ -20,6 +20,7 @@ import android.view.WindowManager;
 
 import com.angcyo.library.utils.L;
 import com.angcyo.uiview.RApplication;
+import com.angcyo.uiview.github.utilcode.utils.PhoneUtils;
 import com.angcyo.uiview.widget.RExTextView;
 
 import java.io.File;
@@ -109,6 +110,26 @@ public class RUtils {
             {".zip", "application/x-zip-compressed"},
             {"", "*/*"}
     };
+
+    /**
+     * 跳至拨号界面
+     *
+     * @param phoneNumber 电话号码
+     */
+    public static void callTo(String phoneNumber) {
+        PhoneUtils.dial(phoneNumber);
+    }
+
+    public static void emailTo(Activity activity, String email) {
+        Intent intent = new Intent(Intent.ACTION_SENDTO);
+        intent.setData(Uri.parse("mailto:" + email));
+//        intent.putExtra(Intent.EXTRA_CC, new String[]
+//                {"1032694760@qq.com"});
+        intent.putExtra(Intent.EXTRA_EMAIL, "");
+        intent.putExtra(Intent.EXTRA_TEXT, "欢迎提供意您的见或建议");
+        activity.startActivity(Intent.createChooser(intent, "选择邮件客户端"));
+    }
+
 
     /**
      * 去除字符串左右的字符

@@ -16,7 +16,7 @@ import com.angcyo.uiview.R;
 /**
  * Copyright (C) 2016,深圳市红鸟网络科技股份有限公司 All rights reserved.
  * 项目名称：
- * 类的描述：
+ * 类的描述：请使用更强大的{@link ItemInfoLayout}
  * 创建人员：Robi
  * 创建时间：2017/04/11 08:43
  * 修改人员：Robi
@@ -24,6 +24,7 @@ import com.angcyo.uiview.R;
  * 修改备注：
  * Version: 1.0.0
  */
+@Deprecated
 public class ItemSubInfoLayout extends LinearLayout {
 
     public static int DEFAULT_TEXT_SIZE = 15;//sp
