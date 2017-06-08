@@ -51,6 +51,11 @@ class TouchMoveView : View {
     var mTextColorNormal by ColorSetDelegate()
     var mTextColorSelected by ColorSetDelegate(true)
 
+    val textDrawColor: Int
+        get() {
+            return if (mSelected) mTextColorSelected else mTextColorNormal
+        }
+
     /**图片文本之间的间隙*/
     var mTextSpace = 4f
         get() {
@@ -326,7 +331,7 @@ class TouchMoveView : View {
 
     override fun onDraw(canvas: Canvas) {
         canvas.save()
-
+        mPaint.textSize = mShowTextSize
         //绘制图片
         if (drawDrawable != null) {
             canvas.translate((measuredWidth / 2).toFloat(), measuredHeight / 2 - subHeight / 2 + imageHeight / 2)
@@ -355,7 +360,7 @@ class TouchMoveView : View {
 
         //绘制文本
         if (!mShowText.isNullOrEmpty()) {
-            mPaint.textSize = mShowTextSize
+            mPaint.color = textDrawColor
             canvas.drawText(mShowText,
                     (measuredWidth / 2 - textWidth / 2).toFloat(),
                     measuredHeight / 2 + subHeight / 2 - mPaint.descent(),
