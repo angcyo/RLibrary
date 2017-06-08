@@ -11,6 +11,7 @@ import android.graphics.drawable.Drawable;
 import android.support.annotation.ColorInt;
 import android.support.annotation.DrawableRes;
 import android.support.annotation.NonNull;
+import android.support.v4.content.ContextCompat;
 import android.support.v7.widget.AppCompatTextView;
 import android.text.InputFilter;
 import android.text.Spannable;
@@ -296,21 +297,28 @@ public class RTextView extends AppCompatTextView {
         }
     }
 
+    private Drawable getDrawable(@DrawableRes int icoRes) {
+        if (icoRes == -1) {
+            return null;
+        }
+        return ContextCompat.getDrawable(getContext(), icoRes);
+    }
+
     public void setLeftIco(@DrawableRes int leftIco) {
         final Drawable[] compoundDrawables = getCompoundDrawables();
-        setCompoundDrawablesWithIntrinsicBounds(getResources().getDrawable(leftIco),
+        setCompoundDrawablesWithIntrinsicBounds(getDrawable(leftIco),
                 compoundDrawables[1], compoundDrawables[2], compoundDrawables[3]);
     }
 
     public void setRightIco(@DrawableRes int rightIco) {
         final Drawable[] compoundDrawables = getCompoundDrawables();
         setCompoundDrawablesWithIntrinsicBounds(compoundDrawables[0],
-                compoundDrawables[1], getResources().getDrawable(rightIco), compoundDrawables[3]);
+                compoundDrawables[1], getDrawable(rightIco), compoundDrawables[3]);
     }
 
     public void setTopIco(@DrawableRes int topIco) {
         final Drawable[] compoundDrawables = getCompoundDrawables();
-        setCompoundDrawablesWithIntrinsicBounds(compoundDrawables[0], getResources().getDrawable(topIco),
+        setCompoundDrawablesWithIntrinsicBounds(compoundDrawables[0], getDrawable(topIco),
                 compoundDrawables[2], compoundDrawables[3]);
     }
 
@@ -318,7 +326,7 @@ public class RTextView extends AppCompatTextView {
         final Drawable[] compoundDrawables = getCompoundDrawables();
         setCompoundDrawablesWithIntrinsicBounds(
                 compoundDrawables[0], compoundDrawables[1],
-                compoundDrawables[2], getResources().getDrawable(bottomIco));
+                compoundDrawables[2], getDrawable(bottomIco));
     }
 
     private void initLeftRes() {

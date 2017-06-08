@@ -1142,7 +1142,7 @@ public class UILayoutImpl extends SwipeBackLayout implements ILayout<UIParam>, U
             return;
         }
         viewPattern.mIView.onViewHide();
-        if (hide) {
+        if (hide && !viewPattern.mIView.isDialog()) {
             viewPattern.mView.setVisibility(GONE);
         }
     }

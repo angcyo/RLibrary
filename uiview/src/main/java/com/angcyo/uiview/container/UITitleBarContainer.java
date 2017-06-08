@@ -271,7 +271,7 @@ public class UITitleBarContainer extends FrameLayout {
     /**
      * 标题文本视图
      */
-    public TextView getTitleView() {
+    public RTextView getTitleView() {
         return mTitleView;
     }
 

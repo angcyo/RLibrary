@@ -54,12 +54,19 @@ class RadarScanView(context: Context, attributeSet: AttributeSet? = null) : View
 
     override fun onAttachedToWindow() {
         super.onAttachedToWindow()
-        mChoreographer.postFrameCallback(this)
     }
 
     override fun onDetachedFromWindow() {
         super.onDetachedFromWindow()
-        mChoreographer.removeFrameCallback(this)
+    }
+
+    override fun onVisibilityChanged(changedView: View?, visibility: Int) {
+        super.onVisibilityChanged(changedView, visibility)
+        if (visibility == VISIBLE) {
+            mChoreographer.postFrameCallback(this)
+        } else {
+            mChoreographer.removeFrameCallback(this)
+        }
     }
 
     override fun onDraw(canvas: Canvas) {
