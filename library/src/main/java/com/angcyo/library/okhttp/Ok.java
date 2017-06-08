@@ -70,6 +70,13 @@ public class Ok {
      * 根据url, 回调对应图片的类型
      */
     public void type(final String url, final OnImageTypeListener listener) {
+        if (TextUtils.isEmpty(url)) {
+            if (listener != null) {
+                listener.onImageType(ImageType.UNKNOWN);
+            }
+            return;
+        }
+
         ImageType type = imageTypeCache.get(url);
 
         if (listener != null) {

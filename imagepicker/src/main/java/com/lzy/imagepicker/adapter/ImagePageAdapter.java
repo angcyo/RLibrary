@@ -4,6 +4,7 @@ import android.app.Activity;
 import android.graphics.Bitmap;
 import android.graphics.drawable.TransitionDrawable;
 import android.support.v4.view.PagerAdapter;
+import android.text.TextUtils;
 import android.util.DisplayMetrics;
 import android.view.Gravity;
 import android.view.View;
@@ -29,6 +30,7 @@ import com.lzy.imagepicker.bean.ImageItem;
 import com.lzy.imagepicker.loader.ImageLoader;
 import com.lzy.imagepicker.view.MaterialProgressView;
 
+import java.io.File;
 import java.util.ArrayList;
 
 
@@ -107,6 +109,11 @@ public class ImagePageAdapter extends PagerAdapter {
         this.images = images;
     }
 
+    public void resetData(ArrayList<ImageItem> images) {
+        this.images = images;
+        notifyDataSetChanged();
+    }
+
     public void setPhotoViewClickListener(PhotoViewClickListener listener) {
         this.listener = listener;
     }
@@ -148,7 +155,21 @@ public class ImagePageAdapter extends PagerAdapter {
                     imageView.setImageDrawable(imageItem.placeholderDrawable);
                 }
 
-                loadImage(photoView, imageView, progressView, imageItem);
+                if (!TextUtils.isEmpty(imageItem.path)) {
+                    File file = new File(imageItem.path);
+                    if (file.exists()) {
+                        Glide.with(mActivity)
+                                .load(file)
+                                .into(photoView);
+                        imageView.setVisibility(View.GONE);
+                        progressView.setVisibility(View.GONE);
+                        progressView.stop();
+                    } else {
+                        loadImage(photoView, imageView, progressView, imageItem);
+                    }
+                } else {
+                    loadImage(photoView, imageView, progressView, imageItem);
+                }
             }
         }
 

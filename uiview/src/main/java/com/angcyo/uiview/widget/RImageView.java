@@ -18,6 +18,7 @@ import android.support.v4.content.ContextCompat;
 import android.support.v7.widget.AppCompatImageView;
 import android.util.AttributeSet;
 import android.view.MotionEvent;
+import android.widget.ImageView;
 
 import com.angcyo.uiview.R;
 
@@ -99,6 +100,17 @@ public class RImageView extends AppCompatImageView {
         bitmapDrawable.setBounds(0, 0, dwidth, dheight);
         bitmapDrawable.draw(canvas);
 
+        return result;
+    }
+
+    public static Drawable copyDrawable(final ImageView imageView) {
+        Drawable result = null, drawable = imageView == null ? null : imageView.getDrawable();
+        if (drawable != null) {
+            Drawable.ConstantState constantState = drawable.mutate().getConstantState();
+            if (constantState != null) {
+                result = constantState.newDrawable();
+            }
+        }
         return result;
     }
 
@@ -226,13 +238,6 @@ public class RImageView extends AppCompatImageView {
         }
     }
 
-    public void setPlayDrawable(Drawable playDrawable) {
-        mPlayDrawable = playDrawable;
-        if (isAttachedToWindow) {
-            postInvalidate();
-        }
-    }
-
 //    @Override
 //    public void setImageResource(@DrawableRes int resId) {
 //        super.setImageResource(resId);
@@ -256,6 +261,13 @@ public class RImageView extends AppCompatImageView {
 //            super.setImageBitmap(drawable);
 //        }
 //    }
+
+    public void setPlayDrawable(Drawable playDrawable) {
+        mPlayDrawable = playDrawable;
+        if (isAttachedToWindow) {
+            postInvalidate();
+        }
+    }
 
     public void setPlayDrawable(@DrawableRes int res) {
         setPlayDrawable(ContextCompat.getDrawable(getContext(), res));
@@ -289,13 +301,6 @@ public class RImageView extends AppCompatImageView {
     }
 
     public Drawable copyDrawable() {
-        Drawable result = null, drawable = getDrawable();
-        if (drawable != null) {
-            Drawable.ConstantState constantState = drawable.mutate().getConstantState();
-            if (constantState != null) {
-                result = constantState.newDrawable();
-            }
-        }
-        return result;
+        return copyDrawable(this);
     }
 }

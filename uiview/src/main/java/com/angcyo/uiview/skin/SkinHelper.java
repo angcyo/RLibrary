@@ -88,11 +88,15 @@ public class SkinHelper {
      * 主题颜色的圆角边框selector
      */
     public static Drawable getThemeRoundBorderSelector() {
+        return getRoundBorderSelector(SkinHelper.getSkin().getThemeTranColor(80));
+    }
+
+    public static Drawable getRoundBorderSelector(int defaultColor) {
         return ResUtil.generateRoundBorderDrawable(
                 RApplication.getApp().getResources().getDimensionPixelOffset(R.dimen.base_round_little_radius),
                 RApplication.getApp().getResources().getDimensionPixelOffset(R.dimen.base_line),
                 SkinHelper.getSkin().getThemeSubColor(),
-                SkinHelper.getSkin().getThemeTranColor(80)
+                defaultColor
         );
     }
 }

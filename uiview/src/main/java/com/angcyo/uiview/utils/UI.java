@@ -10,6 +10,8 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
+import com.angcyo.uiview.resources.ResUtil;
+
 import java.io.BufferedOutputStream;
 import java.io.File;
 import java.io.FileOutputStream;
@@ -29,6 +31,10 @@ import java.io.OutputStream;
  * Version: 1.0.0
  */
 public class UI {
+    public static void setBackgroundDrawable(View view, Drawable drawable) {
+        ResUtil.setBgDrawable(view, drawable);
+    }
+
     public static void setViewHeight(View view, int height) {
         ViewGroup.LayoutParams layoutParams = view.getLayoutParams();
         layoutParams.height = height;
