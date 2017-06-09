@@ -91,8 +91,8 @@ public abstract class Indicator extends Drawable implements Animatable {
         for (int i = 0; i < mAnimators.size(); i++) {
             ValueAnimator animator = mAnimators.get(i);
 
-            //when the animator restart , add the updateListener again because they
-            // was removed by animator stop .
+            //when the progressAnimator restart , add the updateListener again because they
+            // was removed by progressAnimator stop .
             ValueAnimator.AnimatorUpdateListener updateListener = mUpdateListeners.get(animator);
             if (updateListener != null) {
                 animator.addUpdateListener(updateListener);
@@ -142,7 +142,7 @@ public abstract class Indicator extends Drawable implements Animatable {
 
     /**
      * Your should use this to add AnimatorUpdateListener when
-     * create animator , otherwise , animator doesn't work when
+     * create progressAnimator , otherwise , progressAnimator doesn't work when
      * the animation restart .
      *
      * @param updateListener
