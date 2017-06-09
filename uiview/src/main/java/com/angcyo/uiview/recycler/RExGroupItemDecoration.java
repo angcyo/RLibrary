@@ -50,7 +50,7 @@ public class RExGroupItemDecoration extends RecyclerView.ItemDecoration {
             return;
         }
 
-        int startOffset;
+        int startOffset = -1;
         String lastGroupText = "";
         for (int i = 0; i < parent.getChildCount(); i++) {
             final View view = parent.getChildAt(i);
@@ -59,12 +59,6 @@ public class RExGroupItemDecoration extends RecyclerView.ItemDecoration {
 
             GroupInfo groupInfo = groupInfoArrayMap.get(adapterPosition);
 
-            if (groupInfo.isHorizontal()) {
-                startOffset = 0;
-            } else {
-                startOffset = groupInfo.outRect.top;
-            }
-
             //分组开头的第一个View的left值
             if (groupInfo.groupStartPosition == adapterPosition) {
                 if (groupInfo.isHorizontal()) {
@@ -72,12 +66,19 @@ public class RExGroupItemDecoration extends RecyclerView.ItemDecoration {
                 } else {
                     startOffset = Math.max(view.getTop(), groupInfo.outRect.top);
                 }
-            }
-            if (groupInfo.groupEndPosition == groupInfo.firstVisibleItemPosition) {
+            } else if (groupInfo.groupEndPosition == groupInfo.firstVisibleItemPosition) {
                 if (groupInfo.isHorizontal()) {
                     startOffset = (int) Math.min(0, view.getRight() - mGroupCallBack.getGroupTextSize(adapterPosition, groupInfo.layoutOrientation));
                 } else {
-                    startOffset = Math.min(startOffset, view.getBottom());
+                    startOffset = Math.min(groupInfo.outRect.top, view.getBottom());
+                }
+            } else {
+                if (startOffset == -1) {
+                    if (groupInfo.isHorizontal()) {
+                        startOffset = 0;
+                    } else {
+                        startOffset = groupInfo.outRect.top;
+                    }
                 }
             }
 
@@ -86,6 +87,7 @@ public class RExGroupItemDecoration extends RecyclerView.ItemDecoration {
             if (!TextUtils.isEmpty(groupInfo.groupText) && !TextUtils.equals(lastGroupText, groupInfo.groupText)) {
                 mGroupCallBack.onGroupOverDraw(c, view, groupInfoArrayMap.get(adapterPosition));
                 lastGroupText = groupInfo.groupText;
+                startOffset = -1;
             }
         }
     }
@@ -121,7 +123,7 @@ public class RExGroupItemDecoration extends RecyclerView.ItemDecoration {
         } else {
             for (int i = adapterPosition - 1; i >= 0; i--) {
                 String tempGroupText = mGroupCallBack.getGroupText(i);
-                if (TextUtils.isEmpty(tempGroupText) /*注意此判断, 我也不知道有啥用...*/ ||
+                if (!TextUtils.isEmpty(tempGroupText) /*如果分组前面出现空字符, 则视为不同分组*/ &&
                         TextUtils.equals(tempGroupText, groupText)) {
                     groupInfo.groupStartPosition = i;
                 } else {
@@ -131,7 +133,8 @@ public class RExGroupItemDecoration extends RecyclerView.ItemDecoration {
 
             for (int i = adapterPosition; i < itemCount; i++) {
                 String tempGroupText = mGroupCallBack.getGroupText(i);
-                if (TextUtils.isEmpty(tempGroupText) || TextUtils.equals(tempGroupText, groupText)) {
+                if (TextUtils.isEmpty(tempGroupText) /*如果分组后面出现了空字符的分组信息, 则视为相同相同分组*/ ||
+                        TextUtils.equals(tempGroupText, groupText)) {
                     groupInfo.groupEndPosition = i;
                 } else {
                     break;

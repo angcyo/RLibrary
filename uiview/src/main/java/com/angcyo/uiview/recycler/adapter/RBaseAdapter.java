@@ -42,7 +42,14 @@ public abstract class RBaseAdapter<T> extends RecyclerView.Adapter<RBaseViewHold
      * 当前加载状态
      */
     int mLoadState = ILoadMore.NORMAL;
+    /**
+     * 当前显示的状态
+     */
     int mShowState = IShowState.NORMAL;
+    /**
+     * 切换显示状态, 是否执行动画
+     */
+    boolean animToShowState = false;
 
 
     public RBaseAdapter(Context context) {
@@ -435,12 +442,16 @@ public abstract class RBaseAdapter<T> extends RecyclerView.Adapter<RBaseViewHold
 
         if (mIShowState == null || showState == IShowState.NORMAL) {
             if (mIShowState != null && mIShowState instanceof ItemShowStateLayout) {
-                ((ItemShowStateLayout) mIShowState).animToHide(new Runnable() {
-                    @Override
-                    public void run() {
-                        notifyDataSetChanged();
-                    }
-                });
+                if (animToShowState) {
+                    ((ItemShowStateLayout) mIShowState).animToHide(new Runnable() {
+                        @Override
+                        public void run() {
+                            notifyDataSetChanged();
+                        }
+                    });
+                } else {
+                    notifyDataSetChanged();
+                }
             } else {
                 notifyDataSetChanged();
             }
@@ -494,7 +505,7 @@ public abstract class RBaseAdapter<T> extends RecyclerView.Adapter<RBaseViewHold
     }
 
     protected void onChildViewDetachedFromWindow(View view, int adapterPosition, int layoutPosition) {
-       //L.v("call: onChildViewDetachedFromWindow -> " + adapterPosition + " " + layoutPosition + " " + view);
+        //L.v("call: onChildViewDetachedFromWindow -> " + adapterPosition + " " + layoutPosition + " " + view);
     }
 
 
