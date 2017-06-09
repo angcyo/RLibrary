@@ -68,7 +68,8 @@ public class UIItemDialog extends UIIDialogImpl {
         mViewHolder = new RBaseViewHolder(rootView);
         mItemContentLayout = mViewHolder.v(R.id.item_content_layout);
         mCancelView = mViewHolder.v(R.id.cancel_view);
-        mCancelView.setTextColor(SkinHelper.getSkin().getThemeColor());
+        mCancelView.setTextColor(SkinHelper.getSkin().getThemeSubColor());
+
         mCancelView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
