@@ -9,6 +9,7 @@ import android.graphics.Paint;
 import android.graphics.RectF;
 import android.graphics.drawable.ColorDrawable;
 import android.graphics.drawable.Drawable;
+import android.graphics.drawable.GradientDrawable;
 import android.graphics.drawable.RippleDrawable;
 import android.graphics.drawable.ShapeDrawable;
 import android.graphics.drawable.StateListDrawable;
@@ -565,4 +566,67 @@ public class ResUtil {
         shapeDrawable.getPaint().setColor(color);//设置颜色
         return shapeDrawable;
     }
+
+    public static Drawable createSolidDrawable(int color, float radii) {
+        float[] outRadii = new float[]{radii, radii, radii, radii, radii, radii, radii, radii};//四个角的 圆角幅度,8个可以设置的值,每个角都有2个边 2*4=8个
+        Shape roundRectShape = new RoundRectShape(outRadii, null, null);//圆角背景
+        ShapeDrawable shapeDrawable = new ShapeDrawable(roundRectShape);//圆角shape
+        shapeDrawable.getPaint().setColor(color);//设置颜色
+        return shapeDrawable;
+    }
+
+    /**
+     * 系统xml翻译过来的就是GradientDrawable
+     */
+    public static Drawable createDrawable(int strokeColor, int solidColor, int strokeWidth, float radii) {
+        GradientDrawable drawable = (GradientDrawable) createDrawable(strokeColor, strokeWidth, radii);
+        drawable.setColor(solidColor);//请不要用透明颜色试图隐藏solid
+        return drawable;
+    }
+
+    /**
+     * 效果比createSolidDrawable好
+     */
+    public static Drawable createDrawable(int solidColor, float radii) {
+        GradientDrawable drawable = new GradientDrawable();
+        drawable.setShape(GradientDrawable.RECTANGLE);//设置形状
+        drawable.setCornerRadius(radii);
+        drawable.setColor(solidColor);//请不要用透明颜色试图隐藏solid
+        return drawable;
+    }
+
+    /**
+     * 创建一个框框的Drawable, 效果比 createStrokeDrawable 方法好.
+     */
+    public static Drawable createDrawable(int strokeColor, int strokeWidth, float radii) {
+        GradientDrawable drawable = new GradientDrawable();
+        drawable.setShape(GradientDrawable.RECTANGLE);//设置形状
+        drawable.setStroke(strokeWidth, strokeColor);
+        drawable.setCornerRadius(radii);
+        return drawable;
+    }
+
+    public static Drawable createColorDrawable(int color) {
+        return new ColorDrawable(color);
+    }
+
+    /**
+     * 创建Drawable选择器
+     */
+    public static Drawable selector(Drawable normalDrawable, Drawable pressDrawable) {
+        StateListDrawable listDrawable = new StateListDrawable();//状态shape
+        listDrawable.addState(new int[]{android.R.attr.state_pressed}, pressDrawable);//按下状态
+        listDrawable.addState(new int[]{}, normalDrawable);//其他状态
+        return listDrawable;
+    }
+
+    public static Drawable selector(int[] states, Drawable[] drawables, Drawable normalDrawable) {
+        StateListDrawable listDrawable = new StateListDrawable();//状态shape
+        for (int i = 0; i < states.length; i++) {
+            listDrawable.addState(new int[]{states[i]}, drawables[i]);
+        }
+        listDrawable.addState(new int[]{}, normalDrawable);
+        return listDrawable;
+    }
+
 }
