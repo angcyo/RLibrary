@@ -249,7 +249,10 @@ public abstract class UIBaseView extends UIIViewImpl {
     }
 
     protected View inflateNonetLayout(FrameLayout baseRootLayout, LayoutInflater inflater) {
-        return inflater.inflate(R.layout.base_nonet_layout, baseRootLayout);
+        View view = inflater.inflate(R.layout.base_nonet_layout, baseRootLayout);
+        view.findViewById(R.id.base_refresh_view);
+        view.findViewById(R.id.base_setting_view);
+        return view;
     }
 
     protected View inflateEmptyLayout(FrameLayout baseRootLayout, LayoutInflater inflater) {

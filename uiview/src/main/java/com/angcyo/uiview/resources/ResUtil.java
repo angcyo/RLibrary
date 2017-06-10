@@ -553,4 +553,16 @@ public class ResUtil {
         bgStateDrawable.addState(new int[]{}, ContextCompat.getDrawable(context, defaultRes));//其他状态
         return bgStateDrawable;
     }
+
+    /**
+     * 创建一个框框的Drawable
+     */
+    public static Drawable createStrokeDrawable(int color, float radii, float borderWidth) {
+        float[] outRadii = new float[]{radii, radii, radii, radii, radii, radii, radii, radii};//四个角的 圆角幅度,8个可以设置的值,每个角都有2个边 2*4=8个
+        RectF inset = new RectF(borderWidth, borderWidth, borderWidth, borderWidth);
+        Shape roundRectShape = new RoundRectShape(outRadii, inset, outRadii);//圆角背景
+        ShapeDrawable shapeDrawable = new ShapeDrawable(roundRectShape);//圆角shape
+        shapeDrawable.getPaint().setColor(color);//设置颜色
+        return shapeDrawable;
+    }
 }
