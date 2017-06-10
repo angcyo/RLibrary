@@ -221,7 +221,7 @@
     </style>
 
     <style name="BaseWhiteColorTextButtonStyle" parent="BaseMainColorTextButtonStyle">
-        <item name="android:textColor">@drawable/base_white_color_text_selector</item>
+        <item name="android:textColor">@color/base_white_color_text_selector</item>
     </style>
 
     <style name="BaseWhiteColorTextButtonStyle2" parent="BaseWhiteColorTextButtonStyle">

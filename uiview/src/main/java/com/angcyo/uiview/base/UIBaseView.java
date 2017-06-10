@@ -250,8 +250,17 @@ public abstract class UIBaseView extends UIIViewImpl {
 
     protected View inflateNonetLayout(FrameLayout baseRootLayout, LayoutInflater inflater) {
         View view = inflater.inflate(R.layout.base_nonet_layout, baseRootLayout);
-        view.findViewById(R.id.base_refresh_view);
-        view.findViewById(R.id.base_setting_view);
+        int borderColor = getColor(R.color.default_base_border);
+        int borderSize = getDimensionPixelOffset(R.dimen.base_border_size);
+        int radii = getDimensionPixelOffset(R.dimen.base_40dpi);
+
+        Drawable drawable = ResUtil.selector(
+                ResUtil.createDrawable(borderColor, borderSize, radii),
+                ResUtil.createDrawable(SkinHelper.getTranColor(SkinHelper.getSkin().getThemeSubColor(), 0x80), radii)
+        );
+        ResUtil.setBgDrawable(view.findViewById(R.id.base_refresh_view), drawable);
+        ResUtil.setBgDrawable(view.findViewById(R.id.base_setting_view), drawable.mutate().getConstantState().newDrawable());
+
         return view;
     }
 
