@@ -2,6 +2,7 @@ package com.angcyo.uiview.view;
 
 import android.content.Context;
 import android.content.Intent;
+import android.content.res.ColorStateList;
 import android.content.res.Resources;
 import android.graphics.Color;
 import android.graphics.drawable.Drawable;
@@ -620,6 +621,11 @@ public abstract class UIIViewImpl implements IView {
     @ColorInt
     public int getColor(@ColorRes int id) {
         return ContextCompat.getColor(mActivity, id);
+    }
+
+    //2017-06-10
+    public ColorStateList getColorList(@ColorRes int id) {
+        return ContextCompat.getColorStateList(mActivity, id);
     }
 
     public Drawable getDrawable(@DrawableRes int id) {
