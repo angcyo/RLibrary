@@ -2,6 +2,7 @@ package com.angcyo.uiview.utils;
 
 import android.content.Context;
 import android.content.res.ColorStateList;
+import android.graphics.Color;
 import android.os.Build;
 import android.view.Gravity;
 import android.view.LayoutInflater;
@@ -72,6 +73,9 @@ public class T2 {
                     }
                     break;
                 case TYPE_ERROR:
+                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+                        imageView.setImageTintList(ColorStateList.valueOf(Color.parseColor("#d62119")));
+                    }
                     imageView.setImageResource(R.drawable.base_failed_red);
                     break;
             }
