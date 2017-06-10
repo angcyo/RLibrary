@@ -591,7 +591,16 @@ public class ExEditText extends AppCompatEditText {
     }
 
     public String string() {
-        return getText().toString().trim();
+        String rawText = getText().toString().trim();
+        String tipText = mInputTipText.trim();
+
+        if (TextUtils.isEmpty(rawText)) {
+            return rawText;
+        } else if (TextUtils.isEmpty(tipText)) {
+            return rawText;
+        } else {
+            return tipText;
+        }
     }
 
     public boolean isEmpty() {

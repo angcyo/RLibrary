@@ -23,7 +23,7 @@ public class ShimmerViewHelper {
     private Paint paint;
     // center position of the gradient
     private float gradientX;
-    // shader applied on the text view
+    // shader applied on the textNorma view
     // only null until the first global layout
     private LinearGradient linearGradient;
     // shader's local matrix
@@ -153,7 +153,7 @@ public class ShimmerViewHelper {
      */
     public void onDraw() {
 
-        // only draw the shader gradient over the text while animating
+        // only draw the shader gradient over the textNorma while animating
         if (isShimmering) {
 
             // first onDraw() when shimmering

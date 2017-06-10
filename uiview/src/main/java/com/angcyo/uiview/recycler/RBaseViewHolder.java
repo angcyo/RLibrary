@@ -201,7 +201,10 @@ public class RBaseViewHolder extends RecyclerView.ViewHolder {
     }
 
     public void click(@IdRes int id, View.OnClickListener listener) {
-        v(id).setOnClickListener(listener);
+        View view = v(id);
+        if (view != null) {
+            view.setOnClickListener(listener);
+        }
     }
 
     public View viewByName(String name) {

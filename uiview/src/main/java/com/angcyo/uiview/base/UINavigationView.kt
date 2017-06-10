@@ -98,7 +98,9 @@ abstract class UINavigationView : UIContentView() {
 
     fun createNavItem(page: PageBean): TouchMoveView {
         val view = TouchMoveView(mActivity)
-        view.mShowText = page.text
+        view.textNormal = page.textNormal
+        view.textSelected = page.textSelected
+
         if (page.textColorNormal != null) {
             view.mTextColorNormal = page.textColorNormal
         }
@@ -141,7 +143,8 @@ abstract class UINavigationView : UIContentView() {
     /**页面*/
     data class PageBean(
             val iview: UIBaseView,
-            val text: String? = null,
+            val textNormal: String? = null,
+            val textSelected: String? = null,
             val textColorNormal: Int? = null,
             val textColorSelected: Int? = null,
             val icoResNormal: Int? = null,

@@ -44,6 +44,12 @@ class TouchMoveView : View {
 
     /**需要绘制显示的文本*/
     var mShowText: String? = null
+        get() {
+            return if (mSelected) textSelected else textNormal
+        }
+
+    var textNormal: String? = null
+    var textSelected: String? = null
     var mShowTextSize = 12f
         set(value) {
             field = value

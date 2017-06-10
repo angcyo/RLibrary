@@ -128,7 +128,7 @@ public final class RevealTextView extends AppCompatTextView implements Runnable,
     }
 
     /**
-     * Change the text and replay the animation.
+     * Change the textNorma and replay the animation.
      *
      * @param text Text to be shown.
      */

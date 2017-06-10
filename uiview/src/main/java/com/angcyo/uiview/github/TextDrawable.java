@@ -41,11 +41,11 @@ public class TextDrawable extends ShapeDrawable {
         width = builder.width;
         radius = builder.radius;
 
-        // text and color
+        // textNorma and color
         text = builder.toUpperCase ? builder.text.toUpperCase() : builder.text;
         color = builder.color;
 
-        // text paint settings
+        // textNorma paint settings
         fontSize = builder.fontSize;
         textPaint = new Paint();
         textPaint.setColor(builder.textColor);
@@ -93,7 +93,7 @@ public class TextDrawable extends ShapeDrawable {
         int count = canvas.save();
         canvas.translate(r.left, r.top);
 
-        // draw text
+        // draw textNorma
         int width = this.width < 0 ? r.width() : this.width;
         int height = this.height < 0 ? r.height() : this.height;
         int fontSize = this.fontSize < 0 ? (Math.min(width, height) / 2) : this.fontSize;
