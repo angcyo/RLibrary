@@ -290,14 +290,30 @@ public class RImageView extends AppCompatImageView {
         td.startTransition(300);
     }
 
-    public void setImageBitmap(@Nullable Drawable fromDrawable, @Nullable Bitmap toBitmap) {
-        final TransitionDrawable td = new TransitionDrawable(new Drawable[]{
-                fromDrawable, new BitmapDrawable(getResources(),
-                getScaleType() == ScaleType.CENTER_CROP ?
-                        centerCrop(getResources(), toBitmap, getMeasuredWidth(), getMeasuredHeight()) :
-                        toBitmap)});
-        super.setImageDrawable(td);
-        td.startTransition(300);
+    public void setImageBitmap(@Nullable final Drawable fromDrawable, @Nullable final Bitmap toBitmap) {
+        final int width = getMeasuredWidth();
+        final int height = getMeasuredHeight();
+
+        Runnable runnable = new Runnable() {
+            @Override
+            public void run() {
+                final TransitionDrawable td = new TransitionDrawable(new Drawable[]{
+                        fromDrawable, new BitmapDrawable(getResources(),
+                        getScaleType() == ScaleType.CENTER_CROP ?
+                                centerCrop(getResources(), toBitmap, width, height) :
+                                toBitmap)});
+                RImageView.super.setImageDrawable(td);
+                td.startTransition(300);
+            }
+        };
+
+        if (width == 0 || height == 0) {
+            post(runnable);
+        } else {
+            runnable.run();
+        }
+
+
     }
 
     public Drawable copyDrawable() {
