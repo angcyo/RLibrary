@@ -4,7 +4,7 @@
     android:layout_width="wrap_content"
     android:layout_height="wrap_content"
     android:background="@android:color/white"
-    android:minHeight="150dp"
+    android:minHeight="250dp"
     android:orientation="vertical">
 
     <include
@@ -35,6 +35,7 @@
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"/>
+
     </LinearLayout>
 
 

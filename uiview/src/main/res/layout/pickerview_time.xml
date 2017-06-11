@@ -4,6 +4,7 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:background="@android:color/white"
+    android:minHeight="250dp"
     android:orientation="vertical">
 
     <include
@@ -44,6 +45,12 @@
 
         <com.angcyo.uiview.github.pickerview.lib.WheelView
             android:id="@+id/min"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1.1"/>
+
+        <com.angcyo.uiview.github.pickerview.lib.WheelView
+            android:id="@+id/second"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1.1"/>

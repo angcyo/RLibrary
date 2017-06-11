@@ -5,18 +5,21 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.RelativeLayout;
 
+import com.angcyo.library.utils.L;
 import com.angcyo.uiview.R;
 import com.angcyo.uiview.base.UIIDialogImpl;
 import com.angcyo.uiview.github.pickerview.view.WheelTime;
 
+import java.text.DateFormat;
 import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
 
 /**
  * Copyright (C) 2016,深圳市红鸟网络科技股份有限公司 All rights reserved.
  * 项目名称：
- * 类的描述：日期选择对话框
+ * 类的描述：日期选择对话框, 时间选择对话框
  * 创建人员：Robi
  * 创建时间：2017/02/21 18:19
  * 修改人员：Robi
@@ -26,7 +29,14 @@ import java.util.Date;
  */
 public class DateDialog extends UIIDialogImpl {
 
-    WheelTime.Type mType = WheelTime.Type.YEAR_MONTH_DAY;
+    public static DateFormat Date_FORMAT = new SimpleDateFormat("yyyy-MM-dd");
+
+
+    /**
+     * 年月日 时分秒 是否显示
+     */
+    boolean[] mShowType = new boolean[]{true, true, true, false, false, false};
+
     DateConfig mDateConfig;
     private WheelTime wheelTime;
 
@@ -46,7 +56,7 @@ public class DateDialog extends UIIDialogImpl {
         int year = calendar.get(Calendar.YEAR);//当前那一年
 
         try {
-            calendar.setTime(WheelTime.Date_FORMAT.parse(date));
+            calendar.setTime(Date_FORMAT.parse(date));
             int y = calendar.get(Calendar.YEAR);//当前那一年
             return year - y;
         } catch (ParseException e) {
@@ -63,7 +73,7 @@ public class DateDialog extends UIIDialogImpl {
     @Override
     protected void initDialogContentView() {
         super.initDialogContentView();
-        wheelTime = new WheelTime(mViewHolder.v(R.id.timepicker), mType);
+        wheelTime = new WheelTime(mViewHolder.v(R.id.timepicker), mShowType);
         mViewHolder.v(R.id.btnSubmit).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -77,40 +87,44 @@ public class DateDialog extends UIIDialogImpl {
                 finishDialog();
             }
         });
-        //默认选中当前时间
-        if (TextUtils.isEmpty(mDateConfig.getMaxDate())) {
-            if (TextUtils.isEmpty(mDateConfig.getCurrentDate())) {
-                setTime(null, true);
-            } else {
-                try {
-                    setTime(WheelTime.Date_FORMAT.parse(mDateConfig.getCurrentDate()), false);
-                } catch (ParseException e) {
-                    e.printStackTrace();
-                }
-            }
-        } else {
-            if (TextUtils.isEmpty(mDateConfig.getCurrentDate())) {
-                setTime(null, true);
-            } else {
-                try {
-                    Date maxData = WheelTime.Date_FORMAT.parse(mDateConfig.getMaxDate());
-                    Calendar calendar = Calendar.getInstance();
-                    calendar.setTime(maxData);
 
-                    wheelTime.setEndYear(calendar.get(Calendar.YEAR));
-                    wheelTime.setMaxValue(calendar.get(Calendar.YEAR), calendar.get(Calendar.MONTH), calendar.get(Calendar.DAY_OF_MONTH));
+        wheelTime.setLabels(null, null, null, null, null, null);
 
-                } catch (ParseException e) {
-                    e.printStackTrace();
-                }
+        //禁止循环滚动
+        setCyclic(false);
 
-                try {
-                    setTime(WheelTime.Date_FORMAT.parse(mDateConfig.getCurrentDate()), false);
-                } catch (ParseException e) {
-                    e.printStackTrace();
-                }
+        //设置时间范围
+        if (!TextUtils.isEmpty(mDateConfig.getMaxDate())) {
+            Date maxData = null;
+            try {
+                maxData = Date_FORMAT.parse(mDateConfig.getMaxDate());
+                Calendar calendar = Calendar.getInstance();
+                calendar.setTime(maxData);
+
+                Calendar startDate = Calendar.getInstance();
+                startDate.set(1970, 1, 1);
+                Calendar endDate = Calendar.getInstance();
+                endDate.setTimeInMillis(System.currentTimeMillis());
+
+                wheelTime.setRangDate(startDate, endDate);
+            } catch (ParseException e) {
+                e.printStackTrace();
             }
         }
+
+        Calendar calendar = Calendar.getInstance();
+        String currentDate = mDateConfig.getCurrentDate();
+        //设置当前时间
+        if (!TextUtils.isEmpty(currentDate)) {
+            try {
+                calendar.setTime(Date_FORMAT.parse(currentDate));
+            } catch (ParseException e) {
+                e.printStackTrace();
+            }
+        } else {
+            calendar.setTimeInMillis(System.currentTimeMillis());
+        }
+        setTime(calendar.getTime());
     }
 
     /**
@@ -118,7 +132,7 @@ public class DateDialog extends UIIDialogImpl {
      *
      * @param date 时间
      */
-    public void setTime(Date date, boolean isMax) {
+    public void setTime(Date date) {
         Calendar calendar = Calendar.getInstance();
         if (date == null)
             calendar.setTimeInMillis(System.currentTimeMillis());
@@ -129,11 +143,9 @@ public class DateDialog extends UIIDialogImpl {
         int day = calendar.get(Calendar.DAY_OF_MONTH);
         int hours = calendar.get(Calendar.HOUR_OF_DAY);
         int minute = calendar.get(Calendar.MINUTE);
-        if (isMax) {
-            wheelTime.setEndYear(year);
-            wheelTime.setMaxValue(year, month, day);
-        }
-        wheelTime.setPicker(year, month, day, hours, minute);
+        int second = calendar.get(Calendar.SECOND);
+
+        wheelTime.setPicker(year, month, day, hours, minute, second);
     }
 
     /**
@@ -165,7 +177,7 @@ public class DateDialog extends UIIDialogImpl {
 
         @Override
         public void onDateSelector(WheelTime wheelTime) {
-
+            L.e("onDateSelector() -> " + wheelTime.getTime());
         }
 
         @Override
@@ -175,7 +187,7 @@ public class DateDialog extends UIIDialogImpl {
 
         @Override
         public String getMaxDate() {
-            return WheelTime.Date_FORMAT.format(new Date(System.currentTimeMillis()));
+            return Date_FORMAT.format(new Date(System.currentTimeMillis()));
         }
     }
 
