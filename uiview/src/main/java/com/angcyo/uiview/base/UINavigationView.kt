@@ -69,6 +69,7 @@ abstract class UINavigationView : UIContentView() {
 
     override fun onViewLoad() {
         super.onViewLoad()
+        mainLayoutImpl?.setEnableSwipeBack(false)//关闭侧滑
         createPages(pages)
         onCreatePages()
     }

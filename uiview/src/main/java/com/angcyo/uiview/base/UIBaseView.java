@@ -379,6 +379,7 @@ public abstract class UIBaseView extends UIIViewImpl {
     //-----------------以下私有方法------------------//
 
     protected void removeOtherView(LayoutState needShowState) {
+        mViewHolder.clear();
         if (needShowState == LayoutState.CONTENT) {
             if (mBaseLoadLayout != null) {
                 mBaseContentRootLayout.removeView(mBaseLoadLayout);

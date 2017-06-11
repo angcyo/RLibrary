@@ -21,6 +21,7 @@ import com.angcyo.library.utils.L;
 import com.angcyo.uiview.widget.ItemInfoLayout;
 import com.angcyo.uiview.widget.ItemSubInfoLayout;
 
+import java.lang.ref.WeakReference;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 
@@ -28,7 +29,7 @@ import java.lang.reflect.Method;
  * 通用ViewHolder
  */
 public class RBaseViewHolder extends RecyclerView.ViewHolder {
-    private SparseArray<View> sparseArray;
+    private SparseArray<WeakReference<View>> sparseArray;
     private int viewType = -1;
 
     public RBaseViewHolder(View itemView) {
@@ -91,15 +92,29 @@ public class RBaseViewHolder extends RecyclerView.ViewHolder {
         return result;
     }
 
+    /**
+     * 清理缓存
+     */
+    public void clear() {
+        sparseArray.clear();
+    }
+
     public int getViewType() {
         return viewType == -1 ? super.getItemViewType() : viewType;
     }
 
     public <T extends View> T v(@IdRes int resId) {
-        View view = sparseArray.get(resId);
-        if (view == null) {
+        WeakReference<View> viewWeakReference = sparseArray.get(resId);
+        View view;
+        if (viewWeakReference == null) {
             view = itemView.findViewById(resId);
-            sparseArray.put(resId, view);
+            sparseArray.put(resId, new WeakReference<>(view));
+        } else {
+            view = viewWeakReference.get();
+            if (view == null) {
+                view = itemView.findViewById(resId);
+                sparseArray.put(resId, new WeakReference<>(view));
+            }
         }
         return (T) view;
     }
