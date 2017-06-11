@@ -70,7 +70,9 @@ public class RBaseItemDecoration extends RecyclerView.ItemDecoration {
         super.onDraw(c, parent, state);
 
         final RecyclerView.LayoutManager manager = parent.getLayoutManager();
-        if (manager.getItemCount() <= 1 && !drawLastLine) {
+
+        int itemCount = manager.getItemCount();
+        if (itemCount < 1) {
             //如果只有1个item, 直接返回;
             return;
         }
@@ -84,7 +86,17 @@ public class RBaseItemDecoration extends RecyclerView.ItemDecoration {
             final LinearLayoutManager layoutManager = (LinearLayoutManager) manager;
             final int firstItem = layoutManager.findFirstVisibleItemPosition();
             for (int i = 0; i < layoutManager.getChildCount(); i++) {
-                final View view = layoutManager.findViewByPosition(firstItem + i);
+                int adapterPosition = firstItem + i;
+
+                final View view = layoutManager.findViewByPosition(adapterPosition);
+
+                if (itemCount == 1 || adapterPosition == itemCount - 1) {
+                    //第一个, 或者最后一个
+                    if (!drawLastLine) {
+                        continue;
+                    }
+                }
+
                 if (view != null) {
                     if (layoutManager.getOrientation() == LinearLayoutManager.HORIZONTAL) {
                         //水平
@@ -113,7 +125,7 @@ public class RBaseItemDecoration extends RecyclerView.ItemDecoration {
         final RecyclerView.LayoutParams layoutParams = (RecyclerView.LayoutParams) view.getLayoutParams();
         final int viewLayoutPosition = layoutParams.getViewLayoutPosition();//布局时当前View的位置
 
-        if (layoutManager.getItemCount() <= 1) {
+        if (layoutManager.getItemCount() < 1) {
             //如果只有1个item, 直接返回;
             return;
         }
@@ -129,24 +141,38 @@ public class RBaseItemDecoration extends RecyclerView.ItemDecoration {
             final int itemCount = layoutManager.getItemCount();
             if (linearLayoutManager.getOrientation() == LinearLayoutManager.HORIZONTAL) {
                 //水平方向
-                if (viewLayoutPosition == 0) {
+                if (itemCount == 1 || viewLayoutPosition == itemCount - 1) {
                     //这里可以决定,第一个item的分割线
-                    outRect.set(0, 0, (int) mDividerSize, 0);//默认只有右边有分割线, 你也可以把左边的分割线添加出来
-                } else if (viewLayoutPosition == itemCount - 1 && !drawLastLine) {
-                    //这里可以决定, 最后一个item的分割线
-                    outRect.set(0, 0, 0, 0);//默认, 最后一个item不需要分割线
+                    if (drawLastLine) {
+                        outRect.set(0, 0, (int) mDividerSize, 0);//默认只有右边有分割线, 你也可以把左边的分割线添加出来}
+                    } else {
+                        outRect.set(0, 0, 0, 0);//默认只有右边有分割线, 你也可以把左边的分割线添加出来}
+                    }
+//                    //这里可以决定, 最后一个item的分割线
+//                    if (drawLastLine) {
+//                        outRect.set(0, 0, (int) mDividerSize, 0);
+//                    } else {
+//                        outRect.set(0, 0, 0, 0);//默认, 最后一个item不需要分割线
+//                    }
                 } else {
                     //中间的item,默认只有右边的分割线
                     outRect.set(0, 0, (int) mDividerSize, 0);
                 }
             } else {
                 //垂直方向
-                if (viewLayoutPosition == 0) {
+                if (itemCount == 1 || viewLayoutPosition == itemCount - 1) {
                     //这里可以决定,第一个item的分割线
-                    outRect.set(0, 0, 0, (int) mDividerSize);//默认只有右边有分割线, 你也可以把左边的分割线添加出来
-                } else if (viewLayoutPosition == itemCount - 1) {
-                    //这里可以决定, 最后一个item的分割线
-                    outRect.set(0, 0, 0, 0);//默认, 最后一个item不需要分割线
+                    if (drawLastLine) {
+                        outRect.set(0, 0, 0, (int) mDividerSize);//默认只有右边有分割线, 你也可以把左边的分割线添加出来
+                    } else {
+                        outRect.set(0, 0, 0, 0);
+                    }
+//                    //这里可以决定, 最后一个item的分割线
+//                    if (drawLastLine) {
+//                        outRect.set(0, 0, 0, (int) mDividerSize);//默认, 最后一个item不需要分割线
+//                    } else {
+//                        outRect.set(0, 0, 0, 0);//默认, 最后一个item不需要分割线
+//                    }
                 } else {
                     //中间的item,默认只有右边的分割线
                     outRect.set(0, 0, 0, (int) mDividerSize);

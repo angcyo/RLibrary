@@ -2,6 +2,7 @@ package com.angcyo.uiview.widget;
 
 import android.content.Context;
 import android.content.res.ColorStateList;
+import android.graphics.drawable.Drawable;
 import android.support.v4.content.ContextCompat;
 import android.support.v4.graphics.drawable.DrawableCompat;
 import android.support.v7.widget.AppCompatImageView;
@@ -95,7 +96,13 @@ public class RImageCheckView extends AppCompatImageView implements View.OnClickL
         } else if (heightMode == MeasureSpec.EXACTLY) {
             size = height;
         } else {
-            size = (int) (getResources().getDisplayMetrics().density * 40);
+            Drawable drawable = getDrawable();
+            if (drawable == null) {
+                size = (int) (getResources().getDisplayMetrics().density * 40);
+            } else {
+                size = Math.max(drawable.getIntrinsicWidth() + getPaddingLeft() + getPaddingRight(),
+                        drawable.getIntrinsicHeight() + getPaddingTop() + getPaddingBottom());
+            }
         }
 
         setMeasuredDimension(size, size);

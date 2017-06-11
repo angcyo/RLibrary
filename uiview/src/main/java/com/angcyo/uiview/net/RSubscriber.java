@@ -91,8 +91,10 @@ public abstract class RSubscriber<T> extends Subscriber<T> {
             nonet = true;
         }
 
+        RException exception = new RException(errorCode, errorMsg, "no more").setThrowable(e);
+
         onEnd();
-        onEnd(error, nonet, e);
+        onEnd(error, nonet, exception);
         if (L.LOG_DEBUG) {
             T_.error("[" + errorCode + "]" + errorMsg);
         }

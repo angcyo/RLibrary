@@ -14,6 +14,7 @@ package com.angcyo.uiview.net;
 public class RException extends RuntimeException {
 
 
+    Throwable throwable;
     /**
      * code : 1039
      * msg : 验证码未发送或者已过期,请重新发送
@@ -30,8 +31,18 @@ public class RException extends RuntimeException {
         this.more = more;
     }
 
+    public RException setThrowable(Throwable throwable) {
+        this.throwable = throwable;
+        return this;
+    }
+
     @Override
     public String getMessage() {
+        return "[" + code + "]" + msg;
+    }
+
+    @Override
+    public String getLocalizedMessage() {
         return msg;
     }
 

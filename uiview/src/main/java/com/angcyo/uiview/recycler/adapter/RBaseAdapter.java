@@ -339,14 +339,9 @@ public abstract class RBaseAdapter<T> extends RecyclerView.Adapter<RBaseViewHold
      */
     public void deleteItem(T bean) {
         if (mAllDatas != null) {
-            int size = getItemCount();
             int indexOf = mAllDatas.indexOf(bean);
             if (indexOf > -1) {
-                if (onDeleteItem(bean)) {
-                    mAllDatas.remove(bean);
-                    notifyItemRemoved(indexOf);
-                    notifyItemRangeChanged(indexOf, size - indexOf);
-                }
+                deleteItem(indexOf);
             }
         }
     }
@@ -355,9 +350,11 @@ public abstract class RBaseAdapter<T> extends RecyclerView.Adapter<RBaseViewHold
         if (mAllDatas != null) {
             int size = getItemCount();
             if (size > position) {
-                mAllDatas.remove(position);
-                notifyItemRemoved(position);
-                notifyItemRangeChanged(position, size - position);
+                if (onDeleteItem(position)) {
+                    mAllDatas.remove(position);
+                    notifyItemRemoved(position);
+                    notifyItemRangeChanged(position, size - position);
+                }
             }
         }
     }
@@ -365,7 +362,7 @@ public abstract class RBaseAdapter<T> extends RecyclerView.Adapter<RBaseViewHold
     /**
      * 是否可以删除bean
      */
-    protected boolean onDeleteItem(T bean) {
+    protected boolean onDeleteItem(int position) {
         return true;
     }
 

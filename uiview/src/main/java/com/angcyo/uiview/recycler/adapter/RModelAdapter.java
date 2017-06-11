@@ -260,7 +260,7 @@ public abstract class RModelAdapter<T> extends RBaseAdapter<T> {
     /**
      * 通知选中数量改变了
      */
-    private void notifySelectorChange() {
+    protected void notifySelectorChange() {
         List<Integer> allSelectorList = getAllSelectorList();
         if (getModel() == MODEL_SINGLE && allSelectorList.isEmpty()) {
             //单选模式下, 未选中, 不回调
@@ -532,7 +532,7 @@ public abstract class RModelAdapter<T> extends RBaseAdapter<T> {
      *
      * @param model 单选,多选, 正常
      */
-    public void setModel(@Model int model) {
+    public RModelAdapter setModel(@Model int model) {
         if (mModel != model) {
             int old = mModel;
             mModel = model;
@@ -552,10 +552,40 @@ public abstract class RModelAdapter<T> extends RBaseAdapter<T> {
             notifyDataSetChanged();
         }
         notifySelectorChange();
+        return this;
     }
 
     public RBaseViewHolder getViewHolderFromPosition(int position) {
         return mBaseViewHolderMap.get(position);
+    }
+
+    @Override
+    public void deleteItem(T bean) {
+        super.deleteItem(bean);
+    }
+
+    @Override
+    public void deleteItem(int position) {
+        super.deleteItem(position);
+    }
+
+    @Override
+    protected boolean onDeleteItem(int position) {
+        mSelector.remove(position);
+        Iterator<Integer> iterator = mSelector.iterator();
+
+        HashSet<Integer> newSelector = new HashSet<>();
+        while (iterator.hasNext()) {
+            Integer next = iterator.next();
+            if (next < position) {
+                newSelector.add(next);
+            } else if (next > position) {
+                newSelector.add(next - 1);
+            }
+        }
+        mSelector.clear();
+        mSelector.addAll(newSelector);
+        return true;
     }
 
     @IntDef({MODEL_NORMAL, MODEL_SINGLE, MODEL_MULTI})

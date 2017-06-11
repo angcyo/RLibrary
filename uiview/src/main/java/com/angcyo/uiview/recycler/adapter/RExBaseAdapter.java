@@ -413,14 +413,9 @@ public abstract class RExBaseAdapter<H, T, F> extends RModelAdapter<T> {
     @Override
     public void deleteItem(T bean) {
         if (mAllDatas != null) {
-            int size = mAllDatas.size();
             int indexOf = mAllDatas.indexOf(bean) + getHeaderCount();
             if (indexOf > -1) {
-                if (onDeleteItem(bean)) {
-                    mAllDatas.remove(bean);
-                    notifyItemRemoved(indexOf);
-                    notifyItemRangeChanged(indexOf, size - indexOf);
-                }
+                deleteItem(indexOf);
             }
         }
     }
@@ -428,14 +423,7 @@ public abstract class RExBaseAdapter<H, T, F> extends RModelAdapter<T> {
     @Override
     public void deleteItem(int position) {
         position += getHeaderCount();
-        if (mAllDatas != null) {
-            int size = mAllDatas.size();
-            if (size > position) {
-                mAllDatas.remove(position);
-                notifyItemRemoved(position);
-                notifyItemRangeChanged(position, size - position);
-            }
-        }
+        super.deleteItem(position);
     }
 
     @Override
@@ -470,6 +458,8 @@ public abstract class RExBaseAdapter<H, T, F> extends RModelAdapter<T> {
         } else {
             notifyDataSetChanged();
         }
+
+        notifySelectorChange();
     }
 
     /**
@@ -487,6 +477,8 @@ public abstract class RExBaseAdapter<H, T, F> extends RModelAdapter<T> {
         this.mAllDatas.addAll(datas);
         notifyItemRangeInserted(startPosition, datas.size());
         notifyItemRangeChanged(startPosition, getItemCount());
+
+        notifySelectorChange();
     }
 
     public interface ObjectEmpty {
