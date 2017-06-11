@@ -246,6 +246,16 @@ public class UIDialog extends UIIDialogImpl {
         return this;
     }
 
+    public UIDialog setIncertitudeProgress(boolean incertitudeProgress) {
+        if (mBaseProgressBar != null) {
+            if (incertitudeProgress) {
+                mBaseProgressBar.setVisibility(View.VISIBLE);
+            }
+            mBaseProgressBar.setIncertitudeProgress(incertitudeProgress);
+        }
+        return this;
+    }
+
     public interface OnDialogClick {
         void onDialogClick(UIDialog dialog, View clickView);
     }

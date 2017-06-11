@@ -202,6 +202,8 @@ public abstract class UIIViewImpl implements IView {
 
         if (lastShowTime == 0) {
             onViewShowFirst(bundle);
+        } else {
+            onViewShowNotFirst(bundle);
         }
 
         onViewShow(viewShowCount);
@@ -213,6 +215,10 @@ public abstract class UIIViewImpl implements IView {
 
     public void onViewShowFirst(Bundle bundle) {
         L.v(this.getClass().getSimpleName(), "onViewShowFirst: ");
+    }
+
+    public void onViewShowNotFirst(Bundle bundle) {
+        L.v(this.getClass().getSimpleName(), "onViewShowNotFirst: ");
     }
 
     //星期五 2017-2-17

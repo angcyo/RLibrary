@@ -876,10 +876,17 @@ public class ExEditText extends AppCompatEditText {
         Anim.band(this);
     }
 
+    /**
+     * 如果为空, 自动执行动画提示.
+     * 返回结果表示是否为空
+     */
     public boolean checkEmpty() {
         return checkEmpty(false);
     }
 
+    /**
+     * 返回结果表示是否为空
+     */
     public boolean checkEmpty(boolean checkPhone) {
         if (isEmpty()) {
             error();

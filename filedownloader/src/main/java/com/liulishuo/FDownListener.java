@@ -119,12 +119,12 @@ public abstract class FDownListener extends FileDownloadSampleListener {
      * 下载进度
      */
     public void onProgress(BaseDownloadTask task, int soFarBytes, int totalBytes, float progress /*80 比例*/) {
-        //L.d("下载进度:" + task.getUrl() + " -> total:" + totalBytes + " :" + scale);
+//        L.d("下载进度:" + task.getUrl() + " -> total:" + totalBytes + " :" + progress);
     }
 
     @Deprecated
     public void onProgress(BaseDownloadTask task, int soFarBytes, int totalBytes, String scale /*80% 比例*/) {
-        //L.d("下载进度:" + task.getUrl() + " -> total:" + totalBytes + " :" + scale);
+        L.d("下载进度:" + task.getUrl() + " -> total:" + totalBytes + " :" + scale);
     }
 
     /**

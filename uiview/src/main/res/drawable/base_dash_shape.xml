@@ -3,8 +3,8 @@
        android:shape="line">
     <!--蚂蚁线-->
     <stroke
-        android:width="@dimen/base_ldpi"
+        android:width="@dimen/base_line"
         android:color="@color/base_text_color_dark"
         android:dashGap="@dimen/base_ldpi"
-        android:dashWidth="@dimen/base_xhdpi"/>
+        android:dashWidth="@dimen/base_ldpi"/>
 </shape>

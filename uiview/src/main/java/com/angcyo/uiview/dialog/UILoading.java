@@ -10,6 +10,7 @@ import android.widget.TextView;
 import com.angcyo.uiview.R;
 import com.angcyo.uiview.base.UIIDialogImpl;
 import com.angcyo.uiview.container.ILayout;
+import com.angcyo.uiview.container.UIParam;
 
 /**
  * Copyright (C) 2016,深圳市红鸟网络科技股份有限公司 All rights reserved.
@@ -60,7 +61,7 @@ public class UILoading extends UIIDialogImpl {
 
     public static void hide() {
         if (isShowing && mUILoading != null) {
-            mUILoading.finishDialog();
+            mUILoading.finishIView(mUILoading, new UIParam(true, true, false));
             isShowing = false;
         }
     }

@@ -1,5 +1,7 @@
 package com.angcyo.uiview.widget;
 
+import android.animation.ArgbEvaluator;
+import android.animation.ValueAnimator;
 import android.content.Context;
 import android.graphics.Canvas;
 import android.graphics.Color;
@@ -8,6 +10,7 @@ import android.graphics.Rect;
 import android.support.v4.view.ViewCompat;
 import android.util.AttributeSet;
 import android.view.View;
+import android.view.animation.LinearInterpolator;
 
 import com.angcyo.uiview.skin.SkinHelper;
 
@@ -34,6 +37,13 @@ public class SimpleProgressBar extends View {
 
     boolean autoHide = true;
 
+    /**
+     * 不确定的进度
+     */
+    boolean incertitudeProgress = false;
+    int drawColor;
+    private ValueAnimator mColorAnimator;
+
     public SimpleProgressBar(Context context) {
         super(context);
         init();
@@ -58,6 +68,12 @@ public class SimpleProgressBar extends View {
     }
 
     public void setProgress(int progress) {
+        if (incertitudeProgress) {
+            return;
+        }
+
+        endIncertitudeAnimator();
+
         progress = Math.max(0, Math.min(100, progress));
         if (autoHide && (progress >= 100 || progress <= 0)) {
 //            setVisibility(GONE);
@@ -69,6 +85,16 @@ public class SimpleProgressBar extends View {
         }
         mProgress = progress;
         postInvalidate();
+    }
+
+    public void setIncertitudeProgress(boolean incertitudeProgress) {
+        this.incertitudeProgress = incertitudeProgress;
+        drawColor = mProgressColor;
+        if (incertitudeProgress) {
+            startIncertitudeAnimator();
+        } else {
+            endIncertitudeAnimator();
+        }
     }
 
     public void setProgressColor(int progressColor) {
@@ -100,6 +126,42 @@ public class SimpleProgressBar extends View {
 
     @Override
     protected void onDraw(Canvas canvas) {
-        canvas.drawRect(0, 0, mRect.width() * (mProgress / 100f), mRect.height(), mPaint);
+        if (incertitudeProgress) {
+            mPaint.setColor(drawColor);
+            canvas.drawRect(0, 0, mRect.width(), mRect.height(), mPaint);
+        } else {
+            canvas.drawRect(0, 0, mRect.width() * (mProgress / 100f), mRect.height(), mPaint);
+        }
+    }
+
+    @Override
+    protected void onDetachedFromWindow() {
+        super.onDetachedFromWindow();
+        endIncertitudeAnimator();
+    }
+
+    private void endIncertitudeAnimator() {
+        if (mColorAnimator != null) {
+            mColorAnimator.cancel();
+            mColorAnimator = null;
+        }
+    }
+
+    private void startIncertitudeAnimator() {
+        if (mColorAnimator == null) {
+            mColorAnimator = ValueAnimator.ofObject(new ArgbEvaluator(), mProgressColor, SkinHelper.getTranColor(mProgressColor, 0x10));
+            mColorAnimator.setInterpolator(new LinearInterpolator());
+            mColorAnimator.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
+                @Override
+                public void onAnimationUpdate(ValueAnimator animation) {
+                    drawColor = (int) animation.getAnimatedValue();//之后就可以得到动画的颜色了.
+                    postInvalidate();
+                }
+            });
+            mColorAnimator.setDuration(1000);
+            mColorAnimator.setRepeatCount(ValueAnimator.INFINITE);
+            mColorAnimator.setRepeatMode(ValueAnimator.REVERSE);
+        }
+        mColorAnimator.start();
     }
 }
