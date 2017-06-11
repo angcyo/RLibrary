@@ -88,6 +88,12 @@ public class SimpleProgressBar extends View {
     }
 
     public void setIncertitudeProgress(boolean incertitudeProgress) {
+        boolean old = this.incertitudeProgress;
+
+        if (old == incertitudeProgress) {
+            return;
+        }
+
         this.incertitudeProgress = incertitudeProgress;
         drawColor = mProgressColor;
         if (incertitudeProgress) {
