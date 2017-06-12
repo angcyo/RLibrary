@@ -53,7 +53,7 @@ public class SimpleCircleProgressBar extends View {
 
         mPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
 
-        mPaint.setStrokeCap(Paint.Cap.SQUARE);
+        mPaint.setStrokeCap(Paint.Cap.ROUND);
         mPaint.setAntiAlias(true);
         mPaint.setStyle(Paint.Style.STROKE);
 
@@ -99,7 +99,7 @@ public class SimpleCircleProgressBar extends View {
         canvas.drawArc(mRectF, 0f, 360f, false, mPaint);
 
         mPaint.setColor(mProgressColor);
-        mPaint.setStrokeWidth(strokeWidth + 2);
+        mPaint.setStrokeWidth(strokeWidth + 1.1f);
         canvas.drawArc(mRectF, startAngle, 90f, false, mPaint);
     }
 
