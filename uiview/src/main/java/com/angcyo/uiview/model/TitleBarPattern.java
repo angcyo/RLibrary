@@ -230,6 +230,11 @@ public class TitleBarPattern {
         @ColorInt
         public int textColor = -1;
 
+        public int leftMargin = 0;
+        public int topMargin = 0;
+        public int rightMargin = 0;
+        public int bottomMargin = 0;
+
         private TitleBarItem() {
 
         }
@@ -281,6 +286,26 @@ public class TitleBarPattern {
 
         public TitleBarItem setTextColor(@ColorInt int textColor) {
             this.textColor = textColor;
+            return this;
+        }
+
+        public TitleBarItem setLeftMargin(int leftMargin) {
+            this.leftMargin = leftMargin;
+            return this;
+        }
+
+        public TitleBarItem setTopMargin(int topMargin) {
+            this.topMargin = topMargin;
+            return this;
+        }
+
+        public TitleBarItem setRightMargin(int rightMargin) {
+            this.rightMargin = rightMargin;
+            return this;
+        }
+
+        public TitleBarItem setBottomMargin(int bottomMargin) {
+            this.bottomMargin = bottomMargin;
             return this;
         }
     }

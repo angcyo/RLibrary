@@ -50,7 +50,6 @@ public interface IView {
      */
     void loadContentView(View rootView);
 
-
     /**
      * 生命周期顺序: 4
      */

@@ -514,6 +514,9 @@ public abstract class RModelAdapter<T> extends RBaseAdapter<T> {
      * 添加选中位置, 不做任何其他操作
      */
     public void addSelectorPosition(int position) {
+        if (mModel == MODEL_SINGLE) {
+            mSelector.clear();
+        }
         mSelector.add(position);
         notifySelectorChange();
     }

@@ -331,7 +331,8 @@ public class UITitleBarContainer extends FrameLayout {
             view.setVisibility(item.visibility);
             view.setMinimumWidth(itemSize);
             LinearLayout.LayoutParams layoutParams = new LinearLayout.LayoutParams(-2, -1);
-            view.setTag(i);//方便之后查找这个view
+            layoutParams.setMargins(item.leftMargin, item.topMargin, item.rightMargin, item.bottomMargin);
+            view.setTag(R.id.tag, i);//方便之后查找这个view
             layout.addView(view, layoutParams);
             views.add(view);
         }

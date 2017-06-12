@@ -1,5 +1,6 @@
 package com.angcyo.uiview.viewgroup
 
+import android.animation.Animator
 import android.animation.ObjectAnimator
 import android.animation.ValueAnimator
 import android.content.Context
@@ -42,6 +43,8 @@ class ExpandRecordLayout(context: Context, attributeSet: AttributeSet? = null) :
         gravity = Gravity.BOTTOM
         setWillNotDraw(false)
     }
+
+    var listener: OnRecordListener? = null
 
     override fun onAttachedToWindow() {
         super.onAttachedToWindow()
@@ -208,7 +211,7 @@ class ExpandRecordLayout(context: Context, attributeSet: AttributeSet? = null) :
                 removeCallbacks(longPressRunnable)
                 if (isLongPress) {
                     isLongPress = false
-                    stopProgress()
+                    stopProgress((progressAnimator.currentPlayTime / 1000.0).toInt())
                 }
             }
             ACTION_MOVE -> {
@@ -281,10 +284,34 @@ class ExpandRecordLayout(context: Context, attributeSet: AttributeSet? = null) :
     private fun startProgress() {
         if (!progressAnimator.isStarted) {
             progress = 0f
+
+
             progressAnimator.addUpdateListener {
                 progress = it.animatedValue as Float
                 //L.e("call: startProgress -> ${Math.ceil(it.currentPlayTime / 1000.0)}s")
+                listener?.onRecording((it.currentPlayTime / 1000.0).toInt())
             }
+
+            progressAnimator.addListener(object : Animator.AnimatorListener {
+                override fun onAnimationRepeat(animation: Animator?) {
+                }
+
+                override fun onAnimationEnd(animation: Animator) {
+                    if (isLongPress) {
+                        isLongPress = false
+                        stopProgress(maxTime)
+                    }
+                }
+
+                override fun onAnimationCancel(animation: Animator?) {
+                }
+
+                override fun onAnimationStart(animation: Animator?) {
+                    listener?.onRecordStart()
+                }
+
+            })
+
             progressAnimator.start()
         }
 
@@ -298,8 +325,12 @@ class ExpandRecordLayout(context: Context, attributeSet: AttributeSet? = null) :
         lessenAnimator.start()
     }
 
-    private fun stopProgress() {
-        L.e("call: stopProgress -> ${Math.ceil(progressAnimator.currentPlayTime / 1000.0)}s")
+    /**停止录制*/
+    private fun stopProgress(progress: Int) {
+        L.e("call: stopProgress -> ${progress}s")
+
+        listener?.onRecordEnd(progress)
+
         if (progressAnimator.isStarted || progressAnimator.isRunning) {
             progressAnimator.cancel()
         }
@@ -350,8 +381,8 @@ class ExpandRecordLayout(context: Context, attributeSet: AttributeSet? = null) :
             paint.color = progressColor
 
             //绘制进度文本
-            val time = "${Math.ceil(progressAnimator.currentPlayTime / 1000.0)} s"
-            canvas.drawText(time, cx - paint.measureText(time) / 2, outCircleRect.top - 20 * density, paint)
+            val time = "${(progressAnimator.currentPlayTime / 1000.0).toInt()} s"
+            canvas.drawText(time, cx - paint.measureText(time) / 2, outCircleRect.top - 30 * density, paint)
 
             //进度的宽度
             paint.strokeWidth = progressWidth
@@ -401,6 +432,12 @@ class ExpandRecordLayout(context: Context, attributeSet: AttributeSet? = null) :
 
         const val ANIM_TIME = 200L
         const val MAX_SCALE = 1.2f
-        const val MIN_SCALE = 0.8f
+        const val MIN_SCALE = 0.5f
+    }
+
+    interface OnRecordListener {
+        fun onRecordStart()
+        fun onRecording(progress: Int)
+        fun onRecordEnd(progress: Int)
     }
 }

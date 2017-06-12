@@ -50,11 +50,28 @@ public class RLoopRecyclerView extends RRecyclerView {
 
     @Override
     public void setAdapter(Adapter adapter) {
+        if (isInEditMode()) {
+            super.setAdapter(adapter);
+            return;
+        }
+
         if (!(adapter instanceof LoopAdapter)) {
             throw new IllegalArgumentException("adapter must  instanceof LoopAdapter!");
         }
         super.setAdapter(adapter);
-        scrollToPosition(getAdapter().getItemRawCount() * 10000);//开始时的偏移量
+        scrollToPosition(getDefaultPosition());//开始时的偏移量
+    }
+
+    /**
+     * 默认滚动至
+     */
+    protected int getDefaultPosition() {
+        return getAdapter().getItemRawCount() * 10000;
+    }
+
+    @Override
+    public void scrollTo(int position, boolean anim) {
+        super.scrollTo(getDefaultPosition() + position, anim);
     }
 
     private void initView() {
