@@ -131,8 +131,11 @@ class ExpandRecordLayout(context: Context, attributeSet: AttributeSet? = null) :
             }
 
             override fun onSingleTapUp(e: MotionEvent?): Boolean {
+                if (isLongPress) {
+                    return false
+                }
                 L.e("call: onSingleTapUp -> ")
-                expandLayout(state == STATE_CLOSE)
+                //expandLayout(state == STATE_CLOSE)
 
                 if (state == STATE_EXPAND) {
                     expandLayout(false)
@@ -280,7 +283,7 @@ class ExpandRecordLayout(context: Context, attributeSet: AttributeSet? = null) :
             progress = 0f
             progressAnimator.addUpdateListener {
                 progress = it.animatedValue as Float
-                L.e("call: startProgress -> ${Math.ceil(it.currentPlayTime / 1000.0)}s")
+                //L.e("call: startProgress -> ${Math.ceil(it.currentPlayTime / 1000.0)}s")
             }
             progressAnimator.start()
         }

@@ -198,12 +198,12 @@ class TouchMoveView : View {
         var newWidthSpec = widthMeasureSpec
         var newHeightSpec = heightMeasureSpec
 
-        if (widthMode == MeasureSpec.AT_MOST) {
+        if (widthMode == MeasureSpec.AT_MOST || widthMode == View.MeasureSpec.UNSPECIFIED) {
             widthSize = Math.max(imageWidth, textWidth)
             newWidthSpec = MeasureSpec.makeMeasureSpec(widthSize, MeasureSpec.EXACTLY)
         }
 
-        if (heightMode == MeasureSpec.AT_MOST) {
+        if (heightMode == MeasureSpec.AT_MOST || heightMode == View.MeasureSpec.UNSPECIFIED) {
             heightSize = (imageHeight + textHeight).toInt()
             newHeightSpec = MeasureSpec.makeMeasureSpec(heightSize, MeasureSpec.EXACTLY)
         }

@@ -83,12 +83,12 @@ public class RDownloadView extends AppCompatImageView implements Runnable {
 
         int heightSize = MeasureSpec.getSize(heightMeasureSpec);
         int heightMode = MeasureSpec.getMode(heightMeasureSpec);
-        if (widthMode == MeasureSpec.AT_MOST) {
+        if (widthMode == MeasureSpec.AT_MOST || widthMode== MeasureSpec.UNSPECIFIED) {
             widthSize = Math.max(normalDrawable.getIntrinsicWidth(),
                     finishDrawable.getIntrinsicWidth()) + getPaddingLeft() + getPaddingRight();
         }
 
-        if (heightMode == MeasureSpec.AT_MOST) {
+        if (heightMode == MeasureSpec.AT_MOST || heightMode== MeasureSpec.UNSPECIFIED) {
             heightSize = Math.max(normalDrawable.getIntrinsicHeight(),
                     finishDrawable.getIntrinsicHeight()) + getPaddingBottom() + getPaddingTop();
         }

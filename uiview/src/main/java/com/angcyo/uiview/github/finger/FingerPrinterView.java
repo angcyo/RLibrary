@@ -91,11 +91,11 @@ public class FingerPrinterView extends View {
         int widthSize = MeasureSpec.getSize(widthMeasureSpec);
         int heightSize = MeasureSpec.getSize(heightMeasureSpec);
 
-        if (heightMode == MeasureSpec.AT_MOST) {
+        if (heightMode == MeasureSpec.AT_MOST || heightMode== MeasureSpec.UNSPECIFIED) {
             heightSize = mBitHeight;
         }
 
-        if (widthMode == MeasureSpec.AT_MOST) {
+        if (widthMode == MeasureSpec.AT_MOST || widthMode== MeasureSpec.UNSPECIFIED) {
             widthSize = mBitWidth;
         }
 

@@ -123,11 +123,11 @@ public class RSeekBar extends View {
         int heightSize = MeasureSpec.getSize(heightMeasureSpec);
         int heightMode = MeasureSpec.getMode(heightMeasureSpec);
 
-        if (widthMode == MeasureSpec.AT_MOST) {
+        if (widthMode == MeasureSpec.AT_MOST || widthMode == MeasureSpec.UNSPECIFIED) {
             widthSize = (int) (100 * mDensity + mThumbWidth) + getPaddingLeft() + getPaddingRight();
         }
 
-        if (heightMode == MeasureSpec.AT_MOST) {
+        if (heightMode == MeasureSpec.AT_MOST || heightMode == MeasureSpec.UNSPECIFIED) {
             heightSize = Math.max(mThumbHeight, mTrackHeight) + getPaddingBottom() + getPaddingTop();
         }
 
