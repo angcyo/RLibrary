@@ -3,6 +3,7 @@ package com.lzy.imagepicker.view;
 import android.content.Context;
 import android.content.res.Resources;
 import android.graphics.Canvas;
+import android.graphics.Color;
 import android.graphics.ColorFilter;
 import android.graphics.Paint;
 import android.graphics.PixelFormat;
@@ -27,6 +28,9 @@ import java.util.ArrayList;
  */
 public class MaterialProgressView extends View {
 
+    RectF bgRectF = new RectF();
+    Paint bgPaint = new Paint();
+
     private MaterialProgressDrawable mDrawable;
     private float mScale = 1f;
 
@@ -44,6 +48,10 @@ public class MaterialProgressView extends View {
         mDrawable = new MaterialProgressDrawable(getContext(), this);
         mDrawable.setAlpha(255);
         mDrawable.setCallback(this);
+
+        bgPaint.setStrokeCap(Paint.Cap.SQUARE);
+        bgPaint.setAntiAlias(true);
+        bgPaint.setStyle(Paint.Style.STROKE);
     }
 
     @Override
@@ -88,6 +96,12 @@ public class MaterialProgressView extends View {
         int l = getPaddingLeft() + (getMeasuredWidth() - mDrawable.getIntrinsicWidth()) / 2;
         canvas.translate(l, getPaddingTop());
         canvas.scale(mScale, mScale, rect.exactCenterX(), rect.exactCenterY());
+
+        bgRectF.set(rect);
+        bgPaint.setStrokeWidth(mDrawable.getRing().getStrokeWidth());
+        bgPaint.setColor(Color.RED);
+        canvas.drawArc(bgRectF, 0f, 360f, false, bgPaint);
+        
         mDrawable.draw(canvas);
         canvas.restoreToCount(saveCount);
     }
@@ -159,6 +173,10 @@ public class MaterialProgressView extends View {
             mRing.setColors(COLORS);
             setSizeParameters(CIRCLE_DIAMETER, CIRCLE_DIAMETER, CENTER_RADIUS, STROKE_WIDTH);
             setupAnimators();
+        }
+
+        public Ring getRing() {
+            return mRing;
         }
 
         private void setSizeParameters(double progressCircleWidth, double progressCircleHeight,

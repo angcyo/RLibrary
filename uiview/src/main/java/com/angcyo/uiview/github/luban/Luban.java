@@ -14,6 +14,8 @@ import android.text.format.Formatter;
 import android.util.Log;
 
 import com.angcyo.library.utils.L;
+import com.angcyo.uiview.utils.RUtils;
+import com.angcyo.uiview.utils.file.FileUtil;
 
 import java.io.BufferedInputStream;
 import java.io.BufferedOutputStream;
@@ -432,7 +434,8 @@ public class Luban {
 
     private File thirdCompress(@NonNull File file) {
         String thumb = mCacheDir.getAbsolutePath() + File.separator +
-                (TextUtils.isEmpty(filename) ? UUID.randomUUID().toString()/*System.currentTimeMillis()*/ : filename) + ".jpg";
+                (TextUtils.isEmpty(filename) ? UUID.randomUUID().toString()/*System.currentTimeMillis()*/ : filename) +
+                "." + FileUtil.getExtensionName(file.getName(), "jpg");
 
         double size;
         String filePath = file.getAbsolutePath();
@@ -449,10 +452,15 @@ public class Luban {
 
         double scale = ((double) width / height);
 
+        if (RUtils.getImageType(file) == RUtils.ImageType.GIF) {
+            //GIF 图片, 不压缩直接重命名保存
+            return copyTo(file, thumb, width, height);
+        }
+
         if (scale <= 1 && scale > 0.5625) {
             if (height < 1664) {
                 if (file.length() / 1024 < 150)
-                    return copyTo(file, thumb, width, height);
+                    return copyTo(file, thumb, width, height);//原本就已经很小的图片, 重命名保存
 
                 size = (width * height) / Math.pow(1664, 2) * 150;
                 size = size < 60 ? 60 : size;
@@ -475,7 +483,7 @@ public class Luban {
             }
         } else if (scale <= 0.5625 && scale > 0.5) {
             if (height < 1280 && file.length() / 1024 < 200)
-                return copyTo(file, thumb, width, height);
+                return copyTo(file, thumb, width, height);//原本就已经很小的图片, 重命名保存
 
             int multiple = height / 1280 == 0 ? 1 : height / 1280;
             thumbW = width / multiple;
@@ -669,7 +677,7 @@ public class Luban {
         }
         bitmap.recycle();
         try {
-            filePath += "_s_" + width + "x" + height + ".png";
+            filePath += "_s_" + width + "x" + height + ".jpg";
             FileOutputStream fos = new FileOutputStream(filePath);
             fos.write(stream.toByteArray());
             fos.flush();
@@ -686,7 +694,7 @@ public class Luban {
         String filePath = toPath;
         File targetFile = file;
         try {
-            filePath += "_s_" + width + "x" + height + ".png";
+            filePath += "_s_" + width + "x" + height + "." + FileUtil.getExtensionName(file.getName(), "jpg");
 
             FileInputStream input = new FileInputStream(file);
             BufferedInputStream inBuff = new BufferedInputStream(input);
