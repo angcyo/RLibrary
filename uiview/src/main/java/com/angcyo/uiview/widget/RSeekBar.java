@@ -30,6 +30,12 @@ import java.util.Set;
 public class RSeekBar extends View {
 
     /**
+     * 浮子类型
+     */
+    public static final int THUMB_CIRCLE = 1;//圆
+    public static final int THUMB_DEFAULT = 0;//默认
+
+    /**
      * 轨道背景颜色
      */
     int mTrackBgColor;
@@ -46,6 +52,8 @@ public class RSeekBar extends View {
     int mThumbColor;
     int mThumbHeight;
     int mThumbWidth;
+    //在thumbType==THUMB_CIRCLE 时
+    int mThumbRadius;
     /**
      * 浮子圆角大小
      */
@@ -58,6 +66,8 @@ public class RSeekBar extends View {
     Set<OnProgressChangeListener> mOnProgressChangeListeners = new HashSet<>();
     private float mDensity;
     private RectF mRectF;
+
+    private int thumbType = THUMB_DEFAULT;
 
     public RSeekBar(Context context) {
         this(context, null);
@@ -89,15 +99,22 @@ public class RSeekBar extends View {
 
         mTrackBgColor = typedArray.getColor(R.styleable.RSeekBar_r_track_bg_color, mTrackBgColor);
         mTrackColor = typedArray.getColor(R.styleable.RSeekBar_r_track_color, mTrackColor);
+        mThumbColor = typedArray.getColor(R.styleable.RSeekBar_r_thumb_color, mThumbColor);
 
         mTrackHeight = typedArray.getDimensionPixelOffset(R.styleable.RSeekBar_r_track_height, mTrackHeight);
         mThumbHeight = typedArray.getDimensionPixelOffset(R.styleable.RSeekBar_r_thumb_height, mThumbHeight);
         mThumbWidth = typedArray.getDimensionPixelOffset(R.styleable.RSeekBar_r_thumb_width, mThumbWidth);
         mThumbRoundSize = typedArray.getDimensionPixelOffset(R.styleable.RSeekBar_r_thumb_round_size, mThumbRoundSize);
         curProgress = typedArray.getInteger(R.styleable.RSeekBar_r_cur_progress, curProgress);
+        thumbType = typedArray.getInt(R.styleable.RSeekBar_r_thumb_type, THUMB_DEFAULT);
         curProgress = ensureProgress(curProgress);
 
         typedArray.recycle();
+
+        if (thumbType == THUMB_CIRCLE) {
+            mThumbRadius = Math.min(mThumbWidth, mThumbHeight);
+            mThumbWidth = mThumbHeight = mThumbRadius;
+        }
 
         initView();
     }
@@ -156,7 +173,11 @@ public class RSeekBar extends View {
         //绘制浮子
         mPaint.setColor(mThumbColor);
         updateProgress();
-        canvas.drawRoundRect(mRectF, mThumbRoundSize, mThumbRoundSize, mPaint);
+        if (thumbType == THUMB_DEFAULT) {
+            canvas.drawRoundRect(mRectF, mThumbRoundSize, mThumbRoundSize, mPaint);
+        } else if (thumbType == THUMB_CIRCLE) {
+            canvas.drawCircle(mRectF.centerX(), mRectF.centerY(), mThumbHeight / 2, mPaint);
+        }
     }
 
     /**

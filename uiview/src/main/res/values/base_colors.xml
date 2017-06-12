@@ -36,6 +36,7 @@
     <color name="default_base_white">#ffffff</color>
     <color name="base_white">#ffffff</color>
     <color name="base_white_tran">#19ffffff</color>
+    <color name="base_white_tran2">#40ffffff</color>
     <color name="default_base_white_tran">#80ffffff</color>
     <color name="default_base_white_dark">#C0FBEC</color>
 
