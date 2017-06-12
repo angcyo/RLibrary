@@ -506,6 +506,7 @@ public abstract class UIIViewImpl implements IView {
         if (mILayout == null) {
             throw new IllegalArgumentException("ILayout 还未初始化");
         }
+        param.setReplaceIView(this);
         mILayout.replaceIView(iView, param);
     }
 

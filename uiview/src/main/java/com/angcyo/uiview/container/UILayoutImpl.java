@@ -892,14 +892,17 @@ public class UILayoutImpl extends SwipeBackLayout implements ILayout<UIParam>, U
 
                 topViewStart(newViewPattern, param);
 
-                final Runnable endRunnable = new Runnable() {
-                    @Override
-                    public void run() {
-                        removeViewPattern(oldViewPattern);
-                    }
-                };
-                viewHide(oldViewPattern, true);
-                bottomViewRemove(oldViewPattern, newViewPattern, endRunnable, param.mAnim);
+                if (oldViewPattern.mIView == param.replaceIView) {
+                    final Runnable endRunnable = new Runnable() {
+                        @Override
+                        public void run() {
+                            removeViewPattern(oldViewPattern);
+                            param.clear();
+                        }
+                    };
+                    viewHide(oldViewPattern, true);
+                    bottomViewRemove(oldViewPattern, newViewPattern, endRunnable, param.mAnim);
+                }
 
                 mLastShowViewPattern = newViewPattern;
                 runnableCount--;

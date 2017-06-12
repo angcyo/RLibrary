@@ -2,6 +2,8 @@ package com.angcyo.uiview.container;
 
 import android.os.Bundle;
 
+import com.angcyo.uiview.view.IView;
+
 /**
  * Copyright (C) 2016,深圳市红鸟网络科技股份有限公司 All rights reserved.
  * 项目名称：
@@ -38,6 +40,11 @@ public class UIParam {
      * 启动一个新的IView 时, 是否隐藏之前顶部的IView
      */
     public boolean hideLastIView = true;
+
+    /**
+     * 需要替换的iview, 只在replaceIView时使用, 用来判断目标的可行性
+     */
+    public IView replaceIView;
 
     public UIParam(boolean anim, boolean async, Bundle bundle) {
         mAnim = anim;
@@ -103,5 +110,15 @@ public class UIParam {
     public UIParam setLaunchMode(int mode) {
         start_mode = mode;
         return this;
+    }
+
+    public UIParam setReplaceIView(IView replaceIView) {
+        this.replaceIView = replaceIView;
+        return this;
+    }
+
+    public void clear() {
+        replaceIView = null;
+        mBundle = null;
     }
 }

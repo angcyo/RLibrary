@@ -28,7 +28,7 @@ import com.lzy.imagepicker.Utils;
 import com.lzy.imagepicker.YImageControl;
 import com.lzy.imagepicker.bean.ImageItem;
 import com.lzy.imagepicker.loader.ImageLoader;
-import com.lzy.imagepicker.view.MaterialProgressView;
+import com.lzy.imagepicker.view.SimpleCircleProgressBar;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -132,7 +132,8 @@ public class ImagePageAdapter extends PagerAdapter {
         imageView.setScaleType(ImageView.ScaleType.CENTER);
 
         //进度条显示
-        final MaterialProgressView progressView = new MaterialProgressView(mActivity);
+        //final MaterialProgressView progressView = new MaterialProgressView(mActivity);
+        final SimpleCircleProgressBar progressView = new SimpleCircleProgressBar(mActivity);
 
         final ImageItem imageItem = images.get(position);
         /*imagePicker.getImageLoader().*/
@@ -206,7 +207,7 @@ public class ImagePageAdapter extends PagerAdapter {
     }
 
     protected void loadImage(final PhotoView photoView, final ImageView imageView,
-                             final MaterialProgressView progressView, final ImageItem imageItem) {
+                             final SimpleCircleProgressBar progressView, final ImageItem imageItem) {
 
         Ok.instance().type(imageItem.url, new Ok.OnImageTypeListener() {
             @Override
