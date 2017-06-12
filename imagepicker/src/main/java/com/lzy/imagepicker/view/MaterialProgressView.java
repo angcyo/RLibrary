@@ -94,7 +94,6 @@ public class MaterialProgressView extends View {
         int l = getPaddingLeft() + (getMeasuredWidth() - mDrawable.getIntrinsicWidth()) / 2;
         canvas.translate(l, getPaddingTop());
         canvas.scale(mScale, mScale, rect.exactCenterX(), rect.exactCenterY());
-
         mDrawable.draw(canvas);
         canvas.restoreToCount(saveCount);
     }
