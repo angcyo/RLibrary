@@ -5,9 +5,7 @@ import android.content.res.Resources;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.media.MediaMetadataRetriever;
-import android.media.ThumbnailUtils;
 import android.os.Build;
-import android.provider.MediaStore;
 
 import com.angcyo.uiview.utils.ScreenUtil;
 import com.angcyo.uiview.utils.file.AttachmentStore;
@@ -259,6 +257,9 @@ public class BitmapDecoder {
         return null;
     }
 
+    /**
+     * 星期二 2017-6-13 视频截图
+     */
     public static boolean extractThumbnail(String videoPath, String thumbPath) {
         if (!AttachmentStore.isFileExist(thumbPath)) {
 //            Bitmap thumbnail = ThumbnailUtils.createVideoThumbnail(videoPath, MediaStore.Images.Thumbnails.MINI_KIND);

@@ -259,8 +259,8 @@ public class ImageDataSource implements LoaderManager.LoaderCallbacks<Cursor> {
 
         try {
             String[] split = resolution.split("x");
-            imageItem.width = Integer.parseInt(split[1]);
-            imageItem.height = Integer.parseInt(split[0]);
+            imageItem.width = Integer.parseInt(split[0]);
+            imageItem.height = Integer.parseInt(split[1]);
         } catch (Exception e) {
             e.printStackTrace();
         }

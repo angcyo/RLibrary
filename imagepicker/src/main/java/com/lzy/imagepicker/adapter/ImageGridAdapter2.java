@@ -22,7 +22,9 @@ import com.lzy.imagepicker.ui.ImageBaseActivity;
 import com.lzy.imagepicker.ui.ImageGridActivity;
 import com.lzy.imagepicker.view.ImagePickerImageView;
 
+import java.io.File;
 import java.util.ArrayList;
+import java.util.UUID;
 
 import static com.lzy.imagepicker.ImageDataSource.VIDEO;
 
@@ -128,9 +130,13 @@ public class ImageGridAdapter2 extends RecyclerView.Adapter<ImageViewHolder> {
             thumbImageView.setScaleType(ImageView.ScaleType.CENTER_CROP);
 
             if (loadType == VIDEO) {
+                //视频类型处理
                 thumbImageView.setPlayDrawable(R.drawable.image_picker_play);
                 TextView textView = holder.v(R.id.video_duration_view);
                 textView.setText(getVideoTime(imageItem.videoDuration / 1000));
+
+                //创建视频缩略图
+                createThumbFile(imageItem, position);
 
                 imagePicker.getImageLoader().displayImage(mActivity, imageItem.videoThumbPath, "", "", thumbImageView, mImageSize, mImageSize);
             } else {
@@ -174,6 +180,26 @@ public class ImageGridAdapter2 extends RecyclerView.Adapter<ImageViewHolder> {
             } else {
                 checkBox.setVisibility(View.GONE);
             }
+        }
+    }
+
+    private void createThumbFile(final ImageItem item, final int position) {
+        File thumbFile = new File(item.videoThumbPath);
+
+        if (!thumbFile.exists()) {
+            ThreadExecutor.instance().onThread(new Runnable() {
+                @Override
+                public void run() {
+                    item.videoThumbPath = mActivity.getCacheDir().getAbsolutePath() + File.separator + UUID.randomUUID().toString();
+                    Utils.extractThumbnail(item.path, item.videoThumbPath);
+                    ThreadExecutor.instance().onMain(new Runnable() {
+                        @Override
+                        public void run() {
+                            notifyItemChanged(position);
+                        }
+                    });
+                }
+            });
         }
     }
 

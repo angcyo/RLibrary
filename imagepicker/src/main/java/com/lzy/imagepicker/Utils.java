@@ -3,14 +3,16 @@ package com.lzy.imagepicker;
 import android.app.Activity;
 import android.content.Context;
 import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
-import android.graphics.Matrix;
+import android.media.MediaMetadataRetriever;
 import android.os.Environment;
+import android.text.TextUtils;
 import android.util.DisplayMetrics;
 
+import java.io.BufferedOutputStream;
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
-import java.util.Random;
+import java.io.IOException;
 
 /**
  * ================================================
@@ -23,7 +25,9 @@ import java.util.Random;
  */
 public class Utils {
 
-    /** 获得状态栏的高度 */
+    /**
+     * 获得状态栏的高度
+     */
     public static int getStatusHeight(Context context) {
         int statusHeight = -1;
         try {
@@ -37,7 +41,9 @@ public class Utils {
         return statusHeight;
     }
 
-    /** 根据屏幕宽度与密度计算GridView显示的列数， 最少为三列，并获取Item宽度 */
+    /**
+     * 根据屏幕宽度与密度计算GridView显示的列数， 最少为三列，并获取Item宽度
+     */
     public static int getImageItemWidth(Activity activity) {
         int screenWidth = activity.getResources().getDisplayMetrics().widthPixels;
         int densityDpi = activity.getResources().getDisplayMetrics().densityDpi;
@@ -61,5 +67,76 @@ public class Utils {
         DisplayMetrics displaysMetrics = new DisplayMetrics();
         activity.getWindowManager().getDefaultDisplay().getMetrics(displaysMetrics);
         return displaysMetrics;
+    }
+
+    public static boolean extractThumbnail(String videoPath, String thumbPath) {
+        if (!isFileExist(thumbPath)) {
+//            Bitmap thumbnail = ThumbnailUtils.createVideoThumbnail(videoPath, MediaStore.Images.Thumbnails.MINI_KIND);
+            Bitmap thumbnail = createVideoThumbnail(videoPath);
+            if (thumbnail != null) {
+                saveBitmap(thumbnail, thumbPath, true);
+                return true;
+            }
+        }
+        return false;
+    }
+
+    public static boolean isFileExist(String path) {
+        if (!TextUtils.isEmpty(path) && new File(path).exists()) {
+            return true;
+        } else {
+            return false;
+        }
+    }
+
+    public static Bitmap createVideoThumbnail(String filePath) {
+        Bitmap bitmap = null;
+        MediaMetadataRetriever retriever = new MediaMetadataRetriever();
+        try {
+            retriever.setDataSource(filePath);
+            bitmap = retriever.getFrameAtTime(1);
+        } catch (IllegalArgumentException ex) {
+            // Assume this is a corrupt video file
+        } catch (RuntimeException ex) {
+            // Assume this is a corrupt video file.
+        } finally {
+            try {
+                retriever.release();
+            } catch (RuntimeException ex) {
+                // Ignore failures while cleaning up.
+            }
+        }
+
+        if (bitmap == null) return null;
+
+        return bitmap;
+    }
+
+    public static boolean saveBitmap(Bitmap bitmap, String path, boolean recyle) {
+        if (bitmap == null || TextUtils.isEmpty(path)) {
+            return false;
+        }
+
+        BufferedOutputStream bos = null;
+        try {
+            FileOutputStream fos = new FileOutputStream(path);
+            bos = new BufferedOutputStream(fos);
+            bitmap.compress(Bitmap.CompressFormat.PNG, 80, bos);
+            return true;
+
+        } catch (FileNotFoundException e) {
+            return false;
+        } finally {
+            if (bos != null) {
+                try {
+                    bos.flush();
+                    bos.close();
+                } catch (IOException e) {
+                }
+            }
+            if (recyle) {
+                bitmap.recycle();
+            }
+        }
     }
 }

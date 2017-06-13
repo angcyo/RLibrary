@@ -30,8 +30,8 @@ public class ImageItem implements Serializable {
 
     //星期二 2017-6-13 支持扫描视频文件
     public long videoDuration = -1;//视频时长
-    public String videoThumbPath;//
-    public String resolution;//height x width
+    public String videoThumbPath = "";//
+    public String resolution;// width x height or height x width
 
     @ImageDataSource.LoaderType
     public int loadType;
