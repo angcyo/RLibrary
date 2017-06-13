@@ -32,6 +32,11 @@
             android:configChanges="orientation|screenSize"
             android:screenOrientation="portrait"
             android:theme="@style/ImagePickerThemeFullScreen"/>
+        <activity
+            android:name=".ui.VideoPlayActivity"
+            android:screenOrientation="portrait"
+            android:theme="@style/ImagePickerThemeFullScreen"
+            android:configChanges="orientation|screenSize"/>
     </application>
 
 </manifest>

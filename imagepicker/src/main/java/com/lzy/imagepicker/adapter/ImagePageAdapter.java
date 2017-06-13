@@ -22,12 +22,16 @@ import com.bumptech.glide.request.animation.GlideAnimation;
 import com.bumptech.glide.request.target.SimpleTarget;
 import com.github.chrisbanes.photoview.OnPhotoTapListener;
 import com.github.chrisbanes.photoview.PhotoView;
+import com.lzy.imagepicker.ImageDataSource;
 import com.lzy.imagepicker.ImagePicker;
 import com.lzy.imagepicker.ImagePickerHelper;
+import com.lzy.imagepicker.R;
 import com.lzy.imagepicker.Utils;
 import com.lzy.imagepicker.YImageControl;
 import com.lzy.imagepicker.bean.ImageItem;
 import com.lzy.imagepicker.loader.ImageLoader;
+import com.lzy.imagepicker.ui.VideoPlayActivity;
+import com.lzy.imagepicker.view.ImagePickerImageView;
 import com.lzy.imagepicker.view.SimpleCircleProgressBar;
 
 import java.io.File;
@@ -128,18 +132,40 @@ public class ImagePageAdapter extends PagerAdapter {
         photoView.setScaleType(ImageView.ScaleType.FIT_CENTER);
 
         //缩略图显示
-        final ImageView imageView = new ImageView(mActivity);
+        final ImagePickerImageView imageView = new ImagePickerImageView(mActivity);
         imageView.setScaleType(ImageView.ScaleType.CENTER);
 
         //进度条显示
         //final MaterialProgressView progressView = new MaterialProgressView(mActivity);
         final SimpleCircleProgressBar progressView = new SimpleCircleProgressBar(mActivity);
+        progressView.setVisibility(View.GONE);
 
+        //item data
         final ImageItem imageItem = images.get(position);
         /*imagePicker.getImageLoader().*/
         if (imageItem.placeholderDrawable == null) {
-            displayImage(mActivity, imageItem.path, imageItem.thumbPath,
-                    imageItem.url, photoView, screenWidth, screenHeight);
+            String displayPath;
+            if (imageItem.loadType == ImageDataSource.VIDEO) {
+                displayPath = imageItem.videoThumbPath;
+                imageView.setPlayDrawable(R.drawable.image_picker_play);
+                imageView.setScaleType(ImageView.ScaleType.CENTER_CROP);
+
+                Glide.with(mActivity).load(new File(displayPath)).into(imageView);
+
+                imageView.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        VideoPlayActivity.launcher(mActivity, imageItem.path);
+                    }
+                });
+            } else {
+                displayPath = imageItem.path;
+                imageView.setPlayDrawable(null);
+
+                displayImage(mActivity, displayPath, imageItem.thumbPath,
+                        imageItem.url, photoView, screenWidth, screenHeight);
+            }
+
         } else {
             imageView.setVisibility(View.VISIBLE);
             progressView.setVisibility(View.VISIBLE);
@@ -195,7 +221,7 @@ public class ImagePageAdapter extends PagerAdapter {
         });
         photoView.setOnExitListener(mOnExitListener);
 
-        itemLayout.addView(imageView);
+        itemLayout.addView(imageView, new ViewGroup.LayoutParams(-1, -1));
         itemLayout.addView(photoView);
         itemLayout.addView(progressView, new FrameLayout.LayoutParams(-2, -2, Gravity.CENTER));
         container.addView(itemLayout);

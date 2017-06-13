@@ -1,5 +1,6 @@
 package com.lzy.imagepicker.ui;
 
+import android.app.Activity;
 import android.content.Intent;
 import android.os.Build;
 import android.os.Bundle;
@@ -15,6 +16,11 @@ import com.lzy.imagepicker.ImagePicker;
 import com.lzy.imagepicker.R;
 import com.lzy.imagepicker.bean.ImageItem;
 import com.lzy.imagepicker.view.SuperCheckBox;
+
+import java.util.ArrayList;
+
+import static com.lzy.imagepicker.ImageDataSource.IMAGE;
+import static com.lzy.imagepicker.ImageDataSource.VIDEO;
 
 /**
  * ================================================
@@ -35,11 +41,25 @@ public class ImagePreviewActivity extends ImagePreviewBaseActivity implements Im
     private Button mBtnOk;                         //确认图片的选择
     private View bottomBar;
 
+    private int loadType;
+
+    public static void launcher(Activity activity, ArrayList<ImageItem> items,
+                                int selectedPosition, boolean isOrigin, int loadType) {
+        Intent intent = new Intent(activity, ImagePreviewActivity.class);
+        intent.putExtra(ImagePicker.EXTRA_LOAD_TYPE, loadType);
+        intent.putExtra(ImagePicker.EXTRA_SELECTED_IMAGE_POSITION, selectedPosition);
+        intent.putExtra(ImagePicker.EXTRA_IMAGE_ITEMS, items);
+        intent.putExtra(ImagePreviewActivity.ISORIGIN, isOrigin);
+        activity.startActivityForResult(intent, ImagePicker.REQUEST_CODE_PREVIEW);
+    }
+
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
         isOrigin = getIntent().getBooleanExtra(ImagePreviewActivity.ISORIGIN, false);
+        loadType = getIntent().getIntExtra(ImagePicker.EXTRA_LOAD_TYPE, IMAGE);
         imagePicker.addOnImageSelectedListener(this);
 
         mBtnOk = (Button) topBar.findViewById(R.id.btn_ok);
@@ -54,6 +74,10 @@ public class ImagePreviewActivity extends ImagePreviewBaseActivity implements Im
         mCbOrigin.setText(getString(R.string.origin));
         mCbOrigin.setOnCheckedChangeListener(this);
         mCbOrigin.setChecked(isOrigin);
+
+        if (loadType != IMAGE) {
+            mCbOrigin.setVisibility(View.GONE);
+        }
 
         //初始化当前页面的状态
         onImageSelected(0, null, false);
@@ -79,7 +103,8 @@ public class ImagePreviewActivity extends ImagePreviewBaseActivity implements Im
                 ImageItem imageItem = mImageItems.get(mCurrentPosition);
                 int selectLimit = imagePicker.getSelectLimit();
                 if (mCbCheck.isChecked() && selectedImages.size() >= selectLimit) {
-                    Toast.makeText(ImagePreviewActivity.this, ImagePreviewActivity.this.getString(R.string.select_limit, selectLimit), Toast.LENGTH_SHORT).show();
+                    Toast.makeText(ImagePreviewActivity.this,
+                            ImagePreviewActivity.this.getString(loadType == VIDEO ? R.string.select_video_limit : R.string.select_limit, selectLimit), Toast.LENGTH_SHORT).show();
                     mCbCheck.setChecked(false);
                 } else {
                     imagePicker.addSelectedImageItem(mCurrentPosition, imageItem, mCbCheck.isChecked());

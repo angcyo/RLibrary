@@ -10,16 +10,21 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.CheckBox;
 import android.widget.ImageView;
+import android.widget.TextView;
 import android.widget.Toast;
 
+import com.lzy.imagepicker.ImageDataSource;
 import com.lzy.imagepicker.ImagePicker;
 import com.lzy.imagepicker.R;
 import com.lzy.imagepicker.Utils;
 import com.lzy.imagepicker.bean.ImageItem;
 import com.lzy.imagepicker.ui.ImageBaseActivity;
 import com.lzy.imagepicker.ui.ImageGridActivity;
+import com.lzy.imagepicker.view.ImagePickerImageView;
 
 import java.util.ArrayList;
+
+import static com.lzy.imagepicker.ImageDataSource.VIDEO;
 
 /**
  * ================================================
@@ -42,9 +47,11 @@ public class ImageGridAdapter2 extends RecyclerView.Adapter<ImageViewHolder> {
     private boolean isShowCamera;         //是否显示拍照按钮
     private int mImageSize;               //每个条目的大小
     private OnImageItemClickListener listener;   //图片被点击的监听
+    private int loadType = ImageDataSource.IMAGE;
 
-    public ImageGridAdapter2(Activity activity, ArrayList<ImageItem> images) {
+    public ImageGridAdapter2(Activity activity, ArrayList<ImageItem> images, int loadType) {
         this.mActivity = activity;
+        this.loadType = loadType;
         if (images == null || images.size() == 0) this.images = new ArrayList<>();
         else this.images = images;
 
@@ -52,6 +59,19 @@ public class ImageGridAdapter2 extends RecyclerView.Adapter<ImageViewHolder> {
         imagePicker = ImagePicker.getInstance();
         isShowCamera = imagePicker.isShowCamera();
         mSelectedImages = imagePicker.getSelectedImages();
+    }
+
+    static String getVideoTime(long time) {
+        final long videoTime = time;
+        long min = videoTime / 60;
+        long second = videoTime % 60;
+
+        StringBuilder builder = new StringBuilder();
+        builder.append(min >= 10 ? min : ("0" + min));
+        builder.append(":");
+        builder.append(second >= 10 ? second : ("0" + second));
+
+        return builder.toString();
     }
 
     public void refreshData(ArrayList<ImageItem> images) {
@@ -83,16 +103,39 @@ public class ImageGridAdapter2 extends RecyclerView.Adapter<ImageViewHolder> {
                     if (!((ImageBaseActivity) mActivity).checkPermission(Manifest.permission.CAMERA)) {
                         ActivityCompat.requestPermissions(mActivity, new String[]{Manifest.permission.CAMERA}, ImageGridActivity.REQUEST_PERMISSION_CAMERA);
                     } else {
-                        imagePicker.takePicture(mActivity, ImagePicker.REQUEST_CODE_TAKE);
+                        if (loadType == VIDEO) {
+                            imagePicker.recordVideo(mActivity, ImagePicker.REQUEST_CODE_RECORD_VIDEO);
+                        } else {
+                            imagePicker.takePicture(mActivity, ImagePicker.REQUEST_CODE_TAKE);
+                        }
                     }
                 }
             });
             mTextureView = (TextureView) convertView.findViewById(R.id.texture_view);
+            TextView tipView = (TextView) convertView.findViewById(R.id.tip_view);
+
+            if (loadType == VIDEO) {
+                tipView.setText("录制视频");
+            } else {
+                tipView.setText("拍摄照片");
+            }
         } else {
             final ImageItem imageItem = getItem(position);
             final CheckBox checkBox = holder.v(R.id.cb_check);
             final View maskView = holder.v(R.id.mask);
-            final ImageView thumbImageView = holder.v(R.id.iv_thumb);
+            final ImagePickerImageView thumbImageView = holder.v(R.id.iv_thumb);
+
+            thumbImageView.setScaleType(ImageView.ScaleType.CENTER_CROP);
+
+            if (loadType == VIDEO) {
+                thumbImageView.setPlayDrawable(R.drawable.image_picker_play);
+                TextView textView = holder.v(R.id.video_duration_view);
+                textView.setText(getVideoTime(imageItem.videoDuration / 1000));
+
+                imagePicker.getImageLoader().displayImage(mActivity, imageItem.videoThumbPath, "", "", thumbImageView, mImageSize, mImageSize);
+            } else {
+                imagePicker.getImageLoader().displayImage(mActivity, imageItem.path, "", "", thumbImageView, mImageSize, mImageSize); //显示图片
+            }
 
             thumbImageView.setOnClickListener(new View.OnClickListener() {
                 @Override
@@ -106,7 +149,9 @@ public class ImageGridAdapter2 extends RecyclerView.Adapter<ImageViewHolder> {
                 public void onClick(View v) {
                     int selectLimit = imagePicker.getSelectLimit();
                     if (checkBox.isChecked() && mSelectedImages.size() >= selectLimit) {
-                        Toast.makeText(mActivity.getApplicationContext(), mActivity.getString(R.string.select_limit, selectLimit + ""), Toast.LENGTH_SHORT).show();
+                        Toast.makeText(mActivity.getApplicationContext(),
+                                mActivity.getString(loadType == VIDEO ? R.string.select_video_limit : R.string.select_limit, selectLimit + ""),
+                                Toast.LENGTH_SHORT).show();
                         checkBox.setChecked(false);
                         maskView.setVisibility(View.GONE);
                     } else {
@@ -129,7 +174,6 @@ public class ImageGridAdapter2 extends RecyclerView.Adapter<ImageViewHolder> {
             } else {
                 checkBox.setVisibility(View.GONE);
             }
-            imagePicker.getImageLoader().displayImage(mActivity, imageItem.path, "", "", thumbImageView, mImageSize, mImageSize); //显示图片
         }
     }
 

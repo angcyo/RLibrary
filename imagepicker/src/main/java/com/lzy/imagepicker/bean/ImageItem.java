@@ -2,6 +2,8 @@ package com.lzy.imagepicker.bean;
 
 import android.graphics.drawable.Drawable;
 
+import com.lzy.imagepicker.ImageDataSource;
+
 import java.io.Serializable;
 
 /**
@@ -25,6 +27,22 @@ public class ImageItem implements Serializable {
     public int height;        //图片的高度
     public String mimeType;   //图片的类型
     public long addTime;      //图片的创建时间
+
+    //星期二 2017-6-13 支持扫描视频文件
+    public long videoDuration = -1;//视频时长
+    public String videoThumbPath;//
+    public String resolution;//height x width
+
+    @ImageDataSource.LoaderType
+    public int loadType;
+
+    public ImageItem(int loadType) {
+        this.loadType = loadType;
+    }
+
+    public ImageItem() {
+        this(ImageDataSource.IMAGE);
+    }
 
     /**
      * 图片的路径和创建时间相同就认为是同一张图片

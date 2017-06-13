@@ -35,6 +35,7 @@ public class ImagePicker {
 
     public static final String TAG = ImagePicker.class.getSimpleName();
     public static final int REQUEST_CODE_TAKE = 1001;
+    public static final int REQUEST_CODE_RECORD_VIDEO = 1010;
     public static final int REQUEST_CODE_CROP = 1002;
     public static final int REQUEST_CODE_PREVIEW = 1003;
     public static final int RESULT_CODE_ITEMS = 1004;
@@ -43,6 +44,7 @@ public class ImagePicker {
     public static final String EXTRA_RESULT_ITEMS = "extra_result_items";
     public static final String EXTRA_SELECTED_IMAGE_POSITION = "selected_image_position";
     public static final String EXTRA_IMAGE_ITEMS = "extra_image_items";
+    public static final String EXTRA_LOAD_TYPE = "extra_load_type";
     private static ImagePicker mInstance;
     public Bitmap cropBitmap;
     private boolean multiMode = true;    //图片选择模式
@@ -62,6 +64,8 @@ public class ImagePicker {
     private List<ImageFolder> mImageFolders;      //所有的图片文件夹
     private int mCurrentImageFolderPosition = 0;  //当前选中的文件夹位置 0表示所有图片
     private List<OnImageSelectedListener> mImageSelectedListeners;          // 图片选中的监听回调
+    @ImageDataSource.LoaderType
+    private int loadType = ImageDataSource.IMAGE;//文件过滤类型
 
     private ImagePicker() {
     }
@@ -232,6 +236,9 @@ public class ImagePicker {
     }
 
     public ArrayList<ImageItem> getSelectedImages() {
+        if (mSelectedImages == null) {
+            mSelectedImages = new ArrayList<>();
+        }
         return mSelectedImages;
     }
 
@@ -271,6 +278,38 @@ public class ImagePicker {
                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
                     fileUri = FileProvider.getUriForFile(activity, activity.getPackageName(), takeImageFile);
                     takePictureIntent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
+                    takePictureIntent.addFlags(Intent.FLAG_GRANT_WRITE_URI_PERMISSION);
+                } else {
+                    fileUri = Uri.fromFile(takeImageFile);
+                }
+                // 默认情况下，即不需要指定intent.putExtra(MediaStore.EXTRA_OUTPUT, uri);
+                // 照相机有自己默认的存储路径，拍摄的照片将返回一个缩略图。如果想访问原始图片，
+                // 可以通过dat extra能够得到原始图片位置。即，如果指定了目标uri，data就没有数据，
+                // 如果没有指定uri，则data就返回有数据！
+                takePictureIntent.putExtra(MediaStore.EXTRA_OUTPUT, fileUri);
+            }
+        }
+        activity.startActivityForResult(takePictureIntent, requestCode);
+    }
+
+    /**
+     * 录制视频
+     */
+    public void recordVideo(Activity activity, int requestCode) {
+        Intent takePictureIntent = new Intent(MediaStore.ACTION_VIDEO_CAPTURE);
+        takePictureIntent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+        if (takePictureIntent.resolveActivity(activity.getPackageManager()) != null) {
+
+            if (Utils.existSDCard())
+                takeImageFile = new File(Environment.getExternalStorageDirectory(), "/DCIM/Video/");
+            else takeImageFile = Environment.getDataDirectory();
+            takeImageFile = createFile(takeImageFile, "Video_", ".mp4");
+            if (takeImageFile != null) {
+                Uri fileUri;
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
+                    fileUri = FileProvider.getUriForFile(activity, activity.getPackageName(), takeImageFile);
+                    takePictureIntent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
+                    takePictureIntent.addFlags(Intent.FLAG_GRANT_WRITE_URI_PERMISSION);
                 } else {
                     fileUri = Uri.fromFile(takeImageFile);
                 }
@@ -305,6 +344,15 @@ public class ImagePicker {
         for (OnImageSelectedListener l : mImageSelectedListeners) {
             l.onImageSelected(position, item, isAdd);
         }
+    }
+
+    @ImageDataSource.LoaderType
+    public int getLoadType() {
+        return loadType;
+    }
+
+    public void setLoadType(int loadType) {
+        this.loadType = loadType;
     }
 
     /**

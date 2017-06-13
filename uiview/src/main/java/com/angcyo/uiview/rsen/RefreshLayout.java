@@ -224,7 +224,6 @@ public class RefreshLayout extends ViewGroup {
     protected void onAttachedToWindow() {
         super.onAttachedToWindow();
         mTouchSlop = 0;//ViewConfiguration.get(getContext()).getScaledTouchSlop();
-        mScroller = new OverScroller(getContext(), new DecelerateInterpolator());
 
         if (!isInEditMode()) {
             if (mTopView.getParent() == null) {
@@ -262,6 +261,8 @@ public class RefreshLayout extends ViewGroup {
     }
 
     protected void initRefreshView() {
+        mScroller = new OverScroller(getContext(), new DecelerateInterpolator());
+
         if (isInEditMode()) {
             return;
         }

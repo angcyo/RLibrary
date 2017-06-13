@@ -9,6 +9,7 @@ import android.widget.BaseAdapter;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.lzy.imagepicker.ImageDataSource;
 import com.lzy.imagepicker.ImagePicker;
 import com.lzy.imagepicker.R;
 import com.lzy.imagepicker.Utils;
@@ -34,9 +35,12 @@ public class ImageFolderAdapter extends BaseAdapter {
     private int mImageSize;
     private List<ImageFolder> imageFolders;
     private int lastSelected = 0;
+    private int loadType = ImageDataSource.IMAGE;
 
-    public ImageFolderAdapter(Activity activity, List<ImageFolder> folders) {
+    public ImageFolderAdapter(Activity activity, List<ImageFolder> folders, int loadType) {
         mActivity = activity;
+        this.loadType = loadType;
+
         if (folders != null && folders.size() > 0) imageFolders = folders;
         else imageFolders = new ArrayList<>();
 
@@ -78,8 +82,13 @@ public class ImageFolderAdapter extends BaseAdapter {
 
         ImageFolder folder = getItem(position);
         holder.folderName.setText(folder.name);
-        holder.imageCount.setText(mActivity.getString(R.string.folder_image_count, folder.images.size()));
-        imagePicker.getImageLoader().displayImage(mActivity, folder.cover.path, "", "", holder.cover, mImageSize, mImageSize);
+        if (loadType == ImageDataSource.VIDEO) {
+            holder.imageCount.setText(mActivity.getString(R.string.folder_video_count, folder.images.size()));
+            imagePicker.getImageLoader().displayImage(mActivity, folder.cover.videoThumbPath, "", "", holder.cover, mImageSize, mImageSize);
+        } else {
+            holder.imageCount.setText(mActivity.getString(R.string.folder_image_count, folder.images.size()));
+            imagePicker.getImageLoader().displayImage(mActivity, folder.cover.path, "", "", holder.cover, mImageSize, mImageSize);
+        }
 
         if (lastSelected == position) {
             holder.folderCheck.setVisibility(View.VISIBLE);

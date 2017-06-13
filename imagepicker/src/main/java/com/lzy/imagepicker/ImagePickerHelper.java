@@ -31,6 +31,14 @@ public class ImagePickerHelper {
         imagePicker.setImageLoader(new GlideImageLoader());
     }
 
+    public static void startImagePicker(Activity activity, boolean multiMode, int selectLimit, @ImageDataSource.LoaderType int loadType) {
+        startImagePicker(activity, true, true, false, multiMode, selectLimit, loadType);
+    }
+
+    public static void startImagePicker(Activity activity, boolean showCamera, boolean multiMode, int selectLimit, @ImageDataSource.LoaderType int loadType) {
+        startImagePicker(activity, showCamera, true, false, multiMode, selectLimit, loadType);
+    }
+
     public static void startImagePicker(Activity activity, boolean crop, boolean multiMode, int selectLimit) {
         startImagePicker(activity, true, crop, multiMode, selectLimit);
     }
@@ -42,6 +50,12 @@ public class ImagePickerHelper {
     public static void startImagePicker(Activity activity, boolean showCamera,
                                         boolean clear, boolean crop,
                                         boolean multiMode, int selectLimit) {
+        startImagePicker(activity, showCamera, clear, crop, multiMode, selectLimit, ImageDataSource.IMAGE);
+    }
+
+    public static void startImagePicker(Activity activity, boolean showCamera,
+                                        boolean clear, boolean crop,
+                                        boolean multiMode, int selectLimit, @ImageDataSource.LoaderType int loadType) {
         ImagePicker imagePicker = ImagePicker.getInstance();
         imagePicker.setImageLoader(new GlideImageLoader());
         imagePicker.setCrop(crop);
@@ -52,6 +66,7 @@ public class ImagePickerHelper {
         imagePicker.setOutPutY(800);
         imagePicker.setFocusWidth(600);
         imagePicker.setFocusHeight(600);
+        imagePicker.setLoadType(loadType);
         Intent intent = new Intent(activity, ImageGridActivity.class);
         intent.putExtra(ImageGridActivity.CLEAR_SELECTOR, clear);
         activity.startActivityForResult(intent, REQUEST_CODE);
@@ -68,6 +83,22 @@ public class ImagePickerHelper {
                 for (ImageItem item : images) {
                     list.add(item.path);
                 }
+            } else {
+                Toast.makeText(activity, "没有数据", Toast.LENGTH_SHORT).show();
+            }
+        }
+        return list;
+    }
+
+    /**
+     * 获取items, 包括视频类型
+     */
+    public static ArrayList<ImageItem> getItems(Activity activity, int requestCode, int resultCode, Intent data) {
+        ArrayList<ImageItem> list = new ArrayList<>();
+        if (resultCode == ImagePicker.RESULT_CODE_ITEMS) {
+            if (data != null && requestCode == 100) {
+                ArrayList<ImageItem> images = (ArrayList<ImageItem>) data.getSerializableExtra(ImagePicker.EXTRA_RESULT_ITEMS);
+                list.addAll(images);
             } else {
                 Toast.makeText(activity, "没有数据", Toast.LENGTH_SHORT).show();
             }

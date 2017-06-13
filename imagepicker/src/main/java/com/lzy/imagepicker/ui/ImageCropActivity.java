@@ -13,6 +13,7 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
 
+import com.lzy.imagepicker.ImageDataSource;
 import com.lzy.imagepicker.ImagePicker;
 import com.lzy.imagepicker.R;
 import com.lzy.imagepicker.bean.ImageItem;
@@ -188,7 +189,7 @@ public class ImageCropActivity extends ImageBaseActivity implements View.OnClick
 
         //裁剪后替换掉返回数据的内容，但是不要改变全局中的选中数据
         mImageItems.remove(0);
-        ImageItem imageItem = new ImageItem();
+        ImageItem imageItem = new ImageItem(ImageDataSource.IMAGE);
         imageItem.path = file.getAbsolutePath();
         mImageItems.add(imageItem);
 
