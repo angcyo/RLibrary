@@ -301,7 +301,7 @@ public class ImageDataSource implements LoaderManager.LoaderCallbacks<Cursor> {
             try {
                 path = dataCursor.getString(dataCursor.getColumnIndexOrThrow(MediaStore.Video.Thumbnails.DATA));
             } catch (Exception e) {
-                e.printStackTrace();
+                System.err.print("未找到视频缩略图. id:" + videoId);
             }
             dataCursor.close();
         }

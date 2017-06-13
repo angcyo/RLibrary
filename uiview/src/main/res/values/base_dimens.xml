@@ -71,6 +71,7 @@
     <dimen name="base_45dpi">45dp</dimen>
     <dimen name="base_40dpi_">-40dp</dimen>
     <dimen name="base_50dpi">50dp</dimen>
+    <dimen name="base_55dpi">55dp</dimen>
     <dimen name="base_50dpi_">-50dp</dimen>
     <dimen name="base_60dpi">60dp</dimen>
     <dimen name="base_65dpi">65dp</dimen>

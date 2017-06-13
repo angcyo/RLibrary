@@ -8,6 +8,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import com.angcyo.library.utils.L;
 import com.angcyo.uiview.R;
 import com.angcyo.uiview.recycler.RBaseViewHolder;
 import com.angcyo.uiview.recycler.widget.ILoadMore;
@@ -119,26 +120,30 @@ public abstract class RBaseAdapter<T> extends RecyclerView.Adapter<RBaseViewHold
 
     @Override
     public RBaseViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-        View itemView;
-        if (mEnableShowState && viewType == ITEM_TYPE_SHOW_STATE) {
-            itemView = LayoutInflater.from(mContext)
-                    .inflate(R.layout.base_item_show_state_layout, parent, false);
-            mIShowState = (IShowState) itemView;
-        } else if (mEnableLoadMore && viewType == ITEM_TYPE_LOAD_MORE) {
-            itemView = LayoutInflater.from(mContext)
-                    .inflate(R.layout.base_item_load_more_layout, parent, false);
-            mLoadMore = (ILoadMore) itemView;
-        } else {
-            int itemLayoutId = getItemLayoutId(viewType);
-            if (itemLayoutId == 0) {
-                itemView = createContentView(parent, viewType);
+        View itemView = null;
+        try {
+            if (mEnableShowState && viewType == ITEM_TYPE_SHOW_STATE) {
+                itemView = LayoutInflater.from(mContext)
+                        .inflate(R.layout.base_item_show_state_layout, parent, false);
+                mIShowState = (IShowState) itemView;
+            } else if (mEnableLoadMore && viewType == ITEM_TYPE_LOAD_MORE) {
+                itemView = LayoutInflater.from(mContext)
+                        .inflate(R.layout.base_item_load_more_layout, parent, false);
+                mLoadMore = (ILoadMore) itemView;
             } else {
-                itemView = LayoutInflater.from(mContext).inflate(itemLayoutId, parent, false);
+                int itemLayoutId = getItemLayoutId(viewType);
+                if (itemLayoutId == 0) {
+                    itemView = createContentView(parent, viewType);
+                } else {
+                    itemView = LayoutInflater.from(mContext).inflate(itemLayoutId, parent, false);
+                }
             }
-        }
 //        if (itemView == null) {
 //            return createItemViewHolder(parent, viewType);
 //        }
+        } catch (Exception e) {
+            L.e("请及时处理此处BUG.");
+        }
         return createBaseViewHolder(viewType, itemView);
     }
 
@@ -161,15 +166,19 @@ public abstract class RBaseAdapter<T> extends RecyclerView.Adapter<RBaseViewHold
     @Override
     public void onBindViewHolder(RBaseViewHolder holder, int position) {
 //        L.e("call: onBindViewHolder([holder, position])-> " + position);
-        if (isStateLayout()) {
-            if (mIShowState != null) {
-                mIShowState.setShowState(mShowState);
+        try {
+            if (isStateLayout()) {
+                if (mIShowState != null) {
+                    mIShowState.setShowState(mShowState);
+                }
+            } else if (mEnableLoadMore && isLast(position)) {
+                /**如果第一个就是加载更多的布局, 需要调用加载更多么?*/
+                onBindLoadMore(position);
+            } else {
+                onBindView(holder, position, mAllDatas.size() > position ? mAllDatas.get(position) : null);
             }
-        } else if (mEnableLoadMore && isLast(position)) {
-            /**如果第一个就是加载更多的布局, 需要调用加载更多么?*/
-            onBindLoadMore(position);
-        } else {
-            onBindView(holder, position, mAllDatas.size() > position ? mAllDatas.get(position) : null);
+        } catch (Exception e) {
+            L.e("请及时处理此处BUG.");
         }
     }
 
