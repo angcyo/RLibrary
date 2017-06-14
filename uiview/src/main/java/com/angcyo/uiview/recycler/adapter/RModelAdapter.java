@@ -87,6 +87,13 @@ public abstract class RModelAdapter<T> extends RBaseAdapter<T> {
         }
     }
 
+    @Override
+    public void onViewDetachedFromWindow(RBaseViewHolder holder) {
+        super.onViewDetachedFromWindow(holder);
+//        mBaseViewHolderMap.put(holder.getAdapterPosition(), null);
+        mBaseViewHolderMap.remove(holder.getAdapterPosition());
+    }
+
     /**
      * 选择模式下, 和正常模式下都会执行
      */
