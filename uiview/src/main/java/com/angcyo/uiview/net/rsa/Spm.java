@@ -33,6 +33,6 @@ public class Spm {
         } catch (Exception e) {
 
         }
-        return builder.toString().replaceAll("=", "-");
+        return builder.toString().replaceAll("=", "-").replaceAll("\\n", "");
     }
 }
