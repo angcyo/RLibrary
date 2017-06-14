@@ -422,13 +422,13 @@ class ExpandRecordLayout(context: Context, attributeSet: AttributeSet? = null) :
 
     companion object {
         //未展开
-        val STATE_CLOSE = 0
+        const val STATE_CLOSE = 0
         //正在滚动
-        val STATE_SCROLL_ING = 1
+        const val STATE_SCROLL_ING = 1
         //滚动结束
-        val STATE_SCROLL_IDLE = 2
+        const val STATE_SCROLL_IDLE = 2
         //展开
-        val STATE_EXPAND = 3
+        const val STATE_EXPAND = 3
 
         const val ANIM_TIME = 200L
         const val MAX_SCALE = 1.2f
