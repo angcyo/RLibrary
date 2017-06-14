@@ -79,14 +79,22 @@ public class ImageGridActivity extends ImageBaseActivity implements ImageDataSou
     public static long getVideoDuration(Context context, String videoFile) {
         MediaMetadataRetriever retriever = new MediaMetadataRetriever();
         //use one of overloaded setDataSource() functions to set your data source
-        retriever.setDataSource(context, Uri.fromFile(new File(videoFile)));
-        String time = retriever.extractMetadata(MediaMetadataRetriever.METADATA_KEY_DURATION);
-        int width = Integer.parseInt(retriever.extractMetadata(MediaMetadataRetriever.METADATA_KEY_VIDEO_HEIGHT));
-        int height = Integer.parseInt(retriever.extractMetadata(MediaMetadataRetriever.METADATA_KEY_VIDEO_WIDTH));
+        String time;
+        try {
+            retriever.setDataSource(context, Uri.fromFile(new File(videoFile)));
+            time = retriever.extractMetadata(MediaMetadataRetriever.METADATA_KEY_DURATION);
+            int width = Integer.parseInt(retriever.extractMetadata(MediaMetadataRetriever.METADATA_KEY_VIDEO_HEIGHT));
+            int height = Integer.parseInt(retriever.extractMetadata(MediaMetadataRetriever.METADATA_KEY_VIDEO_WIDTH));
+        } finally {
+            try {
+                retriever.release();
+            } catch (Exception ex) {
+                // Ignore failures while cleaning up.
+            }
+        }
 
         long timeInMillisec = Long.parseLong(time);
 
-        retriever.release();
         return timeInMillisec;
     }
 
@@ -319,11 +327,21 @@ public class ImageGridActivity extends ImageBaseActivity implements ImageDataSou
                 imageItem.path = imagePicker.getTakeImageFile().getAbsolutePath();
 
                 MediaMetadataRetriever retriever = new MediaMetadataRetriever();
-                retriever.setDataSource(this, Uri.fromFile(new File(imageItem.path)));
-                String time = retriever.extractMetadata(MediaMetadataRetriever.METADATA_KEY_DURATION);
-                int width = Integer.parseInt(retriever.extractMetadata(MediaMetadataRetriever.METADATA_KEY_VIDEO_HEIGHT));
-                int height = Integer.parseInt(retriever.extractMetadata(MediaMetadataRetriever.METADATA_KEY_VIDEO_WIDTH));
-                retriever.release();
+                String time = "0";
+                int width = 0;
+                int height = 0;
+                try {
+                    retriever.setDataSource(this, Uri.fromFile(new File(imageItem.path)));
+                    time = retriever.extractMetadata(MediaMetadataRetriever.METADATA_KEY_DURATION);
+                    width = Integer.parseInt(retriever.extractMetadata(MediaMetadataRetriever.METADATA_KEY_VIDEO_HEIGHT));
+                    height = Integer.parseInt(retriever.extractMetadata(MediaMetadataRetriever.METADATA_KEY_VIDEO_WIDTH));
+                } finally {
+                    try {
+                        retriever.release();
+                    } catch (Exception ex) {
+                        // Ignore failures while cleaning up.
+                    }
+                }
 
                 long timeInMillisec = Long.parseLong(time);
 
