@@ -460,13 +460,11 @@ public abstract class RModelAdapter<T> extends RBaseAdapter<T> {
                 return;
             } else {
                 mSelector.remove(position);
-                if (viewHolder == null) {
-                    //视图还为加载的时候, 直接返回
-                    return;
-                }
-                if (!onUnSelectorPosition(viewHolder, position, false)) {
-                    onBindModelView(mModel, false, viewHolder, position,
-                            getAllDatas().size() > position ? getAllDatas().get(position) : null);
+                if (viewHolder != null) {
+                    if (!onUnSelectorPosition(viewHolder, position, false)) {
+                        onBindModelView(mModel, false, viewHolder, position,
+                                getAllDatas().size() > position ? getAllDatas().get(position) : null);
+                    }
                 }
             }
         } else {
@@ -475,21 +473,22 @@ public abstract class RModelAdapter<T> extends RBaseAdapter<T> {
                 if (!allSelectorList.isEmpty()) {
                     Integer pos = allSelectorList.get(0);
                     RBaseViewHolder holder = getViewHolderFromPosition(pos);
-                    if (!onUnSelectorPosition(holder, pos, false)) {
-                        onBindModelView(mModel, false, holder, pos,
-                                getAllDatas().size() > pos ? getAllDatas().get(pos) : null);
+
+                    if (holder != null) {
+                        if (!onUnSelectorPosition(holder, pos, false)) {
+                            onBindModelView(mModel, false, holder, pos,
+                                    getAllDatas().size() > pos ? getAllDatas().get(pos) : null);
+                        }
                     }
                 }
                 mSelector.clear();
             }
             mSelector.add(position);
-            if (viewHolder == null) {
-                //视图还为加载的时候, 直接返回
-                return;
-            }
-            if (!onSelectorPosition(viewHolder, position, true)) {
-                onBindModelView(mModel, true, viewHolder, position,
-                        getAllDatas().size() > position ? getAllDatas().get(position) : null);
+            if (viewHolder != null) {
+                if (!onSelectorPosition(viewHolder, position, true)) {
+                    onBindModelView(mModel, true, viewHolder, position,
+                            getAllDatas().size() > position ? getAllDatas().get(position) : null);
+                }
             }
         }
 

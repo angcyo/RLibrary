@@ -7,10 +7,12 @@ import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Matrix;
 import android.graphics.PorterDuff;
+import android.graphics.Rect;
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
 import android.graphics.drawable.LayerDrawable;
 import android.graphics.drawable.TransitionDrawable;
+import android.os.Build;
 import android.support.annotation.ColorInt;
 import android.support.annotation.DrawableRes;
 import android.support.annotation.Nullable;
@@ -21,6 +23,7 @@ import android.view.MotionEvent;
 import android.widget.ImageView;
 
 import com.angcyo.uiview.R;
+import com.angcyo.uiview.RApplication;
 
 /**
  * Copyright (C) 2016,深圳市红鸟网络科技股份有限公司 All rights reserved.
@@ -103,12 +106,26 @@ public class RImageView extends AppCompatImageView {
         return result;
     }
 
+    /**
+     * 复制 imageView的Drawable
+     */
     public static Drawable copyDrawable(final ImageView imageView) {
         Drawable result = null, drawable = imageView == null ? null : imageView.getDrawable();
         if (drawable != null) {
-            Drawable.ConstantState constantState = drawable.mutate().getConstantState();
-            if (constantState != null) {
-                result = constantState.newDrawable();
+            if (Build.VERSION.SDK_INT < Build.VERSION_CODES.LOLLIPOP) {
+                Rect bounds = drawable.getBounds();
+                int width = bounds.width();
+                int height = bounds.height();
+                Bitmap bitmap = Bitmap.createBitmap(width, height, Bitmap.Config.ARGB_8888);
+                Canvas canvas = new Canvas(bitmap);
+                drawable.draw(canvas);
+                result = new BitmapDrawable(RApplication.getApp().getResources(), bitmap);
+                result.setBounds(bounds);
+            } else {
+                Drawable.ConstantState constantState = drawable.mutate().getConstantState();
+                if (constantState != null) {
+                    result = constantState.newDrawable();
+                }
             }
         }
         return result;
@@ -143,7 +160,7 @@ public class RImageView extends AppCompatImageView {
 
     private void setColor(Drawable drawable, @ColorInt int color) {
         if (drawable != null) {
-            if (drawable instanceof LayerDrawable) {
+            if (showMask(drawable)) {
 //                LayerDrawable layerDrawable = (LayerDrawable) drawable;
 //                int numberOfLayers = layerDrawable.getNumberOfLayers();
 ////                if (numberOfLayers > 0) {
@@ -162,9 +179,13 @@ public class RImageView extends AppCompatImageView {
         }
     }
 
+    private boolean showMask(Drawable drawable) {
+        return Build.VERSION.SDK_INT < Build.VERSION_CODES.LOLLIPOP || drawable instanceof LayerDrawable;
+    }
+
     private void clearColor(Drawable drawable) {
         if (drawable != null) {
-            if (drawable instanceof LayerDrawable) {
+            if (showMask(drawable)) {
 //                LayerDrawable layerDrawable = (LayerDrawable) drawable;
 //                int numberOfLayers = layerDrawable.getNumberOfLayers();
 //                if (numberOfLayers > 0) {

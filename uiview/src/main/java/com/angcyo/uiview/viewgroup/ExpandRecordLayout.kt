@@ -66,7 +66,7 @@ class ExpandRecordLayout(context: Context, attributeSet: AttributeSet? = null) :
         val p = Paint(Paint.ANTI_ALIAS_FLAG)
         p.strokeCap = Paint.Cap.BUTT
         p.strokeJoin = Paint.Join.ROUND
-        p.textSize = 12 * scaledDensity
+        p.textSize = 14 * scaledDensity
         p
     }
 
