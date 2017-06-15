@@ -189,6 +189,9 @@ public class ImagePicker {
     }
 
     public ImageLoader getImageLoader() {
+        if (imageLoader == null) {
+            imageLoader = new GlideImageLoader();
+        }
         return imageLoader;
     }
 

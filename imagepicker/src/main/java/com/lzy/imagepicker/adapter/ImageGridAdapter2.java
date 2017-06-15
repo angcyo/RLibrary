@@ -3,9 +3,7 @@ package com.lzy.imagepicker.adapter;
 import android.Manifest;
 import android.app.Activity;
 import android.support.v4.app.ActivityCompat;
-import android.support.v4.util.ArrayMap;
 import android.support.v7.widget.RecyclerView;
-import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.TextureView;
 import android.view.View;
@@ -24,9 +22,8 @@ import com.lzy.imagepicker.ui.ImageBaseActivity;
 import com.lzy.imagepicker.ui.ImageGridActivity;
 import com.lzy.imagepicker.view.ImagePickerImageView;
 
-import java.io.File;
+import java.lang.ref.WeakReference;
 import java.util.ArrayList;
-import java.util.UUID;
 
 import static com.lzy.imagepicker.ImageDataSource.VIDEO;
 
@@ -43,7 +40,6 @@ public class ImageGridAdapter2 extends RecyclerView.Adapter<ImageViewHolder> {
 
     private static final int ITEM_TYPE_CAMERA = 0;  //第一个条目是相机
     private static final int ITEM_TYPE_NORMAL = 1;  //第一个条目不是相机
-    static ArrayMap<String, String> thumbMap;
     TextureView mTextureView;
     private ImagePicker imagePicker;
     private Activity mActivity;
@@ -78,6 +74,7 @@ public class ImageGridAdapter2 extends RecyclerView.Adapter<ImageViewHolder> {
 
         return builder.toString();
     }
+
 
     public void refreshData(ArrayList<ImageItem> images) {
         if (images == null || images.size() == 0) this.images = new ArrayList<>();
@@ -139,7 +136,8 @@ public class ImageGridAdapter2 extends RecyclerView.Adapter<ImageViewHolder> {
                 textView.setText(getVideoTime(imageItem.videoDuration / 1000));
 
                 //创建视频缩略图
-                createThumbFile(imageItem, position);
+                ThumbLoad.createThumbFile(new WeakReference<>(mActivity), new WeakReference<RecyclerView.Adapter>(this)
+                        , imageItem, position);
 
                 imagePicker.getImageLoader().displayImage(mActivity, imageItem.videoThumbPath, "", "", thumbImageView, mImageSize, mImageSize);
             } else {
@@ -183,37 +181,6 @@ public class ImageGridAdapter2 extends RecyclerView.Adapter<ImageViewHolder> {
             } else {
                 checkBox.setVisibility(View.GONE);
             }
-        }
-    }
-
-    private void createThumbFile(final ImageItem item, final int position) {
-        if (thumbMap == null) {
-            thumbMap = new ArrayMap<>();
-        }
-
-        File thumbFile = new File(item.videoThumbPath);
-        String temp = thumbMap.get(item.path);
-        if (!TextUtils.isEmpty(temp) && new File(temp).exists()) {
-            item.videoThumbPath = temp;
-            return;
-        }
-
-        if (!thumbFile.exists()) {
-            ThreadExecutor.instance().onThread(new Runnable() {
-                @Override
-                public void run() {
-                    item.videoThumbPath = mActivity.getCacheDir().getAbsolutePath() + File.separator + UUID.randomUUID().toString();
-                    Utils.extractThumbnail(item.path, item.videoThumbPath);
-                    thumbMap.put(item.path, item.videoThumbPath);
-
-                    ThreadExecutor.instance().onMain(new Runnable() {
-                        @Override
-                        public void run() {
-                            notifyItemChanged(position);
-                        }
-                    });
-                }
-            });
         }
     }
 

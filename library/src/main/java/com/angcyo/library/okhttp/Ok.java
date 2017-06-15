@@ -51,8 +51,8 @@ public class Ok {
     }
 
     public void load(String url) {
-        Call call = getCall(url);
         try {
+            Call call = getCall(url);
             Response response = call.execute();
             response.body().byteStream();
         } catch (Exception e) {
@@ -60,10 +60,16 @@ public class Ok {
         }
     }
 
-    protected Call getCall(String url) {
+    private Call getCall(String url) {
         ensureClient();
-        Request mRequest = new Request.Builder().url(url).build();//如果url不是 网址, 会报错
-        return sOkHttpClient.newCall(mRequest);
+        Call call = null;
+        try {
+            Request mRequest = new Request.Builder().url(url).build();//如果url不是 网址, 会报错
+            call = sOkHttpClient.newCall(mRequest);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return call;
     }
 
     /**
@@ -90,18 +96,22 @@ public class Ok {
                 typeCheckEnd(url, imageType, listener);
             } else {
                 Call call = getCall(url);
-                call.enqueue(new Callback() {
-                    @Override
-                    public void onFailure(Call call, IOException e) {
-                        typeCheckEnd(url, UNKNOWN, listener);
-                    }
+                if (call == null) {
+                    typeCheckEnd(url, UNKNOWN, listener);
+                } else {
+                    call.enqueue(new Callback() {
+                        @Override
+                        public void onFailure(Call call, IOException e) {
+                            typeCheckEnd(url, UNKNOWN, listener);
+                        }
 
-                    @Override
-                    public void onResponse(Call call, Response response) throws IOException {
-                        final String imageType = ImageTypeUtil.getImageType(response.body().byteStream());
-                        typeCheckEnd(url, imageType, listener);
-                    }
-                });
+                        @Override
+                        public void onResponse(Call call, Response response) throws IOException {
+                            final String imageType = ImageTypeUtil.getImageType(response.body().byteStream());
+                            typeCheckEnd(url, imageType, listener);
+                        }
+                    });
+                }
             }
         } else {
             if (listener != null) {

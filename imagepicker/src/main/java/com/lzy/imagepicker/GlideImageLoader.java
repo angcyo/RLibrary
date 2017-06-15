@@ -28,6 +28,9 @@ public class GlideImageLoader implements ImageLoader {
      * 可以设置占位图的
      */
     public static void displayImage(final ImageView imageView, final String url, final int placeholderRes) {
+        if (imageView == null) {
+            return;
+        }
         File file = new File(url);
         if ("GIF".equalsIgnoreCase(ImageUtils.getImageType(file))) {
             GifRequestBuilder<File> gifRequestBuilder = Glide.with(imageView.getContext())
@@ -89,6 +92,9 @@ public class GlideImageLoader implements ImageLoader {
     @Override
     public void displayImage(Activity activity, String path, String thumbPath,
                              String url, ImageView imageView, int width, int height) {
+        if (imageView == null) {
+            return;
+        }
 
         if (TextUtils.isEmpty(path)) {
             loadUrlImage(activity, thumbPath, url, imageView);

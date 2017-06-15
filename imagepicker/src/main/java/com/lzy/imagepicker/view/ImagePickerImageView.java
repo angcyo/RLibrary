@@ -268,7 +268,11 @@ public class ImagePickerImageView extends AppCompatImageView {
     }
 
     public void setPlayDrawable(@DrawableRes int res) {
-        setPlayDrawable(ContextCompat.getDrawable(getContext(), res));
+        if (res == -1) {
+            setPlayDrawable(null);
+        } else {
+            setPlayDrawable(ContextCompat.getDrawable(getContext(), res));
+        }
     }
 
     public void setShowGifTip(boolean showGifTip) {

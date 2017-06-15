@@ -4,7 +4,9 @@ import android.app.Activity;
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.media.MediaMetadataRetriever;
+import android.media.ThumbnailUtils;
 import android.os.Environment;
+import android.provider.MediaStore;
 import android.text.TextUtils;
 import android.util.DisplayMetrics;
 
@@ -71,8 +73,15 @@ public class Utils {
 
     public static boolean extractThumbnail(String videoPath, String thumbPath) {
         if (!isFileExist(thumbPath)) {
-//            Bitmap thumbnail = ThumbnailUtils.createVideoThumbnail(videoPath, MediaStore.Images.Thumbnails.MINI_KIND);
-            Bitmap thumbnail = createVideoThumbnail(videoPath);
+            Bitmap thumbnail = null;
+            thumbnail = ThumbnailUtils.createVideoThumbnail(videoPath, MediaStore.Images.Thumbnails.MINI_KIND);
+            if (thumbnail == null) {
+                try {
+                    thumbnail = createVideoThumbnail(videoPath);
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+            }
             if (thumbnail != null) {
                 saveBitmap(thumbnail, thumbPath, true);
                 return true;
@@ -98,6 +107,8 @@ public class Utils {
         } catch (IllegalArgumentException ex) {
             // Assume this is a corrupt video file
         } catch (RuntimeException ex) {
+            // Assume this is a corrupt video file.
+        } catch (Exception ex) {
             // Assume this is a corrupt video file.
         } finally {
             try {
