@@ -95,6 +95,7 @@ public abstract class RSubscriber<T> extends Subscriber<T> {
 
         onEnd();
         onEnd(error, nonet, exception);
+        onEnd(error, errorCode, nonet, exception);
         if (L.LOG_DEBUG) {
             T_.error("[" + errorCode + "]" + errorMsg);
         }
@@ -116,8 +117,13 @@ public abstract class RSubscriber<T> extends Subscriber<T> {
         //L.d("订阅结束->onEnd()");
     }
 
+    @Deprecated
     public void onEnd(boolean isError, boolean isNoNetwork, Throwable e) {
-        L.e("订阅结束-> isError:" + isError + " isNoNetwork:" + isNoNetwork + " Throwable:" + e);
+//        L.e("订阅结束-> isError:" + isError + " isNoNetwork:" + isNoNetwork + " Throwable:" + e);
+    }
+
+    public void onEnd(boolean isError, int errorCode, boolean isNoNetwork, Throwable e) {
+        L.e("订阅结束-> isError:" + isError + " errorCode:" + errorCode + " isNoNetwork:" + isNoNetwork + " Throwable:" + e);
     }
 
     public void onNoNetwork() {
