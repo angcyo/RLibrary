@@ -543,6 +543,64 @@ public class WheelTime {
         return sb.toString();
     }
 
+    /**
+     * 获取最后选中的年
+     */
+    public int getSelectorYear() {
+        return wv_year.getCurrentItem() + startYear;
+    }
+
+    /**
+     * 获取最后选中的月
+     */
+    public int getSelectorMonth() {
+        int month = 0;
+        if (currentYear == startYear) {
+            month = wv_month.getCurrentItem() + startMonth;
+        } else {
+            month = wv_month.getCurrentItem() + 1;
+        }
+        return month;
+    }
+
+    /**
+     * 获取最后选中的天
+     */
+    public int getSelectorDay() {
+        int day = 0;
+        if (currentYear == startYear) {
+            if ((wv_month.getCurrentItem() + startMonth) == startMonth) {
+                day = wv_day.getCurrentItem() + startDay;
+            } else {
+                day = wv_day.getCurrentItem() + 1;
+            }
+        } else {
+            day = wv_day.getCurrentItem() + 1;
+        }
+        return day;
+    }
+
+    /**
+     * 获取最后选中的小时
+     */
+    public int getSelectorHours() {
+        return wv_hours.getCurrentItem();
+    }
+
+    /**
+     * 获取最后选中的分钟
+     */
+    public int getSelectorMins() {
+        return wv_mins.getCurrentItem();
+    }
+
+    /**
+     * 获取最后选中的秒
+     */
+    public int getSelectorSeconds() {
+        return wv_seconds.getCurrentItem();
+    }
+
     public View getView() {
         return view;
     }

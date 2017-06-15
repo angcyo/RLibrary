@@ -14,7 +14,6 @@ import android.content.pm.ResolveInfo;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
-import android.os.Debug;
 import android.os.Environment;
 import android.os.Process;
 import android.os.StatFs;
@@ -24,6 +23,7 @@ import android.view.View;
 
 import com.angcyo.library.utils.L;
 import com.angcyo.uiview.container.ILayout;
+import com.angcyo.uiview.container.UILayoutImpl;
 import com.angcyo.uiview.dialog.UIDialog;
 import com.angcyo.uiview.github.utilcode.utils.ClipboardUtils;
 import com.angcyo.uiview.github.utilcode.utils.CmdUtil;
@@ -608,7 +608,7 @@ public class RCrashHandler implements Thread.UncaughtExceptionHandler {
                 return;
             }
         }
-        String dataTime = getDataTime("yyyy-MM-dd-HH-mm-ss");
+        String dataTime = getDataTime("yyyy-MM-dd_HH-mm-ss-SSS");
         File file = new File(saveFolder, dataTime + FILE_NAME_SUFFIX);
 
         Hawk.put(KEY_IS_CRASH, true);//异常退出
@@ -618,6 +618,7 @@ public class RCrashHandler implements Thread.UncaughtExceptionHandler {
         PrintWriter pw = new PrintWriter(new BufferedWriter(new FileWriter(file)));
         // 导出发生异常的时间
         pw.println(dataTime);
+        pw.println(UILayoutImpl.LAYOUT_INFO);
         // 导出手机信息
         dumpPhoneInfo(pw);
 
@@ -671,8 +672,8 @@ public class RCrashHandler implements Thread.UncaughtExceptionHandler {
         pw.println(Formatter.formatFileSize(context, getTotalMemorySize(context)));
 //        pw.println();
 
-        pw.print("JVM可用内存大小:");
-        pw.println(Formatter.formatFileSize(context, Runtime.getRuntime().maxMemory()));
+//        pw.print("JVM可用内存大小:");
+//        pw.println(Formatter.formatFileSize(context, Runtime.getRuntime().maxMemory()));
 //        pw.println();
 
         final ActivityManager.MemoryInfo memoryInfo = getMemoryInfo(context);
@@ -680,20 +681,20 @@ public class RCrashHandler implements Thread.UncaughtExceptionHandler {
         pw.println(Formatter.formatFileSize(context, memoryInfo.totalMem));
         pw.print("系统剩余内存:");
         pw.println(Formatter.formatFileSize(context, memoryInfo.availMem));
-        pw.print("是否内存警告:");
-        pw.println(memoryInfo.lowMemory);
-        pw.print("阈值:");
-        pw.println(Formatter.formatFileSize(context, memoryInfo.threshold));
-        pw.println();
+//        pw.print("是否内存警告:");
+//        pw.println(memoryInfo.lowMemory);
+//        pw.print("阈值:");
+//        pw.println(Formatter.formatFileSize(context, memoryInfo.threshold));
+//        pw.println();
 
-        pw.print("getNativeHeapSize:");
-        pw.println(Formatter.formatFileSize(context, Debug.getNativeHeapSize()));
-
-        pw.print("getNativeHeapAllocatedSize:");
-        pw.println(Formatter.formatFileSize(context, Debug.getNativeHeapAllocatedSize()));
-
-        pw.print("getNativeHeapFreeSize:");
-        pw.println(Formatter.formatFileSize(context, Debug.getNativeHeapFreeSize()));
+//        pw.print("getNativeHeapSize:");
+//        pw.println(Formatter.formatFileSize(context, Debug.getNativeHeapSize()));
+//
+//        pw.print("getNativeHeapAllocatedSize:");
+//        pw.println(Formatter.formatFileSize(context, Debug.getNativeHeapAllocatedSize()));
+//
+//        pw.print("getNativeHeapFreeSize:");
+//        pw.println(Formatter.formatFileSize(context, Debug.getNativeHeapFreeSize()));
         pw.println();
 
         pw.print("SD空间大小:");

@@ -47,6 +47,7 @@ import static com.angcyo.uiview.view.UIIViewImpl.DEFAULT_ANIM_TIME;
 public class UILayoutImpl extends SwipeBackLayout implements ILayout<UIParam>, UIViewPager.OnPagerShowListener {
 
     private static final String TAG = "UILayoutImpl";
+    public static String LAYOUT_INFO = "";
     /**
      * 已经追加到内容层的View
      */
@@ -113,7 +114,6 @@ public class UILayoutImpl extends SwipeBackLayout implements ILayout<UIParam>, U
 
         }
     };
-
     /**
      * 是否正在退出
      */
@@ -154,7 +154,6 @@ public class UILayoutImpl extends SwipeBackLayout implements ILayout<UIParam>, U
      * 滑动关闭标志
      */
     private boolean needDragClose = false;
-
     /**
      * 管理子的ILayout, 用于在滑动的过程中控制显示和隐藏最后一个IView
      */
@@ -1138,7 +1137,6 @@ public class UILayoutImpl extends SwipeBackLayout implements ILayout<UIParam>, U
         }
     }
 
-
     private void viewHide(final ViewPattern viewPattern, boolean hide) {
         if (viewPattern == null ||
                 viewPattern.mIView.getIViewShowState() == IView.IViewShowState.STATE_VIEW_HIDE) {
@@ -1892,9 +1890,9 @@ public class UILayoutImpl extends SwipeBackLayout implements ILayout<UIParam>, U
             stringBuilder.append(viewPattern.mView.getAlpha());
             stringBuilder.append("\n");
         }
-        String string = stringBuilder.toString();
-        L.e(string);
-        return string;
+        LAYOUT_INFO = stringBuilder.toString();
+        L.e(LAYOUT_INFO);
+        return LAYOUT_INFO;
     }
 
     /**
