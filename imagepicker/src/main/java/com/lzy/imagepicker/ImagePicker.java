@@ -43,7 +43,7 @@ public class ImagePicker {
 
     public static final String EXTRA_RESULT_ITEMS = "extra_result_items";
     public static final String EXTRA_SELECTED_IMAGE_POSITION = "selected_image_position";
-    public static final String EXTRA_IMAGE_ITEMS = "extra_image_items";
+    //public static final String EXTRA_IMAGE_ITEMS = "extra_image_items";
     public static final String EXTRA_LOAD_TYPE = "extra_load_type";
     private static ImagePicker mInstance;
     public Bitmap cropBitmap;
@@ -258,9 +258,9 @@ public class ImagePicker {
             mImageFolders.clear();
             mImageFolders = null;
         }
-        if (mSelectedImages != null) {
-            mSelectedImages.clear();
-        }
+//        if (mSelectedImages != null) {
+//            mSelectedImages.clear();
+//        }
         mCurrentImageFolderPosition = 0;
     }
 

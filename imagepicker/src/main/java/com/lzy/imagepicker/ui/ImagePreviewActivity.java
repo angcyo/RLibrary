@@ -48,7 +48,7 @@ public class ImagePreviewActivity extends ImagePreviewBaseActivity implements Im
         Intent intent = new Intent(activity, ImagePreviewActivity.class);
         intent.putExtra(ImagePicker.EXTRA_LOAD_TYPE, loadType);
         intent.putExtra(ImagePicker.EXTRA_SELECTED_IMAGE_POSITION, selectedPosition);
-        intent.putExtra(ImagePicker.EXTRA_IMAGE_ITEMS, items);
+        //intent.putExtra(ImagePicker.EXTRA_IMAGE_ITEMS, items);
         intent.putExtra(ImagePreviewActivity.ISORIGIN, isOrigin);
         activity.startActivityForResult(intent, ImagePicker.REQUEST_CODE_PREVIEW);
     }

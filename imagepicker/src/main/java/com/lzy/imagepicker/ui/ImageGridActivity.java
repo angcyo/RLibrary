@@ -108,9 +108,11 @@ public class ImageGridActivity extends ImageBaseActivity implements ImageDataSou
         imagePicker = ImagePicker.getInstance();
         loadType = imagePicker.getLoadType();
 
+        imagePicker.clear();
         if (clear) {
-            imagePicker.clear();
+            imagePicker.clearSelectedImages();
         }
+
         imagePicker.addOnImageSelectedListener(this);
 
         findViewById(R.id.btn_back).setOnClickListener(this);
