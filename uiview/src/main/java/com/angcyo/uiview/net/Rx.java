@@ -19,6 +19,7 @@ import rx.Observable;
 import rx.Scheduler;
 import rx.Subscription;
 import rx.android.schedulers.AndroidSchedulers;
+import rx.functions.Action1;
 import rx.functions.Func1;
 import rx.schedulers.Schedulers;
 
@@ -68,6 +69,22 @@ public class Rx<Rx> extends Observable<Rx> {
 
     public static <T, R> Subscription base(T t, Func1<? super T, ? extends R> func) {
         return Observable.just(t).map(func).compose(applyIOSchedulers()).subscribe();
+    }
+
+    /**
+     * 简单的子线程,转主线程调用
+     */
+    public static <R> Subscription base(RFunc<? extends R> onBack, RSubscriber<R> onMain) {
+        return Observable
+                .just("base")
+                .map(onBack)
+                .compose(new Transformer<R, R>() {
+                    @Override
+                    public Observable<R> call(Observable<R> rObservable) {
+                        return rObservable.subscribeOn(Schedulers.io()).observeOn(AndroidSchedulers.mainThread());
+                    }
+                })
+                .subscribe(onMain);
     }
 
     public static <T, R> Subscription base(T t, Func1<? super T, ? extends R> func, Scheduler scheduler) {

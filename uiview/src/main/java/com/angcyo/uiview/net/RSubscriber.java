@@ -38,6 +38,7 @@ public abstract class RSubscriber<T> extends Subscriber<T> {
         L.d("订阅完成->" + this.getClass().getSimpleName());
         onEnd();
         onEnd(false, false, null);
+        onEnd(false, 0, false, null);
     }
 
     @Override

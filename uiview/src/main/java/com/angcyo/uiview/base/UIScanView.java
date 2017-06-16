@@ -27,7 +27,11 @@ import com.angcyo.rcode.zxing.decode.CaptureActivityHandler;
 import com.angcyo.rcode.zxing.decode.InactivityTimer;
 import com.angcyo.rcode.zxing.view.ViewfinderView;
 import com.angcyo.uiview.R;
+import com.angcyo.uiview.dialog.UILoading;
 import com.angcyo.uiview.model.TitleBarPattern;
+import com.angcyo.uiview.net.RFunc;
+import com.angcyo.uiview.net.RSubscriber;
+import com.angcyo.uiview.net.Rx;
 import com.angcyo.uiview.resources.AnimUtil;
 import com.angcyo.uiview.skin.SkinHelper;
 import com.angcyo.uiview.utils.T_;
@@ -216,13 +220,13 @@ public class UIScanView extends UIContentView implements SurfaceHolder.Callback,
             handler.quitSynchronously();
             handler = null;
         }
-        inactivityTimer.onPause();
+        try {
+            inactivityTimer.onPause();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
         ambientLightManager.stop();
         cameraManager.closeDriver();
-        if (!hasSurface) {
-            SurfaceHolder surfaceHolder = mSurfaceView.getHolder();
-            surfaceHolder.removeCallback(this);
-        }
     }
 
     @Override
@@ -230,6 +234,11 @@ public class UIScanView extends UIContentView implements SurfaceHolder.Callback,
         super.onViewUnload();
         inactivityTimer.shutdown();
         mViewfinderView.recycleLineDrawable();
+
+        if (!hasSurface) {
+            SurfaceHolder surfaceHolder = mSurfaceView.getHolder();
+            surfaceHolder.removeCallback(this);
+        }
     }
 
     /**
@@ -263,7 +272,9 @@ public class UIScanView extends UIContentView implements SurfaceHolder.Callback,
     public void surfaceCreated(SurfaceHolder holder) {
         if (!hasSurface) {
             hasSurface = true;
-            //initCamera(holder);
+            if (getIViewShowState() == IViewShowState.STATE_VIEW_SHOW) {
+                initCamera(holder);
+            }
         }
     }
 
@@ -352,7 +363,24 @@ public class UIScanView extends UIContentView implements SurfaceHolder.Callback,
     /**
      * 扫描图片二维码
      */
-    public void scanPicture(String picturePath) {
-        onHandleDecode(QRCodeDecoder.syncDecodeQRCode(picturePath));
+    public void scanPicture(final String picturePath) {
+        UILoading.show2(mParentILayout).setLoadingTipText("正在扫描...").setCanCancel(false);
+        Rx.base(new RFunc<String>() {
+            @Override
+            public String call(String s) {
+                return QRCodeDecoder.syncDecodeQRCode(picturePath);
+            }
+        }, new RSubscriber<String>() {
+            @Override
+            public void onSucceed(String bean) {
+                onHandleDecode(bean);
+            }
+
+            @Override
+            public void onEnd(boolean isError, int errorCode, boolean isNoNetwork, Throwable e) {
+                super.onEnd(isError, errorCode, isNoNetwork, e);
+                UILoading.hide();
+            }
+        });
     }
 }
