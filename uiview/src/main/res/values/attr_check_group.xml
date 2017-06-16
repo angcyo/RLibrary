@@ -4,4 +4,9 @@
         <!--默认选中的按钮id-->
         <attr name="checked_id" format="reference"/>
     </declare-styleable>
+
+    <declare-styleable name="RImageCheckView">
+        <attr name="r_checked" format="boolean"/>
+        <attr name="r_tint_color" format="boolean"/>
+    </declare-styleable>
 </resources>

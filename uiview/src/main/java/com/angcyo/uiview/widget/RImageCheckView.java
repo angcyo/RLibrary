@@ -2,11 +2,11 @@ package com.angcyo.uiview.widget;
 
 import android.content.Context;
 import android.content.res.ColorStateList;
+import android.content.res.TypedArray;
 import android.graphics.drawable.Drawable;
 import android.support.v4.content.ContextCompat;
 import android.support.v4.graphics.drawable.DrawableCompat;
 import android.support.v7.widget.AppCompatImageView;
-import android.text.TextUtils;
 import android.util.AttributeSet;
 import android.view.View;
 
@@ -26,24 +26,33 @@ public class RImageCheckView extends AppCompatImageView implements View.OnClickL
     View.OnClickListener mOnClickListener;
     OnCheckedChangeListener mOnCheckedChangeListener;
 
+    boolean isTintColor;
+
     public RImageCheckView(Context context) {
-        super(context);
+        this(context, null);
     }
 
     public RImageCheckView(Context context, AttributeSet attrs) {
         super(context, attrs);
+
+        TypedArray typedArray = context.obtainStyledAttributes(attrs, R.styleable.RImageCheckView);
+        mChecked = typedArray.getBoolean(R.styleable.RImageCheckView_r_checked, false);
+        isTintColor = typedArray.getBoolean(R.styleable.RImageCheckView_r_tint_color, isTintColor);
+        typedArray.recycle();
+
+        setScaleType(ScaleType.CENTER_INSIDE);
     }
 
     @Override
     protected void onAttachedToWindow() {
         super.onAttachedToWindow();
         super.setOnClickListener(this);
-        setScaleType(ScaleType.CENTER_INSIDE);
-        if (getTag() != null && TextUtils.equals("checked", getTag().toString())) {
-            setChecked(true);
-        }
+//        setScaleType(ScaleType.CENTER_INSIDE);
+//        if (getTag() != null && TextUtils.equals("checked", getTag().toString())) {
+//            setChecked(true);
+//        }
 
-        if (!isInEditMode()) {
+        if (!isInEditMode() && isTintColor) {
             ColorStateList stateList = new ColorStateList(
                     new int[][]{{android.R.attr.state_checked}, {}},
                     new int[]{SkinHelper.getSkin().getThemeSubColor(), ContextCompat.getColor(getContext(), R.color.default_base_bg_disable)});
@@ -119,7 +128,14 @@ public class RImageCheckView extends AppCompatImageView implements View.OnClickL
     }
 
     public void setOnCheckedChangeListener(OnCheckedChangeListener onCheckedChangeListener) {
+        setOnCheckedChangeListener(onCheckedChangeListener, false);
+    }
+
+    public void setOnCheckedChangeListener(OnCheckedChangeListener onCheckedChangeListener, boolean notify) {
         mOnCheckedChangeListener = onCheckedChangeListener;
+        if (notify && mOnCheckedChangeListener != null) {
+            mOnCheckedChangeListener.onCheckedChanged(this, mChecked);
+        }
     }
 
     @Override

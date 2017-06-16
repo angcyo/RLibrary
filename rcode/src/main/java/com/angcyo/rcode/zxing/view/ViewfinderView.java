@@ -40,8 +40,8 @@ public final class ViewfinderView extends View {
     private static final long ANIMATION_DELAY = 80L;
     private static float density;
     private final Paint paint, paint2;
-    private final int maskColor;
     private final int resultColor;
+    private int maskColor;
     private CameraManager cameraManager;
     private Bitmap resultBitmap;
     private int scannerAlpha;
@@ -87,6 +87,11 @@ public final class ViewfinderView extends View {
 
     public void setCameraManager(CameraManager cameraManager) {
         this.cameraManager = cameraManager;
+    }
+
+
+    public void setMaskColor(int maskColor) {
+        this.maskColor = maskColor;
     }
 
     @Override
