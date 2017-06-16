@@ -71,6 +71,10 @@ public class UIScanView extends UIContentView implements SurfaceHolder.Callback,
     private Result savedResultToShow;
     private SurfaceView mSurfaceView;
 
+
+    public UIScanView() {
+    }
+
     public UIScanView(Action1<String> resultAction) {
         mResultAction = resultAction;
     }
@@ -304,10 +308,10 @@ public class UIScanView extends UIContentView implements SurfaceHolder.Callback,
         //Message message = Message.obtain(handler, IDecodeCallback.decode_failed);
         //handler.sendMessage(message);
 
-        String msg = rawResult.getText();
-        L.e("二维码: " + msg);
+        String result = rawResult.getText();
+        L.e("二维码: " + result);
 
-        onHandleDecode(msg);
+        onHandleDecode(result);
     }
 
     /**
@@ -325,16 +329,16 @@ public class UIScanView extends UIContentView implements SurfaceHolder.Callback,
     /**
      * 重写此方法, 自定义扫描之后的事件
      */
-    protected void onHandleDecode(String msg) {
-        if (TextUtils.isEmpty(msg)) {
-            msg = "unknown";
+    protected void onHandleDecode(String result) {
+        if (TextUtils.isEmpty(result)) {
+            result = "unknown";
         }
         //playVibrate();
         beepManager.playBeepSoundAndVibrate();
-        //T_.show(msg);
+        //T_.show(result);
         finishIView();
         if (mResultAction != null) {
-            mResultAction.call(msg);
+            mResultAction.call(result);
         }
     }
 
