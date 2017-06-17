@@ -79,6 +79,8 @@ public abstract class UIBaseView extends UIIViewImpl {
      * 加载数据的布局
      */
     protected View mBaseLoadLayout;
+
+    protected View mBaseErrorLayout;
     /**
      * 内容布局
      */
@@ -208,6 +210,8 @@ public abstract class UIBaseView extends UIIViewImpl {
             showEmptyLayout();
         } else if (state == LayoutState.NONET) {
             showNonetLayout();
+        } else if (state == LayoutState.ERROR) {
+            showErrorLayout();
         }
     }
 
@@ -239,6 +243,9 @@ public abstract class UIBaseView extends UIIViewImpl {
         LayoutInflater.from(mActivity).inflate(layoutId, mBaseContentLayout);
     }
 
+    /**
+     * 布局inflate
+     */
     protected View inflateLoadLayout(FrameLayout baseRootLayout, LayoutInflater inflater) {
 //        return inflater.inflate(R.layout.base_load_layout, baseRootLayout);
         EmptyView emptyView = new EmptyView(mActivity);
@@ -249,26 +256,57 @@ public abstract class UIBaseView extends UIIViewImpl {
     }
 
     protected View inflateNonetLayout(FrameLayout baseRootLayout, LayoutInflater inflater) {
-        View view = inflater.inflate(R.layout.base_nonet_layout, baseRootLayout);
-        initNonetButtonDrawable(view);
+        View view = inflater.inflate(getBaseNonetLayoutId(), baseRootLayout);
+        initBaseNonetLayout(view);
         return view;
     }
 
-    protected void initNonetButtonDrawable(View view) {
-        int borderColor = getColor(R.color.default_base_border);
-        int borderSize = getDimensionPixelOffset(R.dimen.base_border_size);
-        int radii = getDimensionPixelOffset(R.dimen.base_40dpi);
+    protected int getBaseNonetLayoutId() {
+        return R.layout.base_nonet_layout;
+    }
 
-        Drawable drawable = ResUtil.selector(
-                ResUtil.createDrawable(borderColor, borderSize, radii),
-                ResUtil.createDrawable(SkinHelper.getTranColor(SkinHelper.getSkin().getThemeSubColor(), 0x80), radii)
-        );
+    protected void initBaseNonetLayout(View view) {
+        Drawable drawable = getTipButtonSelector();
         ResUtil.setBgDrawable(view.findViewById(R.id.base_refresh_view), drawable);
         ResUtil.setBgDrawable(view.findViewById(R.id.base_setting_view), drawable.mutate().getConstantState().newDrawable());
     }
 
+    protected Drawable getTipButtonSelector() {
+        int borderColor = getColor(R.color.default_base_border);
+        int borderSize = getDimensionPixelOffset(R.dimen.base_border_size);
+        int radii = getDimensionPixelOffset(R.dimen.base_40dpi);
+        return ResUtil.selector(
+                ResUtil.createDrawable(borderColor, borderSize, radii),
+                ResUtil.createDrawable(SkinHelper.getTranColor(SkinHelper.getSkin().getThemeSubColor(), 0x80), radii)
+        );
+    }
+
     protected View inflateEmptyLayout(FrameLayout baseRootLayout, LayoutInflater inflater) {
-        return inflater.inflate(R.layout.base_empty_layout, baseRootLayout);
+        View view = inflater.inflate(getBaseEmptyLayoutId(), baseRootLayout);
+        initBaseEmptyLayout(view);
+        return view;
+    }
+
+    protected void initBaseEmptyLayout(View view) {
+
+    }
+
+    protected void initBaseErrorLayout(View view) {
+
+    }
+
+    protected int getBaseEmptyLayoutId() {
+        return R.layout.base_empty_layout;
+    }
+
+    protected View inflateErrorLayout(FrameLayout baseRootLayout, LayoutInflater inflater) {
+        View view = inflater.inflate(getBaseErrorLayoutId(), baseRootLayout);
+        initBaseErrorLayout(view);
+        return view;
+    }
+
+    protected int getBaseErrorLayoutId() {
+        return R.layout.base_error_layout;
     }
 
     protected TitleBarPattern getTitleBar() {
@@ -360,6 +398,15 @@ public abstract class UIBaseView extends UIIViewImpl {
         changeState(mLayoutState, LayoutState.EMPTY);
     }
 
+    public void showErrorLayout() {
+        removeOtherView(LayoutState.ERROR);
+        if (mBaseErrorLayout == null) {
+            mBaseErrorLayout = UILayoutImpl.safeAssignView(mBaseContentRootLayout,
+                    inflateErrorLayout(mBaseContentRootLayout, LayoutInflater.from(mActivity)));//填充错误布局
+        }
+        changeState(mLayoutState, LayoutState.ERROR);
+    }
+
     public void showNonetLayout() {
         showNonetLayout(null, null);
     }
@@ -384,50 +431,59 @@ public abstract class UIBaseView extends UIIViewImpl {
     protected void removeOtherView(LayoutState needShowState) {
         mViewHolder.clear();
         if (needShowState == LayoutState.CONTENT) {
-            if (mBaseLoadLayout != null) {
-                mBaseContentRootLayout.removeView(mBaseLoadLayout);
-                mBaseLoadLayout = null;
-            }
-            if (mBaseEmptyLayout != null) {
-                mBaseContentRootLayout.removeView(mBaseEmptyLayout);
-                mBaseEmptyLayout = null;
-            }
-            if (mBaseNonetLayout != null) {
-                mBaseContentRootLayout.removeView(mBaseNonetLayout);
-                mBaseNonetLayout = null;
-            }
+            removeLoadLayout();
+            removeEmptyLayout();
+            removeNonetLayout();
+            removeErrorLayout();
         } else {
             if (mBaseContentLayout != null) {
                 mBaseContentLayout.removeAllViews();
             }
             if (needShowState == LayoutState.EMPTY) {
-                if (mBaseLoadLayout != null) {
-                    mBaseContentRootLayout.removeView(mBaseLoadLayout);
-                    mBaseLoadLayout = null;
-                }
-                if (mBaseNonetLayout != null) {
-                    mBaseContentRootLayout.removeView(mBaseNonetLayout);
-                    mBaseNonetLayout = null;
-                }
+                removeLoadLayout();
+                removeNonetLayout();
+                removeErrorLayout();
             } else if (needShowState == LayoutState.LOAD) {
-                if (mBaseEmptyLayout != null) {
-                    mBaseContentRootLayout.removeView(mBaseEmptyLayout);
-                    mBaseEmptyLayout = null;
-                }
-                if (mBaseNonetLayout != null) {
-                    mBaseContentRootLayout.removeView(mBaseNonetLayout);
-                    mBaseNonetLayout = null;
-                }
+                removeEmptyLayout();
+                removeNonetLayout();
+                removeErrorLayout();
             } else if (needShowState == LayoutState.NONET) {
-                if (mBaseLoadLayout != null) {
-                    mBaseContentRootLayout.removeView(mBaseLoadLayout);
-                    mBaseLoadLayout = null;
-                }
-                if (mBaseEmptyLayout != null) {
-                    mBaseContentRootLayout.removeView(mBaseEmptyLayout);
-                    mBaseEmptyLayout = null;
-                }
+                removeLoadLayout();
+                removeEmptyLayout();
+                removeErrorLayout();
+            } else if (needShowState == LayoutState.ERROR) {
+                removeLoadLayout();
+                removeEmptyLayout();
+                removeNonetLayout();
             }
+        }
+    }
+
+    private void removeErrorLayout() {
+        if (mBaseErrorLayout != null) {
+            mBaseContentRootLayout.removeView(mBaseErrorLayout);
+            mBaseErrorLayout = null;
+        }
+    }
+
+    private void removeNonetLayout() {
+        if (mBaseNonetLayout != null) {
+            mBaseContentRootLayout.removeView(mBaseNonetLayout);
+            mBaseNonetLayout = null;
+        }
+    }
+
+    private void removeEmptyLayout() {
+        if (mBaseEmptyLayout != null) {
+            mBaseContentRootLayout.removeView(mBaseEmptyLayout);
+            mBaseEmptyLayout = null;
+        }
+    }
+
+    private void removeLoadLayout() {
+        if (mBaseLoadLayout != null) {
+            mBaseContentRootLayout.removeView(mBaseLoadLayout);
+            mBaseLoadLayout = null;
         }
     }
 
@@ -841,7 +897,8 @@ public abstract class UIBaseView extends UIIViewImpl {
         EMPTY,//空布局
         LOAD,//装载布局
         NONET,//无网络
-        CONTENT //内容
+        CONTENT, //内容
+        ERROR //异常
     }
 
     /**
