@@ -273,10 +273,15 @@ public abstract class RModelAdapter<T> extends RBaseAdapter<T> {
             //单选模式下, 未选中, 不回调
             return;
         }
+        onSelectorChange(allSelectorList);
         final Iterator<OnModelChangeListener> iterator = mChangeListeners.iterator();
         while (iterator.hasNext()) {
             iterator.next().onSelectorChange(allSelectorList);
         }
+    }
+
+    protected void onSelectorChange(List<Integer> allSelectorList) {
+
     }
 
     /**
@@ -542,16 +547,20 @@ public abstract class RModelAdapter<T> extends RBaseAdapter<T> {
      * @param model 单选,多选, 正常
      */
     public RModelAdapter setModel(@Model int model) {
-        if (mModel != model) {
-            int old = mModel;
+        @Model
+        int oldMode = mModel;
+
+        if (oldMode != model) {
             mModel = model;
+
+            onModelChange(oldMode, model);
 
             final Iterator<OnModelChangeListener> iterator = mChangeListeners.iterator();
             while (iterator.hasNext()) {
-                iterator.next().onModelChange(old, model);
+                iterator.next().onModelChange(oldMode, model);
             }
 
-            if (mModel != MODEL_NORMAL) {
+            if (oldMode != MODEL_NORMAL) {
                 mOldLoadMore = isEnableLoadMore();
                 //setEnableLoadMore(false);//不关闭
                 mSelector.clear();
@@ -562,6 +571,10 @@ public abstract class RModelAdapter<T> extends RBaseAdapter<T> {
         }
         notifySelectorChange();
         return this;
+    }
+
+    protected void onModelChange(@Model int from, @Model int to) {
+
     }
 
     public RBaseViewHolder getViewHolderFromPosition(int position) {

@@ -1055,7 +1055,7 @@ public class UILayoutImpl extends SwipeBackLayout implements ILayout<UIParam>, U
             public void run() {
                 logLayoutInfo();
             }
-        }, 100);
+        }, 16);
     }
 
     /**
