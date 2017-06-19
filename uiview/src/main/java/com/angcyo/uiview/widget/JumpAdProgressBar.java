@@ -157,7 +157,7 @@ public class JumpAdProgressBar extends View {
     @Override
     protected void onAttachedToWindow() {
         super.onAttachedToWindow();
-        start();
+        //start();
     }
 
     @Override
