@@ -7,4 +7,5 @@
     <color name="transparent">#00000000</color>
     <color name="main_bg_color_press">#20000000</color>
     <color name="main_bg_white_color_press">#60FFFFFF</color>
+    <color name="image_view_placeholder_color">#EFEFEF</color>
 </resources>

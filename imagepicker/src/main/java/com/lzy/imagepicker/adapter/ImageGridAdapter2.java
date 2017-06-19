@@ -13,6 +13,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.lzy.imagepicker.GlideImageLoader;
 import com.lzy.imagepicker.ImageDataSource;
 import com.lzy.imagepicker.ImagePicker;
 import com.lzy.imagepicker.R;
@@ -139,9 +140,10 @@ public class ImageGridAdapter2 extends RecyclerView.Adapter<ImageViewHolder> {
                 ThumbLoad.createThumbFile(new WeakReference<>(mActivity), new WeakReference<RecyclerView.Adapter>(this)
                         , imageItem, position);
 
-                imagePicker.getImageLoader().displayImage(mActivity, imageItem.videoThumbPath, "", "", thumbImageView, mImageSize, mImageSize);
+                GlideImageLoader.displayImage(thumbImageView, imageItem.videoThumbPath, R.drawable.image_placeholder_shape); //显示图片
+                //imagePicker.getImageLoader().displayImage(mActivity, imageItem.videoThumbPath, "no", "", thumbImageView, mImageSize, mImageSize);
             } else {
-                imagePicker.getImageLoader().displayImage(mActivity, imageItem.path, "", "", thumbImageView, mImageSize, mImageSize); //显示图片
+                GlideImageLoader.displayImage(thumbImageView, imageItem.path, R.drawable.image_placeholder_shape); //显示图片
             }
 
             thumbImageView.setOnClickListener(new View.OnClickListener() {

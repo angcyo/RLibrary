@@ -132,8 +132,8 @@ public class ImagePageAdapter extends PagerAdapter {
         photoView.setScaleType(ImageView.ScaleType.FIT_CENTER);
 
         //缩略图显示
-        final ImagePickerImageView imageView = new ImagePickerImageView(mActivity);
-        imageView.setScaleType(ImageView.ScaleType.CENTER);
+        final ImagePickerImageView thumbImageView = new ImagePickerImageView(mActivity);
+        thumbImageView.setScaleType(ImageView.ScaleType.CENTER);
 
         //进度条显示
         //final MaterialProgressView progressView = new MaterialProgressView(mActivity);
@@ -143,59 +143,81 @@ public class ImagePageAdapter extends PagerAdapter {
         //item data
         final ImageItem imageItem = images.get(position);
         /*imagePicker.getImageLoader().*/
-        if (imageItem.placeholderDrawable == null) {
-            String displayPath;
-            if (imageItem.loadType == ImageDataSource.VIDEO) {
-                displayPath = imageItem.videoThumbPath;
-                imageView.setPlayDrawable(R.drawable.image_picker_play);
-                imageView.setScaleType(ImageView.ScaleType.CENTER_CROP);
 
-                Glide.with(mActivity).load(new File(displayPath)).into(imageView);
-
-                imageView.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-                        VideoPlayActivity.launcher(mActivity, imageItem.path);
-                    }
-                });
-            } else {
-                displayPath = imageItem.path;
-                imageView.setPlayDrawable(null);
-
-                displayImage(mActivity, displayPath, imageItem.thumbPath,
-                        imageItem.url, photoView, screenWidth, screenHeight);
-            }
-
+        //显示视频播放按钮
+        if (imageItem.loadType == ImageDataSource.VIDEO) {
+            thumbImageView.setPlayDrawable(R.drawable.image_picker_play);
         } else {
-            imageView.setVisibility(View.VISIBLE);
-            progressView.setVisibility(View.VISIBLE);
+            thumbImageView.setPlayDrawable(null);
+        }
 
-            if (YImageControl.isYellowImage(imageItem.url)) {
-                YImageControl.showYellowImageXiao(photoView);
-                photoView.setScaleType(ImageView.ScaleType.CENTER);
-            } else {
-                progressView.start();
-                if (imageItem.placeholderDrawable instanceof TransitionDrawable) {
-                    TransitionDrawable transitionDrawable = (TransitionDrawable) imageItem.placeholderDrawable;
-                    imageView.setImageDrawable(transitionDrawable.getDrawable(transitionDrawable.getNumberOfLayers() - 1));
-                } else {
-                    imageView.setImageDrawable(imageItem.placeholderDrawable);
+        String thumbPath = imageItem.thumbPath;
+        //显示缩略图
+        if (imageItem.placeholderDrawable != null) {
+            //thumbImageView.setScaleType(ImageView.ScaleType.CENTER_CROP);
+            thumbImageView.setImageDrawable(imageItem.placeholderDrawable);
+        } else {
+
+            if (!TextUtils.isEmpty(thumbPath)) {
+                File thumbFile = new File(thumbPath);
+                if (thumbFile.exists()) {
+                    Glide.with(mActivity).load(thumbFile).dontAnimate().into(thumbImageView);
                 }
+            }
+        }
 
-                if (!TextUtils.isEmpty(imageItem.path)) {
-                    File file = new File(imageItem.path);
-                    if (file.exists()) {
-                        Glide.with(mActivity)
-                                .load(file)
-                                .into(photoView);
-                        imageView.setVisibility(View.GONE);
-                        progressView.setVisibility(View.GONE);
-                        progressView.stop();
-                    } else {
-                        loadImage(photoView, imageView, progressView, imageItem);
-                    }
+        //显示真正的图片
+        if (imageItem.loadType == ImageDataSource.VIDEO) {
+            if (!TextUtils.isEmpty(imageItem.videoThumbPath)) {
+                File videoThumbFile = new File(imageItem.videoThumbPath);
+                if (videoThumbFile.exists()) {
+                    thumbImageView.setScaleType(ImageView.ScaleType.CENTER_CROP);
+                    Glide.with(mActivity).load(videoThumbFile).dontAnimate().into(thumbImageView);
+                }
+            }
+            thumbImageView.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    VideoPlayActivity.launcher(mActivity, imageItem.path);
+                }
+            });
+        } else {
+            if (!TextUtils.isEmpty(imageItem.path) && new File(imageItem.path).exists()) {
+                //加载本地图片
+                displayImage(mActivity, imageItem.path, "no",
+                        imageItem.url, photoView, screenWidth, screenHeight);
+            } else {
+                //加载网络图片
+                thumbImageView.setVisibility(View.VISIBLE);
+                progressView.setVisibility(View.VISIBLE);
+
+                if (YImageControl.isYellowImage(imageItem.url)) {
+                    YImageControl.showYellowImageXiao(photoView);
+                    photoView.setScaleType(ImageView.ScaleType.CENTER);
                 } else {
-                    loadImage(photoView, imageView, progressView, imageItem);
+                    progressView.start();
+                    if (imageItem.placeholderDrawable instanceof TransitionDrawable) {
+                        TransitionDrawable transitionDrawable = (TransitionDrawable) imageItem.placeholderDrawable;
+                        thumbImageView.setImageDrawable(transitionDrawable.getDrawable(transitionDrawable.getNumberOfLayers() - 1));
+                    } else {
+                        thumbImageView.setImageDrawable(imageItem.placeholderDrawable);
+                    }
+
+                    if (!TextUtils.isEmpty(imageItem.path)) {
+                        File file = new File(imageItem.path);
+                        if (file.exists()) {
+                            Glide.with(mActivity)
+                                    .load(file)
+                                    .into(photoView);
+                            thumbImageView.setVisibility(View.GONE);
+                            progressView.setVisibility(View.GONE);
+                            progressView.stop();
+                        } else {
+                            loadImage(photoView, thumbImageView, progressView, imageItem);
+                        }
+                    } else {
+                        loadImage(photoView, thumbImageView, progressView, imageItem);
+                    }
                 }
             }
         }
@@ -221,7 +243,7 @@ public class ImagePageAdapter extends PagerAdapter {
         });
         photoView.setOnExitListener(mOnExitListener);
 
-        itemLayout.addView(imageView, new ViewGroup.LayoutParams(-1, -1));
+        itemLayout.addView(thumbImageView, new ViewGroup.LayoutParams(-1, -1));
         itemLayout.addView(photoView);
         itemLayout.addView(progressView, new FrameLayout.LayoutParams(-2, -2, Gravity.CENTER));
         container.addView(itemLayout);

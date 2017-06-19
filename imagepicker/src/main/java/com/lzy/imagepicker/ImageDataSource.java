@@ -198,6 +198,8 @@ public class ImageDataSource implements LoaderManager.LoaderCallbacks<Cursor> {
         imageItem.height = imageHeight;
         imageItem.mimeType = imageMimeType;
         imageItem.addTime = imageAddTime;
+        //imageItem.placeholderDrawable = ContextCompat.getDrawable(activity, R.drawable.image_placeholder_shape);
+
         allImages.add(imageItem);
         //根据父路径分类存放图片
         File imageParentFile = imageFile.getParentFile();
@@ -256,6 +258,7 @@ public class ImageDataSource implements LoaderManager.LoaderCallbacks<Cursor> {
         imageItem.videoDuration = videoDuration;
         imageItem.videoThumbPath = thumbPath;
         imageItem.resolution = resolution;
+        //imageItem.placeholderDrawable = ContextCompat.getDrawable(activity, R.drawable.image_placeholder_shape);
 
         try {
             String[] split = resolution.split("x");
