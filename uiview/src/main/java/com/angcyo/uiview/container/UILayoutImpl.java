@@ -645,6 +645,8 @@ public class UILayoutImpl extends SwipeBackLayout implements ILayout<UIParam>, U
             }
         };
 
+        isFinishing = true;
+
         if (param.mAsync) {
             post(endRunnable);
             return;
