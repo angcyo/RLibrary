@@ -91,11 +91,34 @@ public class RExTextView extends RTextView {
     /**
      * 判断 str是否是数字
      */
+//    public static boolean isNumber(String str) {
+//        Pattern compile = Pattern.compile("^\\d+$");
+//        Matcher matcher = compile.matcher(str);
+//        //matcher.group(matcher.groupCount())
+//        return matcher.find();
+//    }
+    public static boolean isWebUrl(String url) {
+        if (TextUtils.isEmpty(url)) {
+            return false;
+        }
+        return patternUrl.matcher(url).matches();
+    }
+
+    /**
+     * 判断 str是否是数字
+     */
     public static boolean isNumber(String str) {
-        Pattern compile = Pattern.compile("^\\d+$");
-        Matcher matcher = compile.matcher(str);
-        //matcher.group(matcher.groupCount())
-        return matcher.find();
+        if (TextUtils.isEmpty(str)) {
+            return false;
+        }
+        return patternNumber.matcher(str).matches();
+    }
+
+    public static boolean isPhone(String str) {
+        if (TextUtils.isEmpty(str)) {
+            return false;
+        }
+        return patternPhone.matcher(str).matches();
     }
 
     public void setImageSpanTextColor(int imageSpanTextColor) {
@@ -606,16 +629,17 @@ public class RExTextView extends RTextView {
             L.e("call: onClick([view])-> " + mShowContent + " : " + url);
             if (mOnImageSpanClick != null) {
                 if (!mOnImageSpanClick.onClick(view, mShowContent, url)) {
-                    if (patternUrl.matcher(url).matches()) {
+                    if (isWebUrl(url)) {
                         mOnImageSpanClick.onUrlClick(view, url);
-                    } else if (patternPhone.matcher(url).matches()) {
+                    } else if (isPhone(url)) {
                         mOnImageSpanClick.onPhoneClick(view, url);
-                    } else if (patternNumber.matcher(url).matches()) {
+                    } else if (isNumber(url)) {
                         mOnImageSpanClick.onMentionClick(view, url);
                     }
                 }
             }
         }
+
 
         public void onTouchUp(final TextView view) {
             isTouchDown = false;
