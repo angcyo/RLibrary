@@ -51,6 +51,7 @@
     <color name="base_text_color_dark2">#666666</color>
 
     <color name="base_chat_bg_color">#F0F0F5</color>
+    <color name="base_placeholder_color">#EFEFEF</color>
 
     <color name="base_color_disable">#CBCBCB</color>
 
