@@ -179,9 +179,13 @@ public class RRetrofit {
                 return;
             }
         }
-        String dataTime = RCrashHandler.getDataTime("yyyy-MM-dd-HH-mm-ss");
+        String dataTime = RCrashHandler.getDataTime("yyyy-MM-dd_HH-mm-ss-SSS");
         File file = new File(saveFolder, /*dataTime + */"RRetrofit.log");
-        PrintWriter pw = new PrintWriter(new BufferedWriter(new FileWriter(file, true)));
+        boolean append = true;
+        if (file.length() > 1024 * 1024 * 10 /*大于10MB重写*/) {
+            append = false;
+        }
+        PrintWriter pw = new PrintWriter(new BufferedWriter(new FileWriter(file, append)));
         pw.print(dataTime);
         pw.print(":");
         pw.print(data);

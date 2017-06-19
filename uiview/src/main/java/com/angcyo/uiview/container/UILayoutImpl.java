@@ -10,6 +10,7 @@ import android.graphics.Color;
 import android.graphics.Rect;
 import android.os.Build;
 import android.os.Bundle;
+import android.os.Environment;
 import android.support.v4.widget.ViewDragHelper;
 import android.text.TextUtils;
 import android.util.AttributeSet;
@@ -22,6 +23,8 @@ import android.view.animation.Animation;
 import android.view.inputmethod.InputMethodManager;
 
 import com.angcyo.library.utils.L;
+import com.angcyo.uiview.RCrashHandler;
+import com.angcyo.uiview.Root;
 import com.angcyo.uiview.base.UILayoutActivity;
 import com.angcyo.uiview.model.ViewPattern;
 import com.angcyo.uiview.resources.AnimUtil;
@@ -32,6 +35,11 @@ import com.angcyo.uiview.view.IView;
 import com.angcyo.uiview.view.UIIViewImpl;
 import com.angcyo.uiview.widget.viewpager.UIViewPager;
 
+import java.io.BufferedWriter;
+import java.io.File;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.io.PrintWriter;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.Set;
@@ -204,6 +212,33 @@ public class UILayoutImpl extends SwipeBackLayout implements ILayout<UIParam>, U
         }
     }
 
+    public static void saveToSDCard(String data) {
+        try {
+            String saveFolder = Environment.getExternalStorageDirectory().getAbsoluteFile() +
+                    File.separator + Root.APP_FOLDER + File.separator + "log";
+            File folder = new File(saveFolder);
+            if (!folder.exists()) {
+                if (!folder.mkdirs()) {
+                    return;
+                }
+            }
+            String dataTime = RCrashHandler.getDataTime("yyyy-MM-dd_HH-mm-ss-SSS");
+            File file = new File(saveFolder, /*dataTime + */"ILayout.log");
+            boolean append = true;
+            if (file.length() > 1024 * 1024 * 10 /*大于10MB重写*/) {
+                append = false;
+            }
+            PrintWriter pw = new PrintWriter(new BufferedWriter(new FileWriter(file, append)));
+            pw.println(dataTime);
+            pw.println(data);
+            // 导出手机信息
+            pw.println();
+            pw.close();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
     @Override
     public void onLastViewReShow(Bundle bundle) {
         if (mLastShowViewPattern != null) {
@@ -306,7 +341,10 @@ public class UILayoutImpl extends SwipeBackLayout implements ILayout<UIParam>, U
 
     @Override
     public void startIView(final IView iView, final UIParam param) {
-        L.d("请求启动:" + iView.getClass().getSimpleName());
+        String log = this.getClass().getSimpleName() + " 请求启动:" + iView.getClass().getSimpleName();
+        L.d(log);
+        saveToSDCard(log);
+
         iView.onAttachedToILayout(this);
         if (checkInterrupt(iView)) return;
 
@@ -519,7 +557,9 @@ public class UILayoutImpl extends SwipeBackLayout implements ILayout<UIParam>, U
             return;
         }
 
-        L.d("请求关闭2:" + viewPattern.toString() + " isFinishing:" + isFinishing);
+        String log = this.getClass().getSimpleName() + " 请求关闭2:" + viewPattern.toString() + " isFinishing:" + isFinishing;
+        L.d(log);
+        saveToSDCard(log);
 
         ViewPattern lastViewPattern = findLastShowViewPattern(viewPattern);
 
@@ -619,7 +659,10 @@ public class UILayoutImpl extends SwipeBackLayout implements ILayout<UIParam>, U
             finishCancel();
             return;
         }
-        L.d("请求关闭/中断:" + iview.getClass().getSimpleName());
+
+        String log = this.getClass().getSimpleName() + " 请求关闭/中断:" + iview.getClass().getSimpleName();
+        L.d(log);
+        saveToSDCard(log);
         interruptSet.add(iview);
 
         final ViewPattern viewPattern = findViewPatternByIView(iview);
@@ -1144,6 +1187,7 @@ public class UILayoutImpl extends SwipeBackLayout implements ILayout<UIParam>, U
                 viewPattern.mIView.getIViewShowState() == IView.IViewShowState.STATE_VIEW_HIDE) {
             return;
         }
+        saveToSDCard(viewPattern.mIView.getClass().getSimpleName() + " onViewHide()");
         viewPattern.mIView.onViewHide();
         if (hide && !viewPattern.mIView.isDialog()) {
             viewPattern.mView.setVisibility(GONE);
@@ -1159,6 +1203,7 @@ public class UILayoutImpl extends SwipeBackLayout implements ILayout<UIParam>, U
                 viewPattern.mIView.getIViewShowState() == IView.IViewShowState.STATE_VIEW_SHOW) {
             return;
         }
+        saveToSDCard(viewPattern.mIView.getClass().getSimpleName() + " onViewShow()");
         viewPattern.mView.setVisibility(VISIBLE);
 //        viewPattern.mView.bringToFront();
         viewPattern.mIView.onViewShow(bundle);
@@ -1868,7 +1913,7 @@ public class UILayoutImpl extends SwipeBackLayout implements ILayout<UIParam>, U
      * 打印堆栈信息
      */
     public String logLayoutInfo() {
-        StringBuilder stringBuilder = new StringBuilder("\n");
+        StringBuilder stringBuilder = new StringBuilder(this.getClass().getSimpleName() + " IViews:\n");
         for (int i = 0; i < getAttachViewSize(); i++) {
             ViewPattern viewPattern = mAttachViews.get(i);
             stringBuilder.append(i);
@@ -1894,6 +1939,7 @@ public class UILayoutImpl extends SwipeBackLayout implements ILayout<UIParam>, U
         }
         LAYOUT_INFO = stringBuilder.toString();
         L.e(LAYOUT_INFO);
+        saveToSDCard(LAYOUT_INFO);
         return LAYOUT_INFO;
     }
 
