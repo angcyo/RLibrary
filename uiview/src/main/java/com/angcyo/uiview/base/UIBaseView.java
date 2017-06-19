@@ -37,6 +37,7 @@ import com.angcyo.uiview.utils.ClipHelper;
 import com.angcyo.uiview.utils.ScreenUtil;
 import com.angcyo.uiview.view.UIIViewImpl;
 import com.angcyo.uiview.widget.EmptyView;
+import com.angcyo.uiview.widget.RImageView;
 import com.angcyo.uiview.widget.SoftRelativeLayout;
 
 import static android.view.View.GONE;
@@ -268,7 +269,7 @@ public abstract class UIBaseView extends UIIViewImpl {
     protected void initBaseNonetLayout(View view) {
         Drawable drawable = getTipButtonSelector();
         ResUtil.setBgDrawable(view.findViewById(R.id.base_refresh_view), drawable);
-        ResUtil.setBgDrawable(view.findViewById(R.id.base_setting_view), drawable.mutate().getConstantState().newDrawable());
+        ResUtil.setBgDrawable(view.findViewById(R.id.base_setting_view), RImageView.copyDrawable(drawable));
     }
 
     protected Drawable getTipButtonSelector() {

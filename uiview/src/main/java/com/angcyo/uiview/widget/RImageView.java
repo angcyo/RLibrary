@@ -110,7 +110,14 @@ public class RImageView extends AppCompatImageView {
      * 复制 imageView的Drawable
      */
     public static Drawable copyDrawable(final ImageView imageView) {
-        Drawable result = null, drawable = imageView == null ? null : imageView.getDrawable();
+        if (imageView == null) {
+            return null;
+        }
+        return copyDrawable(imageView.getDrawable());
+    }
+
+    public static Drawable copyDrawable(final Drawable drawable) {
+        Drawable result = null;
         if (drawable != null) {
             if (Build.VERSION.SDK_INT < Build.VERSION_CODES.LOLLIPOP) {
                 Rect bounds = drawable.getBounds();
