@@ -81,7 +81,9 @@ public class RViewPager extends ViewPager {
     @Override
     protected void onSizeChanged(int w, int h, int oldw, int oldh) {
         super.onSizeChanged(w, h, oldw, oldh);
-        UIViewPager.ensureGlow(this, SkinHelper.getSkin().getThemeSubColor());
+        if (!isInEditMode()) {
+            UIViewPager.ensureGlow(this, SkinHelper.getSkin().getThemeSubColor());
+        }
     }
 
     @Override
