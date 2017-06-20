@@ -11,6 +11,7 @@ import android.view.View;
 import android.widget.OverScroller;
 import android.widget.RelativeLayout;
 
+import com.angcyo.library.utils.L;
 import com.angcyo.uiview.recycler.RRecyclerView;
 import com.angcyo.uiview.utils.Reflect;
 
@@ -166,7 +167,21 @@ public class StickLayout2 extends RelativeLayout {
         }
         mFloatView = getChildAt(2);
 
-        measureChild(topView, widthMeasureSpec, MeasureSpec.makeMeasureSpec(heightSize, MeasureSpec.UNSPECIFIED));
+        if (topView instanceof IWebView) {
+            int webViewContentHeight = ((IWebView) topView).getWebViewContentHeight();
+            topView.measure(widthMeasureSpec, MeasureSpec.makeMeasureSpec(heightSize, MeasureSpec.UNSPECIFIED));
+            int topViewMeasuredHeight = topView.getMeasuredHeight();
+
+            //L.e("测量高度:" + topViewMeasuredHeight + " 内容高度:" + webViewContentHeight + " Range:" + ((IWebView) topView).getWebViewVerticalScrollRange());
+
+            if (webViewContentHeight > 0 && topViewMeasuredHeight > 10_000 && (topViewMeasuredHeight - webViewContentHeight > 1_00)) {
+                //topView.measure(widthMeasureSpec, MeasureSpec.makeMeasureSpec(webViewContentHeight * 2 + 100, MeasureSpec.AT_MOST));
+            }
+
+        } else {
+            measureChild(topView, widthMeasureSpec, MeasureSpec.makeMeasureSpec(heightSize, MeasureSpec.UNSPECIFIED));
+        }
+
         measureChild(mFloatView, widthMeasureSpec, heightMeasureSpec);
         measureChild(scrollView, widthMeasureSpec,
                 MeasureSpec.makeMeasureSpec(heightSize - mFloatView.getMeasuredHeight() - floatTopOffset, MeasureSpec.EXACTLY));

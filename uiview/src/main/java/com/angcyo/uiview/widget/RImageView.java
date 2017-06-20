@@ -144,6 +144,9 @@ public class RImageView extends AppCompatImageView {
 
     @Override
     public boolean onTouchEvent(MotionEvent event) {
+        if (!isClickable()) {
+            return super.onTouchEvent(event);
+        }
 
         switch (event.getAction()) {
             case MotionEvent.ACTION_DOWN:
@@ -298,7 +301,11 @@ public class RImageView extends AppCompatImageView {
     }
 
     public void setPlayDrawable(@DrawableRes int res) {
-        setPlayDrawable(ContextCompat.getDrawable(getContext(), res));
+        if (res == -1) {
+            setPlayDrawable(null);
+        } else {
+            setPlayDrawable(ContextCompat.getDrawable(getContext(), res));
+        }
     }
 
     public void setShowGifTip(boolean showGifTip) {

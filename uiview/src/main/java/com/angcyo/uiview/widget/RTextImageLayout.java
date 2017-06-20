@@ -35,7 +35,7 @@ public class RTextImageLayout extends ViewGroup {
     int textSpace = 6;//文本与图片之间的空隙
     ConfigCallback mConfigCallback;
     private TextView mTextView;
-    private List<ImageView> mImageViews = new ArrayList<>();
+    private List<RImageView> mImageViews = new ArrayList<>();
     private List<String> mImages;
     private boolean isAttachedToWindow;
     private int mTextSize = 20;
@@ -159,7 +159,7 @@ public class RTextImageLayout extends ViewGroup {
     }
 
     private void notifyLoadImage() {
-        ImageView imageView;
+        RImageView imageView;
         for (int i = 0; i < Math.min(mImageViews.size(), MAX_IMAGE_SIZE); i++) {
             imageView = mImageViews.get(i);
             //cancelRequest(imageView);
@@ -236,7 +236,7 @@ public class RTextImageLayout extends ViewGroup {
 
         //最大显示3张图片
         for (int i = mImageViews.size(); i < Math.min(MAX_IMAGE_SIZE, imageSize); i++) {
-            ImageView imageView = createImageView();
+            RImageView imageView = createImageView();
             addViewInLayout(imageView, i, new LayoutParams(-2, -2));
             mImageViews.add(imageView);
         }
@@ -255,7 +255,7 @@ public class RTextImageLayout extends ViewGroup {
         }
     }
 
-    private void displayImage(ImageView imageView, String url) {
+    private void displayImage(RImageView imageView, String url) {
         if (mConfigCallback != null) {
             mConfigCallback.displayImage(imageView, url);
         }
@@ -272,8 +272,8 @@ public class RTextImageLayout extends ViewGroup {
         }
     }
 
-    private ImageView createImageView() {
-        ImageView imageView = new ImageView(getContext());
+    private RImageView createImageView() {
+        RImageView imageView = new RImageView(getContext());
         imageView.setScaleType(ImageView.ScaleType.CENTER_CROP);
         if (mConfigCallback != null) {
             mConfigCallback.onCreateImageView(imageView);
@@ -284,10 +284,10 @@ public class RTextImageLayout extends ViewGroup {
     public interface ConfigCallback {
         int[] getImageSize(int position);
 
-        void onCreateImageView(ImageView imageView);
+        void onCreateImageView(RImageView imageView);
 
         void onCreateTextView(TextView textView);
 
-        void displayImage(ImageView imageView, String url);
+        void displayImage(RImageView imageView, String url);
     }
 }
