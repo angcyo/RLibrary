@@ -75,6 +75,7 @@ public class UIViewPager extends ViewPager implements Runnable, StickLayout.CanS
             }
         });
         //setCurrentItem(defaultShowItem);
+        setPageTransformer(true, new FadeInOutPageTransformer());
     }
 
     @Override

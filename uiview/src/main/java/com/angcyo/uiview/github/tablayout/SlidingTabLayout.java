@@ -38,9 +38,9 @@ import java.util.Collections;
  * https://github.com/H07000223/FlycoTabLayout
  */
 public class SlidingTabLayout extends HorizontalScrollView implements ViewPager.OnPageChangeListener {
-    private static final int STYLE_NORMAL = 0;
-    private static final int STYLE_TRIANGLE = 1;
-    private static final int STYLE_BLOCK = 2;
+    public static final int STYLE_NORMAL = 0;
+    public static final int STYLE_TRIANGLE = 1;
+    public static final int STYLE_BLOCK = 2;
     /**
      * title
      */
@@ -252,10 +252,20 @@ public class SlidingTabLayout extends HorizontalScrollView implements ViewPager.
         for (int i = 0; i < mTabCount; i++) {
             tabView = View.inflate(mContext, R.layout.layout_tab, null);
             CharSequence pageTitle = mTitles == null ? mViewPager.getAdapter().getPageTitle(i) : mTitles.get(i);
+            if (itemNoBackground) {
+                tabView.setBackground(null);
+            }
             addTab(i, pageTitle.toString(), tabView);
         }
 
         updateTabStyles();
+    }
+
+    boolean itemNoBackground = false;
+
+    /**去除Item的背景*/
+    public void setItemNoBackground(boolean itemNoBackground) {
+        this.itemNoBackground = itemNoBackground;
     }
 
     public void addNewTab(String title) {
@@ -457,6 +467,12 @@ public class SlidingTabLayout extends HorizontalScrollView implements ViewPager.
             mIndicatorRect.left = (int) indicatorLeft;
             mIndicatorRect.right = (int) (mIndicatorRect.left + mIndicatorWidth);
         }
+    }
+
+    @Override
+    public void draw(Canvas canvas) {
+        //canvas.clipRect(0, 0, getMeasuredWidth(), getMeasuredHeight());
+        super.draw(canvas);
     }
 
     @Override

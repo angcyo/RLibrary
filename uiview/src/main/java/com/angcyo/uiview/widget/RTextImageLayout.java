@@ -32,12 +32,13 @@ public class RTextImageLayout extends ViewGroup {
 
     public static final int MAX_IMAGE_SIZE = 3;
     int space = 6;//dp, 间隙
-    int textSpace = 10;//文本与图片之间的空隙
+    int textSpace = 6;//文本与图片之间的空隙
     ConfigCallback mConfigCallback;
     private TextView mTextView;
     private List<ImageView> mImageViews = new ArrayList<>();
     private List<String> mImages;
     private boolean isAttachedToWindow;
+    private int mTextSize = 20;
 
     public RTextImageLayout(Context context) {
         super(context);
@@ -53,14 +54,18 @@ public class RTextImageLayout extends ViewGroup {
         float density = getResources().getDisplayMetrics().density;
         space = (int) (density * space);
         textSpace = (int) (density * textSpace);
+
+        if (isInEditMode()) {
+            setText("测试的文本信息测试的文本信息测试的文本信息测试的文本信息测试的文本信息测试的文本信息测试的文本信息测试的文本信息测试的文本信息测试的文本信息");
+        }
     }
 
     @Override
     protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
         int width = MeasureSpec.getSize(widthMeasureSpec);
         int height = MeasureSpec.getSize(heightMeasureSpec);
-        int width_UNSPECIFIED = MeasureSpec.makeMeasureSpec(width, MeasureSpec.UNSPECIFIED);
-        int height_UNSPECIFIED = MeasureSpec.makeMeasureSpec(height, MeasureSpec.UNSPECIFIED);
+        int width_UNSPECIFIED = MeasureSpec.makeMeasureSpec(width - getPaddingStart() - getPaddingEnd(), MeasureSpec.AT_MOST);
+        int height_UNSPECIFIED = MeasureSpec.makeMeasureSpec(1 << 30 - 1, MeasureSpec.AT_MOST);
         if (mImageViews.isEmpty()) {
             if (mTextView == null) {
                 setMeasuredDimension(width, getPaddingTop() + getPaddingBottom());
@@ -259,6 +264,7 @@ public class RTextImageLayout extends ViewGroup {
     private void ensureTextView() {
         if (mTextView == null) {
             mTextView = new TextView(getContext());
+            mTextView.setTextSize(mTextSize);
             addView(mTextView, new LayoutParams(-2, -2));
             if (mConfigCallback != null) {
                 mConfigCallback.onCreateTextView(mTextView);
