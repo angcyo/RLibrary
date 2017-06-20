@@ -2,7 +2,8 @@
 <resources>
     <declare-styleable name="TouchMoveView">
         <!--需要显示的文本-->
-        <attr name="r_show_text"/>
+        <attr name="r_text_normal" format="string"/>
+        <attr name="r_text_selected" format="string"/>
         <attr name="r_show_text_size" format="dimension"/>
         <!--文本图片之间的间隙-->
         <attr name="r_text_space" format="dimension"/>

@@ -74,6 +74,9 @@ class TouchMoveView : View {
         }
     var textWidth = 0
         get() {
+            if (mShowText.isNullOrEmpty()) {
+                return 0
+            }
             return mPaint.measureText(mShowText).toInt()
         }
     var textHeight = 0f
@@ -171,7 +174,8 @@ class TouchMoveView : View {
 
     fun initView(context: Context, attr: AttributeSet?) {
         val typedArray = context.obtainStyledAttributes(attr, R.styleable.TouchMoveView)
-        mShowText = typedArray.getString(R.styleable.TouchMoveView_r_show_text)
+        textSelected = typedArray.getString(R.styleable.TouchMoveView_r_text_selected)
+        textNormal = typedArray.getString(R.styleable.TouchMoveView_r_text_normal)
         mShowTextSize = typedArray.getDimension(R.styleable.TouchMoveView_r_show_text_size, mShowTextSize * scaledDensity)
 
         mTextColorNormal = typedArray.getColor(R.styleable.TouchMoveView_r_text_color_normal, mTextColorNormal)
