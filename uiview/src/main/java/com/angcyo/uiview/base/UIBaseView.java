@@ -16,9 +16,11 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.view.animation.AlphaAnimation;
 import android.view.animation.Animation;
+import android.view.animation.CycleInterpolator;
 import android.view.animation.DecelerateInterpolator;
 import android.view.animation.LinearInterpolator;
 import android.view.animation.RotateAnimation;
+import android.view.animation.TranslateAnimation;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.FrameLayout;
 import android.widget.RelativeLayout;
@@ -888,6 +890,24 @@ public abstract class UIBaseView extends UIIViewImpl {
         ClipHelper.ANIM_TIME = time;
         return time;
 //        return ClipHelper.ANIM_TIME;
+    }
+
+    /**
+     * 抖动IView
+     */
+    public void shakeView() {
+        if (mRootView == null) {
+            return;
+        }
+        TranslateAnimation translateAnimation = new TranslateAnimation(Animation.RELATIVE_TO_SELF, 0f, Animation.RELATIVE_TO_SELF, .02f,
+                Animation.RELATIVE_TO_SELF, 0f, Animation.RELATIVE_TO_SELF, 0f);
+        translateAnimation.setInterpolator(new CycleInterpolator(1f));
+        translateAnimation.setRepeatCount(1);
+        translateAnimation.setRepeatMode(Animation.REVERSE);
+        translateAnimation.setDuration(300);
+        translateAnimation.setFillAfter(false);
+        //translateAnimation.start();
+        mRootView.startAnimation(translateAnimation);
     }
 
     /**
