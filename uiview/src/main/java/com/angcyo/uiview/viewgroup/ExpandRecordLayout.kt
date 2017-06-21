@@ -420,6 +420,10 @@ class ExpandRecordLayout(context: Context, attributeSet: AttributeSet? = null) :
         }
     }
 
+    fun expandLayout() {
+        expandLayout(state == STATE_CLOSE)
+    }
+
     companion object {
         //未展开
         const val STATE_CLOSE = 0
