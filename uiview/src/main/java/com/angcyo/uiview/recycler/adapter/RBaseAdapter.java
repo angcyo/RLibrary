@@ -179,6 +179,7 @@ public abstract class RBaseAdapter<T> extends RecyclerView.Adapter<RBaseViewHold
             }
         } catch (Exception e) {
             L.e("请及时处理此处BUG.");
+            e.printStackTrace();
         }
     }
 
