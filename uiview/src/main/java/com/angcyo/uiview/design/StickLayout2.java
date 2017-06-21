@@ -11,7 +11,6 @@ import android.view.View;
 import android.widget.OverScroller;
 import android.widget.RelativeLayout;
 
-import com.angcyo.library.utils.L;
 import com.angcyo.uiview.recycler.RRecyclerView;
 import com.angcyo.uiview.utils.Reflect;
 
@@ -169,7 +168,7 @@ public class StickLayout2 extends RelativeLayout {
 
         if (topView instanceof IWebView) {
             int webViewContentHeight = ((IWebView) topView).getWebViewContentHeight();
-            topView.measure(widthMeasureSpec, MeasureSpec.makeMeasureSpec(heightSize, MeasureSpec.UNSPECIFIED));
+            topView.measure(widthMeasureSpec, MeasureSpec.makeMeasureSpec(1 << 30 - 1, MeasureSpec.AT_MOST));
             int topViewMeasuredHeight = topView.getMeasuredHeight();
 
             //L.e("测量高度:" + topViewMeasuredHeight + " 内容高度:" + webViewContentHeight + " Range:" + ((IWebView) topView).getWebViewVerticalScrollRange());
@@ -178,6 +177,7 @@ public class StickLayout2 extends RelativeLayout {
                 //topView.measure(widthMeasureSpec, MeasureSpec.makeMeasureSpec(webViewContentHeight * 2 + 100, MeasureSpec.AT_MOST));
             }
 
+//            topView.measure(widthMeasureSpec, MeasureSpec.makeMeasureSpec(heightSize, MeasureSpec.AT_MOST));
         } else {
             measureChild(topView, widthMeasureSpec, MeasureSpec.makeMeasureSpec(heightSize, MeasureSpec.UNSPECIFIED));
         }
@@ -265,6 +265,11 @@ public class StickLayout2 extends RelativeLayout {
 //        if (!inTopTouch) {
 //            return super.dispatchTouchEvent(ev);
 //        }
+
+//        if (getChildAt(0) instanceof IWebView) {
+//            return super.dispatchTouchEvent(ev);
+//        }
+
         boolean event = mGestureDetectorCompat.onTouchEvent(ev);
         if (event) {
             ev.setAction(MotionEvent.ACTION_CANCEL);

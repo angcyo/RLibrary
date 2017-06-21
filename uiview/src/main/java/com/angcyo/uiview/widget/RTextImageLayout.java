@@ -64,13 +64,13 @@ public class RTextImageLayout extends ViewGroup {
     protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
         int width = MeasureSpec.getSize(widthMeasureSpec);
         int height = MeasureSpec.getSize(heightMeasureSpec);
-        int width_UNSPECIFIED = MeasureSpec.makeMeasureSpec(width - getPaddingStart() - getPaddingEnd(), MeasureSpec.AT_MOST);
-        int height_UNSPECIFIED = MeasureSpec.makeMeasureSpec(1 << 30 - 1, MeasureSpec.AT_MOST);
+        int width_AT_MOST = MeasureSpec.makeMeasureSpec(width - getPaddingStart() - getPaddingEnd(), MeasureSpec.AT_MOST);
+        int height_AT_MOST = MeasureSpec.makeMeasureSpec(1 << 30 - 1, MeasureSpec.AT_MOST);
         if (mImageViews.isEmpty()) {
             if (mTextView == null) {
                 setMeasuredDimension(width, getPaddingTop() + getPaddingBottom());
             } else {
-                mTextView.measure(width_UNSPECIFIED, height_UNSPECIFIED);
+                mTextView.measure(width_AT_MOST, height_AT_MOST);
                 setMeasuredDimension(width, getPaddingTop() + getPaddingBottom() + mTextView.getMeasuredHeight());
             }
         } else {
@@ -93,21 +93,35 @@ public class RTextImageLayout extends ViewGroup {
                 if (mTextView == null) {
                     setMeasuredDimension(width, getPaddingTop() + getPaddingBottom() + imageView.getMeasuredHeight());
                 } else {
-                    mTextView.measure(MeasureSpec.makeMeasureSpec(width - imageView.getMeasuredWidth() - textSpace - getPaddingLeft() - getPaddingRight(),
-                            MeasureSpec.EXACTLY), heightMeasureSpec);
-                    setMeasuredDimension(width, getPaddingTop() + getPaddingBottom() + Math.max(mTextView.getMeasuredHeight(), imageView.getMeasuredHeight()));
+                    if (isVideo()) {
+                        //视频类型, 文本和图片采用上下结构
+                        mTextView.measure(width_AT_MOST, height_AT_MOST);
+                        setMeasuredDimension(width, getPaddingTop() + getPaddingBottom() + mTextView.getMeasuredHeight() + textSpace + imageView.getMeasuredHeight());
+                    } else {
+                        //图片类型, 一张图片采用左右结构
+                        mTextView.measure(MeasureSpec.makeMeasureSpec(width - imageView.getMeasuredWidth() - textSpace - getPaddingLeft() - getPaddingRight(),
+                                MeasureSpec.EXACTLY), heightMeasureSpec);
+                        setMeasuredDimension(width, getPaddingTop() + getPaddingBottom() + Math.max(mTextView.getMeasuredHeight(), imageView.getMeasuredHeight()));
+                    }
                 }
             } else if (mImageViews.size() > 1) {
                 if (mTextView == null) {
                     setMeasuredDimension(width, getPaddingTop() + getPaddingBottom() + imageView.getMeasuredHeight());
                 } else {
-                    mTextView.measure(width_UNSPECIFIED, height_UNSPECIFIED);
+                    mTextView.measure(width_AT_MOST, height_AT_MOST);
                     setMeasuredDimension(width, getPaddingTop() + getPaddingBottom() + mTextView.getMeasuredHeight() + imageView.getMeasuredHeight());
                 }
             } else {
                 setMeasuredDimension(width, getPaddingTop() + getPaddingBottom());
             }
         }
+    }
+
+    private boolean isVideo() {
+        if (mConfigCallback == null) {
+            return false;
+        }
+        return mConfigCallback.isVideoType();
     }
 
     @Override
@@ -124,11 +138,21 @@ public class RTextImageLayout extends ViewGroup {
         } else {
 
             if (mImageViews.size() == 1) {
+                int imageTop = 0;
+
                 if (mTextView != null) {
                     mTextView.layout(l, t, l + mTextView.getMeasuredWidth(), t + mTextView.getMeasuredHeight());
+
+                    imageTop += textSpace;
+                    imageTop += mTextView.getMeasuredHeight();
                 }
+
                 ImageView imageView = mImageViews.get(0);
-                imageView.layout(r - imageView.getMeasuredWidth(), t, r, t + imageView.getMeasuredHeight());
+                if (isVideo()) {
+                    imageView.layout(l, t + imageTop, r, t + imageTop + imageView.getMeasuredHeight());
+                } else {
+                    imageView.layout(r - imageView.getMeasuredWidth(), t, r, t + imageView.getMeasuredHeight());
+                }
 
                 //displayImage(mImageViews.get(0), mImages.get(0));
             } else if (mImageViews.size() > 1) {
@@ -289,5 +313,7 @@ public class RTextImageLayout extends ViewGroup {
         void onCreateTextView(TextView textView);
 
         void displayImage(RImageView imageView, String url);
+
+        boolean isVideoType();
     }
 }
