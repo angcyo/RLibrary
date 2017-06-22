@@ -261,6 +261,16 @@ public abstract class RBaseAdapter<T> extends RecyclerView.Adapter<RBaseViewHold
     }
 
     /**
+     * 数据是否为空
+     */
+    public boolean isItemEmpty() {
+        if (mAllDatas == null || mAllDatas.isEmpty()) {
+            return true;
+        }
+        return false;
+    }
+
+    /**
      * 根据position返回Item的类型.
      */
     public int getItemType(int position) {

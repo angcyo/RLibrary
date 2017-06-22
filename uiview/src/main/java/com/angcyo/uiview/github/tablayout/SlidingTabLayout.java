@@ -47,6 +47,7 @@ public class SlidingTabLayout extends HorizontalScrollView implements ViewPager.
     private static final int TEXT_BOLD_NONE = 0;
     private static final int TEXT_BOLD_WHEN_SELECT = 1;
     private static final int TEXT_BOLD_BOTH = 2;
+    boolean itemNoBackground = false;
     private Context mContext;
     private ViewPager mViewPager;
     private ArrayList<String> mTitles;
@@ -101,7 +102,6 @@ public class SlidingTabLayout extends HorizontalScrollView implements ViewPager.
     private int mTextUnselectColor;
     private int mTextBold;
     private boolean mTextAllCaps;
-
     private int mLastScrollX;
     private int mHeight;
     private boolean mSnapOnTabClick;
@@ -261,9 +261,9 @@ public class SlidingTabLayout extends HorizontalScrollView implements ViewPager.
         updateTabStyles();
     }
 
-    boolean itemNoBackground = false;
-
-    /**去除Item的背景*/
+    /**
+     * 去除Item的背景
+     */
     public void setItemNoBackground(boolean itemNoBackground) {
         this.itemNoBackground = itemNoBackground;
     }
@@ -323,6 +323,25 @@ public class SlidingTabLayout extends HorizontalScrollView implements ViewPager.
         }
 
         mTabsContainer.addView(tabView, position, lp_tab);
+    }
+
+    /**
+     * 更新标题
+     */
+    public void updateTabTitle() {
+        for (int i = 0; i < mTabCount; i++) {
+            View v = mTabsContainer.getChildAt(i);
+            TextView tv_tab_title = (TextView) v.findViewById(R.id.tv_tab_title);
+            if (tv_tab_title != null) {
+                CharSequence pageTitle = tv_tab_title.getText();
+                if (mTitles != null) {
+                    pageTitle = mTitles.get(i);
+                } else if (mViewPager != null) {
+                    pageTitle = mViewPager.getAdapter().getPageTitle(i);
+                }
+                tv_tab_title.setText(pageTitle);
+            }
+        }
     }
 
     private void updateTabStyles() {

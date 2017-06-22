@@ -67,6 +67,20 @@ public abstract class RExBaseAdapter<H, T, F> extends RModelAdapter<T> {
     }
 
     @Override
+    public boolean isItemEmpty() {
+        boolean dataEmpty = super.isItemEmpty();
+        boolean headerEmpty = false;
+        boolean footerEmpty = false;
+        if (mAllHeaderDatas == null || mAllHeaderDatas.isEmpty()) {
+            headerEmpty = true;
+        }
+        if (mAllFooterDatas == null || mAllFooterDatas.isEmpty()) {
+            footerEmpty = true;
+        }
+        return dataEmpty && headerEmpty && footerEmpty;
+    }
+
+    @Override
     public int getItemCount() {
         if (isStateLayout()) {
             return super.getItemCount();
