@@ -1,6 +1,7 @@
 package com.angcyo.uiview.widget;
 
 import android.content.Context;
+import android.support.v4.content.ContextCompat;
 import android.text.TextUtils;
 import android.util.AttributeSet;
 import android.view.View;
@@ -38,7 +39,14 @@ public class RTextImageLayout extends ViewGroup {
     private List<RImageView> mImageViews = new ArrayList<>();
     private List<String> mImages;
     private boolean isAttachedToWindow;
-    private int mTextSize = 20;
+    private int mTextSize = 16;
+    private int mTextColor = ContextCompat.getColor(getContext(),R.color.default_base_black);
+
+    public void setMaxLines(int mMaxLines) {
+        this.mMaxLines = mMaxLines;
+    }
+
+    private int mMaxLines = 3;
 
     public RTextImageLayout(Context context) {
         super(context);
@@ -288,7 +296,9 @@ public class RTextImageLayout extends ViewGroup {
     private void ensureTextView() {
         if (mTextView == null) {
             mTextView = new TextView(getContext());
+            mTextView.setMaxLines(mMaxLines);
             mTextView.setTextSize(mTextSize);
+            mTextView.setTextColor(mTextColor);
             addView(mTextView, new LayoutParams(-2, -2));
             if (mConfigCallback != null) {
                 mConfigCallback.onCreateTextView(mTextView);
