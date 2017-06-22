@@ -14,6 +14,7 @@ import android.view.animation.LinearInterpolator
 import android.widget.LinearLayout
 import android.widget.OverScroller
 import com.angcyo.library.utils.L
+import com.angcyo.uiview.R
 import com.angcyo.uiview.kotlin.density
 import com.angcyo.uiview.kotlin.scaledDensity
 import com.angcyo.uiview.skin.SkinHelper
@@ -32,8 +33,35 @@ import com.angcyo.uiview.skin.SkinHelper
 class ExpandRecordLayout(context: Context, attributeSet: AttributeSet? = null) :
         LinearLayout(context, attributeSet) {
 
-    /**当前状态*/
+    var circleMaxOffset: Float = 30 * density
+    var circleMinOffset: Float
+
+    var circleMaxRadius = 30 * density
+    var circleMinRadius: Float
+
+    var outCircleMaxRadius: Float
+    var outCircleMinRadius: Float
+
+    /**当前状态, 也是默认状态*/
     var state = STATE_CLOSE
+
+    /**所有child View的高度*/
+    var childHeight: Int = 0
+
+    init {
+        val typedArray = context.obtainStyledAttributes(attributeSet, R.styleable.ExpandRecordLayout)
+        circleMaxOffset = typedArray.getDimensionPixelOffset(R.styleable.ExpandRecordLayout_r_expand_record_circle_max_offset, circleMaxOffset.toInt()).toFloat()
+        circleMinOffset = typedArray.getDimensionPixelOffset(R.styleable.ExpandRecordLayout_r_expand_record_circle_min_offset, (circleMaxOffset * 0.6f).toInt()).toFloat()
+
+        circleMaxRadius = typedArray.getDimensionPixelOffset(R.styleable.ExpandRecordLayout_r_expand_record_circle_max_radius, circleMaxRadius.toInt()).toFloat()
+        circleMinRadius = typedArray.getDimensionPixelOffset(R.styleable.ExpandRecordLayout_r_expand_record_circle_min_radius, (circleMaxRadius * 0.5f).toInt()).toFloat()
+
+        outCircleMaxRadius = typedArray.getDimensionPixelOffset(R.styleable.ExpandRecordLayout_r_expand_record_out_circle_max_radius, (circleMaxRadius + 10 * density).toInt()).toFloat()
+        outCircleMinRadius = typedArray.getDimensionPixelOffset(R.styleable.ExpandRecordLayout_r_expand_record_out_circle_min_radius, (outCircleMaxRadius * 0.5f).toInt()).toFloat()
+
+        state = typedArray.getInt(R.styleable.ExpandRecordLayout_r_expand_record_default_state, STATE_CLOSE)
+        typedArray.recycle()
+    }
 
     /**控制滚动展开,隐藏*/
     val scroller: OverScroller by lazy { OverScroller(context) }
@@ -59,9 +87,6 @@ class ExpandRecordLayout(context: Context, attributeSet: AttributeSet? = null) :
         }
     }
 
-    /**所有child View的高度*/
-    var childHeight: Int = 0
-
     val paint: Paint by lazy {
         val p = Paint(Paint.ANTI_ALIAS_FLAG)
         p.strokeCap = Paint.Cap.BUTT
@@ -70,32 +95,16 @@ class ExpandRecordLayout(context: Context, attributeSet: AttributeSet? = null) :
         p
     }
 
-    val circleMaxOffset = 30 * density
-    val circleMinOffset: Float
-        get() {
-            return circleMaxOffset * 0.6f
-        }
     val circleOffset: Float
         get() {
             return circleMinOffset + (circleMaxOffset - circleMinOffset) * (Math.abs(scrollY.toFloat()) / childHeight)
         }
 
-
-    val circleMaxRadius = 30 * density
-    val circleMinRadius: Float
-        get() {
-            return circleMaxRadius * 0.5f
-        }
     val circleDrawRadius: Float
         get() {
             return circleMinRadius + (circleMaxRadius - circleMinRadius) * (Math.abs(scrollY.toFloat()) / childHeight)
         }
 
-    val outCircleMaxRadius = circleMaxRadius + 10 * density
-    val outCircleMinRadius: Float
-        get() {
-            return outCircleMaxRadius * 0.5f
-        }
     val outCircleDrawRadius: Float
         get() {
             return outCircleMinRadius + (outCircleMaxRadius - outCircleMinRadius) * (Math.abs(scrollY.toFloat()) / childHeight)
@@ -184,16 +193,24 @@ class ExpandRecordLayout(context: Context, attributeSet: AttributeSet? = null) :
     /**推荐使用Match_Parent*/
     override fun onMeasure(widthMeasureSpec: Int, heightMeasureSpec: Int) {
         super.onMeasure(widthMeasureSpec, heightMeasureSpec)
+    }
+
+    override fun onLayout(changed: Boolean, left: Int, top: Int, right: Int, bottom: Int) {
+        super.onLayout(changed, left, top, right, bottom)
 
         var height: Int = 0
         (0..childCount - 1).map {
             height += getChildAt(it).measuredHeight
         }
         childHeight = height
-    }
 
-    override fun onLayout(changed: Boolean, left: Int, top: Int, right: Int, bottom: Int) {
-        super.onLayout(changed, left, top, right, bottom)
+        if (isInEditMode) {
+            if (state == STATE_EXPAND) {
+                scrollTo(0, 0)
+            } else {
+                scrollTo(0, -childHeight)
+            }
+        }
     }
 
     override fun onDraw(canvas: Canvas) {
@@ -410,6 +427,7 @@ class ExpandRecordLayout(context: Context, attributeSet: AttributeSet? = null) :
 
 
     fun expandLayout(expand: Boolean) {
+
         if (state == STATE_SCROLL_ING) {
             return
         }
