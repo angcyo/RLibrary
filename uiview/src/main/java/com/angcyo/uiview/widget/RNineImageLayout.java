@@ -1,6 +1,7 @@
 package com.angcyo.uiview.widget;
 
 import android.content.Context;
+import android.content.res.TypedArray;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.LinearGradient;
@@ -11,8 +12,8 @@ import android.view.View;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
 
-import com.angcyo.library.R;
 import com.angcyo.library.utils.L;
+import com.angcyo.uiview.R;
 import com.bumptech.glide.request.GenericRequest;
 
 import java.util.ArrayList;
@@ -49,9 +50,21 @@ public class RNineImageLayout extends RelativeLayout implements View.OnClickList
     private Paint mPaint;
     private float mDensity;
 
+    private int mPaddingLeft = 0;
+    private int mPaddingRight = 0;
+    private int mPaddingTop = 0;
+    private int mPaddingBottom = 0;
+
     public RNineImageLayout(Context context, AttributeSet attrs) {
         super(context, attrs);
         space *= getResources().getDisplayMetrics().density;
+
+        TypedArray typedArray = context.obtainStyledAttributes(attrs, R.styleable.RNineImageLayout);
+        mPaddingBottom = typedArray.getDimensionPixelOffset(R.styleable.RNineImageLayout_r_paddingBottom, 0);
+        mPaddingLeft = typedArray.getDimensionPixelOffset(R.styleable.RNineImageLayout_r_paddingLeft, 0);
+        mPaddingRight = typedArray.getDimensionPixelOffset(R.styleable.RNineImageLayout_r_paddingRight, 0);
+        mPaddingTop = typedArray.getDimensionPixelOffset(R.styleable.RNineImageLayout_r_paddingTop, 0);
+        typedArray.recycle();
     }
 
     public RNineImageLayout(Context context) {
@@ -85,7 +98,7 @@ public class RNineImageLayout extends RelativeLayout implements View.OnClickList
             setMeasuredDimension(measureWidth, measureWidth);
         } else {
             final int size = getImageSize();
-            int width = MeasureSpec.getSize(widthMeasureSpec);
+            int width = measureWidth;
             int height;//需要计算布局的高度
             if (size == 1) {
                 //一张图片
@@ -104,16 +117,18 @@ public class RNineImageLayout extends RelativeLayout implements View.OnClickList
                     //L.e("width:" + widthHeight[0] + " height:" + widthHeight[1]);
                 }
             } else {
+                width = measureWidth - mPaddingLeft - mPaddingRight;
+
                 final int columns = getColumns(size);
                 final int rows = getRows(size);
                 //每张图片的宽度
                 int itemWidth = (width - space * Math.max(0, columns - 1)) / columns;
-                height = rows * itemWidth + Math.max(0, columns - 1) * space;
+                height = rows * itemWidth + Math.max(0, rows - 1) * space;
 
                 for (View view : mImageViews) {
                     view.measure(getSize(itemWidth), getSize(itemWidth));
                 }
-                setMeasuredDimension(width, height);
+                setMeasuredDimension(measureWidth, height);
             }
         }
     }

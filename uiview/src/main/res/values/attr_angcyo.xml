@@ -2,7 +2,14 @@
 <resources>
 
     <!--View Group-->
+
+    <!--不影响原来背景的背景-->
     <attr name="r_background" format="reference"/>
+    <!--不影响原来measure的padding属性-->
+    <attr name="r_paddingLeft" format="dimension"/>
+    <attr name="r_paddingRight" format="dimension"/>
+    <attr name="r_paddingBottom" format="dimension"/>
+    <attr name="r_paddingTop" format="dimension"/>
 
     <!--View-->
     <attr name="r_show_text" format="string"/>
@@ -61,4 +68,10 @@
         <attr name="r_jump_time" format="integer"/>
     </declare-styleable>
 
+    <declare-styleable name="RNineImageLayout">
+        <attr name="r_paddingLeft"/>
+        <attr name="r_paddingRight"/>
+        <attr name="r_paddingBottom"/>
+        <attr name="r_paddingTop"/>
+    </declare-styleable>
 </resources>
