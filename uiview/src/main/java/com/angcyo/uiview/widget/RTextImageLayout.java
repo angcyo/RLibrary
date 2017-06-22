@@ -40,12 +40,7 @@ public class RTextImageLayout extends ViewGroup {
     private List<String> mImages;
     private boolean isAttachedToWindow;
     private int mTextSize = 16;
-    private int mTextColor = ContextCompat.getColor(getContext(),R.color.default_base_black);
-
-    public void setMaxLines(int mMaxLines) {
-        this.mMaxLines = mMaxLines;
-    }
-
+    private int mTextColor = ContextCompat.getColor(getContext(), R.color.default_base_black);
     private int mMaxLines = 3;
 
     public RTextImageLayout(Context context) {
@@ -56,6 +51,10 @@ public class RTextImageLayout extends ViewGroup {
     public RTextImageLayout(Context context, AttributeSet attrs) {
         super(context, attrs);
         initLayout();
+    }
+
+    public void setMaxLines(int mMaxLines) {
+        this.mMaxLines = mMaxLines;
     }
 
     private void initLayout() {
@@ -117,7 +116,7 @@ public class RTextImageLayout extends ViewGroup {
                     setMeasuredDimension(width, getPaddingTop() + getPaddingBottom() + imageView.getMeasuredHeight());
                 } else {
                     mTextView.measure(width_AT_MOST, height_AT_MOST);
-                    setMeasuredDimension(width, getPaddingTop() + getPaddingBottom() + mTextView.getMeasuredHeight() + imageView.getMeasuredHeight());
+                    setMeasuredDimension(width, getPaddingTop() + getPaddingBottom() + mTextView.getMeasuredHeight() + textSpace + imageView.getMeasuredHeight());
                 }
             } else {
                 setMeasuredDimension(width, getPaddingTop() + getPaddingBottom());

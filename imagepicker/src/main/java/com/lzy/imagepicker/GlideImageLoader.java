@@ -46,13 +46,13 @@ public class GlideImageLoader implements ImageLoader {
                 GifRequestBuilder<File> gifRequestBuilder = Glide.with(imageView.getContext())
                         .load(file)
                         .asGif()
-                        .diskCacheStrategy(DiskCacheStrategy.NONE);
+                        .diskCacheStrategy(DiskCacheStrategy.SOURCE);
                 gifRequestBuilder.placeholder(placeholderDrawable);
                 gifRequestBuilder.into(imageView);
             } else {
                 final DrawableRequestBuilder<File> requestBuilder = Glide.with(imageView.getContext())
                         .load(file)
-                        .diskCacheStrategy(DiskCacheStrategy.NONE);
+                        .diskCacheStrategy(DiskCacheStrategy.ALL);
                 requestBuilder.placeholder(placeholderDrawable);
                 requestBuilder.into(imageView);
             }
@@ -108,7 +108,7 @@ public class GlideImageLoader implements ImageLoader {
                         //.fitCenter()
                         .asGif()
                         //.centerCrop()
-                        .diskCacheStrategy(DiskCacheStrategy.NONE);
+                        .diskCacheStrategy(DiskCacheStrategy.SOURCE);
 
                 if (TextUtils.isEmpty(thumbPath)) {
                     gifRequestBuilder.placeholder(R.mipmap.base_zhanweitu_klg)     //设置占位图片
@@ -125,7 +125,7 @@ public class GlideImageLoader implements ImageLoader {
                         //.error(R.mipmap.default_image)           //设置错误图片
                         //.fitCenter()
                         //.centerCrop()
-                        .diskCacheStrategy(DiskCacheStrategy.NONE);
+                        .diskCacheStrategy(DiskCacheStrategy.ALL);
 
                 if (TextUtils.isEmpty(thumbPath)) {
                     requestBuilder.placeholder(R.mipmap.base_zhanweitu_klg)     //设置占位图片
