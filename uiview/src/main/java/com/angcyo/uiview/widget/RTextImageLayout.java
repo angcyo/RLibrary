@@ -312,7 +312,7 @@ public class RTextImageLayout extends ViewGroup {
             textView = mConfigTextView.onCreateTextView(null);
         }
         if (textView == null) {
-            textView = new TextView(getContext());
+            textView = new RTextView(getContext());
         }
 
         textView.setMaxLines(mMaxLines);
