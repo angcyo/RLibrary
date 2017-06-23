@@ -97,18 +97,20 @@ class ExpandRecordLayout(context: Context, attributeSet: AttributeSet? = null) :
 
     val circleOffset: Float
         get() {
-            return circleMinOffset + (circleMaxOffset - circleMinOffset) * (Math.abs(scrollY.toFloat()) / childHeight)
+            return circleMinOffset + calcOffset(circleMaxOffset, circleMinOffset)
         }
 
     val circleDrawRadius: Float
         get() {
-            return circleMinRadius + (circleMaxRadius - circleMinRadius) * (Math.abs(scrollY.toFloat()) / childHeight)
+            return circleMinRadius + calcOffset(circleMaxRadius, circleMinRadius)
         }
 
     val outCircleDrawRadius: Float
         get() {
-            return outCircleMinRadius + (outCircleMaxRadius - outCircleMinRadius) * (Math.abs(scrollY.toFloat()) / childHeight)
+            return outCircleMinRadius + calcOffset(outCircleMaxRadius, outCircleMinRadius)
         }
+
+    private fun calcOffset(maxValue: Float, minValue: Float) = (maxValue - minValue) * (Math.abs(scrollY.toFloat()) / childHeight)
 
     /**控制缩放动画的变量*/
     var circleScale: Float = 1f

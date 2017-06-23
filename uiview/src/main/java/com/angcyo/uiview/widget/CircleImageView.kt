@@ -18,9 +18,9 @@ import com.angcyo.uiview.kotlin.density
  * 修改备注：
  * Version: 1.0.0
  */
-class CircleImageView(context: Context, attributeSet: AttributeSet? = null) : AppCompatImageView(context, attributeSet) {
+open class CircleImageView(context: Context, attributeSet: AttributeSet? = null) : AppCompatImageView(context, attributeSet) {
 
-    var showType = CIRCLE
+    var showType = NORMAL
         set(value) {
             field = value
             postInvalidate()
@@ -32,6 +32,7 @@ class CircleImageView(context: Context, attributeSet: AttributeSet? = null) : Ap
         RectF()
     }
 
+    var lineWidth = 0f
     var lineColor: Int = Color.WHITE
 
     /**4个角的圆角信息*/
@@ -46,6 +47,7 @@ class CircleImageView(context: Context, attributeSet: AttributeSet? = null) : Ap
         showType = typedArray.getInt(R.styleable.CircleImageView_r_show_type, showType)
         lineColor = typedArray.getColor(R.styleable.CircleImageView_r_line_color, lineColor)
         roundRadius = typedArray.getDimensionPixelOffset(R.styleable.CircleImageView_r_round_radius, (10 * density).toInt()).toFloat()
+        lineWidth = typedArray.getDimensionPixelOffset(R.styleable.CircleImageView_r_line_width, (1 * density).toInt()).toFloat()
         typedArray.recycle()
     }
 
@@ -53,7 +55,7 @@ class CircleImageView(context: Context, attributeSet: AttributeSet? = null) : Ap
 
     val paint: Paint by lazy {
         val p = Paint(Paint.ANTI_ALIAS_FLAG)
-        p.strokeWidth = 2 * density
+        p.strokeWidth = lineWidth
         p.strokeJoin = Paint.Join.ROUND
         p.strokeCap = Paint.Cap.ROUND
         p.style = Paint.Style.STROKE

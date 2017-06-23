@@ -11,7 +11,9 @@
         </attr>
         <!--ROUND 状态时, 圆角的大小-->
         <attr name="r_round_radius" format="dimension"/>
-        <!---->
+        <!--补充外圈线的颜色-->
         <attr name="r_line_color" format="color"/>
+        <!--补充外圈线的宽度-->
+        <attr name="r_line_width" format="dimension"/>
     </declare-styleable>
 </resources>

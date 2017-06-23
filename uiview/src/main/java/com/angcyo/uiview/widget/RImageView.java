@@ -73,6 +73,11 @@ public class RImageView extends AppCompatImageView {
         if (bitmap == null) {
             return null;
         }
+
+        if (width == 0 || height == 0) {
+            return bitmap;
+        }
+
         Bitmap result = Bitmap.createBitmap(width, height, Bitmap.Config.ARGB_8888);
 
         Matrix matrix = new Matrix();

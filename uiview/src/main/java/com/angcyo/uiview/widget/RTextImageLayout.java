@@ -35,6 +35,7 @@ public class RTextImageLayout extends ViewGroup {
     int space = 6;//dp, 间隙
     int textSpace = 6;//文本与图片之间的空隙
     ConfigCallback mConfigCallback;
+    ConfigTextView mConfigTextView;
     private TextView mTextView;
     private List<RImageView> mImageViews = new ArrayList<>();
     private List<String> mImages;
@@ -235,6 +236,10 @@ public class RTextImageLayout extends ViewGroup {
         mConfigCallback = configCallback;
     }
 
+    public void setConfigTextView(ConfigTextView configTextView) {
+        mConfigTextView = configTextView;
+    }
+
     /**
      * 设置文本
      */
@@ -245,6 +250,11 @@ public class RTextImageLayout extends ViewGroup {
             removeView(mTextView);
             mTextView = null;
         }
+    }
+
+    public TextView getTextView() {
+        ensureTextView();
+        return mTextView;
     }
 
     public void setImage(String image) {
@@ -293,16 +303,28 @@ public class RTextImageLayout extends ViewGroup {
     }
 
     private void ensureTextView() {
-        if (mTextView == null) {
-            mTextView = new TextView(getContext());
-            mTextView.setMaxLines(mMaxLines);
-            mTextView.setTextSize(mTextSize);
-            mTextView.setTextColor(mTextColor);
-            addView(mTextView, new LayoutParams(-2, -2));
-            if (mConfigCallback != null) {
-                mConfigCallback.onCreateTextView(mTextView);
-            }
+        if (mTextView != null) {
+            return;
         }
+
+        TextView textView = null;
+        if (mConfigTextView != null) {
+            textView = mConfigTextView.onCreateTextView(null);
+        }
+        if (textView == null) {
+            textView = new TextView(getContext());
+        }
+
+        textView.setMaxLines(mMaxLines);
+        textView.setTextSize(mTextSize);
+        textView.setTextColor(mTextColor);
+
+        if (mConfigTextView != null) {
+            mConfigTextView.onCreateTextView(textView);
+        }
+
+        mTextView = textView;
+        addView(mTextView, new LayoutParams(-2, -2));
     }
 
     private RImageView createImageView() {
@@ -319,10 +341,17 @@ public class RTextImageLayout extends ViewGroup {
 
         void onCreateImageView(RImageView imageView);
 
-        void onCreateTextView(TextView textView);
-
         void displayImage(RImageView imageView, String url);
 
         boolean isVideoType();
+    }
+
+    public interface ConfigTextView {
+        /**
+         * 此方法可以用来替换默认的TextView
+         *
+         * @param textView 当textView不为空的时候, 可以用来设置自定义的属性参数, 否则使用默认属性
+         */
+        TextView onCreateTextView(TextView textView);
     }
 }
