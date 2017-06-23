@@ -941,7 +941,7 @@ public class UILayoutImpl extends SwipeBackLayout implements ILayout<UIParam>, U
 
                 topViewStart(newViewPattern, param);
 
-                if (oldViewPattern.mIView == param.replaceIView) {
+                if (param.replaceIView == null || oldViewPattern.mIView == param.replaceIView) {
                     final Runnable endRunnable = new Runnable() {
                         @Override
                         public void run() {

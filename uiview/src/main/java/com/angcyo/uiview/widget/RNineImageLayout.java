@@ -43,7 +43,7 @@ public class RNineImageLayout extends RelativeLayout implements View.OnClickList
 
     NineImageConfig mNineImageConfig;
 
-    int space = 6;//dp, 间隙
+    int space = 3;//dp, 间隙
 
     boolean canItemClick = true;
     private boolean drawMask = false;
