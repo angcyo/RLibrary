@@ -7,6 +7,8 @@ import com.angcyo.uiview.model.ViewPattern;
 import com.angcyo.uiview.skin.ISkin;
 import com.angcyo.uiview.view.IView;
 
+import java.util.List;
+
 /**
  * 可以添加IView, 必须实现的接口
  * Created by angcyo on 2016-11-12.
@@ -94,6 +96,20 @@ public interface ILayout<T extends UIParam> {
      * @param keepLast true 会保留最上层的IView
      */
     void finishAll(boolean keepLast);//2016-12-16
+
+    /**
+     * 排除在外的界面, 都会finish
+     *
+     * @param keepList        需要保留的列表
+     * @param keepLast        是否保留最后的界面
+     * @param lastFinishParam 可以为null
+     */
+    void finishAllWithKeep(List<Class<? extends IView>> keepList, boolean keepLast, final UIParam lastFinishParam);//2017-6-23
+
+    /**
+     * 通过类,返回存在的IView对象
+     */
+    <IV extends IView> IV getIViewWith(Class<IV> cls);//2017-6-23
 
     /**
      * 强制退出

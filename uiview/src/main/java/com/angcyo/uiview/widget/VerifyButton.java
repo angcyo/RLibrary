@@ -28,6 +28,8 @@ public class VerifyButton extends AppCompatTextView implements View.OnClickListe
     int countDown = DEFAULT_COUNT;
     String oldText = "验证";
 
+    int maxWidth = 0;
+
     public VerifyButton(Context context) {
         super(context);
     }
@@ -38,6 +40,14 @@ public class VerifyButton extends AppCompatTextView implements View.OnClickListe
 
     public VerifyButton(Context context, AttributeSet attrs, int defStyleAttr) {
         super(context, attrs, defStyleAttr);
+    }
+
+    @Override
+    protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
+        super.onMeasure(widthMeasureSpec, heightMeasureSpec);
+        int measuredWidth = getMeasuredWidth();
+        maxWidth = Math.max(measuredWidth, maxWidth);
+        setMeasuredDimension(maxWidth, getMeasuredHeight());
     }
 
     @Override

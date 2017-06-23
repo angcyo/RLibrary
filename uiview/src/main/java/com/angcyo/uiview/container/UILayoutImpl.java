@@ -38,10 +38,11 @@ import com.angcyo.uiview.widget.viewpager.UIViewPager;
 import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileWriter;
-import java.io.IOException;
 import java.io.PrintWriter;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 import java.util.Stack;
 
@@ -237,6 +238,10 @@ public class UILayoutImpl extends SwipeBackLayout implements ILayout<UIParam>, U
         } catch (Exception e) {
             e.printStackTrace();
         }
+    }
+
+    public static List<Class<? extends IView>> getIViewList(Class<? extends IView>... iViews) {
+        return Arrays.asList(iViews);
     }
 
     @Override
@@ -1418,11 +1423,18 @@ public class UILayoutImpl extends SwipeBackLayout implements ILayout<UIParam>, U
 
     public ViewPattern findViewPatternByClass(Class<?> clz) {
         for (ViewPattern viewPattern : mAttachViews) {
-            if (TextUtils.equals(viewPattern.mIView.getClass().getSimpleName(), clz.getSimpleName())) {
+            if (isViewPatternEquals(clz, viewPattern)) {
                 return viewPattern;
             }
         }
         return null;
+    }
+
+    /**
+     * 判断ViewPattern的类名是否相等
+     */
+    private boolean isViewPatternEquals(Class<?> clz, ViewPattern viewPattern) {
+        return TextUtils.equals(viewPattern.mIView.getClass().getSimpleName(), clz.getSimpleName());
     }
 
     public ViewPattern findLastShowViewPattern() {
@@ -1748,8 +1760,55 @@ public class UILayoutImpl extends SwipeBackLayout implements ILayout<UIParam>, U
     }
 
     @Override
+    public <IV extends IView> IV getIViewWith(Class<IV> cls) {
+        IView result = null;
+        for (ViewPattern pattern : mAttachViews) {
+            if (isViewPatternEquals(cls, pattern)) {
+                result = pattern.mIView;
+                break;
+            }
+        }
+        return (IV) result;
+    }
+
+    @Override
     public void finishAll() {
         finishAll(false);
+    }
+
+    @Override
+    public void finishAllWithKeep(List<Class<? extends IView>> keepList, boolean keepLast, final UIParam lastFinishParam) {
+        List<ViewPattern> needFinishPattern = new ArrayList<>();
+
+        //循环拿到需要finish的IView
+        for (ViewPattern pattern : mAttachViews) {
+            boolean keep = false;
+            for (Class cls : keepList) {
+                if (isViewPatternEquals(cls, pattern)) {
+                    keep = true;
+                    break;
+                }
+            }
+
+            if (!keep) {
+                if (keepLast && pattern == getLastViewPattern()) {
+
+                } else {
+                    needFinishPattern.add(pattern);
+                }
+            }
+        }
+
+        for (ViewPattern pattern : needFinishPattern) {
+            if (pattern == getLastViewPattern() && lastFinishParam != null) {
+                //最后一个页面关闭时, 正常执行
+                //finishIViewInner(pattern, lastFinishParam);
+                finishIView(pattern.mIView, lastFinishParam);
+            } else {
+                //看不见的页面关闭时, 安静执行
+                finishIViewInner(pattern, new UIParam(false, false, true));
+            }
+        }
     }
 
     @Override
