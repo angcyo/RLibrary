@@ -892,6 +892,11 @@ public abstract class UIBaseView extends UIIViewImpl {
 //        return ClipHelper.ANIM_TIME;
     }
 
+    @Override
+    public UILayoutImpl getILayout() {
+        return (UILayoutImpl) super.getILayout();
+    }
+
     /**
      * 抖动IView
      */
