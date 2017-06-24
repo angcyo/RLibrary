@@ -80,7 +80,7 @@ public abstract class UILayoutActivity extends StyleActivity {
                             notifyAppDetailView();
                             T_.show("必要的权限被拒绝!");
                         } else {
-                            //onLoadView();
+                            onLoadViewAfterPermission(getIntent());
                         }
                     }
                 });
@@ -95,6 +95,13 @@ public abstract class UILayoutActivity extends StyleActivity {
 //                        }
 //                    }
 //                });
+    }
+
+    /**
+     * 权限通过后回调
+     */
+    protected void onLoadViewAfterPermission(Intent intent) {
+
     }
 
     protected String[] needPermissions() {
