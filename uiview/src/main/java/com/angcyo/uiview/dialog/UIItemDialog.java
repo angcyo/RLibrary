@@ -43,6 +43,8 @@ public class UIItemDialog extends UIIDialogImpl {
      */
     protected boolean useFullItem = false;
 
+    protected ItemConfig mItemConfig;
+
     public UIItemDialog() {
     }
 
@@ -75,6 +77,11 @@ public class UIItemDialog extends UIIDialogImpl {
         return this;
     }
 
+    public UIItemDialog setItemConfig(ItemConfig itemConfig) {
+        mItemConfig = itemConfig;
+        return this;
+    }
+
     @Override
     protected View inflateDialogView(RelativeLayout dialogRootLayout, LayoutInflater inflater) {
         return inflate(R.layout.base_dialog_item_layout);
@@ -95,10 +102,12 @@ public class UIItemDialog extends UIIDialogImpl {
             }
         });
 
-        if (showCancelButton) {
+        if (!useFullItem) {
             int offset = getDimensionPixelOffset(R.dimen.base_xxhdpi);
             rootView.setPadding(offset, 0, offset, 0);
-        } else {
+        }
+
+        if (!showCancelButton) {
             mViewHolder.v(R.id.cancel_layout).setVisibility(View.GONE);
             mViewHolder.v(R.id.line1).setVisibility(View.GONE);
             mViewHolder.v(R.id.line2).setVisibility(View.GONE);
@@ -111,6 +120,10 @@ public class UIItemDialog extends UIIDialogImpl {
         }
 
         inflateItem();
+
+        if (mItemConfig != null) {
+            mItemConfig.onLoadContent(mItemContentLayout);
+        }
     }
 
     /**
@@ -120,7 +133,7 @@ public class UIItemDialog extends UIIDialogImpl {
         int size = mItemInfos.size();
         for (int i = 0; i < size; i++) {
             ItemInfo info = mItemInfos.get(i);
-            TextView textView = getItem(info);
+            TextView textView = createItem(info);
 
             if (useFullItem) {
                 textView.setBackgroundResource(R.drawable.base_bg_selector);
@@ -138,8 +151,11 @@ public class UIItemDialog extends UIIDialogImpl {
                     }
                 }
                 textView.setTextColor(SkinHelper.getSkin().getThemeSubColor());
-            }
 
+                if (mItemConfig != null) {
+                    mItemConfig.onCreateItem(textView);
+                }
+            }
 
             mItemContentLayout.addView(textView,
                     new ViewGroup.LayoutParams(-1,
@@ -147,7 +163,7 @@ public class UIItemDialog extends UIIDialogImpl {
         }
     }
 
-    protected TextView getItem(final ItemInfo info) {
+    protected TextView createItem(final ItemInfo info) {
         TextView textView = new TextView(mActivity);
         textView.setText(info.mItemText);
         textView.setTextColor(SkinHelper.getSkin().getThemeSubColor());
@@ -165,6 +181,12 @@ public class UIItemDialog extends UIIDialogImpl {
         });
 
         return textView;
+    }
+
+    public interface ItemConfig {
+        void onCreateItem(TextView itemView);
+
+        void onLoadContent(LinearLayout contentLayout);
     }
 
     public static class ItemInfo {

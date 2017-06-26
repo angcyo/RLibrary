@@ -37,6 +37,7 @@ public class UIBottomItemDialog extends UIItemDialog {
     boolean useWxStyle = true;
 
     public UIBottomItemDialog() {
+        setUseFullItem(useWxStyle);
     }
 
     public static UIBottomItemDialog build() {
@@ -60,6 +61,7 @@ public class UIBottomItemDialog extends UIItemDialog {
 
     public UIBottomItemDialog setUseWxStyle(boolean use) {
         this.useWxStyle = use;
+        setUseFullItem(useWxStyle);
         return this;
     }
 
@@ -104,7 +106,7 @@ public class UIBottomItemDialog extends UIItemDialog {
         int size = mItemInfos.size();
         for (int i = 0; i < size; i++) {
             ItemInfo info = mItemInfos.get(i);
-            TextView textView = getItem(info);
+            TextView textView = createItem(info);
             if (useWxStyle) {
                 textView.setTextColor(getWxStyleTextColor());
             } else {
@@ -122,8 +124,8 @@ public class UIBottomItemDialog extends UIItemDialog {
     }
 
     @Override
-    protected TextView getItem(ItemInfo info) {
-        TextView item = super.getItem(info);
+    protected TextView createItem(ItemInfo info) {
+        TextView item = super.createItem(info);
         int offset = getWxStylePaddingLeft();
         if (info.leftRes != 0) {
             item.setCompoundDrawablePadding(offset);
