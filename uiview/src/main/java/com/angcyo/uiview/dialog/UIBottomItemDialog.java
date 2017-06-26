@@ -1,6 +1,5 @@
 package com.angcyo.uiview.dialog;
 
-import android.graphics.Color;
 import android.text.TextUtils;
 import android.view.Gravity;
 import android.view.LayoutInflater;
@@ -109,7 +108,7 @@ public class UIBottomItemDialog extends UIItemDialog {
             if (useWxStyle) {
                 textView.setTextColor(getWxStyleTextColor());
             } else {
-                textView.setTextColor(mActivity.getResources().getColor(R.color.base_text_color));
+                textView.setTextColor(getColor(R.color.base_text_color));
             }
             textView.setBackgroundResource(R.drawable.base_bg_selector);
             mItemContentLayout.addView(textView,
@@ -119,7 +118,7 @@ public class UIBottomItemDialog extends UIItemDialog {
     }
 
     private int getWxStyleTextColor() {
-        return Color.parseColor("#999999");
+        return getColor(R.color.base_text_color);
     }
 
     @Override

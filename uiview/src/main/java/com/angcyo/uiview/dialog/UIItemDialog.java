@@ -1,5 +1,6 @@
 package com.angcyo.uiview.dialog;
 
+import android.graphics.Color;
 import android.support.annotation.DrawableRes;
 import android.util.TypedValue;
 import android.view.Gravity;
@@ -35,6 +36,13 @@ public class UIItemDialog extends UIIDialogImpl {
     protected RBaseViewHolder mViewHolder;
     protected ArrayList<ItemInfo> mItemInfos = new ArrayList<>();
 
+    protected boolean showCancelButton = true;
+
+    /**
+     * 使用全屏占满形式的item
+     */
+    protected boolean useFullItem = false;
+
     public UIItemDialog() {
     }
 
@@ -54,6 +62,16 @@ public class UIItemDialog extends UIIDialogImpl {
 
     public UIItemDialog addItem(ItemInfo itemInfo) {
         mItemInfos.add(itemInfo);
+        return this;
+    }
+
+    public UIItemDialog setShowCancelButton(boolean showCancelButton) {
+        this.showCancelButton = showCancelButton;
+        return this;
+    }
+
+    public UIItemDialog setUseFullItem(boolean useFullItem) {
+        this.useFullItem = useFullItem;
         return this;
     }
 
@@ -77,6 +95,21 @@ public class UIItemDialog extends UIIDialogImpl {
             }
         });
 
+        if (showCancelButton) {
+            int offset = getDimensionPixelOffset(R.dimen.base_xxhdpi);
+            rootView.setPadding(offset, 0, offset, 0);
+        } else {
+            mViewHolder.v(R.id.cancel_layout).setVisibility(View.GONE);
+            mViewHolder.v(R.id.line1).setVisibility(View.GONE);
+            mViewHolder.v(R.id.line2).setVisibility(View.GONE);
+        }
+
+        if (useFullItem) {
+            mItemContentLayout.setBackgroundColor(Color.WHITE);
+        } else {
+            mItemContentLayout.setBackgroundResource(R.drawable.base_white_round_bg);
+        }
+
         inflateItem();
     }
 
@@ -88,19 +121,25 @@ public class UIItemDialog extends UIIDialogImpl {
         for (int i = 0; i < size; i++) {
             ItemInfo info = mItemInfos.get(i);
             TextView textView = getItem(info);
-            if (size == 1) {
-                textView.setBackgroundResource(R.drawable.base_round_bg_selector);
+
+            if (useFullItem) {
+                textView.setBackgroundResource(R.drawable.base_bg_selector);
+                textView.setTextColor(getColor(R.color.base_text_color));
             } else {
-                if (i == 0) {
-                    textView.setBackgroundResource(R.drawable.base_top_round_bg_selector);
-                } else if (i == size - 1) {
-                    textView.setBackgroundResource(R.drawable.base_bottom_round_bg_selector);
+                if (size == 1) {
+                    textView.setBackgroundResource(R.drawable.base_round_bg_selector);
                 } else {
-                    textView.setBackgroundResource(R.drawable.base_bg_selector);
+                    if (i == 0) {
+                        textView.setBackgroundResource(R.drawable.base_top_round_bg_selector);
+                    } else if (i == size - 1) {
+                        textView.setBackgroundResource(R.drawable.base_bottom_round_bg_selector);
+                    } else {
+                        textView.setBackgroundResource(R.drawable.base_bg_selector);
+                    }
                 }
+                textView.setTextColor(SkinHelper.getSkin().getThemeSubColor());
             }
 
-            textView.setTextColor(SkinHelper.getSkin().getThemeSubColor());
 
             mItemContentLayout.addView(textView,
                     new ViewGroup.LayoutParams(-1,

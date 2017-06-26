@@ -50,10 +50,25 @@ public abstract class UILayoutActivity extends StyleActivity {
     }
 
     protected void checkPermissions() {
+        checkPermissions(needPermissions(), new Action1<Boolean>() {
+            @Override
+            public void call(Boolean aBoolean) {
+                if (aBoolean) {
+                    onLoadViewAfterPermission(getIntent());
+                } else {
+                    finishSelf();
+                    notifyAppDetailView();
+                    T_.show("必要的权限被拒绝!");
+                }
+            }
+        });
+    }
+
+    public void checkPermissions(String[] permissions, final Action1<Boolean> onResult) {
         if (mRxPermissions == null) {
             mRxPermissions = new RxPermissions(this);
         }
-        mRxPermissions.requestEach(needPermissions())
+        mRxPermissions.requestEach(permissions)
                 .map(new Func1<Permission, String>() {
                     @Override
                     public String call(Permission permission) {
@@ -76,11 +91,11 @@ public abstract class UILayoutActivity extends StyleActivity {
                         L.e("\n" + UILayoutActivity.this.getClass().getSimpleName() + " 权限状态-->\n"
                                 + s.replaceAll("1", " 允许").replaceAll("0", " 拒绝"));
                         if (s.contains("0")) {
-                            finishSelf();
-                            notifyAppDetailView();
-                            T_.show("必要的权限被拒绝!");
+                            //有权限被拒绝
+                            onResult.call(false);
                         } else {
-                            onLoadViewAfterPermission(getIntent());
+                            //所欲权限通过
+                            onResult.call(true);
                         }
                     }
                 });

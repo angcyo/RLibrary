@@ -9,7 +9,7 @@ import android.view.View
 
 @Suppress("UNCHECKED_CAST")
 public fun <V : View> View.v(id: Int): V {
-    return this.findViewById<V>(id)
+    return this.findViewById(id) as V
 }
 
 public val View.scaledDensity: Float get() {
