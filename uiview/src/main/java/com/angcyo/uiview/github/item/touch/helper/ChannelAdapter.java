@@ -63,11 +63,16 @@ public class ChannelAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
     private Handler delayHandler = new Handler();
     private RecyclerView mRecyclerView;
 
+    private String myTagTitle, otherTagTitle;
+
     public ChannelAdapter(Context context, ItemTouchHelper helper, List<ChannelEntity> mMyChannelItems, List<ChannelEntity> mOtherChannelItems) {
         this.mInflater = LayoutInflater.from(context);
         this.mItemTouchHelper = helper;
         this.mMyChannelItems = mMyChannelItems;
         this.mOtherChannelItems = mOtherChannelItems;
+
+        myTagTitle = context.getString(R.string.my_channel);
+        otherTagTitle = context.getString(R.string.other_channel);
     }
 
     public void setOnFinishListener(OnFinishListener onFinishListener) {
@@ -111,6 +116,7 @@ public class ChannelAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
                         }
                     }
                 });
+                ((TextView) view.findViewById(R.id.tv)).setText(myTagTitle);
                 return holder;
 
             case TYPE_MY:
@@ -216,6 +222,7 @@ public class ChannelAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
 
             case TYPE_OTHER_CHANNEL_HEADER:
                 view = mInflater.inflate(R.layout.item_other_channel_header, parent, false);
+                ((TextView) view.findViewById(R.id.tv)).setText(otherTagTitle);
                 return new RecyclerView.ViewHolder(view) {
                 };
 
@@ -570,6 +577,14 @@ public class ChannelAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
 
     public void setOnMyChannelItemClickListener(OnMyChannelItemClickListener listener) {
         this.mChannelItemClickListener = listener;
+    }
+
+    public void setMyTagTitle(String myTagTitle) {
+        this.myTagTitle = myTagTitle;
+    }
+
+    public void setOtherTagTitle(String otherTagTitle) {
+        this.otherTagTitle = otherTagTitle;
     }
 
     interface OnMyChannelItemClickListener {
