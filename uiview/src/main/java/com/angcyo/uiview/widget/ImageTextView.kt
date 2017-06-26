@@ -9,6 +9,7 @@ import android.text.TextPaint
 import android.util.AttributeSet
 import android.view.View
 import android.view.ViewGroup
+import android.widget.ImageView
 import com.angcyo.uiview.R
 import com.angcyo.uiview.kotlin.density
 import com.angcyo.uiview.kotlin.scaledDensity
@@ -28,6 +29,10 @@ class ImageTextView(context: Context, attributeSet: AttributeSet? = null) : View
 
     /**需要绘制显示的文本*/
     var showText: String? = null
+        set(value) {
+            field = value
+            postInvalidate()
+        }
     var showTextSize: Int = 14
     var textOffset: Int = 0
         get() {
@@ -47,6 +52,7 @@ class ImageTextView(context: Context, attributeSet: AttributeSet? = null) : View
     val imageView: CircleImageView by lazy {
         val view = CircleImageView(context)
         view.showType = CircleImageView.CIRCLE
+        view.scaleType = ImageView.ScaleType.CENTER_CROP
         view
     }
 
