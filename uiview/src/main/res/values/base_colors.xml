@@ -58,4 +58,6 @@
     <color name="base_main_color_bg_color">#F1F1F5</color>
 
     <color name="base_mention_color">#507daf</color>
+
+    <color name="base_image_placeholder_color">#EFEFEF</color>
 </resources>

@@ -15,5 +15,10 @@
         <attr name="r_line_color" format="color"/>
         <!--补充外圈线的宽度-->
         <attr name="r_line_width" format="dimension"/>
+        <!--需要显示的文本-->
+        <attr name="r_show_text"/>
+        <attr name="r_show_text_color"/>
+        <attr name="r_show_text_size"/>
+        <attr name="r_text_offset"/>
     </declare-styleable>
 </resources>

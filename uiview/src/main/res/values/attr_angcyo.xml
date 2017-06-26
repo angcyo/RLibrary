@@ -13,6 +13,9 @@
 
     <!--View-->
     <attr name="r_show_text" format="string"/>
+    <attr name="r_show_text_size" format="dimension"/>
+    <attr name="r_show_text_color" format="color"/>
+    <attr name="r_text_offset" format="dimension"/>
 
     <!--progress bar-->
     <!--进度颜色-->

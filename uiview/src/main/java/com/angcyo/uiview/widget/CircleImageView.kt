@@ -2,6 +2,7 @@ package com.angcyo.uiview.widget
 
 import android.content.Context
 import android.graphics.*
+import android.graphics.drawable.Drawable
 import android.support.v7.widget.AppCompatImageView
 import android.util.AttributeSet
 import com.angcyo.uiview.R
@@ -68,7 +69,8 @@ open class CircleImageView(context: Context, attributeSet: AttributeSet? = null)
                 super.onDraw(canvas)
             }
             ROUND, CIRCLE -> {
-                val size = Math.min(measuredHeight - paddingTop - paddingBottom, measuredWidth - paddingLeft - paddingRight)
+                val size = Math.min(measuredHeight - paddingTop - paddingBottom,
+                        measuredWidth - paddingLeft - paddingRight)
                 val cx = (paddingLeft + size / 2).toFloat()
                 val cy = (paddingTop + size / 2).toFloat()
                 val cr = (size / 2).toFloat()
@@ -81,15 +83,23 @@ open class CircleImageView(context: Context, attributeSet: AttributeSet? = null)
                     roundRectF.set(cx - cr, cy - cr, cx + cr, cy + cr)
                     clipPath.addRoundRect(roundRectF, radius, Path.Direction.CW)
                 }
+                canvas.save()
                 canvas.clipPath(clipPath)
+
                 super.onDraw(canvas)
 
                 //canvas.drawRoundRect(roundRectF, roundRadius, roundRadius, paint)
                 //canvas.drawCircle(cx, cy, cr, paint)
                 canvas.drawPath(clipPath, paint)
+                canvas.restore()
             }
         }
     }
+
+    val drawDrawable: Drawable?
+        get() {
+            return drawable
+        }
 
     companion object {
         const val NORMAL = 0
