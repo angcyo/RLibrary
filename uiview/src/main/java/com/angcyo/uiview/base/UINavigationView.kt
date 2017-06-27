@@ -97,7 +97,7 @@ abstract class UINavigationView : UIContentView() {
         }
     }
 
-    fun createNavItem(page: PageBean): TouchMoveView {
+    open fun createNavItem(page: PageBean): TouchMoveView {
         val view = TouchMoveView(mActivity)
         view.textNormal = page.textNormal
         view.textSelected = page.textSelected
@@ -135,10 +135,10 @@ abstract class UINavigationView : UIContentView() {
     /**创建页面*/
     abstract fun createPages(pages: ArrayList<PageBean>)
 
-    fun onSelectorPosition(targetView: TouchMoveView, position: Int) {
+    open fun onSelectorPosition(targetView: TouchMoveView, position: Int) {
     }
 
-    fun onRepeatSelectorPosition(targetView: TouchMoveView, position: Int) {
+    open fun onRepeatSelectorPosition(targetView: TouchMoveView, position: Int) {
     }
 
     /**页面*/
@@ -152,5 +152,17 @@ abstract class UINavigationView : UIContentView() {
             val icoResSelected: Int? = null,
             val icoSubResNormal: Int? = null,
             val icoSubResSelected: Int? = null
-    )
+    ) {
+        constructor(iview: UIBaseView,
+                    textNormal: String? = null,
+                    icoResNormal: Int? = null
+        ) : this(iview, textNormal, textNormal, null, null, icoResNormal, icoResNormal, null, null)
+
+        constructor(iview: UIBaseView,
+                    textNormal: String? = null,
+                    textColorNormal: Int? = null,
+                    textColorSelected: Int? = null,
+                    icoResNormal: Int? = null
+        ) : this(iview, textNormal, textNormal, textColorNormal, textColorSelected, icoResNormal, icoResNormal, null, null)
+    }
 }

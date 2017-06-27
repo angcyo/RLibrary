@@ -208,7 +208,7 @@ class TouchMoveView : View {
         }
 
         if (heightMode == MeasureSpec.AT_MOST || heightMode == View.MeasureSpec.UNSPECIFIED) {
-            heightSize = (imageHeight + textHeight).toInt()
+            heightSize = (imageHeight + textHeight + paddingBottom + paddingTop).toInt()
             newHeightSpec = MeasureSpec.makeMeasureSpec(heightSize, MeasureSpec.EXACTLY)
         }
         super.onMeasure(newWidthSpec, newHeightSpec)

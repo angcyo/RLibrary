@@ -23,17 +23,16 @@ public abstract class ImageAdapter extends PagerAdapter {
 
     @Override
     public Object instantiateItem(ViewGroup container, final int position) {
-
         RelativeLayout layout = new RelativeLayout(container.getContext());
         ImageView imageView = new ImageView(container.getContext());
         imageView.setScaleType(ImageView.ScaleType.FIT_XY);
-        initImageView(imageView, position);
         layout.addView(imageView, new ViewGroup.LayoutParams(-1, -1));
+        initImageView(layout, imageView, position);
         container.addView(layout, new ViewGroup.LayoutParams(width, height));
         return layout;
     }
 
-    protected abstract void initImageView(ImageView imageView, int position);
+    protected abstract void initImageView(RelativeLayout rootLayout, ImageView imageView, int position);
 
     @Override
     public void destroyItem(ViewGroup container, int position, Object object) {

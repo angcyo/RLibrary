@@ -1,6 +1,7 @@
 package com.angcyo.uiview.skin;
 
 import android.content.Context;
+import android.support.annotation.ColorRes;
 import android.support.v4.content.ContextCompat;
 
 import com.angcyo.uiview.R;
@@ -22,6 +23,10 @@ public class BaseSkin extends SkinImpl {
 
     public BaseSkin(Context context) {
         mContext = context;
+    }
+
+    public int getColor(@ColorRes int id) {
+        return ContextCompat.getColor(mContext, id);
     }
 
     @Override
