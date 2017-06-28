@@ -21,6 +21,11 @@ import com.angcyo.uiview.widget.viewpager.UIViewPager
  * Version: 1.0.0
  */
 abstract class UISlidingTabView : UIContentView() {
+
+    val pages: ArrayList<TabPageBean> by lazy {
+        arrayListOf<TabPageBean>()
+    }
+
     val mViewPager: UIViewPager by lazy {
         mViewHolder.v<UIViewPager>(R.id.base_view_pager)
     }
@@ -35,39 +40,53 @@ abstract class UISlidingTabView : UIContentView() {
 
     override fun onViewLoad() {
         super.onViewLoad()
-        mViewPager.adapter = createAdapter()
 
+        createPages(pages)
+        mViewPager.adapter = createAdapter()
         mSlidingTab.setViewPager(mViewPager)
 
         initTabLayout(mSlidingTab)
+        initViewPager(mViewPager)
     }
 
     open fun initTabLayout(tabLayout: SlidingTabLayout) {
+        tabLayout.setIndicatorWidthEqualTitle(true)
         tabLayout.textSelectColor = SkinHelper.getSkin().themeSubColor
         tabLayout.textUnselectColor = getColor(R.color.base_text_color)
         tabLayout.indicatorHeight = 1 * density()
         tabLayout.indicatorColor = SkinHelper.getSkin().themeSubColor
-        tabLayout.setIndicatorWidthEqualTitle(true)
         tabLayout.indicatorStyle = SlidingTabLayout.STYLE_NORMAL
         tabLayout.indicatorCornerRadius = 3 * density() //指示器的圆角
         tabLayout.indicatorMarginLeft = 0f //指示器左偏移的距离
         tabLayout.tabPadding = 5 * density()
     }
 
+    open fun initViewPager(viewPager: UIViewPager) {
+
+    }
+
+    /**创建页面*/
+    open fun createPages(pages: ArrayList<TabPageBean>) {
+
+    }
+
     /**页面数量*/
-    abstract fun getPageCount(): Int
+    open fun getPageCount(): Int = pages.size
 
     /**对应页面*/
-    abstract fun getPageIView(position: Int): IView
+    open fun getPageIView(position: Int): IView = pages[position].iView
 
     /**页面标题*/
-    abstract fun getPageTitle(position: Int): String
+    open fun getPageTitle(position: Int): String? = pages[position].title
 
     open fun createAdapter() = object : UIPagerAdapter() {
         override fun getIView(position: Int): IView = getPageIView(position)
 
         override fun getCount(): Int = getPageCount()
 
-        override fun getPageTitle(position: Int): CharSequence = this@UISlidingTabView.getPageTitle(position)
+        override fun getPageTitle(position: Int): CharSequence? = this@UISlidingTabView.getPageTitle(position)
     }
+
+    /**页面*/
+    data class TabPageBean(val iView: IView, val title: String? = null)
 }

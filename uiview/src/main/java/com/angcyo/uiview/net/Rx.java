@@ -71,6 +71,17 @@ public class Rx<Rx> extends Observable<Rx> {
     }
 
     /**
+     * <pre>
+     *
+     * Rx.base(object : RFunc<HomeBean>() {
+     *      override fun call(t: String?): HomeBean? {
+     *      return null
+     *  }
+     * }, object : RSubscriber<HomeBean>() {
+     *
+     * })
+     *
+     * </pre>
      * 简单的子线程,转主线程调用
      */
     public static <R> Subscription base(RFunc<? extends R> onBack, RSubscriber<R> onMain) {
