@@ -12,7 +12,8 @@ import android.widget.TextView
 
 @Suppress("UNCHECKED_CAST")
 public fun <V : View> View.v(id: Int): V {
-    return this.findViewById<View>(id) as V
+    val view: View = findViewById(id)
+    return view as V
 }
 
 public val View.scaledDensity: Float get() {
