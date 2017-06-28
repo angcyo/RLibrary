@@ -706,6 +706,22 @@ public class SlidingTabLayout extends HorizontalScrollView implements ViewPager.
         return mIndicatorMarginLeft;
     }
 
+    public void setIndicatorMarginLeft(float indicatorMarginLeft) {
+        mIndicatorMarginLeft = indicatorMarginLeft;
+    }
+
+    public void setIndicatorMarginTop(float indicatorMarginTop) {
+        mIndicatorMarginTop = indicatorMarginTop;
+    }
+
+    public void setIndicatorMarginRight(float indicatorMarginRight) {
+        mIndicatorMarginRight = indicatorMarginRight;
+    }
+
+    public void setIndicatorMarginBottom(float indicatorMarginBottom) {
+        mIndicatorMarginBottom = indicatorMarginBottom;
+    }
+
     public float getIndicatorMarginTop() {
         return mIndicatorMarginTop;
     }
