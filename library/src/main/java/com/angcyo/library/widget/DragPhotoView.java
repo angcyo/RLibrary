@@ -7,6 +7,7 @@ import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.drawable.Drawable;
+import android.os.Build;
 import android.util.AttributeSet;
 import android.view.MotionEvent;
 
@@ -74,7 +75,7 @@ public class DragPhotoView extends PhotoView {
 
     @Override
     protected void onDraw(Canvas canvas) {
-        if (isLargeBitmap) {
+        if (isLargeBitmap || Build.VERSION.SDK_INT < Build.VERSION_CODES.LOLLIPOP) {
             setLayerType(LAYER_TYPE_SOFTWARE, mPaint);
         } else {
             setLayerType(LAYER_TYPE_HARDWARE, mPaint);
