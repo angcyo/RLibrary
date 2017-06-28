@@ -19,7 +19,6 @@ import rx.Observable;
 import rx.Scheduler;
 import rx.Subscription;
 import rx.android.schedulers.AndroidSchedulers;
-import rx.functions.Action1;
 import rx.functions.Func1;
 import rx.schedulers.Schedulers;
 
@@ -108,6 +107,43 @@ public class Rx<Rx> extends Observable<Rx> {
             public Observable<T> call(Observable<T> tObservable) {
                 return tObservable.unsubscribeOn(Schedulers.io())
                         .subscribeOn(Schedulers.io())
+                        .observeOn(AndroidSchedulers.mainThread());
+            }
+        };
+    }
+
+    /**
+     * 不检查数据返回, 直接转换成Bean
+     */
+    public static <T> Observable.Transformer<ResponseBody, T> transformerBean(final Class<T> type) {
+        return new Observable.Transformer<ResponseBody, T>() {
+
+            @Override
+            public Observable<T> call(Observable<ResponseBody> responseObservable) {
+                return responseObservable.unsubscribeOn(Schedulers.io())
+                        .subscribeOn(Schedulers.io())
+                        .map(new Func1<ResponseBody, T>() {
+                            @Override
+                            public T call(ResponseBody stringResponse) {
+                                T bean;
+                                String body;
+                                try {
+                                    body = stringResponse.string();
+
+                                    //"接口返回数据-->\n" +
+                                    L.json(body);
+
+                                    bean = Json.from(body, type);
+                                    return bean;
+                                } catch (Exception e) {
+                                    e.printStackTrace();
+                                    //throw new RException(-1000, "服务器数据异常.", e.getMessage());
+                                }
+                                //throw new NullPointerException("无数据.");
+                                return null;
+                            }
+                        })
+                        .retry(RETRY_COUNT)
                         .observeOn(AndroidSchedulers.mainThread());
             }
         };
