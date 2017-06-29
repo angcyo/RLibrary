@@ -665,6 +665,13 @@ public class UILayoutImpl extends SwipeBackLayout implements ILayout<UIParam>, U
             return;
         }
 
+        if (interruptSet.contains(iview)) {
+            String log = this.getClass().getSimpleName() + " 已在中断列表中:" + iview.getClass().getSimpleName();
+            L.d(log);
+            saveToSDCard(log);
+            return;
+        }
+
         String log = this.getClass().getSimpleName() + " 请求关闭/中断:" + iview.getClass().getSimpleName();
         L.d(log);
         saveToSDCard(log);
@@ -672,6 +679,12 @@ public class UILayoutImpl extends SwipeBackLayout implements ILayout<UIParam>, U
 
         final ViewPattern viewPattern = findViewPatternByIView(iview);
         if (viewPattern != null) {
+            if (viewPattern.interrupt) {
+                log = iview.getClass().getSimpleName() + " 已在中断";
+                L.d(log);
+                saveToSDCard(log);
+                return;
+            }
             viewPattern.interrupt = true;//中断启动
         }
 
