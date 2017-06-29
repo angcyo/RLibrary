@@ -22,6 +22,7 @@ public class DragPhotoView extends PhotoView {
     private final static int MAX_TRANSLATE_Y = 500;
     private final static int CANCEL_TRANSLATE_Y = 100;
     private final static long DURATION = 300;
+    boolean isMove = false;
     private Paint mPaint;
     // downX
     private float mDownX;
@@ -36,14 +37,11 @@ public class DragPhotoView extends PhotoView {
     private int mAlpha = 255;
     private boolean canFinish = false;
     private boolean isAnimate = false;
-
     //is event on PhotoView
     private boolean isTouchEvent = false;
     private OnTapListener mTapListener;
     private OnExitListener mExitListener;
-
     private boolean enableMoveExit = true;
-
     private boolean cancel_click = false;
     private Runnable mCheckTapRunnable = new Runnable() {
         @Override
@@ -184,6 +182,10 @@ public class DragPhotoView extends PhotoView {
                         //judge finish or not
                         //postDelayed(mCheckTapRunnable, 300);
                     }
+
+                case MotionEvent.ACTION_CANCEL:
+                    isMove = false;
+                    break;
             }
         }
 
@@ -191,6 +193,7 @@ public class DragPhotoView extends PhotoView {
     }
 
     private void onActionUp(MotionEvent event) {
+        isMove = false;
         if (mTranslateY > MAX_TRANSLATE_Y) {
             if (mExitListener != null) {
                 mExitListener.onExit(this, mTranslateX, mTranslateY, mWidth, mHeight);
@@ -203,12 +206,19 @@ public class DragPhotoView extends PhotoView {
         }
     }
 
+    /**
+     * 是否正在拖动返回
+     */
+    public boolean isMove() {
+        return isMove;
+    }
+
     private void onActionMove(MotionEvent event) {
         float moveY = event.getY();
         float moveX = event.getX();
         mTranslateX = moveX - mDownX;
         mTranslateY = moveY - mDownY;
-
+        isMove = true;
         //保证上划到到顶还可以继续滑动
         if (mTranslateY < 0) {
             mTranslateY = 0;
@@ -230,6 +240,7 @@ public class DragPhotoView extends PhotoView {
         } else if (mScale > 1f) {
             mScale = 1;
         }
+
 
         invalidate();
 

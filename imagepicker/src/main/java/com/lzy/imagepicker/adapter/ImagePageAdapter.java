@@ -51,6 +51,7 @@ public class ImagePageAdapter extends PagerAdapter {
 
     public PhotoViewClickListener listener;
     DragPhotoView.OnExitListener mOnExitListener;
+    PhotoViewLongClickListener mPhotoViewLongClickListener;
     private int screenWidth;
     private int screenHeight;
     private ImagePicker imagePicker;
@@ -123,7 +124,7 @@ public class ImagePageAdapter extends PagerAdapter {
     }
 
     @Override
-    public Object instantiateItem(ViewGroup container, int position) {
+    public Object instantiateItem(ViewGroup container, final int position) {
         FrameLayout itemLayout = new FrameLayout(mActivity);
 
         //支持手势的图片
@@ -241,6 +242,17 @@ public class ImagePageAdapter extends PagerAdapter {
                 if (listener != null) listener.OnPhotoTapListener(view, x, y);
             }
         });
+        photoView.setOnLongClickListener(new View.OnLongClickListener() {
+            @Override
+            public boolean onLongClick(View v) {
+                if (mPhotoViewLongClickListener == null || photoView.isMove()) {
+                    return false;
+                } else {
+                    mPhotoViewLongClickListener.onLongClickListener(photoView, position, imageItem);
+                    return false;
+                }
+            }
+        });
         photoView.setOnExitListener(mOnExitListener);
 
         itemLayout.addView(thumbImageView, new ViewGroup.LayoutParams(-1, -1));
@@ -323,6 +335,10 @@ public class ImagePageAdapter extends PagerAdapter {
         mOnExitListener = onExitListener;
     }
 
+    public void setPhotoViewLongClickListener(PhotoViewLongClickListener photoViewLongClickListener) {
+        mPhotoViewLongClickListener = photoViewLongClickListener;
+    }
+
     @Override
     public int getItemPosition(Object object) {
         return POSITION_NONE;
@@ -330,5 +346,9 @@ public class ImagePageAdapter extends PagerAdapter {
 
     public interface PhotoViewClickListener {
         void OnPhotoTapListener(View view, float v, float v1);
+    }
+
+    public interface PhotoViewLongClickListener {
+        void onLongClickListener(PhotoView photoView, int position, ImageItem item);
     }
 }

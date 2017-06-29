@@ -36,6 +36,9 @@ public class ImageItem implements Serializable {
     @ImageDataSource.LoaderType
     public int loadType;
 
+    //是否可以保存到本地
+    public boolean canSave = true;
+
     public ImageItem(int loadType) {
         this.loadType = loadType;
     }
