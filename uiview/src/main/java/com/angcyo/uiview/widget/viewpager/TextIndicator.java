@@ -23,6 +23,8 @@ public class TextIndicator extends AppCompatTextView implements ViewPager.OnPage
     private ViewPager mViewPager;
     private int maxCount, currentCount;
 
+    private boolean autoHide = true;
+
     public TextIndicator(Context context) {
         super(context);
     }
@@ -93,12 +95,23 @@ public class TextIndicator extends AppCompatTextView implements ViewPager.OnPage
 
     private void initView() {
         PagerAdapter adapter = mViewPager.getAdapter();
-        if (adapter == null) {
-            setVisibility(INVISIBLE);
+        if (autoHide) {
+            if (adapter == null) {
+                setVisibility(INVISIBLE);
+            } else {
+                setVisibility(VISIBLE);
+                setText((mViewPager.getCurrentItem() + 1) + "/" + adapter.getCount());
+            }
         } else {
-            setVisibility(VISIBLE);
-            setText((mViewPager.getCurrentItem() + 1) + "/" + adapter.getCount());
+            if (adapter == null) {
+            } else {
+                setText((mViewPager.getCurrentItem() + 1) + "/" + adapter.getCount());
+            }
         }
+    }
+
+    public void setAutoHide(boolean autoHide) {
+        this.autoHide = autoHide;
     }
 
     @Override

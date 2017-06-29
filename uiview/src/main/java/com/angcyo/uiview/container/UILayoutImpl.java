@@ -1585,7 +1585,14 @@ public class UILayoutImpl extends SwipeBackLayout implements ILayout<UIParam>, U
                 l = childAt.getLeft();
             }
         }
-        super.onLayout(changed, left, top, right, bottom);
+        //super.onLayout(changed, left, top, right, bottom);
+        int count = getChildCount();
+        for (int i = 0; i < count; i++) {
+            View childAt = getChildAt(i);
+            if (i == count - 1) {
+                childAt.layout(0, 0, right, bottom);
+            }
+        }
 //        for (int i = 0; i < getChildCount(); i++) {
 //            View childAt = getChildAt(i);
 //            childAt.layout(0, 0, getMeasuredWidth(), getMeasuredHeight());
@@ -1605,10 +1612,10 @@ public class UILayoutImpl extends SwipeBackLayout implements ILayout<UIParam>, U
     @Override
     protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
         //of java
-//        int widthSize = MeasureSpec.getSize(widthMeasureSpec);
-        //int widthMode = MeasureSpec.getMode(widthMeasureSpec);
-        //int heightSize = MeasureSpec.getSize(heightMeasureSpec);
-        //int heightMode = MeasureSpec.getMode(heightMeasureSpec);
+        int widthSize = MeasureSpec.getSize(widthMeasureSpec);
+//        int widthMode = MeasureSpec.getMode(widthMeasureSpec);
+        int heightSize = MeasureSpec.getSize(heightMeasureSpec);
+//        int heightMode = MeasureSpec.getMode(heightMeasureSpec);
 
         //of kotlin
 //        var widthSize = MeasureSpec.getSize(widthMeasureSpec)
@@ -1633,7 +1640,18 @@ public class UILayoutImpl extends SwipeBackLayout implements ILayout<UIParam>, U
 
 
 //        widthMeasureSpec = MeasureSpec.makeMeasureSpec(widthSize + 100, MeasureSpec.EXACTLY);
-        super.onMeasure(widthMeasureSpec, heightMeasureSpec);
+//        super.onMeasure(widthMeasureSpec, heightMeasureSpec);
+
+        int count = getChildCount();
+        for (int i = 0; i < count; i++) {
+            View childAt = getChildAt(i);
+            if (i == count - 1) {
+                childAt.measure(MeasureSpec.makeMeasureSpec(widthSize, MeasureSpec.EXACTLY),
+                        MeasureSpec.makeMeasureSpec(heightSize, MeasureSpec.EXACTLY));
+            }
+        }
+
+        setMeasuredDimension(widthSize, heightSize);
     }
 
     private void notifyListener() {

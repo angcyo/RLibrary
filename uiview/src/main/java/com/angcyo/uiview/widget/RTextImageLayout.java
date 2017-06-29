@@ -94,7 +94,12 @@ public class RTextImageLayout extends ViewGroup {
             ImageView imageView = null;
             for (int i = 0; i < mImageViews.size(); i++) {
                 imageView = mImageViews.get(i);
-                imageView.measure(imageSize[0], imageSize[1]);
+
+                int widthSpec = imageSize[0];
+                if (widthSpec == -1) {
+                    widthSpec = MeasureSpec.makeMeasureSpec(width - getPaddingStart() - getPaddingEnd(), MeasureSpec.EXACTLY);
+                }
+                imageView.measure(widthSpec, imageSize[1]);
             }
 
             if (mImageViews.size() == 1) {
