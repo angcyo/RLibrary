@@ -74,6 +74,8 @@ public abstract class UIIDialogImpl extends UIIViewImpl {
      */
     protected boolean autoFinishDialog = true;
 
+    protected int dimColor = super.getDimColor();
+
     @Override
     protected View inflateBaseView(FrameLayout container, LayoutInflater inflater) {
         mDialogRootLayout = new SoftRelativeLayout(mActivity);
@@ -94,6 +96,16 @@ public abstract class UIIDialogImpl extends UIIViewImpl {
         super.loadContentView(rootView);
         startLayoutAnim(mDialogRootLayout);
         initDialogContentView();
+    }
+
+    @Override
+    public int getDimColor() {
+        return dimColor;
+    }
+
+    public UIIDialogImpl setDimColor(int dimColor) {
+        this.dimColor = dimColor;
+        return this;
     }
 
     /**
