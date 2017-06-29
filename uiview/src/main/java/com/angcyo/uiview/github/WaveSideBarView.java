@@ -186,8 +186,10 @@ public class WaveSideBarView extends View {
         super.onMeasure(widthMeasureSpec, heightMeasureSpec);
         mHeight = MeasureSpec.getSize(heightMeasureSpec);
         mWidth = getMeasuredWidth();
-//        mItemHeight = (mHeight - mPadding) / mLetters.size();
         mItemHeight = (int) mTextSize + mPadding;
+        if (mItemHeight * mLetters.size() > mHeight) {
+            mItemHeight = (mHeight - mPadding) / mLetters.size();
+        }
         mPosX = mWidth - 1.6f * mTextSize;
     }
 
