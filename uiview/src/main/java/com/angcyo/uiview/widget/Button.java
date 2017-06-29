@@ -24,7 +24,7 @@ import com.angcyo.uiview.skin.SkinHelper;
  */
 public class Button extends RTextView {
     public Button(Context context) {
-        super(context);
+        this(context, null);
     }
 
     public Button(Context context, AttributeSet attrs) {
