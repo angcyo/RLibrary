@@ -14,6 +14,9 @@ import android.widget.TextView
 public fun <V : View> View.v(id: Int): V {
     val view: View = findViewById(id)
     return view as V
+=======
+    return this.findViewById<V>(id) as V
+>>>>>>> rebase
 }
 
 public val View.scaledDensity: Float get() {
