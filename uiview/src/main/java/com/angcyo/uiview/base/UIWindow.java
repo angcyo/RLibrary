@@ -144,12 +144,12 @@ public class UIWindow extends UIIDialogImpl {
         dialogRootLayout.addView(containLayout, params);
 
         if (mOnInitWindow != null) {
-            mOnInitWindow.onInitWindow(new RBaseViewHolder(containLayout));
+            mOnInitWindow.onInitWindow(this, new RBaseViewHolder(containLayout));
         }
         return containLayout;
     }
 
     public interface OnInitWindow {
-        void onInitWindow(RBaseViewHolder viewHolder);
+        void onInitWindow(UIWindow window, RBaseViewHolder viewHolder);
     }
 }

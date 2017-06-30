@@ -20,16 +20,15 @@ public class RTextCheckView extends AppCompatTextView implements View.OnClickLis
     OnCheckedChangeListener mOnCheckedChangeListener;
 
     public RTextCheckView(Context context) {
-        super(context);
+        this(context, null);
     }
 
     public RTextCheckView(Context context, AttributeSet attrs) {
         super(context, attrs);
+        initView();
     }
 
-    @Override
-    protected void onAttachedToWindow() {
-        super.onAttachedToWindow();
+    private void initView() {
         super.setOnClickListener(this);
         setGravity(Gravity.CENTER);
 
@@ -39,6 +38,12 @@ public class RTextCheckView extends AppCompatTextView implements View.OnClickLis
             int paddTop = (int) (density * 10);
             setPadding(paddStart, paddTop, paddStart, paddTop);
         }
+    }
+
+    @Override
+    protected void onAttachedToWindow() {
+        super.onAttachedToWindow();
+
     }
 
     @Override

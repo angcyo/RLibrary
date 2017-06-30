@@ -1,9 +1,18 @@
 package com.angcyo.uiview.widget;
 
 import android.content.Context;
+import android.graphics.Color;
+import android.support.annotation.ColorRes;
+import android.support.annotation.DimenRes;
+import android.support.v4.content.ContextCompat;
 import android.util.AttributeSet;
+import android.view.Gravity;
 import android.view.View;
 import android.widget.LinearLayout;
+
+import com.angcyo.uiview.R;
+import com.angcyo.uiview.resources.ResUtil;
+import com.angcyo.uiview.skin.SkinHelper;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -15,13 +24,11 @@ public class RFlowLayout extends LinearLayout {
     /**
      * The M all views.
      */
-    List<List<View>> mAllViews = new ArrayList<>();
-    ;//保存所有行的所有View
+    List<List<View>> mAllViews = new ArrayList<>();//保存所有行的所有View
     /**
      * The M line height.
      */
-    List<Integer> mLineHeight = new ArrayList<>();
-    ;//保存每一行的行高
+    List<Integer> mLineHeight = new ArrayList<>();//保存每一行的行高
 
     List<View> lineViews = new ArrayList<>();
 
@@ -136,5 +143,51 @@ public class RFlowLayout extends LinearLayout {
             left = getPaddingLeft();
             top += lineHeight;
         }
+    }
+
+    private int getDimensionPixelOffset(@DimenRes int id) {
+        return getResources().getDimensionPixelOffset(id);
+    }
+
+    private int getColor(@ColorRes int id) {
+        return ContextCompat.getColor(getContext(), id);
+    }
+
+    public RTextCheckView addCheckTextView(String text) {
+        RTextCheckView textView = new RTextCheckView(getContext());
+        textView.setText(text);
+        textView.setGravity(Gravity.CENTER);
+
+        int lineSize = getDimensionPixelOffset(R.dimen.base_line);
+        int radius = getDimensionPixelOffset(R.dimen.base_round_little_radius);
+        int offset = getDimensionPixelOffset(R.dimen.base_xxhdpi);
+        textView.setPadding(offset, offset / 4, offset, offset / 4);
+
+        LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(-2, -2);
+        params.rightMargin = offset / 2;
+        params.topMargin = radius;
+        params.bottomMargin = radius;
+        textView.setLayoutParams(params);
+
+        textView.setBackground(ResUtil.selectorChecked(
+                ResUtil.createDrawable(getColor(R.color.default_base_line), Color.TRANSPARENT, lineSize, radius),
+                ResUtil.createDrawable(SkinHelper.getSkin().getThemeTranColor(0x80), radius)
+        ));
+
+        addView(textView);
+        return textView;
+    }
+
+    public List<String> getCheckedTextList() {
+        List<String> list = new ArrayList<>();
+        for (int i = 0; i < getChildCount(); i++) {
+            View childAt = getChildAt(i);
+            if (childAt instanceof RTextCheckView) {
+                if (((RTextCheckView) childAt).isChecked()) {
+                    list.add(String.valueOf(((RTextCheckView) childAt).getText()));
+                }
+            }
+        }
+        return list;
     }
 }

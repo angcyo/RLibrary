@@ -3,8 +3,6 @@ package com.angcyo.uiview.widget;
 import android.content.Context;
 import android.content.res.ColorStateList;
 import android.graphics.Color;
-import android.support.v4.content.ContextCompat;
-import android.support.v4.view.ViewCompat;
 import android.util.AttributeSet;
 import android.view.Gravity;
 
@@ -29,10 +27,6 @@ public class Button extends RTextView {
 
     public Button(Context context, AttributeSet attrs) {
         super(context, attrs);
-        if (isInEditMode()) {
-            setGravity(Gravity.CENTER);
-            ViewCompat.setBackground(this, ContextCompat.getDrawable(context, R.drawable.base_bg_selector));
-        }
     }
 
     public Button(Context context, AttributeSet attrs, int defStyleAttr) {
@@ -45,14 +39,19 @@ public class Button extends RTextView {
         setGravity(Gravity.CENTER);
         setClickable(true);
         setTextColor(ColorStateList.valueOf(Color.WHITE));
-        setBackground(SkinHelper.getSkin().getThemeMaskBackgroundRoundSelector());
+        if (isInEditMode()) {
+            setTextColor(Color.BLACK);
+            setBackgroundResource(R.drawable.base_dark_solid_round_shape);
+        } else {
+            setBackground(SkinHelper.getSkin().getThemeMaskBackgroundRoundSelector());
+        }
     }
 
     @Override
     protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
         super.onMeasure(widthMeasureSpec, heightMeasureSpec);
         int heightMode = MeasureSpec.getMode(heightMeasureSpec);
-        if (heightMode == MeasureSpec.AT_MOST) {
+        if (heightMode == MeasureSpec.AT_MOST && getPaddingTop() == 0 && getPaddingBottom() == 0) {
             setMeasuredDimension(getMeasuredWidth(), getResources().getDimensionPixelOffset(R.dimen.default_button_height));
         }
     }
