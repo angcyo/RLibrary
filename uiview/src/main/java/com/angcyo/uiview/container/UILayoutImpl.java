@@ -23,6 +23,7 @@ import android.view.animation.Animation;
 import android.view.inputmethod.InputMethodManager;
 
 import com.angcyo.library.utils.L;
+import com.angcyo.uiview.R;
 import com.angcyo.uiview.RCrashHandler;
 import com.angcyo.uiview.Root;
 import com.angcyo.uiview.base.UILayoutActivity;
@@ -1593,6 +1594,14 @@ public class UILayoutImpl extends SwipeBackLayout implements ILayout<UIParam>, U
             View childAt = getChildAt(i);
             if (i == count - 1 || i == count - 2) {
                 childAt.layout(0, 0, right, bottom);
+                if (childAt.getMeasuredHeight() == getMeasuredHeight() &&
+                        childAt.getMeasuredWidth() == getMeasuredWidth()) {
+                    childAt.setTag(R.id.tag_layout, "true");
+                } else {
+                    childAt.setTag(R.id.tag_layout, "false");
+                }
+            } else {
+                childAt.setTag(R.id.tag_layout, "false");
             }
         }
 //        for (int i = 0; i < getChildCount(); i++) {
@@ -1624,32 +1633,20 @@ public class UILayoutImpl extends SwipeBackLayout implements ILayout<UIParam>, U
 //        val widthMode = MeasureSpec.getMode(widthMeasureSpec)
 //        var heightSize = MeasureSpec.getSize(heightMeasureSpec)
 //        val heightMode = MeasureSpec.getMode(heightMeasureSpec)
-//
-//        var newWidthSpec = widthMeasureSpec
-//        var newHeightSpec = heightMeasureSpec
-//
-//        if (widthMode == MeasureSpec.AT_MOST) {
-//            widthSize = (steps.size * stepWidth).toInt()
-//            newWidthSpec = MeasureSpec.makeMeasureSpec(widthSize, MeasureSpec.EXACTLY)
-//        }
-//
-//        if (heightMode == MeasureSpec.AT_MOST) {
-//            heightSize = (textHeight * 2 + stepHeight).toInt()
-//            newHeightSpec = MeasureSpec.makeMeasureSpec(heightSize, MeasureSpec.EXACTLY)
-//        }
-//
-//        super.onMeasure(newWidthSpec, newHeightSpec)
-
-
-//        widthMeasureSpec = MeasureSpec.makeMeasureSpec(widthSize + 100, MeasureSpec.EXACTLY);
-//        super.onMeasure(widthMeasureSpec, heightMeasureSpec);
 
         int count = getChildCount();
         for (int i = 0; i < count; i++) {
             View childAt = getChildAt(i);
-            if (i == count - 1 || i == count - 2) {
+            if (i == count - 1) {
+                childAt.measure(exactlyMeasure(widthSize), exactlyMeasure(heightSize));
+            } else if (findViewPatternByView(childAt).mIView.haveOtherILayout()) {
+                childAt.measure(exactlyMeasure(widthSize), exactlyMeasure(heightSize));
+            } else if (!"true".equalsIgnoreCase(String.valueOf(childAt.getTag(R.id.tag_layout)))) {
                 childAt.measure(exactlyMeasure(widthSize), exactlyMeasure(heightSize));
             }
+//            if (i == count - 1 || i == count - 2) {
+//                childAt.measure(exactlyMeasure(widthSize), exactlyMeasure(heightSize));
+//            }
 //            if (i == count - 2) {
 ////                if (mAttachViews.get(i).mIView.showOnDialog() || mAttachViews.get(i).mIView.isDialog()) {
 ////                    childAt.measure(MeasureSpec.makeMeasureSpec(widthSize, MeasureSpec.EXACTLY),
@@ -2067,6 +2064,8 @@ public class UILayoutImpl extends SwipeBackLayout implements ILayout<UIParam>, U
             stringBuilder.append(viewPattern.mView.getRight());
             stringBuilder.append(" B:");
             stringBuilder.append(viewPattern.mView.getBottom());
+            stringBuilder.append(" layout:");
+            stringBuilder.append(viewPattern.mView.getTag(R.id.tag_layout));
             stringBuilder.append("\n");
         }
         LAYOUT_INFO = stringBuilder.toString();

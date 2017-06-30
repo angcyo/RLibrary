@@ -3,4 +3,5 @@
     <item name="tag_position" type="id"/>
     <item name="tag" type="id"/>
     <item name="tag_url" type="id"/>
+    <item name="tag_layout" type="id"/>
 </resources>
