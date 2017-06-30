@@ -7,6 +7,17 @@
     android:orientation="vertical"
     tools:background="@color/base_gray">
 
+    <com.angcyo.uiview.widget.RTextView
+        android:id="@+id/base_title_view"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@color/base_white"
+        android:gravity="center"
+        android:padding="@dimen/base_xhdpi"
+        android:textStyle="bold"
+        android:visibility="gone"
+        tools:text="我是标题"/>
+
     <!--Item填充-->
     <LinearLayout
         android:id="@+id/item_content_layout"
@@ -14,6 +25,7 @@
         android:layout_height="wrap_content"
         android:background="@drawable/base_white_round_bg"
         android:divider="@drawable/base_shape_line"
+        android:dividerPadding="@dimen/base_0dpi"
         android:orientation="vertical"
         android:showDividers="middle"/>
 

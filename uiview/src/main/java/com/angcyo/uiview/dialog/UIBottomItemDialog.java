@@ -125,7 +125,7 @@ public class UIBottomItemDialog extends UIItemDialog {
 
     @Override
     protected TextView createItem(ItemInfo info) {
-        TextView item = super.createItem(info);
+        TextView item = (TextView) super.createItem(info);
         int offset = getWxStylePaddingLeft();
         if (info.leftRes != 0) {
             item.setCompoundDrawablePadding(offset);

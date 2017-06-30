@@ -2,6 +2,7 @@ package com.angcyo.uiview.dialog;
 
 import android.graphics.Color;
 import android.support.annotation.DrawableRes;
+import android.text.TextUtils;
 import android.util.TypedValue;
 import android.view.Gravity;
 import android.view.LayoutInflater;
@@ -32,7 +33,7 @@ import java.util.ArrayList;
 public class UIItemDialog extends UIIDialogImpl {
 
     protected LinearLayout mItemContentLayout;
-    protected TextView mCancelView;
+    protected TextView mCancelView, mTitleView;
     protected RBaseViewHolder mViewHolder;
     protected ArrayList<ItemInfo> mItemInfos = new ArrayList<>();
 
@@ -44,6 +45,8 @@ public class UIItemDialog extends UIIDialogImpl {
     protected boolean useFullItem = false;
 
     protected ItemConfig mItemConfig;
+
+    protected String dialogTitle = "";
 
     public UIItemDialog() {
     }
@@ -82,6 +85,11 @@ public class UIItemDialog extends UIIDialogImpl {
         return this;
     }
 
+    public UIItemDialog setDialogTitle(String dialogTitle) {
+        this.dialogTitle = dialogTitle;
+        return this;
+    }
+
     @Override
     protected View inflateDialogView(RelativeLayout dialogRootLayout, LayoutInflater inflater) {
         return inflate(R.layout.base_dialog_item_layout);
@@ -93,7 +101,15 @@ public class UIItemDialog extends UIIDialogImpl {
         mViewHolder = new RBaseViewHolder(rootView);
         mItemContentLayout = mViewHolder.v(R.id.item_content_layout);
         mCancelView = mViewHolder.v(R.id.cancel_view);
+        mTitleView = mViewHolder.v(R.id.base_title_view);
         mCancelView.setTextColor(SkinHelper.getSkin().getThemeSubColor());
+
+        if (TextUtils.isEmpty(dialogTitle)) {
+            mTitleView.setVisibility(View.GONE);
+        } else {
+            mTitleView.setVisibility(View.VISIBLE);
+            mTitleView.setText(dialogTitle);
+        }
 
         mCancelView.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -122,7 +138,7 @@ public class UIItemDialog extends UIIDialogImpl {
         inflateItem();
 
         if (mItemConfig != null) {
-            mItemConfig.onLoadContent(mItemContentLayout);
+            mItemConfig.onLoadContent(this, mViewHolder);
         }
     }
 
@@ -133,37 +149,40 @@ public class UIItemDialog extends UIIDialogImpl {
         int size = mItemInfos.size();
         for (int i = 0; i < size; i++) {
             ItemInfo info = mItemInfos.get(i);
-            TextView textView = createItem(info);
+            View itemView = createItem(info);
 
-            if (useFullItem) {
-                textView.setBackgroundResource(R.drawable.base_bg_selector);
-                textView.setTextColor(getColor(R.color.base_text_color));
-            } else {
-                if (size == 1) {
-                    textView.setBackgroundResource(R.drawable.base_round_bg_selector);
+            if (itemView instanceof TextView) {
+                TextView textView = (TextView) itemView;
+                if (useFullItem) {
+                    textView.setBackgroundResource(R.drawable.base_bg_selector);
+                    textView.setTextColor(getColor(R.color.base_text_color));
                 } else {
-                    if (i == 0) {
-                        textView.setBackgroundResource(R.drawable.base_top_round_bg_selector);
-                    } else if (i == size - 1) {
-                        textView.setBackgroundResource(R.drawable.base_bottom_round_bg_selector);
+                    if (size == 1) {
+                        textView.setBackgroundResource(R.drawable.base_round_bg_selector);
                     } else {
-                        textView.setBackgroundResource(R.drawable.base_bg_selector);
+                        if (i == 0) {
+                            textView.setBackgroundResource(R.drawable.base_top_round_bg_selector);
+                        } else if (i == size - 1) {
+                            textView.setBackgroundResource(R.drawable.base_bottom_round_bg_selector);
+                        } else {
+                            textView.setBackgroundResource(R.drawable.base_bg_selector);
+                        }
                     }
-                }
-                textView.setTextColor(SkinHelper.getSkin().getThemeSubColor());
+                    textView.setTextColor(SkinHelper.getSkin().getThemeSubColor());
 
-                if (mItemConfig != null) {
-                    mItemConfig.onCreateItem(textView);
+                    if (mItemConfig != null) {
+                        mItemConfig.onCreateItem(textView);
+                    }
                 }
             }
 
-            mItemContentLayout.addView(textView,
+            mItemContentLayout.addView(itemView,
                     new ViewGroup.LayoutParams(-1,
                             mActivity.getResources().getDimensionPixelSize(R.dimen.base_item_size)));
         }
     }
 
-    protected TextView createItem(final ItemInfo info) {
+    protected View createItem(final ItemInfo info) {
         TextView textView = new TextView(mActivity);
         textView.setText(info.mItemText);
         textView.setTextColor(SkinHelper.getSkin().getThemeSubColor());
@@ -186,7 +205,7 @@ public class UIItemDialog extends UIIDialogImpl {
     public interface ItemConfig {
         void onCreateItem(TextView itemView);
 
-        void onLoadContent(LinearLayout contentLayout);
+        void onLoadContent(UIItemDialog dialog, RBaseViewHolder viewHolder);
     }
 
     public static class ItemInfo {

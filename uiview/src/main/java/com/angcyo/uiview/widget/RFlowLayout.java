@@ -190,4 +190,30 @@ public class RFlowLayout extends LinearLayout {
         }
         return list;
     }
+
+    public RTextCheckView addTagTextView(String text) {
+        RTextCheckView textView = new RTextCheckView(getContext());
+        textView.setText(text);
+        textView.setGravity(Gravity.CENTER);
+        textView.setTextColor(getColor(R.color.base_text_color_dark));
+        textView.setEnabled(false);//不允许点击
+
+        int radius = getDimensionPixelOffset(R.dimen.base_round_little_radius);
+        int offset = getDimensionPixelOffset(R.dimen.base_xxhdpi);
+        textView.setPadding(offset, offset / 4, offset, offset / 4);
+
+        LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(-2, -2);
+        params.rightMargin = offset / 2;
+        params.topMargin = radius;
+        params.bottomMargin = radius;
+        textView.setLayoutParams(params);
+
+        textView.setBackground(ResUtil.selectorChecked(
+                ResUtil.createDrawable(getColor(R.color.base_chat_bg_color), radius),
+                ResUtil.createDrawable(SkinHelper.getSkin().getThemeTranColor(0x80), radius)
+        ));
+
+        addView(textView);
+        return textView;
+    }
 }

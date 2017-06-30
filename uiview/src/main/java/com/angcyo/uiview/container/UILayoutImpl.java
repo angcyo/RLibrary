@@ -347,7 +347,7 @@ public class UILayoutImpl extends SwipeBackLayout implements ILayout<UIParam>, U
     @Override
     public void startIView(final IView iView, final UIParam param) {
         String log = this.getClass().getSimpleName() + " 请求启动:" + iView.getClass().getSimpleName();
-        L.d(log);
+        L.i(log);
         saveToSDCard(log);
 
         iView.onAttachedToILayout(this);
@@ -389,7 +389,7 @@ public class UILayoutImpl extends SwipeBackLayout implements ILayout<UIParam>, U
         /**已经被中断启动了*/
         if (interruptSet.contains(iView)) {
             interruptSet.remove(iView);
-            L.d("请求启动:" + iView.getClass().getSimpleName() + " --启动被中断!");
+            L.i("请求启动:" + iView.getClass().getSimpleName() + " --启动被中断!");
             return true;
         }
         return false;
@@ -563,7 +563,7 @@ public class UILayoutImpl extends SwipeBackLayout implements ILayout<UIParam>, U
         }
 
         String log = this.getClass().getSimpleName() + " 请求关闭2:" + viewPattern.toString() + " isFinishing:" + isFinishing;
-        L.d(log);
+        L.i(log);
         saveToSDCard(log);
 
         ViewPattern lastViewPattern = findLastShowViewPattern(viewPattern);
@@ -665,31 +665,33 @@ public class UILayoutImpl extends SwipeBackLayout implements ILayout<UIParam>, U
             return;
         }
 
-        if (interruptSet.contains(iview)) {
-            String log = this.getClass().getSimpleName() + " 已在中断列表中:" + iview.getClass().getSimpleName();
-            L.d(log);
-            saveToSDCard(log);
-            return;
-        }
+//        if (interruptSet.contains(iview)) {
+//            String log = this.getClass().getSimpleName() + " 已在中断列表中:" + iview.getClass().getSimpleName();
+//            L.i(log);
+//            saveToSDCard(log);
+//            return;
+//        }
 
         String log = this.getClass().getSimpleName() + " 请求关闭/中断:" + iview.getClass().getSimpleName();
-        L.d(log);
+        L.i(log);
         saveToSDCard(log);
         interruptSet.add(iview);
 
         final ViewPattern viewPattern = findViewPatternByIView(iview);
         if (viewPattern != null) {
-            if (viewPattern.interrupt) {
-                log = iview.getClass().getSimpleName() + " 已在中断";
-                L.d(log);
-                saveToSDCard(log);
-                return;
-            }
+//            if (viewPattern.interrupt) {
+//                log = iview.getClass().getSimpleName() + " 已在中断";
+//                L.i(log);
+//                saveToSDCard(log);
+//                return;
+//            }
             viewPattern.interrupt = true;//中断启动
         }
 
-        if (mLastShowViewPattern != null && mLastShowViewPattern != viewPattern && mLastShowViewPattern.mIView.isDialog()) {
-            L.d("等待对话框:" + mLastShowViewPattern.mIView.getClass().getSimpleName() + " 的关闭");
+        if (mLastShowViewPattern != null &&
+                mLastShowViewPattern != viewPattern &&
+                mLastShowViewPattern.mIView.isDialog()) {
+            L.i("等待对话框:" + mLastShowViewPattern.mIView.getClass().getSimpleName() + " 的关闭");
             postDelayed(new Runnable() {
                 @Override
                 public void run() {
@@ -931,7 +933,7 @@ public class UILayoutImpl extends SwipeBackLayout implements ILayout<UIParam>, U
         }
 
         if (mLastShowViewPattern != null && mLastShowViewPattern.mIView.isDialog()) {
-            L.d("等待对话框:" + mLastShowViewPattern.mIView.getClass().getSimpleName() + " 的关闭");
+            L.i("等待对话框:" + mLastShowViewPattern.mIView.getClass().getSimpleName() + " 的关闭");
             postDelayed(new Runnable() {
                 @Override
                 public void run() {
@@ -1038,7 +1040,7 @@ public class UILayoutImpl extends SwipeBackLayout implements ILayout<UIParam>, U
         final Runnable endRunnable = new Runnable() {
             @Override
             public void run() {
-                L.d(topViewPattern.mIView.getClass().getSimpleName() + " 启动完毕.");
+                L.i(topViewPattern.mIView.getClass().getSimpleName() + " 启动完毕.");
                 viewShow(topViewPattern, param.mBundle);
                 topViewPattern.isAnimToStart = false;
                 printLog();
@@ -1074,7 +1076,7 @@ public class UILayoutImpl extends SwipeBackLayout implements ILayout<UIParam>, U
         final Runnable endRunnable = new Runnable() {
             @Override
             public void run() {
-                L.d(topViewPattern.mIView.getClass().getSimpleName() + " 关闭完成.");
+                L.i(topViewPattern.mIView.getClass().getSimpleName() + " 关闭完成.");
                 mLastShowViewPattern = bottomViewPattern;//星期一 2017-1-16
 
                 topViewPattern.isAnimToEnd = false;
@@ -1208,7 +1210,7 @@ public class UILayoutImpl extends SwipeBackLayout implements ILayout<UIParam>, U
         saveToSDCard(viewPattern.mIView.getClass().getSimpleName() + " onViewHide()");
         viewPattern.mIView.onViewHide();
         if (hide && !viewPattern.mIView.isDialog()) {
-            viewPattern.mView.setVisibility(GONE);
+            //viewPattern.mView.setVisibility(GONE);
         }
     }
 
@@ -1222,7 +1224,7 @@ public class UILayoutImpl extends SwipeBackLayout implements ILayout<UIParam>, U
             return;
         }
         saveToSDCard(viewPattern.mIView.getClass().getSimpleName() + " onViewShow()");
-        viewPattern.mView.setVisibility(VISIBLE);
+//        viewPattern.mView.setVisibility(VISIBLE);
 //        viewPattern.mView.bringToFront();
         viewPattern.mIView.onViewShow(bundle);
     }
@@ -1589,7 +1591,7 @@ public class UILayoutImpl extends SwipeBackLayout implements ILayout<UIParam>, U
         int count = getChildCount();
         for (int i = 0; i < count; i++) {
             View childAt = getChildAt(i);
-            if (i == count - 1) {
+            if (i == count - 1 || i == count - 2) {
                 childAt.layout(0, 0, right, bottom);
             }
         }
@@ -1645,13 +1647,41 @@ public class UILayoutImpl extends SwipeBackLayout implements ILayout<UIParam>, U
         int count = getChildCount();
         for (int i = 0; i < count; i++) {
             View childAt = getChildAt(i);
-            if (i == count - 1) {
-                childAt.measure(MeasureSpec.makeMeasureSpec(widthSize, MeasureSpec.EXACTLY),
-                        MeasureSpec.makeMeasureSpec(heightSize, MeasureSpec.EXACTLY));
+            if (i == count - 1 || i == count - 2) {
+                childAt.measure(exactlyMeasure(widthSize), exactlyMeasure(heightSize));
             }
+//            if (i == count - 2) {
+////                if (mAttachViews.get(i).mIView.showOnDialog() || mAttachViews.get(i).mIView.isDialog()) {
+////                    childAt.measure(MeasureSpec.makeMeasureSpec(widthSize, MeasureSpec.EXACTLY),
+////                            MeasureSpec.makeMeasureSpec(heightSize, MeasureSpec.EXACTLY));
+////                } else
+//                if (childNeedMeasure(mAttachViews.get(i).mIView) || childNeedMeasure(childAt, widthSize, heightSize)) {
+//                    childAt.measure(exactlyMeasure(widthSize), exactlyMeasure(heightSize));
+//                }
+//            }
         }
 
         setMeasuredDimension(widthSize, heightSize);
+    }
+
+    private int exactlyMeasure(int size) {
+        return MeasureSpec.makeMeasureSpec(size, MeasureSpec.EXACTLY);
+    }
+
+    private boolean childNeedMeasure(IView iView) {
+        if (iView.getIViewShowState() == IView.IViewShowState.STATE_NORMAL ||
+                iView.getIViewShowState() == IView.IViewShowState.STATE_VIEW_SHOW) {
+            return true;
+        }
+        return false;
+    }
+
+
+    private boolean childNeedMeasure(View child, int viewWidth, int viewHeight) {
+        if (child == null) {
+            return false;
+        }
+        return child.getMeasuredHeight() != viewHeight || child.getMeasuredWidth() != viewWidth;
     }
 
     private void notifyListener() {
@@ -2025,6 +2055,18 @@ public class UILayoutImpl extends SwipeBackLayout implements ILayout<UIParam>, U
             stringBuilder.append(vis);
             stringBuilder.append(" alpha-->");
             stringBuilder.append(viewPattern.mView.getAlpha());
+            stringBuilder.append(" W:");
+            stringBuilder.append(this.getMeasuredWidth());
+            stringBuilder.append("-");
+            stringBuilder.append(viewPattern.mView.getMeasuredWidth());
+            stringBuilder.append(" H:");
+            stringBuilder.append(this.getMeasuredHeight());
+            stringBuilder.append("-");
+            stringBuilder.append(viewPattern.mView.getMeasuredHeight());
+            stringBuilder.append(" R:");
+            stringBuilder.append(viewPattern.mView.getRight());
+            stringBuilder.append(" B:");
+            stringBuilder.append(viewPattern.mView.getBottom());
             stringBuilder.append("\n");
         }
         LAYOUT_INFO = stringBuilder.toString();

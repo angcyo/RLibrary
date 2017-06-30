@@ -83,6 +83,9 @@ public class RTextCheckView extends AppCompatTextView implements View.OnClickLis
     @Override
     public void setOnClickListener(OnClickListener l) {
         mOnClickListener = l;
+        if (mOnClickListener == null) {
+            super.setOnClickListener(null);
+        }
     }
 
     public void setOnCheckedChangeListener(OnCheckedChangeListener onCheckedChangeListener) {
@@ -98,6 +101,6 @@ public class RTextCheckView extends AppCompatTextView implements View.OnClickLis
     }
 
     public interface OnCheckedChangeListener {
-        void onCheckedChanged(RTextCheckView buttonView, boolean isChecked);
+        void onCheckedChanged(RTextCheckView textCheckView, boolean isChecked);
     }
 }
