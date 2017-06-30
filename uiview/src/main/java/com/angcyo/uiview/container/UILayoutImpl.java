@@ -1588,11 +1588,11 @@ public class UILayoutImpl extends SwipeBackLayout implements ILayout<UIParam>, U
                 l = childAt.getLeft();
             }
         }
-        //super.onLayout(changed, left, top, right, bottom);
+//        super.onLayout(changed, left, top, right, bottom);
         int count = getChildCount();
         for (int i = 0; i < count; i++) {
             View childAt = getChildAt(i);
-            if (i == count - 1 || i == count - 2) {
+//            if (i == count - 1 || i == count - 2) {
                 childAt.layout(0, 0, right, bottom);
                 if (childAt.getMeasuredHeight() == getMeasuredHeight() &&
                         childAt.getMeasuredWidth() == getMeasuredWidth()) {
@@ -1600,9 +1600,9 @@ public class UILayoutImpl extends SwipeBackLayout implements ILayout<UIParam>, U
                 } else {
                     childAt.setTag(R.id.tag_layout, "false");
                 }
-            } else {
-                childAt.setTag(R.id.tag_layout, "false");
-            }
+//            } else {
+//                childAt.setTag(R.id.tag_layout, "false");
+//            }
         }
 //        for (int i = 0; i < getChildCount(); i++) {
 //            View childAt = getChildAt(i);
@@ -1639,10 +1639,20 @@ public class UILayoutImpl extends SwipeBackLayout implements ILayout<UIParam>, U
             View childAt = getChildAt(i);
             if (i == count - 1) {
                 childAt.measure(exactlyMeasure(widthSize), exactlyMeasure(heightSize));
-            } else if (findViewPatternByView(childAt).mIView.haveOtherILayout()) {
+            } else if (i == count - 2 && lastIsDialog()) {
                 childAt.measure(exactlyMeasure(widthSize), exactlyMeasure(heightSize));
-            } else if (!"true".equalsIgnoreCase(String.valueOf(childAt.getTag(R.id.tag_layout)))) {
-                childAt.measure(exactlyMeasure(widthSize), exactlyMeasure(heightSize));
+            } else {
+                if (!"true".equalsIgnoreCase(String.valueOf(childAt.getTag(R.id.tag_layout)))) {
+                    childAt.measure(exactlyMeasure(widthSize), exactlyMeasure(heightSize));
+                } else {
+                    ViewPattern viewPatternByView = findViewPatternByView(childAt);
+                    if (viewPatternByView != null) {
+                        IView iView = viewPatternByView.mIView;
+                        if (iView != null && iView.haveOtherILayout()) {
+                            childAt.measure(exactlyMeasure(widthSize), exactlyMeasure(heightSize));
+                        }
+                    }
+                }
             }
 //            if (i == count - 1 || i == count - 2) {
 //                childAt.measure(exactlyMeasure(widthSize), exactlyMeasure(heightSize));
@@ -1659,6 +1669,15 @@ public class UILayoutImpl extends SwipeBackLayout implements ILayout<UIParam>, U
         }
 
         setMeasuredDimension(widthSize, heightSize);
+    }
+
+    private boolean lastIsDialog() {
+        if (mLastShowViewPattern != null) {
+            if (mLastShowViewPattern.mIView.isDialog() || mLastShowViewPattern.mIView.showOnDialog()) {
+                return true;
+            }
+        }
+        return false;
     }
 
     private int exactlyMeasure(int size) {
