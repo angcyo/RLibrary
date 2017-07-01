@@ -352,8 +352,13 @@ public class RImageView extends AppCompatImageView {
         } else {
             runnable.run();
         }
+    }
 
-
+    public void setImageBitmapNoCrop(@Nullable final Drawable fromDrawable, @Nullable final Bitmap toBitmap) {
+        final TransitionDrawable td = new TransitionDrawable(new Drawable[]{
+                fromDrawable, new BitmapDrawable(getResources(), toBitmap)});
+        RImageView.super.setImageDrawable(td);
+        td.startTransition(300);
     }
 
     public Drawable copyDrawable() {

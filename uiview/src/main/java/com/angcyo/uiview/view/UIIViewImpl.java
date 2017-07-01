@@ -56,7 +56,6 @@ public abstract class UIIViewImpl implements IView {
     public static final int DEFAULT_FINISH_ANIM_TIME = 200;
     public static final int DEFAULT_DIALOG_FINISH_ANIM_TIME = 150;
 
-
     protected ILayout mILayout;
     protected ILayout mParentILayout;//上层ILayout,
     protected ILayout mChildILayout;//用来管理上层IView的生命周期, 如果有值, 会等于mILayout
@@ -569,8 +568,13 @@ public abstract class UIIViewImpl implements IView {
     }
 
     @Override
-    public boolean haveOtherILayout() {
+    public boolean haveParentILayout() {
         return mParentILayout != mILayout;
+    }
+
+    @Override
+    public boolean haveChildILayout() {
+        return mChildILayout != mILayout;
     }
 
     @Override

@@ -5,7 +5,9 @@ import android.content.res.TypedArray;
 import android.graphics.Canvas;
 import android.graphics.drawable.Drawable;
 import android.support.v4.content.ContextCompat;
+import android.support.v4.view.GestureDetectorCompat;
 import android.util.AttributeSet;
+import android.view.GestureDetector;
 import android.view.MotionEvent;
 import android.widget.RelativeLayout;
 
@@ -24,14 +26,16 @@ import com.angcyo.uiview.R;
  */
 public class RRelativeLayout extends RelativeLayout {
 
+    onInterceptTouchListener mOnInterceptTouchListener;
     private Drawable mBackgroundDrawable;
+    private GestureDetectorCompat mGestureDetectorCompat;
 
     public RRelativeLayout(Context context) {
-        super(context);
+        this(context, null);
     }
 
     public RRelativeLayout(Context context, AttributeSet attrs) {
-        super(context, attrs);
+        this(context, attrs, 0);
     }
 
     public RRelativeLayout(Context context, AttributeSet attrs, int defStyleAttr) {
@@ -44,6 +48,16 @@ public class RRelativeLayout extends RelativeLayout {
 
     private void initLayout() {
         setWillNotDraw(false);
+        mGestureDetectorCompat = new GestureDetectorCompat(getContext(),
+                new GestureDetector.SimpleOnGestureListener() {
+                    @Override
+                    public boolean onSingleTapUp(MotionEvent e) {
+                        if (mOnInterceptTouchListener != null) {
+                            return mOnInterceptTouchListener.onSingleTapUp(e);
+                        }
+                        return super.onSingleTapUp(e);
+                    }
+                });
     }
 
     @Override
@@ -66,11 +80,25 @@ public class RRelativeLayout extends RelativeLayout {
         return super.onTouchEvent(event);
     }
 
+    public void setOnInterceptTouchListener(onInterceptTouchListener onInterceptTouchListener) {
+        mOnInterceptTouchListener = onInterceptTouchListener;
+    }
+
+    @Override
+    public boolean dispatchTouchEvent(MotionEvent ev) {
+        mGestureDetectorCompat.onTouchEvent(ev);
+        return super.dispatchTouchEvent(ev);
+    }
+
     @Override
     public boolean onInterceptTouchEvent(MotionEvent ev) {
         if (!isEnabled()) {
             return true;
         }
         return super.onInterceptTouchEvent(ev);
+    }
+
+    public interface onInterceptTouchListener {
+        boolean onSingleTapUp(MotionEvent e);
     }
 }

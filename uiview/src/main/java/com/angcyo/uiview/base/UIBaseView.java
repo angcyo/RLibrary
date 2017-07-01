@@ -152,8 +152,8 @@ public abstract class UIBaseView extends UIIViewImpl {
             mUITitleBarContainer.setOnBackListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    //UIBaseView.this.onTitleBackListener();
-                    mILayout.requestBackPressed();
+                    UIBaseView.this.onTitleBackListener();
+//                    mILayout.requestBackPressed();
                 }
             });
         }
@@ -747,12 +747,6 @@ public abstract class UIBaseView extends UIIViewImpl {
         return super.canSwipeBackPressed();
     }
 
-    protected void backPressed() {
-        if (mILayout != null) {
-            mILayout.requestBackPressed(new UIParam(true, true, false));
-        }
-    }
-
     /**
      * 标题栏中, 点击了返回按钮
      */
@@ -770,10 +764,17 @@ public abstract class UIBaseView extends UIIViewImpl {
                     onClipEnd(ClipMode.CLIP_EXIT);
                 }
             });
-            backPressed();
+            if (mILayout != null) {
+                mILayout.requestBackPressed(new UIParam(true, true, false));
+            }
             return false;
+        } else {
+            mEnableClip = false;
+            if (mILayout != null) {
+                mILayout.requestBackPressed(new UIParam(true, false, false));
+            }
+            return true;
         }
-        return true;
     }
 
     @Override

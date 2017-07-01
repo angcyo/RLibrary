@@ -79,8 +79,8 @@ public class UILayoutImpl extends SwipeBackLayout implements ILayout<UIParam>, U
             L.w("call: onActivityStarted([activity])-> " + activity.getClass().getSimpleName());
             if (activity == mLayoutActivity) {
                 if (mLastShowViewPattern != null &&
-                        !mLastShowViewPattern.mIView.haveOtherILayout() &&
-                        mLastShowViewPattern.mView.getVisibility() != VISIBLE) {
+                        !mLastShowViewPattern.mIView.haveParentILayout() /*&&
+                        mLastShowViewPattern.mView.getVisibility() != VISIBLE*/) {
                     viewShow(mLastShowViewPattern, null);
                 }
             }
@@ -107,8 +107,8 @@ public class UILayoutImpl extends SwipeBackLayout implements ILayout<UIParam>, U
             L.w("call: onActivityStopped([activity])-> " + activity.getClass().getSimpleName());
             if (activity == mLayoutActivity) {
                 if (mLastShowViewPattern != null &&
-                        !mLastShowViewPattern.mIView.haveOtherILayout() &&
-                        mLastShowViewPattern.mView.getVisibility() == VISIBLE) {
+                        !mLastShowViewPattern.mIView.haveParentILayout() /*&&
+                        mLastShowViewPattern.mView.getVisibility() == VISIBLE*/) {
                     viewHide(mLastShowViewPattern);
                 }
             }
@@ -1593,13 +1593,13 @@ public class UILayoutImpl extends SwipeBackLayout implements ILayout<UIParam>, U
         for (int i = 0; i < count; i++) {
             View childAt = getChildAt(i);
 //            if (i == count - 1 || i == count - 2) {
-                childAt.layout(0, 0, right, bottom);
-                if (childAt.getMeasuredHeight() == getMeasuredHeight() &&
-                        childAt.getMeasuredWidth() == getMeasuredWidth()) {
-                    childAt.setTag(R.id.tag_layout, "true");
-                } else {
-                    childAt.setTag(R.id.tag_layout, "false");
-                }
+            childAt.layout(0, 0, right, bottom);
+            if (childAt.getMeasuredHeight() == getMeasuredHeight() &&
+                    childAt.getMeasuredWidth() == getMeasuredWidth()) {
+                childAt.setTag(R.id.tag_layout, "true");
+            } else {
+                childAt.setTag(R.id.tag_layout, "false");
+            }
 //            } else {
 //                childAt.setTag(R.id.tag_layout, "false");
 //            }
@@ -1648,7 +1648,7 @@ public class UILayoutImpl extends SwipeBackLayout implements ILayout<UIParam>, U
                     ViewPattern viewPatternByView = findViewPatternByView(childAt);
                     if (viewPatternByView != null) {
                         IView iView = viewPatternByView.mIView;
-                        if (iView != null && iView.haveOtherILayout()) {
+                        if (iView != null && iView.haveChildILayout()) {
                             childAt.measure(exactlyMeasure(widthSize), exactlyMeasure(heightSize));
                         }
                     }
@@ -1673,7 +1673,8 @@ public class UILayoutImpl extends SwipeBackLayout implements ILayout<UIParam>, U
 
     private boolean lastIsDialog() {
         if (mLastShowViewPattern != null) {
-            if (mLastShowViewPattern.mIView.isDialog() || mLastShowViewPattern.mIView.showOnDialog()) {
+            if (mLastShowViewPattern.mIView.isDialog() ||
+                    mLastShowViewPattern.mIView.showOnDialog()) {
                 return true;
             }
         }

@@ -217,7 +217,9 @@ public interface IView {
      */
     IView bindParentILayout(ILayout iLayout);//星期二 2017-5-23
 
-    boolean haveOtherILayout();//星期二 2017-5-23
+    boolean haveParentILayout();//星期二 2017-5-23
+
+    boolean haveChildILayout();//星期六 2017-07-01
 
     /**
      * 返回当前IView的视图显示状态
