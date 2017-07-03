@@ -218,9 +218,9 @@ public class RTextImageLayout extends ViewGroup {
         super.onDetachedFromWindow();
         isAttachedToWindow = false;
 
-        for (View view : mImageViews) {
-            cancelRequest(view);
-        }
+//        for (View view : mImageViews) {
+//            cancelRequest(view);
+//        }
     }
 
     private void cancelRequest(View view) {
@@ -283,7 +283,7 @@ public class RTextImageLayout extends ViewGroup {
         //最大显示3张图片
         for (int i = mImageViews.size(); i < Math.min(MAX_IMAGE_SIZE, imageSize); i++) {
             RImageView imageView = createImageView();
-            addViewInLayout(imageView, i, new LayoutParams(-2, -2));
+            addView(imageView, i, new LayoutParams(-2, -2));
             mImageViews.add(imageView);
         }
 
@@ -293,12 +293,14 @@ public class RTextImageLayout extends ViewGroup {
             return;
         }
 
-        if (imageViewSize == newImageViewSize ||
-                (imageViewSize >= MAX_IMAGE_SIZE && newImageViewSize >= MAX_IMAGE_SIZE)) {
-            notifyLoadImage();
-        } else {
-            requestLayout();
-        }
+        notifyLoadImage();
+
+//        if (imageViewSize == newImageViewSize ||
+//                (imageViewSize >= MAX_IMAGE_SIZE && newImageViewSize >= MAX_IMAGE_SIZE)) {
+//            notifyLoadImage();
+//        } else {
+//            requestLayout();
+//        }
     }
 
     private void displayImage(RImageView imageView, String url) {

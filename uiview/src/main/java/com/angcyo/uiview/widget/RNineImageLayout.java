@@ -250,17 +250,19 @@ public class RNineImageLayout extends RelativeLayout implements View.OnClickList
             }
         }
 
-        if (oldSize == newSize) {
-            displayImage();
-        } else {
-            requestLayout();
-        }
+        displayImage();
+
+//        if (oldSize == newSize) {
+//            displayImage();
+//        } else {
+//            requestLayout();
+//        }
     }
 
     @Override
     protected void onDetachedFromWindow() {
         super.onDetachedFromWindow();
-        cancelAllRequest();
+        //cancelAllRequest();
     }
 
     private void cancelAllRequest() {
