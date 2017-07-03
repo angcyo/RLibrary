@@ -28,6 +28,10 @@ public class StickLayout2 extends RelativeLayout {
     boolean inTopTouch = false;
     boolean isFirst = true;
     StickLayout.OnScrollListener mOnScrollListener;
+    /**
+     * 是否滚动了, 滚动了之后, 拦截Touch事件, 防止传递给子View
+     */
+    boolean isScroll = false;
     private OverScroller mOverScroller;
     private GestureDetectorCompat mGestureDetectorCompat;
     private int maxScrollY, topHeight;
@@ -36,7 +40,6 @@ public class StickLayout2 extends RelativeLayout {
     private float lastOffsetY;
     private float mLastVelocity = 0f;
     private boolean isFling;
-
     /**
      * 滚动顶部后, 是否可以继续滚动, 增益效果
      */
@@ -246,22 +249,28 @@ public class StickLayout2 extends RelativeLayout {
     }
 
     @Override
-    public boolean onTouchEvent(MotionEvent event) {
-        super.onTouchEvent(event);
+    public boolean onTouchEvent(MotionEvent ev) {
+//        L.e("call: onTouchEvent([event])-> " + ev.getAction());
+        super.onTouchEvent(ev);
         return true;
     }
 
     @Override
     public boolean onInterceptTouchEvent(MotionEvent ev) {
+//        L.e("call: onInterceptTouchEvent([ev])-> " + ev.getAction());
         if (ev.getAction() == MotionEvent.ACTION_UP || ev.getAction() == MotionEvent.ACTION_CANCEL) {
             onTouchUp();
             onTouchEnd();
+        }
+        if (isScroll) {
+            return true;
         }
         return super.onInterceptTouchEvent(ev);
     }
 
     @Override
     public boolean dispatchTouchEvent(MotionEvent ev) {
+//        L.e("call: dispatchTouchEvent([ev])-> " + ev.getAction());
 //        if (!inTopTouch) {
 //            return super.dispatchTouchEvent(ev);
 //        }
@@ -348,6 +357,7 @@ public class StickLayout2 extends RelativeLayout {
         downX = 0;
         isFirst = true;
         handleTouch = true;
+        isScroll = false;
     }
 
     private void onTouchEnd() {
@@ -373,6 +383,7 @@ public class StickLayout2 extends RelativeLayout {
                 }
 
                 if (!scrollVertically) {
+                    isScroll = true;
                     scrollBy(0, (int) (offsetY));
                 } else {
                     return true;
@@ -381,6 +392,7 @@ public class StickLayout2 extends RelativeLayout {
                 if (isFloat()) {
                     return true;
                 }
+                isScroll = true;
                 scrollBy(0, (int) (offsetY));
             }
         }
