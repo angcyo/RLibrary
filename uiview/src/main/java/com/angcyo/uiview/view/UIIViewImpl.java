@@ -21,6 +21,8 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.Window;
+import android.view.WindowManager;
 import android.view.animation.AccelerateInterpolator;
 import android.view.animation.Animation;
 import android.view.animation.DecelerateInterpolator;
@@ -746,6 +748,20 @@ public abstract class UIIViewImpl implements IView {
     public void registerLifecycler(ILifecycle lifecycle) {
         if (!mILifecycleList.contains(lifecycle)) {
             mILifecycleList.add(lifecycle);
+        }
+    }
+
+    /**
+     * 保持屏幕常亮
+     */
+    public void keepScreenOn(boolean keep) {
+        if (mActivity != null) {
+            Window window = mActivity.getWindow();
+            if (keep) {
+                window.addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
+            } else {
+                window.clearFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
+            }
         }
     }
 }
