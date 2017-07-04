@@ -3,7 +3,9 @@ package com.angcyo.uiview.viewgroup;
 import android.content.Context;
 import android.content.res.TypedArray;
 import android.graphics.Canvas;
+import android.graphics.drawable.ColorDrawable;
 import android.graphics.drawable.Drawable;
+import android.support.annotation.ColorInt;
 import android.support.v4.content.ContextCompat;
 import android.support.v4.view.GestureDetectorCompat;
 import android.util.AttributeSet;
@@ -96,6 +98,14 @@ public class RRelativeLayout extends RelativeLayout {
             return true;
         }
         return super.onInterceptTouchEvent(ev);
+    }
+
+    public void setRBackgroundDrawable(@ColorInt int color) {
+        setRBackgroundDrawable(new ColorDrawable(color));
+    }
+
+    public void setRBackgroundDrawable(Drawable drawable) {
+        mBackgroundDrawable = drawable;
     }
 
     public interface onInterceptTouchListener {
