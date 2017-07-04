@@ -6,6 +6,7 @@ import android.graphics.Bitmap;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Matrix;
+import android.graphics.Paint;
 import android.graphics.PorterDuff;
 import android.graphics.Rect;
 import android.graphics.drawable.BitmapDrawable;
@@ -78,7 +79,12 @@ public class RImageView extends AppCompatImageView {
             return bitmap;
         }
 
-        Bitmap result = Bitmap.createBitmap(width, height, Bitmap.Config.ARGB_8888);
+        Bitmap result = Bitmap.createBitmap(width, height, bitmap.getConfig() != null
+                ? bitmap.getConfig() : Bitmap.Config.ARGB_8888);
+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB_MR1 && result != null) {
+            result.setHasAlpha(bitmap.hasAlpha());
+        }
 
         Matrix matrix = new Matrix();
 
@@ -102,11 +108,15 @@ public class RImageView extends AppCompatImageView {
         matrix.setScale(scale, scale);
         matrix.postTranslate(Math.round(dx), Math.round(dy));
 
+//        Canvas canvas = new Canvas(result);
+//        canvas.concat(matrix);
+//        BitmapDrawable bitmapDrawable = new BitmapDrawable(res, bitmap);
+//        bitmapDrawable.setBounds(0, 0, dwidth, dheight);
+//        bitmapDrawable.draw(canvas);
+
         Canvas canvas = new Canvas(result);
-        canvas.concat(matrix);
-        BitmapDrawable bitmapDrawable = new BitmapDrawable(res, bitmap);
-        bitmapDrawable.setBounds(0, 0, dwidth, dheight);
-        bitmapDrawable.draw(canvas);
+        Paint paint = new Paint(Paint.DITHER_FLAG | Paint.FILTER_BITMAP_FLAG);
+        canvas.drawBitmap(bitmap, matrix, paint);
 
         return result;
     }

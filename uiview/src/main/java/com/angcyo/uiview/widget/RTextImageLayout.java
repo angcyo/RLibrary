@@ -37,7 +37,7 @@ public class RTextImageLayout extends ViewGroup {
     ConfigCallback mConfigCallback;
     ConfigTextView mConfigTextView;
     private TextView mTextView;
-    private List<RImageView> mImageViews = new ArrayList<>();
+    private List<GlideImageView> mImageViews = new ArrayList<>();
     private List<String> mImages;
     private boolean isAttachedToWindow;
     private int mTextSize = 16;
@@ -196,7 +196,7 @@ public class RTextImageLayout extends ViewGroup {
     }
 
     private void notifyLoadImage() {
-        RImageView imageView;
+        GlideImageView imageView;
         for (int i = 0; i < Math.min(mImageViews.size(), MAX_IMAGE_SIZE); i++) {
             imageView = mImageViews.get(i);
             //cancelRequest(imageView);
@@ -282,7 +282,7 @@ public class RTextImageLayout extends ViewGroup {
 
         //最大显示3张图片
         for (int i = mImageViews.size(); i < Math.min(MAX_IMAGE_SIZE, imageSize); i++) {
-            RImageView imageView = createImageView();
+            GlideImageView imageView = createImageView();
             addView(imageView, i, new LayoutParams(-2, -2));
             mImageViews.add(imageView);
         }
@@ -303,7 +303,7 @@ public class RTextImageLayout extends ViewGroup {
 //        }
     }
 
-    private void displayImage(RImageView imageView, String url) {
+    private void displayImage(GlideImageView imageView, String url) {
         if (mConfigCallback != null) {
             mConfigCallback.displayImage(imageView, url);
         }
@@ -334,8 +334,8 @@ public class RTextImageLayout extends ViewGroup {
         addView(mTextView, new LayoutParams(-2, -2));
     }
 
-    private RImageView createImageView() {
-        RImageView imageView = new RImageView(getContext());
+    private GlideImageView createImageView() {
+        GlideImageView imageView = new GlideImageView(getContext(), null);
         imageView.setScaleType(ImageView.ScaleType.CENTER_CROP);
         if (mConfigCallback != null) {
             mConfigCallback.onCreateImageView(imageView);
@@ -346,9 +346,9 @@ public class RTextImageLayout extends ViewGroup {
     public interface ConfigCallback {
         int[] getImageSize(int position);
 
-        void onCreateImageView(RImageView imageView);
+        void onCreateImageView(GlideImageView imageView);
 
-        void displayImage(RImageView imageView, String url);
+        void displayImage(GlideImageView imageView, String url);
 
         boolean isVideoType();
     }

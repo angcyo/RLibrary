@@ -39,7 +39,7 @@ public class RNineImageLayout extends RelativeLayout implements View.OnClickList
     /**
      * 用来显示图片的ImageView
      */
-    List<RImageView> mImageViews = new ArrayList<>();
+    List<GlideImageView> mImageViews = new ArrayList<>();
 
     NineImageConfig mNineImageConfig;
 
@@ -200,7 +200,7 @@ public class RNineImageLayout extends RelativeLayout implements View.OnClickList
         //L.e("displayImage() -> " + this.getClass().getSimpleName());
         if (mNineImageConfig != null) {
             for (int i = 0; i < mImageViews.size(); i++) {
-                RImageView imageView = mImageViews.get(i);
+                GlideImageView imageView = mImageViews.get(i);
                 //cancelRequest(imageView);
 
                 String url = mImagesList.get(i);
@@ -290,7 +290,7 @@ public class RNineImageLayout extends RelativeLayout implements View.OnClickList
     }
 
     private void createImageView(int i) {
-        RImageView imageView = new RImageView(getContext());
+        GlideImageView imageView = new GlideImageView(getContext(), null);
 //            imageView.setBackgroundColor(Color.BLUE);
         imageView.setTag(R.id.tag_position, i);
         imageView.setScaleType(ImageView.ScaleType.CENTER_CROP);
@@ -331,7 +331,7 @@ public class RNineImageLayout extends RelativeLayout implements View.OnClickList
     public void onClick(View v) {
         if (mNineImageConfig != null) {
             final int position = (int) v.getTag(R.id.tag_position);
-            mNineImageConfig.onImageItemClick((ImageView) v, mImagesList, mImageViews, position);
+            mNineImageConfig.onImageItemClick((GlideImageView) v, mImagesList, mImageViews, position);
         }
     }
 
@@ -391,8 +391,8 @@ public class RNineImageLayout extends RelativeLayout implements View.OnClickList
         /**
          * @param imageSize 总共需要显示多少张图片, 根据图片数量的不同, 决定图片的 缩放类型
          */
-        void displayImage(ImageView imageView, String url, int width, int height, int imageSize);
+        void displayImage(GlideImageView imageView, String url, int width, int height, int imageSize);
 
-        void onImageItemClick(ImageView imageView, List<String> urlList, List<RImageView> imageList, int index);
+        void onImageItemClick(GlideImageView imageView, List<String> urlList, List<GlideImageView> imageList, int index);
     }
 }
