@@ -14,7 +14,6 @@ import android.view.ContextMenu
 import android.view.inputmethod.EditorInfo
 import com.angcyo.uiview.R
 import com.angcyo.uiview.kotlin.density
-import com.angcyo.uiview.utils.T_
 
 /**
  * Copyright (C) 2016,深圳市红鸟网络科技股份有限公司 All rights reserved.
@@ -61,6 +60,19 @@ class PasswordInputEditText(context: Context, attributeSet: AttributeSet? = null
     }
 
     init {
+        val array = context.obtainStyledAttributes(attributeSet, R.styleable.PasswordInputEditText)
+        passwordCount = array.getInt(R.styleable.PasswordInputEditText_r_password_count, passwordCount)
+        passwordSpace = array.getDimensionPixelOffset(R.styleable.PasswordInputEditText_r_password_space, passwordSpace.toInt()).toFloat()
+        passwordSize = array.getDimensionPixelOffset(R.styleable.PasswordInputEditText_r_password_size, passwordSize.toInt()).toFloat()
+        strokeWidth = array.getDimensionPixelOffset(R.styleable.PasswordInputEditText_r_border_width, strokeWidth.toInt()).toFloat()
+
+        passwordHighlightColor = array.getColor(R.styleable.PasswordInputEditText_r_password_highlight_color, passwordHighlightColor)
+        passwordBgColor = array.getColor(R.styleable.PasswordInputEditText_r_password_bg_color, passwordBgColor)
+        passwordColor = array.getColor(R.styleable.PasswordInputEditText_r_password_color, passwordColor)
+        passwordBorderColor = array.getColor(R.styleable.PasswordInputEditText_r_password_border_color, passwordBorderColor)
+
+        array.recycle()
+
         setBackgroundColor(Color.TRANSPARENT)
         setTextColor(Color.TRANSPARENT)
         isCursorVisible = false
@@ -70,19 +82,6 @@ class PasswordInputEditText(context: Context, attributeSet: AttributeSet? = null
         filters = arrayOf(InputFilter.LengthFilter(passwordCount))
         imeOptions = EditorInfo.IME_FLAG_NO_EXTRACT_UI
         keyListener = DigitsKeyListener.getInstance("1234567890")
-
-        val array = context.obtainStyledAttributes(attributeSet, R.styleable.PasswordInputEditText)
-        passwordCount = array.getInt(R.styleable.PasswordInputEditText_r_password_count, passwordCount)
-        passwordSpace = array.getDimensionPixelOffset(R.styleable.PasswordInputEditText_r_password_space, passwordSpace.toInt()).toFloat()
-        strokeWidth = array.getDimensionPixelOffset(R.styleable.PasswordInputEditText_r_border_width, strokeWidth.toInt()).toFloat()
-
-        passwordHighlightColor = array.getColor(R.styleable.PasswordInputEditText_r_password_highlight_color, passwordHighlightColor)
-        passwordBgColor = array.getColor(R.styleable.PasswordInputEditText_r_password_bg_color, passwordBgColor)
-        passwordColor = array.getColor(R.styleable.PasswordInputEditText_r_password_color, passwordColor)
-        passwordBorderColor = array.getColor(R.styleable.PasswordInputEditText_r_password_border_color, passwordBorderColor)
-
-
-        array.recycle()
     }
 
     override fun onMeasure(widthMeasureSpec: Int, heightMeasureSpec: Int) {
@@ -117,12 +116,19 @@ class PasswordInputEditText(context: Context, attributeSet: AttributeSet? = null
         super.onTextChanged(text, start, lengthBefore, lengthAfter)
 
         if (text?.length == passwordCount && passwordCount != 0) {
-            T_.show("本次密码:$text")
+            //T_.show("本次密码:$text")
         }
     }
 
+    override fun isFocused(): Boolean {
+        if (isInEditMode) {
+            return true
+        }
+        return super.isFocused()
+    }
+
     override fun onDraw(canvas: Canvas) {
-        canvas.drawColor(Color.parseColor("#40000000"))
+        //canvas.drawColor(Color.parseColor("#40000000"))
         paint.strokeWidth = strokeWidth
         highlightRect.setEmpty()
 
@@ -167,5 +173,22 @@ class PasswordInputEditText(context: Context, attributeSet: AttributeSet? = null
             paint.color = passwordHighlightColor
             canvas.drawRect(highlightRect, paint)
         }
+    }
+
+    /**是否输入有误*/
+    fun isInputError(): Boolean {
+        if (text.isNullOrEmpty()) {
+            return true
+        }
+        if (text.length != passwordCount) {
+            return true
+        }
+
+        return false
+    }
+
+    fun string(): String {
+        val rawText = text.toString().trim()
+        return rawText
     }
 }
