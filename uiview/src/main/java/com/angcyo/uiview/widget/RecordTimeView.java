@@ -88,6 +88,10 @@ public class RecordTimeView extends RTextView {
         resetText();
     }
 
+    public long getSumTime() {
+        return mSumTime;
+    }
+
     private void resetText() {
         String mmss = formatMMSS(mTime);
         if (mSumTime < 0) {
@@ -102,7 +106,7 @@ public class RecordTimeView extends RTextView {
                 setText(formatMMSS(mSumTime));
             } else {
                 setText(mmss + "/" + formatMMSS(mSumTime));
-                setHighlightWord(mmss);
+                setHighlightWord(mmss, true);
             }
         }
     }
@@ -126,6 +130,10 @@ public class RecordTimeView extends RTextView {
         }
         isRecording = true;
         postDelayed(recordRunnable, 1000);
+    }
+
+    public long getTime() {
+        return mTime;
     }
 
     /**

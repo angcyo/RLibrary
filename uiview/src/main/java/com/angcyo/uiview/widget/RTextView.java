@@ -387,6 +387,10 @@ public class RTextView extends AppCompatTextView {
      * 设置高亮的关键字
      */
     public void setHighlightWord(String word) {
+        setHighlightWord(word, false);
+    }
+
+    public void setHighlightWord(String word, boolean first) {
         CharSequence text = getText();
         if (TextUtils.isEmpty(text) || TextUtils.isEmpty(word)) {
             return;
@@ -408,6 +412,10 @@ public class RTextView extends AppCompatTextView {
 
             builder.setSpan(new ForegroundColorSpan(SkinHelper.getSkin().getThemeSubColor()),
                     start, end, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
+
+            if (first) {
+                break;
+            }
         }
 
         setTextEx(builder, BufferType.NORMAL);
