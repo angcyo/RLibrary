@@ -10,6 +10,7 @@ import com.angcyo.uiview.RApplication;
 import com.angcyo.uiview.base.UIIDialogImpl;
 import com.angcyo.uiview.github.pickerview.bean.JsonBean;
 import com.angcyo.uiview.github.pickerview.view.WheelOptions;
+import com.angcyo.uiview.net.RException;
 import com.angcyo.uiview.net.RSubscriber;
 import com.angcyo.uiview.net.Rx;
 import com.angcyo.uiview.utils.T_;
@@ -213,7 +214,7 @@ public class CityDialog extends UIIDialogImpl {
                     }
 
                     @Override
-                    public void onEnd(boolean isError, boolean isNoNetwork, Throwable e) {
+                    public void onEnd(boolean isError, boolean isNoNetwork, RException e) {
                         super.onEnd(isError, isNoNetwork, e);
                         if (isError) {
                             T_.ok("数据异常,请重试.");

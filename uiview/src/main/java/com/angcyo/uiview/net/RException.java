@@ -31,19 +31,30 @@ public class RException extends RuntimeException {
         this.more = more;
     }
 
+    public RException(int code, String msg) {
+        this(code, msg, "no more");
+    }
+
+    @Override
+    public String getMessage() {
+        return "[" + code + "]" + msg + ":" + throwable;
+    }
+
+    public Throwable getThrowable() {
+        return throwable;
+    }
+
     public RException setThrowable(Throwable throwable) {
         this.throwable = throwable;
         return this;
     }
 
-    @Override
-    public String getMessage() {
-        return "[" + code + "]" + msg;
+    public String getMsg() {
+        return msg;
     }
 
-    @Override
-    public String getLocalizedMessage() {
-        return msg;
+    public String getMore() {
+        return more;
     }
 
     public int getCode() {

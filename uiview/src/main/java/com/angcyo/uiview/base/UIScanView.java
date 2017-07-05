@@ -27,6 +27,7 @@ import com.angcyo.rcode.zxing.view.ViewfinderView;
 import com.angcyo.uiview.R;
 import com.angcyo.uiview.dialog.UILoading;
 import com.angcyo.uiview.model.TitleBarPattern;
+import com.angcyo.uiview.net.RException;
 import com.angcyo.uiview.net.RFunc;
 import com.angcyo.uiview.net.RSubscriber;
 import com.angcyo.uiview.net.Rx;
@@ -363,8 +364,8 @@ public class UIScanView extends UIContentView implements SurfaceHolder.Callback,
             }
 
             @Override
-            public void onEnd(boolean isError, int errorCode, boolean isNoNetwork, Throwable e) {
-                super.onEnd(isError, errorCode, isNoNetwork, e);
+            public void onEnd(boolean isError, boolean isNoNetwork, RException e) {
+                super.onEnd(isError, isNoNetwork, e);
                 UILoading.hide();
             }
         });

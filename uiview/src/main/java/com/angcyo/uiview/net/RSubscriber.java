@@ -1,7 +1,6 @@
 package com.angcyo.uiview.net;
 
 import com.angcyo.library.utils.L;
-import com.angcyo.uiview.utils.T_;
 import com.fasterxml.jackson.core.JsonParseException;
 import com.fasterxml.jackson.databind.JsonMappingException;
 
@@ -36,9 +35,7 @@ public abstract class RSubscriber<T> extends Subscriber<T> {
     @Override
     public void onCompleted() {
         L.d("订阅完成->" + this.getClass().getSimpleName());
-        onEnd();
         onEnd(false, false, null);
-        onEnd(false, 0, false, null);
     }
 
     @Override
@@ -74,7 +71,7 @@ public abstract class RSubscriber<T> extends Subscriber<T> {
             errorMsg = "恐龙君打了个盹，请稍后再试!"; //   "数据解析错误:" + e.getMessage();
             errorCode = -40001;
         } else if (e instanceof RException) {
-            errorMsg = e.getMessage();
+            errorMsg = ((RException) e).getMsg();
             errorCode = ((RException) e).getCode();
         } else {
             errorMsg = "未知错误:" + e.getMessage();
@@ -86,7 +83,6 @@ public abstract class RSubscriber<T> extends Subscriber<T> {
         L.d("订阅异常->" + this.getClass().getSimpleName() + " " + errorCode);
         L.e("-----------------------------------------End-------------------------------------------");
 
-        onError(errorCode, errorMsg);
         if (errorCode == RSubscriber.NO_NETWORK) {
             onNoNetwork();
             nonet = true;
@@ -94,38 +90,31 @@ public abstract class RSubscriber<T> extends Subscriber<T> {
 
         RException exception = new RException(errorCode, errorMsg, "no more").setThrowable(e);
 
-        onEnd();
+        onError(errorCode, errorMsg);
         onEnd(error, nonet, exception);
-        onEnd(error, errorCode, nonet, exception);
-        if (L.LOG_DEBUG) {
-            T_.error("[" + errorCode + "]" + errorMsg);
-        }
+//        if (L.LOG_DEBUG) {
+//            T_.error("[" + errorCode + "]" + errorMsg);
+//        }
     }
 
     /**
-     * 统一错误处理
+     * 统一错误处理, 多用来弹出Toast
      */
-    @Deprecated
     public void onError(int code, String msg) {
         //L.w("call: onError([code, msg])-> " + code + " " + msg);
     }
 
     /**
+     * 统一错误处理
      * 不管是成功订阅,还是异常,都会执行的方法
      */
-    @Deprecated
-    public void onEnd() {
-        //L.d("订阅结束->onEnd()");
+    public void onEnd(boolean isError, boolean isNoNetwork, RException e) {
+        L.e("订阅结束-> isError:" + isError + " isNoNetwork:" + isNoNetwork + " Throwable:" + e);
     }
 
-    @Deprecated
-    public void onEnd(boolean isError, boolean isNoNetwork, Throwable e) {
-//        L.e("订阅结束-> isError:" + isError + " isNoNetwork:" + isNoNetwork + " Throwable:" + e);
-    }
-
-    public void onEnd(boolean isError, int errorCode, boolean isNoNetwork, Throwable e) {
-        L.e("订阅结束-> isError:" + isError + " errorCode:" + errorCode + " isNoNetwork:" + isNoNetwork + " Throwable:" + e);
-    }
+//    public void onEnd(boolean isError, int errorCode, boolean isNoNetwork, RException e) {
+//        L.e("订阅结束-> isError:" + isError + " errorCode:" + errorCode + " isNoNetwork:" + isNoNetwork + " Throwable:" + e);
+//    }
 
     public void onNoNetwork() {
         //L.w("call: onNoNetwork([])-> ");
