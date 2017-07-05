@@ -117,6 +117,7 @@ class PasswordInputEditText(context: Context, attributeSet: AttributeSet? = null
 
         if (text?.length == passwordCount && passwordCount != 0) {
             //T_.show("本次密码:$text")
+            onPasswordInputListener?.onPassword(text?.toString())
         }
     }
 
@@ -190,5 +191,11 @@ class PasswordInputEditText(context: Context, attributeSet: AttributeSet? = null
     fun string(): String {
         val rawText = text.toString().trim()
         return rawText
+    }
+
+    var onPasswordInputListener: OnPasswordInputListener? = null
+
+    open interface OnPasswordInputListener {
+        fun onPassword(password: String)
     }
 }
