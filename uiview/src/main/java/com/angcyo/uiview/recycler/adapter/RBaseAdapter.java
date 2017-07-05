@@ -346,12 +346,16 @@ public abstract class RBaseAdapter<T> extends RecyclerView.Adapter<RBaseViewHold
     }
 
     public void addFirstItem(T bean) {
+        insertItem(0, bean);
+    }
+
+    public void insertItem(int position, T bean) {
         if (mAllDatas == null) {
             mAllDatas = new ArrayList<>();
         }
-        mAllDatas.add(0, bean);
-        notifyItemInserted(0);
-        notifyItemRangeChanged(0, getItemCount());
+        mAllDatas.add(position, bean);
+        notifyItemInserted(position);
+        notifyItemRangeChanged(position, getItemCount());
     }
 
     /**

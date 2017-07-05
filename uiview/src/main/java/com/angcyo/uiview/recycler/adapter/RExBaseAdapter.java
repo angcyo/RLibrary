@@ -413,12 +413,20 @@ public abstract class RExBaseAdapter<H, T, F> extends RModelAdapter<T> {
 
     @Override
     public void addFirstItem(T bean) {
+        insertItem(0, bean);
+    }
+
+    /**
+     * 在指定位置插入 数据
+     */
+    @Override
+    public void insertItem(int position, T bean) {
         if (mAllDatas == null) {
             mAllDatas = new ArrayList<>();
         }
-        mAllDatas.add(0, bean);
-        notifyItemInserted(getHeaderCount());
-        notifyItemRangeChanged(getHeaderCount(), getItemCount());
+        mAllDatas.add(position, bean);
+        notifyItemInserted(getHeaderCount() + position);
+        notifyItemRangeChanged(getHeaderCount() + position, getItemCount());
     }
 
     /**

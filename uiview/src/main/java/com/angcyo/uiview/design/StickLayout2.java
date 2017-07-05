@@ -8,6 +8,7 @@ import android.util.AttributeSet;
 import android.view.GestureDetector;
 import android.view.MotionEvent;
 import android.view.View;
+import android.view.ViewConfiguration;
 import android.widget.OverScroller;
 import android.widget.RelativeLayout;
 
@@ -45,6 +46,7 @@ public class StickLayout2 extends RelativeLayout {
      */
     private boolean edgeScroll = false;
     private int viewMaxHeight;
+    private boolean mWantV = true;
 
     public StickLayout2(Context context) {
         this(context, null);
@@ -302,13 +304,16 @@ public class StickLayout2 extends RelativeLayout {
                 downY = moveY;
                 downX = moveX;
 
-                boolean wantV;
-                if (Math.abs(offsetX) > Math.abs(offsetY)) {
-                    wantV = false;
-                } else if (Math.abs(offsetY) > Math.abs(offsetX)) {
-                    wantV = true;
+                if (Math.abs(offsetX) - Math.abs(offsetY) >
+                        ViewConfiguration.get(getContext()).getScaledTouchSlop()) {
+                    mWantV = false;
+                } else if (Math.abs(offsetY) - Math.abs(offsetX) >
+                        ViewConfiguration.get(getContext()).getScaledTouchSlop()) {
+                    mWantV = true;
                 } else {
-                    break;
+                    if (isFirst) {
+                        break;
+                    }
                 }
 
                 boolean first = isFirst;
@@ -317,7 +322,7 @@ public class StickLayout2 extends RelativeLayout {
                 //L.e("dispatchTouchEvent() -> " + offsetX + " " + offsetY + " w:" + wantV + "  f:" + first);
 
                 if (first) {
-                    if (!wantV) {
+                    if (!mWantV) {
                         handleTouch = false;
                         break;
                     }
@@ -358,6 +363,7 @@ public class StickLayout2 extends RelativeLayout {
         isFirst = true;
         handleTouch = true;
         isScroll = false;
+        mWantV = true;
     }
 
     private void onTouchEnd() {

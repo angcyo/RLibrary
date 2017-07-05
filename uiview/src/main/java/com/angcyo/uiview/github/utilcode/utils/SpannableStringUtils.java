@@ -480,7 +480,7 @@ public class SpannableStringUtils {
                 proportion = -1;
             }
             if (textSize != -1) {
-                mBuilder.setSpan(new AbsoluteSizeSpan(textSize, true), start, end, flag);
+                mBuilder.setSpan(new AbsoluteSizeSpan(textSize, false), start, end, flag);
                 textSize = -1;
             }
             if (xProportion != -1) {

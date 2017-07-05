@@ -1637,6 +1637,8 @@ public class UILayoutImpl extends SwipeBackLayout implements ILayout<UIParam>, U
         int count = getChildCount();
         for (int i = 0; i < count; i++) {
             View childAt = getChildAt(i);
+
+            //--------------------------
             if (i == count - 1) {
                 childAt.measure(exactlyMeasure(widthSize), exactlyMeasure(heightSize));
             } else if (i == count - 2 && lastIsDialog()) {
@@ -1654,6 +1656,7 @@ public class UILayoutImpl extends SwipeBackLayout implements ILayout<UIParam>, U
                     }
                 }
             }
+            //-----------------------------
 //            if (i == count - 1 || i == count - 2) {
 //                childAt.measure(exactlyMeasure(widthSize), exactlyMeasure(heightSize));
 //            }

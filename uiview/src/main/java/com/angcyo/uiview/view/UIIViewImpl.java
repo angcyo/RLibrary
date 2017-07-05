@@ -523,6 +523,12 @@ public abstract class UIIViewImpl implements IView {
         }
     }
 
+    public void postDelayed(long delayMillis, Runnable action) {
+        if (mRootView != null) {
+            mRootView.postDelayed(action, delayMillis);
+        }
+    }
+
     public void removeCallbacks(Runnable action) {
         if (mRootView != null) {
             mRootView.removeCallbacks(action);

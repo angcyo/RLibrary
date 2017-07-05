@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<shape xmlns:android="http://schemas.android.com/apk/res/android"
+       android:shape="rectangle">
+    <corners android:radius="@dimen/base_40dpi"/>
+    <stroke
+        android:width="@dimen/base_line"
+        android:color="@color/default_base_line"/>
+    <solid android:color="@color/base_chat_bg_color"/>
+</shape>
