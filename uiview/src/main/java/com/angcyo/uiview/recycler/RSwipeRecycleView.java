@@ -7,12 +7,17 @@ import android.util.AttributeSet;
 import android.view.MotionEvent;
 import android.view.View;
 
+import com.angcyo.uiview.recycler.adapter.RBaseSwipeAdapter;
 import com.angcyo.uiview.recycler.widget.SwipeRecycleViewItemLayout;
 
 /**
  * Created by yukuo on 2016/4/29.
  * 这是一个带下拉刷新和上拉加载的revycleview
  * https://github.com/yukuoyuan/YRecycleview
+ * <p>
+ * 请配合
+ * {@link com.angcyo.uiview.recycler.adapter.RBaseSwipeAdapter}
+ * 使用
  */
 public class RSwipeRecycleView extends RRecyclerView {
 
@@ -47,6 +52,11 @@ public class RSwipeRecycleView extends RRecyclerView {
 
     @Override
     public void setAdapter(Adapter adapter) {
+        if (adapter instanceof RBaseSwipeAdapter) {
+
+        } else {
+
+        }
         super.setAdapter(adapter);
     }
 
