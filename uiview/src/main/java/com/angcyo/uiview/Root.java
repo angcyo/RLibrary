@@ -24,6 +24,19 @@ public class Root {
                 File.separator + Root.APP_FOLDER + File.separator + folder;
     }
 
+    /**
+     * 创建时间文件名
+     */
+    public static String createTimeFileName() {
+        String dataTime = RCrashHandler.getDataTime("yyyy-MM-dd_HH-mm-ss-SSS");
+        return dataTime;
+    }
+
+    /**
+     * 创建随机文本名
+     *
+     * @param suffix 后缀
+     */
     public static String createFileName(String suffix) {
         if (suffix == null) {
             suffix = "";
