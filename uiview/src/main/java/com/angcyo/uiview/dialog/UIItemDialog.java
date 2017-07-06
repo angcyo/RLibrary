@@ -123,7 +123,13 @@ public class UIItemDialog extends UIIDialogImpl {
             rootView.setPadding(offset, 0, offset, 0);
         }
 
-        if (!showCancelButton) {
+        if (showCancelButton) {
+            if (useFullItem) {
+                mViewHolder.v(R.id.cancel_layout).setBackgroundResource(R.drawable.base_bg_selector);
+                mViewHolder.v(R.id.line1).setVisibility(View.GONE);
+                mViewHolder.v(R.id.line2).setVisibility(View.GONE);
+            }
+        } else {
             mViewHolder.v(R.id.cancel_layout).setVisibility(View.GONE);
             mViewHolder.v(R.id.line1).setVisibility(View.GONE);
             mViewHolder.v(R.id.line2).setVisibility(View.GONE);

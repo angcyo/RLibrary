@@ -10,6 +10,7 @@ import android.graphics.drawable.Drawable;
 import android.os.Build;
 import android.util.AttributeSet;
 import android.view.MotionEvent;
+import android.view.ViewConfiguration;
 
 import com.github.chrisbanes.photoview.PhotoView;
 
@@ -128,6 +129,7 @@ public class DragPhotoView extends PhotoView {
                     removeCallbacks(mCheckTapRunnable);
 
                     onActionDown(event);
+                    isMove = false;
 
                     //change the canFinish flag
                     canFinish = !canFinish;
@@ -138,6 +140,10 @@ public class DragPhotoView extends PhotoView {
                     float moveX = event.getX();
                     float dx = moveX - mDownX;
                     float dy = moveY - mDownY;
+
+                    if (!isMove && Math.abs(dy) < ViewConfiguration.get(getContext()).getScaledTouchSlop()) {
+                        break;
+                    }
 
                     //in viewpager
                     if (mTranslateY == 0 && mTranslateX != 0) {
@@ -171,6 +177,8 @@ public class DragPhotoView extends PhotoView {
 
                 case MotionEvent.ACTION_UP:
                     //防止下拉的时候双手缩放
+                    isMove = false;
+
                     if (event.getPointerCount() == 1) {
                         onActionUp(event);
 
