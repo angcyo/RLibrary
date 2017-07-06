@@ -5,8 +5,11 @@ import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
 import android.support.annotation.ColorInt;
+import android.support.v4.view.ViewPager;
 import android.util.AttributeSet;
 import android.view.View;
+
+import com.angcyo.uiview.widget.viewpager.RViewPager;
 
 /**
  * Copyright (C) 2016,深圳市红鸟网络科技股份有限公司 All rights reserved.
@@ -53,6 +56,28 @@ public class RecyclerViewPagerIndicator extends View {
             public void onViewPager(int index) {
                 mCurrentPager = index;
                 postInvalidate();
+            }
+        });
+        requestLayout();
+    }
+
+    public void setUpUIViewPager(RViewPager pager,int pagerCount) {
+        mPagerCount = pagerCount;
+        pager.addOnPageChangeListener(new ViewPager.OnPageChangeListener() {
+            @Override
+            public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
+
+            }
+
+            @Override
+            public void onPageSelected(int position) {
+                mCurrentPager = position;
+                postInvalidate();
+            }
+
+            @Override
+            public void onPageScrollStateChanged(int state) {
+
             }
         });
         requestLayout();
