@@ -71,6 +71,14 @@ public class ExEditText extends AppCompatEditText {
      * 保存需要@的成员昵称
      */
     List<String> mAllMention = new ArrayList<>(5);
+    /**
+     * 用来限制输入的最大值, 需要inputType  包含 EditorInfo.TYPE_CLASS_NUMBER
+     */
+    float mMaxNumber = Float.MAX_VALUE;
+    /**
+     * 小数点后几位, 需要inputType  包含 EditorInfo.TYPE_NUMBER_FLAG_DECIMAL
+     */
+    int mDecimalCount = Integer.MAX_VALUE;
     private List<Range> mRangeArrayList = new ArrayList<>(5);
     private OnMentionInputListener mOnMentionInputListener;
     private boolean mIsSelected = false;
@@ -460,6 +468,23 @@ public class ExEditText extends AppCompatEditText {
         checkEdit(isFocused());
         if (enableMention) {
             checkMentionString();
+        }
+
+        if ((getInputType() & EditorInfo.TYPE_CLASS_NUMBER) == EditorInfo.TYPE_CLASS_NUMBER) {
+            //限制最大数值
+            Float value = Float.valueOf(String.valueOf(text));
+            if (value > mMaxNumber) {
+                setText(String.valueOf(mMaxNumber));
+            }
+        }
+
+        if ((getInputType() & EditorInfo.TYPE_NUMBER_FLAG_DECIMAL) == EditorInfo.TYPE_NUMBER_FLAG_DECIMAL) {
+            //显示小数点后几位
+            String value = String.valueOf(text);
+            int lastIndexOf = value.lastIndexOf(".");
+            if (value.length() - lastIndexOf > mDecimalCount) {
+//                setText(value.substring(0, ""));
+            }
         }
     }
 
@@ -1078,6 +1103,7 @@ public class ExEditText extends AppCompatEditText {
 
         @Override
         public boolean commitText(CharSequence text, int newCursorPosition) {
+            //editText.getText();
             return super.commitText(text, newCursorPosition);
         }
 
