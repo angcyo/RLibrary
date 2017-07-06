@@ -836,7 +836,7 @@ public class ExEditText extends AppCompatEditText {
         List<String> allMention = getAllMention();
         for (String s : allMention) {
             string = string.replaceAll("@" + s.replaceAll("\\(", "\\\\(").replaceAll("\\)", "\\\\)"),
-                    createShowString(getIdFromUserName.userId(s), s));
+                    createShowString(getIdFromUserName.userId(s), "@" + s));
         }
         return string;
     }
