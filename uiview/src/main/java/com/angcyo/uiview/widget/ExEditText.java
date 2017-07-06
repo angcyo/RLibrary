@@ -181,14 +181,18 @@ public class ExEditText extends AppCompatEditText {
         ensurePaint();
         TypedArray typedArray = context.obtainStyledAttributes(attrs, R.styleable.ExEditText);
         int color = typedArray.getColor(R.styleable.ExEditText_r_left_text_color, getCurrentTextColor());
-        mTextPaint.setTextColor(color);
-
         mLeftOffset = typedArray.getDimensionPixelOffset(R.styleable.ExEditText_r_left_text_offset,
                 getResources().getDimensionPixelOffset(R.dimen.base_ldpi));
-
         String string = typedArray.getString(R.styleable.ExEditText_r_left_text);
-        setLeftString(string);
+
+        mMaxNumber = typedArray.getFloat(R.styleable.ExEditText_r_max_number, mMaxNumber);
+        mDecimalCount = typedArray.getInteger(R.styleable.ExEditText_r_decimal_count, mDecimalCount);
+
         typedArray.recycle();
+
+        setLeftString(string);
+        mTextPaint.setTextColor(color);
+
     }
 
     public boolean canVerticalScroll() {
@@ -470,22 +474,77 @@ public class ExEditText extends AppCompatEditText {
             checkMentionString();
         }
 
-        if ((getInputType() & EditorInfo.TYPE_CLASS_NUMBER) == EditorInfo.TYPE_CLASS_NUMBER) {
-            //限制最大数值
-            Float value = Float.valueOf(String.valueOf(text));
-            if (value > mMaxNumber) {
-                setText(String.valueOf(mMaxNumber));
-            }
-        }
+        if (isInputTypeNumber()) {
+            if (!TextUtils.isEmpty(text)) {
+                Float value;
+                try {
+                    value = Float.valueOf(String.valueOf(text));
+                } catch (Exception e) {
+                    value = 0f;
+                }
 
-        if ((getInputType() & EditorInfo.TYPE_NUMBER_FLAG_DECIMAL) == EditorInfo.TYPE_NUMBER_FLAG_DECIMAL) {
-            //显示小数点后几位
-            String value = String.valueOf(text);
-            int lastIndexOf = value.lastIndexOf(".");
-            if (value.length() - lastIndexOf > mDecimalCount) {
-//                setText(value.substring(0, ""));
+                //限制最大数值
+                if (value > mMaxNumber) {
+                    String maxValue;
+                    if (isInputTypeDecimal()) {
+                        maxValue = Float.valueOf(mMaxNumber).toString();
+                    } else {
+                        maxValue = String.valueOf(Float.valueOf(mMaxNumber).intValue());
+                    }
+                    resetSelectionText(maxValue);
+                    setSelection(maxValue.length());
+                }
+
+                if (isInputTypeDecimal()) {
+                    //显示小数点后几位
+                    String string = String.valueOf(text);
+                    int lastIndexOf = string.lastIndexOf(".");
+                    if (lastIndexOf != -1 && string.length() - lastIndexOf - 1 > mDecimalCount) {
+                        resetSelectionText(string.substring(0, lastIndexOf + mDecimalCount + 1));
+                    }
+                }
+
+                //剔除前面的0
+                if (text.length() > 1) {
+                    if (text.charAt(0) == '0' && text.charAt(1) != '.') {
+                        resetSelectionText(String.valueOf(text.subSequence(1, text.length())));
+                    }
+                }
             }
         }
+    }
+
+    /**
+     * 输入类型是否是数字
+     */
+    private boolean isInputTypeNumber() {
+        return (getInputType() & EditorInfo.TYPE_CLASS_NUMBER) == EditorInfo.TYPE_CLASS_NUMBER;
+    }
+
+    /**
+     * 输入类型是否是小数
+     */
+    private boolean isInputTypeDecimal() {
+        return (getInputType() & EditorInfo.TYPE_NUMBER_FLAG_DECIMAL) == EditorInfo.TYPE_NUMBER_FLAG_DECIMAL;
+    }
+
+    private void resetSelectionText(String text) {
+        int start = getSelectionStart();
+        setText(text);
+        setSelection(Math.min(start, text.length()));
+    }
+
+    /**
+     * 获取输入的数字
+     */
+    public float getInputNumber() {
+        Float value;
+        try {
+            value = Float.valueOf(getText().toString());
+        } catch (Exception e) {
+            value = 0f;
+        }
+        return value;
     }
 
     @Override

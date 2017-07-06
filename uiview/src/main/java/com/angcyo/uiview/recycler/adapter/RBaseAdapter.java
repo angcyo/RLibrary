@@ -121,6 +121,7 @@ public abstract class RBaseAdapter<T> extends RecyclerView.Adapter<RBaseViewHold
     @Override
     public RBaseViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         View itemView = null;
+        RBaseViewHolder viewHolder = null;
         try {
             if (mEnableShowState && viewType == ITEM_TYPE_SHOW_STATE) {
                 itemView = LayoutInflater.from(mContext)
@@ -138,13 +139,11 @@ public abstract class RBaseAdapter<T> extends RecyclerView.Adapter<RBaseViewHold
                     itemView = LayoutInflater.from(mContext).inflate(itemLayoutId, parent, false);
                 }
             }
-//        if (itemView == null) {
-//            return createItemViewHolder(parent, viewType);
-//        }
+            viewHolder = createBaseViewHolder(viewType, itemView);
         } catch (Exception e) {
-            L.e("请及时处理此处BUG.");
+            L.e("请及时处理此处BUG. itemView=" + itemView);
         }
-        return createBaseViewHolder(viewType, itemView);
+        return viewHolder;
     }
 
     @NonNull

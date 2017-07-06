@@ -60,6 +60,11 @@
         <attr name="r_left_text"/>
         <attr name="r_left_text_color"/>
         <attr name="r_left_text_offset"/>
+
+        <!--允许输入最大的数字-->
+        <attr name="r_max_number" format="float"/>
+        <!--允许小数点后几位-->
+        <attr name="r_decimal_count" format="integer"/>
     </declare-styleable>
 
     <declare-styleable name="JumpAdProgressBar">
