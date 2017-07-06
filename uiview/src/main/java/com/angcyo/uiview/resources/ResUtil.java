@@ -628,6 +628,15 @@ public class ResUtil {
         return listDrawable;
     }
 
+    public static Drawable selector(Drawable normalDrawable, Drawable pressDrawable, Drawable checkedDrawable, Drawable disableDrawable) {
+        StateListDrawable listDrawable = new StateListDrawable();//状态shape
+        listDrawable.addState(new int[]{-android.R.attr.state_enabled}, disableDrawable);//禁止状态
+        listDrawable.addState(new int[]{android.R.attr.state_checked}, checkedDrawable);
+        listDrawable.addState(new int[]{android.R.attr.state_pressed}, pressDrawable);//按下状态
+        listDrawable.addState(new int[]{}, normalDrawable);//其他状态
+        return listDrawable;
+    }
+
     public static Drawable selector(int[] states, Drawable[] drawables, Drawable normalDrawable) {
         StateListDrawable listDrawable = new StateListDrawable();//状态shape
         for (int i = 0; i < states.length; i++) {

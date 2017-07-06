@@ -10,6 +10,7 @@ import com.lzy.imagepicker.ui.ImageGridActivity;
 import com.lzy.imagepicker.ui.ImagePreviewActivity;
 
 import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Copyright (C) 2016,深圳市红鸟网络科技股份有限公司 All rights reserved.
@@ -127,6 +128,39 @@ public class ImagePickerHelper {
      */
     public static void clearAllSelectedImages() {
         ImagePicker.getInstance().clear();
+        ImagePicker.getInstance().clearSelectedImages();
+    }
+
+    /**
+     * 取消选中状态中的图片
+     *
+     * @param keep 是否保留 paths 中的选择
+     */
+    public static void clearSelectedPath(List<String> paths, boolean keep) {
+        if (paths == null || paths.isEmpty()) {
+            return;
+        }
+
+        ArrayList<ImageItem> selectedImages = ImagePicker.getInstance().getSelectedImages();
+        int size = selectedImages.size();
+
+        for (int i = size - 1; i >= 0; i--) {
+            ImageItem imageItem = selectedImages.get(i);
+
+            if (TextUtils.isEmpty(imageItem.path)) {
+                continue;
+            }
+
+            if (keep) {
+                if (!paths.contains(imageItem.path)) {
+                    selectedImages.remove(i);
+                }
+            } else {
+                if (paths.contains(imageItem.path)) {
+                    selectedImages.remove(i);
+                }
+            }
+        }
     }
 
     /**
@@ -139,5 +173,12 @@ public class ImagePickerHelper {
             }
         }
         return false;
+    }
+
+    /**
+     * 取消了图片选择
+     */
+    public static boolean isCancelPicker(int resultCode) {
+        return resultCode == Activity.RESULT_CANCELED;
     }
 }
