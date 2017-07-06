@@ -865,6 +865,27 @@ public class RUtils {
                 && (b[0] == 0x42) && (b[1] == 0x4d);
     }
 
+    /**
+     * 00:00的格式输出, 如果有小时,01:00:00
+     */
+    public static String formatTime(long millisecond /*毫秒*/) {
+        long mill = millisecond / 1000;
+
+        long min = mill / 60;
+        long hour = min / 60;
+        long second = mill % 60;
+
+        StringBuilder builder = new StringBuilder();
+        if (hour > 0) {
+            builder.append(hour >= 10 ? hour : ("0" + hour));
+        }
+        builder.append(min >= 10 ? min : ("0" + min));
+        builder.append(":");
+        builder.append(second >= 10 ? second : ("0" + second));
+
+        return builder.toString();
+    }
+
     public enum ImageType {
         JPEG, GIF, PNG, BMP, UNKNOWN
     }
