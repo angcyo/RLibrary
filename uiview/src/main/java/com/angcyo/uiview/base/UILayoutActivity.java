@@ -5,13 +5,16 @@ import android.annotation.TargetApi;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.ActivityInfo;
+import android.graphics.Color;
 import android.net.Uri;
 import android.os.Build;
 import android.provider.Settings;
+import android.view.View;
 import android.view.inputmethod.InputMethodManager;
 
 import com.angcyo.library.utils.L;
 import com.angcyo.uiview.container.ILayout;
+import com.angcyo.uiview.container.RSwipeLayout;
 import com.angcyo.uiview.container.UILayoutImpl;
 import com.angcyo.uiview.container.UIParam;
 import com.angcyo.uiview.utils.T_;
@@ -31,13 +34,26 @@ public abstract class UILayoutActivity extends StyleActivity {
 
     protected ILayout mLayout;
     protected RxPermissions mRxPermissions;
+    protected RSwipeLayout mSwipeLayout;
     private boolean destroyed = false;
 
     @Override
     protected void onCreateView() {
         mLayout = new UILayoutImpl(this);
-        setContentView(mLayout.getLayout());
 
+        if (isEnableSwipeMenu()) {
+            mSwipeLayout = new RSwipeLayout(this, null);
+            mSwipeLayout.setDragDirection(getSwipeDirection());
+
+            View menuView = new View(this);
+            menuView.setBackgroundColor(Color.RED);
+
+            mSwipeLayout.setMenuView(menuView);
+            mSwipeLayout.setContentView(mLayout.getLayout());
+            setContentView(mSwipeLayout);
+        } else {
+            setContentView(mLayout.getLayout());
+        }
         onAfterCreateView();
     }
 
@@ -222,4 +238,11 @@ public abstract class UILayoutActivity extends StyleActivity {
         }
     }
 
+    public boolean isEnableSwipeMenu() {
+        return false;
+    }
+
+    public int getSwipeDirection() {
+        return RSwipeLayout.DRAG_LEFT;
+    }
 }

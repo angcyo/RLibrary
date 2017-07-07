@@ -51,3 +51,8 @@ public fun TextView.textHeight(): Float {
 public fun View.getColor(id: Int): Int {
     return ContextCompat.getColor(context, id)
 }
+
+/**Match_Parent*/
+public fun View.exactlyMeasure(size: Int): Int {
+    return View.MeasureSpec.makeMeasureSpec(size, View.MeasureSpec.EXACTLY)
+}
