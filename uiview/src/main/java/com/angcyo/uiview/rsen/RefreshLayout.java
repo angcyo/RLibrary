@@ -83,8 +83,8 @@ public class RefreshLayout extends ViewGroup {
     public static final String TARGET_VIEW = "target_view";
     public static final String TIP_VIEW = "tip_view";
     public static final long ANIM_TIME = 300;
-    float downY, downX, lastY;
     protected View mTopView, mBottomView, mTargetView, mTipView;
+    float downY, downX, lastY;
     private OverScroller mScroller;
     private int mTouchSlop;
     /**
@@ -977,7 +977,7 @@ public class RefreshLayout extends ViewGroup {
             mDrawable = getResources().getDrawable(R.drawable.base_refresh_top_book);
             mBitmap = getBitmapFromDrawable();
             mPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
-            mPaint.setColor(getResources().getColor(R.color.theme_color_primary));
+            mPaint.setColor(SkinHelper.getSkin().getThemeSubColor());
             mCenterRect = new Rect();
             mProgressRect = new Rect();
             mDrawRect = new Rect();
