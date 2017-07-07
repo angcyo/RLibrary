@@ -354,7 +354,7 @@ public class UIScanView extends UIContentView implements SurfaceHolder.Callback,
         UILoading.show2(mParentILayout).setLoadingTipText("正在扫描...").setCanCancel(false);
         Rx.base(new RFunc<String>() {
             @Override
-            public String call(String s) {
+            public String onFuncCall() {
                 return QRCodeDecoder.syncDecodeQRCode(picturePath);
             }
         }, new RSubscriber<String>() {

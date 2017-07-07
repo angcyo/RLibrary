@@ -80,7 +80,8 @@ public abstract class UIIViewImpl implements IView {
     /**
      * 当{@link #onViewShow(Bundle)}被调用一次, 计数器就会累加
      */
-    private long viewShowCount = 0;
+    protected long viewShowCount = 0;
+    protected long showInPagerCount = 0;
     private boolean mIsRightJumpLeft = false;
 
     public static void setDefaultConfig(Animation animation, boolean isFinish) {
@@ -395,7 +396,8 @@ public abstract class UIIViewImpl implements IView {
      */
     @Override
     public void onShowInPager(UIViewPager viewPager) {
-        L.i(this.getClass().getSimpleName(), "onShowInPager: ");
+        showInPagerCount++;
+        L.i(this.getClass().getSimpleName(), "onShowInPager: " + showInPagerCount);
     }
 
     /**

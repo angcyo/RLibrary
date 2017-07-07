@@ -14,4 +14,10 @@ import rx.functions.Func1;
  * Version: 1.0.0
  */
 public abstract class RFunc<R> implements Func1<String, R> {
+    @Override
+    public R call(String s) {
+        return onFuncCall();
+    }
+
+    public abstract R onFuncCall();
 }
