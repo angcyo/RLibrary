@@ -94,6 +94,7 @@ public abstract class UIBaseView extends UIIViewImpl {
     protected UITitleBarContainer mUITitleBarContainer;
     protected LayoutState mLayoutState = LayoutState.NORMAL;
     protected View.OnClickListener mNonetSettingClickListener, mNonetRefreshClickListener;
+    protected OnViewLoadListener mOnViewLoadListener;
     private Animation mLoadingAnimation;
     private ClipMode mClipMode;
     private boolean mEnableClip = false;
@@ -607,12 +608,18 @@ public abstract class UIBaseView extends UIIViewImpl {
         if (mUITitleBarContainer != null) {
             mUITitleBarContainer.showLoadView();
         }
+        if (mOnViewLoadListener != null) {
+            mOnViewLoadListener.onShowLoadView();
+        }
         return this;
     }
 
     public UIBaseView hideLoadView() {
         if (mUITitleBarContainer != null) {
             mUITitleBarContainer.hideLoadView();
+        }
+        if (mOnViewLoadListener != null) {
+            mOnViewLoadListener.onHideLoadView();
         }
         return this;
     }
@@ -944,5 +951,15 @@ public abstract class UIBaseView extends UIIViewImpl {
          * 2者都使用
          */
         CLIP_BOTH
+    }
+
+    public void setOnViewLoadListener(OnViewLoadListener onViewLoadListener) {
+        mOnViewLoadListener = onViewLoadListener;
+    }
+
+    public interface OnViewLoadListener {
+        void onShowLoadView();
+
+        void onHideLoadView();
     }
 }

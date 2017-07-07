@@ -6,6 +6,7 @@ import com.angcyo.uiview.R
 import com.angcyo.uiview.github.tablayout.SlidingTabLayout
 import com.angcyo.uiview.skin.SkinHelper
 import com.angcyo.uiview.view.IView
+import com.angcyo.uiview.view.UIIViewImpl
 import com.angcyo.uiview.widget.viewpager.UIPagerAdapter
 import com.angcyo.uiview.widget.viewpager.UIViewPager
 
@@ -20,7 +21,14 @@ import com.angcyo.uiview.widget.viewpager.UIViewPager
  * 修改备注：
  * Version: 1.0.0
  */
-abstract class UISlidingTabView : UIContentView() {
+abstract class UISlidingTabView : UIContentView(), UIBaseView.OnViewLoadListener {
+    override fun onShowLoadView() {
+        showLoadView()
+    }
+
+    override fun onHideLoadView() {
+        hideLoadView()
+    }
 
     val pages: ArrayList<TabPageBean> by lazy {
         arrayListOf<TabPageBean>()
@@ -80,7 +88,10 @@ abstract class UISlidingTabView : UIContentView() {
     open fun getPageTitle(position: Int): String? = pages[position].title
 
     open fun createAdapter() = object : UIPagerAdapter() {
-        override fun getIView(position: Int): IView = getPageIView(position).apply { bindParentILayout(mILayout) }
+        override fun getIView(position: Int): IView = (getPageIView(position) as UIBaseView).apply {
+            this.bindParentILayout(mILayout)
+            this.setOnViewLoadListener(this@UISlidingTabView)
+        }
 
         override fun getCount(): Int = getPageCount()
 
