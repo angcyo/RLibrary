@@ -2,13 +2,16 @@ package com.angcyo.uiview.model;
 
 import android.content.Context;
 import android.graphics.Color;
+import android.graphics.drawable.Drawable;
 import android.support.annotation.ColorInt;
 import android.support.annotation.DrawableRes;
 import android.support.annotation.StringRes;
+import android.support.v4.content.ContextCompat;
 import android.text.TextUtils;
 import android.view.View;
 import android.widget.TextView;
 
+import com.angcyo.uiview.RApplication;
 import com.angcyo.uiview.container.UITitleBarContainer;
 import com.angcyo.uiview.widget.RTitleCenterLayout;
 
@@ -225,6 +228,7 @@ public class TitleBarPattern {
         public String text;
         @DrawableRes
         public int res = -1;
+        public Drawable icoDrawable;
         public View.OnClickListener listener;
         public int visibility = View.VISIBLE;
         @ColorInt
@@ -245,8 +249,8 @@ public class TitleBarPattern {
         }
 
         public TitleBarItem(@DrawableRes int res, View.OnClickListener listener) {
-            this.res = res;
             this.listener = listener;
+            setRes(res);
         }
 
         @Deprecated
@@ -271,6 +275,16 @@ public class TitleBarPattern {
 
         public TitleBarItem setRes(int res) {
             this.res = res;
+            if (res == -1) {
+                setIcoDrawable(null);
+            } else {
+                setIcoDrawable(ContextCompat.getDrawable(RApplication.getApp(), res));
+            }
+            return this;
+        }
+
+        public TitleBarItem setIcoDrawable(Drawable icoDrawable) {
+            this.icoDrawable = icoDrawable;
             return this;
         }
 

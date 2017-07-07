@@ -6,6 +6,7 @@ import android.content.res.ColorStateList;
 import android.content.res.Resources;
 import android.content.res.TypedArray;
 import android.graphics.Paint;
+import android.graphics.PorterDuff;
 import android.graphics.RectF;
 import android.graphics.drawable.ColorDrawable;
 import android.graphics.drawable.Drawable;
@@ -56,6 +57,10 @@ public class ResUtil {
 
     public static float spToPx(Context context, float sp) {
         return spToPx(context.getResources(), sp);
+    }
+
+    public static void colorFilter(Drawable drawable, int color) {
+        drawable.mutate().setColorFilter(color, PorterDuff.Mode.MULTIPLY);
     }
 
     /**

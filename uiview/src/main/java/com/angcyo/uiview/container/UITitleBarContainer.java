@@ -8,7 +8,6 @@ import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
 import android.graphics.drawable.Drawable;
 import android.support.annotation.ColorInt;
-import android.support.annotation.DrawableRes;
 import android.support.v4.view.ViewCompat;
 import android.text.TextUtils;
 import android.util.AttributeSet;
@@ -321,12 +320,12 @@ public class UITitleBarContainer extends FrameLayout {
         for (int i = 0; i < items.size(); i++) {
             TitleBarPattern.TitleBarItem item = items.get(i);
             View view;
-            if (item.res == -1) {
+            if (item.icoDrawable == null) {
                 //不是图片, 就创建文本按钮
                 view = createTextItem(item.text, item.textColor, item.listener);
             } else {
                 //创建图片按钮
-                view = createImageItem(item.res, item.listener);
+                view = createImageItem(item.icoDrawable, item.listener);
             }
             view.setVisibility(item.visibility);
             view.setMinimumWidth(itemSize);
@@ -351,9 +350,9 @@ public class UITitleBarContainer extends FrameLayout {
 //        }
     }
 
-    private ImageView createImageItem(@DrawableRes int res, OnClickListener listener) {
+    private ImageView createImageItem(Drawable drawable, OnClickListener listener) {
         ImageView item = new ImageView(getContext());
-        item.setImageResource(res);
+        item.setImageDrawable(drawable);
         item.setScaleType(ImageView.ScaleType.CENTER);
         item.setBackgroundResource(R.drawable.base_bg2_selector);
         item.setOnClickListener(listener);

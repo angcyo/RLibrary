@@ -3,6 +3,7 @@ package com.angcyo.uiview.design;
 import android.content.Context;
 import android.support.annotation.Px;
 import android.support.v4.view.GestureDetectorCompat;
+import android.support.v4.view.MotionEventCompat;
 import android.support.v7.widget.RecyclerView;
 import android.util.AttributeSet;
 import android.view.GestureDetector;
@@ -47,6 +48,7 @@ public class StickLayout2 extends RelativeLayout {
     private boolean edgeScroll = false;
     private int viewMaxHeight;
     private boolean mWantV = true;
+    private int mStartScrollY;
 
     public StickLayout2(Context context) {
         this(context, null);
@@ -260,12 +262,16 @@ public class StickLayout2 extends RelativeLayout {
     @Override
     public boolean onInterceptTouchEvent(MotionEvent ev) {
 //        L.e("call: onInterceptTouchEvent([ev])-> " + ev.getAction());
-        if (ev.getAction() == MotionEvent.ACTION_UP || ev.getAction() == MotionEvent.ACTION_CANCEL) {
+        int action = MotionEventCompat.getActionMasked(ev);
+        if (action == MotionEvent.ACTION_UP || action == MotionEvent.ACTION_CANCEL) {
             onTouchUp();
             onTouchEnd();
-        }
-        if (isScroll) {
-            return true;
+
+            if (Math.abs(mStartScrollY - getScrollY()) >
+                    ViewConfiguration.get(getContext()).getScaledTouchSlop()) {
+                //ev.setAction(MotionEvent.ACTION_CANCEL);
+                return true;
+            }
         }
         return super.onInterceptTouchEvent(ev);
     }
@@ -287,7 +293,7 @@ public class StickLayout2 extends RelativeLayout {
             //return super.dispatchTouchEvent(ev);
         }
 
-        switch (ev.getAction()) {
+        switch (MotionEventCompat.getActionMasked(ev)) {
             case MotionEvent.ACTION_DOWN:
                 onTouchDown(ev);
                 break;
@@ -410,7 +416,7 @@ public class StickLayout2 extends RelativeLayout {
 
         downY = ev.getY() + 0.5f;
         lastX = downX = ev.getX() + 0.5f;
-        int scrollY = getScrollY();
+        mStartScrollY = getScrollY();
 
         mOverScroller.abortAnimation();
 
@@ -423,7 +429,7 @@ public class StickLayout2 extends RelativeLayout {
                 inTopTouch = false;
             }
         } else {
-            if (topHeight - scrollY > downY) {
+            if (topHeight - mStartScrollY > downY) {
                 inTopTouch = true;
             } else {
                 inTopTouch = false;
