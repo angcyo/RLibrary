@@ -18,8 +18,11 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.angcyo.library.utils.L;
+import com.angcyo.uiview.widget.GlideImageView;
 import com.angcyo.uiview.widget.ItemInfoLayout;
 import com.angcyo.uiview.widget.ItemSubInfoLayout;
+import com.angcyo.uiview.widget.RImageView;
+import com.angcyo.uiview.widget.RTextView;
 
 import java.lang.ref.WeakReference;
 import java.lang.reflect.Field;
@@ -159,6 +162,10 @@ public class RBaseViewHolder extends RecyclerView.ViewHolder {
         return (TextView) v(resId);
     }
 
+    public RTextView rtv(@IdRes int resId) {
+        return (RTextView) v(resId);
+    }
+
     public TextView tV(String idName) {
         return (TextView) v(idName);
     }
@@ -194,6 +201,14 @@ public class RBaseViewHolder extends RecyclerView.ViewHolder {
      */
     public ImageView imgV(@IdRes int resId) {
         return (ImageView) v(resId);
+    }
+
+    public RImageView rimgV(@IdRes int resId) {
+        return (RImageView) v(resId);
+    }
+
+    public GlideImageView glideImgV(@IdRes int resId) {
+        return (GlideImageView) v(resId);
     }
 
     public ImageView imageView(@IdRes int resId) {

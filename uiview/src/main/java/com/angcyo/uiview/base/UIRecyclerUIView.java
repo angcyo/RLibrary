@@ -122,9 +122,9 @@ public abstract class UIRecyclerUIView<H, T, F> extends UIContentView
 
     }
 
-    protected RRecyclerView initRecyclerView(RRecyclerView recyclerView, RelativeLayout baseContentLayout) {
+    protected void initRecyclerView(RRecyclerView recyclerView, RelativeLayout baseContentLayout) {
         if (recyclerView == null) {
-            return recyclerView;
+            return;
         }
         final RecyclerView.ItemDecoration itemDecoration = createItemDecoration();
         if (itemDecoration != null) {
@@ -144,7 +144,6 @@ public abstract class UIRecyclerUIView<H, T, F> extends UIContentView
                 mRefreshLayout.addView(recyclerView, new ViewGroup.LayoutParams(-1, -1));
             }
         }
-        return recyclerView;
     }
 
 
@@ -154,17 +153,15 @@ public abstract class UIRecyclerUIView<H, T, F> extends UIContentView
         return null;
     }
 
-
-    protected RefreshLayout initRefreshLayout(RefreshLayout refreshLayout, RelativeLayout baseContentLayout) {
+    protected void initRefreshLayout(RefreshLayout refreshLayout, RelativeLayout baseContentLayout) {
         if (refreshLayout == null) {
-            return refreshLayout;
+            return;
         }
         refreshLayout.setRefreshDirection(RefreshLayout.TOP);
         refreshLayout.addOnRefreshListener(this);
         if (refreshLayout.getParent() == null) {
             baseContentLayout.addView(refreshLayout, new ViewGroup.LayoutParams(-1, -1));
         }
-        return refreshLayout;
     }
 
     /**

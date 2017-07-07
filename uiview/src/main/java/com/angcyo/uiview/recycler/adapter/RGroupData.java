@@ -62,6 +62,9 @@ public class RGroupData<T> {
     }
 
     public List<T> getAllDatas() {
+        if (mAllDatas == null) {
+            mAllDatas = new ArrayList<>();
+        }
         return mAllDatas;
     }
 
@@ -144,6 +147,10 @@ public class RGroupData<T> {
      * @param indexInData 在数据中, 从0开始的索引
      */
     protected void onBindDataView(RBaseViewHolder holder, int position, int indexInData) {
+        onBindDataView(holder, position, indexInData, getAllDatas().size() > indexInData ? getAllDatas().get(indexInData) : null);
+    }
+
+    protected void onBindDataView(RBaseViewHolder holder, int position, int indexInData, T bean) {
 
     }
 }
