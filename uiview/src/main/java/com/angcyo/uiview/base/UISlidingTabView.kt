@@ -80,7 +80,7 @@ abstract class UISlidingTabView : UIContentView() {
     open fun getPageTitle(position: Int): String? = pages[position].title
 
     open fun createAdapter() = object : UIPagerAdapter() {
-        override fun getIView(position: Int): IView = getPageIView(position)
+        override fun getIView(position: Int): IView = getPageIView(position).apply { bindParentILayout(mILayout) }
 
         override fun getCount(): Int = getPageCount()
 
