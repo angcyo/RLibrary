@@ -13,7 +13,6 @@ import android.view.LayoutInflater;
 import android.view.SurfaceHolder;
 import android.view.SurfaceView;
 import android.view.View;
-import android.widget.FrameLayout;
 
 import com.angcyo.library.utils.L;
 import com.angcyo.rcode.IDecodeCallback;
@@ -25,6 +24,7 @@ import com.angcyo.rcode.zxing.decode.CaptureActivityHandler;
 import com.angcyo.rcode.zxing.decode.InactivityTimer;
 import com.angcyo.rcode.zxing.view.ViewfinderView;
 import com.angcyo.uiview.R;
+import com.angcyo.uiview.container.ContentLayout;
 import com.angcyo.uiview.dialog.UILoading;
 import com.angcyo.uiview.model.TitleBarPattern;
 import com.angcyo.uiview.net.RException;
@@ -97,7 +97,7 @@ public class UIScanView extends UIContentView implements SurfaceHolder.Callback,
 //    }
 
     @Override
-    protected void inflateContentLayout(FrameLayout baseContentLayout, LayoutInflater inflater) {
+    protected void inflateContentLayout(ContentLayout baseContentLayout, LayoutInflater inflater) {
         inflate(R.layout.base_view_rscan_layout);
     }
 

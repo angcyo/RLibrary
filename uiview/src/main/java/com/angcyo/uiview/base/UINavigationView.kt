@@ -4,6 +4,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.widget.FrameLayout
 import com.angcyo.uiview.R
+import com.angcyo.uiview.container.ContentLayout
 import com.angcyo.uiview.container.UILayoutImpl
 import com.angcyo.uiview.container.UIParam
 import com.angcyo.uiview.model.TitleBarPattern
@@ -63,7 +64,7 @@ abstract class UINavigationView : UIContentView() {
             shadowView?.visibility = if (value) View.VISIBLE else View.GONE
         }
 
-    override fun inflateContentLayout(baseContentLayout: FrameLayout?, inflater: LayoutInflater?) {
+    override fun inflateContentLayout(baseContentLayout: ContentLayout?, inflater: LayoutInflater?) {
         inflate(R.layout.base_navigation_view)
     }
 

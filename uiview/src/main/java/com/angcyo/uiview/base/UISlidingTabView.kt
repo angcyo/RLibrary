@@ -3,6 +3,7 @@ package com.angcyo.uiview.base
 import android.view.LayoutInflater
 import android.widget.FrameLayout
 import com.angcyo.uiview.R
+import com.angcyo.uiview.container.ContentLayout
 import com.angcyo.uiview.github.tablayout.SlidingTabLayout
 import com.angcyo.uiview.skin.SkinHelper
 import com.angcyo.uiview.view.IView
@@ -41,7 +42,7 @@ abstract class UISlidingTabView : UIContentView(), UIBaseView.OnViewLoadListener
         mViewHolder.v<SlidingTabLayout>(R.id.base_tab_layout)
     }
 
-    override fun inflateContentLayout(baseContentLayout: FrameLayout?, inflater: LayoutInflater?) {
+    override fun inflateContentLayout(baseContentLayout: ContentLayout?, inflater: LayoutInflater?) {
         inflate(R.layout.base_sliding_tab_view)
     }
 

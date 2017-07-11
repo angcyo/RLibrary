@@ -7,6 +7,7 @@ import android.view.ViewGroup
 import android.widget.FrameLayout
 import android.widget.ImageView
 import android.widget.RelativeLayout
+import com.angcyo.uiview.container.ContentLayout
 import com.angcyo.uiview.github.utilcode.utils.AppUtils
 import com.angcyo.uiview.widget.viewpager.ImageAdapter
 import com.angcyo.uiview.widget.viewpager.RViewPager
@@ -38,7 +39,7 @@ abstract class UILauncherView : UIContentView() {
 
     lateinit var mViewPager: RViewPager
 
-    override fun inflateContentLayout(baseContentLayout: FrameLayout, inflater: LayoutInflater?) {
+    override fun inflateContentLayout(baseContentLayout: ContentLayout?, inflater: LayoutInflater?) {
         mViewPager = RViewPager(mActivity)
         mViewPager.adapter = object : ImageAdapter() {
             override fun initImageView(rootLayout: RelativeLayout, imageView: ImageView, position: Int) {
@@ -50,7 +51,7 @@ abstract class UILauncherView : UIContentView() {
             }
 
         }
-        baseContentLayout.addView(mViewPager, ViewGroup.LayoutParams(-1, -1))
+        baseContentLayout?.addView(mViewPager, ViewGroup.LayoutParams(-1, -1))
         mViewPager.setOnPagerEndListener {
             onPagerEnd()
         }

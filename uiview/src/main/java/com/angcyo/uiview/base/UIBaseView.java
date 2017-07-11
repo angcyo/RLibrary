@@ -27,6 +27,7 @@ import android.widget.TextView;
 
 import com.angcyo.library.utils.L;
 import com.angcyo.uiview.R;
+import com.angcyo.uiview.container.ContentLayout;
 import com.angcyo.uiview.container.UILayoutImpl;
 import com.angcyo.uiview.container.UIParam;
 import com.angcyo.uiview.container.UITitleBarContainer;
@@ -86,7 +87,7 @@ public abstract class UIBaseView extends UIIViewImpl {
     /**
      * 内容布局
      */
-    protected FrameLayout mBaseContentLayout;
+    protected ContentLayout mBaseContentLayout;
     /**
      * 标题
      */
@@ -163,7 +164,7 @@ public abstract class UIBaseView extends UIIViewImpl {
             mBaseContentRootLayout.setId(mBaseContentRootId);
 
             //内容包裹布局
-            mBaseContentLayout = new FrameLayout(mActivity);
+            mBaseContentLayout = new ContentLayout(mActivity, null);
             mBaseContentRootLayout.addView(mBaseContentLayout, new ViewGroup.LayoutParams(-1, -1));
 
             FrameLayout.LayoutParams params = new FrameLayout.LayoutParams(-1, -1);
@@ -185,7 +186,10 @@ public abstract class UIBaseView extends UIIViewImpl {
         } else {
             //没有标题的情况, 减少布局层级 星期二 2017-7-11
             mBaseContentRootLayout = mBaseRootLayout;
-            mBaseContentLayout = mBaseRootLayout;
+            mBaseContentLayout = new ContentLayout(mActivity, null);
+            mBaseContentRootId = R.id.base_root_content_id;//View.generateViewId();
+            mBaseContentLayout.setId(mBaseContentRootId);
+            mBaseContentRootLayout.addView(mBaseContentLayout, new ViewGroup.LayoutParams(-1, -1));
         }
 
         // 2016-12-18 使用懒加载的方式 加载.
@@ -232,7 +236,7 @@ public abstract class UIBaseView extends UIIViewImpl {
     /**
      * 请不要在此方法中初始化内容, 因为ButterKnife.bind(this, mBaseContentLayout);还么有执行
      */
-    protected abstract void inflateContentLayout(FrameLayout baseContentLayout, LayoutInflater inflater);
+    protected abstract void inflateContentLayout(ContentLayout baseContentLayout, LayoutInflater inflater);
 
     /**
      * 初始化内容, 当你的 默认布局状态不等于 {@link LayoutState#CONTENT} 时,请使用以下方法初始化View
