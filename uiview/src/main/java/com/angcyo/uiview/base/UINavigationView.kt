@@ -2,7 +2,7 @@ package com.angcyo.uiview.base
 
 import android.view.LayoutInflater
 import android.view.View
-import android.widget.RelativeLayout
+import android.widget.FrameLayout
 import com.angcyo.uiview.R
 import com.angcyo.uiview.container.UILayoutImpl
 import com.angcyo.uiview.container.UIParam
@@ -63,7 +63,7 @@ abstract class UINavigationView : UIContentView() {
             shadowView?.visibility = if (value) View.VISIBLE else View.GONE
         }
 
-    override fun inflateContentLayout(baseContentLayout: RelativeLayout?, inflater: LayoutInflater?) {
+    override fun inflateContentLayout(baseContentLayout: FrameLayout?, inflater: LayoutInflater?) {
         inflate(R.layout.base_navigation_view)
     }
 

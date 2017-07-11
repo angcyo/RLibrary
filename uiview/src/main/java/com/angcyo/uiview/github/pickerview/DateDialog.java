@@ -3,7 +3,7 @@ package com.angcyo.uiview.github.pickerview;
 import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
-import android.widget.RelativeLayout;
+import android.widget.FrameLayout;
 
 import com.angcyo.library.utils.L;
 import com.angcyo.uiview.R;
@@ -66,7 +66,7 @@ public class DateDialog extends UIIDialogImpl {
     }
 
     @Override
-    protected View inflateDialogView(RelativeLayout dialogRootLayout, LayoutInflater inflater) {
+    protected View inflateDialogView(FrameLayout dialogRootLayout, LayoutInflater inflater) {
         return inflate(com.angcyo.uiview.R.layout.pickerview_time);
     }
 

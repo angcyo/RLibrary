@@ -4,8 +4,8 @@ import android.text.TextUtils;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.widget.FrameLayout;
 import android.widget.LinearLayout;
-import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.angcyo.uiview.R;
@@ -66,7 +66,7 @@ public class UIDialog extends UIIDialogImpl {
     }
 
     @Override
-    protected View inflateDialogView(RelativeLayout dialogRootLayout, LayoutInflater inflater) {
+    protected View inflateDialogView(FrameLayout dialogRootLayout, LayoutInflater inflater) {
         setGravity(Gravity.CENTER_VERTICAL);
         if (isX5Style) {
             return inflater.inflate(R.layout.base_dialog_layout_5x, dialogRootLayout);
@@ -228,7 +228,7 @@ public class UIDialog extends UIIDialogImpl {
             }
         }
 
-        mDialogRootLayout.setGravity(gravity);
+        resetDialogGravity();
 
         mBaseDialogOkView.setTextColor(SkinHelper.getSkin().getThemeSubColor());
 

@@ -5,7 +5,7 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.RelativeLayout;
+import android.widget.FrameLayout;
 
 import com.angcyo.uiview.R;
 import com.angcyo.uiview.container.UIParam;
@@ -49,7 +49,7 @@ public abstract class UIRecyclerUIView<H, T, F> extends UIContentView
     }
 
     @Override
-    final protected void inflateContentLayout(RelativeLayout baseContentLayout, LayoutInflater inflater) {
+    final protected void inflateContentLayout(FrameLayout baseContentLayout, LayoutInflater inflater) {
         beforeInflateView(baseContentLayout);
 
         createRecyclerRootView(baseContentLayout, inflater);
@@ -62,7 +62,7 @@ public abstract class UIRecyclerUIView<H, T, F> extends UIContentView
     /**
      * 复写此方法, 重写根布局
      */
-    protected void createRecyclerRootView(RelativeLayout baseContentLayout, LayoutInflater inflater) {
+    protected void createRecyclerRootView(FrameLayout baseContentLayout, LayoutInflater inflater) {
         mRefreshLayout = new RefreshLayout(mActivity);
         initRefreshLayout(mRefreshLayout, baseContentLayout);
         mRecyclerView = new RRecyclerView(mActivity);
@@ -111,18 +111,18 @@ public abstract class UIRecyclerUIView<H, T, F> extends UIContentView
     /**
      * 填充试图之前调用
      */
-    protected void beforeInflateView(RelativeLayout baseContentLayout) {
+    protected void beforeInflateView(FrameLayout baseContentLayout) {
 
     }
 
     /**
      * 内容试图填充之后调用
      */
-    protected void afterInflateView(RelativeLayout baseContentLayout) {
+    protected void afterInflateView(FrameLayout baseContentLayout) {
 
     }
 
-    protected void initRecyclerView(RRecyclerView recyclerView, RelativeLayout baseContentLayout) {
+    protected void initRecyclerView(RRecyclerView recyclerView, FrameLayout baseContentLayout) {
         if (recyclerView == null) {
             return;
         }
@@ -153,7 +153,7 @@ public abstract class UIRecyclerUIView<H, T, F> extends UIContentView
         return null;
     }
 
-    protected void initRefreshLayout(RefreshLayout refreshLayout, RelativeLayout baseContentLayout) {
+    protected void initRefreshLayout(RefreshLayout refreshLayout, FrameLayout baseContentLayout) {
         if (refreshLayout == null) {
             return;
         }

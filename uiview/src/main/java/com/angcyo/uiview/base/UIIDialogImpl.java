@@ -10,7 +10,6 @@ import android.view.animation.Animation;
 import android.view.animation.AnimationSet;
 import android.view.animation.TranslateAnimation;
 import android.widget.FrameLayout;
-import android.widget.RelativeLayout;
 
 import com.angcyo.uiview.container.ILayout;
 import com.angcyo.uiview.container.UILayoutImpl;
@@ -83,8 +82,17 @@ public abstract class UIIDialogImpl extends UIIViewImpl {
         mDialogContentRootLayout = UILayoutImpl.safeAssignView(mDialogRootLayout,
                 inflateDialogView(mDialogRootLayout, inflater));
         mDialogContentRootLayout.setClickable(true);
-        mDialogRootLayout.setGravity(getGravity());
+        resetDialogGravity();
         return mDialogRootLayout;
+    }
+
+    protected void resetDialogGravity() {
+        if (mDialogRootLayout != null) {
+            View childAt = mDialogRootLayout.getChildAt(0);
+            if (childAt != null) {
+                ((FrameLayout.LayoutParams) childAt.getLayoutParams()).gravity = getGravity();
+            }
+        }
     }
 
     protected View inflate(@LayoutRes int layoutId) {
@@ -126,7 +134,7 @@ public abstract class UIIDialogImpl extends UIIViewImpl {
     /**
      * 需要实现的方法
      */
-    protected abstract View inflateDialogView(RelativeLayout dialogRootLayout, LayoutInflater inflater);
+    protected abstract View inflateDialogView(FrameLayout dialogRootLayout, LayoutInflater inflater);
 
     @Override
     public boolean showOnDialog() {

@@ -13,7 +13,7 @@ import android.view.LayoutInflater;
 import android.view.SurfaceHolder;
 import android.view.SurfaceView;
 import android.view.View;
-import android.widget.RelativeLayout;
+import android.widget.FrameLayout;
 
 import com.angcyo.library.utils.L;
 import com.angcyo.rcode.IDecodeCallback;
@@ -97,7 +97,7 @@ public class UIScanView extends UIContentView implements SurfaceHolder.Callback,
 //    }
 
     @Override
-    protected void inflateContentLayout(RelativeLayout baseContentLayout, LayoutInflater inflater) {
+    protected void inflateContentLayout(FrameLayout baseContentLayout, LayoutInflater inflater) {
         inflate(R.layout.base_view_rscan_layout);
     }
 

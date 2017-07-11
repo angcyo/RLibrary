@@ -11,7 +11,7 @@ import android.view.View;
 import android.view.WindowInsets;
 import android.view.animation.DecelerateInterpolator;
 import android.view.inputmethod.InputMethodManager;
-import android.widget.RelativeLayout;
+import android.widget.FrameLayout;
 
 import com.angcyo.uiview.R;
 import com.angcyo.uiview.container.IWindowInsetsListener;
@@ -31,7 +31,7 @@ import java.util.ArrayList;
  * 修改备注：
  * Version: 1.0.0
  */
-public class SoftRelativeLayout extends RelativeLayout implements ILifecycle {
+public class SoftRelativeLayout extends FrameLayout implements ILifecycle {
     boolean isViewShow = false;
     boolean mFitSystemWindow = false;
     ClipHelper mClipHelper;
@@ -46,9 +46,13 @@ public class SoftRelativeLayout extends RelativeLayout implements ILifecycle {
     private boolean mInterceptKeyboard;//拦截touch down事件, 自动隐藏键盘
     private boolean isTouchDown;
 
+    /**
+     * 悬浮标题View, 不悬浮采用上下竖直布局
+     */
+    private boolean floatingTitleView = true;
+
     public SoftRelativeLayout(Context context) {
-        super(context);
-        initView();
+        this(context, null);
     }
 
     public SoftRelativeLayout(Context context, AttributeSet attrs) {
@@ -96,7 +100,30 @@ public class SoftRelativeLayout extends RelativeLayout implements ILifecycle {
 
     @Override
     protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
-        super.onMeasure(widthMeasureSpec, heightMeasureSpec);
+        if (floatingTitleView) {
+            super.onMeasure(widthMeasureSpec, heightMeasureSpec);
+        } else {
+            View titleView = findViewById(R.id.base_root_title_id);
+            if (titleView == null) {
+                super.onMeasure(widthMeasureSpec, heightMeasureSpec);
+            } else {
+                int widthMode = MeasureSpec.getMode(widthMeasureSpec);
+                int heightMode = MeasureSpec.getMode(heightMeasureSpec);
+                int widthSize = MeasureSpec.getSize(widthMeasureSpec);
+                int heightSize = MeasureSpec.getSize(heightMeasureSpec);
+
+                titleView.measure(MeasureSpec.makeMeasureSpec(widthSize, MeasureSpec.EXACTLY),
+                        MeasureSpec.makeMeasureSpec(heightSize, MeasureSpec.AT_MOST));
+
+                View contentView = findViewById(R.id.base_root_content_id);
+                if (contentView != null) {
+                    contentView.measure(MeasureSpec.makeMeasureSpec(widthSize, MeasureSpec.EXACTLY),
+                            MeasureSpec.makeMeasureSpec(heightSize - titleView.getMeasuredHeight(), MeasureSpec.EXACTLY));
+                }
+
+                setMeasuredDimension(widthSize, heightSize);
+            }
+        }
     }
 
     @Override
@@ -106,7 +133,23 @@ public class SoftRelativeLayout extends RelativeLayout implements ILifecycle {
 
     @Override
     protected void onLayout(boolean changed, int l, int t, int r, int b) {
-        super.onLayout(changed, l, t, r, b);
+        if (floatingTitleView) {
+            super.onLayout(changed, l, t, r, b);
+        } else {
+            View titleView = findViewById(R.id.base_root_title_id);
+            if (titleView == null) {
+                super.onLayout(changed, l, t, r, b);
+            } else {
+
+                titleView.layout(0, 0, r, titleView.getMeasuredHeight());
+
+                View contentView = findViewById(R.id.base_root_content_id);
+                if (contentView != null) {
+                    contentView.layout(0, titleView.getMeasuredHeight(), r, b);
+                }
+            }
+        }
+
 //        final int count = getChildCount();
 //        for (int i = 0; i < count; i++) {
 //            View child = getChildAt(i);
@@ -373,6 +416,10 @@ public class SoftRelativeLayout extends RelativeLayout implements ILifecycle {
 
     public void startExitClip(ClipHelper.OnEndListener listener) {
         mClipHelper.startExitClip(listener);
+    }
+
+    public void setFloatingTitleView(boolean floatingTitleView) {
+        this.floatingTitleView = floatingTitleView;
     }
 
     public void setAutoInterceptKeyboard(boolean interceptKeyboard) {

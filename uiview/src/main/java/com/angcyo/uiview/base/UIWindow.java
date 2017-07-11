@@ -5,9 +5,9 @@ import android.support.annotation.LayoutRes;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
-import android.widget.RelativeLayout;
 
 import com.angcyo.uiview.R;
 import com.angcyo.uiview.container.ILayout;
@@ -85,7 +85,7 @@ public class UIWindow extends UIIDialogImpl {
     }
 
     @Override
-    protected View inflateDialogView(RelativeLayout dialogRootLayout, LayoutInflater inflater) {
+    protected View inflateDialogView(FrameLayout dialogRootLayout, LayoutInflater inflater) {
         LinearLayout containLayout = new LinearLayout(mActivity);
         containLayout.setOrientation(LinearLayout.VERTICAL);
 
@@ -96,7 +96,7 @@ public class UIWindow extends UIIDialogImpl {
                     View.MeasureSpec.makeMeasureSpec(1 << 30 - 1, View.MeasureSpec.AT_MOST));
         }
 
-        RelativeLayout.LayoutParams params = new RelativeLayout.LayoutParams(-1, -2);
+        FrameLayout.LayoutParams params = new FrameLayout.LayoutParams(-1, -2);
         LinearLayout.LayoutParams triangleParams = new LinearLayout.LayoutParams(-2, -2);
 
 //        final int[] drawingLocation = mTmpDrawingLocation;
@@ -137,11 +137,12 @@ public class UIWindow extends UIIDialogImpl {
                 containLayout.addView(triangleView, triangleParams);
             }
             params.bottomMargin = displayFrame.bottom - screenLocation[1] + offsetY;
-            params.addRule(RelativeLayout.ALIGN_PARENT_BOTTOM);
+            params.gravity = Gravity.BOTTOM;
             gravity = Gravity.BOTTOM;
         }
 
         dialogRootLayout.addView(containLayout, params);
+        resetDialogGravity();
 
         if (mOnInitWindow != null) {
             mOnInitWindow.onInitWindow(this, new RBaseViewHolder(containLayout));

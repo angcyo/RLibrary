@@ -23,7 +23,6 @@ import android.view.animation.RotateAnimation;
 import android.view.animation.TranslateAnimation;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.FrameLayout;
-import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.angcyo.library.utils.L;
@@ -87,7 +86,7 @@ public abstract class UIBaseView extends UIIViewImpl {
     /**
      * 内容布局
      */
-    protected RelativeLayout mBaseContentLayout;
+    protected FrameLayout mBaseContentLayout;
     /**
      * 标题
      */
@@ -157,17 +156,39 @@ public abstract class UIBaseView extends UIIViewImpl {
 //                    mILayout.requestBackPressed();
                 }
             });
+
+            //内容根布局, 包含空布局,加载布局等
+            mBaseContentRootLayout = new FrameLayout(mActivity);
+            mBaseContentRootId = R.id.base_root_content_id;//View.generateViewId();
+            mBaseContentRootLayout.setId(mBaseContentRootId);
+
+            //内容包裹布局
+            mBaseContentLayout = new FrameLayout(mActivity);
+            mBaseContentRootLayout.addView(mBaseContentLayout, new ViewGroup.LayoutParams(-1, -1));
+
+            FrameLayout.LayoutParams params = new FrameLayout.LayoutParams(-1, -1);
+            mBaseRootLayout.addView(mBaseContentRootLayout, params);
+
+            mBaseRootLayout.addView(mUITitleBarContainer, new ViewGroup.LayoutParams(-1, -2));
+
+            mBaseRootLayout.setFloatingTitleView(titleBarPattern.isFloating);
+
+            if (titleBarPattern.isFloating) {
+                if (titleBarPattern.isFixContentHeight) {
+                    mBaseContentRootLayout.setPadding(mBaseContentRootLayout.getPaddingLeft(),
+                            mBaseContentRootLayout.getPaddingTop() + mActivity.getResources().getDimensionPixelOffset(R.dimen.title_bar_height),
+                            mBaseContentRootLayout.getPaddingRight(), mBaseContentRootLayout.getPaddingBottom());
+                }
+            } else {
+            }
+
+        } else {
+            //没有标题的情况, 减少布局层级 星期二 2017-7-11
+            mBaseContentRootLayout = mBaseRootLayout;
+            mBaseContentLayout = mBaseRootLayout;
         }
 
-        //内容根布局, 包含空布局,加载布局等
-        mBaseContentRootLayout = new FrameLayout(mActivity);
-        mBaseContentRootId = R.id.base_root_content_id;//View.generateViewId();
-        mBaseContentRootLayout.setId(mBaseContentRootId);
-
-        //内容包裹布局
-        mBaseContentLayout = new RelativeLayout(mActivity);
-// 2016-12-18 使用懒加载的方式 加载.
-        mBaseContentRootLayout.addView(mBaseContentLayout, new ViewGroup.LayoutParams(-1, -1));
+        // 2016-12-18 使用懒加载的方式 加载.
 //        mBaseEmptyLayout = UILayoutImpl.safeAssignView(mBaseContentRootLayout,
 //                inflateEmptyLayout(mBaseContentRootLayout, inflater));//填充空布局
 //        mBaseNonetLayout = UILayoutImpl.safeAssignView(mBaseContentRootLayout,
@@ -180,22 +201,6 @@ public abstract class UIBaseView extends UIIViewImpl {
 //        safeSetView(mBaseNonetLayout);
 //        safeSetView(mBaseLoadLayout);
 
-        RelativeLayout.LayoutParams params = new RelativeLayout.LayoutParams(-1, -1);
-        mBaseRootLayout.addView(mBaseContentRootLayout, params);
-
-        if (titleBarPattern != null) {
-            mBaseRootLayout.addView(mUITitleBarContainer, new ViewGroup.LayoutParams(-1, -2));
-
-            if (titleBarPattern.isFloating) {
-                if (titleBarPattern.isFixContentHeight) {
-                    mBaseContentRootLayout.setPadding(mBaseContentRootLayout.getPaddingLeft(),
-                            mBaseContentRootLayout.getPaddingTop() + mActivity.getResources().getDimensionPixelOffset(R.dimen.title_bar_height),
-                            mBaseContentRootLayout.getPaddingRight(), mBaseContentRootLayout.getPaddingBottom());
-                }
-            } else {
-                params.addRule(RelativeLayout.BELOW, mUITitleBarId);
-            }
-        }
 
         container.addView(mBaseRootLayout, new ViewGroup.LayoutParams(-1, -1));
         return mBaseRootLayout;
@@ -227,7 +232,7 @@ public abstract class UIBaseView extends UIIViewImpl {
     /**
      * 请不要在此方法中初始化内容, 因为ButterKnife.bind(this, mBaseContentLayout);还么有执行
      */
-    protected abstract void inflateContentLayout(RelativeLayout baseContentLayout, LayoutInflater inflater);
+    protected abstract void inflateContentLayout(FrameLayout baseContentLayout, LayoutInflater inflater);
 
     /**
      * 初始化内容, 当你的 默认布局状态不等于 {@link LayoutState#CONTENT} 时,请使用以下方法初始化View
@@ -923,6 +928,10 @@ public abstract class UIBaseView extends UIIViewImpl {
         mRootView.startAnimation(translateAnimation);
     }
 
+    public void setOnViewLoadListener(OnViewLoadListener onViewLoadListener) {
+        mOnViewLoadListener = onViewLoadListener;
+    }
+
     /**
      * 指示当前布局的显示状态, 当前那个布局在显示
      */
@@ -951,10 +960,6 @@ public abstract class UIBaseView extends UIIViewImpl {
          * 2者都使用
          */
         CLIP_BOTH
-    }
-
-    public void setOnViewLoadListener(OnViewLoadListener onViewLoadListener) {
-        mOnViewLoadListener = onViewLoadListener;
     }
 
     public interface OnViewLoadListener {

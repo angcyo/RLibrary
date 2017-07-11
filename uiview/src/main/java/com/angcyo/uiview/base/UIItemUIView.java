@@ -8,7 +8,7 @@ import android.text.TextPaint;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.RelativeLayout;
+import android.widget.FrameLayout;
 
 import com.angcyo.uiview.R;
 import com.angcyo.uiview.model.TitleBarPattern;
@@ -121,7 +121,7 @@ public abstract class UIItemUIView<T extends Item> extends UIRecyclerUIView<Stri
 
 
     @Override
-    protected void createRecyclerRootView(RelativeLayout baseContentLayout, LayoutInflater inflater) {
+    protected void createRecyclerRootView(FrameLayout baseContentLayout, LayoutInflater inflater) {
         //为软键盘弹出提供支持
         mSoftInputLayout = new RSoftInputLayout(mActivity);
         registerLifecycler(mSoftInputLayout);//隐藏的时候, 不处理键盘事件
@@ -136,7 +136,7 @@ public abstract class UIItemUIView<T extends Item> extends UIRecyclerUIView<Stri
     }
 
     @Override
-    protected void afterInflateView(RelativeLayout baseContentLayout) {
+    protected void afterInflateView(FrameLayout baseContentLayout) {
         mRefreshLayout.setRefreshDirection(RefreshLayout.BOTH);
         mRefreshLayout.setTopView(new PlaceholderView(mActivity));
         mRefreshLayout.setBottomView(new PlaceholderView(mActivity));
