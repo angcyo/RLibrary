@@ -1,5 +1,6 @@
 package com.angcyo.uiview.widget
 
+import android.app.Activity
 import android.content.Context
 import android.util.AttributeSet
 import com.angcyo.library.okhttp.Ok
@@ -140,6 +141,12 @@ open class GlideImageView(context: Context, attributeSet: AttributeSet? = null) 
                 override fun onImageType(imageType: Ok.ImageType) {
                     if (!url.contains(getTag(R.id.tag_url).toString())) {
                         return
+                    }
+
+                    if (context is Activity) {
+                        if ((context as Activity).isDestroyed) {
+                            return
+                        }
                     }
 
                     if (imageType == Ok.ImageType.GIF) {

@@ -175,6 +175,14 @@ public class ExEditText extends AppCompatEditText {
         return !TextUtils.isEmpty(phone) && phone.matches("^1[3-8]\\d{9}$");
     }
 
+    public void setMaxNumber(float mMaxNumber) {
+        this.mMaxNumber = mMaxNumber;
+    }
+
+    public void setDecimalCount(int mDecimalCount) {
+        this.mDecimalCount = mDecimalCount;
+    }
+
     private void initView(Context context, AttributeSet attrs) {
         mPaddingLeft = getPaddingLeft();
 
@@ -191,6 +199,8 @@ public class ExEditText extends AppCompatEditText {
         typedArray.recycle();
 
         setLeftString(string);
+
+
         mTextPaint.setTextColor(color);
 
     }
