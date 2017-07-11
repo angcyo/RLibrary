@@ -164,7 +164,7 @@ public abstract class UIBaseView extends UIIViewImpl {
             mBaseContentRootLayout.setId(mBaseContentRootId);
 
             //内容包裹布局
-            mBaseContentLayout = new ContentLayout(mActivity, null);
+            mBaseContentLayout = new ContentLayout(mActivity);
             mBaseContentRootLayout.addView(mBaseContentLayout, new ViewGroup.LayoutParams(-1, -1));
 
             FrameLayout.LayoutParams params = new FrameLayout.LayoutParams(-1, -1);
@@ -186,9 +186,11 @@ public abstract class UIBaseView extends UIIViewImpl {
         } else {
             //没有标题的情况, 减少布局层级 星期二 2017-7-11
             mBaseContentRootLayout = mBaseRootLayout;
-            mBaseContentLayout = new ContentLayout(mActivity, null);
+
+            mBaseContentLayout = new ContentLayout(mActivity);
             mBaseContentRootId = R.id.base_root_content_id;//View.generateViewId();
             mBaseContentLayout.setId(mBaseContentRootId);
+
             mBaseContentRootLayout.addView(mBaseContentLayout, new ViewGroup.LayoutParams(-1, -1));
         }
 

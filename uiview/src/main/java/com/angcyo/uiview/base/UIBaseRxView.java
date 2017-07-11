@@ -48,7 +48,9 @@ public abstract class UIBaseRxView extends UIBaseDataView {
     }
 
     public void add(Subscription subscription) {
-        mSubscriptions.add(subscription);
+        if (mSubscriptions != null) {
+            mSubscriptions.add(subscription);
+        }
         if (NetworkStateReceiver.getNetType().value() < 2) {
             //2G网络以下, 取消网络请求
             onCancel();

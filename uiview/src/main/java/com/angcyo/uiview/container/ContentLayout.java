@@ -1,9 +1,6 @@
 package com.angcyo.uiview.container;
 
 import android.content.Context;
-import android.support.annotation.AttrRes;
-import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
 import android.util.AttributeSet;
 import android.widget.FrameLayout;
 
@@ -19,15 +16,15 @@ import android.widget.FrameLayout;
  * Version: 1.0.0
  */
 public class ContentLayout extends FrameLayout {
-    public ContentLayout(@NonNull Context context) {
+    public ContentLayout(Context context) {
         super(context);
     }
 
-    public ContentLayout(@NonNull Context context, @Nullable AttributeSet attrs) {
+    public ContentLayout(Context context, AttributeSet attrs) {
         super(context, attrs);
     }
 
-    public ContentLayout(@NonNull Context context, @Nullable AttributeSet attrs, @AttrRes int defStyleAttr) {
+    public ContentLayout(Context context, AttributeSet attrs, int defStyleAttr) {
         super(context, attrs, defStyleAttr);
     }
 

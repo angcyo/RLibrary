@@ -178,7 +178,7 @@ public class UILayoutImpl extends SwipeBackLayout implements ILayout<UIParam>, U
         super(context);
         initLayout();
 
-        UIParam uiParam = new UIParam(false);
+        UIParam uiParam = new UIParam(false, false);
         final ViewPattern newViewPattern = startIViewInternal(iView, uiParam);
         startIViewAnim(mLastShowViewPattern, newViewPattern, uiParam, false);
     }
@@ -1057,7 +1057,11 @@ public class UILayoutImpl extends SwipeBackLayout implements ILayout<UIParam>, U
         topViewPattern.isAnimToEnd = false;
 
         if (!param.mAnim) {
-            endRunnable.run();
+            if (param.mAsync) {
+                post(endRunnable);
+            } else {
+                endRunnable.run();
+            }
             return;
         }
 
