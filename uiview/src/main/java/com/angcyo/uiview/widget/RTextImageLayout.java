@@ -92,17 +92,26 @@ public class RTextImageLayout extends ViewGroup {
             }
 
             ImageView imageView = null;
-            for (int i = 0; i < mImageViews.size(); i++) {
+            int imageCount = mImageViews.size();
+            for (int i = 0; i < imageCount; i++) {
                 imageView = mImageViews.get(i);
 
                 int widthSpec = imageSize[0];
                 if (widthSpec == -1) {
                     widthSpec = MeasureSpec.makeMeasureSpec(width - getPaddingStart() - getPaddingEnd(), MeasureSpec.EXACTLY);
                 }
-                imageView.measure(widthSpec, imageSize[1]);
+
+                if (imageCount == 1 && isVideo()) {
+                    /**视频采用 16:9 的比例显示*/
+                    int heightSpec = MeasureSpec.makeMeasureSpec((int) ((width - getPaddingStart() - getPaddingEnd()) * 9f / 16f),
+                            MeasureSpec.EXACTLY);
+                    imageView.measure(widthSpec, heightSpec);
+                } else {
+                    imageView.measure(widthSpec, imageSize[1]);
+                }
             }
 
-            if (mImageViews.size() == 1) {
+            if (imageCount == 1) {
                 if (mTextView == null) {
                     setMeasuredDimension(width, getPaddingTop() + getPaddingBottom() + imageView.getMeasuredHeight());
                 } else {
@@ -117,7 +126,7 @@ public class RTextImageLayout extends ViewGroup {
                         setMeasuredDimension(width, getPaddingTop() + getPaddingBottom() + Math.max(mTextView.getMeasuredHeight(), imageView.getMeasuredHeight()));
                     }
                 }
-            } else if (mImageViews.size() > 1) {
+            } else if (imageCount > 1) {
                 if (mTextView == null) {
                     setMeasuredDimension(width, getPaddingTop() + getPaddingBottom() + imageView.getMeasuredHeight());
                 } else {
