@@ -20,8 +20,13 @@ public class Root {
         if (folder == null) {
             folder = "";
         }
-        return Environment.getExternalStorageDirectory().getAbsoluteFile() +
-                File.separator + Root.APP_FOLDER + File.separator + folder;
+
+        File file = new File(Environment.getExternalStorageDirectory().getAbsoluteFile() +
+                File.separator + Root.APP_FOLDER + File.separator + folder);
+        if (!file.exists()) {
+            file.mkdirs();
+        }
+        return file.getAbsolutePath();
     }
 
     /**
