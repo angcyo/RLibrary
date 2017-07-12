@@ -21,6 +21,7 @@ import android.os.Build;
 import android.support.annotation.DrawableRes;
 import android.support.annotation.RequiresApi;
 import android.support.v4.content.ContextCompat;
+import android.support.v4.graphics.drawable.DrawableCompat;
 import android.support.v4.view.ViewCompat;
 import android.util.TypedValue;
 import android.view.View;
@@ -59,8 +60,20 @@ public class ResUtil {
         return spToPx(context.getResources(), sp);
     }
 
+    /**
+     * 颜色过滤
+     */
     public static void colorFilter(Drawable drawable, int color) {
         drawable.mutate().setColorFilter(color, PorterDuff.Mode.MULTIPLY);
+    }
+
+    /**
+     * tint颜色
+     */
+    public static Drawable tintDrawable(Drawable drawable, int color) {
+        Drawable wrappedDrawable = DrawableCompat.wrap(drawable).mutate();
+        DrawableCompat.setTint(wrappedDrawable, color);
+        return wrappedDrawable;
     }
 
     /**
