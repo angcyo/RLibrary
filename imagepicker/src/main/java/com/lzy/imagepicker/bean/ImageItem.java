@@ -18,20 +18,21 @@ import java.io.Serializable;
 public class ImageItem implements Serializable {
 
     public String name;       //图片的名字
-    public String path;       //图片的路径
+    public String path;       //路径
     public String thumbPath;  //图片的占位路径
     public String url;        //图片的网络地址
     public Drawable placeholderDrawable; //第一次需要显示的占位图
-    public long size;         //图片的大小
-    public int width;         //图片的宽度
-    public int height;        //图片的高度
-    public String mimeType;   //图片的类型
-    public long addTime;      //图片的创建时间
+    public long size;         //大小
+    public int width;         //宽度
+    public int height;        //高度
+    public String mimeType;   //类型
+    public long addTime;      //创建时间
 
     //星期二 2017-6-13 支持扫描视频文件
     public long videoDuration = -1;//视频时长
     public String videoThumbPath = "";//
     public String resolution;// width x height or height x width
+    public int videoRotation = 0;//视频的宽高,已通过旋转方向自动调整了
 
     @ImageDataSource.LoaderType
     public int loadType;

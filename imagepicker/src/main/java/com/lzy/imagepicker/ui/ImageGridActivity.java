@@ -335,8 +335,8 @@ public class ImageGridActivity extends ImageBaseActivity implements ImageDataSou
                 try {
                     retriever.setDataSource(this, Uri.fromFile(new File(imageItem.path)));
                     time = retriever.extractMetadata(MediaMetadataRetriever.METADATA_KEY_DURATION);
-                    width = Integer.parseInt(retriever.extractMetadata(MediaMetadataRetriever.METADATA_KEY_VIDEO_HEIGHT));
-                    height = Integer.parseInt(retriever.extractMetadata(MediaMetadataRetriever.METADATA_KEY_VIDEO_WIDTH));
+                    height = Integer.parseInt(retriever.extractMetadata(MediaMetadataRetriever.METADATA_KEY_VIDEO_HEIGHT));
+                    width = Integer.parseInt(retriever.extractMetadata(MediaMetadataRetriever.METADATA_KEY_VIDEO_WIDTH));
                 } finally {
                     try {
                         retriever.release();
@@ -350,7 +350,7 @@ public class ImageGridActivity extends ImageBaseActivity implements ImageDataSou
                 imageItem.videoDuration = timeInMillisec;
                 imageItem.width = width;
                 imageItem.height = height;
-                imageItem.resolution = height + "x" + width;
+                imageItem.resolution = width + "x" + height;
 
                 imagePicker.getSelectedImages().add(imageItem);
 

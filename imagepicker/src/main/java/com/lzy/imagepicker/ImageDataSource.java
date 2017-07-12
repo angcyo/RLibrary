@@ -2,6 +2,7 @@ package com.lzy.imagepicker;
 
 import android.content.ContentResolver;
 import android.database.Cursor;
+import android.media.MediaMetadataRetriever;
 import android.os.Bundle;
 import android.provider.MediaStore;
 import android.support.annotation.IntDef;
@@ -144,13 +145,23 @@ public class ImageDataSource implements LoaderManager.LoaderCallbacks<Cursor> {
         imageFolders.clear();
         if (data != null) {
             ArrayList<ImageItem> allImages = new ArrayList<>();   //所有图片的集合,不分文件夹
+
+            MediaMetadataRetriever mediaMetadataRetriever = new MediaMetadataRetriever();
             while (data.moveToNext()) {
                 if (mLoaderType == IMAGE) {
                     loadImage(data, allImages);
                 } else if (mLoaderType == VIDEO) {
-                    loadVideo(data, allImages);
+                    loadVideo(data, allImages, mediaMetadataRetriever);
                 }
             }
+
+            try {
+                mediaMetadataRetriever.release();
+            } catch (Exception e) {
+
+            }
+
+
             //防止没有图片报异常
             if (data.getCount() > 0) {
                 //构造所有图片的集合
@@ -218,7 +229,7 @@ public class ImageDataSource implements LoaderManager.LoaderCallbacks<Cursor> {
         }
     }
 
-    private void loadVideo(Cursor data, ArrayList<ImageItem> allImages) {
+    private void loadVideo(Cursor data, ArrayList<ImageItem> allImages, MediaMetadataRetriever mediaMetadataRetriever) {
         //查询数据
         String imageName = data.getString(data.getColumnIndexOrThrow(VIDEO_PROJECTION[0]));
         String imagePath = data.getString(data.getColumnIndexOrThrow(VIDEO_PROJECTION[1]));
@@ -261,12 +272,36 @@ public class ImageDataSource implements LoaderManager.LoaderCallbacks<Cursor> {
         //imageItem.placeholderDrawable = ContextCompat.getDrawable(activity, R.drawable.image_placeholder_shape);
 
         try {
-            String[] split = resolution.split("x");
-            imageItem.width = Integer.parseInt(split[0]);
-            imageItem.height = Integer.parseInt(split[1]);
+            mediaMetadataRetriever.setDataSource(imagePath);
+            imageItem.videoRotation = Integer.parseInt(mediaMetadataRetriever
+                    .extractMetadata(MediaMetadataRetriever.METADATA_KEY_VIDEO_ROTATION));
+            if (imageWidth == 0) {
+                imageWidth = Integer.parseInt(mediaMetadataRetriever
+                        .extractMetadata(MediaMetadataRetriever.METADATA_KEY_VIDEO_WIDTH));
+                imageItem.width = imageWidth;
+            }
+            if (imageHeight == 0) {
+                imageHeight = Integer.parseInt(mediaMetadataRetriever
+                        .extractMetadata(MediaMetadataRetriever.METADATA_KEY_VIDEO_HEIGHT));
+                imageItem.height = imageHeight;
+            }
+
         } catch (Exception e) {
-            e.printStackTrace();
+
         }
+
+        if (imageItem.videoRotation == 90 || imageItem.videoRotation == 270) {
+            imageItem.width = imageHeight;
+            imageItem.height = imageWidth;
+        }
+
+//        try {
+//            String[] split = resolution.split("x");
+//            imageItem.width = Integer.parseInt(split[0]);
+//            imageItem.height = Integer.parseInt(split[1]);
+//        } catch (Exception e) {
+//            e.printStackTrace();
+//        }
 
         allImages.add(imageItem);
         //根据父路径分类存放图片
