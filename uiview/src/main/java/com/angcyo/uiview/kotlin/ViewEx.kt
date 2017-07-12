@@ -29,6 +29,11 @@ public fun View.getDrawCenterTextCy(paint: Paint): Float {
     return paddingTop + rawHeight / 2 - paint.descent() / 2 - paint.ascent() / 2
 }
 
+public fun View.getDrawCenterTextCx(paint: Paint, text: String): Float {
+    val rawWidth = measuredWidth - paddingLeft - paddingRight
+    return paddingLeft + rawWidth / 2 - paint.measureText(text) / 2
+}
+
 public fun View.getDrawCenterCy(): Float {
     val rawHeight = measuredHeight - paddingTop - paddingBottom
     return (paddingTop + rawHeight / 2).toFloat()

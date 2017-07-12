@@ -20,6 +20,7 @@
     <!--progress bar-->
     <!--进度颜色-->
     <attr name="r_progress_color" format="color"/>
+    <attr name="r_progress_bg_color" format="color"/>
     <!--进度背景颜色-->
     <attr name="r_back_color" format="color"/>
     <!--进度宽度-->
@@ -74,6 +75,17 @@
         <attr name="r_progress_width"/>
         <attr name="r_show_text"/>
         <attr name="r_jump_time" format="integer"/>
+    </declare-styleable>
+
+    <declare-styleable name="SimpleProgressBar">
+        <attr name="r_progress_bg_color"/>
+        <attr name="r_progress_text_color" format="color"/>
+        <attr name="r_progress_text_size" format="dimension"/>
+        <attr name="r_progress_width"/>
+        <attr name="r_progress_style" format="enum">
+            <enum name="RECT" value="1"/>
+            <enum name="CIRCLE" value="2"/>
+        </attr>
     </declare-styleable>
 
     <declare-styleable name="RNineImageLayout">

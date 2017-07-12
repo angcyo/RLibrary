@@ -3,15 +3,18 @@ package com.angcyo.uiview.widget;
 import android.animation.ArgbEvaluator;
 import android.animation.ValueAnimator;
 import android.content.Context;
+import android.content.res.TypedArray;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
-import android.graphics.Rect;
+import android.graphics.RectF;
 import android.support.v4.view.ViewCompat;
 import android.util.AttributeSet;
 import android.view.View;
 import android.view.animation.LinearInterpolator;
 
+import com.angcyo.uiview.R;
+import com.angcyo.uiview.kotlin.ViewExKt;
 import com.angcyo.uiview.skin.SkinHelper;
 
 
@@ -27,13 +30,22 @@ import com.angcyo.uiview.skin.SkinHelper;
  * Version: 1.0.0
  */
 public class SimpleProgressBar extends View {
+    public static final int STYLE_RECT = 1;//矩形进度条
+    public static final int STYLE_CIRCLE = 2;//圆形进度条
+
+    /**
+     * 进度条样式
+     */
+    int mProgressStyle = STYLE_RECT;
 
     int mProgress = 0;//当前的进度
 
-    int mProgressColor;
+    int mProgressColor, mProgressBgColor, mProgressWidth, mProgressTextColor;
+
+    float mProgressTextSize;
 
     Paint mPaint;
-    Rect mRect;
+    RectF mRect;
 
     boolean autoHide = true;
 
@@ -45,13 +57,32 @@ public class SimpleProgressBar extends View {
     private ValueAnimator mColorAnimator;
 
     public SimpleProgressBar(Context context) {
-        super(context);
-        init();
+        this(context, null);
     }
 
     public SimpleProgressBar(Context context, AttributeSet attrs) {
         super(context, attrs);
+
+        mProgressWidth = (int) (getDensity() * 3);
+        mProgressBgColor = Color.parseColor("#40000000");
+        mProgressTextSize = 12 * getResources().getDisplayMetrics().scaledDensity;
+
+        mProgressTextColor = Color.WHITE;
+
+        TypedArray typedArray = context.obtainStyledAttributes(attrs, R.styleable.SimpleProgressBar);
+        mProgressWidth = typedArray.getDimensionPixelOffset(R.styleable.SimpleProgressBar_r_progress_width, mProgressWidth);
+        mProgressTextSize = typedArray.getDimensionPixelOffset(R.styleable.SimpleProgressBar_r_progress_text_size, (int) mProgressTextSize);
+        mProgressBgColor = typedArray.getColor(R.styleable.SimpleProgressBar_r_progress_bg_color, mProgressBgColor);
+        mProgressTextColor = typedArray.getColor(R.styleable.SimpleProgressBar_r_progress_text_color, mProgressTextColor);
+        mProgressStyle = typedArray.getInt(R.styleable.SimpleProgressBar_r_progress_style, STYLE_RECT);
+
+        typedArray.recycle();
+
         init();
+    }
+
+    public float getDensity() {
+        return getResources().getDisplayMetrics().density;
     }
 
     private void init() {
@@ -63,8 +94,7 @@ public class SimpleProgressBar extends View {
         }
         mPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
         mPaint.setColor(mProgressColor);
-        mPaint.setStyle(Paint.Style.FILL);
-        mRect = new Rect();
+        mRect = new RectF();
     }
 
     public void setProgress(int progress) {
@@ -115,12 +145,27 @@ public class SimpleProgressBar extends View {
     @Override
     protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
         //super.onMeasure(widthMeasureSpec, heightMeasureSpec);
+        final int widthMode = MeasureSpec.getMode(widthMeasureSpec);
         final int heightMode = MeasureSpec.getMode(heightMeasureSpec);
         int width = MeasureSpec.getSize(widthMeasureSpec);
         int height = MeasureSpec.getSize(heightMeasureSpec);
-        if (heightMode == MeasureSpec.AT_MOST || heightMode== MeasureSpec.UNSPECIFIED) {
-            height = (int) (getResources().getDisplayMetrics().density * 4);
+
+        if (heightMode == MeasureSpec.AT_MOST || heightMode == MeasureSpec.UNSPECIFIED) {
+            if (mProgressStyle == STYLE_RECT) {
+                height = (int) (getDensity() * 4);
+            } else {
+                height = (int) (getDensity() * 30);
+            }
         }
+
+        if (widthMode == MeasureSpec.AT_MOST || widthMode == MeasureSpec.UNSPECIFIED) {
+            if (mProgressStyle == STYLE_RECT) {
+                width = (int) (getDensity() * 100);
+            } else {
+                width = (int) (getDensity() * 30);
+            }
+        }
+
         setMeasuredDimension(width, height);
     }
 
@@ -128,15 +173,49 @@ public class SimpleProgressBar extends View {
     protected void onSizeChanged(int w, int h, int oldw, int oldh) {
         super.onSizeChanged(w, h, oldw, oldh);
         mRect.set(0, 0, w, h);
+        if (mProgressStyle == STYLE_CIRCLE) {
+            mRect.inset(mProgressWidth, mProgressWidth);
+        }
     }
 
     @Override
     protected void onDraw(Canvas canvas) {
-        if (incertitudeProgress) {
-            mPaint.setColor(drawColor);
-            canvas.drawRect(0, 0, mRect.width(), mRect.height(), mPaint);
+        if (mProgressStyle == STYLE_RECT) {
+            mPaint.setStyle(Paint.Style.FILL);
+            if (incertitudeProgress) {
+                mPaint.setColor(drawColor);
+                canvas.drawRect(0, 0, mRect.width(), mRect.height(), mPaint);
+            } else {
+                mPaint.setColor(mProgressColor);
+                canvas.drawRect(0, 0, mRect.width() * (mProgress / 100f), mRect.height(), mPaint);
+            }
         } else {
-            canvas.drawRect(0, 0, mRect.width() * (mProgress / 100f), mRect.height(), mPaint);
+            mPaint.setStyle(Paint.Style.STROKE);
+
+            mPaint.setColor(mProgressBgColor);
+            mPaint.setStrokeWidth(mProgressWidth);
+            canvas.drawArc(mRect, 0f, 360f, false, mPaint);
+
+            if (incertitudeProgress) {
+                mPaint.setColor(drawColor);
+
+                canvas.drawArc(mRect, 0f, 360f, false, mPaint);
+            } else {
+                mPaint.setColor(mProgressColor);
+                mPaint.setStrokeWidth(mProgressWidth + .2f);
+                canvas.drawArc(mRect, -90f, 360 * mProgress / 100f, false, mPaint);
+            }
+
+            //绘制进度文本
+            mPaint.setStyle(Paint.Style.FILL_AND_STROKE);
+            mPaint.setTextSize(mProgressTextSize);
+            mPaint.setColor(mProgressTextColor);
+            mPaint.setStrokeWidth(1);
+            String text = mProgress + "%";
+            canvas.drawText(text,
+                    ViewExKt.getDrawCenterTextCx(this, mPaint, text),
+                    ViewExKt.getDrawCenterTextCy(this, mPaint),
+                    mPaint);
         }
     }
 
