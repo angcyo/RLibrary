@@ -139,7 +139,7 @@ open class GlideImageView(context: Context, attributeSet: AttributeSet? = null) 
                 }
 
                 override fun onImageType(imageUrl: String, imageType: Ok.ImageType) {
-                    if (!url.contains(getTag(R.id.tag_url).toString())) {
+                    if (!imageUrl.contains(getTag(R.id.tag_url).toString())) {
                         return
                     }
 
