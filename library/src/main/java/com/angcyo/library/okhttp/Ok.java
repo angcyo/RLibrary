@@ -78,7 +78,7 @@ public class Ok {
     public void type(final String url, final OnImageTypeListener listener) {
         if (TextUtils.isEmpty(url)) {
             if (listener != null) {
-                listener.onImageType(ImageType.UNKNOWN);
+                listener.onImageType(url, ImageType.UNKNOWN);
             }
             return;
         }
@@ -115,12 +115,12 @@ public class Ok {
             }
         } else {
             if (listener != null) {
-                listener.onImageType(type);
+                listener.onImageType(url, type);
             }
         }
     }
 
-    private void typeCheckEnd(String url, String imageType, final OnImageTypeListener listener) {
+    private void typeCheckEnd(final String url, String imageType, final OnImageTypeListener listener) {
         final ImageType imageType1 = ImageType.of(imageType);
         imageTypeCache.put(url, imageType1);
         if (listener != null) {
@@ -128,7 +128,7 @@ public class Ok {
                 @Override
                 public void run() {
                     if (listener != null) {
-                        listener.onImageType(imageType1);
+                        listener.onImageType(url, imageType1);
                     }
                 }
             });
@@ -159,7 +159,7 @@ public class Ok {
     }
 
     public interface OnImageTypeListener {
-        void onImageType(ImageType imageType);
+        void onImageType(String imageUrl, ImageType imageType);
 
         void onLoadStart();
     }

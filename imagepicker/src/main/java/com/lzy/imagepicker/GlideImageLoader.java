@@ -59,21 +59,21 @@ public class GlideImageLoader implements ImageLoader {
         } else {
             Ok.instance().type(url, new Ok.OnImageTypeListener() {
                 @Override
-                public void onImageType(Ok.ImageType imageType) {
-                    L.v("call: onImageType([imageType])-> " + url + " : " + imageType);
+                public void onImageType(String imageUrl, Ok.ImageType imageType) {
+                    L.v("call: onImageType([imageType])-> " + imageUrl + " : " + imageType);
 
                     if (imageType != Ok.ImageType.UNKNOWN) {
                         if (imageType == Ok.ImageType.GIF) {
                             //imageView.setScaleType(ImageView.ScaleType.FIT_XY);
                             GifRequestBuilder<String> requestBuilder = Glide.with(imageView.getContext())
-                                    .load(url)
+                                    .load(imageUrl)
                                     .asGif()
                                     .diskCacheStrategy(DiskCacheStrategy.SOURCE);
                             requestBuilder.placeholder(placeholderDrawable);
                             requestBuilder.into(imageView);
                         } else {
                             final DrawableRequestBuilder<String> drawableRequestBuilder = Glide.with(imageView.getContext())
-                                    .load(url)
+                                    .load(imageUrl)
                                     .diskCacheStrategy(DiskCacheStrategy.ALL);
 
                             drawableRequestBuilder.placeholder(placeholderDrawable);
@@ -151,21 +151,21 @@ public class GlideImageLoader implements ImageLoader {
         } else {
             Ok.instance().type(url, new Ok.OnImageTypeListener() {
                 @Override
-                public void onImageType(Ok.ImageType imageType) {
-                    L.d("call: onImageType([imageType])-> " + url + " : " + imageType);
+                public void onImageType(String imageUrl, Ok.ImageType imageType) {
+                    L.d("call: onImageType([imageType])-> " + imageUrl + " : " + imageType);
 
                     if (imageType != Ok.ImageType.UNKNOWN) {
                         if (imageType == Ok.ImageType.GIF) {
                             //imageView.setScaleType(ImageView.ScaleType.FIT_XY);
                             Glide.with(imageView.getContext())
-                                    .load(url)
+                                    .load(imageUrl)
                                     .asGif()
                                     .placeholder(R.mipmap.base_zhanweitu_klg)
                                     .diskCacheStrategy(DiskCacheStrategy.SOURCE)
                                     .into(imageView);
                         } else {
                             final DrawableRequestBuilder<String> drawableRequestBuilder = Glide.with(activity)                             //配置上下文
-                                    .load(url)                                       //设置图片路径(fix #8,文件名包含%符号 无法识别和显示)
+                                    .load(imageUrl)                                       //设置图片路径(fix #8,文件名包含%符号 无法识别和显示)
                                     //.error(R.mipmap.default_image)                    //设置错误图片
                                     //.fitCenter()
                                     //.centerCrop()

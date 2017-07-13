@@ -138,7 +138,7 @@ open class GlideImageView(context: Context, attributeSet: AttributeSet? = null) 
                     this@GlideImageView.setImageResource(placeholderRes)
                 }
 
-                override fun onImageType(imageType: Ok.ImageType) {
+                override fun onImageType(imageUrl: String, imageType: Ok.ImageType) {
                     if (!url.contains(getTag(R.id.tag_url).toString())) {
                         return
                     }
@@ -151,13 +151,13 @@ open class GlideImageView(context: Context, attributeSet: AttributeSet? = null) 
 
                     if (imageType == Ok.ImageType.GIF) {
                         if (showGifImage) {
-                            loadGifUrl(url)
+                            loadGifUrl(imageUrl)
                         } else {
                             setShowGifTip(true)
-                            loadJpegUrl(url)
+                            loadJpegUrl(imageUrl)
                         }
                     } else {
-                        loadUrl(url)
+                        loadUrl(imageUrl)
                     }
                 }
             })

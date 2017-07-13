@@ -271,8 +271,11 @@ public class ImagePageAdapter extends PagerAdapter {
 
         Ok.instance().type(imageItem.url, new Ok.OnImageTypeListener() {
             @Override
-            public void onImageType(Ok.ImageType imageType) {
+            public void onImageType(String imageUrl, Ok.ImageType imageType) {
                 L.e("call: onImageType([imageType])-> " + imageItem.url + " : " + imageType);
+
+//                if (!imageUrl.contains(imageView.getTag())) {
+//                }
 
                 if (imageType != Ok.ImageType.UNKNOWN) {
                     if (imageType == Ok.ImageType.GIF) {
