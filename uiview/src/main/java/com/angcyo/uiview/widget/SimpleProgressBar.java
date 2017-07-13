@@ -74,7 +74,7 @@ public class SimpleProgressBar extends View {
         mProgressTextSize = typedArray.getDimensionPixelOffset(R.styleable.SimpleProgressBar_r_progress_text_size, (int) mProgressTextSize);
         mProgressBgColor = typedArray.getColor(R.styleable.SimpleProgressBar_r_progress_bg_color, mProgressBgColor);
         mProgressTextColor = typedArray.getColor(R.styleable.SimpleProgressBar_r_progress_text_color, mProgressTextColor);
-        mProgressStyle = typedArray.getInt(R.styleable.SimpleProgressBar_r_progress_style, STYLE_RECT);
+        setProgressStyle(typedArray.getInt(R.styleable.SimpleProgressBar_r_progress_style, STYLE_RECT));
 
         typedArray.recycle();
 
@@ -248,5 +248,30 @@ public class SimpleProgressBar extends View {
             mColorAnimator.setRepeatMode(ValueAnimator.REVERSE);
         }
         mColorAnimator.start();
+    }
+
+    public void setProgressStyle(int progressStyle) {
+        mProgressStyle = progressStyle;
+        if (mProgressStyle == STYLE_CIRCLE) {
+            autoHide = false;
+        } else {
+            autoHide = true;
+        }
+    }
+
+    public void setProgressBgColor(int progressBgColor) {
+        mProgressBgColor = progressBgColor;
+    }
+
+    public void setProgressWidth(int progressWidth) {
+        mProgressWidth = progressWidth;
+    }
+
+    public void setProgressTextColor(int progressTextColor) {
+        mProgressTextColor = progressTextColor;
+    }
+
+    public void setProgressTextSize(float progressTextSize) {
+        mProgressTextSize = progressTextSize;
     }
 }
