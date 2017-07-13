@@ -26,6 +26,7 @@
         android:layout_gravity="center_horizontal"
         android:paddingTop="@dimen/base_ldpi"
         android:textColor="@color/base_white"
+        android:textSize="@dimen/default_text_size9"
         tolls:text="正在处理中..."/>
 
 </LinearLayout>

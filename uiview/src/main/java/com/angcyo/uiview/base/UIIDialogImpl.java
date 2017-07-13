@@ -13,6 +13,7 @@ import android.widget.FrameLayout;
 
 import com.angcyo.uiview.container.ILayout;
 import com.angcyo.uiview.container.UILayoutImpl;
+import com.angcyo.uiview.container.UIParam;
 import com.angcyo.uiview.view.UIIViewImpl;
 import com.angcyo.uiview.widget.SoftRelativeLayout;
 
@@ -198,8 +199,16 @@ public abstract class UIIDialogImpl extends UIIViewImpl {
     /**
      * 结束对话框
      */
-    protected void finishDialog() {
-        mILayout.finishIView(this);
+    public void finishDialog() {
+        setCanCancel(true);
+        //mILayout.finishIView(this);
+        mILayout.finishIView(this, new UIParam(true, true, false));
+    }
+
+    @Override
+    public void finishIView() {
+        //super.finishIView();
+        finishDialog();
     }
 
     @Override

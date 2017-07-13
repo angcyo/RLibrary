@@ -30,6 +30,7 @@ import android.view.animation.TranslateAnimation;
 import android.widget.FrameLayout;
 
 import com.angcyo.library.utils.L;
+import com.angcyo.uiview.RApplication;
 import com.angcyo.uiview.base.UILayoutActivity;
 import com.angcyo.uiview.container.ILayout;
 import com.angcyo.uiview.container.UILayoutImpl;
@@ -593,6 +594,9 @@ public abstract class UIIViewImpl implements IView {
     }
 
     public Resources getResources() {
+        if (mActivity == null) {
+            return RApplication.getApp().getResources();
+        }
         return mActivity.getResources();
     }
 
