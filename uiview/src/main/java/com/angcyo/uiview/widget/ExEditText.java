@@ -87,7 +87,24 @@ public class ExEditText extends AppCompatEditText {
      * 是否激活@功能, 当调用{@link #setOnMentionInputListener(OnMentionInputListener)}后, 自动激活
      */
     private boolean enableMention = false;
+    private boolean enableCallback = true;
+
     private RTextPaint mTextPaint;
+
+    public boolean unableCallback() {
+        enableCallback = false;
+        return enableCallback;
+    }
+
+    public boolean enableCallback() {
+        enableCallback = true;
+        return enableCallback;
+    }
+
+    public void setEnableMention(boolean enableMention) {
+        this.enableMention = enableMention;
+    }
+
     private String mLeftString;
     /**
      * 自动提示的文本
@@ -1140,6 +1157,9 @@ public class ExEditText extends AppCompatEditText {
 
         @Override
         public void onTextChanged(CharSequence charSequence, int index, int i1, int count) {
+            if (!enableCallback) {
+                return;
+            }
             if (count == 1 && !TextUtils.isEmpty(charSequence)) {
                 char mentionChar = charSequence.toString().charAt(index);
                 if ('@' == mentionChar && mOnMentionInputListener != null) {

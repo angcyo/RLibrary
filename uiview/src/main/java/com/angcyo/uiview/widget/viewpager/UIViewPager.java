@@ -96,6 +96,7 @@ public class UIViewPager extends ViewPager implements Runnable, StickLayout.CanS
         post(new Runnable() {
             @Override
             public void run() {
+                lastItem = -1;
                 checkPageChanged();
             }
         });
