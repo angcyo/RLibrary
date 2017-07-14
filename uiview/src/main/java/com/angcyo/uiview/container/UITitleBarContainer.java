@@ -453,4 +453,30 @@ public class UITitleBarContainer extends FrameLayout {
             return density * 40f;
         }
     }
+
+    public void hide(boolean anim) {
+        if (getTranslationY() == 0) {
+            //已经是显示状态
+            if (anim) {
+                animate().setDuration(300)
+                        .translationY(-getMeasuredHeight())
+                        .start();
+            } else {
+                ViewCompat.setTranslationY(this, -getMeasuredHeight());
+            }
+        }
+    }
+
+    public void show(boolean anim) {
+        if (getTranslationY() == -getMeasuredHeight()) {
+            //已经是显示状态
+            if (anim) {
+                animate().setDuration(300)
+                        .translationY(0)
+                        .start();
+            } else {
+                ViewCompat.setTranslationY(this, 0);
+            }
+        }
+    }
 }
