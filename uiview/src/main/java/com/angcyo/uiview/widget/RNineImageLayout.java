@@ -250,7 +250,9 @@ public class RNineImageLayout extends RelativeLayout implements View.OnClickList
             }
         }
 
-        displayImage();
+        if (getMeasuredHeight() != 0 && getMeasuredWidth() != 0) {
+            displayImage();
+        }
 
 //        if (oldSize == newSize) {
 //            displayImage();

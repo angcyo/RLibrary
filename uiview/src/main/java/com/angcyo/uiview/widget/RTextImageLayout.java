@@ -302,7 +302,9 @@ public class RTextImageLayout extends ViewGroup {
             return;
         }
 
-        notifyLoadImage();
+        if (getMeasuredHeight() != 0 && getMeasuredWidth() != 0) {
+            notifyLoadImage();
+        }
 
 //        if (imageViewSize == newImageViewSize ||
 //                (imageViewSize >= MAX_IMAGE_SIZE && newImageViewSize >= MAX_IMAGE_SIZE)) {

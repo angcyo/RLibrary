@@ -700,7 +700,7 @@ public abstract class UIBaseView extends UIIViewImpl {
     public void onSkinChanged(ISkin skin) {
         super.onSkinChanged(skin);
         if (mUITitleBarContainer != null) {
-            mUITitleBarContainer.setBackgroundColor(skin.getThemeColor());
+            mUITitleBarContainer.setBackgroundColor(getTitleBarBGColor());
         }
     }
 
