@@ -118,7 +118,7 @@ open class UIVideoView : UIContentView() {
 
             if (autoPlay) {
                 videoView.start()
-                postDelayed(100L) {
+                postDelayed(200L) {
                     videoView.pause()
                 }
             }
