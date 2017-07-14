@@ -138,6 +138,11 @@ public class RImageView extends AppCompatImageView {
                 Rect bounds = drawable.getBounds();
                 int width = bounds.width();
                 int height = bounds.height();
+
+                if (width == 0 || height == 0) {
+                    return drawable;
+                }
+
                 Bitmap bitmap = Bitmap.createBitmap(width, height, Bitmap.Config.ARGB_8888);
                 Canvas canvas = new Canvas(bitmap);
                 drawable.draw(canvas);
