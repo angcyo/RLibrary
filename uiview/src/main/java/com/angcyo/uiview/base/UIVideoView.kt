@@ -111,15 +111,19 @@ open class UIVideoView : UIContentView() {
 
     override fun onViewShowFirst(bundle: Bundle?) {
         super.onViewShowFirst(bundle)
-        AnimUtil.startArgb(videoView, Color.BLACK, Color.TRANSPARENT, 200)
 
         videoPath?.let {
             videoView.setVideoPath(it)
 
-            if (autoPlay) {
-                videoView.start()
-                postDelayed(200L) {
-                    videoView.pause()
+            videoView.setOnPreparedListener {
+                if (autoPlay) {
+                    videoView.start()
+
+                    postDelayed(160L) {
+                        AnimUtil.startArgb(videoView, Color.BLACK, Color.TRANSPARENT, 160)
+                        videoView.pause()
+                        videoView.setOnPreparedListener { }
+                    }
                 }
             }
         }
