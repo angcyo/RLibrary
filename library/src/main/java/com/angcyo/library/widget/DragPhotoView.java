@@ -99,15 +99,12 @@ public class DragPhotoView extends PhotoView {
             int height = drawable.getIntrinsicHeight();
             if (width > 2000 || height > 2000) {
                 isLargeBitmap = true;
-
-                setMaximumScale(8f);
-                setMediumScale(6f);
+                setScaleLevels(1f, 4.6f, 8f);
             }
         }
 
         if (!isLargeBitmap) {
-            setMaximumScale(3.0f);
-            setMediumScale(1.75f);
+            setScaleLevels(1f, 1.75f, 3f);
         }
     }
 
