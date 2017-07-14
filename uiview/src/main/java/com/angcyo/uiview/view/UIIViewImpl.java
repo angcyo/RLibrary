@@ -41,6 +41,8 @@ import com.angcyo.uiview.recycler.RRecyclerView;
 import com.angcyo.uiview.resources.AnimUtil;
 import com.angcyo.uiview.resources.ResUtil;
 import com.angcyo.uiview.skin.ISkin;
+import com.angcyo.uiview.utils.RUtils;
+import com.angcyo.uiview.utils.ThreadExecutor;
 import com.angcyo.uiview.widget.viewpager.UIViewPager;
 
 import java.util.ArrayList;
@@ -773,6 +775,24 @@ public abstract class UIIViewImpl implements IView {
                 window.addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
             } else {
                 window.clearFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
+            }
+        }
+    }
+
+    /**
+     * 强制主线程执行
+     */
+    public void runOnUiThread(Runnable runnable) {
+        if (runnable == null) {
+            return;
+        }
+        if (RUtils.isMainThread()) {
+            runnable.run();
+        } else {
+            if (mActivity == null) {
+                ThreadExecutor.instance().onMain(runnable);
+            } else {
+                mActivity.runOnUiThread(runnable);
             }
         }
     }
