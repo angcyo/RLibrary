@@ -3,6 +3,7 @@ package com.angcyo.uiview.base
 import android.view.LayoutInflater
 import com.angcyo.uiview.container.ContentLayout
 import com.angcyo.uiview.recycler.RBaseViewHolder
+import com.angcyo.uiview.view.UIIViewImpl
 
 /**
  * Copyright (C) 2016,深圳市红鸟网络科技股份有限公司 All rights reserved.
@@ -16,11 +17,11 @@ import com.angcyo.uiview.recycler.RBaseViewHolder
  * Version: 1.0.0
  */
 abstract class UIViewConfig {
-    open fun inflateContentLayout(uiview: UIBaseView, baseContentLayout: ContentLayout?, inflater: LayoutInflater?) {
+    open fun inflateContentLayout(uiview: UIIViewImpl, baseContentLayout: ContentLayout?, inflater: LayoutInflater?) {
 
     }
 
-    open fun initOnShowContentLayout(uiview: UIBaseView, viewHolder: RBaseViewHolder) {
+    open fun initOnShowContentLayout(uiview: UIIViewImpl, viewHolder: RBaseViewHolder) {
 
     }
 }

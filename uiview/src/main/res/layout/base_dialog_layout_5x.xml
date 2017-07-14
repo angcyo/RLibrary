@@ -47,6 +47,16 @@
         tools:background="@android:color/holo_red_dark">
 
         <TextView
+            android:id="@+id/base_dialog_ex_view"
+            style="@style/BaseButtonStyle"
+            android:layout_marginEnd="@dimen/base_xhdpi"
+            android:background="@drawable/base_round_bg_selector_5x"
+            android:textColor="@color/default_base_border"
+            android:visibility="gone"
+            tools:text="@string/base_cancel"
+            tools:textColor="@android:color/white"/>
+
+        <TextView
             android:id="@+id/base_dialog_cancel_view"
             style="@style/BaseButtonStyle"
             android:layout_marginEnd="@dimen/base_xhdpi"

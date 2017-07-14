@@ -886,6 +886,25 @@ public class RUtils {
         return builder.toString();
     }
 
+    /**
+     * 分享文件
+     */
+    public static void shareFile(Activity activity, String filePath) {
+        Intent share = new Intent(Intent.ACTION_SEND);
+        share.putExtra(Intent.EXTRA_STREAM,
+                Uri.fromFile(new File(filePath)));
+        share.setType("*/*");//此处可发送多种文件
+        activity.startActivity(Intent.createChooser(share, "发送给..."));
+    }
+
+    public static void shareText(Activity activity, final String title, final String text) {
+        Intent intent = new Intent(Intent.ACTION_SEND);
+        intent.setType("text/plain");
+        intent.putExtra(Intent.EXTRA_SUBJECT, "分享：" + title);
+        intent.putExtra(Intent.EXTRA_TEXT, title + " " + text);
+        activity.startActivity(Intent.createChooser(intent, "选择分享"));
+    }
+
     public enum ImageType {
         JPEG, GIF, PNG, BMP, UNKNOWN
     }

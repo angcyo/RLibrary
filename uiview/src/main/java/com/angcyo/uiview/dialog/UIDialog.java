@@ -11,6 +11,7 @@ import android.widget.TextView;
 import com.angcyo.uiview.R;
 import com.angcyo.uiview.RApplication;
 import com.angcyo.uiview.base.UIIDialogImpl;
+import com.angcyo.uiview.base.UIViewConfig;
 import com.angcyo.uiview.skin.SkinHelper;
 import com.angcyo.uiview.widget.SimpleProgressBar;
 
@@ -55,6 +56,8 @@ public class UIDialog extends UIIDialogImpl {
      */
     int progress = 0;
     private SimpleProgressBar mBaseProgressBar;
+
+    UIViewConfig mViewConfig;
 
     private UIDialog() {
         cancelText = RApplication.getApp().getString(R.string.base_cancel);
@@ -145,6 +148,11 @@ public class UIDialog extends UIIDialogImpl {
         return this;
     }
 
+    public UIDialog setViewConfig(UIViewConfig viewConfig) {
+        mViewConfig = viewConfig;
+        return this;
+    }
+
     @Override
     public void loadContentView(View rootView) {
         super.loadContentView(rootView);
@@ -232,7 +240,9 @@ public class UIDialog extends UIIDialogImpl {
 
         mBaseDialogOkView.setTextColor(SkinHelper.getSkin().getThemeSubColor());
 
-
+        if (mViewConfig != null) {
+            mViewConfig.initOnShowContentLayout(this, mViewHolder);
+        }
     }
 
     public UIDialog setProgress(int progress) {

@@ -46,6 +46,13 @@
         android:showDividers="middle">
 
         <TextView
+            android:id="@+id/base_dialog_ex_view"
+            style="@style/BaseAvgHTextStyle"
+            android:background="@drawable/base_left_button_round_selector"
+            android:visibility="gone"
+            tools:text="@string/base_cancel"/>
+
+        <TextView
             android:id="@+id/base_dialog_cancel_view"
             style="@style/BaseAvgHTextStyle"
             android:background="@drawable/base_left_button_round_selector"

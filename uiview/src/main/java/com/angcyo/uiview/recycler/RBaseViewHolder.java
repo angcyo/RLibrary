@@ -237,6 +237,19 @@ public class RBaseViewHolder extends RecyclerView.ViewHolder {
         }
     }
 
+    public void text(@IdRes int id, String text, View.OnClickListener listener) {
+        View view = v(id);
+        if (view != null) {
+            view.setVisibility(View.VISIBLE);
+
+            view.setOnClickListener(listener);
+
+            if (view instanceof TextView) {
+                ((TextView) view).setText(text);
+            }
+        }
+    }
+
     public View viewByName(String name) {
         View view = v(getIdByName(name, "id"));
         return view;

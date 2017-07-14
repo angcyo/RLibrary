@@ -22,14 +22,17 @@ import android.util.Log;
 import android.view.View;
 
 import com.angcyo.library.utils.L;
+import com.angcyo.uiview.base.UIViewConfig;
 import com.angcyo.uiview.container.ILayout;
 import com.angcyo.uiview.container.UILayoutImpl;
 import com.angcyo.uiview.dialog.UIDialog;
 import com.angcyo.uiview.github.utilcode.utils.ClipboardUtils;
 import com.angcyo.uiview.github.utilcode.utils.CmdUtil;
 import com.angcyo.uiview.github.utilcode.utils.FileUtils;
+import com.angcyo.uiview.recycler.RBaseViewHolder;
 import com.angcyo.uiview.utils.RUtils;
 import com.angcyo.uiview.utils.T_;
+import com.angcyo.uiview.view.UIIViewImpl;
 import com.orhanobut.hawk.Hawk;
 
 import java.io.BufferedReader;
@@ -521,6 +524,24 @@ public class RCrashHandler implements Thread.UncaughtExceptionHandler {
                             } catch (ActivityNotFoundException e) {
                                 e.printStackTrace();
                             }
+                        }
+                    })
+                    .setViewConfig(new UIViewConfig() {
+                        @Override
+                        public void initOnShowContentLayout(UIIViewImpl uiview, RBaseViewHolder viewHolder) {
+                            super.initOnShowContentLayout(uiview, viewHolder);
+                            viewHolder.text(R.id.base_dialog_ex_view, "分享文件", new View.OnClickListener() {
+                                @Override
+                                public void onClick(View v) {
+                                    try {
+                                        RUtils.shareFile(((Activity) iLayout.getLayout().getContext()),
+                                                Hawk.get(RCrashHandler.KEY_CRASH_FILE, "-"));
+                                    } catch (Exception e) {
+                                        e.printStackTrace();
+                                    }
+                                }
+                            });
+
                         }
                     })
                     .showDialog(iLayout);
