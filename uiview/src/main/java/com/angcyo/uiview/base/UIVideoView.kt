@@ -33,7 +33,9 @@ open class UIVideoView : UIContentView() {
     var videoPath: String? = null
 
     /**界面显示, 是否自动播放*/
-    var autoPlay = true
+    var autoPlay = false
+
+    var listener: OnVideoPlayListener? = null
 
     override fun getTitleBar(): TitleBarPattern {
         return super.getTitleBar()
@@ -85,6 +87,8 @@ open class UIVideoView : UIContentView() {
 
         uiTitleBarContainer.show(true)
         videoPlayView.visibility = View.VISIBLE
+
+        onPlayEnd()
     }
 
     fun playVideo() {
@@ -94,6 +98,16 @@ open class UIVideoView : UIContentView() {
 
         uiTitleBarContainer.hide(true)
         videoPlayView.visibility = View.INVISIBLE
+
+        onPlayStart()
+    }
+
+    open fun onPlayStart() {
+        listener?.onVideoPlayStart()
+    }
+
+    open fun onPlayEnd() {
+        listener?.onVideoPlayEnd()
     }
 
     private fun isPlaying(): Boolean {
@@ -116,13 +130,14 @@ open class UIVideoView : UIContentView() {
             videoView.setVideoPath(it)
 
             videoView.setOnPreparedListener {
-                if (autoPlay) {
-                    videoView.start()
+                videoView.start()
 
-                    postDelayed(160L) {
-                        AnimUtil.startArgb(videoView, Color.BLACK, Color.TRANSPARENT, 160)
+                postDelayed(160L) {
+                    AnimUtil.startArgb(videoView, Color.BLACK, Color.TRANSPARENT, 160)
+//                    videoView.setBackgroundColor(Color.TRANSPARENT)
+                    videoView.setOnPreparedListener { }
+                    if (!autoPlay) {
                         videoView.pause()
-                        videoView.setOnPreparedListener { }
                     }
                 }
             }
@@ -132,5 +147,10 @@ open class UIVideoView : UIContentView() {
     override fun onViewUnload() {
         super.onViewUnload()
         videoView.stopPlayback()
+    }
+
+    interface OnVideoPlayListener {
+        fun onVideoPlayStart()
+        fun onVideoPlayEnd()
     }
 }

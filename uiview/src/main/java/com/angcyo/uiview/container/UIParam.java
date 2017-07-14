@@ -46,6 +46,11 @@ public class UIParam {
      */
     public IView replaceIView;
 
+    /**
+     * IView unLoad 时回调
+     */
+    public Runnable unloadRunnable;
+
     public UIParam(boolean anim, boolean async, Bundle bundle) {
         mAnim = anim;
         mBundle = bundle;
@@ -114,6 +119,11 @@ public class UIParam {
 
     public UIParam setReplaceIView(IView replaceIView) {
         this.replaceIView = replaceIView;
+        return this;
+    }
+
+    public UIParam setUnloadRunnable(Runnable unloadRunnable) {
+        this.unloadRunnable = unloadRunnable;
         return this;
     }
 
