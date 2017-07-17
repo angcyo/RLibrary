@@ -3,7 +3,9 @@ package com.angcyo.uiview.viewgroup;
 import android.content.Context;
 import android.content.res.TypedArray;
 import android.graphics.Canvas;
+import android.graphics.drawable.ColorDrawable;
 import android.graphics.drawable.Drawable;
+import android.support.annotation.ColorInt;
 import android.support.annotation.Nullable;
 import android.util.AttributeSet;
 import android.widget.LinearLayout;
@@ -53,5 +55,13 @@ public class RLinearLayout extends LinearLayout {
             mBackgroundDrawable.draw(canvas);
         }
         super.draw(canvas);
+    }
+
+    public void setRBackgroundDrawable(@ColorInt int color) {
+        setRBackgroundDrawable(new ColorDrawable(color));
+    }
+
+    public void setRBackgroundDrawable(Drawable drawable) {
+        mBackgroundDrawable = drawable;
     }
 }

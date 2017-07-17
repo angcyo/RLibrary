@@ -84,4 +84,16 @@ public abstract class StyleActivity extends AppCompatActivity {
     protected boolean enableWindowAnim() {
         return false;
     }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        L.e(this.getClass().getSimpleName() + " call: onDestroy([])-> taskId:" + getTaskId());
+    }
+
+    @Override
+    public void onDetachedFromWindow() {
+        super.onDetachedFromWindow();
+        L.e(this.getClass().getSimpleName() + " call: onDetachedFromWindow([])-> taskId:" + getTaskId());
+    }
 }
