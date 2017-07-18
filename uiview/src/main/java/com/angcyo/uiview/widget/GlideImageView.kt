@@ -26,13 +26,15 @@ import java.io.File
  */
 open class GlideImageView(context: Context, attributeSet: AttributeSet? = null) : RImageView(context, attributeSet) {
     /**是否要检查Url的图片类型为Gif, 可以用来显示Gif指示图*/
-    var checkGif: Boolean = false
+    var checkGif = false
 
     /**强制url使用asGif的方式加载, 需要 checkGif=true*/
-    var showGifImage: Boolean = false
+    var showGifImage = false
 
     /**占位资源*/
     var placeholderRes: Int = R.drawable.base_image_placeholder_shape
+
+    var override = true
 
     /**需要加载的图片地址, 优先判断是否是本地File*/
     var url: String? = null
@@ -93,7 +95,7 @@ open class GlideImageView(context: Context, attributeSet: AttributeSet? = null) 
 
 
     private fun showGifFile(file: File) {
-        Glide.with(context)
+        val builder = Glide.with(context)
                 .load(file)
                 .asGif()
                 .placeholder(placeholderRes)
@@ -101,12 +103,21 @@ open class GlideImageView(context: Context, attributeSet: AttributeSet? = null) 
                 .diskCacheStrategy(DiskCacheStrategy.SOURCE)
                 .crossFade()
                 .priority(Priority.HIGH)
-                .override(measuredWidth, measuredHeight)
-                .into(this)
+        if (override) {
+            if (measuredWidth == 0 || measuredHeight == 0) {
+                post {
+                    showGifFile(file)
+                }
+            } else {
+                builder.override(measuredWidth, measuredHeight).into(this)
+            }
+        } else {
+            builder.into(this)
+        }
     }
 
     private fun showJpegFile(file: File) {
-        Glide.with(context)
+        val builder = Glide.with(context)
                 .load(file)
                 .asBitmap()
                 .placeholder(placeholderRes)
@@ -114,94 +125,141 @@ open class GlideImageView(context: Context, attributeSet: AttributeSet? = null) 
                 .diskCacheStrategy(DiskCacheStrategy.ALL)
                 .crossFade()
                 .priority(Priority.NORMAL)
-                .override(measuredWidth, measuredHeight)
-                .into(this)
+        if (override) {
+            if (measuredWidth == 0 || measuredHeight == 0) {
+                post {
+                    showJpegFile(file)
+                }
+            } else {
+                builder.override(measuredWidth, measuredHeight).into(this)
+            }
+        } else {
+            builder.into(this)
+        }
     }
 
     private fun showFile(file: File) {
-        Glide.with(context)
+        val builder = Glide.with(context)
                 .load(file)
                 .placeholder(placeholderRes)
                 .error(placeholderRes)
                 .diskCacheStrategy(DiskCacheStrategy.ALL)
                 .crossFade()
                 .priority(Priority.NORMAL)
-                .override(measuredWidth, measuredHeight)
-                .into(this)
+
+        if (override) {
+            if (measuredWidth == 0 || measuredHeight == 0) {
+                post {
+                    showFile(file)
+                }
+            } else {
+                builder.override(measuredWidth, measuredHeight).into(this)
+            }
+        } else {
+            builder.into(this)
+        }
     }
 
     private fun loadWidthUrl(url: String) {
         setTag(R.id.tag_url, url)
         if (checkGif) {
-            Ok.instance().type(url, object : Ok.OnImageTypeListener {
-                override fun onLoadStart() {
-                    this@GlideImageView.setImageResource(placeholderRes)
-                }
-
-                override fun onImageType(imageUrl: String, imageType: Ok.ImageType) {
-                    if (!imageUrl.contains(getTag(R.id.tag_url).toString())) {
-                        return
-                    }
-
-                    if (context is Activity) {
-                        if ((context as Activity).isDestroyed) {
-                            return
+            Ok.instance()
+                    .type(url, object : Ok.OnImageTypeListener {
+                        override fun onLoadStart() {
+                            this@GlideImageView.setImageResource(placeholderRes)
                         }
-                    }
 
-                    if (imageType == Ok.ImageType.GIF) {
-                        if (showGifImage) {
-                            loadGifUrl(imageUrl)
-                        } else {
-                            setShowGifTip(true)
-                            loadJpegUrl(imageUrl)
+                        override fun onImageType(imageUrl: String, imageType: Ok.ImageType) {
+                            if (!imageUrl.contains(getTag(R.id.tag_url).toString())) {
+                                return
+                            }
+
+                            if (context is Activity) {
+                                if ((context as Activity).isDestroyed) {
+                                    return
+                                }
+                            }
+
+                            if (imageType == Ok.ImageType.GIF) {
+                                if (showGifImage) {
+                                    loadGifUrl(imageUrl)
+                                } else {
+                                    setShowGifTip(true)
+                                    loadJpegUrl(imageUrl)
+                                }
+                            } else {
+                                loadJpegUrl(imageUrl)
+                            }
                         }
-                    } else {
-                        loadUrl(imageUrl)
-                    }
-                }
-            })
+                    })
         } else {
             loadUrl(url)
         }
     }
 
     private fun loadUrl(url: String) {
-        Glide.with(context)
+        val builder = Glide.with(context)
                 .load(url)
                 .placeholder(placeholderRes)
                 .error(placeholderRes)
                 .diskCacheStrategy(DiskCacheStrategy.ALL)
-                .crossFade()
                 .priority(Priority.NORMAL)
-                .override(measuredWidth, measuredHeight)
-                .into(this)
+                .crossFade()
+        if (override) {
+            if (measuredWidth == 0 || measuredHeight == 0) {
+                post {
+                    loadUrl(url)
+                }
+            } else {
+                builder.override(measuredWidth, measuredHeight).into(this)
+            }
+        } else {
+            builder.into(this)
+        }
     }
 
     private fun loadJpegUrl(url: String) {
-        Glide.with(context)
+        val builder = Glide.with(context)
                 .load(url)
                 .asBitmap()
                 .placeholder(placeholderRes)
                 .error(placeholderRes)
                 .diskCacheStrategy(DiskCacheStrategy.ALL)
-                .crossFade()
                 .priority(Priority.NORMAL)
-                .override(measuredWidth, measuredHeight)
-                .into(this)
+                .crossFade()
+        if (override) {
+            if (measuredWidth == 0 || measuredHeight == 0) {
+                post {
+                    loadJpegUrl(url)
+                }
+            } else {
+                builder.override(measuredWidth, measuredHeight).into(this)
+            }
+        } else {
+            builder.into(this)
+        }
     }
 
     private fun loadGifUrl(url: String) {
-        Glide.with(context)
+        val builder = Glide.with(context)
                 .load(url)
                 .asGif()
                 .placeholder(placeholderRes)
                 .error(placeholderRes)
                 .diskCacheStrategy(DiskCacheStrategy.SOURCE)
-                .crossFade()
                 .priority(Priority.HIGH)
-                .override(measuredWidth, measuredHeight)
-                .into(this)
+                .crossFade()
+        if (override) {
+            if (measuredWidth == 0 || measuredHeight == 0) {
+                post {
+                    loadGifUrl(url)
+                }
+            } else {
+                builder.override(measuredWidth, measuredHeight).into(this)
+            }
+        } else {
+            builder.into(this)
+        }
     }
 
 }

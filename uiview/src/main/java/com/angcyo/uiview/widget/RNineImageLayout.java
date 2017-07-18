@@ -125,6 +125,7 @@ public class RNineImageLayout extends RelativeLayout implements View.OnClickList
                 int itemWidth = (width - space * Math.max(0, columns - 1)) / columns;
                 height = rows * itemWidth + Math.max(0, rows - 1) * space;
 
+                //L.e("call: onMeasure -> " + getImageSize() + " itemSize:" + itemWidth);
                 for (View view : mImageViews) {
                     view.measure(getSize(itemWidth), getSize(itemWidth));
                 }
@@ -193,12 +194,33 @@ public class RNineImageLayout extends RelativeLayout implements View.OnClickList
     @Override
     protected void onSizeChanged(int w, int h, int oldw, int oldh) {
         super.onSizeChanged(w, h, oldw, oldh);
-        displayImage();
+        //displayImage();
     }
 
     private void displayImage() {
         //L.e("displayImage() -> " + this.getClass().getSimpleName());
         if (mNineImageConfig != null) {
+            boolean delay = false;
+            for (int i = 0; i < mImageViews.size(); i++) {
+                GlideImageView imageView = mImageViews.get(i);
+                imageView.setTag(R.id.tag_url, mImagesList.get(i));
+
+                if (imageView.getMeasuredHeight() == 0 ||
+                        imageView.getMeasuredWidth() == 0) {
+                    delay = true;
+                }
+            }
+
+            if (delay) {
+                post(new Runnable() {
+                    @Override
+                    public void run() {
+                        displayImage();
+                    }
+                });
+                return;
+            }
+
             for (int i = 0; i < mImageViews.size(); i++) {
                 GlideImageView imageView = mImageViews.get(i);
                 //cancelRequest(imageView);
@@ -237,22 +259,48 @@ public class RNineImageLayout extends RelativeLayout implements View.OnClickList
     }
 
     private void notifyDataChanged() {
+        int measuredWidth = getMeasuredWidth();
+        int measuredHeight = getMeasuredHeight();
+
         int oldSize = mImageViews.size();
         int newSize = getImageSize();
         if (newSize > oldSize) {
             for (int i = oldSize; i < newSize; i++) {
                 createImageView(i);
             }
-            requestLayout();
+//            if (measuredHeight != 0 && measuredWidth != 0) {
+//                //新创建的ImageView, 还没有测量, 需要测量一次
+//                measure(ViewExKt.exactlyMeasure(this, measuredWidth),
+//                        ViewExKt.exactlyMeasure(this, measuredHeight));
+//            }
         } else if (newSize < oldSize) {
             for (int i = oldSize - 1; i >= newSize; i--) {
                 removeView(mImageViews.remove(i));
             }
         }
 
-        if (getMeasuredHeight() != 0 && getMeasuredWidth() != 0) {
-            displayImage();
-        }
+        displayImage();
+
+//        if (newSize == oldSize &&
+//                measuredHeight != 0 &&
+//                measuredWidth != 0) {
+//            displayImage();
+//        } else {
+//            getViewTreeObserver().addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
+//                @Override
+//                public void onGlobalLayout() {
+//                    getViewTreeObserver().removeOnGlobalLayoutListener(this);
+//                    displayImage();
+//                }
+//            });
+//        }
+
+//        post(new Runnable() {
+//            @Override
+//            public void run() {
+//                displayImage();
+//            }
+//        });
 
 //        if (oldSize == newSize) {
 //            displayImage();
@@ -300,7 +348,7 @@ public class RNineImageLayout extends RelativeLayout implements View.OnClickList
         if (canItemClick) {
             imageView.setOnClickListener(this);
         }
-        addViewInLayout(imageView, i, new LayoutParams(-2, -2));
+        addView(imageView, i, new LayoutParams(-2, -2));
     }
 
     /**

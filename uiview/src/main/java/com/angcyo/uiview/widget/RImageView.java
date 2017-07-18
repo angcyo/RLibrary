@@ -379,4 +379,9 @@ public class RImageView extends AppCompatImageView {
     public Drawable copyDrawable() {
         return copyDrawable(this);
     }
+
+    @Override
+    public void setImageDrawable(@Nullable Drawable drawable) {
+        super.setImageDrawable(drawable);
+    }
 }

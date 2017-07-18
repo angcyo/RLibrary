@@ -201,7 +201,7 @@ public class RTextImageLayout extends ViewGroup {
     @Override
     protected void onSizeChanged(int w, int h, int oldw, int oldh) {
         super.onSizeChanged(w, h, oldw, oldh);
-        notifyLoadImage();
+        //notifyLoadImage();
     }
 
     private void notifyLoadImage() {
@@ -281,6 +281,9 @@ public class RTextImageLayout extends ViewGroup {
      * 设置图片
      */
     public void setImages(List<String> images) {
+        int measuredWidth = getMeasuredWidth();
+        int measuredHeight = getMeasuredHeight();
+
         mImages = images;
         int imageSize = mImages.size();
         int imageViewSize = mImageViews.size();
@@ -302,9 +305,25 @@ public class RTextImageLayout extends ViewGroup {
             return;
         }
 
-        if (getMeasuredHeight() != 0 && getMeasuredWidth() != 0) {
-            notifyLoadImage();
-        }
+        notifyLoadImage();
+
+//        if (imageSize == imageViewSize &&
+//                measuredHeight != 0 &&
+//                measuredWidth != 0) {
+//            notifyLoadImage();
+//        } else {
+//            getViewTreeObserver().addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
+//                @Override
+//                public void onGlobalLayout() {
+//                    getViewTreeObserver().removeOnGlobalLayoutListener(this);
+//                    notifyLoadImage();
+//                }
+//            });
+//        }
+
+//        if (measuredHeight != 0 && measuredWidth != 0) {
+//            notifyLoadImage();
+//        }
 
 //        if (imageViewSize == newImageViewSize ||
 //                (imageViewSize >= MAX_IMAGE_SIZE && newImageViewSize >= MAX_IMAGE_SIZE)) {
