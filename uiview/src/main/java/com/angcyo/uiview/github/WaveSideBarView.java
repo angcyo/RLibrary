@@ -1,4 +1,4 @@
-package com.angcyo.github;
+package com.angcyo.uiview.github;
 
 import android.animation.ValueAnimator;
 import android.content.Context;

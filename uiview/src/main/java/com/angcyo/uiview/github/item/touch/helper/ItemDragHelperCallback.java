@@ -1,4 +1,4 @@
-package com.angcyo.github.item.touch.helper;
+package com.angcyo.uiview.github.item.touch.helper;
 
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
