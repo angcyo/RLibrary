@@ -6,7 +6,7 @@ import android.util.AttributeSet
 import com.angcyo.library.okhttp.Ok
 import com.angcyo.library.utils.L
 import com.angcyo.uiview.R
-import com.angcyo.uiview.github.utilcode.utils.ImageUtils
+import com.angcyo.github.utilcode.utils.ImageUtils
 import com.bumptech.glide.Glide
 import com.bumptech.glide.Priority
 import com.bumptech.glide.load.engine.DiskCacheStrategy

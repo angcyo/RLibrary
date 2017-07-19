@@ -2,8 +2,8 @@ package com.angcyo.uiview.net;
 
 import android.text.TextUtils;
 
+import com.angcyo.github.type.TypeBuilder;
 import com.angcyo.library.utils.L;
-import com.angcyo.uiview.github.type.TypeBuilder;
 import com.angcyo.uiview.utils.Json;
 import com.angcyo.uiview.utils.T;
 

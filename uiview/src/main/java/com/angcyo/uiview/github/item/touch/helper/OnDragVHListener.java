@@ -1,4 +1,4 @@
-package com.angcyo.uiview.github.item.touch.helper;
+package com.angcyo.github.item.touch.helper;
 
 /**
  * ViewHolder 被选中 以及 拖拽释放 触发监听器

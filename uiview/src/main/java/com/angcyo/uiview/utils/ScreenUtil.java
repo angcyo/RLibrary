@@ -13,9 +13,9 @@ import android.view.Surface;
 import android.view.View;
 import android.view.WindowManager;
 
+import com.angcyo.github.utilcode.utils.BarUtils;
+import com.angcyo.github.utilcode.utils.Utils;
 import com.angcyo.uiview.RApplication;
-import com.angcyo.uiview.github.utilcode.utils.BarUtils;
-import com.angcyo.uiview.github.utilcode.utils.Utils;
 
 import java.lang.reflect.Field;
 

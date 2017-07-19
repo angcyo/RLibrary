@@ -6,9 +6,9 @@ import android.content.Intent;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 
+import com.angcyo.github.utilcode.utils.NetworkUtils;
 import com.angcyo.library.utils.L;
 import com.angcyo.uiview.RApplication;
-import com.angcyo.uiview.github.utilcode.utils.NetworkUtils;
 import com.hwangjr.rxbus.RxBus;
 
 /**

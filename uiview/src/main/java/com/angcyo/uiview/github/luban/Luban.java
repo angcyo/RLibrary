@@ -14,6 +14,7 @@ import android.text.format.Formatter;
 import android.util.Log;
 
 import com.angcyo.library.utils.L;
+import com.angcyo.uiview.github.luban.OnCompressListener;
 import com.angcyo.uiview.utils.RUtils;
 import com.angcyo.uiview.utils.file.FileUtil;
 
@@ -36,6 +37,7 @@ import rx.functions.Func2;
 import rx.schedulers.Schedulers;
 
 import static com.angcyo.uiview.github.luban.Preconditions.checkNotNull;
+
 
 public class Luban {
 

@@ -11,7 +11,8 @@ import android.text.TextWatcher;
 import android.util.AttributeSet;
 import android.widget.EditText;
 
-import com.angcyo.uiview.github.utilcode.utils.SpannableStringUtils;
+import com.angcyo.github.utilcode.utils.SpannableStringUtils;
+
 
 /**
  * 类的描述：1/6 这样的ViewPager 指示器

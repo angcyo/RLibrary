@@ -1,4 +1,4 @@
-package com.angcyo.uiview.github.item.touch.helper;
+package com.angcyo.github.item.touch.helper;
 
 /**
  * Item移动后 触发

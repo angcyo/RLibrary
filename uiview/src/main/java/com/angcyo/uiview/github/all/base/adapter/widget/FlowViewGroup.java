@@ -1,4 +1,4 @@
-package com.angcyo.uiview.github.all.base.adapter.widget;
+package com.angcyo.github.all.base.adapter.widget;
 
 import android.content.Context;
 import android.util.AttributeSet;

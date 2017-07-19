@@ -18,9 +18,9 @@ import android.text.TextUtils;
 import android.util.DisplayMetrics;
 import android.view.WindowManager;
 
+import com.angcyo.github.utilcode.utils.PhoneUtils;
 import com.angcyo.library.utils.L;
 import com.angcyo.uiview.RApplication;
-import com.angcyo.uiview.github.utilcode.utils.PhoneUtils;
 import com.angcyo.uiview.widget.RExTextView;
 
 import java.io.File;

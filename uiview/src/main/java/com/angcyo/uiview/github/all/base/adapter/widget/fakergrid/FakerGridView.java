@@ -1,4 +1,4 @@
-package com.angcyo.uiview.github.all.base.adapter.widget.fakergrid;
+package com.angcyo.github.all.base.adapter.widget.fakergrid;
 
 import android.content.Context;
 import android.content.res.TypedArray;
@@ -6,7 +6,7 @@ import android.util.AttributeSet;
 import android.view.View;
 import android.view.ViewGroup;
 
-import com.angcyo.uiview.R;
+import com.angcyo.github.R;
 
 
 /**

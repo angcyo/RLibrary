@@ -7,8 +7,8 @@ import android.view.ViewGroup
 import android.widget.FrameLayout
 import android.widget.ImageView
 import android.widget.RelativeLayout
+import com.angcyo.github.utilcode.utils.AppUtils
 import com.angcyo.uiview.container.ContentLayout
-import com.angcyo.uiview.github.utilcode.utils.AppUtils
 import com.angcyo.uiview.widget.viewpager.ImageAdapter
 import com.angcyo.uiview.widget.viewpager.RViewPager
 import com.orhanobut.hawk.Hawk

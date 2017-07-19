@@ -47,9 +47,9 @@ public interface OnItemStateChangedListener {
      * Called when the ViewHolder swiped or dragged by the ItemTouchHelper is changed.
      *
      * @param viewHolder  The new ViewHolder that is being swiped or dragged. Might be null if it is cleared.
-     * @param actionState One of {@link OnItemStateChangedListener#ACTION_STATE_IDLE},
-     *                    {@link OnItemStateChangedListener#ACTION_STATE_SWIPE} or
-     *                    {@link OnItemStateChangedListener#ACTION_STATE_DRAG}.
+     * @param actionState One of {@link com.angcyo.github.swipe.recyclerview.touch.OnItemStateChangedListener#ACTION_STATE_IDLE},
+     *                    {@link com.angcyo.github.swipe.recyclerview.touch.OnItemStateChangedListener#ACTION_STATE_SWIPE} or
+     *                    {@link com.angcyo.github.swipe.recyclerview.touch.OnItemStateChangedListener#ACTION_STATE_DRAG}.
      */
     void onSelectedChanged(RecyclerView.ViewHolder viewHolder, @ActionStateMode int actionState);
 

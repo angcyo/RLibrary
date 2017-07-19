@@ -1,4 +1,4 @@
-package com.angcyo.uiview.github.item.touch.helper;
+package com.angcyo.github.item.touch.helper;
 
 import android.app.Activity;
 import android.content.Context;

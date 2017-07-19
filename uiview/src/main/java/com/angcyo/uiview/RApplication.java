@@ -8,9 +8,11 @@ import android.support.multidex.MultiDex;
 import android.telephony.TelephonyManager;
 import android.text.TextUtils;
 
+import com.angcyo.github.utilcode.utils.Utils;
 import com.angcyo.library.utils.L;
 import com.angcyo.uiview.skin.SkinHelper;
 import com.angcyo.uiview.utils.Debug;
+import com.angcyo.uiview.utils.RUtils;
 import com.angcyo.uiview.utils.T_;
 import com.bumptech.glide.Glide;
 import com.orhanobut.hawk.Hawk;
@@ -153,6 +155,8 @@ public class RApplication extends Application {
         if (isInitOnce(this)) {
 
             Debug.logTimeStart("RApplication 正在初始化:isInitOnce()");
+
+            Utils.init(this);
 
              /*sp持久化库*/
             Hawk.init(this)

@@ -74,9 +74,9 @@ public class SwipeMenu {
     /**
      * Set the menu orientation.
      *
-     * @param orientation use {@link SwipeMenu#HORIZONTAL} or {@link SwipeMenu#VERTICAL}.
-     * @see SwipeMenu#HORIZONTAL
-     * @see SwipeMenu#VERTICAL
+     * @param orientation use {@link com.angcyo.github.swipe.recyclerview.SwipeMenu#HORIZONTAL} or {@link com.angcyo.github.swipe.recyclerview.SwipeMenu#VERTICAL}.
+     * @see com.angcyo.github.swipe.recyclerview.SwipeMenu#HORIZONTAL
+     * @see com.angcyo.github.swipe.recyclerview.SwipeMenu#VERTICAL
      */
     public void setOrientation(@OrientationMode int orientation) {
         if (orientation != HORIZONTAL && orientation != VERTICAL)
@@ -87,7 +87,7 @@ public class SwipeMenu {
     /**
      * Get the menu orientation.
      *
-     * @return {@link SwipeMenu#HORIZONTAL} or {@link SwipeMenu#VERTICAL}.
+     * @return {@link com.angcyo.github.swipe.recyclerview.SwipeMenu#HORIZONTAL} or {@link com.angcyo.github.swipe.recyclerview.SwipeMenu#VERTICAL}.
      */
     @OrientationMode
     public int getOrientation() {

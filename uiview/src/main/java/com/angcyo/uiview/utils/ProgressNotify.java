@@ -9,10 +9,10 @@ import android.support.annotation.DrawableRes;
 import android.support.v7.app.NotificationCompat;
 import android.widget.RemoteViews;
 
+import com.angcyo.github.utilcode.utils.IntentUtils;
 import com.angcyo.library.utils.L;
 import com.angcyo.uiview.R;
 import com.angcyo.uiview.RApplication;
-import com.angcyo.uiview.github.utilcode.utils.IntentUtils;
 
 import java.io.File;
 import java.util.Random;

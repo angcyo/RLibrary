@@ -136,12 +136,18 @@ public abstract class RBaseAdapter<T> extends RecyclerView.Adapter<RBaseViewHold
                 if (itemLayoutId == 0) {
                     itemView = createContentView(parent, viewType);
                 } else {
-                    itemView = LayoutInflater.from(mContext).inflate(itemLayoutId, parent, false);
+                    try {
+                        itemView = LayoutInflater.from(mContext).inflate(itemLayoutId, parent, false);
+                    } catch (Exception e) {
+                        L.e("xml inflate 失败, 请检查自定义View的应用路径.");
+                        e.printStackTrace();
+                    }
                 }
             }
             viewHolder = createBaseViewHolder(viewType, itemView);
         } catch (Exception e) {
             L.e("请及时处理此处BUG. itemView=" + itemView);
+            e.printStackTrace();
         }
         return viewHolder;
     }

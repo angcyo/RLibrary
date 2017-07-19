@@ -74,4 +74,21 @@ public class EmojiFilter implements InputFilter {
 
         return source;
     }
+
+    /**
+     * https://github.com/woxingxiao/XEditText/blob/master/xedittext/src/main/java/com/xw/repo/XEditText.java
+     */
+    public static class EmojiExcludeFilter implements InputFilter {
+
+        @Override
+        public CharSequence filter(CharSequence source, int start, int end, Spanned dest, int dstart, int dend) {
+            for (int i = start; i < end; i++) {
+                int type = Character.getType(source.charAt(i));
+                if (type == Character.SURROGATE || type == Character.OTHER_SYMBOL) {
+                    return "";
+                }
+            }
+            return null;
+        }
+    }
 }

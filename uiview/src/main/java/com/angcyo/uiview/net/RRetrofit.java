@@ -2,11 +2,11 @@ package com.angcyo.uiview.net;
 
 import android.os.Environment;
 
+import com.angcyo.github.utilcode.utils.NetworkUtils;
 import com.angcyo.library.utils.L;
 import com.angcyo.uiview.RApplication;
 import com.angcyo.uiview.RCrashHandler;
 import com.angcyo.uiview.Root;
-import com.angcyo.uiview.github.utilcode.utils.NetworkUtils;
 import com.angcyo.uiview.net.cookie.CookieJarImpl;
 import com.angcyo.uiview.net.cookie.store.PersistentCookieStore;
 import com.angcyo.uiview.receiver.NetworkStateReceiver;
