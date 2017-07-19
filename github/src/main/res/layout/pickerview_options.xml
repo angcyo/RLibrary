@@ -17,19 +17,19 @@
         android:layout_height="wrap_content"
         android:orientation="horizontal">
 
-        <com.angcyo.uiview.github.pickerview.lib.WheelView
+        <com.angcyo.github.pickerview.lib.WheelView
             android:id="@+id/options1"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"/>
 
-        <com.angcyo.uiview.github.pickerview.lib.WheelView
+        <com.angcyo.github.pickerview.lib.WheelView
             android:id="@+id/options2"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"/>
 
-        <com.angcyo.uiview.github.pickerview.lib.WheelView
+        <com.angcyo.github.pickerview.lib.WheelView
             android:id="@+id/options3"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
