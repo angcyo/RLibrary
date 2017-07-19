@@ -21,7 +21,7 @@ import java.util.List;
  * https://github.com/florent37/ViewAnimator
  */
 public class ViewAnimator {
-    private static final long DEFAULT_DURATION = 3000;
+    private static final long DEFAULT_DURATION = 300;
 
     private List<AnimationBuilder> animationList = new ArrayList<>();
     private long duration = DEFAULT_DURATION;
