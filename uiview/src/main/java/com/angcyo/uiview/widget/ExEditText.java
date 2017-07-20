@@ -84,27 +84,16 @@ public class ExEditText extends AppCompatEditText {
     private boolean mIsSelected = false;
     private Range mLastSelectedRange;
     /**
-     * 是否激活@功能, 当调用{@link #setOnMentionInputListener(OnMentionInputListener)}后, 自动激活
+     * 是否激活@功能,会检查文本 ,当调用{@link #setOnMentionInputListener(OnMentionInputListener)}后, 自动激活
      */
     private boolean enableMention = false;
+
+    /**
+     * 是否监听@字符输入
+     */
     private boolean enableCallback = true;
 
     private RTextPaint mTextPaint;
-
-    public boolean unableCallback() {
-        enableCallback = false;
-        return enableCallback;
-    }
-
-    public boolean enableCallback() {
-        enableCallback = true;
-        return enableCallback;
-    }
-
-    public void setEnableMention(boolean enableMention) {
-        this.enableMention = enableMention;
-    }
-
     private String mLeftString;
     /**
      * 自动提示的文本
@@ -190,6 +179,20 @@ public class ExEditText extends AppCompatEditText {
         }
         final String phone = string.trim();
         return !TextUtils.isEmpty(phone) && phone.matches("^1[3-8]\\d{9}$");
+    }
+
+    public boolean unableCallback() {
+        enableCallback = false;
+        return enableCallback;
+    }
+
+    public boolean enableCallback() {
+        enableCallback = true;
+        return enableCallback;
+    }
+
+    public void setEnableMention(boolean enableMention) {
+        this.enableMention = enableMention;
     }
 
     public void setMaxNumber(float mMaxNumber) {
