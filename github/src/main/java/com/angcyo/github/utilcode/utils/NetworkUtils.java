@@ -352,7 +352,7 @@ public class NetworkUtils {
         NETWORK_4G(3, "4G网络"),
         NETWORK_3G(2, "3G网络"),
         NETWORK_2G(1, "2G网络"),
-        NETWORK_UNKNOWN(0, "未知网络"),
+        NETWORK_UNKNOWN(100, "未知网络"),
         NETWORK_NO(-1, "无网络");
 
         int value;
