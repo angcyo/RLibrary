@@ -261,7 +261,7 @@ public class RRetrofit {
 
             Request.Builder builder = request.newBuilder();
             if (NetworkStateReceiver.getNetType().value() <=
-                    NetworkUtils.NetworkType.NETWORK_UNKNOWN.value()) {
+                    NetworkUtils.NetworkType.NETWORK_NO.value()) {
                 //没网络,强制使用缓存
                 request = builder
                         .cacheControl(CacheControl.FORCE_CACHE)

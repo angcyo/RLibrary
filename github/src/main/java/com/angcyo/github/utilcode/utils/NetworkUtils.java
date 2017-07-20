@@ -348,11 +348,11 @@ public class NetworkUtils {
     }
 
     public enum NetworkType {
+        NETWORK_UNKNOWN(100, "未知网络"),
         NETWORK_WIFI(4, "WIFI网络"),
         NETWORK_4G(3, "4G网络"),
         NETWORK_3G(2, "3G网络"),
         NETWORK_2G(1, "2G网络"),
-        NETWORK_UNKNOWN(100, "未知网络"),
         NETWORK_NO(-1, "无网络");
 
         int value;
