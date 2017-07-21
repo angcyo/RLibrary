@@ -130,7 +130,7 @@ public class AnimUtil {
             }
         });
 
-        animator.setDuration(500);
+        animator.setDuration(300);
         animator.setInterpolator(new LinearInterpolator());
 
         if (targetView.getMeasuredWidth() == 0 || targetView.getMeasuredHeight() == 0) {
@@ -177,7 +177,7 @@ public class AnimUtil {
             }
         });
 
-        animator.setDuration(500);
+        animator.setDuration(300);
         animator.setInterpolator(new LinearInterpolator());
 
         if (targetView.getMeasuredWidth() == 0 || targetView.getMeasuredHeight() == 0) {
