@@ -1,19 +1,48 @@
 package com.angcyo.uiview.resources;
 
+import android.animation.Animator;
 import android.animation.ArgbEvaluator;
 import android.animation.ObjectAnimator;
 import android.animation.ValueAnimator;
+import android.graphics.Point;
+import android.graphics.Rect;
+import android.support.v4.view.ViewCompat;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.ViewTreeObserver;
 import android.view.animation.Animation;
 import android.view.animation.LayoutAnimationController;
 import android.view.animation.LinearInterpolator;
 import android.view.animation.TranslateAnimation;
 
+import com.angcyo.uiview.utils.ScreenUtil;
+
 /**
  * Created by angcyo on 2016-10-02 20:54.
  */
 public class AnimUtil {
+
+    /**
+     * 计算2个颜色之间的颜色值
+     */
+    public static int evaluateColor(float fraction, int startColor, int endColor) {
+        int startInt = startColor;
+        int startA = (startInt >> 24) & 0xff;
+        int startR = (startInt >> 16) & 0xff;
+        int startG = (startInt >> 8) & 0xff;
+        int startB = startInt & 0xff;
+
+        int endInt = endColor;
+        int endA = (endInt >> 24) & 0xff;
+        int endR = (endInt >> 16) & 0xff;
+        int endG = (endInt >> 8) & 0xff;
+        int endB = endInt & 0xff;
+
+        return (startA + (int) (fraction * (endA - startA))) << 24 |
+                ((startR + (int) (fraction * (endR - startR))) << 16) |
+                ((startG + (int) (fraction * (endG - startG))) << 8) |
+                ((startB + (int) (fraction * (endB - startB))));
+    }
 
     /**
      * 默认颜色渐变动画
@@ -68,5 +97,136 @@ public class AnimUtil {
         }
         final LayoutAnimationController layoutAnimationController = new LayoutAnimationController(animation);
         viewGroup.setLayoutAnimation(layoutAnimationController);
+    }
+
+    /**
+     * 视图从一个中心点坐标, 平移放大到结束点坐标
+     */
+    public static ValueAnimator startToMaxAnim(final Rect startRect, final View targetView,
+                                               Point from, Point to,
+                                               int maxWidth, int maxHeight) {
+        final Point startPoint = from;
+        final Point endPoint = to;
+
+        final int targetWidth = Math.min(ScreenUtil.screenWidth, maxWidth);
+        final int targetHeight = Math.min(ScreenUtil.screenHeight, maxHeight);
+
+        final float startScaleX = startRect.width() * 1f / targetWidth;
+        final float startScaleY = startRect.height() * 1f / targetHeight;
+
+        final ValueAnimator animator = ValueAnimator.ofFloat(0f, 1f);
+        animator.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
+            @Override
+            public void onAnimationUpdate(ValueAnimator animation) {
+                float value = (float) animation.getAnimatedValue();
+
+                ViewCompat.setScaleX(targetView, startScaleX + (1 - startScaleX) * value);
+                ViewCompat.setScaleY(targetView, startScaleY + (1 - startScaleY) * value);
+
+                ViewCompat.setX(targetView, (startPoint.x + (endPoint.x - startPoint.x) * value) - targetView.getMeasuredWidth() / 2);
+                ViewCompat.setY(targetView, (startPoint.y + (endPoint.y - startPoint.y) * value) - targetView.getMeasuredHeight() / 2);
+
+                notifyAnimProgress(animation, animation.getAnimatedFraction());
+            }
+        });
+
+        animator.setDuration(500);
+        animator.setInterpolator(new LinearInterpolator());
+
+        if (targetView.getMeasuredWidth() == 0 || targetView.getMeasuredHeight() == 0) {
+            targetView.getViewTreeObserver().addOnPreDrawListener(new ViewTreeObserver.OnPreDrawListener() {
+                @Override
+                public boolean onPreDraw() {
+                    notifyAnimDelayStart(animator);
+                    animator.start();
+                    targetView.getViewTreeObserver().removeOnPreDrawListener(this);
+                    return false;
+                }
+            });
+        } else {
+            notifyAnimDelayStart(animator);
+            animator.start();
+        }
+
+        return animator;
+    }
+
+    public static ValueAnimator startToMinAnim(final Rect endRect, final View targetView, Point from, Point to, int maxWidth, int maxHeight) {
+        final Point startPoint = from;
+        final Point endPoint = to;
+
+        final int targetWidth = Math.min(ScreenUtil.screenWidth, maxWidth);
+        final int targetHeight = Math.min(ScreenUtil.screenHeight, maxHeight);
+
+        final float endScaleX = endRect.width() * 1f / targetWidth;
+        final float endScaleY = endRect.height() * 1f / targetHeight;
+
+        final ValueAnimator animator = ValueAnimator.ofFloat(0f, 1f);
+        animator.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
+            @Override
+            public void onAnimationUpdate(ValueAnimator animation) {
+                float value = (float) animation.getAnimatedValue();
+
+                ViewCompat.setScaleX(targetView, 1 - (1 - endScaleX) * value);
+                ViewCompat.setScaleY(targetView, 1 - (1 - endScaleY) * value);
+
+                ViewCompat.setX(targetView, (startPoint.x + (endPoint.x - startPoint.x) * value) - targetView.getMeasuredWidth() / 2);
+                ViewCompat.setY(targetView, (startPoint.y + (endPoint.y - startPoint.y) * value) - targetView.getMeasuredHeight() / 2);
+
+                notifyAnimProgress(animation, animation.getAnimatedFraction());
+            }
+        });
+
+        animator.setDuration(500);
+        animator.setInterpolator(new LinearInterpolator());
+
+        if (targetView.getMeasuredWidth() == 0 || targetView.getMeasuredHeight() == 0) {
+            targetView.getViewTreeObserver().addOnPreDrawListener(new ViewTreeObserver.OnPreDrawListener() {
+                @Override
+                public boolean onPreDraw() {
+                    notifyAnimDelayStart(animator);
+                    animator.start();
+                    targetView.getViewTreeObserver().removeOnPreDrawListener(this);
+                    return false;
+                }
+            });
+        } else {
+            notifyAnimDelayStart(animator);
+            animator.start();
+        }
+        return animator;
+    }
+
+    private static void notifyAnimProgress(ValueAnimator animator, float progress) {
+        if (animator.getListeners() == null) {
+            return;
+        }
+        for (Animator.AnimatorListener listener : animator.getListeners()) {
+            if (listener instanceof RAnimListener) {
+                ((RAnimListener) listener).onAnimationProgress(animator, progress);
+            }
+        }
+    }
+
+    private static void notifyAnimDelayStart(ValueAnimator animator) {
+        if (animator.getListeners() == null) {
+            return;
+        }
+        for (Animator.AnimatorListener listener : animator.getListeners()) {
+            if (listener instanceof RAnimListener) {
+                ((RAnimListener) listener).onDelayBeforeStart(animator);
+            }
+        }
+    }
+
+    private static void notifyAnimDelayEnd(ValueAnimator animator) {
+        if (animator.getListeners() == null) {
+            return;
+        }
+        for (Animator.AnimatorListener listener : animator.getListeners()) {
+            if (listener instanceof RAnimListener) {
+                ((RAnimListener) listener).onDelayAfterEnd(animator);
+            }
+        }
     }
 }
