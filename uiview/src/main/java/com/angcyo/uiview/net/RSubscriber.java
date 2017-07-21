@@ -96,7 +96,7 @@ public abstract class RSubscriber<T> extends Subscriber<T> {
         }
 
         RException exception = new RException(errorCode, errorMsg, "no more").setThrowable(e);
-        
+
         try {
             onError(errorCode, errorMsg);
         } catch (Exception e1) {
