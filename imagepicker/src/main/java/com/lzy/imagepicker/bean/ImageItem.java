@@ -1,5 +1,6 @@
 package com.lzy.imagepicker.bean;
 
+import android.graphics.Rect;
 import android.graphics.drawable.Drawable;
 
 import com.lzy.imagepicker.ImageDataSource;
@@ -39,6 +40,9 @@ public class ImageItem implements Serializable {
 
     //是否可以保存到本地
     public boolean canSave = true;
+
+    //保存对应视图的坐标位置信息
+    public Rect mViewLocation = new Rect();
 
     public ImageItem(int loadType) {
         this.loadType = loadType;

@@ -59,6 +59,9 @@ public class ImagePageAdapter extends PagerAdapter {
     private Activity mActivity;
     private boolean enableMoveExit = true;
 
+    //当前是缩略图在显示图片, 还是大图在显示图片
+    private View currentImageView;
+
     public ImagePageAdapter(Activity activity, ArrayList<ImageItem> images) {
         this.mActivity = activity;
         this.images = images;
@@ -134,7 +137,9 @@ public class ImagePageAdapter extends PagerAdapter {
 
         //缩略图显示
         final ImagePickerImageView thumbImageView = new ImagePickerImageView(mActivity);
-        thumbImageView.setScaleType(ImageView.ScaleType.CENTER);
+        thumbImageView.setScaleType(ImageView.ScaleType.CENTER_CROP);
+
+        currentImageView = thumbImageView;
 
         //进度条显示
         //final MaterialProgressView progressView = new MaterialProgressView(mActivity);
@@ -187,6 +192,7 @@ public class ImagePageAdapter extends PagerAdapter {
                 //加载本地图片
                 displayImage(mActivity, imageItem.path, "no",
                         imageItem.url, photoView, screenWidth, screenHeight);
+                currentImageView = photoView;
             } else {
                 //加载网络图片
                 thumbImageView.setVisibility(View.VISIBLE);
@@ -213,6 +219,8 @@ public class ImagePageAdapter extends PagerAdapter {
                             thumbImageView.setVisibility(View.GONE);
                             progressView.setVisibility(View.GONE);
                             progressView.stop();
+
+                            currentImageView = photoView;
                         } else {
                             loadImage(photoView, thumbImageView, progressView, imageItem);
                         }
@@ -255,7 +263,7 @@ public class ImagePageAdapter extends PagerAdapter {
         });
         photoView.setOnExitListener(mOnExitListener);
 
-        itemLayout.addView(thumbImageView, new ViewGroup.LayoutParams(-1, -1));
+        itemLayout.addView(thumbImageView, new FrameLayout.LayoutParams(-2, -2, Gravity.CENTER));
         itemLayout.addView(photoView);
         itemLayout.addView(progressView, new FrameLayout.LayoutParams(-2, -2, Gravity.CENTER));
         container.addView(itemLayout);
@@ -294,6 +302,8 @@ public class ImagePageAdapter extends PagerAdapter {
                                         progressView.stop();
                                         photoView.setImageDrawable(resource);
                                         resource.start();
+
+                                        currentImageView = photoView;
                                     }
                                 });
                     } else {
@@ -307,6 +317,8 @@ public class ImagePageAdapter extends PagerAdapter {
                                 progressView.setVisibility(View.GONE);
                                 progressView.stop();
                                 photoView.setImageBitmap(resource);
+
+                                currentImageView = photoView;
                             }
                         });
                     }
@@ -353,5 +365,9 @@ public class ImagePageAdapter extends PagerAdapter {
 
     public interface PhotoViewLongClickListener {
         void onLongClickListener(PhotoView photoView, int position, ImageItem item);
+    }
+
+    public View getCurrentImageView() {
+        return currentImageView;
     }
 }

@@ -3,10 +3,10 @@ package com.angcyo.uiview.widget
 import android.app.Activity
 import android.content.Context
 import android.util.AttributeSet
+import com.angcyo.github.utilcode.utils.ImageUtils
 import com.angcyo.library.okhttp.Ok
 import com.angcyo.library.utils.L
 import com.angcyo.uiview.R
-import com.angcyo.github.utilcode.utils.ImageUtils
 import com.bumptech.glide.Glide
 import com.bumptech.glide.Priority
 import com.bumptech.glide.load.engine.DiskCacheStrategy
@@ -64,6 +64,10 @@ open class GlideImageView(context: Context, attributeSet: AttributeSet? = null) 
                 }
             }
         }
+    }
+
+    fun setTagUrl(url: String) {
+        setTag(R.id.tag_url, url)
     }
 
     /**取消请求*/
@@ -170,7 +174,13 @@ open class GlideImageView(context: Context, attributeSet: AttributeSet? = null) 
                         }
 
                         override fun onImageType(imageUrl: String, imageType: Ok.ImageType) {
-                            if (!imageUrl.contains(getTag(R.id.tag_url).toString())) {
+                            val tagUrl = getTag(R.id.tag_url)?.toString()
+
+                            if (tagUrl.isNullOrEmpty()) {
+                                return
+                            }
+
+                            if (!imageUrl.contains(tagUrl!!)) {
                                 return
                             }
 

@@ -11,11 +11,13 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.view.ViewTreeObserver;
 import android.view.animation.Animation;
+import android.view.animation.DecelerateInterpolator;
 import android.view.animation.LayoutAnimationController;
 import android.view.animation.LinearInterpolator;
 import android.view.animation.TranslateAnimation;
 
 import com.angcyo.uiview.utils.ScreenUtil;
+import com.angcyo.uiview.view.UIIViewImpl;
 
 /**
  * Created by angcyo on 2016-10-02 20:54.
@@ -25,7 +27,7 @@ public class AnimUtil {
     /**
      * 计算2个颜色之间的颜色值
      */
-    public static int evaluateColor(float fraction, int startColor, int endColor) {
+    public static int evaluateColor(float fraction /*0-1*/, int startColor, int endColor) {
         int startInt = startColor;
         int startA = (startInt >> 24) & 0xff;
         int startR = (startInt >> 16) & 0xff;
@@ -99,12 +101,24 @@ public class AnimUtil {
         viewGroup.setLayoutAnimation(layoutAnimationController);
     }
 
+    public static Rect ensureRect(Rect rect) {
+        if (rect == null || rect.isEmpty()) {
+            int dp = (int) (100 * ScreenUtil.density);
+            return new Rect(ScreenUtil.screenWidth / 2 - dp / 2, ScreenUtil.screenHeight / 2 - dp / 2,
+                    ScreenUtil.screenWidth / 2 + dp / 2, ScreenUtil.screenHeight / 2 + dp / 2);
+        }
+        return rect;
+    }
+
     /**
      * 视图从一个中心点坐标, 平移放大到结束点坐标
      */
-    public static ValueAnimator startToMaxAnim(final Rect startRect, final View targetView,
+    public static ValueAnimator startToMaxAnim(Rect startRect, final View targetView,
                                                Point from, Point to,
-                                               int maxWidth, int maxHeight) {
+                                               int maxWidth, int maxHeight, final long startDelay,
+                                               Animator.AnimatorListener listener) {
+        startRect = ensureRect(startRect);
+
         final Point startPoint = from;
         final Point endPoint = to;
 
@@ -115,28 +129,34 @@ public class AnimUtil {
         final float startScaleY = startRect.height() * 1f / targetHeight;
 
         final ValueAnimator animator = ValueAnimator.ofFloat(0f, 1f);
-        animator.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
+        animator.addListener(listener);
+
+        final ValueAnimator.AnimatorUpdateListener updateListener = new ValueAnimator.AnimatorUpdateListener() {
             @Override
             public void onAnimationUpdate(ValueAnimator animation) {
                 float value = (float) animation.getAnimatedValue();
 
-                ViewCompat.setScaleX(targetView, startScaleX + (1 - startScaleX) * value);
-                ViewCompat.setScaleY(targetView, startScaleY + (1 - startScaleY) * value);
-
-                ViewCompat.setX(targetView, (startPoint.x + (endPoint.x - startPoint.x) * value) - targetView.getMeasuredWidth() / 2);
-                ViewCompat.setY(targetView, (startPoint.y + (endPoint.y - startPoint.y) * value) - targetView.getMeasuredHeight() / 2);
+                updateMaxValue(targetView, startScaleX, startScaleY, startPoint, endPoint, value);
 
                 notifyAnimProgress(animation, animation.getAnimatedFraction());
             }
-        });
+        };
 
-        animator.setDuration(300);
-        animator.setInterpolator(new LinearInterpolator());
+        animator.addUpdateListener(updateListener);
+
+        animator.setDuration(UIIViewImpl.DEFAULT_FINISH_ANIM_TIME);
+        if (startDelay > 0) {
+            animator.setStartDelay(startDelay);
+        }
+        animator.setInterpolator(new DecelerateInterpolator());
 
         if (targetView.getMeasuredWidth() == 0 || targetView.getMeasuredHeight() == 0) {
             targetView.getViewTreeObserver().addOnPreDrawListener(new ViewTreeObserver.OnPreDrawListener() {
                 @Override
                 public boolean onPreDraw() {
+                    if (startDelay > 0) {
+                        updateMaxValue(targetView, startScaleX, startScaleY, startPoint, endPoint, 0);
+                    }
                     notifyAnimDelayStart(animator);
                     animator.start();
                     targetView.getViewTreeObserver().removeOnPreDrawListener(this);
@@ -144,6 +164,9 @@ public class AnimUtil {
                 }
             });
         } else {
+            if (startDelay > 0) {
+                updateMaxValue(targetView, startScaleX, startScaleY, startPoint, endPoint, 0);
+            }
             notifyAnimDelayStart(animator);
             animator.start();
         }
@@ -151,7 +174,24 @@ public class AnimUtil {
         return animator;
     }
 
-    public static ValueAnimator startToMinAnim(final Rect endRect, final View targetView, Point from, Point to, int maxWidth, int maxHeight) {
+    private static void updateMaxValue(final View targetView,
+                                       final float startScaleX, final float startScaleY,
+                                       final Point startPoint,
+                                       final Point endPoint,
+                                       float fraction) {
+        ViewCompat.setScaleX(targetView, startScaleX + (1 - startScaleX) * fraction);
+        ViewCompat.setScaleY(targetView, startScaleY + (1 - startScaleY) * fraction);
+
+        ViewCompat.setX(targetView, (startPoint.x + (endPoint.x - startPoint.x) * fraction) - targetView.getMeasuredWidth() / 2);
+        ViewCompat.setY(targetView, (startPoint.y + (endPoint.y - startPoint.y) * fraction) - targetView.getMeasuredHeight() / 2);
+    }
+
+    public static ValueAnimator startToMinAnim(Rect endRect, final View targetView,
+                                               Point from, Point to,
+                                               int maxWidth, int maxHeight,
+                                               Animator.AnimatorListener listener) {
+        endRect = ensureRect(endRect);
+
         final Point startPoint = from;
         final Point endPoint = to;
 
@@ -162,6 +202,8 @@ public class AnimUtil {
         final float endScaleY = endRect.height() * 1f / targetHeight;
 
         final ValueAnimator animator = ValueAnimator.ofFloat(0f, 1f);
+        animator.addListener(listener);
+
         animator.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
             @Override
             public void onAnimationUpdate(ValueAnimator animation) {
@@ -177,8 +219,8 @@ public class AnimUtil {
             }
         });
 
-        animator.setDuration(300);
-        animator.setInterpolator(new LinearInterpolator());
+        animator.setDuration(UIIViewImpl.DEFAULT_FINISH_ANIM_TIME);
+        animator.setInterpolator(new DecelerateInterpolator());
 
         if (targetView.getMeasuredWidth() == 0 || targetView.getMeasuredHeight() == 0) {
             targetView.getViewTreeObserver().addOnPreDrawListener(new ViewTreeObserver.OnPreDrawListener() {

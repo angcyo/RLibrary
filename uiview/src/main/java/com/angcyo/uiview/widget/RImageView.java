@@ -131,9 +131,18 @@ public class RImageView extends AppCompatImageView {
         return copyDrawable(imageView.getDrawable());
     }
 
-    public static Drawable copyDrawable(final Drawable drawable) {
+    public static Drawable copyDrawable(Drawable drawable) {
         Drawable result = null;
         if (drawable != null) {
+            if (drawable instanceof TransitionDrawable) {
+                TransitionDrawable transitionDrawable = (TransitionDrawable) drawable;
+                drawable = transitionDrawable.getDrawable(transitionDrawable.getNumberOfLayers() - 1);
+            }
+
+            if (drawable == null) {
+                return null;
+            }
+
             if (Build.VERSION.SDK_INT < Build.VERSION_CODES.LOLLIPOP) {
                 Rect bounds = drawable.getBounds();
                 int width = bounds.width();
