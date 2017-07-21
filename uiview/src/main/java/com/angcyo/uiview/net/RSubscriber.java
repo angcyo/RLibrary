@@ -35,7 +35,10 @@ public abstract class RSubscriber<T> extends Subscriber<T> {
     @Override
     public void onCompleted() {
         L.d("订阅完成->" + this.getClass().getSimpleName());
-        onEnd(false, false, null);
+        try {
+            onEnd(false, false, null);
+        } catch (Exception e) {
+        }
     }
 
     @Override
@@ -84,14 +87,26 @@ public abstract class RSubscriber<T> extends Subscriber<T> {
         L.e("-----------------------------------------End-------------------------------------------");
 
         if (errorCode == RSubscriber.NO_NETWORK) {
-            onNoNetwork();
+            try {
+                onNoNetwork();
+            } catch (Exception e1) {
+
+            }
             nonet = true;
         }
 
         RException exception = new RException(errorCode, errorMsg, "no more").setThrowable(e);
+        
+        try {
+            onError(errorCode, errorMsg);
+        } catch (Exception e1) {
 
-        onError(errorCode, errorMsg);
-        onEnd(error, nonet, exception);
+        }
+
+        try {
+            onEnd(error, nonet, exception);
+        } catch (Exception e1) {
+        }
 //        if (L.LOG_DEBUG) {
 //            T_.error("[" + errorCode + "]" + errorMsg);
 //        }
