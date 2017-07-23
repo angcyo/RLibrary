@@ -119,6 +119,10 @@ public abstract class UIItemUIView<T extends Item> extends UIRecyclerUIView<Stri
         return mExBaseAdapter.isLast(position);
     }
 
+    @Override
+    public void onUILoadData(int page) {
+        //
+    }
 
     @Override
     protected void createRecyclerRootView(ContentLayout baseContentLayout, LayoutInflater inflater) {

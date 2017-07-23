@@ -1,11 +1,11 @@
 package com.angcyo.uiview.base;
 
+import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.FrameLayout;
 
 import com.angcyo.uiview.R;
 import com.angcyo.uiview.container.ContentLayout;
@@ -13,8 +13,12 @@ import com.angcyo.uiview.container.UIParam;
 import com.angcyo.uiview.recycler.RRecyclerView;
 import com.angcyo.uiview.recycler.adapter.RBaseAdapter;
 import com.angcyo.uiview.recycler.adapter.RExBaseAdapter;
+import com.angcyo.uiview.rsen.BasePointRefreshView;
 import com.angcyo.uiview.rsen.RGestureDetector;
 import com.angcyo.uiview.rsen.RefreshLayout;
+import com.angcyo.uiview.widget.viewpager.UIViewPager;
+
+import java.util.List;
 
 /**
  * Created by angcyo on 2017-03-11.
@@ -35,6 +39,7 @@ public abstract class UIRecyclerUIView<H, T, F> extends UIContentView
 
     protected int mBaseOffsetSize;
     protected int mBaseLineSize;
+    protected int page = 1;
 
     @NonNull
     @Override
@@ -147,7 +152,6 @@ public abstract class UIRecyclerUIView<H, T, F> extends UIContentView
         }
     }
 
-
     protected abstract RExBaseAdapter<H, T, F> createAdapter();
 
     protected RecyclerView.ItemDecoration createItemDecoration() {
@@ -160,6 +164,8 @@ public abstract class UIRecyclerUIView<H, T, F> extends UIContentView
         }
         refreshLayout.setRefreshDirection(RefreshLayout.TOP);
         refreshLayout.addOnRefreshListener(this);
+        refreshLayout.setTopView(new BasePointRefreshView(mActivity));
+        refreshLayout.setBottomView(new BasePointRefreshView(mActivity));
         if (refreshLayout.getParent() == null) {
             baseContentLayout.addView(refreshLayout, new ViewGroup.LayoutParams(-1, -1));
         }
@@ -180,11 +186,94 @@ public abstract class UIRecyclerUIView<H, T, F> extends UIContentView
     }
 
     public void onBaseLoadMore() {
-
+        page++;
+        onUILoadData(page);
     }
 
     public void onBaseLoadData() {
+        page = 1;
+        onUILoadData(page);
+    }
 
+    public void onUILoadData(int page) {
+        showLoadView();
+    }
+
+    public boolean isShowInViewPager() {
+        return false;
+    }
+
+    /**
+     * 重置UI状态
+     */
+    public void resetUI() {
+        hideLoadView();
+        if (mRefreshLayout != null) {
+            mRefreshLayout.setRefreshEnd();
+        }
+        if (mExBaseAdapter != null) {
+            if (mExBaseAdapter.isEnableLoadMore()) {
+                mExBaseAdapter.setLoadMoreEnd();
+            }
+        }
+    }
+
+    /**
+     * 调用此方法自动设置视图
+     */
+    public void onUILoadFinish(List<T> datas) {
+        resetUI();
+        if (datas == null || datas.isEmpty()) {
+            onUILoadEmpty();
+        } else {
+            showContentLayout();
+            if (mExBaseAdapter != null) {
+                if (isUIFirstLoadData()) {
+                    mExBaseAdapter.resetAllData(datas);
+                } else {
+                    mExBaseAdapter.appendAllData(datas);
+                }
+
+                if (mExBaseAdapter.isEnableLoadMore()) {
+                    if (isUIHaveLoadMore(datas)) {
+                        mExBaseAdapter.setLoadMoreEnd();
+                    } else {
+                        mExBaseAdapter.setNoMore(true);
+                    }
+                }
+            }
+        }
+    }
+
+    /**
+     * 数据为空时,回调
+     */
+    public void onUILoadEmpty() {
+        showEmptyLayout();
+    }
+
+    public boolean isUIFirstLoadData() {
+        return page == 1;
+    }
+
+    public boolean isUIHaveLoadMore(List<T> datas) {
+        return datas != null && datas.size() > 20;
+    }
+
+    @Override
+    public void onViewShowFirst(Bundle bundle) {
+        super.onViewShowFirst(bundle);
+        if (!isShowInViewPager()) {
+            onBaseLoadData();
+        }
+    }
+
+    @Override
+    public void onShowInPager(UIViewPager viewPager) {
+        super.onShowInPager(viewPager);
+        if (isShowInViewPager()) {
+            onBaseLoadData();
+        }
     }
 
     /**
