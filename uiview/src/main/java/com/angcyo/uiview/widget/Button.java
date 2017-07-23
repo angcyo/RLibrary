@@ -40,8 +40,7 @@ public class Button extends RTextView {
         setClickable(true);
         setTextColor(ColorStateList.valueOf(Color.WHITE));
         if (isInEditMode()) {
-            setTextColor(Color.BLACK);
-            setBackgroundResource(R.drawable.base_dark_solid_round_shape);
+            setBackgroundColor(Color.BLUE);
         } else {
             setBackground(SkinHelper.getSkin().getThemeMaskBackgroundRoundSelector());
         }

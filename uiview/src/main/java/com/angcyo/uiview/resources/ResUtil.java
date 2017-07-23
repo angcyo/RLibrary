@@ -446,7 +446,7 @@ public class ResUtil {
      * 获取 colorAccent 颜色
      */
     public static int getThemeColorAccent(Context context) {
-        return getThemeColor(context, "colorAccent");
+        return ContextCompat.getColor(context, getThemeColor(context, "colorAccent"));
     }
 
     /**
@@ -460,7 +460,7 @@ public class ResUtil {
 //        int backgroundColor = array.getColor(0, 0xFF00FF);
 //        int textColor = array.getColor(1, 0xFF00FF);
 //        array.recycle();
-        return getThemeIdentifier(context, name, "color");
+        return ContextCompat.getColor(context, getThemeIdentifier(context, name, "color"));
     }
 
     public static float getThemeDimen(Context context, String name) {

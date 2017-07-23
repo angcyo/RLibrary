@@ -37,7 +37,7 @@ public class SkinHelper {
     }
 
     private static void createDefaultSkin(Context context) {
-        mSkin = new BaseSkin(context);
+        mSkin = new MainSkin(context);
     }
 
     /**
