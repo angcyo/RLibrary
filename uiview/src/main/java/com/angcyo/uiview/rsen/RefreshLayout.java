@@ -874,6 +874,11 @@ public class RefreshLayout extends ViewGroup {
         this.mNotifyListener = notifyListener;
     }
 
+    public void setPlaceholderView() {
+        setTopView(new PlaceholderView(getContext()));
+        setBottomView(new PlaceholderView(getContext()));
+    }
+
     public void setShowTip(String tip) {
         boolean oldShow = mShowTip;
         mShowTip = true;

@@ -14,7 +14,7 @@ android {
         angcyo {
             keyAlias 'angcyo'
             keyPassword 'angcyo'
-            storeFile file('../angcyo.jks')
+            storeFile file('../RLibrary/angcyo.jks')
             storePassword 'angcyo'
         }
     }
@@ -26,7 +26,6 @@ android {
         targetSdkVersion Integer.parseInt(rootProject.T_SDK)
         versionCode 1
         versionName "1.0"
-        testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
         multiDexEnabled true
 
         resValue "string", "build_time", getBuildTime()

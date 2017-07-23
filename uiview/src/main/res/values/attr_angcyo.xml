@@ -16,6 +16,7 @@
     <attr name="r_show_text_size" format="dimension"/>
     <attr name="r_show_text_color" format="color"/>
     <attr name="r_text_offset" format="dimension"/>
+    <attr name="r_max_height" format="dimension"/>
 
     <!--progress bar-->
     <!--进度颜色-->
@@ -93,5 +94,9 @@
         <attr name="r_paddingRight"/>
         <attr name="r_paddingBottom"/>
         <attr name="r_paddingTop"/>
+    </declare-styleable>
+
+    <declare-styleable name="ContentLayout">
+        <attr name="r_max_height"/>
     </declare-styleable>
 </resources>

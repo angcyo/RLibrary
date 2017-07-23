@@ -19,6 +19,7 @@ import android.widget.TextView;
 
 import com.angcyo.library.utils.L;
 import com.angcyo.uiview.view.DelayClick;
+import com.angcyo.uiview.widget.ExEditText;
 import com.angcyo.uiview.widget.GlideImageView;
 import com.angcyo.uiview.widget.ItemInfoLayout;
 import com.angcyo.uiview.widget.ItemSubInfoLayout;
@@ -191,6 +192,10 @@ public class RBaseViewHolder extends RecyclerView.ViewHolder {
      */
     public EditText eV(@IdRes int resId) {
         return (EditText) v(resId);
+    }
+
+    public ExEditText exV(@IdRes int resId) {
+        return (ExEditText) v(resId);
     }
 
     public EditText editView(@IdRes int resId) {

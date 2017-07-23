@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8"?>
+<com.angcyo.uiview.container.ContentLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/base_white"
+    app:r_max_height="-2px">
+
+    <com.angcyo.uiview.rsen.RefreshLayout
+        android:id="@+id/base_refresh_view"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <com.angcyo.uiview.recycler.RRecyclerView
+            android:id="@+id/base_recycler_view"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"/>
+
+    </com.angcyo.uiview.rsen.RefreshLayout>
+</com.angcyo.uiview.container.ContentLayout>

@@ -1,8 +1,13 @@
 package com.angcyo.uiview.container;
 
 import android.content.Context;
+import android.content.res.TypedArray;
 import android.util.AttributeSet;
 import android.widget.FrameLayout;
+
+import com.angcyo.uiview.R;
+import com.angcyo.uiview.kotlin.ViewExKt;
+import com.angcyo.uiview.utils.ScreenUtil;
 
 /**
  * Copyright (C) 2016,深圳市红鸟网络科技股份有限公司 All rights reserved.
@@ -16,21 +21,58 @@ import android.widget.FrameLayout;
  * Version: 1.0.0
  */
 public class ContentLayout extends FrameLayout {
+
+    /**
+     * 允许的最大高度, 如果为-2px,那么就是屏幕高度的一半, 如果是-3px,那么就是屏幕高度的三分之, 以此内推
+     */
+    private int maxHeight = -1;
+
     public ContentLayout(Context context) {
-        super(context);
+        this(context, null);
     }
 
     public ContentLayout(Context context, AttributeSet attrs) {
-        super(context, attrs);
+        this(context, attrs, 0);
     }
 
     public ContentLayout(Context context, AttributeSet attrs, int defStyleAttr) {
         super(context, attrs, defStyleAttr);
+
+        TypedArray typedArray = context.obtainStyledAttributes(attrs, R.styleable.ContentLayout);
+        maxHeight = typedArray.getDimensionPixelOffset(R.styleable.ContentLayout_r_max_height, -1);
+        resetMaxHeight();
+        typedArray.recycle();
+
+        initLayout();
+    }
+
+    private void initLayout() {
+
+    }
+
+    private void resetMaxHeight() {
+        if (maxHeight < -1) {
+            int num = Math.abs(maxHeight);
+            maxHeight = ScreenUtil.screenHeight / num;
+        }
+    }
+
+    public void setMaxHeight(int maxHeight) {
+        this.maxHeight = maxHeight;
+        resetMaxHeight();
+        requestLayout();
     }
 
     @Override
     protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
-        super.onMeasure(widthMeasureSpec, heightMeasureSpec);
+        if (maxHeight > 0) {
+            int heightSize = MeasureSpec.getSize(heightMeasureSpec);
+            if (heightSize > maxHeight) {
+                super.onMeasure(widthMeasureSpec, ViewExKt.exactlyMeasure(this, maxHeight));
+            }
+        } else {
+            super.onMeasure(widthMeasureSpec, heightMeasureSpec);
+        }
     }
 
     @Override

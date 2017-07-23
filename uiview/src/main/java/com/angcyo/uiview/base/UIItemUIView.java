@@ -106,7 +106,7 @@ public abstract class UIItemUIView<T extends Item> extends UIRecyclerUIView<Stri
     /**
      * 返回布局
      */
-    protected int getItemLayoutId(int viewType) {
+    protected int getItemLayoutId(int position) {
         return R.layout.base_item_info_layout;
     }
 
