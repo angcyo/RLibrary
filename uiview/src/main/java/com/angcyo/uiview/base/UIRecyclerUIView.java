@@ -252,6 +252,17 @@ public abstract class UIRecyclerUIView<H, T, F> extends UIContentView
         showEmptyLayout();
     }
 
+    @Override
+    public void showNonetLayout() {
+        showNonetLayout(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                showLoadLayout();
+                onBaseLoadData();
+            }
+        });
+    }
+
     public boolean isUIFirstLoadData() {
         return page == 1;
     }
