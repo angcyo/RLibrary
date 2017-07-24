@@ -44,7 +44,6 @@ public abstract class RModelAdapter<T> extends RBaseAdapter<T> {
     private int mModel = MODEL_NORMAL;
 
     private HashSet<OnModelChangeListener> mChangeListeners = new HashSet<>();
-    private boolean mOldLoadMore;
 
     private ArrayMap<Integer, RBaseViewHolder> mBaseViewHolderMap = new ArrayMap<>();
 
@@ -482,8 +481,7 @@ public abstract class RModelAdapter<T> extends RBaseAdapter<T> {
         } else {
             if (mModel == MODEL_SINGLE) {
                 List<Integer> allSelectorList = getAllSelectorList();
-                if (!allSelectorList.isEmpty()) {
-                    Integer pos = allSelectorList.get(0);
+                for (Integer pos : allSelectorList) {
                     RBaseViewHolder holder = getViewHolderFromPosition(pos);
 
                     if (holder != null) {
@@ -560,12 +558,13 @@ public abstract class RModelAdapter<T> extends RBaseAdapter<T> {
                 iterator.next().onModelChange(oldMode, model);
             }
 
+//            boolean oldLoadMore = isEnableLoadMore();
+
             if (oldMode != MODEL_NORMAL) {
-                mOldLoadMore = isEnableLoadMore();
                 //setEnableLoadMore(false);//不关闭
                 mSelector.clear();
             } else {
-                setEnableLoadMore(mOldLoadMore);
+//                setEnableLoadMore(oldLoadMore);
             }
             notifyDataSetChanged();
         }

@@ -39,7 +39,7 @@ class BasePointRefreshView(context: Context) : View(context),
         anim.duration = 600
         anim.addUpdateListener {
             currentPoint = it.animatedValue as Int
-            L.e("call: startAnimation -> $currentPoint")
+            //L.e("call: startAnimation -> $currentPoint")
             postInvalidateOnAnimation()
         }
         anim.addListener(object : RAnimListener() {
