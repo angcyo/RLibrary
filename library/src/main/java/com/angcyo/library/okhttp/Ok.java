@@ -52,7 +52,7 @@ public class Ok {
 
     public void load(String url) {
         try {
-            Call call = getCall(url);
+            Call call = getCall(url, null);
             Response response = call.execute();
             response.body().byteStream();
         } catch (Exception e) {
@@ -60,7 +60,7 @@ public class Ok {
         }
     }
 
-    private Call getCall(String url) {
+    private Call getCall(String url, OnImageTypeListener listener) {
         ensureClient();
         Call call = null;
         try {
@@ -68,6 +68,9 @@ public class Ok {
             call = sOkHttpClient.newCall(mRequest);
         } catch (Exception e) {
             e.printStackTrace();
+            if (listener != null) {
+                typeCheckEnd(url, "UNKNOWN", listener);
+            }
         }
         return call;
     }
@@ -95,9 +98,9 @@ public class Ok {
                 String imageType = ImageTypeUtil.getImageType(file);
                 typeCheckEnd(url, imageType, listener);
             } else {
-                Call call = getCall(url);
+                Call call = getCall(url, listener);
                 if (call == null) {
-                    typeCheckEnd(url, UNKNOWN, listener);
+                    typeCheckEnd(url, "UNKNOWN", listener);
                 } else {
                     call.enqueue(new Callback() {
                         @Override

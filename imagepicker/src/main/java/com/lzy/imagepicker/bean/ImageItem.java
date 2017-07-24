@@ -2,6 +2,8 @@ package com.lzy.imagepicker.bean;
 
 import android.graphics.Rect;
 import android.graphics.drawable.Drawable;
+import android.os.Parcel;
+import android.os.Parcelable;
 
 import com.lzy.imagepicker.ImageDataSource;
 
@@ -16,7 +18,7 @@ import java.io.Serializable;
  * 修订历史：
  * ================================================
  */
-public class ImageItem implements Serializable {
+public class ImageItem implements Parcelable {
 
     public String name;       //图片的名字
     public String path;       //路径
@@ -35,7 +37,7 @@ public class ImageItem implements Serializable {
     public String resolution;// width x height or height x width
     public int videoRotation = 0;//视频的宽高,已通过旋转方向自动调整了
 
-    @ImageDataSource.LoaderType
+    //@ImageDataSource.LoaderType
     public int loadType;
 
     //是否可以保存到本地
@@ -65,4 +67,60 @@ public class ImageItem implements Serializable {
         }
         return super.equals(o);
     }
+
+    @Override
+    public int describeContents() {
+        return 0;
+    }
+
+    @Override
+    public void writeToParcel(Parcel dest, int flags) {
+        dest.writeString(this.name);
+        dest.writeString(this.path);
+        dest.writeString(this.thumbPath);
+        dest.writeString(this.url);
+        dest.writeLong(this.size);
+        dest.writeInt(this.width);
+        dest.writeInt(this.height);
+        dest.writeString(this.mimeType);
+        dest.writeLong(this.addTime);
+        dest.writeLong(this.videoDuration);
+        dest.writeString(this.videoThumbPath);
+        dest.writeString(this.resolution);
+        dest.writeInt(this.videoRotation);
+        dest.writeInt(this.loadType);
+        dest.writeByte(this.canSave ? (byte) 1 : (byte) 0);
+        dest.writeParcelable(this.mViewLocation, flags);
+    }
+
+    protected ImageItem(Parcel in) {
+        this.name = in.readString();
+        this.path = in.readString();
+        this.thumbPath = in.readString();
+        this.url = in.readString();
+        this.size = in.readLong();
+        this.width = in.readInt();
+        this.height = in.readInt();
+        this.mimeType = in.readString();
+        this.addTime = in.readLong();
+        this.videoDuration = in.readLong();
+        this.videoThumbPath = in.readString();
+        this.resolution = in.readString();
+        this.videoRotation = in.readInt();
+        this.loadType = in.readInt();
+        this.canSave = in.readByte() != 0;
+        this.mViewLocation = in.readParcelable(Rect.class.getClassLoader());
+    }
+
+    public static final Creator<ImageItem> CREATOR = new Creator<ImageItem>() {
+        @Override
+        public ImageItem createFromParcel(Parcel source) {
+            return new ImageItem(source);
+        }
+
+        @Override
+        public ImageItem[] newArray(int size) {
+            return new ImageItem[size];
+        }
+    };
 }

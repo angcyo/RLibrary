@@ -2,15 +2,22 @@ package com.angcyo.uiview.widget
 
 import android.app.Activity
 import android.content.Context
+import android.graphics.Bitmap
+import android.graphics.drawable.BitmapDrawable
+import android.graphics.drawable.Drawable
+import android.support.v4.content.ContextCompat
 import android.util.AttributeSet
 import com.angcyo.github.utilcode.utils.ImageUtils
 import com.angcyo.library.okhttp.Ok
 import com.angcyo.library.utils.L
 import com.angcyo.uiview.R
-import com.bumptech.glide.Glide
-import com.bumptech.glide.Priority
+import com.bumptech.glide.*
 import com.bumptech.glide.load.engine.DiskCacheStrategy
+import com.bumptech.glide.load.resource.drawable.GlideDrawable
+import com.bumptech.glide.load.resource.gif.GifDrawable
 import com.bumptech.glide.request.GenericRequest
+import com.bumptech.glide.request.animation.GlideAnimation
+import com.bumptech.glide.request.target.SimpleTarget
 import java.io.File
 
 /**
@@ -36,8 +43,11 @@ open class GlideImageView(context: Context, attributeSet: AttributeSet? = null) 
 
     var override = true
 
+    /**动画样式*/
+    var animType = AnimType.DEFAULT
+
     /**需要加载的图片地址, 优先判断是否是本地File*/
-    var url: String? = null
+    var url: String? = ""
         set(value) {
             field = value
             startLoadUrl()
@@ -48,26 +58,147 @@ open class GlideImageView(context: Context, attributeSet: AttributeSet? = null) 
         startLoadUrl()
     }
 
+    private fun getPlaceholderDrawable(): Drawable {
+        return ContextCompat.getDrawable(context, placeholderRes)
+    }
+
+    override fun setImageDrawable(drawable: Drawable?) {
+        drawable?.let {
+            //L.e("call: setImageDrawable -> ${it.javaClass.simpleName} $checkGif $measuredWidth $measuredHeight")
+        }
+        super.setImageDrawable(drawable)
+//        if (animType == AnimType.TRANSITION) {
+//            if (drawable != null && drawable !is TransitionDrawable) {
+////                var fromDrawable: Drawable? = getDrawable()
+////                if (fromDrawable == null) {
+//                var fromDrawable = ContextCompat.getDrawable(context, placeholderRes)
+////                }
+//                setImageDrawable(fromDrawable, drawable)
+////                super.setImageDrawable(drawable)
+//            } else {
+//                super.setImageDrawable(drawable)
+//            }
+//        } else {
+//            super.setImageDrawable(drawable)
+//        }
+    }
+
     //启动加载流程
     private fun startLoadUrl() {
         setShowGifTip(false)
-
-        url?.let {
+        if (url.isNullOrEmpty()) {
+            setTagUrl("")
+            setImageResource(placeholderRes)
+        } else {
+            setTagUrl(url!!)
             if (measuredHeight == 0 || measuredWidth == 0) {
 
             } else {
-                val file = File(it)
+                val file = File(url)
                 if (file.exists()) {
                     loadWithFile(file)
                 } else {
-                    loadWidthUrl(it)
+                    loadWidthUrl(url!!)
                 }
             }
         }
     }
 
-    fun setTagUrl(url: String) {
-        setTag(R.id.tag_url, url)
+    private fun defaultConfig(request: GenericRequestBuilder<*, *, *, *>, isGif: Boolean) {
+        request.placeholder(placeholderRes)
+                .error(placeholderRes)
+
+        if (isGif) {
+            request.diskCacheStrategy(DiskCacheStrategy.SOURCE)
+                    .priority(Priority.HIGH)
+        } else {
+            request.diskCacheStrategy(DiskCacheStrategy.ALL)
+                    .priority(Priority.NORMAL)
+        }
+
+        if (scaleType == ScaleType.CENTER_CROP) {
+            when (request) {
+                is DrawableRequestBuilder -> request.centerCrop()
+                is BitmapRequestBuilder -> request.centerCrop()
+                is GifRequestBuilder -> request.centerCrop()
+            }
+        }
+
+        when (animType) {
+            AnimType.NONE, AnimType.TRANSITION -> request.dontAnimate()
+            AnimType.CROSS_FADE -> {
+                when (request) {
+                    is DrawableRequestBuilder -> request.crossFade()
+                    is BitmapRequestBuilder -> request.crossFade()
+                    is GifRequestBuilder -> request.crossFade()
+                }
+            }
+        }
+    }
+
+    private fun intoConfig(request: GenericRequestBuilder<*, *, *, *>, onDelayInto: () -> Unit) {
+        if (override) {
+            if (measuredWidth == 0 || measuredHeight == 0) {
+                post {
+                    onDelayInto.invoke()
+                }
+            } else {
+                request.override(measuredWidth, measuredHeight)
+                if (animType == AnimType.TRANSITION) {
+                    when (request) {
+                        is DrawableTypeRequest -> {
+                            request.into(object : SimpleTarget<GlideDrawable>() {
+                                override fun onResourceReady(resource: GlideDrawable?, glideAnimation: GlideAnimation<in GlideDrawable>?) {
+                                    resource?.let {
+                                        setImageDrawable(getPlaceholderDrawable(), it)
+                                    }
+                                }
+                            })
+                        }
+                        is BitmapTypeRequest -> {
+                            request.into(object : SimpleTarget<Bitmap>() {
+                                override fun onResourceReady(resource: Bitmap?, glideAnimation: GlideAnimation<in Bitmap>?) {
+                                    resource?.let {
+                                        setImageDrawable(getPlaceholderDrawable(), BitmapDrawable(resources, it))
+                                    }
+                                }
+                            })
+                        }
+                        is GifTypeRequest -> {
+                            request.into(object : SimpleTarget<GifDrawable>() {
+                                override fun onResourceReady(resource: GifDrawable?, glideAnimation: GlideAnimation<in GifDrawable>?) {
+                                    resource?.let {
+                                        setImageDrawable(getPlaceholderDrawable(), it)
+                                        it.start()
+                                    }
+                                }
+                            })
+                        }
+                    }
+                } else {
+                    request.into(this)
+                }
+            }
+        } else {
+            request.into(this)
+        }
+    }
+
+    fun setTagUrl(url: String?) {
+        if (url == null) {
+            setTag(R.id.tag_url, "")
+        } else {
+            setTag(R.id.tag_url, url)
+        }
+    }
+
+    fun getTagUrl(): String {
+        val tag = getTag(R.id.tag_url)
+        if (tag == null) {
+            return ""
+        } else {
+            return tag as String
+        }
     }
 
     /**取消请求*/
@@ -97,75 +228,45 @@ open class GlideImageView(context: Context, attributeSet: AttributeSet? = null) 
         }
     }
 
-
     private fun showGifFile(file: File) {
-        val builder = Glide.with(context)
+        val request = Glide.with(context)
                 .load(file)
                 .asGif()
-                .placeholder(placeholderRes)
-                .error(placeholderRes)
-                .diskCacheStrategy(DiskCacheStrategy.SOURCE)
-                .crossFade()
-                .priority(Priority.HIGH)
-        if (override) {
-            if (measuredWidth == 0 || measuredHeight == 0) {
-                post {
-                    showGifFile(file)
-                }
-            } else {
-                builder.override(measuredWidth, measuredHeight).into(this)
-            }
-        } else {
-            builder.into(this)
+
+        defaultConfig(request, true)
+
+        intoConfig(request) {
+            showGifFile(file)
         }
     }
 
     private fun showJpegFile(file: File) {
-        val builder = Glide.with(context)
+        val request = Glide.with(context)
                 .load(file)
                 .asBitmap()
-                .placeholder(placeholderRes)
-                .error(placeholderRes)
-                .diskCacheStrategy(DiskCacheStrategy.ALL)
-                .crossFade()
-                .priority(Priority.NORMAL)
-        if (override) {
-            if (measuredWidth == 0 || measuredHeight == 0) {
-                post {
-                    showJpegFile(file)
-                }
-            } else {
-                builder.override(measuredWidth, measuredHeight).into(this)
-            }
-        } else {
-            builder.into(this)
+
+        defaultConfig(request, false)
+
+        intoConfig(request) {
+            showJpegFile(file)
         }
     }
 
     private fun showFile(file: File) {
-        val builder = Glide.with(context)
+        val request = Glide.with(context)
                 .load(file)
-                .placeholder(placeholderRes)
-                .error(placeholderRes)
-                .diskCacheStrategy(DiskCacheStrategy.ALL)
-                .crossFade()
-                .priority(Priority.NORMAL)
 
-        if (override) {
-            if (measuredWidth == 0 || measuredHeight == 0) {
-                post {
-                    showFile(file)
-                }
-            } else {
-                builder.override(measuredWidth, measuredHeight).into(this)
-            }
-        } else {
-            builder.into(this)
+        defaultConfig(request, false)
+
+        intoConfig(request) {
+            showFile(file)
         }
     }
 
     private fun loadWidthUrl(url: String) {
-        setTag(R.id.tag_url, url)
+        if (!canLoad(url)) {
+            return
+        }
         if (checkGif) {
             Ok.instance()
                     .type(url, object : Ok.OnImageTypeListener {
@@ -174,13 +275,7 @@ open class GlideImageView(context: Context, attributeSet: AttributeSet? = null) 
                         }
 
                         override fun onImageType(imageUrl: String, imageType: Ok.ImageType) {
-                            val tagUrl = getTag(R.id.tag_url)?.toString()
-
-                            if (tagUrl.isNullOrEmpty()) {
-                                return
-                            }
-
-                            if (!imageUrl.contains(tagUrl!!)) {
+                            if (!canLoad(imageUrl)) {
                                 return
                             }
 
@@ -208,68 +303,70 @@ open class GlideImageView(context: Context, attributeSet: AttributeSet? = null) 
     }
 
     private fun loadUrl(url: String) {
-        val builder = Glide.with(context)
+        if (!canLoad(url)) {
+            return
+        }
+
+        val request = Glide.with(context)
                 .load(url)
-                .placeholder(placeholderRes)
-                .error(placeholderRes)
-                .diskCacheStrategy(DiskCacheStrategy.ALL)
-                .priority(Priority.NORMAL)
-                .crossFade()
-        if (override) {
-            if (measuredWidth == 0 || measuredHeight == 0) {
-                post {
-                    loadUrl(url)
-                }
-            } else {
-                builder.override(measuredWidth, measuredHeight).into(this)
-            }
-        } else {
-            builder.into(this)
+
+        defaultConfig(request, false)
+
+        intoConfig(request) {
+            loadUrl(url)
         }
     }
 
     private fun loadJpegUrl(url: String) {
-        val builder = Glide.with(context)
+        if (!canLoad(url)) {
+            return
+        }
+
+        val request = Glide.with(context)
                 .load(url)
                 .asBitmap()
-                .placeholder(placeholderRes)
-                .error(placeholderRes)
-                .diskCacheStrategy(DiskCacheStrategy.ALL)
-                .priority(Priority.NORMAL)
-                .crossFade()
-        if (override) {
-            if (measuredWidth == 0 || measuredHeight == 0) {
-                post {
-                    loadJpegUrl(url)
-                }
-            } else {
-                builder.override(measuredWidth, measuredHeight).into(this)
-            }
-        } else {
-            builder.into(this)
+
+        defaultConfig(request, false)
+
+        intoConfig(request) {
+            loadJpegUrl(url)
         }
     }
 
     private fun loadGifUrl(url: String) {
-        val builder = Glide.with(context)
+        if (!canLoad(url)) {
+            return
+        }
+
+        val request = Glide.with(context)
                 .load(url)
                 .asGif()
-                .placeholder(placeholderRes)
-                .error(placeholderRes)
-                .diskCacheStrategy(DiskCacheStrategy.SOURCE)
-                .priority(Priority.HIGH)
-                .crossFade()
-        if (override) {
-            if (measuredWidth == 0 || measuredHeight == 0) {
-                post {
-                    loadGifUrl(url)
-                }
-            } else {
-                builder.override(measuredWidth, measuredHeight).into(this)
-            }
-        } else {
-            builder.into(this)
+
+        defaultConfig(request, true)
+
+        intoConfig(request) {
+            loadGifUrl(url)
         }
     }
 
+    //动画类型
+    enum class AnimType(nativeInt: Int) {
+        DEFAULT(0), NONE(-1), CROSS_FADE(1), TRANSITION(2);
+    }
+
+    //判断是否加载url
+    private fun canLoad(url: String?): Boolean {
+        val tagUrl = getTagUrl()
+
+        if (tagUrl.isNullOrEmpty() || url.isNullOrEmpty()) {
+            return false
+        }
+
+        if (!url!!.contains(tagUrl)) {
+            return false
+        }
+
+        return true
+    }
 }
+

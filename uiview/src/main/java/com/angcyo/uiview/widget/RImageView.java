@@ -16,6 +16,7 @@ import android.graphics.drawable.TransitionDrawable;
 import android.os.Build;
 import android.support.annotation.ColorInt;
 import android.support.annotation.DrawableRes;
+import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.widget.AppCompatImageView;
@@ -23,6 +24,7 @@ import android.util.AttributeSet;
 import android.view.MotionEvent;
 import android.widget.ImageView;
 
+import com.angcyo.library.utils.L;
 import com.angcyo.uiview.R;
 import com.angcyo.uiview.RApplication;
 
@@ -347,7 +349,15 @@ public class RImageView extends AppCompatImageView {
     /**
      * 使用过渡的方式显示Drawable
      */
-    public void setImageDrawable(@Nullable Drawable fromDrawable, @Nullable Drawable toDrawable) {
+    public void setImageDrawable(@NonNull Drawable fromDrawable, @NonNull Drawable toDrawable) {
+//        L.e("call: setImageDrawable([fromDrawable, toDrawable])-> " +
+//                fromDrawable.getClass().getSimpleName() + " " +
+//                toDrawable.getClass().getSimpleName());
+//
+//        if (toDrawable.getClass().getSimpleName().contains("ImageView")) {
+//            L.e("call: setImageDrawable([fromDrawable, toDrawable])-> ............");
+//        }
+
         final TransitionDrawable td = new TransitionDrawable(new Drawable[]{
                 fromDrawable, toDrawable});
         super.setImageDrawable(td);
