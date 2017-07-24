@@ -134,7 +134,7 @@ public abstract class RBaseAdapter<T> extends RecyclerView.Adapter<RBaseViewHold
             } else {
                 int itemLayoutId = getItemLayoutId(viewType);
                 if (itemLayoutId == 0) {
-                    itemView = createContentView(parent, viewType);
+                    itemView = createItemView(parent, viewType);
                 } else {
                     try {
                         itemView = LayoutInflater.from(mContext).inflate(itemLayoutId, parent, false);
@@ -300,7 +300,7 @@ public abstract class RBaseAdapter<T> extends RecyclerView.Adapter<RBaseViewHold
     /**
      * 当 {@link #getItemLayoutId(int)} 返回0的时候, 会调用此方法
      */
-    protected View createContentView(ViewGroup parent, int viewType) {
+    protected View createItemView(ViewGroup parent, int viewType) {
         return null;
     }
 

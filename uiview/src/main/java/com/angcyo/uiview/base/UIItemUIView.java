@@ -89,6 +89,11 @@ public abstract class UIItemUIView<T extends Item> extends UIRecyclerUIView<Stri
             protected int getItemLayoutId(int viewType) {
                 return UIItemUIView.this.getItemLayoutId(viewType);
             }
+
+            @Override
+            protected View createItemView(ViewGroup parent, int viewType) {
+                return UIItemUIView.this.createItemView(parent, viewType);
+            }
         };
     }
 
@@ -108,6 +113,10 @@ public abstract class UIItemUIView<T extends Item> extends UIRecyclerUIView<Stri
      */
     protected int getItemLayoutId(int position) {
         return R.layout.base_item_info_layout;
+    }
+
+    protected View createItemView(ViewGroup parent, int position) {
+        return null;
     }
 
     /**
