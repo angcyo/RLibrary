@@ -50,20 +50,20 @@ public class RNineImageLayout extends RelativeLayout implements View.OnClickList
     private Paint mPaint;
     private float mDensity;
 
-    private int mPaddingLeft = 0;
-    private int mPaddingRight = 0;
-    private int mPaddingTop = 0;
-    private int mPaddingBottom = 0;
+    private int mRPaddingLeft = 0;
+    private int mRPaddingRight = 0;
+    private int mRPaddingTop = 0;
+    private int mRPaddingBottom = 0;
 
     public RNineImageLayout(Context context, AttributeSet attrs) {
         super(context, attrs);
         space *= getResources().getDisplayMetrics().density;
 
         TypedArray typedArray = context.obtainStyledAttributes(attrs, R.styleable.RNineImageLayout);
-        mPaddingBottom = typedArray.getDimensionPixelOffset(R.styleable.RNineImageLayout_r_paddingBottom, 0);
-        mPaddingLeft = typedArray.getDimensionPixelOffset(R.styleable.RNineImageLayout_r_paddingLeft, 0);
-        mPaddingRight = typedArray.getDimensionPixelOffset(R.styleable.RNineImageLayout_r_paddingRight, 0);
-        mPaddingTop = typedArray.getDimensionPixelOffset(R.styleable.RNineImageLayout_r_paddingTop, 0);
+        mRPaddingBottom = typedArray.getDimensionPixelOffset(R.styleable.RNineImageLayout_r_paddingBottom, 0);
+        mRPaddingLeft = typedArray.getDimensionPixelOffset(R.styleable.RNineImageLayout_r_paddingLeft, 0);
+        mRPaddingRight = typedArray.getDimensionPixelOffset(R.styleable.RNineImageLayout_r_paddingRight, 0);
+        mRPaddingTop = typedArray.getDimensionPixelOffset(R.styleable.RNineImageLayout_r_paddingTop, 0);
         typedArray.recycle();
     }
 
@@ -111,13 +111,13 @@ public class RNineImageLayout extends RelativeLayout implements View.OnClickList
                     mImageViews.get(0).measure(getSize(defaultSize), getSize(defaultSize));
                     setMeasuredDimension(defaultSize, defaultSize);
                 } else {
-                    mImageViews.get(0).measure(getSize(widthHeight[0]), getSize(widthHeight[1]));
+                    mImageViews.get(0).measure(getSize(Math.min(widthHeight[0], widthHeight[0] - mRPaddingRight)), getSize(widthHeight[1]));
                     setMeasuredDimension(widthHeight[0], widthHeight[1]);
 
                     //L.e("width:" + widthHeight[0] + " height:" + widthHeight[1]);
                 }
             } else {
-                width = measureWidth - mPaddingLeft - mPaddingRight;
+                width = measureWidth - mRPaddingLeft - mRPaddingRight;
 
                 final int columns = getColumns(size);
                 final int rows = getRows(size);
@@ -416,6 +416,22 @@ public class RNineImageLayout extends RelativeLayout implements View.OnClickList
             mPaint.setFlags(Paint.FILTER_BITMAP_FLAG);
             mDensity = getResources().getDisplayMetrics().density;
         }
+    }
+
+    public int getRPaddingLeft() {
+        return mRPaddingLeft;
+    }
+
+    public int getRPaddingRight() {
+        return mRPaddingRight;
+    }
+
+    public int getRPaddingTop() {
+        return mRPaddingTop;
+    }
+
+    public int getRPaddingBottom() {
+        return mRPaddingBottom;
     }
 
     /**
