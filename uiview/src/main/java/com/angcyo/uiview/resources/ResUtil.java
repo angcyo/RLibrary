@@ -446,7 +446,7 @@ public class ResUtil {
      * 获取 colorAccent 颜色
      */
     public static int getThemeColorAccent(Context context) {
-        return ContextCompat.getColor(context, getThemeColor(context, "colorAccent"));
+        return getThemeColor(context, "colorAccent");
     }
 
     /**
