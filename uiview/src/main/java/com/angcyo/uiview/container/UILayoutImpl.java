@@ -121,7 +121,19 @@ public class UILayoutImpl extends SwipeBackLayout implements ILayout<UIParam>, U
 
         @Override
         public void onActivityDestroyed(Activity activity) {
-
+            if (activity == mLayoutActivity) {
+                while (!mAttachViews.empty()) {
+                    try {
+                        ViewPattern pattern = mAttachViews.pop();
+                        pattern.interrupt = true;
+                        pattern.isAnimToEnd = true;
+                        pattern.mIView.onViewHide();
+                        pattern.mIView.onViewUnload();
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                    }
+                }
+            }
         }
     };
     /**

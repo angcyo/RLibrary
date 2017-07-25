@@ -21,14 +21,14 @@ import android.text.format.Formatter;
 import android.util.Log;
 import android.view.View;
 
+import com.angcyo.github.utilcode.utils.ClipboardUtils;
+import com.angcyo.github.utilcode.utils.CmdUtil;
+import com.angcyo.github.utilcode.utils.FileUtils;
 import com.angcyo.library.utils.L;
 import com.angcyo.uiview.base.UIViewConfig;
 import com.angcyo.uiview.container.ILayout;
 import com.angcyo.uiview.container.UILayoutImpl;
 import com.angcyo.uiview.dialog.UIDialog;
-import com.angcyo.github.utilcode.utils.ClipboardUtils;
-import com.angcyo.github.utilcode.utils.CmdUtil;
-import com.angcyo.github.utilcode.utils.FileUtils;
 import com.angcyo.uiview.recycler.RBaseViewHolder;
 import com.angcyo.uiview.utils.RUtils;
 import com.angcyo.uiview.utils.T_;
@@ -59,6 +59,12 @@ import java.util.zip.ZipFile;
  */
 public class RCrashHandler implements Thread.UncaughtExceptionHandler {
 
+    /**
+     * <intent-filter>
+     * <action android:name="com.angcyo.crash"/>
+     * <category android:name="android.intent.category.DEFAULT"/>
+     * </intent-filter>
+     */
     public static final String INTENT_ACTION_RESTART_ACTIVITY = "com.angcyo.crash";
     public static final String KEY_IS_CRASH = "is_crash";
     public static final String KEY_CRASH_FILE = "crash_file";

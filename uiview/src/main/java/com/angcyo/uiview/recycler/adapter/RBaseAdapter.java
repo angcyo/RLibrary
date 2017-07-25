@@ -122,6 +122,7 @@ public abstract class RBaseAdapter<T> extends RecyclerView.Adapter<RBaseViewHold
     public RBaseViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         View itemView = null;
         RBaseViewHolder viewHolder = null;
+        int itemLayoutId = -1;
         try {
             if (mEnableShowState && viewType == ITEM_TYPE_SHOW_STATE) {
                 itemView = LayoutInflater.from(mContext)
@@ -132,7 +133,7 @@ public abstract class RBaseAdapter<T> extends RecyclerView.Adapter<RBaseViewHold
                         .inflate(R.layout.base_item_load_more_layout, parent, false);
                 mLoadMore = (ILoadMore) itemView;
             } else {
-                int itemLayoutId = getItemLayoutId(viewType);
+                itemLayoutId = getItemLayoutId(viewType);
                 if (itemLayoutId == 0) {
                     itemView = createItemView(parent, viewType);
                 } else {
@@ -148,6 +149,9 @@ public abstract class RBaseAdapter<T> extends RecyclerView.Adapter<RBaseViewHold
         } catch (Exception e) {
             L.e("请及时处理此处BUG. itemView=" + itemView);
             e.printStackTrace();
+        }
+        if (viewHolder == null) {
+            throw new NullPointerException("RBaseViewHolder 创建失败, itemView=" + itemView + " itemLayoutId:" + itemLayoutId);
         }
         return viewHolder;
     }
