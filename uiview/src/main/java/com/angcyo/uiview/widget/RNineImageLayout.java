@@ -111,7 +111,7 @@ public class RNineImageLayout extends RelativeLayout implements View.OnClickList
                     mImageViews.get(0).measure(getSize(defaultSize), getSize(defaultSize));
                     setMeasuredDimension(defaultSize, defaultSize);
                 } else {
-                    mImageViews.get(0).measure(getSize(Math.min(widthHeight[0], widthHeight[0] - mRPaddingRight)), getSize(widthHeight[1]));
+                    mImageViews.get(0).measure(getSize(Math.min(widthHeight[0], measureWidth - mRPaddingRight)), getSize(widthHeight[1]));
                     setMeasuredDimension(widthHeight[0], widthHeight[1]);
 
                     //L.e("width:" + widthHeight[0] + " height:" + widthHeight[1]);
@@ -156,7 +156,7 @@ public class RNineImageLayout extends RelativeLayout implements View.OnClickList
             if (size == 1) {
                 //一张图片
                 final RImageView firstView = mImageViews.get(0);
-                firstView.layout(left, top, right, bottom);
+                firstView.layout(left, top, firstView.getMeasuredWidth(), firstView.getMeasuredHeight());
 
 //                if (mNineImageConfig != null) {
 //                    mNineImageConfig.displayImage(firstView, mImagesList.get(0), getMeasuredWidth(), getMeasuredHeight());
