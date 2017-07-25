@@ -62,6 +62,7 @@ public class ImageGridActivity extends ImageBaseActivity implements ImageDataSou
     // private GridView mGridView;  //图片展示控件
     private RecyclerView mRecyclerView;  //图片展示控件
     private View mFooterBar;     //底部栏
+    private View mProgressBar;     //加载提示
     private Button mBtnOk;       //确定按钮
     private Button mBtnDir;      //文件夹切换按钮
     private Button mBtnPre;      //预览按钮
@@ -115,6 +116,7 @@ public class ImageGridActivity extends ImageBaseActivity implements ImageDataSou
         imagePicker.addOnImageSelectedListener(this);
 
         findViewById(R.id.btn_back).setOnClickListener(this);
+
         mBtnOk = (Button) findViewById(R.id.btn_ok);
         mBtnOk.setOnClickListener(this);
         mBtnDir = (Button) findViewById(R.id.btn_dir);
@@ -159,7 +161,7 @@ public class ImageGridActivity extends ImageBaseActivity implements ImageDataSou
 
         if (Build.VERSION.SDK_INT > Build.VERSION_CODES.JELLY_BEAN) {
             if (checkPermission(Manifest.permission.WRITE_EXTERNAL_STORAGE)) {
-                new ImageDataSource(this, loadType, null, this);
+                startLoadMedia();
             } else {
                 ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE}, REQUEST_PERMISSION_STORAGE);
             }
@@ -176,10 +178,24 @@ public class ImageGridActivity extends ImageBaseActivity implements ImageDataSou
         }
     }
 
+    /**
+     * 开始扫描媒体文件
+     */
+    private void startLoadMedia() {
+        getWindow().getDecorView().post(new Runnable() {
+            @Override
+            public void run() {
+                new ImageDataSource(ImageGridActivity.this, loadType, null, ImageGridActivity.this);
+            }
+        });
+    }
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_image_grid);
+        mProgressBar = findViewById(R.id.progressBar);
+        mProgressBar.setVisibility(View.VISIBLE);
     }
 
     @Override
@@ -187,7 +203,7 @@ public class ImageGridActivity extends ImageBaseActivity implements ImageDataSou
         super.onRequestPermissionsResult(requestCode, permissions, grantResults);
         if (requestCode == REQUEST_PERMISSION_STORAGE) {
             if (grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-                new ImageDataSource(this, loadType, null, this);
+                startLoadMedia();
             } else {
                 showToast("权限被禁止，无法选择本地图片");
             }
@@ -273,6 +289,9 @@ public class ImageGridActivity extends ImageBaseActivity implements ImageDataSou
 //        mGridView.setAdapter(mImageGridAdapter);
         mRecyclerView.setAdapter(mImageGridAdapter);
         mImageFolderAdapter.refreshData(imageFolders);
+
+        //mProgressBar.stop();
+        mProgressBar.setVisibility(View.GONE);
     }
 
     @Override
