@@ -211,6 +211,7 @@ public class RNineImageLayout extends RelativeLayout implements View.OnClickList
 
                 if (imageView.getMeasuredHeight() == 0 ||
                         imageView.getMeasuredWidth() == 0) {
+                    imageView.setImageResource(imageView.getPlaceholderRes());
                     delay = true;
                 }
             }

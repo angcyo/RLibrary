@@ -12,7 +12,9 @@ import com.angcyo.library.okhttp.Ok
 import com.angcyo.library.utils.L
 import com.angcyo.uiview.R
 import com.bumptech.glide.*
+import com.bumptech.glide.load.Transformation
 import com.bumptech.glide.load.engine.DiskCacheStrategy
+import com.bumptech.glide.load.resource.bitmap.BitmapTransformation
 import com.bumptech.glide.load.resource.drawable.GlideDrawable
 import com.bumptech.glide.load.resource.gif.GifDrawable
 import com.bumptech.glide.request.GenericRequest
@@ -36,7 +38,7 @@ open class GlideImageView(context: Context, attributeSet: AttributeSet? = null) 
     var checkGif = false
 
     /**强制url使用asGif的方式加载, 需要 checkGif=true*/
-    var showGifImage = false
+    var showAsGifImage = false
 
     /**占位资源*/
     var placeholderRes: Int = R.drawable.base_image_placeholder_shape
@@ -46,12 +48,26 @@ open class GlideImageView(context: Context, attributeSet: AttributeSet? = null) 
     /**动画样式*/
     var animType = AnimType.DEFAULT
 
+    var bitmapTransform: Transformation<*>? = null
+
     /**需要加载的图片地址, 优先判断是否是本地File*/
     var url: String? = ""
         set(value) {
             field = value
             startLoadUrl()
         }
+
+    /**重置所有属性, 方便在RecyclerView中使用*/
+    fun reset() {
+        checkGif = false
+        showAsGifImage = false
+        mShowGifTip = false
+        override = true
+        placeholderRes = R.drawable.base_image_placeholder_shape
+        animType = AnimType.DEFAULT
+        bitmapTransform = null
+        url = ""
+    }
 
     override fun onSizeChanged(w: Int, h: Int, oldw: Int, oldh: Int) {
         super.onSizeChanged(w, h, oldw, oldh)
@@ -88,6 +104,7 @@ open class GlideImageView(context: Context, attributeSet: AttributeSet? = null) 
         setShowGifTip(false)
         if (url.isNullOrEmpty()) {
             setTagUrl("")
+            cancelRequest()
             setImageResource(placeholderRes)
         } else {
             setTagUrl(url!!)
@@ -116,11 +133,30 @@ open class GlideImageView(context: Context, attributeSet: AttributeSet? = null) 
                     .priority(Priority.NORMAL)
         }
 
-        if (scaleType == ScaleType.CENTER_CROP) {
-            when (request) {
-                is DrawableRequestBuilder -> request.centerCrop()
-                is BitmapRequestBuilder -> request.centerCrop()
-                is GifRequestBuilder -> request.centerCrop()
+        when (request) {
+            is DrawableRequestBuilder -> {
+                if (scaleType == ScaleType.CENTER_CROP) {
+                    request.centerCrop()
+                }
+                bitmapTransform?.let {
+                    request.bitmapTransform(it as Transformation<Bitmap>?)
+                }
+            }
+            is BitmapRequestBuilder -> {
+                if (scaleType == ScaleType.CENTER_CROP) {
+                    request.centerCrop()
+                }
+                bitmapTransform?.let {
+                    request.transform(it as BitmapTransformation?)
+                }
+            }
+            is GifRequestBuilder -> {
+                if (scaleType == ScaleType.CENTER_CROP) {
+                    request.centerCrop()
+                }
+                bitmapTransform?.let {
+                    request.transform(it as Transformation<GifDrawable>?)
+                }
             }
         }
 
@@ -214,7 +250,7 @@ open class GlideImageView(context: Context, attributeSet: AttributeSet? = null) 
     private fun loadWithFile(file: File) {
         if (checkGif) {
             if ("GIF".equals(ImageUtils.getImageType(file), ignoreCase = true)) {
-                if (showGifImage) {
+                if (showAsGifImage) {
                     showGifFile(file)
                 } else {
                     setShowGifTip(true)
@@ -286,7 +322,7 @@ open class GlideImageView(context: Context, attributeSet: AttributeSet? = null) 
                             }
 
                             if (imageType == Ok.ImageType.GIF) {
-                                if (showGifImage) {
+                                if (showAsGifImage) {
                                     loadGifUrl(imageUrl)
                                 } else {
                                     setShowGifTip(true)

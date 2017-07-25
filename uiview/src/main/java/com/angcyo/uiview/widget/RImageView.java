@@ -24,7 +24,6 @@ import android.util.AttributeSet;
 import android.view.MotionEvent;
 import android.widget.ImageView;
 
-import com.angcyo.library.utils.L;
 import com.angcyo.uiview.R;
 import com.angcyo.uiview.RApplication;
 
@@ -52,7 +51,7 @@ public class RImageView extends AppCompatImageView {
      * 当调用{@link android.widget.ImageView#setImageDrawable(Drawable)} 时, 是否显示过渡动画
      */
     private boolean showDrawableAnim = true;
-    private boolean mShowGifTip;
+    protected boolean mShowGifTip;
     private Drawable mGifTipDrawable;
     private float mDensity;
 
