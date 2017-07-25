@@ -7,13 +7,12 @@ import android.util.AttributeSet;
 import android.view.MotionEvent;
 import android.view.View;
 
+import com.angcyo.library.utils.L;
 import com.angcyo.uiview.recycler.adapter.RBaseSwipeAdapter;
 import com.angcyo.uiview.recycler.widget.SwipeRecycleViewItemLayout;
 
 /**
- * Created by yukuo on 2016/4/29.
- * 这是一个带下拉刷新和上拉加载的revycleview
- * https://github.com/yukuoyuan/YRecycleview
+ * 带有侧滑菜单的RecyclerView
  * <p>
  * 请配合
  * {@link com.angcyo.uiview.recycler.adapter.RBaseSwipeAdapter}
@@ -55,7 +54,7 @@ public class RSwipeRecycleView extends RRecyclerView {
         if (adapter instanceof RBaseSwipeAdapter) {
 
         } else {
-
+            L.e("call: setAdapter([adapter])-> 警告:请使用RBaseSwipeAdapter,否则无法实现侧滑菜单.");
         }
         super.setAdapter(adapter);
     }

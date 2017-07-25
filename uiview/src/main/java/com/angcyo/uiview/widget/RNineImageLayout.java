@@ -45,6 +45,8 @@ public class RNineImageLayout extends RelativeLayout implements View.OnClickList
 
     int space = 3;//dp, 间隙
 
+    boolean isContainVideo = false;
+
     boolean canItemClick = true;
     private boolean drawMask = false;
     private Paint mPaint;
@@ -111,8 +113,10 @@ public class RNineImageLayout extends RelativeLayout implements View.OnClickList
                     mImageViews.get(0).measure(getSize(defaultSize), getSize(defaultSize));
                     setMeasuredDimension(defaultSize, defaultSize);
                 } else {
-                    mImageViews.get(0).measure(getSize(Math.min(widthHeight[0], measureWidth - mRPaddingRight)), getSize(widthHeight[1]));
-                    setMeasuredDimension(widthHeight[0], widthHeight[1]);
+                    mImageViews.get(0).measure(isContainVideo ? getSize(widthHeight[0]) :
+                                    getSize(Math.min(widthHeight[0], measureWidth - mRPaddingRight)),
+                            getSize(widthHeight[1]));
+                    setMeasuredDimension(isContainVideo ? widthHeight[0] : widthHeight[0] + mRPaddingRight, widthHeight[1]);
 
                     //L.e("width:" + widthHeight[0] + " height:" + widthHeight[1]);
                 }
@@ -446,6 +450,13 @@ public class RNineImageLayout extends RelativeLayout implements View.OnClickList
      */
     public void setCanItemClick(boolean canItemClick) {
         this.canItemClick = canItemClick;
+    }
+
+    /**
+     * 包裹的内容是否是视频,如果是视频不受RPadding属性的影响
+     */
+    public void setContainVideo(boolean containVideo) {
+        isContainVideo = containVideo;
     }
 
     public interface NineImageConfig {
