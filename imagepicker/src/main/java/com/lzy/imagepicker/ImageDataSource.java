@@ -147,6 +147,8 @@ public class ImageDataSource implements LoaderManager.LoaderCallbacks<Cursor> {
             ArrayList<ImageItem> allImages = new ArrayList<>();   //所有图片的集合,不分文件夹
 
             MediaMetadataRetriever mediaMetadataRetriever = new MediaMetadataRetriever();
+
+            Debug.logTimeStart("开始扫描媒体:");
             while (data.moveToNext()) {
                 if (mLoaderType == IMAGE) {
                     loadImage(data, allImages);
@@ -154,13 +156,13 @@ public class ImageDataSource implements LoaderManager.LoaderCallbacks<Cursor> {
                     loadVideo(data, allImages, mediaMetadataRetriever);
                 }
             }
+            Debug.logTimeEnd("扫描媒体结束:");
 
             try {
                 mediaMetadataRetriever.release();
             } catch (Exception e) {
 
             }
-
 
             //防止没有图片报异常
             if (data.getCount() > 0) {
