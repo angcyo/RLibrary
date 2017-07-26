@@ -204,6 +204,21 @@ public class RExTextView extends RTextView {
     protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
         super.onMeasure(widthMeasureSpec, heightMeasureSpec);
 
+
+        //int lastLineHeight = getLastLineHeight();
+        //float descent = getPaint().descent();
+
+        //setMeasuredDimension(getMeasuredWidth(), (int) (getMeasuredHeight() + density() * 40));
+    }
+
+    @Override
+    protected void onLayout(boolean changed, int left, int top, int right, int bottom) {
+        super.onLayout(changed, left, top, right, bottom);
+    }
+
+    @Override
+    protected void onSizeChanged(int w, int h, int oldw, int oldh) {
+        super.onSizeChanged(w, h, oldw, oldh);
         Layout layout = getLayout();
         if (maxShowLine > 0 && layout != null) {
             int lines = layout.getLineCount();
@@ -212,7 +227,8 @@ public class RExTextView extends RTextView {
                     //需要折叠
                     CharSequence sequence = getText();
                     if (sequence instanceof Spannable) {
-                        int textLength = sequence.length();
+                        Spannable spannable = (Spannable) sequence;
+                        int textLength = spannable.length();
 
                         String more = "...";
                         String foldString = getFoldString();
@@ -222,7 +238,6 @@ public class RExTextView extends RTextView {
                             return;
                         }
 
-                        Spannable spannable = (Spannable) sequence;
                         int lineStart = layout.getLineStart(maxShowLine);//返回第几行的第一个字符, 在字符串中的index
 
                         float needWidth = getPaint().measureText(more + foldString)
@@ -242,6 +257,7 @@ public class RExTextView extends RTextView {
                         //int startPosition = lineStart - more.length() - foldString.length();
 
                         if (startPosition < 0) {
+                            //L.e("call: onMeasure([widthMeasureSpec, heightMeasureSpec])-> Set Span 1");
                             spannable.setSpan(new ImageTextSpan(getContext(), getTextSize(), getCurrentTextColor(), more),
                                     lineStart - 1, lineStart, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
                             return;
@@ -253,16 +269,19 @@ public class RExTextView extends RTextView {
 
                         if (TextUtils.isEmpty(foldString)) {
                             if (!TextUtils.isEmpty(more)) {
+                                //L.e("call: onMeasure([widthMeasureSpec, heightMeasureSpec])-> Set Span 2:" + start);
                                 spannable.setSpan(new ImageTextSpan(getContext(), getTextSize(), getCurrentTextColor(), more),
-                                        start, spannable.length(), Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
+                                        start, textLength, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
                             }
                         } else {
                             if (!TextUtils.isEmpty(more)) {
+                                //L.e("call: onMeasure([widthMeasureSpec, heightMeasureSpec])-> Set Span 3:" + start);
                                 spannable.setSpan(new ImageTextSpan(getContext(), getTextSize(), getCurrentTextColor(), more),
                                         start, start + offset, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
                             }
+                            //L.e("call: onMeasure([widthMeasureSpec, heightMeasureSpec])-> Set Span 4:" + start);
                             spannable.setSpan(new ImageTextSpan(getContext(), getTextSize(), foldString),
-                                    start + offset, spannable.length(), Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
+                                    start + offset, textLength, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
                         }
 
                         //setMeasuredDimension(getMeasuredWidth(), (int) (getMeasuredHeight() + density() * 140));
@@ -271,11 +290,6 @@ public class RExTextView extends RTextView {
                 }
             }
         }
-
-        //int lastLineHeight = getLastLineHeight();
-        //float descent = getPaint().descent();
-
-        //setMeasuredDimension(getMeasuredWidth(), (int) (getMeasuredHeight() + density() * 40));
     }
 
     private int getLastLineHeight() {
@@ -315,13 +329,16 @@ public class RExTextView extends RTextView {
         for (CharacterStyle oldSpan : oldSpans) {
             int spanStart = spannable.getSpanStart(oldSpan);
             int spanEnd = spannable.getSpanEnd(oldSpan);
+
             if (spanStart <= startWidthPosition && spanEnd > startWidthPosition) {
                 position = spanStart;
             }
+
             if (spanStart >= startWidthPosition) {
                 spannable.removeSpan(oldSpan);
             }
         }
+        //L.e("call: findStartPosition([spannable, startWidthPosition]) " + startWidthPosition + " -> " + position);
         return position;
     }
 
