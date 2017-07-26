@@ -9,6 +9,10 @@ import android.content.pm.PackageManager;
 import android.content.res.Configuration;
 import android.content.res.Resources;
 import android.graphics.Point;
+import android.hardware.Camera;
+import android.media.AudioFormat;
+import android.media.AudioRecord;
+import android.media.MediaRecorder;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Looper;
@@ -932,6 +936,60 @@ public class RUtils {
         intent.putExtra(Intent.EXTRA_SUBJECT, "分享：" + title);
         intent.putExtra(Intent.EXTRA_TEXT, title + " " + text);
         activity.startActivity(Intent.createChooser(intent, "选择分享"));
+    }
+
+    /**
+     * 摄像头是否可用
+     */
+    public static boolean isCameraUseable() {
+        Camera mCamera = null;
+        try {
+            mCamera = Camera.open();
+            // setParameters 是针对魅族MX5。MX5通过Camera.open()拿到的Camera对象不为null
+            Camera.Parameters mParameters = mCamera.getParameters();
+            mCamera.setParameters(mParameters);
+        } catch (Exception e) {
+            return false;
+        } finally {
+            if (mCamera != null) {
+                try {
+                    mCamera.release();
+                } catch (Exception e) {
+                    return false;
+                }
+            }
+        }
+        return true;
+    }
+
+    /**
+     * 麦克风是否可用
+     */
+    public static boolean isAudioRecordable() {
+        AudioRecord record = null;
+        try {
+            record = new AudioRecord(MediaRecorder.AudioSource.MIC, 8000, AudioFormat.CHANNEL_CONFIGURATION_MONO,
+                    AudioFormat.ENCODING_PCM_16BIT, AudioRecord.getMinBufferSize(8000, AudioFormat.CHANNEL_CONFIGURATION_MONO,
+                    AudioFormat.ENCODING_PCM_16BIT));
+            record.startRecording();
+
+            int recordingState = record.getRecordingState();
+
+            if (recordingState == AudioRecord.RECORDSTATE_STOPPED) {
+                return false;
+            }
+            return true;
+        } catch (Exception e) {
+            return false;
+        } finally {
+            if (record != null) {
+                try {
+                    record.release();
+                } catch (Exception e) {
+                    return false;
+                }
+            }
+        }
     }
 
     public enum ImageType {
