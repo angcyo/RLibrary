@@ -212,11 +212,12 @@ public class RExTextView extends RTextView {
                     //需要折叠
                     CharSequence sequence = getText();
                     if (sequence instanceof Spannable) {
+                        int textLength = sequence.length();
 
                         String more = "...";
                         String foldString = getFoldString();
 
-                        if (sequence.length() <= more.length() + foldString.length()) {
+                        if (textLength <= more.length() + foldString.length()) {
                             setMaxShowLine(-1);//换行字符太多的情况
                             return;
                         }
@@ -224,7 +225,21 @@ public class RExTextView extends RTextView {
                         Spannable spannable = (Spannable) sequence;
                         int lineStart = layout.getLineStart(maxShowLine);//返回第几行的第一个字符, 在字符串中的index
 
-                        int startPosition = lineStart - more.length() - foldString.length();
+                        float needWidth = getPaint().measureText(more + foldString)
+                               /* + 2 * ImageTextSpan.getSpace(getContext())*/;//需要预留绘制文件的空间宽度
+
+                        //找出需要剔除多少个字符,才够空间绘制
+                        int startPosition = -1;
+                        for (int i = 0; i < textLength; i++) {
+                            CharSequence charSequence = sequence.subSequence(lineStart - i, lineStart);
+                            float textWidth = getPaint().measureText(String.valueOf(charSequence));
+                            if (textWidth > needWidth) {
+                                startPosition = lineStart - i;
+                                break;
+                            }
+                        }
+
+                        //int startPosition = lineStart - more.length() - foldString.length();
 
                         if (startPosition < 0) {
                             spannable.setSpan(new ImageTextSpan(getContext(), getTextSize(), getCurrentTextColor(), more),
@@ -291,6 +306,9 @@ public class RExTextView extends RTextView {
         super.scrollTo(x, y);
     }
 
+    /**
+     * 检查当前位置是否命中在spannable上, 如果是, 返回spannable的start position
+     */
     private int findStartPosition(Spannable spannable, int startWidthPosition) {
         CharacterStyle[] oldSpans = spannable.getSpans(startWidthPosition, spannable.length(), CharacterStyle.class);
         int position = startWidthPosition;
@@ -515,6 +533,10 @@ public class RExTextView extends RTextView {
             return Color.parseColor("#507daf");
         }
 
+        private static int getSpace(Context context) {
+            return (int) (2 * context.getResources().getDisplayMetrics().density);
+        }
+
         public ImageTextSpan setOnImageSpanClick(OnImageSpanClick onImageSpanClick) {
             mOnImageSpanClick = onImageSpanClick;
             if (mOnImageSpanClick == null) {
@@ -527,7 +549,7 @@ public class RExTextView extends RTextView {
 
         private void init(Context context) {
             mContext = context;
-            space = (int) (2 * mContext.getResources().getDisplayMetrics().density);
+            space = getSpace(context);
 
             setDefaultTextColor();
         }
@@ -542,7 +564,10 @@ public class RExTextView extends RTextView {
                 String string = mShowContent;
                 mTextBounds = getTextBounds(paint, string);
                 mImageSize = super.getSize(paint, text, start, end, fm);
-                mSpanWidth = mImageSize + space + mTextBounds.width() + space;
+                mSpanWidth = mImageSize + mTextBounds.width();
+                if (haveIco()) {
+                    mSpanWidth += space;
+                }
                 return mSpanWidth;
             }
         }
@@ -552,8 +577,9 @@ public class RExTextView extends RTextView {
             if (TextUtils.isEmpty(mShowContent)) {
                 super.draw(canvas, text, start, end, x, top, y, bottom, paint);
             } else {
-                tempRect.set((int) x, top, ((int) (x + mSpanWidth + space + space)), bottom);
+                tempRect.set((int) x, top, ((int) (x + mSpanWidth)), bottom);
                 if (isTouchDown && tempRect.contains(((int) downX), (int) downY)) {
+                    canvas.save();
                     if (enableTouchEffect) {
                         paint.setColor(SkinHelper.getTranColor(textColor, 0x80));
                         canvas.drawRect(tempRect, paint);
@@ -561,6 +587,7 @@ public class RExTextView extends RTextView {
                         paint.setColor(Color.TRANSPARENT);
                         canvas.drawRect(tempRect, paint);
                     }
+                    canvas.restore();
                 }
 
                 super.draw(canvas, text, start, end, x, top, y, bottom, paint);
@@ -590,8 +617,12 @@ public class RExTextView extends RTextView {
 //                    paint.setColor(Color.RED);
 //                    canvas.drawRect(x, top, x + x, bottom, paint);
 //                    paint.setColor(textColor);
+                    int sp = 0;
+                    if (haveIco()) {
+                        sp = space;
+                    }
                     canvas.drawText(string,
-                            x + mImageSize + space,
+                            x + mImageSize + sp,
                             textY,
                             paint);
                     canvas.restore();
@@ -602,6 +633,17 @@ public class RExTextView extends RTextView {
         public ImageTextSpan setDefaultTextColor() {
             setTextColor(getDefaultColor());//默认的文本颜色
             return this;
+        }
+
+        private boolean haveIco() {
+            Drawable drawable = getDrawable();
+            if (drawable == null) {
+                return false;
+            }
+            if (drawable instanceof ColorDrawable) {
+                return false;
+            }
+            return true;
         }
 
         public ImageTextSpan setTextColor(int textColor) {
@@ -669,7 +711,8 @@ public class RExTextView extends RTextView {
             if (TextUtils.isEmpty(text)) {
                 return tempRect;
             }
-            paint.getTextBounds(text, 0, text.length(), tempRect);
+            //paint.getTextBounds(text, 0, text.length(), tempRect);
+            tempRect.set(0, 0, (int) paint.measureText(text), 0);
             return tempRect;
         }
 
