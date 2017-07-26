@@ -1230,7 +1230,7 @@ public class UILayoutImpl extends SwipeBackLayout implements ILayout<UIParam>, U
     }
 
     private void viewHide(final ViewPattern viewPattern) {
-        viewHide(viewPattern, true);
+        viewHide(viewPattern, false);
     }
 
     private void viewShow(final ViewPattern viewPattern, final Bundle bundle) {
