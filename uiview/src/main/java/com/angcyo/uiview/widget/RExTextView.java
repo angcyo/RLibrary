@@ -241,7 +241,7 @@ public class RExTextView extends RTextView {
                         int lineStart = layout.getLineStart(maxShowLine);//返回第几行的第一个字符, 在字符串中的index
 
                         float needWidth = getPaint().measureText(more + foldString)
-                               /* + 2 * ImageTextSpan.getSpace(getContext())*/;//需要预留绘制文件的空间宽度
+                                /*+ 20 * ImageTextSpan.getSpace(getContext())*/;//需要预留绘制文件的空间宽度
 
                         //找出需要剔除多少个字符,才够空间绘制
                         int startPosition = -1;
@@ -249,7 +249,7 @@ public class RExTextView extends RTextView {
                             CharSequence charSequence = sequence.subSequence(lineStart - i, lineStart);
                             float textWidth = getPaint().measureText(String.valueOf(charSequence));
                             if (textWidth > needWidth) {
-                                startPosition = lineStart - i;
+                                startPosition = lineStart - i - 1;//多预留一个位置, 防止不够宽度无法绘制
                                 break;
                             }
                         }
