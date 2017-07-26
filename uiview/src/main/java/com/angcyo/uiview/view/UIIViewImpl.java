@@ -476,7 +476,7 @@ public abstract class UIIViewImpl implements IView {
         if (mILayout == null) {
             throw new IllegalArgumentException("ILayout 还未初始化");
         }
-        mILayout.showIView(view, needAnim, bundle);
+        mILayout.showIView(view, new UIParam(needAnim).setBundle(bundle));
     }
 
     public void showIView(IView iview, boolean needAnim) {
@@ -494,7 +494,7 @@ public abstract class UIIViewImpl implements IView {
         if (mILayout == null) {
             throw new IllegalArgumentException("ILayout 还未初始化");
         }
-        mILayout.showIView(iview, needAnim, bundle);
+        mILayout.showIView(iview, new UIParam(needAnim).setBundle(bundle));
     }
 
     public void replaceIView(IView iView, boolean needAnim) {

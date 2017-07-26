@@ -39,7 +39,7 @@ public class UIParam {
     /**
      * 启动一个新的IView 时, 是否隐藏之前顶部的IView
      */
-    public boolean hideLastIView = true;
+    public boolean hideLastIView = false;
 
     /**
      * 需要替换的iview, 只在replaceIView时使用, 用来判断目标的可行性

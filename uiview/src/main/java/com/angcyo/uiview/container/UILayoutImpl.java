@@ -747,11 +747,11 @@ public class UILayoutImpl extends SwipeBackLayout implements ILayout<UIParam>, U
 
     @Override
     public void showIView(final View view, final boolean needAnim) {
-        showIView(view, needAnim, null);
+        showIView(view, new UIParam(needAnim));
     }
 
     @Override
-    public void showIView(final View view, final boolean needAnim, final Bundle bundle) {
+    public void showIView(final View view, final UIParam param) {
         if (view == null) {
             return;
         }
@@ -760,14 +760,14 @@ public class UILayoutImpl extends SwipeBackLayout implements ILayout<UIParam>, U
             @Override
             public void run() {
                 final ViewPattern viewPattern = findViewPatternByView(view);
-                showIViewInternal(viewPattern, needAnim, bundle);
+                showIViewInternal(viewPattern, param);
             }
         });
     }
 
     @Override
     public void showIView(IView iview, boolean needAnim) {
-        showIView(iview, needAnim, null);
+        showIView(iview, new UIParam(needAnim));
     }
 
     @Override
@@ -776,17 +776,17 @@ public class UILayoutImpl extends SwipeBackLayout implements ILayout<UIParam>, U
     }
 
     @Override
-    public void showIView(final IView iview, final boolean needAnim, final Bundle bundle) {
+    public void showIView(final IView iview, final UIParam param) {
         post(new Runnable() {
             @Override
             public void run() {
                 final ViewPattern viewPattern = findViewPatternByIView(iview);
-                showIViewInternal(viewPattern, needAnim, bundle);
+                showIViewInternal(viewPattern, param);
             }
         });
     }
 
-    private void showIViewInternal(final ViewPattern viewPattern, final boolean needAnim, final Bundle bundle) {
+    private void showIViewInternal(final ViewPattern viewPattern, final UIParam param) {
         if (viewPattern == null) {
             return;
         }
@@ -795,18 +795,17 @@ public class UILayoutImpl extends SwipeBackLayout implements ILayout<UIParam>, U
             post(new Runnable() {
                 @Override
                 public void run() {
-                    showIViewInternal(viewPattern, needAnim, bundle);
+                    showIViewInternal(viewPattern, param);
                 }
             });
             return;
         }
 
+        viewPattern.mView.setVisibility(VISIBLE);
         viewPattern.mView.bringToFront();
 
         if (viewPattern == mLastShowViewPattern) {
-            if (bundle != null) {
-                viewShow(viewPattern, bundle);
-            }
+            viewReShow(viewPattern, param == null ? null : param.mBundle);
             return;
         }
 
@@ -816,27 +815,26 @@ public class UILayoutImpl extends SwipeBackLayout implements ILayout<UIParam>, U
         mAttachViews.remove(viewPattern);
         mAttachViews.push(viewPattern);
 
-        mLastShowViewPattern.mView.bringToFront();
-
         final Runnable endRunnable = new Runnable() {
             @Override
             public void run() {
-                viewShow(mLastShowViewPattern, bundle);
+                viewShow(mLastShowViewPattern, param == null ? null : param.mBundle);
+                printLog();
             }
         };
 
         if (mLastShowViewPattern.mIView.isDialog()) {
-            startDialogAnim(mLastShowViewPattern, needAnim ? mLastShowViewPattern.mIView.loadShowAnimation() : null, endRunnable);
+            startDialogAnim(mLastShowViewPattern, param.mAnim ? mLastShowViewPattern.mIView.loadShowAnimation() : null, endRunnable);
         } else {
             if (lastShowViewPattern != null) {
-                safeStartAnim(lastShowViewPattern.mView, needAnim ? mLastShowViewPattern.mIView.loadOtherHideAnimation() : null, new Runnable() {
+                safeStartAnim(lastShowViewPattern.mView, param.mAnim ? mLastShowViewPattern.mIView.loadOtherHideAnimation() : null, new Runnable() {
                     @Override
                     public void run() {
                         viewHide(lastShowViewPattern);
                     }
                 });
             }
-            safeStartAnim(mLastShowViewPattern.mView, needAnim ? mLastShowViewPattern.mIView.loadShowAnimation() : null, endRunnable);
+            safeStartAnim(mLastShowViewPattern.mView, param.mAnim ? mLastShowViewPattern.mIView.loadShowAnimation() : null, endRunnable);
         }
     }
 
@@ -1227,7 +1225,7 @@ public class UILayoutImpl extends SwipeBackLayout implements ILayout<UIParam>, U
         saveToSDCard(viewPattern.mIView.getClass().getSimpleName() + " onViewHide()");
         viewPattern.mIView.onViewHide();
         if (hide && !viewPattern.mIView.isDialog()) {
-            //viewPattern.mView.setVisibility(GONE);
+            viewPattern.mView.setVisibility(GONE);
         }
     }
 
@@ -1240,10 +1238,15 @@ public class UILayoutImpl extends SwipeBackLayout implements ILayout<UIParam>, U
                 viewPattern.mIView.getIViewShowState() == IView.IViewShowState.STATE_VIEW_SHOW) {
             return;
         }
-        saveToSDCard(viewPattern.mIView.getClass().getSimpleName() + " onViewShow()");
+        saveToSDCard(viewPattern.mIView.getClass().getSimpleName() + " onViewShow()" + bundle);
 //        viewPattern.mView.setVisibility(VISIBLE);
 //        viewPattern.mView.bringToFront();
         viewPattern.mIView.onViewShow(bundle);
+    }
+
+    private void viewReShow(final ViewPattern viewPattern, final Bundle bundle) {
+        saveToSDCard(viewPattern.mIView.getClass().getSimpleName() + " onViewReShow()" + bundle);
+        viewPattern.mIView.onViewReShow(bundle);
     }
 
     /**

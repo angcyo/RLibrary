@@ -56,8 +56,12 @@ public class TimeUtil {
     }
 
     public static String getNowDatetime() {
+       return getDatetime(System.currentTimeMillis());
+    }
+
+    public static String getDatetime(long time) {
         SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.getDefault());
-        return (formatter.format(new Date()));
+        return (formatter.format(new Date(time)));
     }
 
     public static int getNow() {

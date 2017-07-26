@@ -47,13 +47,13 @@ public interface ILayout<T extends UIParam> {
 
     void showIView(View view);
 
-    void showIView(final View view, final boolean needAnim, final Bundle bundle);//2016-12-15
+    void showIView(final View view, final UIParam param);//2016-12-15, 2017-7-26
 
     void showIView(IView iview, boolean needAnim);//2016-12-16
 
     void showIView(IView iview);//2016-12-16
 
-    void showIView(final IView iview, final boolean needAnim, final Bundle bundle);//2016-12-16
+    void showIView(final IView iview, final UIParam param);//2016-12-16, 2017-7-26
 
     /**
      * 替换一个View
