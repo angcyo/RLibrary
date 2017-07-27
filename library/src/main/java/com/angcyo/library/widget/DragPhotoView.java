@@ -5,7 +5,9 @@ import android.animation.ValueAnimator;
 import android.content.Context;
 import android.graphics.Canvas;
 import android.graphics.Color;
+import android.graphics.Matrix;
 import android.graphics.Paint;
+import android.graphics.RectF;
 import android.graphics.drawable.Drawable;
 import android.os.Build;
 import android.util.AttributeSet;
@@ -76,6 +78,7 @@ public class DragPhotoView extends PhotoView {
     protected void onDraw(Canvas canvas) {
         if (isLargeBitmap || Build.VERSION.SDK_INT < Build.VERSION_CODES.LOLLIPOP) {
             setLayerType(LAYER_TYPE_SOFTWARE, mPaint);
+//            getDrawable().setBounds(0, 0, getMeasuredWidth(), getMeasuredHeight());
         } else {
             setLayerType(LAYER_TYPE_HARDWARE, mPaint);
         }
@@ -99,13 +102,113 @@ public class DragPhotoView extends PhotoView {
             int height = drawable.getIntrinsicHeight();
             if (width > 2000 || height > 2000) {
                 isLargeBitmap = true;
-                setScaleLevels(1f, 4.6f, 8f);
+                float maxScale = 8f;
+
+                int widthPixels = getResources().getDisplayMetrics().widthPixels;
+                int heightPixels = getResources().getDisplayMetrics().heightPixels;
+
+                try {
+                    if (width > height) {
+                        //宽图
+                        maxScale = heightPixels / (widthPixels * 1f / width * height);
+                    } else {
+                        //长图
+                        maxScale = widthPixels / (heightPixels * 1f / height * width);
+                    }
+
+                    setScaleLevels(1f, /*4.6f*/ maxScale / 2, maxScale);
+                } catch (Exception e) {
+                    setScaleLevels(1f, 4.6f, 8f);
+                }
+
+            } else {
+
             }
         }
 
-        if (!isLargeBitmap) {
+        if (isLargeBitmap) {
+//            setScaleType(ScaleType.CENTER_CROP);
+        } else {
             setScaleLevels(1f, 1.75f, 3f);
+//            setScaleType(ScaleType.FIT_CENTER);
         }
+    }
+
+    /**
+     * 放大之后的图片宽度
+     */
+    public int getCurrentImageWidth() {
+        Drawable drawable = getDrawable();
+        int viewWidth = getMeasuredWidth();
+        int viewHeight = getMeasuredHeight();
+
+        if (drawable != null) {
+            float scale = getScale();
+            int width = drawable.getIntrinsicWidth();
+            int height = drawable.getIntrinsicHeight();
+
+            int heightPixels = getResources().getDisplayMetrics().heightPixels;
+
+            Matrix mBaseMatrix = new Matrix();
+            RectF mTempSrc = new RectF(0, 0, width, height);
+            RectF mTempDst = new RectF(0, 0, viewWidth, viewHeight);
+            mBaseMatrix.setRectToRect(mTempSrc, mTempDst, Matrix.ScaleToFit.CENTER);
+            float[] mMatrixValues = new float[9];
+            mBaseMatrix.getValues(mMatrixValues);
+
+            int scaleWidth = (int) (mMatrixValues[Matrix.MSCALE_X] * width);//缩放之后的宽度
+            int scaleHeight = (int) (mMatrixValues[Matrix.MSCALE_Y] * height);//缩放之后的高度
+
+            return (int) Math.min(viewWidth, scaleWidth * scale);
+//
+//            if (width > height) {
+//                //宽图
+//                return Math.min(viewWidth, width);
+//            } else {
+//                //长图
+//                return (int) (scale * (heightPixels * 1f / height * width));
+//            }
+        }
+        return viewWidth;
+    }
+
+
+    /**
+     * 放大之后的图片高度
+     */
+    public int getCurrentImageHeight() {
+        Drawable drawable = getDrawable();
+        int viewWidth = getMeasuredWidth();
+        int viewHeight = getMeasuredHeight();
+
+        if (drawable != null) {
+            float scale = getScale();
+            int width = drawable.getIntrinsicWidth();
+            int height = drawable.getIntrinsicHeight();
+
+            int widthPixels = getResources().getDisplayMetrics().widthPixels;
+
+            Matrix mBaseMatrix = new Matrix();
+            RectF mTempSrc = new RectF(0, 0, width, height);
+            RectF mTempDst = new RectF(0, 0, viewWidth, viewHeight);
+            mBaseMatrix.setRectToRect(mTempSrc, mTempDst, Matrix.ScaleToFit.CENTER);
+            float[] mMatrixValues = new float[9];
+            mBaseMatrix.getValues(mMatrixValues);
+
+            int scaleWidth = (int) (mMatrixValues[Matrix.MSCALE_X] * width);//缩放之后的宽度
+            int scaleHeight = (int) (mMatrixValues[Matrix.MSCALE_Y] * height);//缩放之后的高度
+
+            return (int) Math.min(viewHeight, scaleHeight * scale);
+
+//            if (width > height) {
+//                //宽图
+//                return (int) (scale * (widthPixels * 1f / width * height));
+//            } else {
+//                //长图
+//                return Math.min(getMeasuredHeight(), height);
+//            }
+        }
+        return getMeasuredHeight();
     }
 
     @Override

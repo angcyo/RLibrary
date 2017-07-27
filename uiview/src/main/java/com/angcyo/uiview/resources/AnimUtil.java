@@ -239,6 +239,51 @@ public class AnimUtil {
         return animator;
     }
 
+    public static ValueAnimator startToMinAnim(final View targetView,
+                                               Point from, Point to,
+                                               final float endScaleX, final float endScaleY,
+                                               Animator.AnimatorListener listener) {
+        final Point startPoint = from;
+        final Point endPoint = to;
+
+        final ValueAnimator animator = ValueAnimator.ofFloat(0f, 1f);
+        animator.addListener(listener);
+
+        animator.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
+            @Override
+            public void onAnimationUpdate(ValueAnimator animation) {
+                float value = (float) animation.getAnimatedValue();
+
+                ViewCompat.setScaleX(targetView, 1 - (1 - endScaleX) * value);
+                ViewCompat.setScaleY(targetView, 1 - (1 - endScaleY) * value);
+
+                ViewCompat.setX(targetView, (startPoint.x + (endPoint.x - startPoint.x) * value) - targetView.getMeasuredWidth() / 2);
+                ViewCompat.setY(targetView, (startPoint.y + (endPoint.y - startPoint.y) * value) - targetView.getMeasuredHeight() / 2);
+
+                notifyAnimProgress(animation, animation.getAnimatedFraction());
+            }
+        });
+
+        animator.setDuration(UIIViewImpl.DEFAULT_FINISH_ANIM_TIME);
+        animator.setInterpolator(new DecelerateInterpolator());
+
+        if (targetView.getMeasuredWidth() == 0 || targetView.getMeasuredHeight() == 0) {
+            targetView.getViewTreeObserver().addOnPreDrawListener(new ViewTreeObserver.OnPreDrawListener() {
+                @Override
+                public boolean onPreDraw() {
+                    notifyAnimDelayStart(animator);
+                    animator.start();
+                    targetView.getViewTreeObserver().removeOnPreDrawListener(this);
+                    return false;
+                }
+            });
+        } else {
+            notifyAnimDelayStart(animator);
+            animator.start();
+        }
+        return animator;
+    }
+
     private static void notifyAnimProgress(ValueAnimator animator, float progress) {
         if (animator.getListeners() == null) {
             return;
