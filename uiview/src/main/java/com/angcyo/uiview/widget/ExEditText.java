@@ -36,6 +36,7 @@ import com.angcyo.library.utils.Anim;
 import com.angcyo.library.utils.L;
 import com.angcyo.uiview.R;
 import com.angcyo.uiview.RApplication;
+import com.angcyo.uiview.kotlin.ExKt;
 import com.angcyo.uiview.skin.SkinHelper;
 import com.angcyo.uiview.utils.RTextPaint;
 
@@ -284,9 +285,9 @@ public class ExEditText extends AppCompatEditText {
             float x = 0, y = 0;
             y = bottom - getLayout().getLineDescent(0);
 
-            if (getGravity() == Gravity.LEFT) {
+            if (ExKt.have(getGravity(), Gravity.LEFT)) {
                 x = getInputTipDrawLeft();
-            } else if (getGravity() == Gravity.RIGHT) {
+            } else if (ExKt.have(getGravity(), Gravity.RIGHT)) {
                 x = getMeasuredWidth() - getInputTipDrawRight() - textPaint.measureText(mRHintText);
             }
 
