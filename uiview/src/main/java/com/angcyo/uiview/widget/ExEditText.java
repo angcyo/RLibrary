@@ -278,8 +278,8 @@ public class ExEditText extends AppCompatEditText {
         if (TextUtils.isEmpty(getText()) && TextUtils.isEmpty(getHint()) && !TextUtils.isEmpty(mRHintText)) {
             canvas.save();
             final TextPaint textPaint = getPaint();
-//            textPaint.setColor(getCurrentHintTextColor());
-            textPaint.setColor(Color.RED);
+            textPaint.setColor(getCurrentHintTextColor());
+//            textPaint.setColor(Color.RED);
 
             int lineHeight = getLayout().getLineDescent(0) - getLayout().getLineAscent(0);
             int bottom = getPaddingTop() + (getMeasuredHeight() - getPaddingTop() - getPaddingBottom()) / 2 + lineHeight / 2;
