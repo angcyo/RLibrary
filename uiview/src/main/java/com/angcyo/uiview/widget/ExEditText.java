@@ -288,6 +288,7 @@ public class ExEditText extends AppCompatEditText {
             if (ExKt.have(getGravity(), Gravity.LEFT)) {
                 x = getInputTipDrawLeft();
             } else if (ExKt.have(getGravity(), Gravity.RIGHT)) {
+                //right属性和inputType属性 同时存在,会产生无效果的BUG.请注意
                 x = getMeasuredWidth() - getInputTipDrawRight() - textPaint.measureText(mRHintText);
             }
 
