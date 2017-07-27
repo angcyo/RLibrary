@@ -99,6 +99,10 @@ public class ExEditText extends AppCompatEditText {
      * 自动提示的文本
      */
     private String mInputTipText = "";
+    /**
+     * 模拟实现系统hint的效果, 好处在于可以使光标在hint字符串的右边
+     */
+    private String mRHintText;
     private List<String> mInputTipTextList = new ArrayList<>();
     private int mLeftOffset;
     private int mDrawLeftOffset;
@@ -212,6 +216,7 @@ public class ExEditText extends AppCompatEditText {
         mLeftOffset = typedArray.getDimensionPixelOffset(R.styleable.ExEditText_r_left_text_offset,
                 getResources().getDimensionPixelOffset(R.dimen.base_ldpi));
         String string = typedArray.getString(R.styleable.ExEditText_r_left_text);
+        mRHintText = typedArray.getString(R.styleable.ExEditText_r_hint_text);
 
         mMaxNumber = typedArray.getFloat(R.styleable.ExEditText_r_max_number, mMaxNumber);
         mDecimalCount = typedArray.getInteger(R.styleable.ExEditText_r_decimal_count, mDecimalCount);
@@ -266,6 +271,28 @@ public class ExEditText extends AppCompatEditText {
                 canvas.restore();
             }
         }
+
+        //绘制RHint
+        if (TextUtils.isEmpty(getText()) && TextUtils.isEmpty(getHint()) && !TextUtils.isEmpty(mRHintText)) {
+            canvas.save();
+            final TextPaint textPaint = getPaint();
+            textPaint.setColor(getCurrentHintTextColor());
+
+            int lineHeight = getLayout().getLineDescent(0) - getLayout().getLineAscent(0);
+            int bottom = getPaddingTop() + (getMeasuredHeight() - getPaddingTop() - getPaddingBottom()) / 2 + lineHeight / 2;
+
+            float x = 0, y = 0;
+            y = bottom - getLayout().getLineDescent(0);
+
+            if (getGravity() == Gravity.LEFT) {
+                x = getInputTipDrawLeft();
+            } else if (getGravity() == Gravity.RIGHT) {
+                x = getMeasuredWidth() - getInputTipDrawRight() - textPaint.measureText(mRHintText);
+            }
+
+            canvas.drawText(mRHintText, x, y, textPaint);
+            canvas.restore();
+        }
     }
 
     private int getInputTipDrawLeft() {
@@ -276,6 +303,16 @@ public class ExEditText extends AppCompatEditText {
             left += getCompoundDrawablePadding();
         }
         return left;
+    }
+
+    private int getInputTipDrawRight() {
+        int right = getPaddingRight();
+        Drawable[] drawables = getCompoundDrawables();
+        if (drawables[2] != null) {
+            right += drawables[2].getIntrinsicWidth();
+            right += getCompoundDrawablePadding();
+        }
+        return right;
     }
 
     private boolean isCenterVertical() {

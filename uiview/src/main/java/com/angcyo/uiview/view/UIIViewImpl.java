@@ -85,6 +85,7 @@ public abstract class UIIViewImpl implements IView {
      */
     protected long viewShowCount = 0;
     protected long showInPagerCount = 0;
+    protected int mBaseSoftInputMode;
     private boolean mIsRightJumpLeft = false;
 
     public static void setDefaultConfig(Animation animation, boolean isFinish) {
@@ -176,6 +177,7 @@ public abstract class UIIViewImpl implements IView {
     @Override
     public void onViewCreate(View rootView, UIParam param) {
         L.d(this.getClass().getSimpleName(), "onViewCreate 2: " + mIViewStatus);
+        mBaseSoftInputMode = mActivity.getWindow().getAttributes().softInputMode;
     }
 
     @CallSuper
@@ -794,6 +796,17 @@ public abstract class UIIViewImpl implements IView {
             } else {
                 mActivity.runOnUiThread(runnable);
             }
+        }
+    }
+
+    /**
+     * 设置窗口键盘弹出模式
+     */
+    public void adjustPan(boolean adjust) {
+        if (adjust) {
+            mActivity.getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_PAN);
+        } else {
+            mActivity.getWindow().setSoftInputMode(mBaseSoftInputMode);
         }
     }
 }

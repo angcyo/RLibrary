@@ -42,11 +42,14 @@ class ExpandRecordLayout(context: Context, attributeSet: AttributeSet? = null) :
     var outCircleMaxRadius: Float
     var outCircleMinRadius: Float
 
+    /**文本距离外圆top的偏移距离*/
+    var textOffset: Float = 30 * density
+
     /**当前状态, 也是默认状态*/
     var state = STATE_CLOSE
 
     /**所有child View的高度*/
-    var childHeight: Int = 0
+    private var childHeight: Int = 0
 
     init {
         val typedArray = context.obtainStyledAttributes(attributeSet, R.styleable.ExpandRecordLayout)
@@ -113,14 +116,14 @@ class ExpandRecordLayout(context: Context, attributeSet: AttributeSet? = null) :
     private fun calcOffset(maxValue: Float, minValue: Float) = (maxValue - minValue) * (Math.abs(scrollY.toFloat()) / childHeight)
 
     /**控制缩放动画的变量*/
-    var circleScale: Float = 1f
-    var outCircleScale: Float = 1f
+    private var circleScale: Float = 1f
+    private var outCircleScale: Float = 1f
 
     /**当前圆的位置坐标*/
-    val circleRect: Rect by lazy {
+    private val circleRect: Rect by lazy {
         Rect()
     }
-    val outCircleRect: RectF by lazy {
+    private val outCircleRect: RectF by lazy {
         RectF()
     }
 
@@ -401,7 +404,7 @@ class ExpandRecordLayout(context: Context, attributeSet: AttributeSet? = null) :
 
             //绘制进度文本
             val time = "${(progressAnimator.currentPlayTime / 1000.0).toInt()} s"
-            canvas.drawText(time, cx - paint.measureText(time) / 2, outCircleRect.top - 30 * density, paint)
+            canvas.drawText(time, cx - paint.measureText(time) / 2, outCircleRect.top - textOffset, paint)
 
             //进度的宽度
             paint.strokeWidth = progressWidth

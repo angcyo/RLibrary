@@ -37,6 +37,7 @@
 
     <!--View-->
     <attr name="r_left_text" format="string"/>
+    <attr name="r_hint_text" format="string"/>
     <attr name="r_left_text_color" format="color"/>
     <attr name="r_left_text_offset" format="dimension"/>
 
@@ -60,6 +61,7 @@
 
     <declare-styleable name="ExEditText">
         <attr name="r_left_text"/>
+        <attr name="r_hint_text"/>
         <attr name="r_left_text_color"/>
         <attr name="r_left_text_offset"/>
 
