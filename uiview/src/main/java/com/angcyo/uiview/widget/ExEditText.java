@@ -3,7 +3,6 @@ package com.angcyo.uiview.widget;
 import android.content.Context;
 import android.content.res.TypedArray;
 import android.graphics.Canvas;
-import android.graphics.Color;
 import android.graphics.Rect;
 import android.graphics.drawable.Drawable;
 import android.support.design.widget.TextInputLayout;
@@ -374,6 +373,13 @@ public class ExEditText extends AppCompatEditText {
         setText(text);
         setSelection(TextUtils.isEmpty(text) ? 0 : text.length());
         //checkEdit(true);
+    }
+
+    /**
+     * 光标定位在文本的最后面
+     */
+    public void setSelectionLast() {
+        setSelection(TextUtils.isEmpty(getText()) ? 0 : getText().length());
     }
 
     private void initView() {
