@@ -106,6 +106,10 @@ public class RefreshLayout extends ViewGroup {
      */
     private int order = NONE;
     /**
+     * 最后一次放手时的刷新方向
+     */
+    private int mLastOrder = FINISH;
+    /**
      * 是否激活延迟加载, 防止刷新太快,就结束了.
      */
     private boolean delayLoadEnd = true;
@@ -369,11 +373,17 @@ public class RefreshLayout extends ViewGroup {
                 } else {
                     if (dy > 0 && canScrollDown() &&
                             !innerCanChildScrollVertically(mTargetView, -1, event.getRawX(), event.getRawY())) {
+                        if (mLastOrder != FINISH && mLastOrder != order) {
+                            return super.onInterceptTouchEvent(event);
+                        }
                         order = TOP;
                         //L.e("call: onInterceptTouchEvent([event])-> 3");
                         return true;
                     } else if (dy < 0 && canScrollUp() &&
                             !innerCanChildScrollVertically(mTargetView, 1, event.getRawX(), event.getRawY())) {
+                        if (mLastOrder != FINISH && mLastOrder != order) {
+                            return super.onInterceptTouchEvent(event);
+                        }
                         order = BOTTOM;
                         //L.e("call: onInterceptTouchEvent([event])-> 4");
                         return true;
@@ -472,6 +482,7 @@ public class RefreshLayout extends ViewGroup {
             return;
         }
 
+        mLastOrder = order;
         order = NONE;
 
         if (!mNotifyListener) {
