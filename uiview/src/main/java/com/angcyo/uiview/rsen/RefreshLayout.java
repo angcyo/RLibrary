@@ -29,6 +29,7 @@ import android.view.animation.ScaleAnimation;
 import android.widget.OverScroller;
 import android.widget.TextView;
 
+import com.angcyo.library.utils.L;
 import com.angcyo.uiview.R;
 import com.angcyo.uiview.skin.SkinHelper;
 import com.angcyo.uiview.utils.T_;
@@ -106,9 +107,9 @@ public class RefreshLayout extends ViewGroup {
      */
     private int order = NONE;
     /**
-     * 最后一次放手时的刷新方向
+     * 按下的时候, 已经滚动的距离.
      */
-    private int mLastOrder = FINISH;
+    private int mDownScrollY = 0;
     /**
      * 是否激活延迟加载, 防止刷新太快,就结束了.
      */
@@ -347,8 +348,10 @@ public class RefreshLayout extends ViewGroup {
             return super.onInterceptTouchEvent(event);
         }
         int action = MotionEventCompat.getActionMasked(event);//event.getActionMasked();
+        L.e("call: onInterceptTouchEvent([event])-> " + action);
 
         if (action == MotionEvent.ACTION_DOWN) {
+            mDownScrollY = getScrollY();
             handleTouchDown(event);
         } else if (action == MotionEvent.ACTION_MOVE) {
             float y = event.getY();
@@ -373,17 +376,11 @@ public class RefreshLayout extends ViewGroup {
                 } else {
                     if (dy > 0 && canScrollDown() &&
                             !innerCanChildScrollVertically(mTargetView, -1, event.getRawX(), event.getRawY())) {
-                        if (mLastOrder != FINISH && mLastOrder != order) {
-                            return super.onInterceptTouchEvent(event);
-                        }
                         order = TOP;
                         //L.e("call: onInterceptTouchEvent([event])-> 3");
                         return true;
                     } else if (dy < 0 && canScrollUp() &&
                             !innerCanChildScrollVertically(mTargetView, 1, event.getRawX(), event.getRawY())) {
-                        if (mLastOrder != FINISH && mLastOrder != order) {
-                            return super.onInterceptTouchEvent(event);
-                        }
                         order = BOTTOM;
                         //L.e("call: onInterceptTouchEvent([event])-> 4");
                         return true;
@@ -417,6 +414,8 @@ public class RefreshLayout extends ViewGroup {
     public boolean onTouchEvent(MotionEvent event) {
         int action = MotionEventCompat.getActionMasked(event);
 
+        L.e("call: onTouchEvent([event])-> " + action + " " + mDownScrollY);
+
         if (action == MotionEvent.ACTION_UP || action == MotionEvent.ACTION_CANCEL) {
             int count = event.getPointerCount();
             if (count == 1) {
@@ -437,7 +436,17 @@ public class RefreshLayout extends ViewGroup {
             }
 
             if (Math.abs(dy) > mTouchSlop) {
-                scrollBy(0, (int) (dy * (1 - 0.4 - Math.abs(getScrollY()) * 1.f / getMeasuredHeight())));
+                int scrollY = getScrollY();
+                int needScrollerY = (int) (dy * (1 - 0.4 - Math.abs(scrollY) * 1.f / getMeasuredHeight()));
+                if (mDownScrollY != 0) {
+                    if (mDownScrollY < 0 && (scrollY + needScrollerY) > 0) {
+                        needScrollerY = -scrollY;
+                    } else if (mDownScrollY > 0 && (scrollY + needScrollerY) < 0) {
+                        needScrollerY = -scrollY;
+                    }
+                }
+
+                scrollBy(0, needScrollerY);
                 lastY = y;
                 if (mCurState == NORMAL /*|| mCurState == FINISH*/) {
                     mCurState = MOVE;
@@ -482,7 +491,6 @@ public class RefreshLayout extends ViewGroup {
             return;
         }
 
-        mLastOrder = order;
         order = NONE;
 
         if (!mNotifyListener) {
@@ -617,6 +625,7 @@ public class RefreshLayout extends ViewGroup {
         if (mTopView != null) {
             //设置正在刷新
             mCurState = TOP;
+
             scrollToTop(true);
 
             //防止还没回到刷新位置, 就已经调用了刷新结束的方法
@@ -636,6 +645,7 @@ public class RefreshLayout extends ViewGroup {
         if (mBottomView != null) {
             //设置正在上拉
             mCurState = BOTTOM;
+
             scrollToBottom(true);
 
             postDelayed(new Runnable() {
