@@ -6,6 +6,7 @@ import android.view.animation.Animation;
 import android.view.animation.Transformation;
 
 /**
+ * Y轴旋转动画
  * Created by robi on 2016-05-25 15:25.
  */
 public class RotateAnimation extends Animation {
@@ -16,11 +17,11 @@ public class RotateAnimation extends Animation {
     /**
      * 沿Y轴正方向看，数值减1时动画逆时针旋转。
      */
-    public static final boolean ROTATE_DECREASE = true;
+    public static final int ROTATE_DECREASE = 1;
     /**
      * 沿Y轴正方向看，数值减1时动画顺时针旋转。
      */
-    public static final boolean ROTATE_INCREASE = false;
+    public static final int ROTATE_INCREASE = 2;
     /**
      * Z轴上最大深度。
      */
@@ -29,23 +30,27 @@ public class RotateAnimation extends Animation {
      * 动画显示时长。
      */
     public static final long DURATION = 800l;
+    private final float centerX;
+    private final float centerY;
     /**
      * 图片翻转类型。
      */
-    private final boolean type;
-    private final float centerX;
-    private final float centerY;
+    private int type = ROTATE_DECREASE;
     private Camera camera;
     /**
      * 用于监听动画进度。当值过半时需更新txtNumber的内容。
      */
     private InterpolatedTimeListener listener;
 
-    public RotateAnimation(float cX, float cY, boolean type) {
+    public RotateAnimation(float cX, float cY, int type) {
         centerX = cX;
         centerY = cY;
         this.type = type;
         setDuration(DURATION);
+    }
+
+    public RotateAnimation(float cX, float cY) {
+        this(cX, cY, ROTATE_DECREASE);
     }
 
     @Override

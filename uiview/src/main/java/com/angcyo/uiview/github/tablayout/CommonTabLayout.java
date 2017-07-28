@@ -125,6 +125,7 @@ public class CommonTabLayout extends FrameLayout implements ValueAnimator.Animat
     private OnTabSelectListener mListener;
     private IndicatorPoint mCurrentP = new IndicatorPoint();
     private IndicatorPoint mLastP = new IndicatorPoint();
+    private boolean haveItemBackground = true;
 
     public CommonTabLayout(Context context) {
         this(context, null, 0);
@@ -257,9 +258,21 @@ public class CommonTabLayout extends FrameLayout implements ValueAnimator.Animat
 
             tabView.setTag(i);
             addTab(i, tabView);
+
+            if (!haveItemBackground) {
+                tabView.setBackground(null);
+            }
         }
 
         updateTabStyles();
+    }
+
+    /**
+     * 请在{@link #setTabData(ArrayList, FragmentActivity, int, ArrayList)}
+     * 之前调用
+     */
+    public void setHaveItemBackground(boolean haveItemBackground) {
+        this.haveItemBackground = haveItemBackground;
     }
 
     /**

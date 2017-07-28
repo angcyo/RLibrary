@@ -43,6 +43,7 @@ import com.angcyo.uiview.resources.ResUtil;
 import com.angcyo.uiview.skin.ISkin;
 import com.angcyo.uiview.utils.RUtils;
 import com.angcyo.uiview.utils.ThreadExecutor;
+import com.angcyo.uiview.widget.RSoftInputLayout;
 import com.angcyo.uiview.widget.viewpager.UIViewPager;
 
 import java.util.ArrayList;
@@ -808,5 +809,21 @@ public abstract class UIIViewImpl implements IView {
         } else {
             mActivity.getWindow().setSoftInputMode(mBaseSoftInputMode);
         }
+    }
+
+    /**
+     * 显示软键盘
+     *
+     * @param editText 尽量是EditText
+     */
+    public void showSoftInput(final View editText) {
+        RSoftInputLayout.showSoftInput(editText);
+    }
+
+    /**
+     * 隐藏软键盘
+     */
+    public void hideSoftInput(final View view) {
+        RSoftInputLayout.hideSoftInput(view);
     }
 }
