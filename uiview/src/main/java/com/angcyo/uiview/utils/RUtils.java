@@ -8,7 +8,9 @@ import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
 import android.content.res.Configuration;
 import android.content.res.Resources;
+import android.graphics.Matrix;
 import android.graphics.Point;
+import android.graphics.RectF;
 import android.hardware.Camera;
 import android.media.AudioFormat;
 import android.media.AudioRecord;
@@ -990,6 +992,23 @@ public class RUtils {
                 }
             }
         }
+    }
+
+    /**
+     * 一个矩形(from), 在另一个矩形(to),居中显示时的宽高度
+     */
+    public static int[] getCenterRectWidthHeight(RectF from, RectF to) {
+        int[] result = new int[2];
+
+        Matrix matrix = new Matrix();
+        matrix.setRectToRect(from, to, Matrix.ScaleToFit.CENTER);
+        float[] matrixValues = new float[9];
+        matrix.getValues(matrixValues);
+
+        result[0] = (int) (matrixValues[Matrix.MSCALE_X] * from.width());//缩放之后的宽度
+        result[1] = (int) (matrixValues[Matrix.MSCALE_Y] * from.height());//缩放之后的高度
+
+        return result;
     }
 
     public enum ImageType {
