@@ -1512,7 +1512,11 @@ public class UILayoutImpl extends SwipeBackLayout implements ILayout<UIParam>, U
                     e.printStackTrace();
                 }
                 if (param != null && param.unloadRunnable != null) {
-                    param.unloadRunnable.run();
+                    if (param.mAsync) {
+                        post(param.unloadRunnable);
+                    } else {
+                        param.unloadRunnable.run();
+                    }
                 }
             }
         });
