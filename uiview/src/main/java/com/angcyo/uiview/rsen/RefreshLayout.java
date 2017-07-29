@@ -348,7 +348,7 @@ public class RefreshLayout extends ViewGroup {
             return super.onInterceptTouchEvent(event);
         }
         int action = MotionEventCompat.getActionMasked(event);//event.getActionMasked();
-        L.e("call: onInterceptTouchEvent([event])-> " + action);
+        //L.e("call: onInterceptTouchEvent([event])-> " + action);
 
         if (action == MotionEvent.ACTION_DOWN) {
             mDownScrollY = getScrollY();
@@ -414,7 +414,7 @@ public class RefreshLayout extends ViewGroup {
     public boolean onTouchEvent(MotionEvent event) {
         int action = MotionEventCompat.getActionMasked(event);
 
-        L.e("call: onTouchEvent([event])-> " + action + " " + mDownScrollY);
+        //L.e("call: onTouchEvent([event])-> " + action + " " + mDownScrollY);
 
         if (action == MotionEvent.ACTION_UP || action == MotionEvent.ACTION_CANCEL) {
             int count = event.getPointerCount();
