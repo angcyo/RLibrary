@@ -16,12 +16,18 @@ import com.angcyo.uiview.R;
 
 public class TitleBarLayout extends FrameLayout {
 
+    boolean enablePadding = true;
+
     public TitleBarLayout(Context context) {
         super(context);
     }
 
     public TitleBarLayout(Context context, AttributeSet attrs) {
         super(context, attrs);
+    }
+
+    public void setEnablePadding(boolean enablePadding) {
+        this.enablePadding = enablePadding;
     }
 
     @Override
@@ -35,6 +41,10 @@ public class TitleBarLayout extends FrameLayout {
     @Override
     protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
         super.onMeasure(widthMeasureSpec, heightMeasureSpec);
+
+        if (!enablePadding) {
+            return;
+        }
 
         int heightMode = MeasureSpec.getMode(heightMeasureSpec);
         int heightSize = MeasureSpec.getSize(heightMeasureSpec);
