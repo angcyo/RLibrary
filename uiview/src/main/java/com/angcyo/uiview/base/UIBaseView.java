@@ -281,9 +281,9 @@ public abstract class UIBaseView extends UIIViewImpl {
 
     protected void initBaseNonetLayout(View view) {
         Drawable drawable = getTipButtonSelector();
-        ResUtil.setBgDrawable(view.findViewById(R.id.base_refresh_button_view), drawable);
+        ResUtil.setBgDrawable(view.findViewById(R.id.base_refresh_view), drawable);
         drawable = getTipButtonSelector();
-        ResUtil.setBgDrawable(view.findViewById(R.id.base_setting_button_view), drawable);
+        ResUtil.setBgDrawable(view.findViewById(R.id.base_setting_view), drawable);
     }
 
     protected Drawable getTipButtonSelector() {
@@ -370,7 +370,7 @@ public abstract class UIBaseView extends UIIViewImpl {
                 ((TextView) mBaseEmptyLayout.findViewById(R.id.base_empty_tip_view)).setText(tip);
             }
         } else if (toState == LayoutState.NONET && mBaseNonetLayout != null) {
-            mBaseNonetLayout.findViewById(R.id.base_setting_button_view).setOnClickListener(new View.OnClickListener() {
+            mBaseNonetLayout.findViewById(R.id.base_setting_view).setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
                     if (mNonetSettingClickListener != null) {
@@ -378,7 +378,7 @@ public abstract class UIBaseView extends UIIViewImpl {
                     }
                 }
             });
-            mBaseNonetLayout.findViewById(R.id.base_refresh_button_view).setOnClickListener(new View.OnClickListener() {
+            mBaseNonetLayout.findViewById(R.id.base_refresh_view).setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
                     if (mNonetRefreshClickListener != null) {

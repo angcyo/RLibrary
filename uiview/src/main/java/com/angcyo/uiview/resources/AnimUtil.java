@@ -6,6 +6,7 @@ import android.animation.ObjectAnimator;
 import android.animation.ValueAnimator;
 import android.graphics.Point;
 import android.graphics.Rect;
+import android.os.Build;
 import android.support.v4.view.ViewCompat;
 import android.view.View;
 import android.view.ViewGroup;
@@ -16,6 +17,8 @@ import android.view.animation.LayoutAnimationController;
 import android.view.animation.LinearInterpolator;
 import android.view.animation.TranslateAnimation;
 
+import com.angcyo.uiview.R;
+import com.angcyo.uiview.RApplication;
 import com.angcyo.uiview.utils.ScreenUtil;
 import com.angcyo.uiview.view.UIIViewImpl;
 
@@ -119,8 +122,13 @@ public class AnimUtil {
                                                Animator.AnimatorListener listener) {
         startRect = ensureRect(startRect);
 
-        final Point startPoint = from;
-        final Point endPoint = to;
+        int statusBarHeight = 0;
+        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.LOLLIPOP) {
+            statusBarHeight = RApplication.getApp().getResources().getDimensionPixelOffset(R.dimen.status_bar_height);
+        }
+
+        final Point startPoint = new Point(from.x, from.y - statusBarHeight);
+        final Point endPoint = new Point(to.x, to.y - statusBarHeight);
 
         final int targetWidth = Math.min(ScreenUtil.screenWidth, maxWidth);
         final int targetHeight = Math.min(ScreenUtil.screenHeight, maxHeight);
@@ -192,8 +200,13 @@ public class AnimUtil {
                                                Animator.AnimatorListener listener) {
         endRect = ensureRect(endRect);
 
-        final Point startPoint = from;
-        final Point endPoint = to;
+        int statusBarHeight = 0;
+        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.LOLLIPOP) {
+            statusBarHeight = RApplication.getApp().getResources().getDimensionPixelOffset(R.dimen.status_bar_height);
+        }
+
+        final Point startPoint = new Point(from.x, from.y - statusBarHeight);
+        final Point endPoint = new Point(to.x, to.y - statusBarHeight);
 
         final int targetWidth = Math.min(ScreenUtil.screenWidth, maxWidth);
         final int targetHeight = Math.min(ScreenUtil.screenHeight, maxHeight);
@@ -243,8 +256,13 @@ public class AnimUtil {
                                                Point from, Point to,
                                                final float endScaleX, final float endScaleY,
                                                Animator.AnimatorListener listener) {
-        final Point startPoint = from;
-        final Point endPoint = to;
+        int statusBarHeight = 0;
+        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.LOLLIPOP) {
+            statusBarHeight = RApplication.getApp().getResources().getDimensionPixelOffset(R.dimen.status_bar_height);
+        }
+
+        final Point startPoint = new Point(from.x, from.y - statusBarHeight);
+        final Point endPoint = new Point(to.x, to.y - statusBarHeight);
 
         final ValueAnimator animator = ValueAnimator.ofFloat(0f, 1f);
         animator.addListener(listener);
