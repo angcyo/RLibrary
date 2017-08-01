@@ -1011,6 +1011,32 @@ public class RUtils {
         return result;
     }
 
+    /**
+     * 判断是否为平板
+     *
+     * @return
+     */
+    public static boolean isPad(Context context) {
+        // 大于6尺寸则为Pad
+        if (getScreenInches(context) >= 6.0) {
+            return true;
+        }
+        return false;
+    }
+
+    /**
+     * 多少寸的屏幕
+     */
+    public static double getScreenInches(Context context) {
+        DisplayMetrics displayMetrics = context.getResources().getDisplayMetrics();
+        double x = Math.pow(displayMetrics.widthPixels / displayMetrics.xdpi, 2);
+        double y = Math.pow(displayMetrics.heightPixels / displayMetrics.ydpi, 2);
+        // 屏幕尺寸
+        double screenInches = Math.sqrt(x + y);
+        // 大于6尺寸则为Pad
+        return screenInches;
+    }
+
     public enum ImageType {
         JPEG, GIF, PNG, BMP, UNKNOWN
     }

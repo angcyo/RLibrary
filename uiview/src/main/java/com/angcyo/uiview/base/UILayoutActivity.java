@@ -58,11 +58,18 @@ public abstract class UILayoutActivity extends StyleActivity {
     }
 
     protected void onAfterCreateView() {
-        setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);//竖屏
+        initScreenOrientation();
 
         onLoadView(getIntent());
 
         //checkPermissions();
+    }
+
+    /**
+     * 初始化屏幕方向
+     */
+    protected void initScreenOrientation() {
+        setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);//竖屏
     }
 
     protected void checkPermissions() {
