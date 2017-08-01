@@ -71,7 +71,7 @@ public class ClipHelper {
      * 必须调用此方法, 才会有效果
      */
     public void draw(Canvas canvas) {
-        if (enableClip) {
+        if (enableClip && !isClipEnd()) {
             canvas.clipPath(clipPath);
         }
     }
@@ -169,7 +169,7 @@ public class ClipHelper {
     private void updateClipPath(float radius) {
         clipPath.reset();
         clipPath.addCircle(clipStartX, clipStartY, radius, Path.Direction.CW);
-        mTargetView.postInvalidate();
+        mTargetView.postInvalidateOnAnimation();
     }
 
     private float calcEndRadius() {
@@ -203,6 +203,7 @@ public class ClipHelper {
             @Override
             public void onAnimationEnd(Animator animator) {
                 isClipEnd = true;
+                mTargetView.postInvalidateOnAnimation();
                 if (mEndListener != null) {
                     mEndListener.onEnd();
                 }
