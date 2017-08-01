@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout
+<FrameLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     android:id="@+id/base_nonet_root_layout"
     android:layout_width="match_parent"
@@ -7,9 +7,9 @@
     android:tag="nonet">
 
     <LinearLayout
-        android:layout_width="wrap_content"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_centerInParent="true"
+        android:layout_gravity="center"
         android:gravity="center_horizontal"
         android:orientation="vertical">
 
@@ -28,28 +28,37 @@
             android:textColor="@color/default_base_border"/>
 
         <LinearLayout
-            android:layout_width="wrap_content"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:gravity="center"
             android:orientation="horizontal"
             android:padding="10dp">
 
             <TextView
-                android:id="@+id/base_setting_view"
+                android:id="@+id/base_setting_button_view"
                 style="@style/BaseButtonStyle"
                 android:background="@drawable/base_big_round_border_selector"
+                android:clickable="true"
+                android:paddingBottom="@dimen/base_mdpi"
+                android:paddingLeft="@dimen/base_xhdpi"
+                android:paddingRight="@dimen/base_xhdpi"
+                android:paddingTop="@dimen/base_mdpi"
                 android:text="打开网络设置"/>
 
-            <View
-                android:layout_width="10dp"
-                android:layout_height="1dp"/>
-
             <TextView
-                android:id="@+id/base_refresh_view"
+                android:id="@+id/base_refresh_button_view"
                 style="@style/BaseButtonStyle"
+                android:layout_marginStart="@dimen/base_xhdpi"
                 android:background="@drawable/base_big_round_border_selector"
+                android:clickable="true"
+                android:paddingBottom="@dimen/base_mdpi"
+                android:paddingLeft="@dimen/base_xhdpi"
+                android:paddingRight="@dimen/base_xhdpi"
+                android:paddingTop="@dimen/base_mdpi"
                 android:text="刷新试试"/>
+
         </LinearLayout>
+
     </LinearLayout>
 
-</RelativeLayout>
+</FrameLayout>

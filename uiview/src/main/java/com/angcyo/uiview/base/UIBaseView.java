@@ -39,7 +39,6 @@ import com.angcyo.uiview.utils.ClipHelper;
 import com.angcyo.uiview.utils.ScreenUtil;
 import com.angcyo.uiview.view.UIIViewImpl;
 import com.angcyo.uiview.widget.EmptyView;
-import com.angcyo.uiview.widget.RImageView;
 import com.angcyo.uiview.widget.SoftRelativeLayout;
 
 import static android.view.View.GONE;
@@ -282,8 +281,9 @@ public abstract class UIBaseView extends UIIViewImpl {
 
     protected void initBaseNonetLayout(View view) {
         Drawable drawable = getTipButtonSelector();
-        ResUtil.setBgDrawable(view.findViewById(R.id.base_refresh_view), drawable);
-        ResUtil.setBgDrawable(view.findViewById(R.id.base_setting_view), RImageView.copyDrawable(drawable));
+        ResUtil.setBgDrawable(view.findViewById(R.id.base_refresh_button_view), drawable);
+        drawable = getTipButtonSelector();
+        ResUtil.setBgDrawable(view.findViewById(R.id.base_setting_button_view), drawable);
     }
 
     protected Drawable getTipButtonSelector() {
@@ -370,8 +370,15 @@ public abstract class UIBaseView extends UIIViewImpl {
                 ((TextView) mBaseEmptyLayout.findViewById(R.id.base_empty_tip_view)).setText(tip);
             }
         } else if (toState == LayoutState.NONET && mBaseNonetLayout != null) {
-            mBaseNonetLayout.findViewById(R.id.base_setting_view).setOnClickListener(mNonetSettingClickListener);
-            mBaseNonetLayout.findViewById(R.id.base_refresh_view).setOnClickListener(new View.OnClickListener() {
+            mBaseNonetLayout.findViewById(R.id.base_setting_button_view).setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    if (mNonetSettingClickListener != null) {
+                        mNonetSettingClickListener.onClick(v);
+                    }
+                }
+            });
+            mBaseNonetLayout.findViewById(R.id.base_refresh_button_view).setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
                     if (mNonetRefreshClickListener != null) {
