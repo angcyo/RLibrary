@@ -114,6 +114,7 @@ public class ExEditText extends AppCompatEditText {
     private int mDrawLeftOffset;
     private int mPaddingLeft;
     private ValueAnimator rollAnim;
+    private int lastRollAnimValue = -100;
 
     public ExEditText(Context context) {
         super(context);
@@ -708,6 +709,8 @@ public class ExEditText extends AppCompatEditText {
         return isPhone(string());
     }
 
+    //------------------------------------@功能支持-----------------------------------------//
+
     /**
      * 判断是否是有效
      */
@@ -715,8 +718,6 @@ public class ExEditText extends AppCompatEditText {
         final String string = string().trim();
         return !TextUtils.isEmpty(string) && string.matches("^[a-zA-Z0-9_-]{6,12}$");
     }
-
-    //------------------------------------@功能支持-----------------------------------------//
 
     /**
      * 判断键盘是否显示
@@ -1165,22 +1166,28 @@ public class ExEditText extends AppCompatEditText {
     /**
      * 随机滚动数值至
      *
-     * @param toValue  滚动结束后的数值
-     * @param maxValue 滚动过程中最大的数值
-     * @param minValue 滚动过程中最小的数值
+     * @param toValue   滚动结束后的数值
+     * @param maxValue  滚动过程中最大的数值
+     * @param minValue  滚动过程中最小的数值
+     * @param threshold 控制阈值, 阈值越大, 跳动的越慢
      */
-    public void rollTo(final float toValue, final float minValue, final float maxValue) {
+    public void rollTo(final float toValue, final float minValue, final float maxValue, final int threshold) {
         if (rollAnim != null) {
             rollAnim.cancel();
         }
+        lastRollAnimValue = -100;
         final Random random = new Random(System.nanoTime());
-        rollAnim = ValueAnimator.ofFloat(0f, 1f);
+        rollAnim = ValueAnimator.ofInt(0, 100);
         rollAnim.setInterpolator(new LinearInterpolator());
         rollAnim.setDuration(300);
         rollAnim.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
             @Override
             public void onAnimationUpdate(ValueAnimator animation) {
-                setInputText(String.format(Locale.CHINA, "%.2f", minValue + (maxValue - minValue) * random.nextFloat()));
+                int value = (int) animation.getAnimatedValue();
+                if (value - lastRollAnimValue > threshold) {
+                    lastRollAnimValue = value;
+                    setInputText(String.format(Locale.CHINA, "%.2f", minValue + (maxValue - minValue) * random.nextFloat()));
+                }
             }
         });
         rollAnim.addListener(new RAnimListener() {
