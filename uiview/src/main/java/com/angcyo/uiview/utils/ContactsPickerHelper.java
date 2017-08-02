@@ -101,7 +101,7 @@ public class ContactsPickerHelper {
                             //相同联系人的不同手机号码视为不同的联系人
                             for (String phone : phones) {
                                 // 去除非手机号
-                                if (!RegexUtils.isMobileExact(phone)) {
+                                if (!RegexUtils.isMobileExact(StringUtil.removeBlanks(phone))) {
                                     continue;
                                 }
                                 ContactsInfo io = new ContactsInfo();
