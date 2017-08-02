@@ -1184,7 +1184,7 @@ public class ExEditText extends AppCompatEditText {
             @Override
             public void onAnimationUpdate(ValueAnimator animation) {
                 int value = (int) animation.getAnimatedValue();
-                if (value - lastRollAnimValue > threshold) {
+                if ((value - lastRollAnimValue) >= threshold) {
                     lastRollAnimValue = value;
                     setInputText(String.format(Locale.CHINA, "%.2f", minValue + (maxValue - minValue) * random.nextFloat()));
                 }
