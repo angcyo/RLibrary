@@ -6,7 +6,6 @@ import android.util.AttributeSet;
 import android.widget.FrameLayout;
 
 import com.angcyo.uiview.R;
-import com.angcyo.uiview.kotlin.ViewExKt;
 import com.angcyo.uiview.utils.ScreenUtil;
 
 /**
@@ -65,11 +64,9 @@ public class ContentLayout extends FrameLayout {
 
     @Override
     protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
+        int heightMode = MeasureSpec.getMode(heightMeasureSpec);
         if (maxHeight > 0) {
-            int heightSize = MeasureSpec.getSize(heightMeasureSpec);
-            if (heightSize > maxHeight) {
-                super.onMeasure(widthMeasureSpec, ViewExKt.exactlyMeasure(this, maxHeight));
-            }
+            super.onMeasure(widthMeasureSpec, MeasureSpec.makeMeasureSpec(maxHeight, heightMode));
         } else {
             super.onMeasure(widthMeasureSpec, heightMeasureSpec);
         }

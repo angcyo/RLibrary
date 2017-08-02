@@ -29,10 +29,12 @@
 
     <declare-styleable name="RLinearLayout">
         <attr name="r_background"/>
+        <attr name="r_max_height"/>
     </declare-styleable>
 
     <declare-styleable name="RRelativeLayout">
         <attr name="r_background"/>
+        <attr name="r_max_height"/>
     </declare-styleable>
 
     <!--View-->
@@ -99,6 +101,10 @@
     </declare-styleable>
 
     <declare-styleable name="ContentLayout">
+        <attr name="r_max_height"/>
+    </declare-styleable>
+
+    <declare-styleable name="TitleBarLayout">
         <attr name="r_max_height"/>
     </declare-styleable>
 </resources>

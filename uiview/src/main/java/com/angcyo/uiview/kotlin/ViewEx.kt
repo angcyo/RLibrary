@@ -61,3 +61,8 @@ public fun View.getColor(id: Int): Int {
 public fun View.exactlyMeasure(size: Int): Int {
     return View.MeasureSpec.makeMeasureSpec(size, View.MeasureSpec.EXACTLY)
 }
+
+/**Wrap_Content*/
+public fun View.atmostMeasure(size: Int): Int {
+    return View.MeasureSpec.makeMeasureSpec(size, View.MeasureSpec.AT_MOST)
+}
