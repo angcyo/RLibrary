@@ -186,6 +186,16 @@ public class ExEditText extends AppCompatEditText {
         return !TextUtils.isEmpty(phone) && phone.matches("^1[3-8]\\d{9}$");
     }
 
+    public static float getInputNumber(Editable editable) {
+        Float value;
+        try {
+            value = Float.valueOf(editable.toString());
+        } catch (Exception e) {
+            value = 0f;
+        }
+        return value;
+    }
+
     public boolean unableCallback() {
         enableCallback = false;
         return enableCallback;
@@ -615,13 +625,7 @@ public class ExEditText extends AppCompatEditText {
      * 获取输入的数字
      */
     public float getInputNumber() {
-        Float value;
-        try {
-            value = Float.valueOf(getText().toString());
-        } catch (Exception e) {
-            value = 0f;
-        }
-        return value;
+        return getInputNumber(getText());
     }
 
     @Override

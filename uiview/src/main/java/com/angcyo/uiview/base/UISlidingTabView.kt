@@ -1,7 +1,6 @@
 package com.angcyo.uiview.base
 
 import android.view.LayoutInflater
-import android.widget.FrameLayout
 import com.angcyo.uiview.R
 import com.angcyo.uiview.container.ContentLayout
 import com.angcyo.uiview.github.tablayout.SlidingTabLayout
@@ -51,10 +50,11 @@ abstract class UISlidingTabView : UIContentView(), UIBaseView.OnViewLoadListener
 
         createPages(pages)
         mViewPager.adapter = createAdapter()
-        mSlidingTab.setViewPager(mViewPager)
 
         initTabLayout(mSlidingTab)
         initViewPager(mViewPager)
+
+        mSlidingTab.setViewPager(mViewPager)
     }
 
     open fun initTabLayout(tabLayout: SlidingTabLayout) {
@@ -67,6 +67,7 @@ abstract class UISlidingTabView : UIContentView(), UIBaseView.OnViewLoadListener
         tabLayout.indicatorCornerRadius = 3 * density() //指示器的圆角
         tabLayout.indicatorMarginLeft = 0f //指示器左偏移的距离
         tabLayout.tabPadding = 5 * density()
+        tabLayout.isTabSpaceEqual = false //tab 是否平分 TabLayout的宽度
     }
 
     open fun initViewPager(viewPager: UIViewPager) {
