@@ -34,6 +34,13 @@
         android:layout_width="match_parent"
         android:layout_height="@dimen/base_xxhdpi"/>
 
+    <View
+        android:id="@+id/line3"
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/base_line"
+        android:background="@color/default_base_line"
+        android:visibility="gone"/>
+
     <RelativeLayout
         android:id="@+id/cancel_layout"
         android:layout_width="match_parent"

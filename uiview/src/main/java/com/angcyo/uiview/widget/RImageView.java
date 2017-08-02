@@ -19,7 +19,6 @@ import android.support.annotation.DrawableRes;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.content.ContextCompat;
-import android.support.v7.widget.AppCompatImageView;
 import android.util.AttributeSet;
 import android.view.MotionEvent;
 import android.widget.ImageView;
@@ -38,20 +37,19 @@ import com.angcyo.uiview.RApplication;
  * 修改备注：
  * Version: 1.0.0
  */
-public class RImageView extends AppCompatImageView {
+public class RImageView extends CircleImageView {
 
+    protected boolean mShowGifTip;
     /**
      * 播放按钮图片
      */
     Drawable mPlayDrawable;
     private boolean isAttachedToWindow;
     private boolean mShowMask;//显示click时的蒙层
-
     /**
      * 当调用{@link android.widget.ImageView#setImageDrawable(Drawable)} 时, 是否显示过渡动画
      */
     private boolean showDrawableAnim = true;
-    protected boolean mShowGifTip;
     private Drawable mGifTipDrawable;
     private float mDensity;
 
@@ -60,11 +58,7 @@ public class RImageView extends AppCompatImageView {
     }
 
     public RImageView(Context context, AttributeSet attrs) {
-        this(context, attrs, 0);
-    }
-
-    public RImageView(Context context, AttributeSet attrs, int defStyleAttr) {
-        super(context, attrs, defStyleAttr);
+        super(context, attrs);
         initView();
     }
 

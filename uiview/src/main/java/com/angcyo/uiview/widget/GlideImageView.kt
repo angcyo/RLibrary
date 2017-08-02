@@ -105,7 +105,7 @@ open class GlideImageView(context: Context, attributeSet: AttributeSet? = null) 
         if (url.isNullOrEmpty()) {
             setTagUrl("")
             cancelRequest()
-            setImageResource(placeholderRes)
+            //setImageResource(placeholderRes)
         } else {
             setTagUrl(url!!)
             if (measuredHeight == 0 || measuredWidth == 0) {

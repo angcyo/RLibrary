@@ -126,9 +126,11 @@ public class UIItemDialog extends UIIDialogImpl {
         try {
             if (showCancelButton) {
                 if (useFullItem) {
+                    mViewHolder.v(R.id.cancel_layout).setBackgroundColor(Color.WHITE);
                     mViewHolder.v(R.id.cancel_view).setBackgroundResource(R.drawable.base_bg_selector);
                     mViewHolder.v(R.id.line1).setVisibility(View.GONE);
                     mViewHolder.v(R.id.line2).setVisibility(View.GONE);
+                    mViewHolder.v(R.id.line3).setVisibility(View.VISIBLE);
                 }
             } else {
                 mViewHolder.v(R.id.cancel_layout).setVisibility(View.GONE);
