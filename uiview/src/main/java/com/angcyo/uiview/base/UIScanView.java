@@ -25,6 +25,7 @@ import com.angcyo.rcode.zxing.decode.InactivityTimer;
 import com.angcyo.rcode.zxing.view.ViewfinderView;
 import com.angcyo.uiview.R;
 import com.angcyo.uiview.container.ContentLayout;
+import com.angcyo.uiview.container.UIParam;
 import com.angcyo.uiview.dialog.UILoading;
 import com.angcyo.uiview.model.TitleBarPattern;
 import com.angcyo.uiview.net.RException;
@@ -312,6 +313,10 @@ public class UIScanView extends UIContentView implements SurfaceHolder.Callback,
         onHandleDecode(result);
     }
 
+    protected void playBeepSoundAndVibrate() {
+        beepManager.playBeepSoundAndVibrate();
+    }
+
     /**
      * 重新扫描
      */
@@ -332,12 +337,17 @@ public class UIScanView extends UIContentView implements SurfaceHolder.Callback,
             result = "unknown";
         }
         //playVibrate();
-        beepManager.playBeepSoundAndVibrate();
+        playBeepSoundAndVibrate();
         //T_.show(result);
-        finishIView();
-        if (mResultAction != null) {
-            mResultAction.call(result);
-        }
+        final String finalResult = result;
+        finishIView(this, new UIParam().setUnloadRunnable(new Runnable() {
+            @Override
+            public void run() {
+                if (mResultAction != null) {
+                    mResultAction.call(finalResult);
+                }
+            }
+        }));
     }
 
     /**
