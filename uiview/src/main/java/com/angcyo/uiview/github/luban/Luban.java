@@ -462,8 +462,7 @@ public class Luban {
         if (scale <= 1 && scale > 0.5625) {
             if (height < 1664) {
                 if (file.length() / 1024 < 150)
-                    return copyTo(file, thumb, width, height);//原本就已经很小的图片, 重命名保存
-
+                    return copyTo(file, thumb, thumbW, thumbH);//原本就已经很小的图片, 重命名保存
                 size = (width * height) / Math.pow(1664, 2) * 150;
                 size = size < 60 ? 60 : size;
             } else if (height >= 1664 && height < 4990) {
@@ -485,8 +484,7 @@ public class Luban {
             }
         } else if (scale <= 0.5625 && scale > 0.5) {
             if (height < 1280 && file.length() / 1024 < 200)
-                return copyTo(file, thumb, width, height);//原本就已经很小的图片, 重命名保存
-
+                return copyTo(file, thumb, thumbW, thumbH);//原本就已经很小的图片, 重命名保存
             int multiple = height / 1280 == 0 ? 1 : height / 1280;
             thumbW = width / multiple;
             thumbH = height / multiple;
