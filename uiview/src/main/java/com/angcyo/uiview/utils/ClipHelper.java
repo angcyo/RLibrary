@@ -26,6 +26,7 @@ public class ClipHelper {
     boolean enableClip = false;
     OnEndListener mEndListener;
     boolean isClipEnd = true;
+    boolean needClip = true;
     private View mTargetView;
 
     public ClipHelper(View targetView) {
@@ -71,7 +72,7 @@ public class ClipHelper {
      * 必须调用此方法, 才会有效果
      */
     public void draw(Canvas canvas) {
-        if (enableClip && !isClipEnd()) {
+        if (enableClip && isNeedClip()) {
             canvas.clipPath(clipPath);
         }
     }
@@ -106,6 +107,7 @@ public class ClipHelper {
             return;
         }
         isClipEnd = false;
+        needClip = true;
 
         clipStartRadius = startR;
         clipStartX = startX;
@@ -148,6 +150,7 @@ public class ClipHelper {
             return;
         }
         isClipEnd = false;
+        needClip = true;
         initExitAnimator();
         mClipExitValueAnimator.start();
     }
@@ -164,6 +167,10 @@ public class ClipHelper {
      */
     public boolean isClipEnd() {
         return isClipEnd;
+    }
+
+    private boolean isNeedClip() {
+        return needClip;
     }
 
     private void updateClipPath(float radius) {
@@ -203,6 +210,7 @@ public class ClipHelper {
             @Override
             public void onAnimationEnd(Animator animator) {
                 isClipEnd = true;
+                needClip = false;
                 mTargetView.postInvalidateOnAnimation();
                 if (mEndListener != null) {
                     mEndListener.onEnd();

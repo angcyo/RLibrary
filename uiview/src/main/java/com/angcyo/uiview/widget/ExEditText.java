@@ -1,5 +1,7 @@
 package com.angcyo.uiview.widget;
 
+import android.animation.Animator;
+import android.animation.ValueAnimator;
 import android.content.Context;
 import android.content.res.TypedArray;
 import android.graphics.Canvas;
@@ -24,6 +26,7 @@ import android.view.Gravity;
 import android.view.KeyEvent;
 import android.view.MotionEvent;
 import android.view.View;
+import android.view.animation.LinearInterpolator;
 import android.view.inputmethod.EditorInfo;
 import android.view.inputmethod.InputConnection;
 import android.view.inputmethod.InputConnectionWrapper;
@@ -37,12 +40,14 @@ import com.angcyo.library.utils.L;
 import com.angcyo.uiview.R;
 import com.angcyo.uiview.RApplication;
 import com.angcyo.uiview.kotlin.ExKt;
+import com.angcyo.uiview.resources.RAnimListener;
 import com.angcyo.uiview.skin.SkinHelper;
 import com.angcyo.uiview.utils.RTextPaint;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
+import java.util.Random;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -108,6 +113,7 @@ public class ExEditText extends AppCompatEditText {
     private int mLeftOffset;
     private int mDrawLeftOffset;
     private int mPaddingLeft;
+    private ValueAnimator rollAnim;
 
     public ExEditText(Context context) {
         super(context);
@@ -710,6 +716,8 @@ public class ExEditText extends AppCompatEditText {
         return !TextUtils.isEmpty(string) && string.matches("^[a-zA-Z0-9_-]{6,12}$");
     }
 
+    //------------------------------------@功能支持-----------------------------------------//
+
     /**
      * 判断键盘是否显示
      */
@@ -718,8 +726,6 @@ public class ExEditText extends AppCompatEditText {
         int keyboardHeight = getSoftKeyboardHeight();
         return screenHeight != keyboardHeight && keyboardHeight > 100;
     }
-
-    //------------------------------------@功能支持-----------------------------------------//
 
     public void hideSoftInput() {
         InputMethodManager manager = (InputMethodManager) getContext().getSystemService(Context.INPUT_METHOD_SERVICE);
@@ -1132,7 +1138,6 @@ public class ExEditText extends AppCompatEditText {
         setMaxLength(maxLength);
     }
 
-
     public void setLeftString(String leftString) {
         mLeftString = leftString;
         if (!TextUtils.isEmpty(mLeftString)) {
@@ -1155,6 +1160,37 @@ public class ExEditText extends AppCompatEditText {
     public void setInputTipTextList(List<String> list) {
         mInputTipTextList.clear();
         mInputTipTextList.addAll(list);
+    }
+
+    /**
+     * 随机滚动数值至
+     *
+     * @param toValue  滚动结束后的数值
+     * @param maxValue 滚动过程中最大的数值
+     * @param minValue 滚动过程中最小的数值
+     */
+    public void rollTo(final float toValue, final float minValue, final float maxValue) {
+        if (rollAnim != null) {
+            rollAnim.cancel();
+        }
+        final Random random = new Random(System.nanoTime());
+        rollAnim = ValueAnimator.ofFloat(0f, 1f);
+        rollAnim.setInterpolator(new LinearInterpolator());
+        rollAnim.setDuration(300);
+        rollAnim.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
+            @Override
+            public void onAnimationUpdate(ValueAnimator animation) {
+                setInputText(String.format(Locale.CHINA, "%.2f", minValue + (maxValue - minValue) * random.nextFloat()));
+            }
+        });
+        rollAnim.addListener(new RAnimListener() {
+            @Override
+            public void onAnimationEnd(Animator animation) {
+                super.onAnimationEnd(animation);
+                setInputText(String.valueOf(toValue));
+            }
+        });
+        rollAnim.start();
     }
 
     public interface getIdFromUserName {
