@@ -51,7 +51,7 @@ open class GlideImageView(context: Context, attributeSet: AttributeSet? = null) 
     var bitmapTransform: Transformation<*>? = null
 
     /**需要加载的图片地址, 优先判断是否是本地File*/
-    var url: String? = ""
+    open var url: String? = ""
         set(value) {
             field = value
             startLoadUrl()

@@ -107,4 +107,14 @@
     <declare-styleable name="TitleBarLayout">
         <attr name="r_max_height"/>
     </declare-styleable>
+
+    <declare-styleable name="Button">
+        <attr name="r_button_style" format="enum">
+            <enum name="DEFAULT" value="1"/>
+            <!--圆角填充-->
+            <enum name="ROUND" value="2"/>
+            <!--圆角边框-->
+            <enum name="ROUND_BORDER" value="3"/>
+        </attr>
+    </declare-styleable>
 </resources>

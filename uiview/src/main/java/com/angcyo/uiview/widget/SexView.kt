@@ -49,12 +49,16 @@ open class SexView(context: Context, attributeSet: AttributeSet? = null) : View(
 
     /**性别*/
     var sex: Int = FEMALE
+        set(value) {
+            field = value
+            postInvalidate()
+        }
 
     /**年龄小于0时,不显示*/
     var age: Int = -1
         set(value) {
             field = value
-            postInvalidate()
+            requestLayout()
         }
 
     private val paint: Paint by lazy {
@@ -70,7 +74,7 @@ open class SexView(context: Context, attributeSet: AttributeSet? = null) : View(
         age = typedArray.getInt(R.styleable.SexView_r_age, age)
         typedArray.recycle()
 
-        setPadding(1 * density.toInt(), 1 * density.toInt(), 1 * density.toInt(), 1 * density.toInt())
+        setPadding(2 * density.toInt(), 1 * density.toInt(), 2 * density.toInt(), 1 * density.toInt())
     }
 
     private fun getAgeWidth(): Int {
