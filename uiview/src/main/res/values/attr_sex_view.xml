@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <declare-styleable name="SexView">
+        <!--性别-->
+        <attr name="r_sex" format="enum">
+            <enum name="NONE" value="0"/>
+            <enum name="MALE" value="1"/>
+            <enum name="FEMALE" value="2"/>
+        </attr>
+        <!--年龄-->
+        <attr name="r_age" format="integer"/>
+    </declare-styleable>
+</resources>
