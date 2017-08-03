@@ -183,6 +183,7 @@ public abstract class RBaseAdapter<T> extends RecyclerView.Adapter<RBaseViewHold
             } else if (mEnableLoadMore && isLast(position)) {
                 /**如果第一个就是加载更多的布局, 需要调用加载更多么?*/
                 onBindLoadMore(position);
+                onBindLoadMoreView(holder, position);
             } else {
                 onBindView(holder, position, mAllDatas.size() > position ? mAllDatas.get(position) : null);
             }
@@ -204,6 +205,7 @@ public abstract class RBaseAdapter<T> extends RecyclerView.Adapter<RBaseViewHold
 //        L.w("onViewDetachedFromWindow");
     }
 
+    @Deprecated
     private void onBindLoadMore(int position) {
         if (mLoadState == ILoadMore.NORMAL
                 || mLoadState == ILoadMore.LOAD_ERROR) {
@@ -219,6 +221,13 @@ public abstract class RBaseAdapter<T> extends RecyclerView.Adapter<RBaseViewHold
         }
 
         updateLoadMoreView();
+    }
+
+    /**
+     * 重写此方法, 可以修改加载更多视图
+     */
+    protected void onBindLoadMoreView(RBaseViewHolder holder, int position) {
+
     }
 
     private void updateLoadMoreView() {

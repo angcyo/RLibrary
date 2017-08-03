@@ -3,6 +3,7 @@ package com.angcyo.uiview.base;
 import android.support.annotation.CallSuper;
 import android.view.View;
 
+import com.angcyo.uiview.container.UIParam;
 import com.angcyo.uiview.net.NonetException;
 import com.angcyo.uiview.net.RSubscriber;
 import com.angcyo.uiview.receiver.NetworkStateReceiver;
@@ -30,6 +31,11 @@ public abstract class UIBaseRxView extends UIBaseDataView {
     public void onViewCreate(View rootView) {
         super.onViewCreate(rootView);
         mSubscriptions = new CompositeSubscription();
+    }
+
+    @Override
+    public void onViewCreate(View rootView, UIParam param) {
+        super.onViewCreate(rootView, param);
     }
 
     @CallSuper
