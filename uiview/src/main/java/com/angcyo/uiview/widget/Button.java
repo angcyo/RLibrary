@@ -40,6 +40,30 @@ public class Button extends RTextView {
         mButtonStyle = typedArray.getInt(R.styleable.Button_r_button_style, DEFAULT);
         typedArray.recycle();
 
+        initButton();
+    }
+
+    private void initButton() {
+        if (isInEditMode()) {
+            setBackgroundColor(Color.BLUE);
+        } else {
+            if (mButtonStyle == ROUND) {
+                setBackground(ResUtil.ripple(SkinHelper.getSkin().getThemeSubColor(),
+                        ResUtil.selector(
+                                ResUtil.createDrawable(SkinHelper.getSkin().getThemeSubColor(), 300),
+                                ResUtil.createDrawable(SkinHelper.getSkin().getThemeDarkColor(), 300)
+                        )));
+            } else if (mButtonStyle == ROUND_BORDER) {
+                setBackground(ResUtil.ripple(SkinHelper.getSkin().getThemeSubColor(),
+                        ResUtil.selector(
+                                ResUtil.createDrawable(SkinHelper.getSkin().getThemeSubColor(), Color.TRANSPARENT, (int) (1 * density()), 300),
+                                ResUtil.createDrawable(SkinHelper.getSkin().getThemeDarkColor(), Color.TRANSPARENT, (int) (1 * density()), 300)
+                        )));
+                setTextColor(ColorStateList.valueOf(SkinHelper.getSkin().getThemeSubColor()));
+            } else {
+                setBackground(SkinHelper.getSkin().getThemeMaskBackgroundRoundSelector());
+            }
+        }
     }
 
     @Override
@@ -49,16 +73,6 @@ public class Button extends RTextView {
         setGravity(Gravity.CENTER);
         setClickable(true);
         setTextColor(ColorStateList.valueOf(Color.WHITE));
-        if (isInEditMode()) {
-            setBackgroundColor(Color.BLUE);
-        } else {
-            if (mButtonStyle == ROUND) {
-                setBackground(ResUtil.selector());
-            } else if (mButtonStyle == ROUND_BORDER) {
-            } else {
-                setBackground(SkinHelper.getSkin().getThemeMaskBackgroundRoundSelector());
-            }
-        }
     }
 
     @Override
