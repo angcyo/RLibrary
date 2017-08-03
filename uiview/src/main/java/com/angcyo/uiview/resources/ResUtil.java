@@ -671,4 +671,15 @@ public class ResUtil {
         listDrawable.addState(new int[]{}, normalDrawable);//其他状态
         return listDrawable;
     }
+
+    /**
+     * 创建Ripple
+     */
+    public static Drawable ripple(int rippleColor, Drawable contentDrawable) {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+            return new RippleDrawable(ColorStateList.valueOf(rippleColor), contentDrawable, contentDrawable);
+        } else {
+            return contentDrawable;
+        }
+    }
 }
