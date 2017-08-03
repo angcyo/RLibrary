@@ -160,6 +160,43 @@ public class Rx<Rx> extends Observable<Rx> {
         };
     }
 
+    /**
+     * 不检查数据返回, 直接转换成列表
+     */
+    public static <T> Observable.Transformer<ResponseBody, List<T>> transformerListBean(final Class<T> type) {
+        return new Observable.Transformer<ResponseBody, List<T>>() {
+
+            @Override
+            public Observable<List<T>> call(Observable<ResponseBody> responseObservable) {
+                return responseObservable.unsubscribeOn(Schedulers.io())
+                        .subscribeOn(Schedulers.io())
+                        .map(new Func1<ResponseBody, List<T>>() {
+                            @Override
+                            public List<T> call(ResponseBody stringResponse) {
+                                List<T> list = new ArrayList<>();
+                                String body;
+                                try {
+                                    body = stringResponse.string();
+
+                                    //"接口返回数据-->\n" +
+                                    L.json(body);
+
+                                    list = Json.from(body, TypeBuilder.newInstance(List.class).addTypeParam(type).build());
+                                    return list;
+                                } catch (Exception e) {
+                                    e.printStackTrace();
+                                    //throw new RException(-1000, "服务器数据异常.", e.getMessage());
+                                }
+                                //throw new NullPointerException("无数据.");
+                                return list;
+                            }
+                        })
+                        .retry(RETRY_COUNT)
+                        .observeOn(AndroidSchedulers.mainThread());
+            }
+        };
+    }
+
     public static <T> Observable.Transformer<ResponseBody, T> transformer(final Class<T> type) {
         return new Observable.Transformer<ResponseBody, T>() {
 
@@ -306,6 +343,62 @@ public class Rx<Rx> extends Observable<Rx> {
                                         }
                                     }
                                     if (result == 1) {
+                                        //请求成功
+                                        String data = jsonObject.getString("data");
+                                        if (!TextUtils.isEmpty(data)) {
+                                            bean = Json.from(data, TypeBuilder.newInstance(List.class).addTypeParam(type).build());
+                                            return bean;
+                                        }
+                                    } else {
+                                        //请求成功, 但是有错误
+                                        JSONObject errorObject = jsonObject.getJSONObject("error");
+
+                                        throw new RException(errorObject.getInt("code"),
+                                                errorObject.getString("msg"),
+                                                errorObject.getString("more"));
+                                    }
+                                } catch (JSONException | IOException e) {
+                                    e.printStackTrace();
+                                }
+                                return bean;
+                            }
+                        })
+                        .retry(RETRY_COUNT)
+                        .observeOn(AndroidSchedulers.mainThread());
+            }
+        };
+    }
+
+    public static <T> Observable.Transformer<ResponseBody, List<T>> transformerList(final Class<T> type, final int successCode) {
+        return new Observable.Transformer<ResponseBody, List<T>>() {
+
+            @Override
+            public Observable<List<T>> call(Observable<ResponseBody> responseObservable) {
+                return responseObservable.unsubscribeOn(Schedulers.io())
+                        .subscribeOn(Schedulers.io())
+                        .map(new Func1<ResponseBody, List<T>>() {
+                            @Override
+                            public List<T> call(ResponseBody stringResponse) {
+                                List<T> bean = new ArrayList<>();
+                                String body;
+                                try {
+                                    body = stringResponse.string();
+
+                                    //"接口返回数据-->\n" +
+                                    L.json(body);
+
+                                    JSONObject jsonObject = new JSONObject(body);
+                                    int result = 0;
+                                    try {
+                                        result = jsonObject.getInt("result");
+                                    } catch (Exception e) {
+                                        ////兼容资讯API
+                                        result = jsonObject.getInt("code");
+                                        if (result == 200) {
+                                            result = successCode;//资讯接口没有此字段
+                                        }
+                                    }
+                                    if (result == successCode) {
                                         //请求成功
                                         String data = jsonObject.getString("data");
                                         if (!TextUtils.isEmpty(data)) {

@@ -48,6 +48,7 @@ public class SlidingTabLayout extends HorizontalScrollView implements ViewPager.
     private static final int TEXT_BOLD_WHEN_SELECT = 1;
     private static final int TEXT_BOLD_BOTH = 2;
     boolean itemNoBackground = false;
+    OnConfigListener mOnConfigListener;
     private Context mContext;
     private ViewPager mViewPager;
     private ArrayList<String> mTitles;
@@ -318,8 +319,16 @@ public class SlidingTabLayout extends HorizontalScrollView implements ViewPager.
         LinearLayout.LayoutParams lp_tab = mTabSpaceEqual ?
                 new LinearLayout.LayoutParams(0, LayoutParams.MATCH_PARENT, 1.0f) :
                 new LinearLayout.LayoutParams(LayoutParams.WRAP_CONTENT, LayoutParams.MATCH_PARENT);
+
         if (mTabWidth > 0) {
             lp_tab = new LinearLayout.LayoutParams((int) mTabWidth, LayoutParams.MATCH_PARENT);
+        }
+
+        if (mOnConfigListener != null) {
+            LinearLayout.LayoutParams params = mOnConfigListener.onCreateTabLayoutParams(position, tabView, lp_tab);
+            if (params != null) {
+                lp_tab = params;
+            }
         }
 
         mTabsContainer.addView(tabView, position, lp_tab);
@@ -710,28 +719,28 @@ public class SlidingTabLayout extends HorizontalScrollView implements ViewPager.
         mIndicatorMarginLeft = indicatorMarginLeft;
     }
 
-    public void setIndicatorMarginTop(float indicatorMarginTop) {
-        mIndicatorMarginTop = indicatorMarginTop;
-    }
-
-    public void setIndicatorMarginRight(float indicatorMarginRight) {
-        mIndicatorMarginRight = indicatorMarginRight;
-    }
-
-    public void setIndicatorMarginBottom(float indicatorMarginBottom) {
-        mIndicatorMarginBottom = indicatorMarginBottom;
-    }
-
     public float getIndicatorMarginTop() {
         return mIndicatorMarginTop;
+    }
+
+    public void setIndicatorMarginTop(float indicatorMarginTop) {
+        mIndicatorMarginTop = indicatorMarginTop;
     }
 
     public float getIndicatorMarginRight() {
         return mIndicatorMarginRight;
     }
 
+    public void setIndicatorMarginRight(float indicatorMarginRight) {
+        mIndicatorMarginRight = indicatorMarginRight;
+    }
+
     public float getIndicatorMarginBottom() {
         return mIndicatorMarginBottom;
+    }
+
+    public void setIndicatorMarginBottom(float indicatorMarginBottom) {
+        mIndicatorMarginBottom = indicatorMarginBottom;
     }
 
     public int getUnderlineColor() {
@@ -951,6 +960,15 @@ public class SlidingTabLayout extends HorizontalScrollView implements ViewPager.
     protected int sp2px(float sp) {
         final float scale = this.mContext.getResources().getDisplayMetrics().scaledDensity;
         return (int) (sp * scale + 0.5f);
+    }
+
+    public void setOnConfigListener(OnConfigListener onConfigListener) {
+        mOnConfigListener = onConfigListener;
+    }
+
+    public interface OnConfigListener {
+
+        LinearLayout.LayoutParams onCreateTabLayoutParams(int position, View tabView, LinearLayout.LayoutParams defaultParams);
     }
 
     class InnerPagerAdapter extends FragmentPagerAdapter {
