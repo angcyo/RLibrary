@@ -1,6 +1,7 @@
 package com.angcyo.uiview.recycler;
 
 import android.content.Context;
+import android.graphics.Canvas;
 import android.graphics.Paint;
 import android.graphics.Rect;
 import android.support.annotation.ColorInt;
@@ -528,6 +529,19 @@ public class RRecyclerView extends RecyclerView {
                 });
             }
         }
+    }
+
+    @Override
+    public void onDraw(Canvas canvas) {
+        super.onDraw(canvas);
+//        canvas.save();
+//        try {
+//            canvas.translate(getScrollX(), getScrollY());
+//            (((ViewGroup) getChildAt(0))).getChildAt(0).draw(canvas);
+//        } catch (Exception e) {
+//            e.printStackTrace();
+//        }
+//        canvas.restore();
     }
 
     /**
