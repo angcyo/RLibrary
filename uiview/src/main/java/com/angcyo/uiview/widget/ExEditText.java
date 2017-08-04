@@ -1194,7 +1194,7 @@ public class ExEditText extends AppCompatEditText {
             @Override
             public void onAnimationEnd(Animator animation) {
                 super.onAnimationEnd(animation);
-                setInputText(String.valueOf(toValue));
+                setInputText(String.format(Locale.CHINA,"%.2f",toValue));
             }
         });
         rollAnim.start();

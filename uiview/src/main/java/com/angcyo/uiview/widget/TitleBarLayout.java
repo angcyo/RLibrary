@@ -76,12 +76,14 @@ public class TitleBarLayout extends FrameLayout {
 
         if (enablePadding) {
             setPadding(getPaddingLeft(), statusBarHeight, getPaddingRight(), getPaddingBottom());
+            maxHeight += statusBarHeight;
+            heightSize += statusBarHeight;
         }
 
         if (maxHeight > 0) {
-            super.onMeasure(widthMeasureSpec, MeasureSpec.makeMeasureSpec(maxHeight, heightMode));
+            super.onMeasure(widthMeasureSpec, MeasureSpec.makeMeasureSpec(Math.min(maxHeight, heightSize), heightMode));
         } else {
-            super.onMeasure(widthMeasureSpec, heightMeasureSpec);
+            super.onMeasure(widthMeasureSpec, MeasureSpec.makeMeasureSpec(heightSize, heightMode));
         }
     }
 }
