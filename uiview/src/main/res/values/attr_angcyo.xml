@@ -117,4 +117,12 @@
             <enum name="ROUND_BORDER" value="3"/>
         </attr>
     </declare-styleable>
+
+    <declare-styleable name="RRangeBar">
+        <attr name="r_max_value" format="integer"/>
+        <attr name="r_min_value" format="integer"/>
+        <attr name="r_current_min_value" format="integer"/>
+        <attr name="r_current_max_value" format="integer"/>
+        <attr name="r_min_range" format="integer"/>
+    </declare-styleable>
 </resources>

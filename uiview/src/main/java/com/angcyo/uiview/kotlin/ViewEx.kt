@@ -53,6 +53,15 @@ public fun TextView.textHeight(): Float {
     return paint.descent() - paint.ascent()
 }
 
+/**文本宽度*/
+public fun View.textWidth(paint: Paint, text: String): Float {
+    return paint.measureText(text)
+}
+
+public fun TextView.textWidth(text: String): Float {
+    return paint.measureText(text)
+}
+
 public fun View.getColor(id: Int): Int {
     return ContextCompat.getColor(context, id)
 }
