@@ -30,6 +30,7 @@ import android.widget.TextView;
 import com.angcyo.uiview.R;
 import com.angcyo.uiview.github.tablayout.listener.CustomTabEntity;
 import com.angcyo.uiview.github.tablayout.listener.OnTabSelectListener;
+import com.angcyo.uiview.github.tablayout.listener.SimpleTabSelectListener;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -606,9 +607,15 @@ public class CommonTabLayout extends FrameLayout implements ValueAnimator.Animat
                 if (mListener != null) {
                     mListener.onTabSelect(currentTab);
                 }
+                if (mListener instanceof SimpleTabSelectListener) {
+                    ((SimpleTabSelectListener) mListener).onTabSelect(mTabsContainer.getChildAt(currentTab), currentTab);
+                }
             } else {
                 if (mListener != null) {
                     mListener.onTabReselect(currentTab);
+                }
+                if (mListener instanceof SimpleTabSelectListener) {
+                    ((SimpleTabSelectListener) mListener).onTabReselect(mTabsContainer.getChildAt(currentTab), currentTab);
                 }
             }
         }

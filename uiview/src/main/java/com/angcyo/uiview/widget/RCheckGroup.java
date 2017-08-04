@@ -90,6 +90,16 @@ public class RCheckGroup extends LinearLayout implements View.OnClickListener {
     }
 
     private void notifyListener(View from, View to) {
+        if (from != null) {
+            if (from instanceof ICheckView) {
+                ((ICheckView) from).setChecked(false);
+            }
+        }
+        if (to != null) {
+            if (to instanceof ICheckView) {
+                ((ICheckView) to).setChecked(true);
+            }
+        }
         if (mCheckChangedListener != null) {
             if (from == to) {
                 mCheckChangedListener.onReChecked(to);

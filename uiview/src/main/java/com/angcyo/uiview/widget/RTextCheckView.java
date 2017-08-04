@@ -1,10 +1,15 @@
 package com.angcyo.uiview.widget;
 
 import android.content.Context;
+import android.graphics.Color;
 import android.support.v7.widget.AppCompatTextView;
 import android.util.AttributeSet;
 import android.view.Gravity;
 import android.view.View;
+
+import com.angcyo.uiview.kotlin.ViewExKt;
+import com.angcyo.uiview.resources.ResUtil;
+import com.angcyo.uiview.skin.SkinHelper;
 
 /**
  * 实现了 checked 状态的 TextView
@@ -37,6 +42,15 @@ public class RTextCheckView extends AppCompatTextView implements View.OnClickLis
             int paddStart = (int) (density * 20);
             int paddTop = (int) (density * 10);
             setPadding(paddStart, paddTop, paddStart, paddTop);
+        } else if (getTag().toString().contains("skin")) {
+            float density = ViewExKt.getDensity(this);
+            setBackground(ResUtil.selector(
+                    ResUtil.createDrawable(Color.parseColor("#E0E0E0"), Color.TRANSPARENT, (int) (1 * density), 3 * density),
+                    ResUtil.createDrawable(SkinHelper.getSkin().getThemeSubColor(), 3 * density),
+                    ResUtil.createDrawable(SkinHelper.getSkin().getThemeSubColor(), 3 * density),
+                    ResUtil.createDrawable(Color.parseColor("#E0E0E0"), 3 * density)
+            ));
+            setTextColor(ResUtil.generateTextColor(Color.WHITE, Color.WHITE, Color.BLACK));
         }
     }
 

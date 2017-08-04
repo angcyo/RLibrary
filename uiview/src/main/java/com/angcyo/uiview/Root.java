@@ -29,6 +29,17 @@ public class Root {
         return file.getAbsolutePath();
     }
 
+    public static String getAppInternalFolder(String folder) {
+        if (folder == null) {
+            folder = "";
+        }
+        File file = new File(RApplication.getApp().getCacheDir(), folder);
+        if (!file.exists()) {
+            file.mkdirs();
+        }
+        return file.getAbsolutePath();
+    }
+
     /**
      * 创建时间文件名
      */

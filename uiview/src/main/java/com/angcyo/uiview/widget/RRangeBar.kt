@@ -14,6 +14,7 @@ import com.angcyo.uiview.kotlin.density
 import com.angcyo.uiview.kotlin.scaledDensity
 import com.angcyo.uiview.kotlin.textHeight
 import com.angcyo.uiview.kotlin.textWidth
+import com.angcyo.uiview.skin.SkinHelper
 
 /**
  * Copyright (C) 2016,深圳市红鸟网络科技股份有限公司 All rights reserved.
@@ -47,6 +48,7 @@ open class RRangeBar(context: Context, attributeSet: AttributeSet? = null) : Vie
     var thumbOutLineColor: Int = Color.parseColor("#E0E0E0")
 
     var progressColor: Int = Color.parseColor("#0BD1A0")
+    var textColor: Int = Color.parseColor("#0BD1A0")
 
     var textSize: Float = 12f * scaledDensity
     var textOffset: Int = 2 * density.toInt()
@@ -70,6 +72,11 @@ open class RRangeBar(context: Context, attributeSet: AttributeSet? = null) : Vie
         currentMinValue = typedArray.getInt(R.styleable.RRangeBar_r_current_min_value, 0)
         currentMaxValue = typedArray.getInt(R.styleable.RRangeBar_r_current_max_value, 100)
         typedArray.recycle()
+
+        if (!isInEditMode) {
+            progressColor = SkinHelper.getSkin().getThemeTranColor(0x80)
+            textColor = SkinHelper.getSkin().themeSubColor
+        }
     }
 
     override fun onMeasure(widthMeasureSpec: Int, heightMeasureSpec: Int) {
@@ -117,7 +124,7 @@ open class RRangeBar(context: Context, attributeSet: AttributeSet? = null) : Vie
     private val maxValueRectF = RectF()
 
     override fun onDraw(canvas: Canvas) {
-        canvas.drawColor(Color.parseColor("#80000000"))
+        //canvas.drawColor(Color.parseColor("#80000000"))
 
         paint.style = Paint.Style.FILL
         paint.color = trackColor
@@ -160,7 +167,7 @@ open class RRangeBar(context: Context, attributeSet: AttributeSet? = null) : Vie
 
     private fun drawText(canvas: Canvas, rectF: RectF, progress: Int) {
         paint.style = Paint.Style.FILL_AND_STROKE
-        paint.color = progressColor
+        paint.color = textColor
         paint.strokeWidth = 1f
 
         val text: String = rangeListener?.getProgressText(progress) ?: "$progress%"
