@@ -249,8 +249,8 @@ public abstract class UIBaseView extends UIIViewImpl {
     /**
      * 只要显示了内容, 就会调用此方法, 请在此方法中设置布局内容
      */
-    protected void OnShowContentLayout() {
-        L.d("call: OnShowContentLayout([])-> ");
+    protected void onShowContentLayout() {
+        L.d("call: onShowContentLayout([])-> ");
     }
 
     protected void inflate(@LayoutRes int layoutId) {
@@ -546,7 +546,7 @@ public abstract class UIBaseView extends UIIViewImpl {
             //ButterKnife.bind(this, mBaseContentLayout);
             initOnShowContentLayout();
         }
-        OnShowContentLayout();
+        onShowContentLayout();
         changeState(mLayoutState, LayoutState.CONTENT);
     }
 
