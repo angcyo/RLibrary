@@ -16,6 +16,7 @@ import com.angcyo.uiview.R;
 import com.angcyo.uiview.base.UIIDialogImpl;
 import com.angcyo.uiview.recycler.RBaseViewHolder;
 import com.angcyo.uiview.skin.SkinHelper;
+import com.angcyo.uiview.view.RClickListener;
 
 import java.util.ArrayList;
 
@@ -201,10 +202,10 @@ public class UIItemDialog extends UIIDialogImpl {
         textView.setTextSize(TypedValue.COMPLEX_UNIT_PX,
                 mActivity.getResources().getDimensionPixelSize(R.dimen.default_text_size));
         textView.setGravity(Gravity.CENTER);
-        textView.setOnClickListener(new View.OnClickListener() {
+        textView.setOnClickListener(new RClickListener(1000) {
             @Override
-            public void onClick(View v) {
-                info.mClickListener.onClick(v);
+            public void onRClick(View view) {
+                info.mClickListener.onClick(view);
                 if (info.autoCloseDialog) {
                     finishDialog();
                 }

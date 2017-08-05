@@ -88,6 +88,7 @@ public abstract class UIIViewImpl implements IView {
     protected long showInPagerCount = 0;
     protected int mBaseSoftInputMode;
     private boolean mIsRightJumpLeft = false;
+    private OnUIViewListener mOnUIViewListener;
 
     public static void setDefaultConfig(Animation animation, boolean isFinish) {
         if (isFinish) {
@@ -264,6 +265,9 @@ public abstract class UIIViewImpl implements IView {
     public void onViewUnload() {
         L.d(this.getClass().getSimpleName(), "onViewUnload: " + mIViewStatus);
         mIViewStatus = IViewShowState.STATE_VIEW_UNLOAD;
+        if (mOnUIViewListener != null) {
+            mOnUIViewListener.onViewUnload(this);
+        }
     }
 
     @Override
@@ -719,8 +723,15 @@ public abstract class UIIViewImpl implements IView {
         return mViewHolder.v(id);
     }
 
-    public void click(@IdRes int id, View.OnClickListener listener) {
-        v(id).setOnClickListener(listener);
+    public void click(@IdRes int id, final View.OnClickListener listener) {
+        v(id).setOnClickListener(new RClickListener(1000) {
+            @Override
+            public void onRClick(View view) {
+                if (listener != null) {
+                    listener.onClick(view);
+                }
+            }
+        });
     }
 
     public void setChildILayout(ILayout childILayout) {
@@ -809,6 +820,11 @@ public abstract class UIIViewImpl implements IView {
         } else {
             mActivity.getWindow().setSoftInputMode(mBaseSoftInputMode);
         }
+    }
+
+    public UIIViewImpl setOnUIViewListener(OnUIViewListener onUIViewListener) {
+        mOnUIViewListener = onUIViewListener;
+        return this;
     }
 
     /**
