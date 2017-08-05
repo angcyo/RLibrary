@@ -97,7 +97,7 @@ public class RAddPhotoAdapter<T> extends RBaseAdapter<T> {
 
         if (holder.getItemViewType() == TYPE_ADD) {
             deleteView.setVisibility(View.GONE);
-            imageView.setImageResource(R.drawable.base_add_border);
+            imageView.setImageResource(getAddViewImageResource(position));
             imageView.setScaleType(ImageView.ScaleType.FIT_XY);
             imageView.setOnClickListener(new View.OnClickListener() {
                 @Override
@@ -117,7 +117,17 @@ public class RAddPhotoAdapter<T> extends RBaseAdapter<T> {
                 @Override
                 public void onClick(View v) {
                     if (mConfigCallback != null) {
+                        mConfigCallback.onImageClick(imageView, position);
                     }
+                }
+            });
+            imageView.setOnLongClickListener(new View.OnLongClickListener() {
+                @Override
+                public boolean onLongClick(View v) {
+                    if (mConfigCallback != null) {
+                        return mConfigCallback.onImageLongClick(imageView, position);
+                    }
+                    return false;
                 }
             });
         }
@@ -161,8 +171,10 @@ public class RAddPhotoAdapter<T> extends RBaseAdapter<T> {
         localRefresh(recyclerView, new OnLocalRefresh() {
             @Override
             public void onLocalRefresh(RBaseViewHolder viewHolder, int position) {
-                final ImageView deleteView = viewHolder.v(R.id.base_delete_view);
-                deleteView.setVisibility(mDeleteModel ? View.VISIBLE : View.GONE);
+                if (getItemType(position) != TYPE_ADD) {
+                    final ImageView deleteView = viewHolder.v(R.id.base_delete_view);
+                    deleteView.setVisibility(mDeleteModel ? View.VISIBLE : View.GONE);
+                }
             }
         });
     }
@@ -182,17 +194,35 @@ public class RAddPhotoAdapter<T> extends RBaseAdapter<T> {
         return this;
     }
 
-    private int getItemSize() {
+    public int getItemSize() {
         int screenWidth = ResUtil.getScreenWidth(mContext) - excludeWidth;
         int itemSize = screenWidth / mItemCountLine;
         return itemSize;
     }
 
-    public interface ConfigCallback {
-        void onDisplayImage(ImageView imageView, int position);
+    protected int getAddViewImageResource(int position) {
+        return R.drawable.base_add_border;
+    }
 
-        void onAddClick(View view);
+    public static abstract class ConfigCallback {
+        public void onDisplayImage(ImageView imageView, int position) {
 
-        boolean onDeleteClick(View view, int position);
+        }
+
+        public void onImageClick(ImageView imageView, int position) {
+
+        }
+
+        public boolean onImageLongClick(ImageView imageView, int position) {
+            return false;
+        }
+
+        public void onAddClick(View view) {
+
+        }
+
+        public boolean onDeleteClick(View view, int position) {
+            return false;
+        }
     }
 }

@@ -76,7 +76,9 @@ public class TitleBarLayout extends FrameLayout {
 
         if (enablePadding) {
             setPadding(getPaddingLeft(), statusBarHeight, getPaddingRight(), getPaddingBottom());
-            maxHeight += statusBarHeight;
+            if (maxHeight > 0) {
+                maxHeight += statusBarHeight;
+            }
             heightSize += statusBarHeight;
         }
 

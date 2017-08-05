@@ -9,6 +9,7 @@
         android:id="@+id/base_image_view"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
+        android:padding="@dimen/base_mdpi"
         tools:src="@drawable/base_add_border"/>
 
     <ImageView
