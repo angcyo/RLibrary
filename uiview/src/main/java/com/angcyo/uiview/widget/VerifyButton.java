@@ -1,6 +1,7 @@
 package com.angcyo.uiview.widget;
 
 import android.content.Context;
+import android.graphics.Color;
 import android.support.v7.widget.AppCompatTextView;
 import android.util.AttributeSet;
 import android.view.Gravity;
@@ -53,7 +54,11 @@ public class VerifyButton extends AppCompatTextView implements View.OnClickListe
     @Override
     protected void onAttachedToWindow() {
         super.onAttachedToWindow();
-        setTextColor(SkinHelper.getSkin().getThemeSubColor());
+        if (isInEditMode()) {
+            setTextColor(Color.BLACK);
+        } else {
+            setTextColor(SkinHelper.getSkin().getThemeSubColor());
+        }
     }
 
     @Override

@@ -942,6 +942,10 @@ public abstract class UIBaseView extends UIIViewImpl {
         mRootView.startAnimation(translateAnimation);
     }
 
+    public LayoutState getLayoutState() {
+        return mLayoutState;
+    }
+
     public void setOnViewLoadListener(OnViewLoadListener onViewLoadListener) {
         mOnViewLoadListener = onViewLoadListener;
     }

@@ -1,5 +1,6 @@
 package com.angcyo.uiview.view;
 
+import android.app.ActivityManager;
 import android.content.Context;
 import android.content.Intent;
 import android.content.res.ColorStateList;
@@ -30,6 +31,7 @@ import android.view.animation.TranslateAnimation;
 import android.widget.FrameLayout;
 
 import com.angcyo.library.utils.L;
+import com.angcyo.uiview.R;
 import com.angcyo.uiview.RApplication;
 import com.angcyo.uiview.base.UILayoutActivity;
 import com.angcyo.uiview.container.ILayout;
@@ -39,7 +41,6 @@ import com.angcyo.uiview.model.TitleBarPattern;
 import com.angcyo.uiview.recycler.RBaseViewHolder;
 import com.angcyo.uiview.recycler.RRecyclerView;
 import com.angcyo.uiview.resources.AnimUtil;
-import com.angcyo.uiview.resources.ResUtil;
 import com.angcyo.uiview.skin.ISkin;
 import com.angcyo.uiview.utils.RUtils;
 import com.angcyo.uiview.utils.ThreadExecutor;
@@ -48,6 +49,8 @@ import com.angcyo.uiview.widget.viewpager.UIViewPager;
 
 import java.util.ArrayList;
 import java.util.List;
+
+import static com.angcyo.uiview.RCrashHandler.getMemoryInfo;
 
 /**
  * 接口的实现, 仅处理了一些动画, 其他实现都为空
@@ -87,8 +90,8 @@ public abstract class UIIViewImpl implements IView {
     protected long viewShowCount = 0;
     protected long showInPagerCount = 0;
     protected int mBaseSoftInputMode;
-    private boolean mIsRightJumpLeft = false;
     protected OnUIViewListener mOnUIViewListener;
+    private boolean mIsRightJumpLeft = false;
 
     public static void setDefaultConfig(Animation animation, boolean isFinish) {
         if (isFinish) {
@@ -99,6 +102,27 @@ public abstract class UIIViewImpl implements IView {
             animation.setInterpolator(new DecelerateInterpolator());
         }
         animation.setFillAfter(false);
+    }
+
+    /**
+     * 判断设备是否是低端
+     */
+    public static boolean isLowDevice() {
+        boolean isLowMen = true;
+        try {
+            final ActivityManager.MemoryInfo memoryInfo = getMemoryInfo(RApplication.getApp());
+            isLowMen = memoryInfo.totalMem < 1024 * 1024 * 1024 * 2L;//小于2G的内存
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        if (!isLollipop()) {
+            return true;
+        }
+        return isLowMen;
+    }
+
+    public static boolean isLollipop() {
+        return Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP;
     }
 
     @Override
@@ -762,11 +786,13 @@ public abstract class UIIViewImpl implements IView {
     }
 
     public float getTitleBarHeight() {
-        float density = getResources().getDisplayMetrics().density;
-        if (ResUtil.isLayoutFullscreen(mActivity)) {
-            return density * 65f;
+//        float density = getResources().getDisplayMetrics().density;
+        if (isLollipop()) {
+            return getDimensionPixelOffset(R.dimen.title_bar_height);
+            //return density * 65f;
         } else {
-            return density * 40f;
+            //return density * 40f;
+            return getDimensionPixelOffset(R.dimen.action_bar_height);
         }
     }
 
