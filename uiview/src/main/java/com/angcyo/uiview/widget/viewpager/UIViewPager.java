@@ -12,10 +12,13 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import com.angcyo.library.utils.L;
+import com.angcyo.uiview.container.ILayout;
+import com.angcyo.uiview.container.UILayoutImpl;
 import com.angcyo.uiview.design.StickLayout;
 import com.angcyo.uiview.skin.SkinHelper;
 import com.angcyo.uiview.utils.Reflect;
 import com.angcyo.uiview.utils.UI;
+import com.angcyo.uiview.view.UIIViewImpl;
 
 import java.util.ArrayList;
 
@@ -39,6 +42,11 @@ public class UIViewPager extends ViewPager implements Runnable, StickLayout.CanS
 
     private int defaultShowItem = 0;
     private float downY, downX;
+
+    /**
+     * adapter中的ILayout, 属于哪个IView
+     */
+    private UIIViewImpl mParentUIView;
 
     public UIViewPager(Context context) {
         super(context);
@@ -171,12 +179,22 @@ public class UIViewPager extends ViewPager implements Runnable, StickLayout.CanS
             if (currentItem == lastItem && lastItem == position) {
 
             } else if (lastItem == position) {
-                if (obj != null && available instanceof OnPagerShowListener) {
-                    ((OnPagerShowListener) available).onHideInPager(this);
+                if (obj != null) {
+//                    if (mParentUIView != null && available instanceof UILayoutImpl) {
+//                        mParentUIView.setChildILayout(null);
+//                    }
+                    if (available instanceof OnPagerShowListener) {
+                        ((OnPagerShowListener) available).onHideInPager(this);
+                    }
                 }
             } else if (currentItem == position) {
-                if (obj != null && available instanceof OnPagerShowListener) {
-                    ((OnPagerShowListener) available).onShowInPager(this);
+                if (obj != null && available != null) {
+                    if (mParentUIView != null && available instanceof UILayoutImpl) {
+                        mParentUIView.setChildILayout((ILayout) available);
+                    }
+                    if (available instanceof OnPagerShowListener) {
+                        ((OnPagerShowListener) available).onShowInPager(this);
+                    }
                 }
             }
         }
@@ -216,6 +234,11 @@ public class UIViewPager extends ViewPager implements Runnable, StickLayout.CanS
             }
         }
         return null;
+    }
+
+    public UIViewPager setParentUIView(UIIViewImpl parentUIView) {
+        mParentUIView = parentUIView;
+        return this;
     }
 
     public interface OnPagerShowListener {

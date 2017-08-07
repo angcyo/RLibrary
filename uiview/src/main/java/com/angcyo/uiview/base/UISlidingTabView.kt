@@ -34,7 +34,9 @@ abstract class UISlidingTabView : UIContentView(), UIBaseView.OnViewLoadListener
     }
 
     val mViewPager: UIViewPager by lazy {
-        mViewHolder.v<UIViewPager>(R.id.base_view_pager)
+        val uiViewPager = mViewHolder.v<UIViewPager>(R.id.base_view_pager)
+        uiViewPager.setParentUIView(this)
+        uiViewPager
     }
 
     val mSlidingTab: SlidingTabLayout by lazy {
