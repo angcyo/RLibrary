@@ -88,7 +88,7 @@ public abstract class UIIViewImpl implements IView {
     protected long showInPagerCount = 0;
     protected int mBaseSoftInputMode;
     private boolean mIsRightJumpLeft = false;
-    private OnUIViewListener mOnUIViewListener;
+    protected OnUIViewListener mOnUIViewListener;
 
     public static void setDefaultConfig(Animation animation, boolean isFinish) {
         if (isFinish) {

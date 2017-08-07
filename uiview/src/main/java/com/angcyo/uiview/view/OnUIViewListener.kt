@@ -15,4 +15,12 @@ abstract class OnUIViewListener {
     open fun onViewUnload(uiview: IView) {
 
     }
+
+    open fun onViewLoadData(page: String?) {
+
+    }
+
+    open fun onViewLoadDataSuccess() {
+
+    }
 }
