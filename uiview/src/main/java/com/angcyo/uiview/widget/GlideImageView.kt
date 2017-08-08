@@ -25,7 +25,7 @@ import java.io.File
 /**
  * Copyright (C) 2016,深圳市红鸟网络科技股份有限公司 All rights reserved.
  * 项目名称：
- * 类的描述：
+ * 类的描述：支持文件/网络图片加载, 支持动态检查gif, 支持显示gif提示, 支持动画
  * 创建人员：Robi
  * 创建时间：2017/07/04 11:11
  * 修改人员：Robi
