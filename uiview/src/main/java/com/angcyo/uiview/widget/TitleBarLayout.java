@@ -9,6 +9,7 @@ import android.widget.FrameLayout;
 
 import com.angcyo.uiview.R;
 import com.angcyo.uiview.utils.ScreenUtil;
+import com.angcyo.uiview.view.UIIViewImpl;
 
 /**
  * 用来控制状态栏的padding
@@ -33,6 +34,9 @@ public class TitleBarLayout extends FrameLayout {
 
         TypedArray typedArray = context.obtainStyledAttributes(attrs, R.styleable.TitleBarLayout);
         maxHeight = typedArray.getDimensionPixelOffset(R.styleable.TitleBarLayout_r_max_height, -1);
+
+        enablePadding = UIIViewImpl.isLollipop();
+
         resetMaxHeight();
         typedArray.recycle();
 

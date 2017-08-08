@@ -25,6 +25,7 @@
             android:layout_height="wrap_content"
             android:layout_marginTop="10dp"
             android:text="~这里空空如许~"
+            android:gravity="center"
             android:textColor="@color/default_base_border"/>
     </LinearLayout>
 
