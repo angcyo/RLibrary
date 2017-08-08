@@ -111,7 +111,7 @@ public abstract class UIIViewImpl implements IView {
         boolean isLowMen = true;
         try {
             final ActivityManager.MemoryInfo memoryInfo = getMemoryInfo(RApplication.getApp());
-            isLowMen = memoryInfo.totalMem < 1024 * 1024 * 1024 * 2L;//小于2G的内存
+            isLowMen = memoryInfo.totalMem < 1000 * 1000 * 1000 * 2L;//小于2G的内存
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -119,6 +119,17 @@ public abstract class UIIViewImpl implements IView {
             return true;
         }
         return isLowMen;
+    }
+
+    public static boolean isHighDevice() {
+        boolean isHighMen = true;
+        try {
+            final ActivityManager.MemoryInfo memoryInfo = getMemoryInfo(RApplication.getApp());
+            isHighMen = memoryInfo.totalMem >= 1000 * 1000 * 1000 * 3.8f;
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return isHighMen;
     }
 
     public static boolean isLollipop() {

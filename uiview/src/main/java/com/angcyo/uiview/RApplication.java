@@ -12,8 +12,8 @@ import com.angcyo.github.utilcode.utils.Utils;
 import com.angcyo.library.utils.L;
 import com.angcyo.uiview.skin.SkinHelper;
 import com.angcyo.uiview.utils.Debug;
-import com.angcyo.uiview.utils.RUtils;
 import com.angcyo.uiview.utils.T_;
+import com.angcyo.uiview.view.UIIViewImpl;
 import com.bumptech.glide.Glide;
 import com.orhanobut.hawk.Hawk;
 
@@ -53,6 +53,9 @@ import java.util.List;
  */
 
 public class RApplication extends Application {
+
+    public static boolean isLowDevice = true;
+    public static boolean isHighDevice = false;
 
     private static RApplication app;
 
@@ -152,6 +155,8 @@ public class RApplication extends Application {
     public void onCreate() {
         super.onCreate();
         app = this;
+        isLowDevice = UIIViewImpl.isLowDevice();
+        isHighDevice = UIIViewImpl.isHighDevice();
         if (isInitOnce(this)) {
 
             Debug.logTimeStart("RApplication 正在初始化:isInitOnce()");
