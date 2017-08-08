@@ -17,6 +17,7 @@ import android.media.AudioRecord;
 import android.media.MediaRecorder;
 import android.net.Uri;
 import android.os.Build;
+import android.os.Environment;
 import android.os.Looper;
 import android.support.v4.content.FileProvider;
 import android.telephony.TelephonyManager;
@@ -27,12 +28,17 @@ import android.view.WindowManager;
 import com.angcyo.github.utilcode.utils.PhoneUtils;
 import com.angcyo.library.utils.L;
 import com.angcyo.uiview.RApplication;
+import com.angcyo.uiview.RCrashHandler;
+import com.angcyo.uiview.Root;
 import com.angcyo.uiview.widget.RExTextView;
 
+import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.PrintWriter;
 import java.lang.reflect.Field;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -1036,6 +1042,40 @@ public class RUtils {
         // 大于6尺寸则为Pad
         return screenInches;
     }
+
+    /**
+     * 写入数据到 SD卡  Root.APP_FOLDER/log 目录下
+     *
+     * @param fileName 文件名
+     * @param data     需要写入的数据
+     */
+    public static void saveToSDCard(String fileName, String data) {
+        try {
+            String saveFolder = Environment.getExternalStorageDirectory().getAbsoluteFile() +
+                    File.separator + Root.APP_FOLDER + File.separator + "log";
+            File folder = new File(saveFolder);
+            if (!folder.exists()) {
+                if (!folder.mkdirs()) {
+                    return;
+                }
+            }
+            String dataTime = RCrashHandler.getDataTime("yyyy-MM-dd_HH-mm-ss-SSS");
+            File file = new File(saveFolder, fileName);
+            boolean append = true;
+            if (file.length() > 1024 * 1024 * 10 /*大于10MB重写*/) {
+                append = false;
+            }
+            PrintWriter pw = new PrintWriter(new BufferedWriter(new FileWriter(file, append)));
+            pw.println(dataTime);
+            pw.println(data);
+            //换行
+            pw.println();
+            pw.close();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
 
     public enum ImageType {
         JPEG, GIF, PNG, BMP, UNKNOWN
