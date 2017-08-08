@@ -137,9 +137,8 @@ public class RImageView extends CircleImageView {
             if (drawable == null) {
                 return null;
             }
-
+            Rect bounds = drawable.getBounds();
             if (Build.VERSION.SDK_INT < Build.VERSION_CODES.LOLLIPOP) {
-                Rect bounds = drawable.getBounds();
                 int width = bounds.width();
                 int height = bounds.height();
 
@@ -156,6 +155,7 @@ public class RImageView extends CircleImageView {
                 Drawable.ConstantState constantState = drawable.mutate().getConstantState();
                 if (constantState != null) {
                     result = constantState.newDrawable();
+                    result.setBounds(bounds);
                 }
             }
         }
