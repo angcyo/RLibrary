@@ -90,8 +90,9 @@ public class RxFingerPrinter {
             publishSubject.onError(new FPerException(SYSTEM_API_ERROR));
         } else {
             initManager();
-            confirmFinger();
-            startListening(null);
+            if (confirmFinger()) {
+                startListening(null);
+            }
         }
         return publishSubject;
 
@@ -146,31 +147,32 @@ public class RxFingerPrinter {
 
     @SuppressLint("NewApi")
     @TargetApi(23)
-    public void confirmFinger() {
+    public boolean confirmFinger() {
 
         //android studio 上，没有这个会报错
         if (ActivityCompat.checkSelfPermission(context, Manifest.permission.USE_FINGERPRINT)
                 != PackageManager.PERMISSION_GRANTED) {
             publishSubject.onError(new FPerException(PERMISSION_DENIED_ERROE));
-            return;
+            return false;
         }
         //判断硬件是否支持指纹识别
         if (!manager.isHardwareDetected()) {
             publishSubject.onError(new FPerException(HARDWARE_MISSIING_ERROR));
-            return;
+            return false;
         }
         //判断 是否开启锁屏密码
 
         if (!mKeyManager.isKeyguardSecure()) {
             publishSubject.onError(new FPerException(KEYGUARDSECURE_MISSIING_ERROR));
-            return;
+            return false;
         }
         //判断是否有指纹录入
         if (!manager.hasEnrolledFingerprints()) {
             publishSubject.onError(new FPerException(NO_FINGERPRINTERS_ENROOLED_ERROR));
-            return;
+            return false;
         }
 
+        return true;
     }
 
     public Observable.Transformer<Object, Boolean> ensure() {
