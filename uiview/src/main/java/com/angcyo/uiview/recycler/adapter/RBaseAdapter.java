@@ -170,12 +170,12 @@ public abstract class RBaseAdapter<T> extends RecyclerView.Adapter<RBaseViewHold
     @Override
     final public void onBindViewHolder(RBaseViewHolder holder, int position, List<Object> payloads) {
         super.onBindViewHolder(holder, position, payloads);
-        L.e("call: onBindViewHolder([holder, position, payloads])-> " + position);
+        //L.e("call: onBindViewHolder([holder, position, payloads])-> " + position);
     }
 
     @Override
     public void onBindViewHolder(RBaseViewHolder holder, int position) {
-        L.e("call: onBindViewHolder([holder, position])-> " + position);
+       //L.e("call: onBindViewHolder([holder, position])-> " + position);
         try {
             if (isStateLayout()) {
                 if (mIShowState != null) {
