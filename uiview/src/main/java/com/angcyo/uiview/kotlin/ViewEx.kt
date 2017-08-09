@@ -26,7 +26,7 @@ public val View.density: Float get() {
 /**返回居中绘制文本的y坐标*/
 public fun View.getDrawCenterTextCy(paint: Paint): Float {
     val rawHeight = measuredHeight - paddingTop - paddingBottom
-    return paddingTop + rawHeight / 2 - paint.descent() / 2 - paint.ascent() / 2
+    return paddingTop + rawHeight / 2 + (paint.descent() - paint.ascent()) / 2 - paint.descent()
 }
 
 public fun View.getDrawCenterTextCx(paint: Paint, text: String): Float {
@@ -41,7 +41,7 @@ public fun View.getDrawCenterCy(): Float {
 
 public fun TextView.getDrawCenterTextCy(): Float {
     val rawHeight = measuredHeight - paddingTop - paddingBottom
-    return paddingTop + rawHeight / 2 - paint.descent() / 2 - paint.ascent() / 2
+    return paddingTop + rawHeight / 2 + (paint.descent() - paint.ascent()) / 2 - paint.descent()
 }
 
 /**文本的高度*/
