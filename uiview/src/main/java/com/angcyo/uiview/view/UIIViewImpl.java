@@ -879,4 +879,14 @@ public abstract class UIIViewImpl implements IView {
     public void hideSoftInput(final View view) {
         RSoftInputLayout.hideSoftInput(view);
     }
+
+    @Override
+    public boolean needTransitionStartAnim() {
+        return false;
+    }
+
+    @Override
+    public boolean needTransitionExitAnim() {
+        return false;
+    }
 }

@@ -103,7 +103,7 @@ public class UIItemDialog extends UIIDialogImpl {
         mItemContentLayout = mViewHolder.v(R.id.item_content_layout);
         mCancelView = mViewHolder.v(R.id.cancel_view);
         mTitleView = mViewHolder.v(R.id.base_title_view);
-        mCancelView.setTextColor(SkinHelper.getSkin().getThemeSubColor());
+        mCancelView.setTextColor(Color.BLACK /*SkinHelper.getSkin().getThemeSubColor()*/);
 
         if (TextUtils.isEmpty(dialogTitle)) {
             mTitleView.setVisibility(View.GONE);

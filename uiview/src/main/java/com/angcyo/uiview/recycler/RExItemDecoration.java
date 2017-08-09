@@ -268,6 +268,15 @@ public class RExItemDecoration extends RecyclerView.ItemDecoration {
         }
 
         /**
+         * 在底部绘制一根线, 可以控制左右偏移的线
+         */
+        protected void drawBottomMarginLine(Canvas canvas, TextPaint paint, View itemView, Rect offsetRect, int itemCount, int position, int leftMargin, int rightMargin) {
+            paint.setColor(getPaintColor(itemView.getContext()));
+            offsetRect.set(leftMargin, itemView.getBottom(), itemView.getRight() - rightMargin, itemView.getBottom() + offsetRect.bottom);
+            canvas.drawRect(offsetRect, paint);
+        }
+
+        /**
          * 在顶部左边绘制一个偏移距离的线
          */
         protected void drawLeftTopLine(Canvas canvas, TextPaint paint, View itemView, Rect offsetRect, int itemCount, int position) {

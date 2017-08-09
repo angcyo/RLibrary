@@ -383,6 +383,10 @@ public class CommonTabLayout extends FrameLayout implements ValueAnimator.Animat
                 tv_tab_title.setCompoundDrawablesWithIntrinsicBounds(null, null,
                         getResources().getDrawable(i == mCurrentTab ? R.drawable.base_zhankai : R.drawable.base_zhankai_dark), null);
             }
+
+            if (mListener instanceof SegmentTabLayout.OnTabSelectListenerEx) {
+                ((SegmentTabLayout.OnTabSelectListenerEx) mListener).onUpdateTabStyles(i, i == mCurrentTab, tabView);
+            }
         }
     }
 
@@ -600,6 +604,13 @@ public class CommonTabLayout extends FrameLayout implements ValueAnimator.Animat
         setCurrentTab(currentTab, true);
     }
 
+    public View getTabView(int position) {
+        if (mTabCount > position) {
+            return mTabsContainer.getChildAt(position);
+        }
+        return null;
+    }
+
     //setter and getter
     public void setCurrentTab(int currentTab, boolean notify) {
         if (notify) {
@@ -608,14 +619,14 @@ public class CommonTabLayout extends FrameLayout implements ValueAnimator.Animat
                     mListener.onTabSelect(currentTab);
                 }
                 if (mListener instanceof SimpleTabSelectListener) {
-                    ((SimpleTabSelectListener) mListener).onTabSelect(mTabsContainer.getChildAt(currentTab), currentTab);
+                    ((SimpleTabSelectListener) mListener).onTabSelect(currentTab, mTabsContainer.getChildAt(currentTab));
                 }
             } else {
                 if (mListener != null) {
                     mListener.onTabReselect(currentTab);
                 }
                 if (mListener instanceof SimpleTabSelectListener) {
-                    ((SimpleTabSelectListener) mListener).onTabReselect(mTabsContainer.getChildAt(currentTab), currentTab);
+                    ((SimpleTabSelectListener) mListener).onTabReselect(currentTab, mTabsContainer.getChildAt(currentTab));
                 }
             }
         }

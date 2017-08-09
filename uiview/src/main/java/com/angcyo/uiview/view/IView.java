@@ -226,6 +226,13 @@ public interface IView {
      */
     IViewShowState getIViewShowState();//星期二 2017-5-23
 
+    /**
+     * 是否需要过渡动画, 在低设备上默认会关闭动画, 可以通过这2个方法, 强行开启动画
+     */
+    boolean needTransitionStartAnim();//星期三 2017-8-9
+
+    boolean needTransitionExitAnim();//星期三 2017-8-9
+
     enum IViewShowState {
         STATE_NORMAL,
         STATE_VIEW_CREATE,

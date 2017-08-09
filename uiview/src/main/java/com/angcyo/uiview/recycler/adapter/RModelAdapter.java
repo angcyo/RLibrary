@@ -8,6 +8,7 @@ import android.support.v4.util.ArrayMap;
 import android.view.View;
 import android.widget.CompoundButton;
 
+import com.angcyo.library.utils.L;
 import com.angcyo.uiview.recycler.RBaseViewHolder;
 import com.angcyo.uiview.recycler.RRecyclerView;
 import com.angcyo.uiview.utils.Reflect;
@@ -77,6 +78,7 @@ public abstract class RModelAdapter<T> extends RBaseAdapter<T> {
 
     @Override
     final protected void onBindView(RBaseViewHolder holder, int position, T bean) {
+//        L.e("call: onBindView([holder, position, bean])-> put:" + position);
         mBaseViewHolderMap.put(position, holder);
         onBindCommonView(holder, position, bean);
         if (mModel == MODEL_NORMAL) {
@@ -90,7 +92,19 @@ public abstract class RModelAdapter<T> extends RBaseAdapter<T> {
     public void onViewDetachedFromWindow(RBaseViewHolder holder) {
         super.onViewDetachedFromWindow(holder);
 //        mBaseViewHolderMap.put(holder.getAdapterPosition(), null);
+//        L.e("call: onViewDetachedFromWindow([holder])-> remove:" + holder.getAdapterPosition());
+    }
+
+    @Override
+    public void onViewRecycled(RBaseViewHolder holder) {
+        super.onViewRecycled(holder);
         mBaseViewHolderMap.remove(holder.getAdapterPosition());
+        //L.e("call: onViewRecycled([holder])->--------------------------------------------- " + holder.getAdapterPosition());
+    }
+
+    @Override
+    public void onViewAttachedToWindow(RBaseViewHolder holder) {
+        super.onViewAttachedToWindow(holder);
     }
 
     /**

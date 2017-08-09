@@ -147,7 +147,7 @@ public abstract class RBaseAdapter<T> extends RecyclerView.Adapter<RBaseViewHold
             }
             viewHolder = createBaseViewHolder(viewType, itemView);
         } catch (Exception e) {
-            L.e("请及时处理此处BUG. itemView=" + itemView);
+            L.e("请及时处理此处BUG. (RBaseAdapter.java:150)#onCreateViewHolder \nitemView=" + itemView);
             e.printStackTrace();
         }
         if (viewHolder == null) {
@@ -170,11 +170,12 @@ public abstract class RBaseAdapter<T> extends RecyclerView.Adapter<RBaseViewHold
     @Override
     final public void onBindViewHolder(RBaseViewHolder holder, int position, List<Object> payloads) {
         super.onBindViewHolder(holder, position, payloads);
+        L.e("call: onBindViewHolder([holder, position, payloads])-> " + position);
     }
 
     @Override
     public void onBindViewHolder(RBaseViewHolder holder, int position) {
-//        L.e("call: onBindViewHolder([holder, position])-> " + position);
+        L.e("call: onBindViewHolder([holder, position])-> " + position);
         try {
             if (isStateLayout()) {
                 if (mIShowState != null) {
@@ -188,7 +189,7 @@ public abstract class RBaseAdapter<T> extends RecyclerView.Adapter<RBaseViewHold
                 onBindView(holder, position, mAllDatas.size() > position ? mAllDatas.get(position) : null);
             }
         } catch (Exception e) {
-            L.e("请及时处理此处BUG.");
+            L.e("请及时处理此处BUG.(RBaseAdapter.java:192)#onBindViewHolder");
             e.printStackTrace();
         }
     }

@@ -9,7 +9,6 @@ import android.view.animation.Animation;
 import android.view.animation.DecelerateInterpolator;
 import android.view.animation.TranslateAnimation;
 
-import static android.R.attr.x;
 import static com.angcyo.uiview.recycler.OverLayCardLayoutManager.MAX_SHOW_COUNT;
 import static com.angcyo.uiview.recycler.OverLayCardLayoutManager.SCALE_GAP;
 import static com.angcyo.uiview.recycler.OverLayCardLayoutManager.TRANS_Y_GAP;
@@ -134,7 +133,7 @@ public class RenRenCallback extends ItemTouchHelper.SimpleCallback {
         }
     }
 
-    private void animTo(final RecyclerView recyclerView, boolean right) {
+    private void animTo(final RecyclerView recyclerView, final boolean right) {
         if (recyclerView == null) {
             return;
         }
@@ -163,9 +162,7 @@ public class RenRenCallback extends ItemTouchHelper.SimpleCallback {
                 isSwipeAnim = false;
                 recyclerView.removeView(view);
                 notifyListener(position,
-                        x > view.getMeasuredWidth() / 2
-                                ?
-                                ItemTouchHelper.RIGHT : ItemTouchHelper.LEFT);
+                        right ? ItemTouchHelper.RIGHT : ItemTouchHelper.LEFT);
             }
 
             @Override
