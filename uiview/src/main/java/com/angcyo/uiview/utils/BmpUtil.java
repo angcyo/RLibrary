@@ -191,12 +191,17 @@ public class BmpUtil {
      * @return rounded corner bitmap
      */
     public static Bitmap getRoundedCornerBitmap(Bitmap bitmap, float roundPx) {
-        Bitmap output = Bitmap.createBitmap(bitmap.getWidth(), bitmap.getHeight(), Bitmap.Config.ARGB_8888);
+        int bitmapWidth = bitmap.getWidth();
+        int bitmapHeight = bitmap.getHeight();
+
+        int size = Math.min(bitmapWidth, bitmapHeight);
+
+        Bitmap output = Bitmap.createBitmap(size, size, Bitmap.Config.ARGB_8888);
         Canvas canvas = new Canvas(output);
 
         final int color = 0xff424242;
         final Paint paint = new Paint();
-        final Rect rect = new Rect(0, 0, bitmap.getWidth(), bitmap.getHeight());
+        final Rect rect = new Rect(0, 0, size, size);
         final RectF rectF = new RectF(rect);
 
         paint.setAntiAlias(true);
@@ -205,7 +210,11 @@ public class BmpUtil {
         canvas.drawRoundRect(rectF, roundPx, roundPx, paint);
 
         paint.setXfermode(new PorterDuffXfermode(PorterDuff.Mode.SRC_IN));
-        canvas.drawBitmap(bitmap, rect, rect, paint);
+
+        int left = Math.max(0, (bitmapWidth - bitmapHeight) / 2);
+        int top = Math.max(0, (bitmapHeight - bitmapWidth) / 2);
+        final Rect dstRect = new Rect(left, top, left + size, top + size);
+        canvas.drawBitmap(bitmap, null, dstRect, paint);
         return output;
     }
 
