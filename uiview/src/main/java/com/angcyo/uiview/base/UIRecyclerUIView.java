@@ -274,7 +274,7 @@ public abstract class UIRecyclerUIView<H, T, F> extends UIContentView
     @Override
     public void onViewShowFirst(Bundle bundle) {
         super.onViewShowFirst(bundle);
-        if (!isShowInViewPager()) {
+        if (getDefaultLayoutState() == LayoutState.LOAD && !isShowInViewPager()) {
             onBaseLoadData();
         }
     }
@@ -282,7 +282,7 @@ public abstract class UIRecyclerUIView<H, T, F> extends UIContentView
     @Override
     public void onShowInPager(UIViewPager viewPager) {
         super.onShowInPager(viewPager);
-        if (isShowInViewPager()) {
+        if (getDefaultLayoutState() == LayoutState.LOAD && isShowInViewPager()) {
             onBaseLoadData();
         }
     }

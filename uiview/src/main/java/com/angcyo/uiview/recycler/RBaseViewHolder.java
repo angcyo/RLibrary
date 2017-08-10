@@ -20,6 +20,7 @@ import android.widget.TextView;
 import com.angcyo.library.utils.L;
 import com.angcyo.uiview.view.DelayClick;
 import com.angcyo.uiview.view.RClickListener;
+import com.angcyo.uiview.view.UIIViewImpl;
 import com.angcyo.uiview.widget.ExEditText;
 import com.angcyo.uiview.widget.GlideImageView;
 import com.angcyo.uiview.widget.ItemInfoLayout;
@@ -237,9 +238,13 @@ public class RBaseViewHolder extends RecyclerView.ViewHolder {
     }
 
     public void click(@IdRes int id, final View.OnClickListener listener) {
+        click(id, UIIViewImpl.DEFAULT_CLICK_DELAY_TIME, listener);
+    }
+
+    public void click(@IdRes int id, int delay, final View.OnClickListener listener) {
         View view = v(id);
         if (view != null) {
-            view.setOnClickListener(new RClickListener(1000) {
+            view.setOnClickListener(new RClickListener(delay) {
                 @Override
                 public void onRClick(View view) {
                     if (listener != null) {

@@ -26,6 +26,7 @@ import android.support.v4.view.ViewCompat;
 import android.util.TypedValue;
 import android.view.View;
 
+import com.angcyo.library.utils.L;
 import com.angcyo.uiview.R;
 import com.angcyo.uiview.RApplication;
 
@@ -468,10 +469,16 @@ public class ResUtil {
         return context.getResources().getDimension(id);
     }
 
+    public static Drawable getThemeDrawable(Context context, String name) {
+        int id = getThemeIdentifier(context, name, "drawable");
+        return ContextCompat.getDrawable(context, id);
+    }
+
     /**
      * 根据name, 在主题中 寻找资源id
      */
     public static int getThemeIdentifier(Context context, String name, String type) {
+        L.i("call: getThemeIdentifier([context, name, type])-> type:" + type +" name:"+name );
         return context.getResources().getIdentifier(name, type, context.getPackageName());
     }
 

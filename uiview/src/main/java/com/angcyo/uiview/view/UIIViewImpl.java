@@ -64,6 +64,7 @@ public abstract class UIIViewImpl implements IView {
     public static final int DEFAULT_ANIM_TIME = 200;
     public static final int DEFAULT_FINISH_ANIM_TIME = 200;
     public static final int DEFAULT_DIALOG_FINISH_ANIM_TIME = 150;
+    public static final int DEFAULT_CLICK_DELAY_TIME = 300;
 
     protected ILayout mILayout;
     protected ILayout mParentILayout;//上层ILayout,
@@ -759,7 +760,7 @@ public abstract class UIIViewImpl implements IView {
     }
 
     public void click(@IdRes int id, final View.OnClickListener listener) {
-        v(id).setOnClickListener(new RClickListener(1000) {
+        v(id).setOnClickListener(new RClickListener(DEFAULT_CLICK_DELAY_TIME) {
             @Override
             public void onRClick(View view) {
                 if (listener != null) {

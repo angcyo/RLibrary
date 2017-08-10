@@ -253,8 +253,8 @@ public abstract class UIBaseView extends UIIViewImpl {
         L.d("call: onShowContentLayout([])-> ");
     }
 
-    protected void inflate(@LayoutRes int layoutId) {
-        LayoutInflater.from(mActivity).inflate(layoutId, mBaseContentLayout);
+    protected View inflate(@LayoutRes int layoutId) {
+        return LayoutInflater.from(mActivity).inflate(layoutId, mBaseContentLayout);
     }
 
     /**

@@ -29,7 +29,6 @@ import android.view.animation.ScaleAnimation;
 import android.widget.OverScroller;
 import android.widget.TextView;
 
-import com.angcyo.library.utils.L;
 import com.angcyo.uiview.R;
 import com.angcyo.uiview.skin.SkinHelper;
 import com.angcyo.uiview.utils.T_;
@@ -898,6 +897,14 @@ public class RefreshLayout extends ViewGroup {
     public void setPlaceholderView() {
         setTopView(new PlaceholderView(getContext()));
         setBottomView(new PlaceholderView(getContext()));
+    }
+
+    /**
+     * 取消时间监听, 取消刷新视图
+     */
+    public void setNoNotifyPlaceholder() {
+        setPlaceholderView();
+        setNotifyListener(false);
     }
 
     public void setShowTip(String tip) {

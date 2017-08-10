@@ -66,7 +66,7 @@ public class RSoftInputLayout extends FrameLayout implements ILifecycle {
     /**
      * 使用动画的形式展开表情布局
      */
-    private boolean isAnimToShow = false;
+    private boolean isAnimToShow = true;
 
     /**
      * 所在的界面,是否隐藏了. 隐藏了,不处理事件
