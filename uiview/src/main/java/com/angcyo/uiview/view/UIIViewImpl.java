@@ -98,11 +98,13 @@ public abstract class UIIViewImpl implements IView {
         if (isFinish) {
             animation.setDuration(DEFAULT_FINISH_ANIM_TIME);
             animation.setInterpolator(new AccelerateInterpolator());
+            animation.setFillAfter(true);
         } else {
             animation.setDuration(DEFAULT_ANIM_TIME);
             animation.setInterpolator(new DecelerateInterpolator());
+            animation.setFillAfter(false);
         }
-        animation.setFillAfter(false);
+        animation.setFillBefore(true);
     }
 
     /**
