@@ -1509,6 +1509,7 @@ public class UILayoutImpl extends SwipeBackLayout implements ILayout<UIParam>, U
 
     public void removeViewPattern(ViewPattern viewPattern, final UIParam param) {
         hideSoftInput();
+        viewPattern.mView.setEnabled(false);
         interruptSet.remove(viewPattern.mIView);
         viewPattern.mIView.onViewUnload();
         final View view = viewPattern.mView;

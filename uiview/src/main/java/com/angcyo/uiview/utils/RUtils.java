@@ -702,50 +702,45 @@ public class RUtils {
         String unit;
         String num;
         int decimal = 0;
-//        if (number.length() > 7) {
-//            unit = "千万";
-//            num = number.substring(0, number.length() - 7);
-//        } else if (number.length() > 6) {
-//            unit = "百万";
-//            num = number.substring(0, number.length() - 6);
-//        } else if (number.length() > 5) {
-//            unit = "十万";
-//            num = number.substring(0, number.length() - 5);
-//        } else if (number.length() > 4) {
-//            unit = "万";
-//            num = number.substring(0, number.length() - 4);
-//        } else {
-//            unit = "";
-//            num = number;
-//        }
-        if (number.length() >= 8) {
-            unit = "kk";
-            int end = number.length() - 7;
-            num = number.substring(0, end);
-
-            if (num.length() >= 2) {
-                decimal = Integer.parseInt(number.substring(end, end + 1));
-            } else {
-                decimal = Integer.parseInt(number.substring(end, end + 2));
-            }
-        } else if (number.length() >= 4) {
-            unit = "k";
-            int end = number.length() - 3;
-            num = number.substring(0, end);
-            if (num.length() >= 2) {
-                decimal = Integer.parseInt(number.substring(end, end + 1));
-            } else {
-                decimal = Integer.parseInt(number.substring(end, end + 2));
-            }
-
+        if (number.length() > 7) {
+            unit = "千万";
+            num = number.substring(0, number.length() - 7);
+        } else if (number.length() > 4) {
+            unit = "万";
+            num = number.substring(0, number.length() - 4);
         } else {
             unit = "";
             num = number;
         }
 
-        if (decimal > 0) {
-            num = num + "." + decimal;
-        }
+//        if (number.length() >= 8) {
+//            unit = "kk";
+//            int end = number.length() - 7;
+//            num = number.substring(0, end);
+//
+//            if (num.length() >= 2) {
+//                decimal = Integer.parseInt(number.substring(end, end + 1));
+//            } else {
+//                decimal = Integer.parseInt(number.substring(end, end + 2));
+//            }
+//        } else if (number.length() >= 4) {
+//            unit = "k";
+//            int end = number.length() - 3;
+//            num = number.substring(0, end);
+//            if (num.length() >= 2) {
+//                decimal = Integer.parseInt(number.substring(end, end + 1));
+//            } else {
+//                decimal = Integer.parseInt(number.substring(end, end + 2));
+//            }
+//
+//        } else {
+//            unit = "";
+//            num = number;
+//        }
+//
+//        if (decimal > 0) {
+//            num = num + "." + decimal;
+//        }
 
         StringBuilder builder = new StringBuilder();
         builder.append(num);
