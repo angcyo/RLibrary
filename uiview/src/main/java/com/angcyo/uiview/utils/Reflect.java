@@ -2,6 +2,8 @@ package com.angcyo.uiview.utils;
 
 import android.text.TextUtils;
 
+import com.angcyo.library.utils.L;
+
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 
@@ -28,7 +30,7 @@ public class Reflect {
             memberField.setAccessible(true);
             result = memberField.get(target);
         } catch (Exception e) {
-            e.printStackTrace();
+            L.e("错误:" + e.getMessage());
         }
         return result;
     }
@@ -39,7 +41,7 @@ public class Reflect {
             memberField.setAccessible(true);
             memberField.set(target, value);
         } catch (Exception e) {
-            e.printStackTrace();
+             L.e("错误:" + e.getMessage());
         }
     }
 
@@ -99,7 +101,7 @@ public class Reflect {
             Object invoke = method.invoke(obj, params);
             return invoke;
         } catch (Exception e) {
-            e.printStackTrace();
+            L.e("错误:" + e.getMessage());
         }
         return null;
     }
@@ -115,7 +117,7 @@ public class Reflect {
             Object invoke = method.invoke(obj, params);
             return invoke;
         } catch (Exception e) {
-            e.printStackTrace();
+            L.e("错误:" + e.getMessage());
         }
         return null;
     }
@@ -135,6 +137,7 @@ public class Reflect {
                 field.setAccessible(true);
                 return field.get(obj);
             } catch (Exception e) {
+                L.e("错误:" + e.getMessage());
             }
             clazz = clazz.getSuperclass();
         }
@@ -157,6 +160,7 @@ public class Reflect {
                 field.set(obj, value);
                 return;
             } catch (Exception e) {
+                L.e("错误:" + e.getMessage());
             }
             clazz = clazz.getSuperclass();
         }

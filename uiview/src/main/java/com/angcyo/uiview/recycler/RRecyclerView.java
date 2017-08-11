@@ -19,6 +19,7 @@ import android.view.MotionEvent;
 import android.view.View;
 import android.widget.LinearLayout;
 
+import com.angcyo.library.utils.L;
 import com.angcyo.uiview.recycler.adapter.RBaseAdapter;
 import com.angcyo.uiview.recycler.recyclerview.adapters.AnimationAdapter;
 import com.angcyo.uiview.recycler.recyclerview.adapters.ScaleInAnimationAdapter;
@@ -116,12 +117,16 @@ public class RRecyclerView extends RecyclerView {
     }
 
     public static void ensureGlow(RecyclerView recyclerView, int color) {
-        Reflect.invokeMethod(RecyclerView.class, recyclerView, "ensureTopGlow");
-        Reflect.invokeMethod(RecyclerView.class, recyclerView, "ensureBottomGlow");
-        Reflect.invokeMethod(RecyclerView.class, recyclerView, "ensureRightGlow");
-        Reflect.invokeMethod(RecyclerView.class, recyclerView, "ensureLeftGlow");
+        try {
+            Reflect.invokeMethod(RecyclerView.class, recyclerView, "ensureTopGlow");
+            Reflect.invokeMethod(RecyclerView.class, recyclerView, "ensureBottomGlow");
+            Reflect.invokeMethod(RecyclerView.class, recyclerView, "ensureRightGlow");
+            Reflect.invokeMethod(RecyclerView.class, recyclerView, "ensureLeftGlow");
 
-        setEdgeEffect(recyclerView, color);
+            setEdgeEffect(recyclerView, color);
+        } catch (Exception e) {
+            L.e(e.getMessage());
+        }
     }
 
     private static void setEdgeEffect(RecyclerView recyclerView, int color) {

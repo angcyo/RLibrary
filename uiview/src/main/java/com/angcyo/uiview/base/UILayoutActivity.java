@@ -40,7 +40,7 @@ public abstract class UILayoutActivity extends StyleActivity {
     @Override
     protected void onCreateView() {
         mLayout = new UILayoutImpl(this);
-
+        initUILayout(mLayout);
         if (isEnableSwipeMenu()) {
             mSwipeLayout = new RSwipeLayout(this, null);
             mSwipeLayout.setDragDirection(getSwipeDirection());
@@ -55,6 +55,10 @@ public abstract class UILayoutActivity extends StyleActivity {
             setContentView(mLayout.getLayout());
         }
         onAfterCreateView();
+    }
+
+    protected void initUILayout(ILayout layout) {
+
     }
 
     protected void onAfterCreateView() {

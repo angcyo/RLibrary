@@ -15,6 +15,7 @@ import android.view.animation.DecelerateInterpolator;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.FrameLayout;
 
+import com.angcyo.library.utils.L;
 import com.angcyo.uiview.view.ILifecycle;
 
 import java.util.HashSet;
@@ -49,7 +50,10 @@ public class RSoftInputLayout extends FrameLayout implements ILifecycle {
     boolean isEmojiShow = false;
 
     HashSet<OnEmojiLayoutChangeListener> mEmojiLayoutChangeListeners = new HashSet<>();
-
+    /**
+     * 需要隐藏键盘, 当为true时, 不用代码检查键盘是否显示
+     */
+    boolean needHideSoftInput = false;
     /**
      * 键盘是否显示
      */
@@ -62,12 +66,10 @@ public class RSoftInputLayout extends FrameLayout implements ILifecycle {
         }
     };
     private ValueAnimator mValueAnimator;
-
     /**
      * 使用动画的形式展开表情布局
      */
     private boolean isAnimToShow = true;
-
     /**
      * 所在的界面,是否隐藏了. 隐藏了,不处理事件
      */
@@ -209,6 +211,8 @@ public class RSoftInputLayout extends FrameLayout implements ILifecycle {
 
     @Override
     protected void onLayout(boolean changed, int l, int t, int r, int b) {
+        needHideSoftInput = false;
+
         if (isViewHide ||
                 contentLayout == null ||
                 !isEnabled()) {
@@ -334,6 +338,7 @@ public class RSoftInputLayout extends FrameLayout implements ILifecycle {
 
         requestLayout();
         if (keyboardShow) {
+            needHideSoftInput = true;
             hideSoftInput(this);
         } else {
             if (isAnimToShow) {
@@ -424,6 +429,8 @@ public class RSoftInputLayout extends FrameLayout implements ILifecycle {
     }
 
     private void notifyEmojiLayoutChangeListener(boolean isEmojiShow, boolean isKeyboardShow, int height) {
+        L.w("表情:" + isEmojiShow + " 键盘:" + isKeyboardShow + " 高度:" + height);
+
         Iterator<OnEmojiLayoutChangeListener> iterator = mEmojiLayoutChangeListeners.iterator();
         while (iterator.hasNext()) {
             iterator.next().onEmojiLayoutChange(isEmojiShow, isKeyboardShow, height);
@@ -453,7 +460,11 @@ public class RSoftInputLayout extends FrameLayout implements ILifecycle {
     }
 
     public boolean isKeyboardShow() {
-        isKeyboardShow = isSoftKeyboardShow();
+        if (needHideSoftInput) {
+            isKeyboardShow = false;
+        } else {
+            isKeyboardShow = isSoftKeyboardShow();
+        }
         return isKeyboardShow;
     }
 

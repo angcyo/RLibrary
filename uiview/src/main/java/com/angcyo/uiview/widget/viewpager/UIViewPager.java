@@ -59,10 +59,14 @@ public class UIViewPager extends ViewPager implements Runnable, StickLayout.CanS
     }
 
     public static void ensureGlow(ViewPager viewPager, int color) {
-        Object mGlow = Reflect.getMember(ViewPager.class, viewPager, "mLeftEdge");
-        setEdgetEffect(mGlow, color);
-        mGlow = Reflect.getMember(ViewPager.class, viewPager, "mRightEdge");
-        setEdgetEffect(mGlow, color);
+        try {
+            Object mGlow = Reflect.getMember(ViewPager.class, viewPager, "mLeftEdge");
+            setEdgetEffect(mGlow, color);
+            mGlow = Reflect.getMember(ViewPager.class, viewPager, "mRightEdge");
+            setEdgetEffect(mGlow, color);
+        } catch (Exception e) {
+            L.e(e.getMessage());
+        }
     }
 
     public static void setEdgetEffect(Object edgeEffectCompat, @ColorInt int color) {
