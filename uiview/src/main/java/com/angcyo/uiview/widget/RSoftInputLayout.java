@@ -408,7 +408,8 @@ public class RSoftInputLayout extends FrameLayout implements ILifecycle {
     }
 
     private int getDefaultKeyboardHeight() {
-        return (int) (getResources().getDisplayMetrics().density * 200);
+        // 设置默认高度 275
+        return (int) (getResources().getDisplayMetrics().density * 275);
     }
 
     /**
