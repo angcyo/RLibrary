@@ -7,6 +7,7 @@ import android.content.res.TypedArray;
 import android.graphics.Canvas;
 import android.graphics.Rect;
 import android.graphics.drawable.Drawable;
+import android.os.Build;
 import android.support.design.widget.TextInputLayout;
 import android.support.v4.content.res.ResourcesCompat;
 import android.support.v7.widget.AppCompatEditText;
@@ -340,26 +341,51 @@ public class ExEditText extends AppCompatEditText {
     }
 
     private boolean isInputTipPattern() {
+
+        if (mInputTipTextList.isEmpty() /*需要自动匹配的文本不能为空*/) {
+            return false;
+        }
+
         String text = getText().toString();
-//        return isCenterVertical() /*必须是Gravity.CENTER_VERTICAL*/ &&
-//                !TextUtils.isEmpty(mInputTipText) /*需要自动匹配的文本不能为空*/ &&
-//                !TextUtils.isEmpty(text) /*当前文本框内容不能为空*/ &&
-//                mInputTipText.startsWith(text) &&
-//                !TextUtils.equals(mInputTipText, text) /*匹配的内容如果已经一致了, 就没必要了.*/;
+
+        if (TextUtils.isEmpty(text) /*当前文本框内容不能为空*/) {
+            return false;
+        }
+
+        if (!isCenterVertical() /*必须是Gravity.CENTER_VERTICAL*/) {
+            return false;
+        }
+
+//
+////        return isCenterVertical() /*必须是Gravity.CENTER_VERTICAL*/ &&
+////                !TextUtils.isEmpty(mInputTipText) /*需要自动匹配的文本不能为空*/ &&
+////                !TextUtils.isEmpty(text) /*当前文本框内容不能为空*/ &&
+////                mInputTipText.startsWith(text) &&
+////                !TextUtils.equals(mInputTipText, text) /*匹配的内容如果已经一致了, 就没必要了.*/;
 
         mInputTipText = "";
-        for (String s : mInputTipTextList) {
-            if (s.startsWith(text)) {
-                mInputTipText = s;
+
+        if (TextUtils.equals(Build.MODEL, "SCH-I545") /*三星这台手机执行下面的for循环会死机.*/) {
+            return false;
+        }
+
+        for (int i = 0; i < mInputTipTextList.size(); i++) {
+            String tipString = mInputTipTextList.get(i);
+            if (!TextUtils.isEmpty(tipString) && tipString.startsWith(text)) {
+                mInputTipText = tipString;
                 break;
             }
         }
 
-        return isCenterVertical() /*必须是Gravity.CENTER_VERTICAL*/ &&
-                !mInputTipTextList.isEmpty() /*需要自动匹配的文本不能为空*/ &&
-                !TextUtils.isEmpty(text) /*当前文本框内容不能为空*/ &&
-                !TextUtils.isEmpty(mInputTipText) &&
-                !TextUtils.equals(mInputTipText, text) /*匹配的内容如果已经一致了, 就没必要了.*/;
+        if (TextUtils.isEmpty(mInputTipText) /*没有匹配到*/) {
+            return false;
+        }
+
+        if (TextUtils.equals(mInputTipText, text) /*匹配的内容如果已经一致了, 就没必要了.*/) {
+            return false;
+        }
+
+        return true;
     }
 
     @Override
@@ -451,12 +477,12 @@ public class ExEditText extends AppCompatEditText {
         super.onFocusChanged(focused, direction, previouslyFocusedRect);
         checkEdit(focused);
 
-        if (!focused) {
-            //没有焦点的时候, 检查自动匹配输入
-            if (isInputTipPattern()) {
-                setText(mInputTipText);
-            }
-        }
+//        if (!focused) {
+//            //没有焦点的时候, 检查自动匹配输入
+//            if (isInputTipPattern()) {
+//                setText(mInputTipText);
+//            }
+//        }
     }
 
     @Override
@@ -1194,7 +1220,7 @@ public class ExEditText extends AppCompatEditText {
             @Override
             public void onAnimationEnd(Animator animation) {
                 super.onAnimationEnd(animation);
-                setInputText(String.format(Locale.CHINA,"%.2f",toValue));
+                setInputText(String.format(Locale.CHINA, "%.2f", toValue));
             }
         });
         rollAnim.start();
