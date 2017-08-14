@@ -55,6 +55,10 @@ public class RSoftInputLayout extends FrameLayout implements ILifecycle {
      */
     boolean needHideSoftInput = false;
     /**
+     * 是否是需要显示表情布局
+     */
+    boolean needShowEmojiLayout = false;
+    /**
      * 键盘是否显示
      */
     private boolean isKeyboardShow = false;
@@ -62,7 +66,7 @@ public class RSoftInputLayout extends FrameLayout implements ILifecycle {
     private Runnable mCheckSizeChanged = new Runnable() {
         @Override
         public void run() {
-            onSizeChanged(0, 0, 0, 0);
+            onSizeChanged(-1, -1, 0, 0);
         }
     };
     private ValueAnimator mValueAnimator;
@@ -170,42 +174,77 @@ public class RSoftInputLayout extends FrameLayout implements ILifecycle {
             return;
         }
 
-        isKeyboardShow = isSoftKeyboardShow();
-        if (isKeyboardShow) {
-            keyboardHeight = getSoftKeyboardHeight();
-            //isEmojiShow = false;
-        }
+        //星期一 2017-8-14
+//        isKeyboardShow = isSoftKeyboardShow();
+//        if (isKeyboardShow) {
+//            keyboardHeight = getSoftKeyboardHeight();
+//            //isEmojiShow = false;
+//        }
+//
+//        int contentHeight;
+//        int emojiHeight;
+//
+//        if (isEmojiShow) {
+//            int showEmojiHeight = getShowEmojiHeight();
+//            if (showEmojiHeight == 0) {
+//                emojiHeight = keyboardHeight;
+//            } else {
+//                emojiHeight = showEmojiHeight;
+//            }
+//        } else {
+//            emojiHeight = 0;
+//        }
+//
+//        if (isKeyboardShow) {
+//            if (maxHeight + keyboardHeight > getScreenHeightPixels()) {
+//                contentHeight = maxHeight - keyboardHeight;
+//            } else {
+//                contentHeight = maxHeight;
+//            }
+//        } else {
+//            contentHeight = maxHeight - emojiHeight;
+//        }
+//
+//        contentLayout.measure(MeasureSpec.makeMeasureSpec(widthSize, MeasureSpec.EXACTLY),
+//                MeasureSpec.makeMeasureSpec(contentHeight, MeasureSpec.EXACTLY));
+//        if (isEmojiShow && emojiLayout != null) {
+//            emojiLayout.measure(MeasureSpec.makeMeasureSpec(widthSize, MeasureSpec.EXACTLY),
+//                    MeasureSpec.makeMeasureSpec(keyboardHeight /*emojiHeight*/, MeasureSpec.EXACTLY));
+//        }
 
-        int contentHeight;
-        int emojiHeight;
+        //键盘是否显示
+        boolean softKeyboardShow = isSoftKeyboardShow();
+        //是否需要显示表情
+        int contentLayoutHeight, emojiLayoutHeight, keyboardHeight;
+        keyboardHeight = getSoftKeyboardHeight();
 
-        if (isEmojiShow) {
-            int showEmojiHeight = getShowEmojiHeight();
-            if (showEmojiHeight == 0) {
-                emojiHeight = keyboardHeight;
-            } else {
-                emojiHeight = showEmojiHeight;
-            }
+        //L.e("call: -> softKeyboardShow:" + softKeyboardShow + " needShowEmojiLayout:" + needShowEmojiLayout + " needHideSoftInput:" + needHideSoftInput);
+
+        //如果键盘显示了, 那么内容的高度=总高度-键盘的高度
+        if (softKeyboardShow) {
+            isEmojiShow = false;
+            contentLayoutHeight = maxHeight - keyboardHeight;
+            emojiLayoutHeight = keyboardHeight;
+            this.keyboardHeight = keyboardHeight;//缓存键盘的高度
+        } else if (needShowEmojiLayout) {
+            //如果需要显示表情
+            isEmojiShow = true;
+            contentLayoutHeight = maxHeight - showEmojiHeight;
+            emojiLayoutHeight = getKeyboardHeight();//键盘的高度, 如果之前还没有缓存键盘的高度, 那么就用默认的高度
         } else {
-            emojiHeight = 0;
-        }
-
-        if (isKeyboardShow) {
-            if (maxHeight + keyboardHeight > getScreenHeightPixels()) {
-                contentHeight = maxHeight - keyboardHeight;
-            } else {
-                contentHeight = maxHeight;
-            }
-        } else {
-            contentHeight = maxHeight - emojiHeight;
+            //标准布局情况, 内容占满全屏
+            isEmojiShow = false;
+            contentLayoutHeight = maxHeight;
+            emojiLayoutHeight = getKeyboardHeight();
         }
 
         contentLayout.measure(MeasureSpec.makeMeasureSpec(widthSize, MeasureSpec.EXACTLY),
-                MeasureSpec.makeMeasureSpec(contentHeight, MeasureSpec.EXACTLY));
-        if (isEmojiShow && emojiLayout != null) {
+                MeasureSpec.makeMeasureSpec(contentLayoutHeight, MeasureSpec.EXACTLY));
+        if (emojiLayout != null) {
             emojiLayout.measure(MeasureSpec.makeMeasureSpec(widthSize, MeasureSpec.EXACTLY),
-                    MeasureSpec.makeMeasureSpec(keyboardHeight /*emojiHeight*/, MeasureSpec.EXACTLY));
+                    MeasureSpec.makeMeasureSpec(emojiLayoutHeight /*emojiHeight*/, MeasureSpec.EXACTLY));
         }
+
         setMeasuredDimension(widthSize, heightSize);
     }
 
@@ -230,13 +269,10 @@ public class RSoftInputLayout extends FrameLayout implements ILifecycle {
 
         int paddingTop = getPaddingTop();
         t += paddingTop;
-        contentLayout.layout(l, t, r, contentLayout.getMeasuredHeight() + paddingTop);
+        int contentBottom = contentLayout.getMeasuredHeight() + paddingTop;
+        contentLayout.layout(l, t, r, contentBottom);
         if (emojiLayout != null) {
-            if (isEmojiShow) {
-                emojiLayout.layout(l, contentLayout.getMeasuredHeight() + paddingTop, r, getMeasuredHeight());
-            } else {
-                emojiLayout.layout(l, b, r, b);
-            }
+            emojiLayout.layout(l, contentBottom, r, contentBottom + emojiLayout.getMeasuredHeight());
         }
     }
 
@@ -264,7 +300,7 @@ public class RSoftInputLayout extends FrameLayout implements ILifecycle {
         boolean result = false;
         if (getFitsSystemWindows()) {
             result = super.fitSystemWindows(insets);
-            post(mCheckSizeChanged);
+            checkOnSizeChanged();
         } else {
             insets.set(0, 0, 0, 0);
         }
@@ -286,11 +322,18 @@ public class RSoftInputLayout extends FrameLayout implements ILifecycle {
 
     @Override
     protected void onSizeChanged(int w, int h, int oldw, int oldh) {
+        //L.e("call: onSizeChanged([w, h, oldw, oldh])-> " + h + " oldh:" + oldh);
+
         if (!isEnabled()) {
             return;
         }
 
         removeCallbacks(mCheckSizeChanged);
+
+        if (w == oldw && h == oldh) {
+            return;
+        }
+
         if (isKeyboardShow = isSoftKeyboardShow()) {
             isEmojiShow = false;
         }
@@ -326,27 +369,33 @@ public class RSoftInputLayout extends FrameLayout implements ILifecycle {
     }
 
     private void showEmojiLayoutInner(int height) {
-        if (isEmojiShow && height == showEmojiHeight) {
+        if (isEmojiShow() && height == showEmojiHeight) {
             return;
         }
 
         boolean keyboardShow = isKeyboardShow();
+        //动画高度的开始值
         int oldHeight = showEmojiHeight;
 
-        isEmojiShow = height > 0;
+        needShowEmojiLayout = height > 0;
         this.showEmojiHeight = height;
 
-        requestLayout();
         if (keyboardShow) {
             needHideSoftInput = true;
             hideSoftInput(this);
         } else {
+            requestLayout();
             if (isAnimToShow) {
                 animToShow(height, oldHeight);
             } else {
-                post(mCheckSizeChanged);
+                checkOnSizeChanged();
             }
         }
+    }
+
+    private void checkOnSizeChanged() {
+        removeCallbacks(mCheckSizeChanged);
+        post(mCheckSizeChanged);
     }
 
     private void animToShow(int height, int oldHeight) {
@@ -372,7 +421,7 @@ public class RSoftInputLayout extends FrameLayout implements ILifecycle {
             @Override
             public void onAnimationEnd(Animator animation) {
                 mValueAnimator = null;
-                post(mCheckSizeChanged);
+                checkOnSizeChanged();
             }
 
             @Override
@@ -401,7 +450,7 @@ public class RSoftInputLayout extends FrameLayout implements ILifecycle {
      * 采用默认的键盘高度显示表情, 如果键盘从未弹出过, 则使用一个缺省的高度
      */
     public void showEmojiLayout() {
-        if (keyboardHeight == 0) {
+        if (keyboardHeight <= 0) {
             keyboardHeight = getDefaultKeyboardHeight();
         }
         showEmojiLayoutInner(keyboardHeight);
@@ -430,7 +479,7 @@ public class RSoftInputLayout extends FrameLayout implements ILifecycle {
     }
 
     private void notifyEmojiLayoutChangeListener(boolean isEmojiShow, boolean isKeyboardShow, int height) {
-        L.w("表情:" + isEmojiShow + " 键盘:" + isKeyboardShow + " 高度:" + height);
+        //L.w("表情:" + isEmojiShow + " 键盘:" + isKeyboardShow + " 高度:" + height);
 
         Iterator<OnEmojiLayoutChangeListener> iterator = mEmojiLayoutChangeListeners.iterator();
         while (iterator.hasNext()) {
@@ -442,7 +491,7 @@ public class RSoftInputLayout extends FrameLayout implements ILifecycle {
      * 当键盘显示时, 可以通过此方法返回键盘的高度
      */
     public int getKeyboardHeight() {
-        if (keyboardHeight == 0) {
+        if (keyboardHeight <= 0) {
             keyboardHeight = getDefaultKeyboardHeight();
         }
         return keyboardHeight;

@@ -117,7 +117,11 @@ public class RefreshLayout extends ViewGroup {
     /**
      * 是否需要通知事件, 如果为false, 那么只有滑动效果, 没有事件监听
      */
-    private boolean mNotifyListener = true;
+    //private boolean mNotifyListener = true;
+    /**
+     * 设置通知事件的方向, 其他方向不通知监听.
+     */
+    private int mNotifyListener = BOTH;
     private boolean mShowTip = false;
     Runnable hideTipRunnable = new Runnable() {
         @Override
@@ -492,10 +496,10 @@ public class RefreshLayout extends ViewGroup {
 
         order = NONE;
 
-        if (!mNotifyListener) {
-            resetScroll();
-            return;
-        }
+//        if (!mNotifyListener) {
+//            resetScroll();
+//            return;
+//        }
 
         if (scrollY < 0) {
             //处理刷新
@@ -505,7 +509,21 @@ public class RefreshLayout extends ViewGroup {
             }
 
             if (rawY >= topHeight) {
-                refreshTop();
+                if (mNotifyListener == TOP || mNotifyListener == BOTH) {
+                    refreshTop();
+                } else {
+                    resetScroll();
+                    postDelayed(new Runnable() {
+                        @Override
+                        public void run() {
+                            for (OnRefreshListener listener : mRefreshListeners) {
+                                if (listener instanceof SimpleRefreshListener) {
+                                    ((SimpleRefreshListener) listener).onNoNotifyRefresh(TOP);
+                                }
+                            }
+                        }
+                    }, 100);
+                }
             } else {
                 resetScroll();
             }
@@ -517,7 +535,21 @@ public class RefreshLayout extends ViewGroup {
             }
 
             if (rawY >= bottomHeight) {
-                refreshBottom();
+                if (mNotifyListener == BOTTOM || mNotifyListener == BOTH) {
+                    refreshBottom();
+                } else {
+                    resetScroll();
+                    postDelayed(new Runnable() {
+                        @Override
+                        public void run() {
+                            for (OnRefreshListener listener : mRefreshListeners) {
+                                if (listener instanceof SimpleRefreshListener) {
+                                    ((SimpleRefreshListener) listener).onNoNotifyRefresh(BOTTOM);
+                                }
+                            }
+                        }
+                    }, 100);
+                }
             } else {
                 resetScroll();
             }
@@ -891,8 +923,20 @@ public class RefreshLayout extends ViewGroup {
     }
 
     public void setNotifyListener(boolean notifyListener) {
+        if (notifyListener) {
+            setNotifyListener(BOTH);
+        } else {
+            setNotifyListener(NONE);
+        }
+    }
+
+    /**
+     * 设置需要监听事件的方向
+     */
+    public void setNotifyListener(int notifyListener) {
         this.mNotifyListener = notifyListener;
     }
+
 
     public void setPlaceholderView() {
         setTopView(new PlaceholderView(getContext()));
@@ -960,6 +1004,9 @@ public class RefreshLayout extends ViewGroup {
      * 刷新,上拉回调
      */
     public interface OnRefreshListener {
+        /**
+         * 正常的刷新事件回调
+         */
         void onRefresh(@Direction int direction);
     }
 
@@ -1206,6 +1253,16 @@ public class RefreshLayout extends ViewGroup {
             mDrawRect.set(left, getPaddingTop(), viewWidth / 2 + rawBottom / 2, getPaddingTop() + rawBottom);
             mDrawable.setBounds(mDrawRect);
             postInvalidate();
+        }
+    }
+
+    public static abstract class SimpleRefreshListener implements OnRefreshListener {
+
+        /**
+         * 当刷新事件被忽略时, 会回调此方法
+         */
+        public void onNoNotifyRefresh(@Direction int direction) {
+
         }
     }
 }

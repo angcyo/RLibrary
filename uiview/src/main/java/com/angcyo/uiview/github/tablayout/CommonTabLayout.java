@@ -127,6 +127,10 @@ public class CommonTabLayout extends FrameLayout implements ValueAnimator.Animat
     private IndicatorPoint mCurrentP = new IndicatorPoint();
     private IndicatorPoint mLastP = new IndicatorPoint();
     private boolean haveItemBackground = true;
+    /**
+     * 默认页
+     */
+    private int mDefaultCurrentTab = 0;
 
     public CommonTabLayout(Context context) {
         this(context, null, 0);
@@ -163,6 +167,10 @@ public class CommonTabLayout extends FrameLayout implements ValueAnimator.Animat
 
         mValueAnimator = ValueAnimator.ofObject(new PointEvaluator(), mLastP, mCurrentP);
         mValueAnimator.addUpdateListener(this);
+    }
+
+    public void setDefaultCurrentTab(int defaultCurrentTab) {
+        mDefaultCurrentTab = defaultCurrentTab;
     }
 
     private void obtainAttributes(Context context, AttributeSet attrs) {
@@ -221,7 +229,7 @@ public class CommonTabLayout extends FrameLayout implements ValueAnimator.Animat
         notifyDataSetChanged();
 
         if (mCurrentTab == -1) {
-            setCurrentTab(0);
+            setCurrentTab(mDefaultCurrentTab);
         } else {
             setCurrentTab(mCurrentTab);
         }
