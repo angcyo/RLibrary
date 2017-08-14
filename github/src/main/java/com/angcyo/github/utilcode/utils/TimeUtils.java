@@ -974,6 +974,11 @@ public class TimeUtils {
         return cal.get(Calendar.WEEK_OF_MONTH);
     }
 
+    public static int getDayOfMonth() {
+        Calendar cal = Calendar.getInstance();
+        return cal.get(Calendar.DAY_OF_MONTH);
+    }
+
     /**
      * 获取月份中的第几周
      * <p>注意：国外周日才是新的一周的开始</p>

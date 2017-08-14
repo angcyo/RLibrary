@@ -253,8 +253,18 @@ public abstract class UIBaseView extends UIIViewImpl {
         L.d("call: onShowContentLayout([])-> ");
     }
 
+    /**
+     * 追加在内容层级, 不包含附加布局层(空布局, 无网络,等)
+     */
     protected View inflate(@LayoutRes int layoutId) {
         return LayoutInflater.from(mActivity).inflate(layoutId, mBaseContentLayout);
+    }
+
+    /**
+     * 追加在顶层, 包含附加布局层(空布局, 无网络,等)
+     */
+    protected View inflateRoot(@LayoutRes int layoutId) {
+        return LayoutInflater.from(mActivity).inflate(layoutId, mBaseContentRootLayout);
     }
 
     /**

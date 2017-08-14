@@ -174,6 +174,11 @@ class RadarScanExView(context: Context, attributeSet: AttributeSet? = null) : Vi
         //开始扫描线
         paint.color = lineColor
         paint.style = Paint.Style.FILL_AND_STROKE
+        paint.strokeWidth = 2 * circleWidth
+//        drawLinePath.reset()
+//        drawLinePath.moveTo(0.toFloat(), lineTop)
+//        drawLinePath.lineTo(measuredWidth.toFloat(), lineTop)
+
         canvas.drawLine(centerX.toFloat(), centerY.toFloat(), measuredWidth.toFloat(), centerY.toFloat(), paint)
         canvas.restore()
 
