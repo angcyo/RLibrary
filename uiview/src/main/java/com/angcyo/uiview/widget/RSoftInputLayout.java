@@ -15,7 +15,6 @@ import android.view.animation.DecelerateInterpolator;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.FrameLayout;
 
-import com.angcyo.library.utils.L;
 import com.angcyo.uiview.view.ILifecycle;
 
 import java.util.HashSet;
@@ -250,7 +249,8 @@ public class RSoftInputLayout extends FrameLayout implements ILifecycle {
 
     @Override
     protected void onLayout(boolean changed, int l, int t, int r, int b) {
-        needHideSoftInput = false;
+        boolean oldNeedHideSoftInput = this.needHideSoftInput;
+        this.needHideSoftInput = false;
 
         if (isViewHide ||
                 contentLayout == null ||
@@ -269,10 +269,23 @@ public class RSoftInputLayout extends FrameLayout implements ILifecycle {
 
         int paddingTop = getPaddingTop();
         t += paddingTop;
-        int contentBottom = contentLayout.getMeasuredHeight() + paddingTop;
+
+        int contentLayoutHeight = contentLayout.getMeasuredHeight();
+        int contentBottom = contentLayoutHeight + paddingTop;
         contentLayout.layout(l, t, r, contentBottom);
-        if (emojiLayout != null) {
-            emojiLayout.layout(l, contentBottom, r, contentBottom + emojiLayout.getMeasuredHeight());
+
+        if (isSoftKeyboardShow()) {
+            if (oldNeedHideSoftInput) {
+            } else {
+                int viewHeight = getMeasuredHeight();
+                if (contentLayoutHeight == viewHeight || contentLayoutHeight == viewHeight - getSoftKeyboardHeight()) {
+                    needShowEmojiLayout = false;
+                }
+            }
+        } else {
+            if (emojiLayout != null) {
+                emojiLayout.layout(l, contentBottom, r, contentBottom + emojiLayout.getMeasuredHeight());
+            }
         }
     }
 
