@@ -15,6 +15,7 @@ import android.view.animation.DecelerateInterpolator;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.FrameLayout;
 
+import com.angcyo.library.utils.L;
 import com.angcyo.uiview.view.ILifecycle;
 
 import java.util.HashSet;
@@ -280,12 +281,13 @@ public class RSoftInputLayout extends FrameLayout implements ILifecycle {
                 int viewHeight = getMeasuredHeight();
                 if (contentLayoutHeight == viewHeight || contentLayoutHeight == viewHeight - getSoftKeyboardHeight()) {
                     needShowEmojiLayout = false;
+                    showEmojiHeight = 0;
+                    contentBottom = viewHeight;
                 }
             }
-        } else {
-            if (emojiLayout != null) {
-                emojiLayout.layout(l, contentBottom, r, contentBottom + emojiLayout.getMeasuredHeight());
-            }
+        }
+        if (emojiLayout != null) {
+            emojiLayout.layout(l, contentBottom, r, contentBottom + emojiLayout.getMeasuredHeight());
         }
     }
 
@@ -492,7 +494,7 @@ public class RSoftInputLayout extends FrameLayout implements ILifecycle {
     }
 
     private void notifyEmojiLayoutChangeListener(boolean isEmojiShow, boolean isKeyboardShow, int height) {
-        //L.w("表情:" + isEmojiShow + " 键盘:" + isKeyboardShow + " 高度:" + height);
+        L.w("表情:" + isEmojiShow + " 键盘:" + isKeyboardShow + " 高度:" + height);
 
         Iterator<OnEmojiLayoutChangeListener> iterator = mEmojiLayoutChangeListeners.iterator();
         while (iterator.hasNext()) {
