@@ -306,6 +306,33 @@ public class RSoftInputLayout extends FrameLayout implements ILifecycle {
     }
 
     @Override
+    protected void onSizeChanged(int w, int h, int oldw, int oldh) {
+        //L.e("call: onSizeChanged([w, h, oldw, oldh])-> " + h + " oldh:" + oldh);
+
+        if (!isEnabled()) {
+            return;
+        }
+
+        removeCallbacks(mCheckSizeChanged);
+
+        if (w == oldw && h == oldh) {
+            return;
+        }
+
+        isKeyboardShow = isSoftKeyboardShow();
+        if (isKeyboardShow) {
+            isEmojiShow = false;
+        }
+//        if (emojiLayout != null) {
+//            if (emojiLayout.getTop() < getMeasuredHeight()) {
+//                isEmojiShow = true;
+//            }
+//        }
+        notifyEmojiLayoutChangeListener(isEmojiShow, isKeyboardShow,
+                isKeyboardShow ? getSoftKeyboardHeight() : showEmojiHeight);
+    }
+
+    @Override
     public void setClipToPadding(boolean clipToPadding) {
         super.setClipToPadding(clipToPadding);
         mClipToPadding = clipToPadding;
@@ -347,27 +374,6 @@ public class RSoftInputLayout extends FrameLayout implements ILifecycle {
                 return super.onApplyWindowInsets(insets);
             }
         }
-    }
-
-    @Override
-    protected void onSizeChanged(int w, int h, int oldw, int oldh) {
-        //L.e("call: onSizeChanged([w, h, oldw, oldh])-> " + h + " oldh:" + oldh);
-
-        if (!isEnabled()) {
-            return;
-        }
-
-        removeCallbacks(mCheckSizeChanged);
-
-        if (w == oldw && h == oldh) {
-            return;
-        }
-
-        if (isKeyboardShow = isSoftKeyboardShow()) {
-            isEmojiShow = false;
-        }
-        notifyEmojiLayoutChangeListener(isEmojiShow, isKeyboardShow,
-                isKeyboardShow ? getSoftKeyboardHeight() : showEmojiHeight);
     }
 
     /**
