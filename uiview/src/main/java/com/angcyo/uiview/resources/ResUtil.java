@@ -478,7 +478,7 @@ public class ResUtil {
      * 根据name, 在主题中 寻找资源id
      */
     public static int getThemeIdentifier(Context context, String name, String type) {
-        L.i("call: getThemeIdentifier([context, name, type])-> type:" + type +" name:"+name );
+        //L.i("call: getThemeIdentifier([context, name, type])-> type:" + type +" name:"+name );
         return context.getResources().getIdentifier(name, type, context.getPackageName());
     }
 

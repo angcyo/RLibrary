@@ -7,7 +7,6 @@ import android.view.Choreographer
 import android.view.View
 import com.angcyo.uiview.kotlin.density
 import com.angcyo.uiview.skin.SkinHelper
-import com.angcyo.uiview.view.UIIViewImpl
 
 /**
  * Copyright (C) 2016,深圳市红鸟网络科技股份有限公司 All rights reserved.
@@ -56,7 +55,7 @@ class RadarScanView(context: Context, attributeSet: AttributeSet? = null) : View
 
     override fun onAttachedToWindow() {
         super.onAttachedToWindow()
-        if (!UIIViewImpl.isLollipop()) {
+        if (visibility == VISIBLE) {
             postFrameCallback()
         }
     }

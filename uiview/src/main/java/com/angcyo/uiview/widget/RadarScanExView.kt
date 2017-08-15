@@ -9,7 +9,6 @@ import com.angcyo.uiview.R
 import com.angcyo.uiview.kotlin.density
 import com.angcyo.uiview.kotlin.getColor
 import com.angcyo.uiview.skin.SkinHelper
-import com.angcyo.uiview.view.UIIViewImpl
 
 /**
  * Copyright (C) 2016,深圳市红鸟网络科技股份有限公司 All rights reserved.
@@ -73,7 +72,7 @@ class RadarScanExView(context: Context, attributeSet: AttributeSet? = null) : Vi
 
     override fun onAttachedToWindow() {
         super.onAttachedToWindow()
-        if (!UIIViewImpl.isLollipop()) {
+        if (visibility == VISIBLE) {
             postFrameCallback()
         }
     }

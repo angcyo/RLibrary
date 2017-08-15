@@ -84,7 +84,7 @@ open class CircleImageView(context: Context, attributeSet: AttributeSet? = null)
                     roundRectF.set(cx - cr, cy - cr, cx + cr, cy + cr)
                     clipPath.addRoundRect(roundRectF, radius, Path.Direction.CW)
                 }
-                val saveLayer = canvas.saveLayer(0f, 0f, measuredWidth.toFloat(), measuredHeight.toFloat(), null, Canvas.ALL_SAVE_FLAG)
+                //val saveLayer = canvas.saveLayer(0f, 0f, measuredWidth.toFloat(), measuredHeight.toFloat(), paint, Canvas.ALL_SAVE_FLAG)
                 canvas.clipPath(clipPath, Region.Op.INTERSECT)//交集显示
 
                 super.onDraw(canvas)
@@ -92,7 +92,7 @@ open class CircleImageView(context: Context, attributeSet: AttributeSet? = null)
                 //canvas.drawRoundRect(roundRectF, roundRadius, roundRadius, paint)
                 //canvas.drawCircle(cx, cy, cr, paint)
                 canvas.drawPath(clipPath, paint)
-                canvas.restoreToCount(saveLayer)
+                //canvas.restoreToCount(saveLayer)
             }
         }
     }
