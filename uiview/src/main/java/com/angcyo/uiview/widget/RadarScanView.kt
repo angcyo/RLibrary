@@ -7,6 +7,7 @@ import android.view.Choreographer
 import android.view.View
 import com.angcyo.uiview.kotlin.density
 import com.angcyo.uiview.skin.SkinHelper
+import com.angcyo.uiview.view.UIIViewImpl
 
 /**
  * Copyright (C) 2016,深圳市红鸟网络科技股份有限公司 All rights reserved.
@@ -52,18 +53,28 @@ class RadarScanView(context: Context, attributeSet: AttributeSet? = null) : View
         Choreographer.getInstance()
     }
 
+
     override fun onAttachedToWindow() {
         super.onAttachedToWindow()
+        if (!UIIViewImpl.isLollipop()) {
+            postFrameCallback()
+        }
+    }
+
+    private fun postFrameCallback() {
+        mChoreographer.removeFrameCallback(this)
+        mChoreographer.postFrameCallback(this)
     }
 
     override fun onDetachedFromWindow() {
         super.onDetachedFromWindow()
+        mChoreographer.removeFrameCallback(this)
     }
 
     override fun onVisibilityChanged(changedView: View?, visibility: Int) {
         super.onVisibilityChanged(changedView, visibility)
         if (visibility == VISIBLE) {
-            mChoreographer.postFrameCallback(this)
+            postFrameCallback()
         } else {
             mChoreographer.removeFrameCallback(this)
         }

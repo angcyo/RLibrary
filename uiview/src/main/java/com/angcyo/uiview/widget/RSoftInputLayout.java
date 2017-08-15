@@ -17,6 +17,7 @@ import android.widget.FrameLayout;
 
 import com.angcyo.library.utils.L;
 import com.angcyo.uiview.view.ILifecycle;
+import com.angcyo.uiview.view.UIIViewImpl;
 
 import java.util.HashSet;
 import java.util.Iterator;
@@ -227,7 +228,11 @@ public class RSoftInputLayout extends FrameLayout implements ILifecycle {
         //如果键盘显示了, 那么内容的高度=总高度-键盘的高度
         if (softKeyboardShow) {
             isEmojiShow = false;
-            contentLayoutHeight = maxHeight - keyboardHeight;
+            if (UIIViewImpl.isLollipop()) {
+                contentLayoutHeight = maxHeight - keyboardHeight;
+            } else {
+                contentLayoutHeight = maxHeight;
+            }
             emojiLayoutHeight = keyboardHeight;
             this.keyboardHeight = keyboardHeight;//缓存键盘的高度
         } else if (needShowEmojiLayout) {

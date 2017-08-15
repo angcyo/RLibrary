@@ -9,6 +9,7 @@ import com.angcyo.uiview.R
 import com.angcyo.uiview.kotlin.density
 import com.angcyo.uiview.kotlin.getColor
 import com.angcyo.uiview.skin.SkinHelper
+import com.angcyo.uiview.view.UIIViewImpl
 
 /**
  * Copyright (C) 2016,深圳市红鸟网络科技股份有限公司 All rights reserved.
@@ -72,6 +73,14 @@ class RadarScanExView(context: Context, attributeSet: AttributeSet? = null) : Vi
 
     override fun onAttachedToWindow() {
         super.onAttachedToWindow()
+        if (!UIIViewImpl.isLollipop()) {
+            postFrameCallback()
+        }
+    }
+
+    private fun postFrameCallback() {
+        mChoreographer.removeFrameCallback(this)
+        mChoreographer.postFrameCallback(this)
     }
 
     override fun onDetachedFromWindow() {
@@ -82,8 +91,7 @@ class RadarScanExView(context: Context, attributeSet: AttributeSet? = null) : Vi
     override fun onVisibilityChanged(changedView: View?, visibility: Int) {
         super.onVisibilityChanged(changedView, visibility)
         if (visibility == VISIBLE) {
-            mChoreographer.removeFrameCallback(this)
-            mChoreographer.postFrameCallback(this)
+            postFrameCallback()
         } else {
             mChoreographer.removeFrameCallback(this)
         }
