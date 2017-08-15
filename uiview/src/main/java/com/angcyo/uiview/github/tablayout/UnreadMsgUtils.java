@@ -24,7 +24,6 @@ public class UnreadMsgUtils {
         if (num <= 0) {//圆点,设置默认宽高
             msgView.setStrokeWidth(0);
             msgView.setText("");
-
             lp.width = (int) (5 * dm.density);
             lp.height = (int) (5 * dm.density);
             msgView.setLayoutParams(lp);

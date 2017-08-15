@@ -51,6 +51,7 @@
         mv:mv_backgroundColor="#FD481F"
         mv:mv_isRadiusHalfHeight="true"
         mv:mv_strokeColor="#ffffff"
-        mv:mv_strokeWidth="1dp"/>
+        mv:mv_strokeWidth="1dp"
+        tools:visibility="visible"/>
 
 </RelativeLayout>
