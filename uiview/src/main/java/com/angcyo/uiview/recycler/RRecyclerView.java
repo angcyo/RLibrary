@@ -29,6 +29,7 @@ import com.angcyo.uiview.resources.AnimUtil;
 import com.angcyo.uiview.skin.SkinHelper;
 import com.angcyo.uiview.utils.Reflect;
 import com.angcyo.uiview.utils.UI;
+import com.angcyo.uiview.view.UIIViewImpl;
 
 import java.lang.reflect.Constructor;
 
@@ -117,6 +118,13 @@ public class RRecyclerView extends RecyclerView {
     }
 
     public static void ensureGlow(RecyclerView recyclerView, int color) {
+        if (!UIIViewImpl.isLollipop()) {
+            if (recyclerView != null) {
+                recyclerView.setOverScrollMode(OVER_SCROLL_NEVER);
+            }
+            return;
+        }
+
         try {
             Reflect.invokeMethod(RecyclerView.class, recyclerView, "ensureTopGlow");
             Reflect.invokeMethod(RecyclerView.class, recyclerView, "ensureBottomGlow");

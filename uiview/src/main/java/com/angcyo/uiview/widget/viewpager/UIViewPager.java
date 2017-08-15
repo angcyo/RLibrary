@@ -59,6 +59,12 @@ public class UIViewPager extends ViewPager implements Runnable, StickLayout.CanS
     }
 
     public static void ensureGlow(ViewPager viewPager, int color) {
+        if (!UIIViewImpl.isLollipop()) {
+            if (viewPager != null) {
+                viewPager.setOverScrollMode(OVER_SCROLL_NEVER);
+            }
+            return;
+        }
         try {
             Object mGlow = Reflect.getMember(ViewPager.class, viewPager, "mLeftEdge");
             setEdgetEffect(mGlow, color);
