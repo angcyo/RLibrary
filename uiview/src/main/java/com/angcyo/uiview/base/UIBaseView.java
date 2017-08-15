@@ -99,10 +99,10 @@ public abstract class UIBaseView extends UIIViewImpl {
     private boolean mEnableClip = false;
     private int[] clipXYR = null;//clip 开始的坐标
 
-    public static void safeSetVisibility(final View view, final int visibility) {
+    public static void safeSetVisibility(final View view, final int visibility, final boolean anim) {
         if (view != null) {
             if (view.getVisibility() == View.VISIBLE) {
-                if (ENABLE_LAYOUT_CHANGE_ANIM) {
+                if (anim) {
                     ViewCompat.animate(view).scaleX(1.2f).scaleY(1.2f).alpha(0).withEndAction(new Runnable() {
                         @Override
                         public void run() {
@@ -594,26 +594,33 @@ public abstract class UIBaseView extends UIIViewImpl {
         onLayoutStateChanged(from, to);
     }
 
+    /**
+     * 布局改变时, 是否激活动画
+     */
+    protected boolean isEnableLayoutChangeAnim() {
+        return ENABLE_LAYOUT_CHANGE_ANIM;
+    }
+
     private void updateLayoutState() {
         if (mLayoutState == LayoutState.LOAD) {
-            safeSetVisibility(mBaseContentLayout, View.GONE);
-            safeSetVisibility(mBaseEmptyLayout, View.GONE);
-            safeSetVisibility(mBaseNonetLayout, View.GONE);
+            safeSetVisibility(mBaseContentLayout, View.GONE, isEnableLayoutChangeAnim());
+            safeSetVisibility(mBaseEmptyLayout, View.GONE, isEnableLayoutChangeAnim());
+            safeSetVisibility(mBaseNonetLayout, View.GONE, isEnableLayoutChangeAnim());
             safeUpdateLayoutState(mBaseLoadLayout, View.VISIBLE);
         } else if (mLayoutState == LayoutState.EMPTY) {
-            safeSetVisibility(mBaseContentLayout, View.GONE);
-            safeSetVisibility(mBaseLoadLayout, View.GONE);
-            safeSetVisibility(mBaseNonetLayout, View.GONE);
+            safeSetVisibility(mBaseContentLayout, View.GONE, isEnableLayoutChangeAnim());
+            safeSetVisibility(mBaseLoadLayout, View.GONE, isEnableLayoutChangeAnim());
+            safeSetVisibility(mBaseNonetLayout, View.GONE, isEnableLayoutChangeAnim());
             safeUpdateLayoutState(mBaseEmptyLayout, View.VISIBLE);
         } else if (mLayoutState == LayoutState.NONET) {
-            safeSetVisibility(mBaseContentLayout, View.GONE);
-            safeSetVisibility(mBaseEmptyLayout, View.GONE);
-            safeSetVisibility(mBaseLoadLayout, View.GONE);
+            safeSetVisibility(mBaseContentLayout, View.GONE, isEnableLayoutChangeAnim());
+            safeSetVisibility(mBaseEmptyLayout, View.GONE, isEnableLayoutChangeAnim());
+            safeSetVisibility(mBaseLoadLayout, View.GONE, isEnableLayoutChangeAnim());
             safeUpdateLayoutState(mBaseNonetLayout, View.VISIBLE);
         } else if (mLayoutState == LayoutState.CONTENT) {
-            safeSetVisibility(mBaseLoadLayout, View.GONE);
-            safeSetVisibility(mBaseEmptyLayout, View.GONE);
-            safeSetVisibility(mBaseNonetLayout, View.GONE);
+            safeSetVisibility(mBaseLoadLayout, View.GONE, isEnableLayoutChangeAnim());
+            safeSetVisibility(mBaseEmptyLayout, View.GONE, isEnableLayoutChangeAnim());
+            safeSetVisibility(mBaseNonetLayout, View.GONE, isEnableLayoutChangeAnim());
             safeUpdateLayoutState(mBaseContentLayout, View.VISIBLE);
         }
     }
