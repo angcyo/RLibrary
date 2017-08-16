@@ -357,8 +357,12 @@ public class RSoftInputLayout extends FrameLayout implements ILifecycle {
                         " viewHeight:" + getMeasuredHeight() +
                         " contentHeight:" + contentLayout.getMeasuredHeight());
             }
-            if (emojiLayout.getTop() != 0 && emojiLayout.getTop() < getMeasuredHeight()) {
+            if (emojiLayout.getTop() != 0 &&
+                    emojiLayout.getTop() < getMeasuredHeight() &&
+                    emojiLayout.getMeasuredHeight() != 0) {
                 isEmojiShow = true;
+            } else {
+                isEmojiShow = false;
             }
         }
         if (!isInEditMode()) {
