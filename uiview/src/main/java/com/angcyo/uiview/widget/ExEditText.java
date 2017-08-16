@@ -477,12 +477,12 @@ public class ExEditText extends AppCompatEditText {
         super.onFocusChanged(focused, direction, previouslyFocusedRect);
         checkEdit(focused);
 
-//        if (!focused) {
-//            //没有焦点的时候, 检查自动匹配输入
-//            if (isInputTipPattern()) {
-//                setText(mInputTipText);
-//            }
-//        }
+        if (!focused) {
+            //没有焦点的时候, 检查自动匹配输入
+            if (isInputTipPattern()) {
+                setText(mInputTipText);
+            }
+        }
     }
 
     @Override
