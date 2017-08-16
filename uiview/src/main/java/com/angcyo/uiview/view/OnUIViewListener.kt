@@ -16,6 +16,14 @@ abstract class OnUIViewListener {
 
     }
 
+    open fun onViewLoad(uiview: IView) {
+
+    }
+
+    open fun onViewShow(uiview: IView) {
+
+    }
+
     open fun onViewLoadData(page: String?) {
 
     }

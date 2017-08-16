@@ -239,6 +239,10 @@ public abstract class UIIViewImpl implements IView {
     public void onViewLoad() {
         L.d(this.getClass().getSimpleName(), "onViewLoad: " + mIViewStatus);
         mIViewStatus = IViewShowState.STATE_VIEW_LOAD;
+
+        if (mOnUIViewListener != null) {
+            mOnUIViewListener.onViewLoad(this);
+        }
     }
 
     @Deprecated
@@ -257,9 +261,7 @@ public abstract class UIIViewImpl implements IView {
         viewShowCount++;
         mLastShowTime = System.currentTimeMillis();
 
-        for (ILifecycle life : mILifecycleList) {
-            life.onLifeViewShow();
-        }
+        notifyLifeViewShow();
 
         if (lastShowTime == 0) {
             onViewShowFirst(bundle);
@@ -272,6 +274,15 @@ public abstract class UIIViewImpl implements IView {
             mChildILayout.onLastViewShow(bundle);
         }
 
+        if (mOnUIViewListener != null) {
+            mOnUIViewListener.onViewShow(this);
+        }
+    }
+
+    public void notifyLifeViewShow() {
+        for (ILifecycle life : mILifecycleList) {
+            life.onLifeViewShow();
+        }
     }
 
     public void onViewShowFirst(Bundle bundle) {
@@ -303,12 +314,16 @@ public abstract class UIIViewImpl implements IView {
         L.d(this.getClass().getSimpleName(), "onViewHide: " + mIViewStatus);
         mIViewStatus = IViewShowState.STATE_VIEW_HIDE;
 
-        for (ILifecycle life : mILifecycleList) {
-            life.onLifeViewHide();
-        }
+        notifyLifeViewHide();
 
         if (mChildILayout != null) {
             mChildILayout.onLastViewHide();
+        }
+    }
+
+    public void notifyLifeViewHide() {
+        for (ILifecycle life : mILifecycleList) {
+            life.onLifeViewHide();
         }
     }
 
@@ -460,6 +475,7 @@ public abstract class UIIViewImpl implements IView {
     public void onShowInPager(UIViewPager viewPager) {
         showInPagerCount++;
         L.i(this.getClass().getSimpleName(), "onShowInPager: " + showInPagerCount);
+        notifyLifeViewShow();
     }
 
     /**
@@ -468,6 +484,7 @@ public abstract class UIIViewImpl implements IView {
     @Override
     public void onHideInPager(UIViewPager viewPager) {
         L.i(this.getClass().getSimpleName(), "onHideInPager: ");
+        notifyLifeViewHide();
     }
 
     public void startIView(final IView iView) {

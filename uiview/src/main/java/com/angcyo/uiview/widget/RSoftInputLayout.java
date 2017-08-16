@@ -42,7 +42,6 @@ public class RSoftInputLayout extends FrameLayout implements ILifecycle {
      * 缺省的键盘高度
      */
     int keyboardHeight = 0;
-
     /**
      * 需要显示的键盘高度,可以指定显示多高
      */
@@ -51,9 +50,7 @@ public class RSoftInputLayout extends FrameLayout implements ILifecycle {
      * 动画执行时, 表情显示的高度
      */
     int animShowEmojiHeight = -1;
-
     boolean isEmojiShow = false;
-
     HashSet<OnEmojiLayoutChangeListener> mEmojiLayoutChangeListeners = new HashSet<>();
     /**
      * 需要隐藏键盘, 当为true时, 不用代码检查键盘是否显示
@@ -68,12 +65,6 @@ public class RSoftInputLayout extends FrameLayout implements ILifecycle {
      */
     private boolean isKeyboardShow = false;
     private boolean mClipToPadding;
-    private Runnable mCheckSizeChanged = new Runnable() {
-        @Override
-        public void run() {
-            onSizeChanged(-1, -1, 0, 0);
-        }
-    };
     private ValueAnimator mValueAnimator;
     /**
      * 使用动画的形式展开表情布局
@@ -83,6 +74,16 @@ public class RSoftInputLayout extends FrameLayout implements ILifecycle {
      * 所在的界面,是否隐藏了. 隐藏了,不处理事件
      */
     private boolean isViewHide = false;
+    /**
+     * 是否需要处理键盘
+     */
+    private boolean enableSoftInput = true;
+    private Runnable mCheckSizeChanged = new Runnable() {
+        @Override
+        public void run() {
+            onSizeChanged(-1, -1, 0, 0);
+        }
+    };
 
     public RSoftInputLayout(Context context) {
         super(context);
@@ -112,6 +113,15 @@ public class RSoftInputLayout extends FrameLayout implements ILifecycle {
         manager.showSoftInput(view, 0);
     }
 
+    public void setEnableSoftInput(boolean enableSoftInput) {
+        this.enableSoftInput = enableSoftInput;
+        if (enableSoftInput) {
+            setFitsSystemWindows();
+        } else {
+            setFitsSystemWindows(false);
+        }
+    }
+
     public void setAnimToShow(boolean animToShow) {
         isAnimToShow = animToShow;
     }
@@ -121,7 +131,7 @@ public class RSoftInputLayout extends FrameLayout implements ILifecycle {
         super.onAttachedToWindow();
 
         if (!isInEditMode() && isEnabled()) {
-            setFitsSystemWindows(isEnabled() && !isViewHide);
+            setFitsSystemWindows();
             setClipToPadding(false);
         }
     }
@@ -130,7 +140,7 @@ public class RSoftInputLayout extends FrameLayout implements ILifecycle {
     public void setEnabled(boolean enabled) {
         super.setEnabled(enabled);
         if (enabled) {
-            setFitsSystemWindows(!isViewHide);
+            setFitsSystemWindows();
         } else {
             setFitsSystemWindows(false);
         }
@@ -148,11 +158,28 @@ public class RSoftInputLayout extends FrameLayout implements ILifecycle {
         if (childCount > 1) {
             emojiLayout = getChildAt(1);
         }
+
+//        if (haveChildSoftInput(child)) {
+//            onLifeViewHide();
+//        }
+    }
+
+    /**
+     * 解决RSoftInputLayout嵌套RSoftInputLayout的问题
+     */
+    private boolean haveChildSoftInput(View child) {
+        if (child instanceof ViewGroup) {
+            for (int i = 0; i < ((ViewGroup) child).getChildCount(); i++) {
+                return haveChildSoftInput(((ViewGroup) child).getChildAt(i));
+            }
+        }
+        return child instanceof RSoftInputLayout;
     }
 
     @Override
     protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
-        if (isViewHide ||
+        if (!enableSoftInput ||
+                isViewHide ||
                 contentLayout == null ||
                 !isEnabled()) {
             super.onMeasure(widthMeasureSpec, heightMeasureSpec);
@@ -267,7 +294,8 @@ public class RSoftInputLayout extends FrameLayout implements ILifecycle {
         boolean oldNeedHideSoftInput = this.needHideSoftInput;
         this.needHideSoftInput = false;
 
-        if (isViewHide ||
+        if (!enableSoftInput ||
+                isViewHide ||
                 contentLayout == null ||
                 !isEnabled()) {
             super.onLayout(changed, l, t, r, b);
@@ -308,12 +336,11 @@ public class RSoftInputLayout extends FrameLayout implements ILifecycle {
     @Override
     protected void onSizeChanged(int w, int h, int oldw, int oldh) {
         //L.e("call: onSizeChanged([w, h, oldw, oldh])-> " + h + " oldh:" + oldh);
+        removeCallbacks(mCheckSizeChanged);
 
-        if (!isEnabled()) {
+        if (!isEnabled() || !enableSoftInput || isViewHide) {
             return;
         }
-
-        removeCallbacks(mCheckSizeChanged);
 
         if (w == oldw && h == oldh) {
             return;
@@ -323,13 +350,21 @@ public class RSoftInputLayout extends FrameLayout implements ILifecycle {
         if (isKeyboardShow) {
             isEmojiShow = false;
         }
-//        if (emojiLayout != null) {
-//            if (emojiLayout.getTop() < getMeasuredHeight()) {
-//                isEmojiShow = true;
-//            }
-//        }
-        notifyEmojiLayoutChangeListener(isEmojiShow, isKeyboardShow,
-                isKeyboardShow ? getSoftKeyboardHeight() : showEmojiHeight);
+        if (emojiLayout != null) {
+            if (!isInEditMode()) {
+                L.w("call: emojiLayout:" + this.hashCode() + " -> top:" + emojiLayout.getTop() +
+                        " height:" + emojiLayout.getMeasuredHeight() +
+                        " viewHeight:" + getMeasuredHeight() +
+                        " contentHeight:" + contentLayout.getMeasuredHeight());
+            }
+            if (emojiLayout.getTop() != 0 && emojiLayout.getTop() < getMeasuredHeight()) {
+                isEmojiShow = true;
+            }
+        }
+        if (!isInEditMode()) {
+            notifyEmojiLayoutChangeListener(isEmojiShow, isKeyboardShow,
+                    isKeyboardShow ? getSoftKeyboardHeight() : showEmojiHeight);
+        }
     }
 
     @Override
@@ -520,7 +555,7 @@ public class RSoftInputLayout extends FrameLayout implements ILifecycle {
     }
 
     private void notifyEmojiLayoutChangeListener(boolean isEmojiShow, boolean isKeyboardShow, int height) {
-        L.w("表情:" + isEmojiShow + " 键盘:" + isKeyboardShow + " 高度:" + height);
+        L.w(hashCode() + " 表情:" + isEmojiShow + " 键盘:" + isKeyboardShow + " 高度:" + height);
 
         Iterator<OnEmojiLayoutChangeListener> iterator = mEmojiLayoutChangeListeners.iterator();
         while (iterator.hasNext()) {
@@ -580,7 +615,11 @@ public class RSoftInputLayout extends FrameLayout implements ILifecycle {
     @Override
     public void onLifeViewShow() {
         isViewHide = false;
-        setFitsSystemWindows(isEnabled() && !isViewHide);
+        setFitsSystemWindows();
+    }
+
+    public void setFitsSystemWindows() {
+        setFitsSystemWindows(isEnabled() && !isViewHide && enableSoftInput);
     }
 
     @Override

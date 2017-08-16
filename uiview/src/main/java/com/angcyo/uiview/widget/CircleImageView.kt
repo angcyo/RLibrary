@@ -3,7 +3,9 @@ package com.angcyo.uiview.widget
 import android.content.Context
 import android.graphics.*
 import android.graphics.drawable.Drawable
+import android.os.Build
 import android.support.v7.widget.AppCompatImageView
+import android.text.TextUtils
 import android.util.AttributeSet
 import com.angcyo.uiview.R
 import com.angcyo.uiview.kotlin.density
@@ -84,14 +86,21 @@ open class CircleImageView(context: Context, attributeSet: AttributeSet? = null)
                     roundRectF.set(cx - cr, cy - cr, cx + cr, cy + cr)
                     clipPath.addRoundRect(roundRectF, radius, Path.Direction.CW)
                 }
-                //val saveLayer = canvas.saveLayer(0f, 0f, measuredWidth.toFloat(), measuredHeight.toFloat(), paint, Canvas.ALL_SAVE_FLAG)
-                canvas.clipPath(clipPath, Region.Op.INTERSECT)//交集显示
 
+                canvas.clipPath(clipPath, Region.Op.INTERSECT)//交集显示
+                var save: Int
+//                if (TextUtils.equals(Build.MODEL, "VTR-AL00") /*华为P10处理圆角, 偶尔会失败.*/) {
+                if (TextUtils.equals(Build.MANUFACTURER, "HUAWEI") && Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP /*华为手机处理圆角, 偶尔会失败.*/) {
+                    save = canvas.saveLayer(0f, 0f, measuredWidth.toFloat(), measuredHeight.toFloat(), paint, Canvas.ALL_SAVE_FLAG)
+                } else {
+                    save = canvas.save()
+                }
                 super.onDraw(canvas)
+                canvas.drawPath(clipPath, paint)
+                canvas.restoreToCount(save)
 
                 //canvas.drawRoundRect(roundRectF, roundRadius, roundRadius, paint)
                 //canvas.drawCircle(cx, cy, cr, paint)
-                canvas.drawPath(clipPath, paint)
                 //canvas.restoreToCount(saveLayer)
             }
         }
