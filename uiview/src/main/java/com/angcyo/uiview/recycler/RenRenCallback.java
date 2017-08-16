@@ -3,7 +3,6 @@ package com.angcyo.uiview.recycler;
 import android.graphics.Canvas;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.helper.ItemTouchHelper;
-import android.util.Log;
 import android.view.View;
 import android.view.animation.Animation;
 import android.view.animation.DecelerateInterpolator;
@@ -50,6 +49,7 @@ public class RenRenCallback extends ItemTouchHelper.SimpleCallback {
     @Override
     public void onSwiped(RecyclerView.ViewHolder viewHolder, int direction) {
         viewHolder.itemView.setRotation(0);//恢复最后一次的旋转状态
+        viewHolder.itemView.setAlpha(1);
         if (mSwipeListener != null) {
             mSwipeListener.onSwipeTo(viewHolder, 0);
         }
@@ -57,7 +57,7 @@ public class RenRenCallback extends ItemTouchHelper.SimpleCallback {
     }
 
     private void notifyListener(int position, int direction) {
-        Log.w(TAG, "onSwiped: " + position + " " + direction);
+        //Log.w(TAG, "onSwiped: " + position + " " + direction);
         if (mSwipeListener != null) {
             mSwipeListener.onSwiped(position, direction);
         }
@@ -73,7 +73,7 @@ public class RenRenCallback extends ItemTouchHelper.SimpleCallback {
     @Override
     public void onChildDraw(Canvas c, RecyclerView recyclerView, RecyclerView.ViewHolder viewHolder, float dX, float dY, int actionState, boolean isCurrentlyActive) {
         super.onChildDraw(c, recyclerView, viewHolder, dX, dY, actionState, isCurrentlyActive);
-        Log.i(TAG, "onChildDraw: dx:" + dX + " dy:" + dY);
+        //Log.i(TAG, "onChildDraw: dx:" + dX + " dy:" + dY);
         //人人影视的效果
         //if (isCurrentlyActive) {
         //先根据滑动的dxdy 算出现在动画的比例系数fraction
@@ -154,12 +154,12 @@ public class RenRenCallback extends ItemTouchHelper.SimpleCallback {
         translateAnimation.setAnimationListener(new Animation.AnimationListener() {
             @Override
             public void onAnimationStart(Animation animation) {
-
             }
 
             @Override
             public void onAnimationEnd(Animation animation) {
                 isSwipeAnim = false;
+                view.setAlpha(0);
                 recyclerView.removeView(view);
                 notifyListener(position,
                         right ? ItemTouchHelper.RIGHT : ItemTouchHelper.LEFT);
@@ -171,6 +171,7 @@ public class RenRenCallback extends ItemTouchHelper.SimpleCallback {
             }
         });
         view.startAnimation(translateAnimation);
+        isSwipeAnim = true;
     }
 
     private boolean check(RecyclerView recyclerView) {
@@ -183,7 +184,6 @@ public class RenRenCallback extends ItemTouchHelper.SimpleCallback {
         if (recyclerView.getAdapter().getItemCount() == 0) {
             return false;
         }
-        isSwipeAnim = true;
         return true;
     }
 

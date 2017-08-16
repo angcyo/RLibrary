@@ -45,12 +45,16 @@ open class CircleImageView(context: Context, attributeSet: AttributeSet? = null)
                     roundRadius, roundRadius, roundRadius, roundRadius)
         }
 
+    /**高度等于宽度*/
+    protected var equWidth: Boolean = false
+
     init {
         val typedArray = context.obtainStyledAttributes(attributeSet, R.styleable.CircleImageView)
         showType = typedArray.getInt(R.styleable.CircleImageView_r_show_type, showType)
         lineColor = typedArray.getColor(R.styleable.CircleImageView_r_line_color, lineColor)
         roundRadius = typedArray.getDimensionPixelOffset(R.styleable.CircleImageView_r_round_radius, (10 * density).toInt()).toFloat()
         lineWidth = typedArray.getDimensionPixelOffset(R.styleable.CircleImageView_r_line_width, (1 * density).toInt()).toFloat()
+        equWidth = typedArray.getBoolean(R.styleable.CircleImageView_r_equ_width, equWidth)
         typedArray.recycle()
     }
 
@@ -64,6 +68,13 @@ open class CircleImageView(context: Context, attributeSet: AttributeSet? = null)
         p.style = Paint.Style.STROKE
         p.isFilterBitmap = true
         p
+    }
+
+    override fun onMeasure(widthMeasureSpec: Int, heightMeasureSpec: Int) {
+        super.onMeasure(widthMeasureSpec, heightMeasureSpec)
+        if (equWidth) {
+            setMeasuredDimension(measuredWidth, measuredWidth)
+        }
     }
 
     override fun onDraw(canvas: Canvas) {

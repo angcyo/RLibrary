@@ -34,6 +34,9 @@ import java.io.File
  * Version: 1.0.0
  */
 open class GlideImageView(context: Context, attributeSet: AttributeSet? = null) : RImageView(context, attributeSet) {
+
+    private var defaultPlaceholderDrawable: Drawable? = null
+
     /**是否要检查Url的图片类型为Gif, 可以用来显示Gif指示图*/
     var checkGif = false
 
@@ -42,6 +45,16 @@ open class GlideImageView(context: Context, attributeSet: AttributeSet? = null) 
 
     /**占位资源*/
     var placeholderRes: Int = R.drawable.base_image_placeholder_shape
+        set(value) {
+            field = value
+            if (value == -1) {
+                placeholderDrawable = null
+            } else {
+                placeholderDrawable = ContextCompat.getDrawable(context, value)
+            }
+        }
+
+    var placeholderDrawable: Drawable? = null
 
     var override = true
 
@@ -49,6 +62,15 @@ open class GlideImageView(context: Context, attributeSet: AttributeSet? = null) 
     var animType = AnimType.DEFAULT
 
     var bitmapTransform: Transformation<*>? = null
+
+    init {
+        val typedArray = context.obtainStyledAttributes(attributeSet, R.styleable.GlideImageView)
+        defaultPlaceholderDrawable = typedArray.getDrawable(R.styleable.GlideImageView_r_placeholder_drawable)
+        if (defaultPlaceholderDrawable != null) {
+            placeholderDrawable = defaultPlaceholderDrawable
+        }
+        typedArray.recycle()
+    }
 
     /**需要加载的图片地址, 优先判断是否是本地File*/
     open var url: String? = ""
@@ -64,6 +86,9 @@ open class GlideImageView(context: Context, attributeSet: AttributeSet? = null) 
         mShowGifTip = false
         override = true
         placeholderRes = R.drawable.base_image_placeholder_shape
+        if (defaultPlaceholderDrawable != null) {
+            placeholderDrawable = defaultPlaceholderDrawable
+        }
         animType = AnimType.DEFAULT
         bitmapTransform = null
         url = ""
@@ -72,10 +97,6 @@ open class GlideImageView(context: Context, attributeSet: AttributeSet? = null) 
     override fun onSizeChanged(w: Int, h: Int, oldw: Int, oldh: Int) {
         super.onSizeChanged(w, h, oldw, oldh)
         startLoadUrl()
-    }
-
-    private fun getPlaceholderDrawable(): Drawable {
-        return ContextCompat.getDrawable(context, placeholderRes)
     }
 
     override fun setImageDrawable(drawable: Drawable?) {
@@ -185,8 +206,8 @@ open class GlideImageView(context: Context, attributeSet: AttributeSet? = null) 
                         is DrawableTypeRequest -> {
                             request.into(object : SimpleTarget<GlideDrawable>() {
                                 override fun onResourceReady(resource: GlideDrawable?, glideAnimation: GlideAnimation<in GlideDrawable>?) {
-                                    resource?.let {
-                                        setImageDrawable(getPlaceholderDrawable(), it)
+                                    if (resource != null && placeholderDrawable != null) {
+                                        setImageDrawable(placeholderDrawable!!, resource)
                                     }
                                 }
                             })
@@ -194,8 +215,8 @@ open class GlideImageView(context: Context, attributeSet: AttributeSet? = null) 
                         is BitmapTypeRequest -> {
                             request.into(object : SimpleTarget<Bitmap>() {
                                 override fun onResourceReady(resource: Bitmap?, glideAnimation: GlideAnimation<in Bitmap>?) {
-                                    resource?.let {
-                                        setImageDrawable(getPlaceholderDrawable(), BitmapDrawable(resources, it))
+                                    if (resource != null && placeholderDrawable != null) {
+                                        setImageDrawable(placeholderDrawable!!, BitmapDrawable(resources, resource))
                                     }
                                 }
                             })
@@ -203,9 +224,9 @@ open class GlideImageView(context: Context, attributeSet: AttributeSet? = null) 
                         is GifTypeRequest -> {
                             request.into(object : SimpleTarget<GifDrawable>() {
                                 override fun onResourceReady(resource: GifDrawable?, glideAnimation: GlideAnimation<in GifDrawable>?) {
-                                    resource?.let {
-                                        setImageDrawable(getPlaceholderDrawable(), it)
-                                        it.start()
+                                    if (resource != null && placeholderDrawable != null) {
+                                        setImageDrawable(placeholderDrawable!!, resource)
+                                        resource.start()
                                     }
                                 }
                             })

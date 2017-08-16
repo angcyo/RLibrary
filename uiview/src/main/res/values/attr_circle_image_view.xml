@@ -15,10 +15,15 @@
         <attr name="r_line_color" format="color"/>
         <!--补充外圈线的宽度-->
         <attr name="r_line_width" format="dimension"/>
-        <!--需要显示的文本-->
-        <attr name="r_show_text"/>
-        <attr name="r_show_text_color"/>
-        <attr name="r_show_text_size"/>
-        <attr name="r_text_offset"/>
+        <attr name="r_equ_width"/>
+        <!--&lt;!&ndash;需要显示的文本&ndash;&gt;-->
+        <!--<attr name="r_show_text"/>-->
+        <!--<attr name="r_show_text_color"/>-->
+        <!--<attr name="r_show_text_size"/>-->
+        <!--<attr name="r_text_offset"/>-->
+    </declare-styleable>
+
+    <declare-styleable name="GlideImageView">
+        <attr name="r_placeholder_drawable" format="reference"/>
     </declare-styleable>
 </resources>

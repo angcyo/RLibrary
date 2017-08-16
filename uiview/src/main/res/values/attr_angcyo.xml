@@ -27,6 +27,9 @@
     <!--进度宽度-->
     <attr name="r_progress_width" format="dimension"/>
 
+    <!--高度等于宽度-->
+    <attr name="r_equ_width" format="boolean"/>
+
     <declare-styleable name="RLinearLayout">
         <attr name="r_background"/>
         <attr name="r_max_height"/>
