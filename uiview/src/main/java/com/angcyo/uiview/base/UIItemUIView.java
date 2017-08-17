@@ -18,6 +18,7 @@ import com.angcyo.uiview.recycler.RRecyclerView;
 import com.angcyo.uiview.recycler.adapter.RExBaseAdapter;
 import com.angcyo.uiview.rsen.PlaceholderView;
 import com.angcyo.uiview.rsen.RefreshLayout;
+import com.angcyo.uiview.view.RClickListener;
 import com.angcyo.uiview.widget.ItemInfoLayout;
 import com.angcyo.uiview.widget.RSoftInputLayout;
 
@@ -34,25 +35,46 @@ public abstract class UIItemUIView<T extends Item> extends UIRecyclerUIView<Stri
     protected List<T> mItems = new ArrayList<>();
     protected RSoftInputLayout mSoftInputLayout;
 
-    public static void baseInitItem(RBaseViewHolder holder, String itemText, View.OnClickListener onClickListener) {
+    public static void baseInitItem(RBaseViewHolder holder, String itemText, final View.OnClickListener onClickListener) {
         ItemInfoLayout infoLayout = holder.v(R.id.base_item_info_layout);
         infoLayout.setItemText(itemText);
-        infoLayout.setOnClickListener(onClickListener);
+        infoLayout.setOnClickListener(new RClickListener(300) {
+            @Override
+            public void onRClick(View view) {
+                if (onClickListener != null) {
+                    onClickListener.onClick(view);
+                }
+            }
+        });
     }
 
-    public static void baseInitItem(RBaseViewHolder holder, @DrawableRes int leftRes, String itemText, View.OnClickListener onClickListener) {
+    public static void baseInitItem(RBaseViewHolder holder, @DrawableRes int leftRes, String itemText, final View.OnClickListener onClickListener) {
         ItemInfoLayout infoLayout = holder.v(R.id.base_item_info_layout);
         infoLayout.setItemText(itemText);
         infoLayout.setLeftDrawableRes(leftRes);
-        infoLayout.setOnClickListener(onClickListener);
+        infoLayout.setOnClickListener(new RClickListener(300) {
+            @Override
+            public void onRClick(View view) {
+                if (onClickListener != null) {
+                    onClickListener.onClick(view);
+                }
+            }
+        });
     }
 
-    public static void baseInitItem(RBaseViewHolder holder, @DrawableRes int leftRes, String itemText, int leftPadding, View.OnClickListener onClickListener) {
+    public static void baseInitItem(RBaseViewHolder holder, @DrawableRes int leftRes, String itemText, int leftPadding, final View.OnClickListener onClickListener) {
         ItemInfoLayout infoLayout = holder.v(R.id.base_item_info_layout);
         infoLayout.setItemText(itemText);
         infoLayout.setLeftDrawableRes(leftRes);
         infoLayout.setLeftDrawPadding(leftPadding);
-        infoLayout.setOnClickListener(onClickListener);
+        infoLayout.setOnClickListener(new RClickListener(300) {
+            @Override
+            public void onRClick(View view) {
+                if (onClickListener != null) {
+                    onClickListener.onClick(view);
+                }
+            }
+        });
     }
 
     @NonNull

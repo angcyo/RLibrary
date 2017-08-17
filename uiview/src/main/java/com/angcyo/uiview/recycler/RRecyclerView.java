@@ -329,8 +329,10 @@ public class RRecyclerView extends RecyclerView {
 
     @Override
     public boolean onTouchEvent(MotionEvent e) {
-        boolean result = super.onTouchEvent(e);
-        return result;
+        if (!isEnabled()) {
+            return false;
+        }
+        return super.onTouchEvent(e);
     }
 
     @Override

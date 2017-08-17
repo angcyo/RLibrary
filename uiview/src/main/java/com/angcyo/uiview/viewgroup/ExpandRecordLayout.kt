@@ -158,6 +158,7 @@ class ExpandRecordLayout(context: Context, attributeSet: AttributeSet? = null) :
                     expandLayout(false)
                 } else {
                     //在未展开的状态下, 点击可以实现拍照(微信就是这样的), 长按就是录制
+                    listener?.onTick(this@ExpandRecordLayout)
                 }
                 return super.onSingleTapUp(e)
             }
@@ -227,25 +228,29 @@ class ExpandRecordLayout(context: Context, attributeSet: AttributeSet? = null) :
     }
 
     override fun onTouchEvent(event: MotionEvent): Boolean {
-        super.onTouchEvent(event)
-        when (MotionEventCompat.getActionMasked(event)) {
-            ACTION_CANCEL, ACTION_UP -> {
-                removeCallbacks(longPressRunnable)
-                if (isLongPress) {
-                    isLongPress = false
-                    stopProgress((progressAnimator.currentPlayTime / 1000.0).toInt())
-                }
-            }
-            ACTION_MOVE -> {
-                val eventX = event.x
-                val eventY = event.y + scrollY
-
-                if (!outCircleRect.contains(eventX, eventY)) {
+        if (!isEnabled) {
+            return super.onTouchEvent(event)
+        } else {
+            super.onTouchEvent(event)
+            when (MotionEventCompat.getActionMasked(event)) {
+                ACTION_CANCEL, ACTION_UP -> {
                     removeCallbacks(longPressRunnable)
+                    if (isLongPress) {
+                        isLongPress = false
+                        stopProgress((progressAnimator.currentPlayTime / 1000.0).toInt())
+                    }
+                }
+                ACTION_MOVE -> {
+                    val eventX = event.x
+                    val eventY = event.y + scrollY
+
+                    if (!outCircleRect.contains(eventX, eventY)) {
+                        removeCallbacks(longPressRunnable)
+                    }
                 }
             }
+            return gestureCompat.onTouchEvent(event)
         }
-        return gestureCompat.onTouchEvent(event)
     }
 
     /**最大允许录制30秒*/
@@ -463,6 +468,7 @@ class ExpandRecordLayout(context: Context, attributeSet: AttributeSet? = null) :
     }
 
     interface OnRecordListener {
+        fun onTick(layout: ExpandRecordLayout)
         fun onRecordStart()
         fun onRecording(progress: Int)
         fun onRecordEnd(progress: Int)
