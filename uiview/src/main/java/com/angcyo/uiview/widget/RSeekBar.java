@@ -12,6 +12,7 @@ import android.view.MotionEvent;
 import android.view.View;
 
 import com.angcyo.uiview.R;
+import com.angcyo.uiview.skin.SkinHelper;
 
 import java.util.HashSet;
 import java.util.Set;
@@ -45,6 +46,10 @@ public class RSeekBar extends View {
      */
     int mTrackColor;
     int mTrackHeight;
+    /**
+     * 轨道的圆角
+     */
+    int mTrackRadius;
 
     /**
      * 浮子的颜色
@@ -63,9 +68,17 @@ public class RSeekBar extends View {
      * 当前进度(0-100)
      */
     int curProgress = 0;
+    /**
+     * 第二进度
+     */
+    int secondProgress = 0;
+
+    int secondProgressColor;
+
     Set<OnProgressChangeListener> mOnProgressChangeListeners = new HashSet<>();
     private float mDensity;
-    private RectF mRectF;
+    private RectF mProgressRectF = new RectF();
+    private RectF mTrackRectF = new RectF();
 
     private int thumbType = THUMB_DEFAULT;
 
@@ -99,13 +112,19 @@ public class RSeekBar extends View {
 
         mTrackBgColor = typedArray.getColor(R.styleable.RSeekBar_r_track_bg_color, mTrackBgColor);
         mTrackColor = typedArray.getColor(R.styleable.RSeekBar_r_track_color, mTrackColor);
+        secondProgressColor = SkinHelper.getTranColor(mTrackColor, 0x80);
+
+        secondProgressColor = typedArray.getColor(R.styleable.RSeekBar_r_second_progress_color, secondProgressColor);
+
         mThumbColor = typedArray.getColor(R.styleable.RSeekBar_r_thumb_color, mThumbColor);
 
         mTrackHeight = typedArray.getDimensionPixelOffset(R.styleable.RSeekBar_r_track_height, mTrackHeight);
         mThumbHeight = typedArray.getDimensionPixelOffset(R.styleable.RSeekBar_r_thumb_height, mThumbHeight);
         mThumbWidth = typedArray.getDimensionPixelOffset(R.styleable.RSeekBar_r_thumb_width, mThumbWidth);
         mThumbRoundSize = typedArray.getDimensionPixelOffset(R.styleable.RSeekBar_r_thumb_round_size, mThumbRoundSize);
+        mTrackRadius = typedArray.getDimensionPixelOffset(R.styleable.RSeekBar_r_track_round_size, 0);
         curProgress = typedArray.getInteger(R.styleable.RSeekBar_r_cur_progress, curProgress);
+        secondProgress = typedArray.getInteger(R.styleable.RSeekBar_r_second_progress, secondProgress);
         thumbType = typedArray.getInt(R.styleable.RSeekBar_r_thumb_type, THUMB_DEFAULT);
         curProgress = ensureProgress(curProgress);
 
@@ -116,13 +135,12 @@ public class RSeekBar extends View {
             mThumbWidth = mThumbHeight = mThumbRadius;
         }
 
+
         initView();
     }
 
     private void initView() {
         mPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
-
-        mRectF = new RectF();
     }
 
     @Override
@@ -163,20 +181,38 @@ public class RSeekBar extends View {
         int trackTop = (getMeasuredHeight() - mTrackHeight) / 2;
         int trackRight = getMeasuredWidth() - getPaddingRight();
         int trackBottom = getMeasuredHeight() / 2 + mTrackHeight / 2;
-        canvas.drawRect(trackLeft, trackTop, trackRight, trackBottom, mPaint);
+        mTrackRectF.set(trackLeft, trackTop, trackRight, trackBottom);
+        canvas.drawRoundRect(mTrackRectF, mTrackRadius, mTrackRadius, mPaint);
+
+        //第二进度
+        if (secondProgress > 0) {
+            mPaint.setColor(secondProgressColor);
+            if (thumbType == THUMB_DEFAULT) {
+                mTrackRectF.set(trackLeft, trackTop, trackLeft + secondProgress / 100f * getMaxLength() + mThumbWidth / 2, trackBottom);
+                canvas.drawRoundRect(mTrackRectF, mTrackRadius, mTrackRadius, mPaint);
+            } else if (thumbType == THUMB_CIRCLE) {
+                mTrackRectF.set(trackLeft, trackTop, trackLeft + secondProgress / 100f * getMaxLength() + mThumbRadius / 2, trackBottom);
+                canvas.drawRoundRect(mTrackRectF, mTrackRadius, mTrackRadius, mPaint);
+            }
+        }
 
         //绘制轨道
         mPaint.setColor(mTrackColor);
-        canvas.drawRect(trackLeft, trackTop,
-                trackLeft + curProgress / 100f * getMaxLength(), trackBottom, mPaint);
+        if (thumbType == THUMB_DEFAULT) {
+            mTrackRectF.set(trackLeft, trackTop, trackLeft + curProgress / 100f * getMaxLength() + mThumbWidth / 2, trackBottom);
+            canvas.drawRoundRect(mTrackRectF, mTrackRadius, mTrackRadius, mPaint);
+        } else if (thumbType == THUMB_CIRCLE) {
+            mTrackRectF.set(trackLeft, trackTop, trackLeft + curProgress / 100f * getMaxLength() + mThumbRadius / 2, trackBottom);
+            canvas.drawRoundRect(mTrackRectF, mTrackRadius, mTrackRadius, mPaint);
+        }
 
         //绘制浮子
         mPaint.setColor(mThumbColor);
         updateProgress();
         if (thumbType == THUMB_DEFAULT) {
-            canvas.drawRoundRect(mRectF, mThumbRoundSize, mThumbRoundSize, mPaint);
+            canvas.drawRoundRect(mProgressRectF, mThumbRoundSize, mThumbRoundSize, mPaint);
         } else if (thumbType == THUMB_CIRCLE) {
-            canvas.drawCircle(mRectF.centerX(), mRectF.centerY(), mThumbHeight / 2, mPaint);
+            canvas.drawCircle(mProgressRectF.centerX(), mProgressRectF.centerY(), mThumbHeight / 2, mPaint);
         }
     }
 
@@ -189,7 +225,7 @@ public class RSeekBar extends View {
 
     private void updateProgress() {
         int left = (int) (getPaddingLeft() + curProgress / 100f * getMaxLength());
-        mRectF.set(left, (getMeasuredHeight() - mThumbHeight) / 2,
+        mProgressRectF.set(left, (getMeasuredHeight() - mThumbHeight) / 2,
                 left + mThumbWidth, getMeasuredHeight() / 2 + mThumbHeight / 2);
     }
 
