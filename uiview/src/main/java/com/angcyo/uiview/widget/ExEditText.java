@@ -611,7 +611,7 @@ public class ExEditText extends AppCompatEditText {
                     } else {
                         maxValue = String.valueOf(Float.valueOf(mMaxNumber).intValue());
                     }
-                    resetSelectionText(maxValue);
+                    resetSelectionText(maxValue, 0);
                     setSelection(maxValue.length());
                 }
 
@@ -620,14 +620,18 @@ public class ExEditText extends AppCompatEditText {
                     String string = String.valueOf(text);
                     int lastIndexOf = string.lastIndexOf(".");
                     if (lastIndexOf != -1 && string.length() - lastIndexOf - 1 > mDecimalCount) {
-                        resetSelectionText(string.substring(0, lastIndexOf + mDecimalCount + 1));
+                        resetSelectionText(string.substring(0, lastIndexOf + mDecimalCount + 1), 0);
                     }
                 }
 
                 //剔除前面的0
                 if (text.length() > 1) {
                     if (text.charAt(0) == '0' && text.charAt(1) != '.') {
-                        resetSelectionText(String.valueOf(text.subSequence(1, text.length())));
+                        resetSelectionText(String.valueOf(text.subSequence(1, text.length())), 0);
+                    }
+                    //如果是小数点开头,补齐0
+                    if (text.charAt(0) == '.') {
+                        resetSelectionText("0" + text, 1);
                     }
                 }
             }
@@ -648,10 +652,10 @@ public class ExEditText extends AppCompatEditText {
         return (getInputType() & EditorInfo.TYPE_NUMBER_FLAG_DECIMAL) == EditorInfo.TYPE_NUMBER_FLAG_DECIMAL;
     }
 
-    private void resetSelectionText(String text) {
+    private void resetSelectionText(String text, int startOffset) {
         int start = getSelectionStart();
         setText(text);
-        setSelection(Math.min(start, text.length()));
+        setSelection(Math.min(start + startOffset, text.length()));
     }
 
     /**
