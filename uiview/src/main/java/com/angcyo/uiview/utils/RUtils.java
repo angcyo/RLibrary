@@ -766,11 +766,7 @@ public class RUtils {
         DownloadManager.Request request = new DownloadManager.Request(uri);  //得到连接请求对象
         request.setAllowedNetworkTypes(DownloadManager.Request.NETWORK_WIFI);   //指定在什么网络下进行下载，这里我指定了WIFI网络
 
-        int indexOf = url.lastIndexOf('/');
-        String fileName = "temp";
-        if (indexOf != -1) {
-            fileName = url.substring(indexOf + 1);
-        }
+        String fileName = getFileNameFromUrl(url);
 
         request.setDestinationInExternalPublicDir(context.getPackageName() + "/download", fileName);  //制定下载文件的保存路径，我这里保存到根目录
         request.setVisibleInDownloadsUi(true);  //设置是否显示在系统的下载界面
@@ -783,6 +779,22 @@ public class RUtils {
         long downLoadId = manager.enqueue(request);   //启动下载,该方法返回系统为当前下载请求分配的一个唯一的ID
 
         return downLoadId;
+    }
+
+    /**
+     * 获取文件名, 在url中
+     */
+    public static String getFileNameFromUrl(String url) {
+        String fileName = "unknown";
+        try {
+            int indexOf = url.lastIndexOf('/');
+            if (indexOf != -1) {
+                fileName = url.substring(indexOf + 1);
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return fileName;
     }
 
     /**
