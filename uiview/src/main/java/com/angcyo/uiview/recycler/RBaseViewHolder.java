@@ -244,22 +244,23 @@ public class RBaseViewHolder extends RecyclerView.ViewHolder {
     public void click(@IdRes int id, int delay, final View.OnClickListener listener) {
         View view = v(id);
         if (view != null) {
-            view.setOnClickListener(new RClickListener(delay) {
-                @Override
-                public void onRClick(View view) {
-                    if (listener != null) {
-                        listener.onClick(view);
+            if (listener instanceof RClickListener) {
+                view.setOnClickListener(listener);
+            } else {
+                view.setOnClickListener(new RClickListener(delay) {
+                    @Override
+                    public void onRClick(View view) {
+                        if (listener != null) {
+                            listener.onClick(view);
+                        }
                     }
-                }
-            });
+                });
+            }
         }
     }
 
     public void delayClick(@IdRes int id, DelayClick listener) {
-        View view = v(id);
-        if (view != null) {
-            view.setOnClickListener(listener);
-        }
+        click(id, listener);
     }
 
     public void text(@IdRes int id, String text, View.OnClickListener listener) {
@@ -267,7 +268,7 @@ public class RBaseViewHolder extends RecyclerView.ViewHolder {
         if (view != null) {
             view.setVisibility(View.VISIBLE);
 
-            view.setOnClickListener(listener);
+            click(id, listener);
 
             if (view instanceof TextView) {
                 ((TextView) view).setText(text);

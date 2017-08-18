@@ -249,6 +249,10 @@ public abstract class UILayoutActivity extends StyleActivity {
         }
     }
 
+    public ILayout getLayout() {
+        return mLayout;
+    }
+
     public boolean isEnableSwipeMenu() {
         return false;
     }
