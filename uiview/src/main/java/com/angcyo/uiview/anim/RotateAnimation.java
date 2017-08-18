@@ -2,8 +2,12 @@ package com.angcyo.uiview.anim;
 
 import android.graphics.Camera;
 import android.graphics.Matrix;
+import android.os.Build;
+import android.text.TextUtils;
 import android.view.animation.Animation;
 import android.view.animation.Transformation;
+
+import com.angcyo.library.utils.L;
 
 /**
  * Y轴旋转动画
@@ -67,6 +71,7 @@ public class RotateAnimation extends Animation {
     @Override
     protected void applyTransformation(float interpolatedTime, Transformation transformation) {
         // interpolatedTime:动画进度值，范围为[0.0f,10.f]
+        L.e("call: applyTransformation-> interpolatedTime:" + interpolatedTime + "\n" + transformation);
         if (listener != null) {
             listener.interpolatedTime(interpolatedTime);
         }
@@ -86,9 +91,14 @@ public class RotateAnimation extends Animation {
         }
         // float depth = 0.0f;
         float depth = (0.5f - Math.abs(interpolatedTime - 0.5f)) * DEPTH_Z;
+        L.e("call: applyTransformation depth:-> " + depth);
         final Matrix matrix = transformation.getMatrix();
         camera.save();
         camera.translate(0.0f, 0.0f, depth);
+        //L.e("call: applyTransformation([interpolatedTime, transformation])-> x:" + camera.getLocationX() + " y:" + camera.getLocationY() + " z:" + camera.getLocationZ());\
+        if (TextUtils.equals(Build.MANUFACTURER, "HUAWEI") && Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP /*华为手机处理圆角, 偶尔会失败.*/) {
+            camera.setLocation(0, 0, -160);
+        }
         camera.rotateY(degree);
         camera.getMatrix(matrix);
         camera.restore();
