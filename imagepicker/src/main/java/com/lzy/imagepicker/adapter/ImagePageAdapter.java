@@ -192,6 +192,7 @@ public class ImagePageAdapter extends PagerAdapter {
                 //加载本地图片
                 displayImage(mActivity, imageItem.path, "no",
                         imageItem.url, photoView, screenWidth, screenHeight);
+                thumbImageView.setVisibility(View.GONE);
                 currentImageView = photoView;
             } else {
                 //加载网络图片

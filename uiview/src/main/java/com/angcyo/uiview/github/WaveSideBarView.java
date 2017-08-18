@@ -188,7 +188,7 @@ public class WaveSideBarView extends View {
         mWidth = getMeasuredWidth();
         mItemHeight = (int) mTextSize + mPadding;
         if (mItemHeight * mLetters.size() > mHeight) {
-            mItemHeight = (mHeight - mPadding) / mLetters.size();
+            mItemHeight = (mHeight - mPadding) / mLetters.size() - 5;// 更改item 大小 ;
         }
         mPosX = mWidth - 1.6f * mTextSize;
     }

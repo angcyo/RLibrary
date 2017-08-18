@@ -69,6 +69,14 @@ public class UILayoutImpl extends SwipeBackLayout implements ILayout<UIParam>, U
     protected ViewPattern mLastShowViewPattern;
     protected boolean isAttachedToWindow = false;
     protected UILayoutActivity mLayoutActivity;
+    /**
+     * 是否正在退出界面
+     */
+    private boolean isFinishing = false;
+    /**
+     * 是否正在启动新界面
+     */
+    private boolean isStarting = false;
     Application.ActivityLifecycleCallbacks mCallbacks = new Application.ActivityLifecycleCallbacks() {
         @Override
         public void onActivityCreated(Activity activity, Bundle savedInstanceState) {
@@ -137,10 +145,6 @@ public class UILayoutImpl extends SwipeBackLayout implements ILayout<UIParam>, U
             }
         }
     };
-    /**
-     * 是否正在退出
-     */
-    private boolean isFinishing = false;
     /**
      * 已经按下返回键
      */
@@ -423,11 +427,13 @@ public class UILayoutImpl extends SwipeBackLayout implements ILayout<UIParam>, U
         if (checkInterrupt(iView)) return;
 
         final ViewPattern oldViewPattern = getLastViewPattern();
+        isStarting = true;
 
         if (param.start_mode == UIParam.SINGLE_TOP) {
             if (oldViewPattern != null && oldViewPattern.mIView == iView) {
                 //如果已经是最前显示, 调用onViewShow方法
                 oldViewPattern.mIView.onViewShow(param.mBundle);
+                isStarting = false;
             } else {
                 ViewPattern viewPatternByIView = findViewPatternByClass(iView.getClass());
                 if (viewPatternByIView == null) {
@@ -824,6 +830,7 @@ public class UILayoutImpl extends SwipeBackLayout implements ILayout<UIParam>, U
             }
         };
 
+        isStarting = true;
         if (mLastShowViewPattern.mIView.isDialog()) {
             startDialogAnim(mLastShowViewPattern, param.mAnim ? mLastShowViewPattern.mIView.loadShowAnimation() : null, endRunnable);
         } else {
@@ -987,6 +994,7 @@ public class UILayoutImpl extends SwipeBackLayout implements ILayout<UIParam>, U
             }
         };
 
+        isStarting = true;
         if (param.mAsync) {
             post(runnable);
         } else {
@@ -1257,6 +1265,7 @@ public class UILayoutImpl extends SwipeBackLayout implements ILayout<UIParam>, U
     }
 
     private void viewShow(final ViewPattern viewPattern, final Bundle bundle) {
+        isStarting = false;
         if (viewPattern == null ||
                 viewPattern.mIView.getIViewShowState() == IView.IViewShowState.STATE_VIEW_SHOW) {
             return;
@@ -1268,6 +1277,7 @@ public class UILayoutImpl extends SwipeBackLayout implements ILayout<UIParam>, U
     }
 
     private void viewReShow(final ViewPattern viewPattern, final Bundle bundle) {
+        isStarting = false;
         saveToSDCard(viewPattern.mIView.getClass().getSimpleName() + " onViewReShow()" + bundle);
         viewPattern.mIView.onViewReShow(bundle);
     }
@@ -1888,6 +1898,14 @@ public class UILayoutImpl extends SwipeBackLayout implements ILayout<UIParam>, U
     public boolean onTouchEvent(MotionEvent event) {
         super.onTouchEvent(event);
         return true;
+    }
+
+    @Override
+    public boolean onInterceptTouchEvent(MotionEvent ev) {
+        if (isFinishing || isStarting) {
+            return true;
+        }
+        return super.onInterceptTouchEvent(ev);
     }
 
     @Override

@@ -219,7 +219,7 @@ public class ImageUtil {
     }
 
     public static int getImageMinEdge() {
-        return (int) (76.0 * 2 / 320.0 * ScreenUtil.screenWidth);
+        return (int) (76.0  / 320.0 * ScreenUtil.screenWidth);
     }
 
     public static ImageSize getThumbnailDisplaySize(float srcWidth, float srcHeight) {

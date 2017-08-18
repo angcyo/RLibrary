@@ -5,7 +5,9 @@ import android.content.res.TypedArray;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
+import android.graphics.Rect;
 import android.graphics.RectF;
+import android.graphics.Region;
 import android.support.v4.view.MotionEventCompat;
 import android.util.AttributeSet;
 import android.view.MotionEvent;
@@ -74,6 +76,10 @@ public class RSeekBar extends View {
     int secondProgress = 0;
 
     int secondProgressColor;
+
+    int maxProgress = 100;
+    boolean isTouchDown = false;
+    Rect clipBounds = new Rect();
 
     Set<OnProgressChangeListener> mOnProgressChangeListeners = new HashSet<>();
     private float mDensity;
@@ -147,7 +153,7 @@ public class RSeekBar extends View {
     protected void onAttachedToWindow() {
         super.onAttachedToWindow();
         if (curProgress != 0) {
-            notifyListener();
+            notifyListenerProgress(false);
         }
     }
 
@@ -176,6 +182,7 @@ public class RSeekBar extends View {
 //            return;
 //        }
         //绘制轨道背景
+        canvas.save();
         mPaint.setColor(mTrackBgColor);
         int trackLeft = getPaddingLeft();
         int trackTop = (getMeasuredHeight() - mTrackHeight) / 2;
@@ -183,37 +190,54 @@ public class RSeekBar extends View {
         int trackBottom = getMeasuredHeight() / 2 + mTrackHeight / 2;
         mTrackRectF.set(trackLeft, trackTop, trackRight, trackBottom);
         canvas.drawRoundRect(mTrackRectF, mTrackRadius, mTrackRadius, mPaint);
+        canvas.restore();
 
         //第二进度
         if (secondProgress > 0) {
+            canvas.save();
             mPaint.setColor(secondProgressColor);
             if (thumbType == THUMB_DEFAULT) {
-                mTrackRectF.set(trackLeft, trackTop, trackLeft + secondProgress / 100f * getMaxLength() + mThumbWidth / 2, trackBottom);
-                canvas.drawRoundRect(mTrackRectF, mTrackRadius, mTrackRadius, mPaint);
+                mTrackRectF.set(trackLeft, trackTop, trackLeft + secondProgress / getMaxProgress() * getMaxLength() + mThumbWidth / 2, trackBottom);
             } else if (thumbType == THUMB_CIRCLE) {
-                mTrackRectF.set(trackLeft, trackTop, trackLeft + secondProgress / 100f * getMaxLength() + mThumbRadius / 2, trackBottom);
-                canvas.drawRoundRect(mTrackRectF, mTrackRadius, mTrackRadius, mPaint);
+                mTrackRectF.set(trackLeft, trackTop, trackLeft + secondProgress / getMaxProgress() * getMaxLength() + mThumbRadius / 2, trackBottom);
             }
+            canvas.drawRoundRect(mTrackRectF, mTrackRadius, mTrackRadius, mPaint);
+            canvas.restore();
         }
 
         //绘制轨道
+        canvas.save();
         mPaint.setColor(mTrackColor);
         if (thumbType == THUMB_DEFAULT) {
-            mTrackRectF.set(trackLeft, trackTop, trackLeft + curProgress / 100f * getMaxLength() + mThumbWidth / 2, trackBottom);
-            canvas.drawRoundRect(mTrackRectF, mTrackRadius, mTrackRadius, mPaint);
+            mTrackRectF.set(trackLeft, trackTop, trackLeft + curProgress / getMaxProgress() * getMaxLength() + mThumbWidth / 2, trackBottom);
         } else if (thumbType == THUMB_CIRCLE) {
-            mTrackRectF.set(trackLeft, trackTop, trackLeft + curProgress / 100f * getMaxLength() + mThumbRadius / 2, trackBottom);
-            canvas.drawRoundRect(mTrackRectF, mTrackRadius, mTrackRadius, mPaint);
+            mTrackRectF.set(trackLeft, trackTop, trackLeft + curProgress / getMaxProgress() * getMaxLength() + mThumbRadius / 2, trackBottom);
         }
+        canvas.drawRoundRect(mTrackRectF, mTrackRadius, mTrackRadius, mPaint);
+        canvas.restore();
 
         //绘制浮子
-        mPaint.setColor(mThumbColor);
         updateProgress();
+        //浮子外圈, 在touch状态下绘制
+        if (isTouchDown && thumbType == THUMB_CIRCLE) {
+            canvas.save();
+            canvas.getClipBounds(clipBounds);
+            clipBounds.inset(0, -mThumbRoundSize / 2);
+            canvas.clipRect(clipBounds, Region.Op.UNION);
+            mPaint.setColor(secondProgressColor);
+            canvas.drawCircle(mProgressRectF.centerX(), mProgressRectF.centerY(),
+                    mThumbRoundSize + mThumbRoundSize / 2, mPaint);
+            canvas.restore();
+        }
+        //浮子
+        canvas.save();
+        mPaint.setColor(mThumbColor);
         if (thumbType == THUMB_DEFAULT) {
             canvas.drawRoundRect(mProgressRectF, mThumbRoundSize, mThumbRoundSize, mPaint);
         } else if (thumbType == THUMB_CIRCLE) {
             canvas.drawCircle(mProgressRectF.centerX(), mProgressRectF.centerY(), mThumbHeight / 2, mPaint);
         }
+        canvas.restore();
     }
 
     /**
@@ -224,9 +248,17 @@ public class RSeekBar extends View {
     }
 
     private void updateProgress() {
-        int left = (int) (getPaddingLeft() + curProgress / 100f * getMaxLength());
+        int left = (int) (getPaddingLeft() + curProgress / getMaxProgress() * getMaxLength());
         mProgressRectF.set(left, (getMeasuredHeight() - mThumbHeight) / 2,
                 left + mThumbWidth, getMeasuredHeight() / 2 + mThumbHeight / 2);
+    }
+
+    public float getMaxProgress() {
+        return maxProgress * 1f;
+    }
+
+    public void setMaxProgress(int maxProgress) {
+        this.maxProgress = maxProgress;
     }
 
     @Override
@@ -237,6 +269,8 @@ public class RSeekBar extends View {
         switch (action) {
             case MotionEvent.ACTION_DOWN:
                 //L.e("call: onTouchEvent([event])-> DOWN:" + " x:" + eventX);
+                isTouchDown = true;
+                notifyListenerStartTouch();
                 calcProgress(eventX);
                 getParent().requestDisallowInterceptTouchEvent(true);
                 break;
@@ -245,6 +279,8 @@ public class RSeekBar extends View {
                 break;
             case MotionEvent.ACTION_UP:
             case MotionEvent.ACTION_CANCEL:
+                isTouchDown = false;
+                notifyListenerStopTouch();
                 getParent().requestDisallowInterceptTouchEvent(false);
                 break;
         }
@@ -257,21 +293,33 @@ public class RSeekBar extends View {
     private void calcProgress(float touchX) {
         float x = touchX - getPaddingLeft() - mThumbWidth / 2;
         int old = this.curProgress;
-        this.curProgress = ensureProgress((int) (x / getMaxLength() * 100));
+        this.curProgress = ensureProgress((int) (x / getMaxLength() * maxProgress));
         if (old != curProgress) {
-            notifyListener();
+            notifyListenerProgress(true);
         }
         postInvalidate();
     }
 
-    private void notifyListener() {
+    private void notifyListenerProgress(boolean fromTouch) {
         for (OnProgressChangeListener listener : mOnProgressChangeListeners) {
-            listener.onProgress(curProgress);
+            listener.onProgress(curProgress, fromTouch);
+        }
+    }
+
+    private void notifyListenerStartTouch() {
+        for (OnProgressChangeListener listener : mOnProgressChangeListeners) {
+            listener.onStartTouch();
+        }
+    }
+
+    private void notifyListenerStopTouch() {
+        for (OnProgressChangeListener listener : mOnProgressChangeListeners) {
+            listener.onStopTouch();
         }
     }
 
     private int ensureProgress(int progress) {
-        return Math.max(0, Math.min(100, progress));
+        return Math.max(0, Math.min(maxProgress, progress));
     }
 
     public void addOnProgressChangeListener(OnProgressChangeListener listener) {
@@ -287,13 +335,38 @@ public class RSeekBar extends View {
     }
 
     public void setCurProgress(int curProgress) {
-        this.curProgress = curProgress;
+        this.curProgress = Math.min(curProgress, maxProgress);
         postInvalidate();
-        notifyListener();
+        notifyListenerProgress(false);
+    }
+
+    public void setSecondProgress(int secondProgress) {
+        this.secondProgress = Math.min(secondProgress, maxProgress);
+        postInvalidate();
+    }
+
+    public void setTrackBgColor(int trackBgColor) {
+        mTrackBgColor = trackBgColor;
+    }
+
+    public void setTrackColor(int trackColor) {
+        mTrackColor = trackColor;
+    }
+
+    public void setThumbColor(int thumbColor) {
+        mThumbColor = thumbColor;
+    }
+
+    public void setSecondProgressColor(int secondProgressColor) {
+        this.secondProgressColor = secondProgressColor;
     }
 
     public interface OnProgressChangeListener {
-        void onProgress(int progress);
+        void onProgress(int progress, boolean fromTouch);
+
+        void onStartTouch();
+
+        void onStopTouch();
     }
 
 }
