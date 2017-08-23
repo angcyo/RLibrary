@@ -24,7 +24,7 @@ import com.angcyo.uiview.skin.SkinHelper
 class RadarScanExView(context: Context, attributeSet: AttributeSet? = null) : View(context, attributeSet),
         Choreographer.FrameCallback {
     override fun doFrame(frameTimeNanos: Long) {
-        sweepAngle++
+        sweepAngle += 3 //控制扫描速度
 
         mChoreographer.postFrameCallback(this)
     }

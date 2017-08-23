@@ -35,4 +35,16 @@ public class Spm {
         }
         return builder.toString().replaceAll("=", "-").replaceAll("\\n", "");
     }
+
+    public static String decode(String result) {
+
+        try {
+            byte[] decode = Base64Utils.decode(result);
+            String value = new String(decode,"UTF-8");
+            return value;
+        } catch (Exception e) {
+            e.printStackTrace();
+            return "";
+        }
+    }
 }

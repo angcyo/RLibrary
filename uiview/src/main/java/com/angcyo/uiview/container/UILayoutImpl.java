@@ -745,6 +745,7 @@ public class UILayoutImpl extends SwipeBackLayout implements ILayout<UIParam>, U
         isBackPress = false;
         isFinishing = false;
         isSwipeDrag = false;
+        isStarting = false;
     }
 
     @Override
@@ -1065,6 +1066,7 @@ public class UILayoutImpl extends SwipeBackLayout implements ILayout<UIParam>, U
                 L.i(topViewPattern.mIView.getClass().getSimpleName() + " 启动完毕.");
                 viewShow(topViewPattern, param.mBundle);
                 topViewPattern.isAnimToStart = false;
+                isStarting = false;
                 printLog();
             }
         };
@@ -1998,6 +2000,7 @@ public class UILayoutImpl extends SwipeBackLayout implements ILayout<UIParam>, U
         } else {
             needDragClose = true;
             mLastShowViewPattern.mView.setVisibility(GONE);
+            mLastShowViewPattern.mView.setAlpha(0f);
             finishIView(mLastShowViewPattern.mIView, new UIParam(false, true, false));
         }
         printLog();
