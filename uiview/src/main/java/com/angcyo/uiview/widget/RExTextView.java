@@ -30,6 +30,7 @@ import android.widget.TextView;
 
 import com.angcyo.library.utils.L;
 import com.angcyo.uiview.R;
+import com.angcyo.uiview.kotlin.ExKt;
 import com.angcyo.uiview.skin.SkinHelper;
 import com.angcyo.uiview.utils.RTextPaint;
 
@@ -540,9 +541,9 @@ public class RExTextView extends RTextView {
             Drawable drawable = new ColorDrawable(Color.WHITE);
             TextPaint textPaint = new TextPaint(Paint.ANTI_ALIAS_FLAG);
             textPaint.setTextSize(textSize);
-            int textHeight = (int) (textPaint.descent());// - textPaint.ascent());//(int) RTextPaint.getTextHeight(textPaint);
+            //int textHeight = (int) (textPaint.descent());// - textPaint.ascent());//(int) RTextPaint.getTextHeight(textPaint);
             //drawable.setBounds(0, 0, 1, textHeight);
-            drawable.setBounds(0, 0, 0, 0);
+            drawable.setBounds(0, 0, 0, (int) -textPaint.ascent() /*(int) ExKt.textHeight(textPaint)*/);
             return drawable;
         }
 
@@ -729,7 +730,7 @@ public class RExTextView extends RTextView {
                 return tempRect;
             }
             //paint.getTextBounds(text, 0, text.length(), tempRect);
-            tempRect.set(0, 0, (int) paint.measureText(text), 0);
+            tempRect.set(0, 0, (int) paint.measureText(text), (int) ExKt.textHeight(paint));
             return tempRect;
         }
 

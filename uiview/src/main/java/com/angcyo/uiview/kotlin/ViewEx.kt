@@ -45,7 +45,7 @@ public fun TextView.getDrawCenterTextCy(): Float {
 }
 
 /**文本的高度*/
-public fun View.textHeight(paint: Paint): Float {
+public fun <T> T.textHeight(paint: Paint): Float {
     return paint.descent() - paint.ascent()
 }
 

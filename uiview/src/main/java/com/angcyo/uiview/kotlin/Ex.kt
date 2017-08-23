@@ -1,5 +1,7 @@
 package com.angcyo.uiview.kotlin
 
+import android.graphics.Paint
+
 /**
  * Copyright (C) 2016,深圳市红鸟网络科技股份有限公司 All rights reserved.
  * 项目名称：
@@ -14,3 +16,8 @@ package com.angcyo.uiview.kotlin
 
 /**整型数中, 是否包含另一个整数*/
 public fun Int.have(value: Int): Boolean = value != 0 && this and value == value
+
+/**文本的高度*/
+public fun Paint.textHeight(): Float {
+    return descent() - ascent()
+}
