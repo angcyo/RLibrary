@@ -695,6 +695,10 @@ public class RUtils {
     }
 
     public static String getShortString(String number, String suffix) {
+        return getShortString(number, suffix, false);
+    }
+
+    public static String getShortString(String number, String suffix, boolean needDecimal) {
         if (TextUtils.isEmpty(number)) {
             return "";
         }
@@ -704,10 +708,25 @@ public class RUtils {
         int decimal = 0;
         if (number.length() > 7) {
             unit = "千万";
-            num = number.substring(0, number.length() - 7);
+
+            int end = number.length() - 7;
+            num = number.substring(0, end);
+
+            if (num.length() >= 4) {
+                decimal = Integer.parseInt(number.substring(end, end + 1));
+            } else {
+                decimal = Integer.parseInt(number.substring(end, end + 2));
+            }
         } else if (number.length() > 4) {
             unit = "万";
-            num = number.substring(0, number.length() - 4);
+
+            int end = number.length() - 4;
+            num = number.substring(0, end);
+            if (num.length() >= 4) {
+                decimal = Integer.parseInt(number.substring(end, end + 1));
+            } else {
+                decimal = Integer.parseInt(number.substring(end, end + 2));
+            }
         } else {
             unit = "";
             num = number;
@@ -743,6 +762,9 @@ public class RUtils {
 //        }
 
         StringBuilder builder = new StringBuilder();
+        if (needDecimal && decimal > 0) {
+            num = num + "." + decimal;
+        }
         builder.append(num);
         builder.append(unit);
         builder.append(suffix);
