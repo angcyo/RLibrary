@@ -65,7 +65,7 @@ public class SimpleProgressBar extends View {
 
         mProgressWidth = (int) (getDensity() * 3);
         mProgressBgColor = Color.parseColor("#40000000");
-        mProgressTextSize = 12 * getResources().getDisplayMetrics().scaledDensity;
+        mProgressTextSize = 12 * getResources().getDisplayMetrics().density;
 
         mProgressTextColor = Color.WHITE;
 

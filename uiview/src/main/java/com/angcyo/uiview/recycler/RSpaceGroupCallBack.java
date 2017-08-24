@@ -32,7 +32,7 @@ public abstract class RSpaceGroupCallBack implements RGroupItemDecoration.GroupC
     public RSpaceGroupCallBack(RecyclerView recyclerView) {
         mRecyclerView = recyclerView;
         paint = new TextPaint(Paint.ANTI_ALIAS_FLAG);
-        paint.setTextSize(mRecyclerView.getResources().getDisplayMetrics().scaledDensity * 20);
+        paint.setTextSize(mRecyclerView.getResources().getDisplayMetrics().density * 20);
         mRectF = new RectF();
         mRect = new Rect();
         mBackgroundColor = Color.parseColor("#969696");

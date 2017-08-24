@@ -83,7 +83,7 @@ public class JumpAdProgressBar extends View {
         //drawText = "跳过";
 
         mPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
-        mPaint.setTextSize(14 * getResources().getDisplayMetrics().scaledDensity);
+        mPaint.setTextSize(14 * getResources().getDisplayMetrics().density);
         mPaint.setStrokeCap(Paint.Cap.ROUND);
         mPaint.setAntiAlias(true);
         mPaint.setStyle(Paint.Style.STROKE);

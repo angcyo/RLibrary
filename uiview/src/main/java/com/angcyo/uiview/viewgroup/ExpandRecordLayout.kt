@@ -16,7 +16,6 @@ import android.widget.OverScroller
 import com.angcyo.library.utils.L
 import com.angcyo.uiview.R
 import com.angcyo.uiview.kotlin.density
-import com.angcyo.uiview.kotlin.scaledDensity
 import com.angcyo.uiview.skin.SkinHelper
 
 /**
@@ -94,7 +93,7 @@ class ExpandRecordLayout(context: Context, attributeSet: AttributeSet? = null) :
         val p = Paint(Paint.ANTI_ALIAS_FLAG)
         p.strokeCap = Paint.Cap.BUTT
         p.strokeJoin = Paint.Join.ROUND
-        p.textSize = 14 * scaledDensity
+        p.textSize = 14 * density
         p
     }
 
@@ -205,7 +204,7 @@ class ExpandRecordLayout(context: Context, attributeSet: AttributeSet? = null) :
         super.onLayout(changed, left, top, right, bottom)
 
         var height: Int = 0
-        (0..childCount - 1).map {
+        (0 until childCount).map {
             height += getChildAt(it).measuredHeight
         }
         childHeight = height
@@ -419,13 +418,20 @@ class ExpandRecordLayout(context: Context, attributeSet: AttributeSet? = null) :
 
     override fun scrollTo(x: Int, y: Int) {
         super.scrollTo(x, y)
-
-        if (y == 0) {
-            state = STATE_EXPAND
-        } else if (y == -childHeight) {
-            state = STATE_CLOSE
-        } else {
-            state = STATE_SCROLL_ING
+        state = when (y) {
+            0 -> {
+                if (visibility == View.INVISIBLE) {
+                    visibility = View.VISIBLE
+                }
+                STATE_EXPAND
+            }
+            -childHeight -> {
+                if (visibility == View.INVISIBLE) {
+                    visibility = View.VISIBLE
+                }
+                STATE_CLOSE
+            }
+            else -> STATE_SCROLL_ING
         }
     }
 
@@ -435,9 +441,7 @@ class ExpandRecordLayout(context: Context, attributeSet: AttributeSet? = null) :
         postInvalidate()
     }
 
-
     fun expandLayout(expand: Boolean) {
-
         if (state == STATE_SCROLL_ING) {
             return
         }

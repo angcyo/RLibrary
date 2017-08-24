@@ -60,7 +60,7 @@ class ImageTextView(context: Context, attributeSet: AttributeSet? = null) : View
 
         val typedArray = context.obtainStyledAttributes(attributeSet, R.styleable.ImageTextView)
         showText = typedArray.getString(R.styleable.ImageTextView_r_show_text)
-        showTextSize = typedArray.getDimensionPixelOffset(R.styleable.ImageTextView_r_show_text_size, (showTextSize * scaledDensity).toInt())
+        showTextSize = typedArray.getDimensionPixelOffset(R.styleable.ImageTextView_r_show_text_size, (showTextSize * density).toInt())
         textOffset = typedArray.getDimensionPixelOffset(R.styleable.ImageTextView_r_text_offset, 0)
         imageSize = typedArray.getDimensionPixelOffset(R.styleable.ImageTextView_r_image_size, (30 * density).toInt())
         textShowColor = typedArray.getColor(R.styleable.ImageTextView_r_show_text_color, textShowColor)

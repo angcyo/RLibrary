@@ -64,7 +64,7 @@ open class SexView(context: Context, attributeSet: AttributeSet? = null) : View(
     private val paint: Paint by lazy {
         val p = Paint(Paint.ANTI_ALIAS_FLAG)
         p.color = Color.WHITE
-        p.textSize = 9f * scaledDensity
+        p.textSize = 9f * density
         p
     }
 

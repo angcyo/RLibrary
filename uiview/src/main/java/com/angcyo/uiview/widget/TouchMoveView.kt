@@ -18,6 +18,7 @@ import android.view.MotionEvent.*
 import android.view.View
 import android.view.animation.LinearInterpolator
 import com.angcyo.uiview.R
+import com.angcyo.uiview.kotlin.scaledDensity
 import kotlin.properties.ReadOnlyProperty
 import kotlin.properties.ReadWriteProperty
 import kotlin.reflect.KProperty
@@ -36,10 +37,9 @@ import kotlin.reflect.KProperty
 class TouchMoveView : View {
 
     val mPaint: TextPaint by lazy {
-        TextPaint(Paint.ANTI_ALIAS_FLAG).apply { textSize = mShowTextSize * scaledDensity }
+        TextPaint(Paint.ANTI_ALIAS_FLAG).apply { textSize = mShowTextSize * density }
     }
 
-    val scaledDensity: Float by lazy { resources.displayMetrics.scaledDensity }
     val density: Float by lazy { resources.displayMetrics.density }
 
     /**需要绘制显示的文本*/
@@ -176,7 +176,7 @@ class TouchMoveView : View {
         val typedArray = context.obtainStyledAttributes(attr, R.styleable.TouchMoveView)
         textSelected = typedArray.getString(R.styleable.TouchMoveView_r_text_selected)
         textNormal = typedArray.getString(R.styleable.TouchMoveView_r_text_normal)
-        mShowTextSize = typedArray.getDimension(R.styleable.TouchMoveView_r_show_text_size, mShowTextSize * scaledDensity)
+        mShowTextSize = typedArray.getDimension(R.styleable.TouchMoveView_r_show_text_size, mShowTextSize * density)
 
         mTextColorNormal = typedArray.getColor(R.styleable.TouchMoveView_r_text_color_normal, mTextColorNormal)
         mTextColorSelected = typedArray.getColor(R.styleable.TouchMoveView_r_text_color_selected, mTextColorSelected)
@@ -389,7 +389,7 @@ class TouchMoveView : View {
                 redDotDrawable.draw(canvas)
             }
             noReadNum in 1..99 -> {
-                mPaint.textSize = 9 * scaledDensity
+                mPaint.textSize = 9 * density
                 val string = noReadNum.toString()
                 val paddingTop = 2 * density
                 val paddingLeft = 2 * paddingTop
