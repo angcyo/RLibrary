@@ -793,14 +793,18 @@ public abstract class UIIViewImpl implements IView {
     }
 
     public void click(@IdRes int id, final View.OnClickListener listener) {
-        v(id).setOnClickListener(new RClickListener(DEFAULT_CLICK_DELAY_TIME) {
-            @Override
-            public void onRClick(View view) {
-                if (listener != null) {
-                    listener.onClick(view);
+        if (listener instanceof RClickListener) {
+            v(id).setOnClickListener(listener);
+        } else {
+            v(id).setOnClickListener(new RClickListener(DEFAULT_CLICK_DELAY_TIME) {
+                @Override
+                public void onRClick(View view) {
+                    if (listener != null) {
+                        listener.onClick(view);
+                    }
                 }
-            }
-        });
+            });
+        }
     }
 
     public void setChildILayout(ILayout childILayout) {

@@ -33,7 +33,7 @@
             android:paddingLeft="8dp"
             android:text="原图(3.07M)"
             android:textColor="#FFF"
-            android:textSize="16dp"/>
+            android:textSize="14dp"/>
 
         <com.lzy.imagepicker.view.SuperCheckBox
             android:id="@+id/cb_check"
@@ -48,6 +48,6 @@
             android:paddingLeft="8dp"
             android:text="选择"
             android:textColor="#ffffff"
-            android:textSize="16dp"/>
+            android:textSize="14dp"/>
     </RelativeLayout>
 </RelativeLayout>

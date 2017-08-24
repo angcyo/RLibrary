@@ -25,6 +25,7 @@
         <item name="android:layout_width">wrap_content</item>
         <item name="android:layout_height">wrap_content</item>
         <item name="android:gravity">center</item>
+        <item name="android:textSize">@dimen/default_text_size</item>
     </style>
 
     <style name="BaseDialogTextStyle" parent="BaseDialogBaseTextStyle">
@@ -65,6 +66,7 @@
         <item name="android:layout_width">0dp</item>
         <item name="android:layout_height">wrap_content</item>
         <item name="android:textAllCaps">false</item>
+        <item name="android:textSize">@dimen/default_text_size</item>
     </style>
 
     <style name="BaseAvgHStyleM" parent="BaseAvgHStyle">
@@ -80,6 +82,7 @@
         <item name="android:clickable">true</item>
         <item name="android:textColor">@color/base_text_color_selector_color</item>
         <item name="android:background">@drawable/base_bg_selector</item>
+        <item name="android:textSize">@dimen/default_text_size</item>
     </style>
 
     <!--标准的Item Info 样式-->
