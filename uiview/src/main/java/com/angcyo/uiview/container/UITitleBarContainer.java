@@ -11,6 +11,7 @@ import android.support.annotation.ColorInt;
 import android.support.v4.view.ViewCompat;
 import android.text.TextUtils;
 import android.util.AttributeSet;
+import android.util.TypedValue;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
@@ -365,6 +366,7 @@ public class UITitleBarContainer extends FrameLayout {
     private TextView createTextItem(String text, @ColorInt int color, OnClickListener listener) {
         TextView item = new TextView(getContext());
         item.setText(text);
+        item.setTextSize(TypedValue.COMPLEX_UNIT_PX, getResources().getDimensionPixelOffset(R.dimen.base_title_size));
         item.setTextColor(color == -1 ? Color.WHITE : color);
         item.setGravity(Gravity.CENTER);
         item.setBackgroundResource(R.drawable.base_bg2_selector);

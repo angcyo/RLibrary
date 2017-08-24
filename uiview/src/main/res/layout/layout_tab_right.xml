@@ -26,6 +26,7 @@
             android:id="@+id/tv_tab_title"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:textSize="@dimen/default_text_little_size"
             android:maxLines="1"
             android:singleLine="true"/>
 
@@ -44,7 +45,7 @@
         android:layout_toRightOf="@+id/ll_tap"
         android:gravity="center"
         android:textColor="#ffffff"
-        android:textSize="11.5sp"
+        android:textSize="11.5dp"
         android:visibility="gone"
         mv:mv_backgroundColor="#FD481F"
         mv:mv_isRadiusHalfHeight="true"

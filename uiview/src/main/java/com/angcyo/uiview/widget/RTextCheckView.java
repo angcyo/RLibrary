@@ -4,6 +4,7 @@ import android.content.Context;
 import android.graphics.Color;
 import android.support.v7.widget.AppCompatTextView;
 import android.util.AttributeSet;
+import android.util.TypedValue;
 import android.view.Gravity;
 import android.view.View;
 
@@ -36,6 +37,10 @@ public class RTextCheckView extends AppCompatTextView implements View.OnClickLis
     private void initView() {
         super.setOnClickListener(this);
         setGravity(Gravity.CENTER);
+
+        if (!isInEditMode()) {
+            setTextSize(TypedValue.COMPLEX_UNIT_PX, SkinHelper.getSkin().getMainTextSize());
+        }
 
         if (getTag() == null) {
             float density = getResources().getDisplayMetrics().density;

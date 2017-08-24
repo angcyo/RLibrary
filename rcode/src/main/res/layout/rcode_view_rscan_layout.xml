@@ -21,6 +21,6 @@
         android:layout_marginTop="100dp"
         android:text="将二维码放入框内，即可自动扫描"
         android:textColor="@android:color/white"
-        android:textSize="20sp"/>
+        android:textSize="20dp"/>
 
 </FrameLayout>

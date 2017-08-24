@@ -54,4 +54,28 @@ public interface ISkin {
      * 圆角带Mask
      */
     Drawable getThemeMaskBackgroundRoundSelector(int pressColor);
+
+    //2017-8-24 添加对字体的支持
+
+    /**
+     * 获取主要主字体大小
+     *
+     * @return 返回计算后的字体大小, {@link android.widget.TextView#setTextSize(int, float)} 时,请使用 {@link android.util.TypedValue#COMPLEX_UNIT_PX}
+     */
+    float getMainTextSize();
+
+    /**
+     * 获取次要字体大小
+     *
+     * @return 返回计算后的字体大小, {@link android.widget.TextView#setTextSize(int, float)} 时,请使用 {@link android.util.TypedValue#COMPLEX_UNIT_PX}
+     */
+    float getSubTextSize();
+
+    /**
+     * 获取字体大小
+     *
+     * @param sizePx 单位px
+     * @return 返回计算后的字体大小, {@link android.widget.TextView#setTextSize(int, float)} 时,请使用 {@link android.util.TypedValue#COMPLEX_UNIT_PX}
+     */
+    float getTextSize(float sizePx);
 }

@@ -3,8 +3,8 @@
     xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:clipChildren="false"
     android:background="@drawable/base_main_color_bg_selector"
+    android:clipChildren="false"
     android:clipToPadding="false">
 
     <LinearLayout
@@ -27,7 +27,8 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:maxLines="1"
-            android:singleLine="true"/>
+            android:singleLine="true"
+            android:textSize="@dimen/default_text_little_size"/>
 
         <com.angcyo.uiview.github.tablayout.ScaleAnimImageView
             android:id="@+id/iv_tab_icon"
@@ -37,14 +38,14 @@
     </LinearLayout>
 
     <com.angcyo.uiview.github.tablayout.MsgView
-        android:id="@+id/rtv_msg_tip"
         xmlns:mv="http://schemas.android.com/apk/res-auto"
+        android:id="@+id/rtv_msg_tip"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_toRightOf="@+id/ll_tap"
         android:gravity="center"
         android:textColor="#ffffff"
-        android:textSize="11.5sp"
+        android:textSize="11.5dp"
         android:visibility="gone"
         mv:mv_backgroundColor="#FD481F"
         mv:mv_isRadiusHalfHeight="true"

@@ -10,7 +10,7 @@
         android:layout_centerVertical="true"
         android:layout_marginStart="16dp"
         android:text="@string/my_channel"
-        android:textSize="16sp"/>
+        android:textSize="16dp"/>
 
     <TextView
         android:layout_width="wrap_content"
@@ -20,7 +20,7 @@
         android:layout_toEndOf="@id/tv"
         android:text="@string/tip_drag"
         android:textColor="@color/base_text_color_dark"
-        android:textSize="12sp"/>
+        android:textSize="12dp"/>
 
     <TextView
         android:id="@+id/tv_btn_edit"
@@ -33,6 +33,6 @@
         android:gravity="center"
         android:text="@string/base_edit"
         android:textColor="#ef4836"
-        android:textSize="13sp"/>
+        android:textSize="13dp"/>
 
 </RelativeLayout>

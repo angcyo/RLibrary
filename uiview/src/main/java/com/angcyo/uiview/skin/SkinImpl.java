@@ -7,6 +7,7 @@ import android.os.Build;
 import com.angcyo.uiview.R;
 import com.angcyo.uiview.RApplication;
 import com.angcyo.uiview.resources.ResUtil;
+import com.angcyo.uiview.utils.ScreenUtil;
 
 /**
  * Copyright (C) 2016,深圳市红鸟网络科技股份有限公司 All rights reserved.
@@ -20,6 +21,9 @@ import com.angcyo.uiview.resources.ResUtil;
  * Version: 1.0.0
  */
 public class SkinImpl implements ISkin {
+
+    public static final int DEFAULT_TEXT_SIZE_OFFSET = 2;
+
     @Override
     public String skinName() {
         return "Default";
@@ -93,5 +97,38 @@ public class SkinImpl implements ISkin {
                         .getDimensionPixelOffset(R.dimen.base_round_little_radius),
                 Color.WHITE, pressColor, getThemeSubColor()
         );
+    }
+
+    /**
+     * 0dpi ~ 120dpi	ldpi
+     * 120dpi ~ 160dpi	mdpi
+     * 160dpi ~ 240dpi	hdpi
+     * 240dpi ~ 320dpi	xhdpi
+     * 320dpi ~ 480dpi	xxhdpi
+     * 480dpi ~ 640dpi	xxxhdpi
+     */
+    @Override
+    public float getMainTextSize() {
+        return getTextSize(14);
+    }
+
+    @Override
+    public float getSubTextSize() {
+        return getTextSize(12);
+    }
+
+    @Override
+    public float getTextSize(float sizePx) {
+        float size;
+        if (ScreenUtil.densityDpi >= 320) {
+            //xxhdpi
+            size = ScreenUtil.density * (sizePx + DEFAULT_TEXT_SIZE_OFFSET);
+        } else if (ScreenUtil.densityDpi >= 240) {
+            //xhdpi
+            size = ScreenUtil.density * sizePx;
+        } else {
+            size = ScreenUtil.density * (sizePx - DEFAULT_TEXT_SIZE_OFFSET);
+        }
+        return size;
     }
 }

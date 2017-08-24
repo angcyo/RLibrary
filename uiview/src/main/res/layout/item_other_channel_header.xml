@@ -10,5 +10,5 @@
         android:layout_centerVertical="true"
         android:layout_marginStart="16dp"
         android:text="@string/other_channel"
-        android:textSize="16sp"/>
+        android:textSize="16dp"/>
 </RelativeLayout>

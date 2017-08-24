@@ -11,7 +11,6 @@ import android.view.MotionEvent
 import android.view.View
 import com.angcyo.uiview.R
 import com.angcyo.uiview.kotlin.density
-import com.angcyo.uiview.kotlin.scaledDensity
 import com.angcyo.uiview.kotlin.textHeight
 import com.angcyo.uiview.kotlin.textWidth
 import com.angcyo.uiview.skin.SkinHelper
@@ -50,7 +49,7 @@ open class RRangeBar(context: Context, attributeSet: AttributeSet? = null) : Vie
     var progressColor: Int = Color.parseColor("#0BD1A0")
     var textColor: Int = Color.parseColor("#0BD1A0")
 
-    var textSize: Float = 12f * scaledDensity
+    var textSize: Float = 12f * density
     var textOffset: Int = 2 * density.toInt()
 
     var currentMinValue: Int = 0

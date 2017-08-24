@@ -350,13 +350,21 @@ public class RSoftInputLayout extends FrameLayout implements ILifecycle {
         if (isKeyboardShow) {
             isEmojiShow = false;
         }
+        checkEmojiLayout();
+        if (emojiLayout != null && !isInEditMode()) {
+            L.w("onSizeChanged: emojiLayout:" + this.hashCode() + " -> top:" + emojiLayout.getTop() +
+                    " height:" + emojiLayout.getMeasuredHeight() +
+                    " viewHeight:" + getMeasuredHeight() +
+                    " contentHeight:" + contentLayout.getMeasuredHeight());
+        }
+        if (!isInEditMode()) {
+            notifyEmojiLayoutChangeListener(isEmojiShow, isKeyboardShow,
+                    isKeyboardShow ? getSoftKeyboardHeight() : showEmojiHeight);
+        }
+    }
+
+    private void checkEmojiLayout() {
         if (emojiLayout != null) {
-            if (!isInEditMode()) {
-                L.w("call: emojiLayout:" + this.hashCode() + " -> top:" + emojiLayout.getTop() +
-                        " height:" + emojiLayout.getMeasuredHeight() +
-                        " viewHeight:" + getMeasuredHeight() +
-                        " contentHeight:" + contentLayout.getMeasuredHeight());
-            }
             if (emojiLayout.getTop() != 0 &&
                     emojiLayout.getTop() < getMeasuredHeight() &&
                     emojiLayout.getMeasuredHeight() != 0) {
@@ -364,10 +372,6 @@ public class RSoftInputLayout extends FrameLayout implements ILifecycle {
             } else {
                 isEmojiShow = false;
             }
-        }
-        if (!isInEditMode()) {
-            notifyEmojiLayoutChangeListener(isEmojiShow, isKeyboardShow,
-                    isKeyboardShow ? getSoftKeyboardHeight() : showEmojiHeight);
         }
     }
 
@@ -545,7 +549,7 @@ public class RSoftInputLayout extends FrameLayout implements ILifecycle {
      * 采用默认的键盘高度显示表情, 如果键盘从未弹出过, 则使用一个缺省的高度
      */
     public void hideEmojiLayout() {
-        if (isKeyboardShow || isEmojiShow) {
+        if (isSoftKeyboardShow() || isEmojiShow()) {
             showEmojiLayoutInner(0, false);
         }
     }
@@ -586,6 +590,7 @@ public class RSoftInputLayout extends FrameLayout implements ILifecycle {
         if (softKeyboardShow) {
             isEmojiShow = false;
         }
+        checkEmojiLayout();
         return isEmojiShow;
     }
 
@@ -609,7 +614,7 @@ public class RSoftInputLayout extends FrameLayout implements ILifecycle {
      * 返回true时, 可以退出. 否则会隐藏键盘或者表情.
      */
     public boolean requestBackPressed() {
-        if (isKeyboardShow || isEmojiShow) {
+        if (isSoftKeyboardShow() || isEmojiShow()) {
             hideEmojiLayout();
             return false;
         }

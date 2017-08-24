@@ -29,6 +29,7 @@ public class RCameraPreview extends TextureView {
 
     private static final int TEN_DESIRED_ZOOM = 27;
     private static final Pattern COMMA_PATTERN = Pattern.compile(",");
+    public static boolean SHOW_PREVIEW = false;
     boolean isPreview = false;
     private Camera mCamera;
     private Point mScreenResolution;
@@ -37,7 +38,9 @@ public class RCameraPreview extends TextureView {
     protected Runnable previewRunnable = new Runnable() {
         @Override
         public void run() {
-            showPreview();
+            if (SHOW_PREVIEW) {
+                showPreview();
+            }
         }
     };
 

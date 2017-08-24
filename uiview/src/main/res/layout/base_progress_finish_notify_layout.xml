@@ -27,7 +27,7 @@
             android:layout_height="wrap_content"
             android:text="标题"
             android:textColor="@color/base_text_color"
-            android:textSize="14sp"/>
+            android:textSize="14dp"/>
 
         <!--<com.angcyo.uiview.widget.SimpleProgressBar-->
         <!--android:id="@+id/progress_bar"-->
@@ -42,7 +42,7 @@
             android:layout_marginTop="@dimen/base_ldpi"
             android:text="下载完成, 点击安装."
             android:textColor="@color/base_text_color"
-            android:textSize="12sp"/>
+            android:textSize="12dp"/>
 
     </LinearLayout>
 

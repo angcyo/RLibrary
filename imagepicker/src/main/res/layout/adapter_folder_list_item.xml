@@ -34,7 +34,7 @@
                 android:layout_height="wrap_content"
                 android:text="@string/all_images"
                 android:textColor="@android:color/black"
-                android:textSize="18sp"/>
+                android:textSize="18dp"/>
 
             <TextView
                 android:id="@+id/tv_image_count"
@@ -43,7 +43,7 @@
                 android:layout_marginTop="4dp"
                 android:text="共0张"
                 android:textColor="#d2d2d7"
-                android:textSize="14sp"/>
+                android:textSize="14dp"/>
         </LinearLayout>
 
         <ImageView

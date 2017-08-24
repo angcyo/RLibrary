@@ -24,7 +24,7 @@
         android:layout_marginTop="@dimen/base_120dpi"
         android:text="@string/qr_code_scan_tip"
         android:textColor="@color/default_base_white"
-        android:textSize="12sp"/>
+        android:textSize="12dp"/>
 
     <LinearLayout
         android:layout_width="wrap_content"

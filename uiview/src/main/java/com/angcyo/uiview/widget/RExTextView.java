@@ -596,17 +596,23 @@ public class RExTextView extends RTextView {
                 super.draw(canvas, text, start, end, x, top, y, bottom, paint);
             } else {
                 tempRect.set((int) x, top, ((int) (x + mSpanWidth)), bottom);
-                if (isTouchDown && tempRect.contains(((int) downX), (int) downY)) {
-                    canvas.save();
-                    if (enableTouchEffect) {
+                canvas.save();
+                if (enableTouchEffect) {
+                    if (isTouchDown && tempRect.contains(((int) downX), (int) downY)) {
                         paint.setColor(SkinHelper.getTranColor(textColor, 0x80));
                         canvas.drawRect(tempRect, paint);
                     } else {
                         paint.setColor(Color.TRANSPARENT);
                         canvas.drawRect(tempRect, paint);
                     }
-                    canvas.restore();
+                } else {
+                    paint.setColor(Color.TRANSPARENT);
+                    canvas.drawRect(tempRect, paint);
                 }
+//                paint.setColor(Color.WHITE);
+//                canvas.drawRect(tempRect, paint);
+//                canvas.drawColor(Color.TRANSPARENT);
+                canvas.restore();
 
                 super.draw(canvas, text, start, end, x, top, y, bottom, paint);
                 paint.setColor(textColor);//默认是黑色
@@ -645,6 +651,8 @@ public class RExTextView extends RTextView {
                             paint);
                     canvas.restore();
                 }
+
+//                paint.setColor(Color.RED);
             }
         }
 

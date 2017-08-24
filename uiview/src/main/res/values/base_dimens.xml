@@ -7,24 +7,24 @@
     <dimen name="base_toast_shadow_height">8dp</dimen>
     <dimen name="base_nav_shadow_height">4dp</dimen>
 
-    <dimen name="textSize_sidebar">10sp</dimen>
-    <dimen name="large_textSize_sidebar">32sp</dimen>
-    <dimen name="textSize_sidebar_choose">12sp</dimen>
-    <dimen name="textSize_sidebar_padding">20sp</dimen>
+    <dimen name="textSize_sidebar">10dp</dimen>
+    <dimen name="large_textSize_sidebar">32dp</dimen>
+    <dimen name="textSize_sidebar_choose">12dp</dimen>
+    <dimen name="textSize_sidebar_padding">20dp</dimen>
     <dimen name="radius_sidebar">22dp</dimen>
     <dimen name="ball_radius_sidebar">24dp</dimen>
 
     <!--默认文本大小-->
-    <dimen name="default_text_size">14sp</dimen>
-    <dimen name="default_text_size_15">15sp</dimen>
-    <dimen name="default_text_little_size">12sp</dimen>
-    <dimen name="default_text_size16">16sp</dimen>
-    <dimen name="default_text_size20">20sp</dimen>
-    <dimen name="default_text_size9">9sp</dimen>
-    <dimen name="default_text_size8">8sp</dimen>
-    <dimen name="default_text_size10">10sp</dimen>
-    <dimen name="default_text_size18">18sp</dimen>
-    <dimen name="default_text_size50">50sp</dimen>
+    <dimen name="default_text_size">14dp</dimen>
+    <dimen name="default_text_size_15">15dp</dimen>
+    <dimen name="default_text_little_size">12dp</dimen>
+    <dimen name="default_text_size16">16dp</dimen>
+    <dimen name="default_text_size20">20dp</dimen>
+    <dimen name="default_text_size9">9dp</dimen>
+    <dimen name="default_text_size8">8dp</dimen>
+    <dimen name="default_text_size10">10dp</dimen>
+    <dimen name="default_text_size18">18dp</dimen>
+    <dimen name="default_text_size50">50dp</dimen>
     <!--默认按钮高度-->
     <dimen name="default_button_height">45dp</dimen>
 
@@ -33,7 +33,7 @@
     <dimen name="base_round_little_radius">3dp</dimen>
     <dimen name="base_big_round_radius">40dp</dimen>
     <!--标题的字体大小-->
-    <dimen name="base_title_size">16sp</dimen>
+    <dimen name="base_title_size">16dp</dimen>
     <!--标题上, 每个item的大小, 一般指的是宽度-->
     <dimen name="base_title_bar_item_size">40dp</dimen>
     <dimen name="base_item_size">48dp</dimen>
