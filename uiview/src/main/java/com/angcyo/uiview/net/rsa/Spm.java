@@ -16,6 +16,18 @@ package com.angcyo.uiview.net.rsa;
  * Version: 1.0.0
  */
 public class Spm {
+
+
+    public static void main(String[] args) {
+
+        String encode = create("1234567");
+        System.out.println("encode : " + encode);
+
+        String decode = decode(encode);
+        System.out.println("decode : " + decode);
+
+    }
+
     public static String create(String value) {
         StringBuilder builder = new StringBuilder();
         try {
@@ -37,11 +49,32 @@ public class Spm {
     }
 
     public static String decode(String result) {
-
+        StringBuilder builder = new StringBuilder();
         try {
-            byte[] decode = Base64Utils.decode(result);
-            String value = new String(decode,"UTF-8");
-            return value;
+            String key = "klgwl";
+            String keyEncode = Base64Utils.encode(key.getBytes()).replaceAll("\\n", "");
+            String str = result.replaceAll("-", "=");
+
+            int count = 2 * keyEncode.length();
+
+            if (str.length() > count) {
+                String last_str = str.substring(count - 1);
+                for (int i = 0 ; i < count;i += 2) {
+                    builder.append(str.charAt(i));
+                }
+                builder.append(last_str);
+
+            } else {
+                for (int i = 0 ; i < count;i += 2) {
+                    builder.append(str.charAt(i));
+                }
+            }
+            return new String(Base64Utils.decode(builder.toString()));
+
+
+//            byte[] decode = Base64Utils.decode(result);
+//            String value = new String(decode);
+//            return value;
         } catch (Exception e) {
             e.printStackTrace();
             return "";

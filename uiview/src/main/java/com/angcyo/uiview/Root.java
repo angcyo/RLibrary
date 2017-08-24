@@ -1,8 +1,15 @@
 package com.angcyo.uiview;
 
 import android.os.Environment;
+import android.text.TextUtils;
 
 import java.io.File;
+import java.io.FileReader;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.io.Reader;
+import java.io.Writer;
+import java.util.Properties;
 import java.util.UUID;
 
 /**
@@ -38,6 +45,68 @@ public class Root {
             file.mkdirs();
         }
         return file.getAbsolutePath();
+    }
+
+    /**
+     * 写入键值对到properties
+     */
+    public static void storeProperties(String key, String value) {
+        if (TextUtils.isEmpty(key) || TextUtils.isEmpty(value)) {
+            return;
+        }
+        Writer writer = null;
+        try {
+            File file = new File(getAppExternalFolder("prop") + File.separator + "account.prop");
+            if (!file.exists()) {
+                file.createNewFile();
+            }
+            writer = new FileWriter(getAppExternalFolder("prop") + File.separator + "account.prop");
+            Properties pro = new Properties();
+            pro.setProperty(key, value);
+            pro.store(writer, "");
+        } catch (IOException e) {
+            e.printStackTrace();
+            if (writer != null) {
+                try {
+                    writer.close();
+                } catch (IOException e1) {
+                    e1.printStackTrace();
+                }
+            }
+        }
+    }
+
+    public static String loadProperties(String key) {
+        if (TextUtils.isEmpty(key)) {
+            return "";
+        }
+        Reader reader = null;
+        try {
+            File file = new File(getAppExternalFolder("prop" + File.separator + "account.prop"));
+            if (!file.exists()) {
+                file.createNewFile();
+            }
+            reader = new FileReader(getAppExternalFolder("prop" + File.separator + "account.prop"));
+            Properties pro = new Properties();
+            pro.load(reader);
+            String value = pro.getProperty(key);
+            if (TextUtils.isEmpty(value)) {
+                return "";
+            } else {
+                return value;
+            }
+        } catch (IOException e) {
+            if (reader != null) {
+                try {
+                    reader.close();
+                } catch (IOException e1) {
+                    e1.printStackTrace();
+                }
+            }
+            e.printStackTrace();
+            return "";
+        }
+
     }
 
     /**
