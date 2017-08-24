@@ -103,7 +103,6 @@ public class UIItemDialog extends UIIDialogImpl {
         mItemContentLayout = mViewHolder.v(R.id.item_content_layout);
         mCancelView = mViewHolder.v(R.id.cancel_view);
         mTitleView = mViewHolder.v(R.id.base_title_view);
-        mCancelView.setTextColor(Color.BLACK /*SkinHelper.getSkin().getThemeSubColor()*/);
 
         if (TextUtils.isEmpty(dialogTitle)) {
             mTitleView.setVisibility(View.GONE);
@@ -144,8 +143,10 @@ public class UIItemDialog extends UIIDialogImpl {
 
         if (useFullItem) {
             mItemContentLayout.setBackgroundColor(Color.WHITE);
+            mCancelView.setTextColor(Color.BLACK /*SkinHelper.getSkin().getThemeSubColor()*/);
         } else {
             mItemContentLayout.setBackgroundResource(R.drawable.base_white_round_bg);
+            mCancelView.setTextColor(SkinHelper.getSkin().getThemeSubColor());
         }
 
         inflateItem();
@@ -199,8 +200,7 @@ public class UIItemDialog extends UIIDialogImpl {
         TextView textView = new TextView(mActivity);
         textView.setText(info.mItemText);
         textView.setTextColor(SkinHelper.getSkin().getThemeSubColor());
-        textView.setTextSize(TypedValue.COMPLEX_UNIT_PX,
-                mActivity.getResources().getDimensionPixelSize(R.dimen.default_text_size));
+        textView.setTextSize(TypedValue.COMPLEX_UNIT_PX, SkinHelper.getSkin().getMainTextSize());
         textView.setGravity(Gravity.CENTER);
         textView.setOnClickListener(new RClickListener(1000) {
             @Override

@@ -107,7 +107,7 @@ public class WheelView extends View {
         textColorCenter =getResources().getColor(R.color.pickerview_wheelview_textcolor_center);
         dividerColor = getResources().getColor(R.color.pickerview_wheelview_textcolor_out);*/
 
-        textSize = (int) (getResources().getDisplayMetrics().scaledDensity * 16f);//默认大小
+        textSize = (int) (getResources().getDisplayMetrics().density * 16f);//默认大小
 
         DisplayMetrics dm = getResources().getDisplayMetrics();
         float density = dm.density; // 屏幕密度（0.75/1.0/1.5/2.0/3.0）
