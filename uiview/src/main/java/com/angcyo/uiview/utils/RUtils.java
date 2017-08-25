@@ -1079,9 +1079,13 @@ public class RUtils {
      * @param data     需要写入的数据
      */
     public static void saveToSDCard(String fileName, String data) {
+        saveToSDCard("log", fileName, data);
+    }
+
+    public static void saveToSDCard(String folderName, String fileName, String data) {
         try {
             String saveFolder = Environment.getExternalStorageDirectory().getAbsoluteFile() +
-                    File.separator + Root.APP_FOLDER + File.separator + "log";
+                    File.separator + Root.APP_FOLDER + File.separator + folderName;
             File folder = new File(saveFolder);
             if (!folder.exists()) {
                 if (!folder.mkdirs()) {
@@ -1105,6 +1109,32 @@ public class RUtils {
         }
     }
 
+    public static void saveToSDCard(String folderName, String fileName, Throwable data) {
+        try {
+            String saveFolder = Environment.getExternalStorageDirectory().getAbsoluteFile() +
+                    File.separator + Root.APP_FOLDER + File.separator + folderName;
+            File folder = new File(saveFolder);
+            if (!folder.exists()) {
+                if (!folder.mkdirs()) {
+                    return;
+                }
+            }
+            String dataTime = RCrashHandler.getDataTime("yyyy-MM-dd_HH-mm-ss-SSS");
+            File file = new File(saveFolder, fileName);
+            boolean append = true;
+            if (file.length() > 1024 * 1024 * 10 /*大于10MB重写*/) {
+                append = false;
+            }
+            PrintWriter pw = new PrintWriter(new BufferedWriter(new FileWriter(file, append)));
+            pw.println(dataTime);
+            data.printStackTrace(pw);
+            //换行
+            pw.println();
+            pw.close();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
 
     public enum ImageType {
         JPEG, GIF, PNG, BMP, UNKNOWN
