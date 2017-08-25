@@ -10,6 +10,7 @@ import android.content.Context;
  *     time  : 16/12/08
  *     desc  : Utils初始化相关
  * </pre>
+ * https://github.com/Blankj/AndroidUtilCode
  */
 public class Utils {
 
