@@ -24,8 +24,17 @@ import com.angcyo.uiview.skin.SkinHelper;
  */
 public class Button extends RTextView {
 
+    /**
+     * 默认就是很小的圆角矩形填充样式
+     */
     public static final int DEFAULT = 1;
+    /**
+     * 圆角矩形填充样式
+     */
     public static final int ROUND = 2;
+    /**
+     * 可自定义的圆角边框样式
+     */
     public static final int ROUND_BORDER = 3;
 
     int mButtonStyle = DEFAULT;
@@ -45,7 +54,23 @@ public class Button extends RTextView {
 
     private void initButton() {
         if (isInEditMode()) {
-            setBackgroundColor(Color.BLUE);
+            if (mButtonStyle == ROUND) {
+                setBackground(ResUtil.ripple(Color.BLUE,
+                        ResUtil.selector(
+                                ResUtil.createDrawable(Color.BLUE, 300),
+                                ResUtil.createDrawable(Color.BLUE, 300)
+                        )));
+            } else if (mButtonStyle == ROUND_BORDER) {
+                setBackground(ResUtil.ripple(Color.BLUE,
+                        ResUtil.selector(
+                                ResUtil.createDrawable(Color.BLUE, Color.TRANSPARENT, (int) (1 * density()), 300),
+                                ResUtil.createDrawable(Color.BLUE, Color.TRANSPARENT, (int) (1 * density()), 300)
+                        )));
+                setTextColor(ColorStateList.valueOf(Color.BLUE));
+            } else {
+                setBackground(ResUtil.generateRippleRoundMaskDrawable(getResources().getDimensionPixelOffset(R.dimen.base_round_little_radius),
+                        Color.WHITE, Color.BLUE, Color.BLUE));
+            }
         } else {
             if (mButtonStyle == ROUND) {
                 setBackground(ResUtil.ripple(SkinHelper.getSkin().getThemeSubColor(),
