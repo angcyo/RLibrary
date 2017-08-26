@@ -964,6 +964,17 @@ public class RUtils {
         share.putExtra(Intent.EXTRA_STREAM,
                 Uri.fromFile(new File(filePath)));
         share.setType("*/*");//此处可发送多种文件
+        share.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+        activity.startActivity(Intent.createChooser(share, "发送给..."));
+    }
+
+    public static void shareImage(Activity activity, String imgFilePath, String content) {
+        Intent share = new Intent(Intent.ACTION_SEND);
+        share.putExtra(Intent.EXTRA_TEXT, content);
+        share.putExtra(Intent.EXTRA_STREAM,
+                Uri.fromFile(new File(imgFilePath)));
+        share.setType("image/*");
+        share.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
         activity.startActivity(Intent.createChooser(share, "发送给..."));
     }
 
@@ -972,6 +983,7 @@ public class RUtils {
         intent.setType("text/plain");
         intent.putExtra(Intent.EXTRA_SUBJECT, "分享：" + title);
         intent.putExtra(Intent.EXTRA_TEXT, title + " " + text);
+        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
         activity.startActivity(Intent.createChooser(intent, "选择分享"));
     }
 

@@ -1155,11 +1155,19 @@ public class ExEditText extends AppCompatEditText {
     }
 
     public void setIsPhone(boolean isPhone, int maxLength) {
+        setIsNumber(isPhone, false, maxLength);
+    }
+
+    public void setIsNumber(boolean isNumber, boolean decimal, int maxLength) {
         int inputType = getInputType();
-        if (isPhone) {
-            setInputType(inputType | EditorInfo.TYPE_CLASS_TEXT | EditorInfo.TYPE_CLASS_NUMBER);
+        if (isNumber) {
+            if (decimal) {
+                setInputType(EditorInfo.TYPE_CLASS_NUMBER | EditorInfo.TYPE_NUMBER_FLAG_DECIMAL);
+            } else {
+                setInputType(EditorInfo.TYPE_CLASS_NUMBER);
+            }
         } else {
-            setInputType(inputType & ~EditorInfo.TYPE_CLASS_NUMBER);
+            setInputType(inputType & ~EditorInfo.TYPE_CLASS_NUMBER & ~EditorInfo.TYPE_NUMBER_FLAG_DECIMAL);
         }
 
         if (maxLength < 0) {
