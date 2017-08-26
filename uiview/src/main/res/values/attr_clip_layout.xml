@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <declare-styleable name="ClipLayout">
+        <attr name="r_clip_type" format="enum">
+            <enum name="CLIP_TYPE_NONE" value="0"/>
+            <enum name="CLIP_TYPE_DEFAULT" value="1"/>
+            <enum name="CLIP_TYPE_ROUND" value="2"/>
+            <enum name="CLIP_TYPE_CIRCLE" value="3"/>
+        </attr>
+        <attr name="r_clip_radius" format="dimension"/>
+    </declare-styleable>
+</resources>

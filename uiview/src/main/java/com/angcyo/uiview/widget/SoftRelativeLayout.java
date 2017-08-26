@@ -61,6 +61,7 @@ public class SoftRelativeLayout extends FrameLayout implements ILifecycle {
     }
 
     private void initView() {
+        setWillNotDraw(false);
 //        setClickable(true);
         setEnabled(true);
 //        setFocusable(true);

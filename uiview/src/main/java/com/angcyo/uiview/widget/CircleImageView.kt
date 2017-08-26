@@ -31,7 +31,7 @@ open class CircleImageView(context: Context, attributeSet: AttributeSet? = null)
 
     var roundRadius = 0f
 
-    val roundRectF: RectF by lazy {
+    private val roundRectF: RectF by lazy {
         RectF()
     }
 
@@ -58,7 +58,7 @@ open class CircleImageView(context: Context, attributeSet: AttributeSet? = null)
         typedArray.recycle()
     }
 
-    val clipPath: Path by lazy { Path() }
+    private val clipPath: Path by lazy { Path() }
 
     val paint: Paint by lazy {
         val p = Paint(Paint.ANTI_ALIAS_FLAG)
