@@ -8,9 +8,14 @@ import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
 import android.content.res.Configuration;
 import android.content.res.Resources;
+import android.graphics.Bitmap;
+import android.graphics.Canvas;
 import android.graphics.Matrix;
+import android.graphics.Paint;
 import android.graphics.Point;
 import android.graphics.RectF;
+import android.graphics.drawable.ColorDrawable;
+import android.graphics.drawable.Drawable;
 import android.hardware.Camera;
 import android.media.AudioFormat;
 import android.media.AudioRecord;
@@ -20,11 +25,15 @@ import android.os.Build;
 import android.os.Environment;
 import android.os.Looper;
 import android.support.v4.content.FileProvider;
+import android.support.v7.widget.RecyclerView;
 import android.telephony.TelephonyManager;
 import android.text.TextUtils;
 import android.util.DisplayMetrics;
+import android.util.LruCache;
+import android.view.View;
 import android.view.WindowManager;
 
+import com.angcyo.github.utilcode.utils.ImageUtils;
 import com.angcyo.github.utilcode.utils.PhoneUtils;
 import com.angcyo.library.utils.L;
 import com.angcyo.uiview.RApplication;
@@ -1146,6 +1155,72 @@ public class RUtils {
         } catch (Exception e) {
             e.printStackTrace();
         }
+    }
+
+    public static Bitmap saveRecyclerViewBitmap(String path, RecyclerView view, int bgColor) {
+        return saveRecyclerViewBitmap(path, view, bgColor, Integer.MAX_VALUE);
+    }
+
+    public static Bitmap saveRecyclerViewBitmap(String path, RecyclerView view, int bgColor, int itemCount/**需要截取的前几个item*/) {
+        Bitmap bitmap = shotRecyclerView(view, bgColor, itemCount);
+        ImageUtils.save(bitmap, path, Bitmap.CompressFormat.PNG);
+        return bitmap;
+    }
+
+    /**
+     * RecyclerView截图
+     */
+    public static Bitmap shotRecyclerView(RecyclerView view, int bgColor, int count) {
+        RecyclerView.Adapter adapter = view.getAdapter();
+        Bitmap bigBitmap = null;
+        if (adapter != null) {
+            int size = Math.min(count, adapter.getItemCount());
+            int height = 0;
+            Paint paint = new Paint();
+            int iHeight = 0;
+            final int maxMemory = (int) (Runtime.getRuntime().maxMemory() / 1024);
+
+            // Use 1/8th of the available memory for this memory cache.
+            final int cacheSize = maxMemory / 8;
+            LruCache<String, Bitmap> bitmapCache = new LruCache<>(cacheSize);
+            for (int i = 0; i < size; i++) {
+                RecyclerView.ViewHolder holder = adapter.createViewHolder(view, adapter.getItemViewType(i));
+                adapter.onBindViewHolder(holder, i);
+                holder.itemView.measure(
+                        View.MeasureSpec.makeMeasureSpec(view.getWidth(), View.MeasureSpec.EXACTLY),
+                        View.MeasureSpec.makeMeasureSpec(0, View.MeasureSpec.UNSPECIFIED));
+                holder.itemView.layout(0, 0, holder.itemView.getMeasuredWidth(),
+                        holder.itemView.getMeasuredHeight());
+                holder.itemView.setDrawingCacheEnabled(true);
+                holder.itemView.buildDrawingCache();
+                Bitmap drawingCache = holder.itemView.getDrawingCache();
+                if (drawingCache != null) {
+
+                    bitmapCache.put(String.valueOf(i), drawingCache);
+                }
+                height += holder.itemView.getMeasuredHeight();
+            }
+
+            bigBitmap = Bitmap.createBitmap(view.getMeasuredWidth(), height, Bitmap.Config.ARGB_8888);
+            Canvas bigCanvas = new Canvas(bigBitmap);
+
+            bigCanvas.drawColor(bgColor);
+
+            Drawable lBackground = view.getBackground();
+            if (lBackground instanceof ColorDrawable) {
+                ColorDrawable lColorDrawable = (ColorDrawable) lBackground;
+                int lColor = lColorDrawable.getColor();
+                bigCanvas.drawColor(lColor);
+            }
+
+            for (int i = 0; i < size; i++) {
+                Bitmap bitmap = bitmapCache.get(String.valueOf(i));
+                bigCanvas.drawBitmap(bitmap, 0f, iHeight, paint);
+                iHeight += bitmap.getHeight();
+                bitmap.recycle();
+            }
+        }
+        return bigBitmap;
     }
 
     public enum ImageType {

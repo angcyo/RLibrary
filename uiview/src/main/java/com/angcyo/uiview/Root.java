@@ -21,10 +21,14 @@ import java.util.UUID;
  */
 
 public class Root {
-    public static String APP_FOLDER = "DValley";
+    public static String APP_FOLDER = "A_APP";
 
     public static String getAppExternalFolder() {
         return getAppExternalFolder("");
+    }
+
+    public static String externalStorageDirectory() {
+        return Environment.getExternalStorageDirectory().getAbsolutePath();
     }
 
     public static String getAppExternalFolder(String folder) {
@@ -71,7 +75,7 @@ public class Root {
 
             Properties pro = new Properties();
             pro.load(reader);
-            for (Enumeration e = pro.propertyNames(); e.hasMoreElements();) {
+            for (Enumeration e = pro.propertyNames(); e.hasMoreElements(); ) {
                 String s = (String) e.nextElement(); // 遍历所有元素
                 if (s.equals(key)) {
                     pro.setProperty(key, value);
@@ -158,7 +162,13 @@ public class Root {
     }
 
     public static String createFileName() {
-
         return createFileName("");
+    }
+
+    /**
+     * 在SD APP_FOLDER根目录下, 随机创建一个文件名路径
+     */
+    public static String createFilePath() {
+        return getAppExternalFolder("") + File.separator + createFileName();
     }
 }

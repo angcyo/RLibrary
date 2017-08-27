@@ -28,6 +28,7 @@ import com.angcyo.uiview.model.TitleBarPattern;
 import com.angcyo.uiview.recycler.RBaseViewHolder;
 import com.angcyo.uiview.resources.ResUtil;
 import com.angcyo.uiview.skin.SkinHelper;
+import com.angcyo.uiview.view.RClickListener;
 import com.angcyo.uiview.widget.RTextView;
 import com.angcyo.uiview.widget.RTitleCenterLayout;
 
@@ -217,6 +218,7 @@ public class UITitleBarContainer extends FrameLayout {
         }
         /*标题*/
         mTitleView.setText(mTitleBarPattern.mTitleString);
+        mTitleView.setTextSize(TypedValue.COMPLEX_UNIT_PX, SkinHelper.getSkin().getMainTextSize());
         mTitleBarPattern.setTextViewSize(mTitleView);
         if (mTitleBarPattern.titleHide) {
             mTitleView.setVisibility(GONE);
@@ -351,26 +353,51 @@ public class UITitleBarContainer extends FrameLayout {
 //        }
     }
 
-    private ImageView createImageItem(Drawable drawable, OnClickListener listener) {
+    private ImageView createImageItem(Drawable drawable, final OnClickListener listener) {
         ImageView item = new ImageView(getContext());
         item.setImageDrawable(drawable);
         item.setScaleType(ImageView.ScaleType.CENTER);
         item.setBackgroundResource(R.drawable.base_bg2_selector);
-        item.setOnClickListener(listener);
+        item.setBackgroundResource(R.drawable.base_bg2_selector);
+        if (listener instanceof RClickListener) {
+            item.setOnClickListener(listener);
+        } else {
+            item.setOnClickListener(new RClickListener(300) {
+                @Override
+                public void onRClick(View view) {
+                    if (listener != null) {
+                        listener.onClick(view);
+                    }
+                }
+            });
+        }
         if (listener == null) {
             item.setClickable(false);
         }
         return item;
     }
 
-    private TextView createTextItem(String text, @ColorInt int color, OnClickListener listener) {
+    private TextView createTextItem(String text, @ColorInt int color, final OnClickListener listener) {
         TextView item = new TextView(getContext());
+        int padding = getResources().getDimensionPixelOffset(R.dimen.base_ldpi);
+        item.setPadding(padding, 0, padding, 0);
         item.setText(text);
-        item.setTextSize(TypedValue.COMPLEX_UNIT_PX, getResources().getDimensionPixelOffset(R.dimen.base_title_size));
+        item.setTextSize(TypedValue.COMPLEX_UNIT_PX, SkinHelper.getSkin().getSubTextSize() /*getResources().getDimensionPixelOffset(R.dimen.base_title_size)*/);
         item.setTextColor(color == -1 ? Color.WHITE : color);
         item.setGravity(Gravity.CENTER);
         item.setBackgroundResource(R.drawable.base_bg2_selector);
-        item.setOnClickListener(listener);
+        if (listener instanceof RClickListener) {
+            item.setOnClickListener(listener);
+        } else {
+            item.setOnClickListener(new RClickListener(300) {
+                @Override
+                public void onRClick(View view) {
+                    if (listener != null) {
+                        listener.onClick(view);
+                    }
+                }
+            });
+        }
         if (listener == null) {
             item.setClickable(false);
         }
@@ -436,6 +463,18 @@ public class UITitleBarContainer extends FrameLayout {
     public void hideRightItem(int index) {
         if (mRightControlLayout.getChildCount() > index) {
             mRightControlLayout.getChildAt(index).setVisibility(GONE);
+        }
+    }
+
+    public void showLeftItem(int index) {
+        if (mLeftControlLayout.getChildCount() > index) {
+            mLeftControlLayout.getChildAt(index).setVisibility(VISIBLE);
+        }
+    }
+
+    public void hideLeftItem(int index) {
+        if (mLeftControlLayout.getChildCount() > index) {
+            mLeftControlLayout.getChildAt(index).setVisibility(GONE);
         }
     }
 

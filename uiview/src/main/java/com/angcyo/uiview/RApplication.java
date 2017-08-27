@@ -57,6 +57,9 @@ public class RApplication extends Application {
     public static boolean isLowDevice = true;
     public static boolean isHighDevice = false;
 
+    public static int memoryClass = 0;
+    public static int largeMemoryClass = 0;
+
     private static RApplication app;
 
     /**
@@ -155,42 +158,58 @@ public class RApplication extends Application {
     public void onCreate() {
         super.onCreate();
         app = this;
-        isLowDevice = UIIViewImpl.isLowDevice();
-        isHighDevice = UIIViewImpl.isHighDevice();
+
         if (isInitOnce(this)) {
 
             Debug.logTimeStart("RApplication 正在初始化:isInitOnce()");
 
-            Utils.init(this);
-
-             /*sp持久化库*/
-            Hawk.init(this)
-                    .build();
-
-            /*崩溃异常处理*/
-            RCrashHandler.init(this);
-
-            SkinHelper.init(this);
-
-            /*Realm数据库初始化*/
-            //RRealm.init(this, "r_jcenter.realm", true);
-
-            /*Facebook图片加载库, 必须*/
-            //Fresco.initialize(this);
-
-            onInit();
-
-            new Thread() {
-                @Override
-                public void run() {
-                    Debug.logTimeStart("RApplication 异步初始化:onAsyncInit()");
-                    onAsyncInit();
-                    Debug.logTimeEnd("RApplication 异步初始化结束:onAsyncInit()");
-                }
-            }.start();
+            onBaseInit();
 
             Debug.logTimeEnd("RApplication 初始化结束:isInitOnce()");
         }
+    }
+
+    protected void onBaseInit() {
+        isLowDevice = UIIViewImpl.isLowDevice();
+        isHighDevice = UIIViewImpl.isHighDevice();
+
+        try {
+            ActivityManager manager = (ActivityManager) getSystemService(Context.ACTIVITY_SERVICE);
+            memoryClass = manager.getMemoryClass();
+            largeMemoryClass = manager.getLargeMemoryClass();
+        } catch (Exception e) {
+
+        }
+        //96 256
+        L.e("RApplication -> memoryClass:" + memoryClass + "MB largeMemoryClass:" + largeMemoryClass + "MB");
+
+        Utils.init(this);
+
+             /*sp持久化库*/
+        Hawk.init(this)
+                .build();
+
+            /*崩溃异常处理*/
+        RCrashHandler.init(this);
+
+        SkinHelper.init(this);
+
+            /*Realm数据库初始化*/
+        //RRealm.init(this, "r_jcenter.realm", true);
+
+            /*Facebook图片加载库, 必须*/
+        //Fresco.initialize(this);
+
+        onInit();
+
+        new Thread() {
+            @Override
+            public void run() {
+                Debug.logTimeStart("RApplication 异步初始化:onAsyncInit()");
+                onAsyncInit();
+                Debug.logTimeEnd("RApplication 异步初始化结束:onAsyncInit()");
+            }
+        }.start();
     }
 
     /**
