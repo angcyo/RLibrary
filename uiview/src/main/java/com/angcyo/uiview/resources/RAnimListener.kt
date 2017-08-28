@@ -21,10 +21,12 @@ abstract class RAnimListener : AnimatorListenerAdapter() {
 
     override fun onAnimationEnd(animation: Animator?) {
         super.onAnimationEnd(animation)
+        onAnimationFinish(animation)
     }
 
     override fun onAnimationCancel(animation: Animator?) {
         super.onAnimationCancel(animation)
+        onAnimationFinish(animation)
     }
 
     override fun onAnimationPause(animation: Animator?) {
@@ -40,6 +42,11 @@ abstract class RAnimListener : AnimatorListenerAdapter() {
     }
 
     open fun onAnimationProgress(animation: Animator?, progress: Float /*0-1f*/) {
+
+    }
+
+    /**动画完成, 或者取消都会执行*/
+    open fun onAnimationFinish(animation: Animator?) {
 
     }
 

@@ -698,6 +698,13 @@ public class RCrashHandler implements Thread.UncaughtExceptionHandler {
         pw.println(Build.CPU_ABI2);
         pw.println();
 
+        pw.print("memoryClass: ");
+        pw.println(RApplication.memoryClass);
+
+        pw.print("largeMemoryClass: ");
+        pw.println(RApplication.largeMemoryClass);
+        pw.println();
+
         pw.print("手机内存大小:");
         pw.println(Formatter.formatFileSize(context, getTotalMemorySize(context)));
 //        pw.println();

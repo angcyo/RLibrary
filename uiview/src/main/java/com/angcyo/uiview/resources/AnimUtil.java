@@ -21,6 +21,7 @@ import com.angcyo.uiview.R;
 import com.angcyo.uiview.RApplication;
 import com.angcyo.uiview.utils.ScreenUtil;
 import com.angcyo.uiview.view.UIIViewImpl;
+import com.angcyo.uiview.viewgroup.ClipLayout;
 
 /**
  * Created by angcyo on 2016-10-02 20:54.
@@ -182,6 +183,80 @@ public class AnimUtil {
         return animator;
     }
 
+    public static ValueAnimator startToMaxAnim(Rect startRect, final View targetView,
+                                               Point from, Point to,
+                                               final ClipLayout clipLayout,
+                                               final long startDelay,
+                                               Animator.AnimatorListener listener) {
+        final Rect finalStartRect = ensureRect(startRect);
+
+        int statusBarHeight = 0;
+        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.LOLLIPOP) {
+            statusBarHeight = RApplication.getApp().getResources().getDimensionPixelOffset(R.dimen.status_bar_height);
+        }
+
+        final Point startPoint = new Point(from.x, from.y - statusBarHeight);
+        final Point endPoint = new Point(to.x, to.y - statusBarHeight);
+
+        final ValueAnimator animator = ValueAnimator.ofFloat(0f, 1f);
+        animator.addListener(listener);
+
+        final ValueAnimator.AnimatorUpdateListener updateListener = new ValueAnimator.AnimatorUpdateListener() {
+            @Override
+            public void onAnimationUpdate(ValueAnimator animation) {
+                float value = (float) animation.getAnimatedValue();
+                float[] toMaxWH = clipLayout.getToMaxWH(finalStartRect.width(), finalStartRect.height(), value);
+
+                clipLayout.clipRectTo(toMaxWH[0], toMaxWH[1]);
+
+                updateMaxValue(targetView, startPoint, endPoint, value);
+
+                notifyAnimProgress(animation, animation.getAnimatedFraction());
+            }
+        };
+
+        animator.addUpdateListener(updateListener);
+
+        animator.setDuration(UIIViewImpl.DEFAULT_FINISH_ANIM_TIME);
+        if (startDelay > 0) {
+            animator.setStartDelay(startDelay);
+        }
+        animator.setInterpolator(new DecelerateInterpolator());
+
+        final Runnable defaultRunnable = new Runnable() {
+            @Override
+            public void run() {
+                float[] toMaxWH = clipLayout.getToMaxWH(finalStartRect.width(), finalStartRect.height(), 0);
+                clipLayout.clipRectTo(toMaxWH[0], toMaxWH[1]);
+                updateMaxValue(targetView, startPoint, endPoint, 0);
+            }
+        };
+
+        if (targetView.getMeasuredWidth() == 0 || targetView.getMeasuredHeight() == 0) {
+            targetView.getViewTreeObserver().addOnPreDrawListener(new ViewTreeObserver.OnPreDrawListener() {
+                @Override
+                public boolean onPreDraw() {
+                    if (startDelay > 0) {
+                        defaultRunnable.run();
+                    }
+                    notifyAnimDelayStart(animator);
+                    animator.start();
+                    targetView.getViewTreeObserver().removeOnPreDrawListener(this);
+                    return false;
+                }
+            });
+        } else {
+            if (startDelay > 0) {
+                //默认状态
+                defaultRunnable.run();
+            }
+            notifyAnimDelayStart(animator);
+            animator.start();
+        }
+
+        return animator;
+    }
+
     private static void updateMaxValue(final View targetView,
                                        final float startScaleX, final float startScaleY,
                                        final Point startPoint,
@@ -190,6 +265,14 @@ public class AnimUtil {
         ViewCompat.setScaleX(targetView, startScaleX + (1 - startScaleX) * fraction);
         ViewCompat.setScaleY(targetView, startScaleY + (1 - startScaleY) * fraction);
 
+        ViewCompat.setX(targetView, (startPoint.x + (endPoint.x - startPoint.x) * fraction) - targetView.getMeasuredWidth() / 2);
+        ViewCompat.setY(targetView, (startPoint.y + (endPoint.y - startPoint.y) * fraction) - targetView.getMeasuredHeight() / 2);
+    }
+
+    private static void updateMaxValue(final View targetView,
+                                       final Point startPoint,
+                                       final Point endPoint,
+                                       float fraction) {
         ViewCompat.setX(targetView, (startPoint.x + (endPoint.x - startPoint.x) * fraction) - targetView.getMeasuredWidth() / 2);
         ViewCompat.setY(targetView, (startPoint.y + (endPoint.y - startPoint.y) * fraction) - targetView.getMeasuredHeight() / 2);
     }
@@ -224,6 +307,58 @@ public class AnimUtil {
 
                 ViewCompat.setScaleX(targetView, 1 - (1 - endScaleX) * value);
                 ViewCompat.setScaleY(targetView, 1 - (1 - endScaleY) * value);
+
+                ViewCompat.setX(targetView, (startPoint.x + (endPoint.x - startPoint.x) * value) - targetView.getMeasuredWidth() / 2);
+                ViewCompat.setY(targetView, (startPoint.y + (endPoint.y - startPoint.y) * value) - targetView.getMeasuredHeight() / 2);
+
+                notifyAnimProgress(animation, animation.getAnimatedFraction());
+            }
+        });
+
+        animator.setDuration(UIIViewImpl.DEFAULT_FINISH_ANIM_TIME);
+        animator.setInterpolator(new DecelerateInterpolator());
+
+        if (targetView.getMeasuredWidth() == 0 || targetView.getMeasuredHeight() == 0) {
+            targetView.getViewTreeObserver().addOnPreDrawListener(new ViewTreeObserver.OnPreDrawListener() {
+                @Override
+                public boolean onPreDraw() {
+                    notifyAnimDelayStart(animator);
+                    animator.start();
+                    targetView.getViewTreeObserver().removeOnPreDrawListener(this);
+                    return false;
+                }
+            });
+        } else {
+            notifyAnimDelayStart(animator);
+            animator.start();
+        }
+        return animator;
+    }
+
+    public static ValueAnimator startToMinAnim(Rect endRect, final View targetView,
+                                               Point from, Point to,
+                                               final ClipLayout clipLayout,
+                                               Animator.AnimatorListener listener) {
+        final Rect finalEndRect = ensureRect(endRect);
+
+        int statusBarHeight = 0;
+        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.LOLLIPOP) {
+            statusBarHeight = RApplication.getApp().getResources().getDimensionPixelOffset(R.dimen.status_bar_height);
+        }
+
+        final Point startPoint = new Point(from.x, from.y - statusBarHeight);
+        final Point endPoint = new Point(to.x, to.y - statusBarHeight);
+
+        final ValueAnimator animator = ValueAnimator.ofFloat(0f, 1f);
+        animator.addListener(listener);
+
+        animator.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
+            @Override
+            public void onAnimationUpdate(ValueAnimator animation) {
+                float value = (float) animation.getAnimatedValue();
+
+                float[] fromMaxWH = clipLayout.getFromMaxWH(finalEndRect.width(), finalEndRect.height(), value);
+                clipLayout.clipRectTo(fromMaxWH[0], fromMaxWH[1]);
 
                 ViewCompat.setX(targetView, (startPoint.x + (endPoint.x - startPoint.x) * value) - targetView.getMeasuredWidth() / 2);
                 ViewCompat.setY(targetView, (startPoint.y + (endPoint.y - startPoint.y) * value) - targetView.getMeasuredHeight() / 2);

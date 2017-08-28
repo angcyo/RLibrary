@@ -568,6 +568,9 @@ public class RefreshLayout extends ViewGroup {
      * 设置当前刷新的状态
      */
     public void setRefreshState(@State int state) {
+        if (mCurState == MOVE) {
+            resetScroll(false);
+        }
         if (mCurState == NORMAL || mCurState == FINISH) {
             if (state == TOP) {
                 if (mDirection == TOP || mDirection == BOTH) {

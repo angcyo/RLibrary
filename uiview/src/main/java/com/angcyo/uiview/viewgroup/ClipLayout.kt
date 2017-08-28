@@ -1,13 +1,20 @@
 package com.angcyo.uiview.viewgroup
 
+import android.animation.Animator
+import android.animation.ObjectAnimator
+import android.animation.ValueAnimator
 import android.content.Context
 import android.graphics.Canvas
 import android.graphics.Path
 import android.graphics.RectF
 import android.util.AttributeSet
+import android.view.animation.AccelerateInterpolator
+import android.view.animation.DecelerateInterpolator
 import android.widget.FrameLayout
 import com.angcyo.uiview.R
 import com.angcyo.uiview.kotlin.density
+import com.angcyo.uiview.resources.RAnimListener
+import com.angcyo.uiview.view.UIIViewImpl
 
 /**
  * Copyright (C) 2016,深圳市红鸟网络科技股份有限公司 All rights reserved.
@@ -31,6 +38,8 @@ open class ClipLayout(context: Context, attributeSet: AttributeSet? = null) : Fr
         val CLIP_TYPE_ROUND = 2
         /**圆*/
         val CLIP_TYPE_CIRCLE = 3
+        /**直角矩形*/
+        val CLIP_TYPE_RECT = 4
     }
 
     var clipType = CLIP_TYPE_DEFAULT
@@ -55,14 +64,25 @@ open class ClipLayout(context: Context, attributeSet: AttributeSet? = null) : Fr
         RectF()
     }
 
+    private val size
+        get() = Math.min(measuredHeight - paddingTop - paddingBottom, measuredWidth - paddingLeft - paddingRight)
+
+    private val cx
+        get() = (paddingLeft + (measuredWidth - paddingLeft - paddingRight) / 2).toFloat()
+
+    private val cy
+        get() = (paddingTop + (measuredHeight - paddingTop - paddingBottom) / 2).toFloat()
+
+    private val cr
+        get() = (size / 2).toFloat()
+
+    override fun onSizeChanged(w: Int, h: Int, oldw: Int, oldh: Int) {
+        super.onSizeChanged(w, h, oldw, oldh)
+        roundRectF.set(cx - cr, cy - cr, cx + cr, cy + cr)
+    }
+
     override fun draw(canvas: Canvas) {
         clipPath.reset()
-        val size = Math.min(measuredHeight - paddingTop - paddingBottom,
-                measuredWidth - paddingLeft - paddingRight)
-        val cx = (paddingLeft + size / 2).toFloat()
-        val cy = (paddingTop + size / 2).toFloat()
-        val cr = (size / 2).toFloat()
-        roundRectF.set(cx - cr, cy - cr, cx + cr, cy + cr)
 
         when (clipType) {
             CLIP_TYPE_NONE -> {
@@ -81,7 +101,102 @@ open class ClipLayout(context: Context, attributeSet: AttributeSet? = null) : Fr
                         defaultClipRadius, defaultClipRadius, defaultClipRadius, defaultClipRadius), Path.Direction.CW)
                 canvas.clipPath(clipPath)
             }
+            CLIP_TYPE_RECT -> {
+                clipPath.addRect(roundRectF, Path.Direction.CW)
+                canvas.clipPath(clipPath)
+            }
         }
+        //canvas.drawColor(Color.RED)
         super.draw(canvas)
+    }
+
+    private var animator: ValueAnimator? = null
+
+    var clipAnimTime = UIIViewImpl.DEFAULT_ANIM_TIME
+
+    /**clip到指定的宽高*/
+    fun clipRectTo(w: Float, h: Float) {
+        clipType = CLIP_TYPE_RECT
+        roundRectF.set(cx - w / 2, cy - h / 2, cx + w / 2, cy + h / 2)
+
+        //L.e("call: clipRectTo -> W:$w H:$h W2:${roundRectF.width()} H2:${roundRectF.height()}")
+
+        postInvalidateOnAnimation()
+    }
+
+    /**toMaxFrom*/
+    fun getToMaxWH(fromWidth: Int, fromHeight: Int, fraction: Float /*0-1f*/): FloatArray {
+        val w: Float = fromWidth + (measuredWidth - fromWidth) * fraction
+        val h: Float = fromHeight + (measuredHeight - fromHeight) * fraction
+        return floatArrayOf(w, h)
+    }
+
+    /**fromMaxTo*/
+    fun getFromMaxWH(toWidth: Int, toHeight: Int, fraction: Float /*0-1f*/): FloatArray {
+        val w: Float = measuredWidth - (measuredWidth - toWidth) * fraction
+        val h: Float = measuredHeight - (measuredHeight - toHeight) * fraction
+        return floatArrayOf(w, h)
+    }
+
+    /**
+     * 以屏幕中心为坐标
+     * 从指定的宽高到本身的宽高
+     *
+     * */
+    fun toMaxFrom(width: Int, height: Int) {
+        if (animator == null) {
+            animator = ObjectAnimator.ofFloat(0f, 1f).apply {
+                duration = clipAnimTime.toLong()
+                interpolator = AccelerateInterpolator()
+                addUpdateListener { animation ->
+                    val value: Float = animation.animatedValue as Float
+                    val w: Float = width + (measuredWidth - width) * value
+                    val h: Float = height + (measuredHeight - height) * value
+                    clipRectTo(w, h)
+                }
+                addListener(object : RAnimListener() {
+                    override fun onAnimationFinish(animation: Animator?) {
+                        super.onAnimationFinish(animation)
+                        animator = null
+                    }
+                })
+
+                clipRectTo(width.toFloat(), height.toFloat())
+
+                start()
+            }
+        }
+    }
+
+    /**
+     * 以屏幕中心为坐标
+     * 从本身的宽高到指定的宽高
+     *
+     * */
+    fun fromMaxTo(width: Int, height: Int) {
+        if (animator == null) {
+            animator = ObjectAnimator.ofFloat(0f, 1f).apply {
+                duration = clipAnimTime.toLong()
+                interpolator = DecelerateInterpolator()
+                addUpdateListener { animation ->
+                    val value: Float = animation.animatedValue as Float
+                    val w: Float = measuredWidth - (measuredWidth - width) * value
+                    val h: Float = measuredHeight - (measuredHeight - height) * value
+                    clipRectTo(w, h)
+                }
+                addListener(object : RAnimListener() {
+                    override fun onAnimationFinish(animation: Animator?) {
+                        super.onAnimationFinish(animation)
+                        animator = null
+                    }
+                })
+
+                clipType = CLIP_TYPE_RECT
+                roundRectF.set(0f, 0f, measuredWidth.toFloat(), measuredHeight.toFloat())
+                postInvalidate()
+
+                start()
+            }
+        }
     }
 }
