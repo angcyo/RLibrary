@@ -822,7 +822,12 @@ public abstract class UIIViewImpl implements IView {
 
     public void setChildILayout(ILayout childILayout) {
         mChildILayout = childILayout;
-        mILayout.setChildILayout(mChildILayout);
+        if (mILayout != null) {
+            mILayout.setChildILayout(mChildILayout);
+        }
+        if (mParentILayout != null) {
+            mParentILayout.setChildILayout(mChildILayout);
+        }
     }
 
     private boolean isChildILayoutEmpty() {

@@ -1123,10 +1123,10 @@ public class UILayoutImpl extends SwipeBackLayout implements ILayout<UIParam>, U
                 mLastShowViewPattern = bottomViewPattern;//星期一 2017-1-16
 
                 topViewPattern.isAnimToEnd = false;
-                finishCancel();
                 viewHide(topViewPattern);
                 removeViewPattern(topViewPattern, param);
 
+                finishCancel();
                 printLog();
             }
         };
@@ -1488,7 +1488,7 @@ public class UILayoutImpl extends SwipeBackLayout implements ILayout<UIParam>, U
             return false;
         }
 
-        animation.setAnimationListener(new AnimRunnable(endRunnable));
+        animation.setAnimationListener(new AnimRunnable(view, endRunnable));
 
         view.startAnimation(animation);
 
@@ -2209,12 +2209,14 @@ public class UILayoutImpl extends SwipeBackLayout implements ILayout<UIParam>, U
         void onIViewRemove(final UILayoutImpl uiLayout, final ViewPattern viewPattern);
     }
 
-    class AnimRunnable implements Animation.AnimationListener {
+    static class AnimRunnable implements Animation.AnimationListener {
 
         private Runnable mRunnable;
+        private View mView;
 
-        public AnimRunnable(Runnable runnable) {
+        public AnimRunnable(View view, Runnable runnable) {
             mRunnable = runnable;
+            mView = view;
         }
 
         @Override
@@ -2224,6 +2226,10 @@ public class UILayoutImpl extends SwipeBackLayout implements ILayout<UIParam>, U
 
         @Override
         public void onAnimationEnd(Animation animation) {
+            if (mView != null) {
+                mView.clearAnimation();
+                mView = null;
+            }
             if (mRunnable != null) {
                 mRunnable.run();
             }

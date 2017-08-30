@@ -47,6 +47,12 @@ public abstract class UIBaseRxView extends UIBaseDataView {
         }
     }
 
+    @Override
+    public void release() {
+        super.release();
+        onCancel();
+    }
+
     public void onCancel() {
         if (mSubscriptions != null) {
             mSubscriptions.clear();

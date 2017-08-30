@@ -9,7 +9,6 @@ import android.graphics.Paint
 import android.view.View
 import android.view.animation.Animation
 import android.view.animation.LinearInterpolator
-import com.angcyo.library.utils.L
 import com.angcyo.uiview.kotlin.density
 import com.angcyo.uiview.resources.RAnimListener
 
@@ -120,5 +119,10 @@ class BasePointRefreshView(context: Context) : View(context),
 
     fun stopAnimation() {
         valueAnim.cancel()
+    }
+
+    override fun onDetachedFromWindow() {
+        super.onDetachedFromWindow()
+        stopAnimation()
     }
 }

@@ -963,6 +963,9 @@ public abstract class UIBaseView extends UIIViewImpl {
         return mLayoutState;
     }
 
+    /**
+     * 需要显示加载View的监听
+     */
     public void setOnViewLoadListener(OnViewLoadListener onViewLoadListener) {
         mOnViewLoadListener = onViewLoadListener;
     }

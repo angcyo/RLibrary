@@ -38,6 +38,11 @@ open abstract class UIIDialogRxImpl : UIIDialogImpl() {
         }
     }
 
+    override fun release() {
+        super.release()
+        onCancel()
+    }
+
     fun onCancel() {
         mSubscriptions.clear()
     }
