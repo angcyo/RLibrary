@@ -9,5 +9,6 @@
             <enum name="CLIP_TYPE_RECT" value="4"/>
         </attr>
         <attr name="r_clip_radius" format="dimension"/>
+        <attr name="r_background"/>
     </declare-styleable>
 </resources>

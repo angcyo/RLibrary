@@ -344,13 +344,13 @@ public class UILayoutImpl extends SwipeBackLayout implements ILayout<UIParam>, U
         mLayoutActivity.getApplication().unregisterActivityLifecycleCallbacks(mCallbacks);
         isAttachedToWindow = false;
         unloadViewInternal();
-        if (mIWindowInsetsListeners != null) {
+/*        if (mIWindowInsetsListeners != null) {
             mIWindowInsetsListeners.clear();
-        }
-        mOnIViewChangedListeners.clear();
-        interruptSet.clear();
-        mChildILayout = null;
-        mLayoutActivity = null;
+        }*/
+        //mOnIViewChangedListeners.clear();
+        //interruptSet.clear();
+        //mChildILayout = null;
+        //mLayoutActivity = null;
     }
 
     /**
@@ -415,7 +415,7 @@ public class UILayoutImpl extends SwipeBackLayout implements ILayout<UIParam>, U
     private boolean checkInterrupt(IView iView) {
         /**已经被中断启动了*/
         if (interruptSet.contains(iView)) {
-            interruptSet.remove(iView);
+            //interruptSet.remove(iView);
             L.i("请求启动:" + iView.getClass().getSimpleName() + " --启动被中断!");
             return true;
         }
@@ -561,6 +561,8 @@ public class UILayoutImpl extends SwipeBackLayout implements ILayout<UIParam>, U
         iView.onViewCreate(rawView);
         iView.onViewCreate(rawView, uiParam);
 
+        L.e("call: loadViewInternal()-> 加载页面:" + iView.getClass().getSimpleName());
+
         return rawView;
     }
 
@@ -586,6 +588,8 @@ public class UILayoutImpl extends SwipeBackLayout implements ILayout<UIParam>, U
      * @param param isQuiet 如果为true, 上层的视图,将取消生命周期 {@link IView#onViewShow()}  的回调
      */
     private void finishIViewInner(final ViewPattern viewPattern, final UIParam param) {
+        isFinishing = true;
+
         if (viewPattern == null || viewPattern.isAnimToEnd) {
             finishCancel();
             return;
@@ -689,62 +693,66 @@ public class UILayoutImpl extends SwipeBackLayout implements ILayout<UIParam>, U
 
     @Override
     public void finishIView(final IView iview, final UIParam param) {
+        finishIView(iview, param, true);
+    }
+
+    protected void finishIView(final IView iview, final UIParam param, boolean checkInterrupt) {
         if (iview == null) {
             finishCancel();
             return;
         }
 
-//        if (interruptSet.contains(iview)) {
-//            String log = this.getClass().getSimpleName() + " 已在中断列表中:" + iview.getClass().getSimpleName();
-//            L.i(log);
-//            saveToSDCard(log);
-//            return;
-//        }
-
-        String log = this.getClass().getSimpleName() + " 请求关闭/中断:" + iview.getClass().getSimpleName();
-        L.i(log);
-        saveToSDCard(log);
-        interruptSet.add(iview);
-
         final ViewPattern viewPattern = findViewPatternByIView(iview);
-        if (viewPattern != null) {
-//            if (viewPattern.interrupt) {
+        if (viewPattern == null || viewPattern.mIView == null) {
+            return;
+        }
+        //            if (viewPattern.interrupt) {
 //                log = iview.getClass().getSimpleName() + " 已在中断";
 //                L.i(log);
 //                saveToSDCard(log);
 //                return;
 //            }
-            viewPattern.interrupt = true;//中断启动
-        }
+        viewPattern.interrupt = true;//中断启动
 
-        if (mLastShowViewPattern != null &&
-                mLastShowViewPattern != viewPattern &&
-                mLastShowViewPattern.mIView.isDialog()) {
-            L.i("等待对话框:" + mLastShowViewPattern.mIView.getClass().getSimpleName() + " 的关闭");
-            postDelayed(new Runnable() {
+        if (checkInterrupt && checkInterrupt(iview)) {
+            String log = this.getClass().getSimpleName() + " 已在中断列表中:" + iview.getClass().getSimpleName();
+            L.i(log);
+            saveToSDCard(log);
+            return;
+        } else {
+            String log = this.getClass().getSimpleName() + " 请求关闭/中断:" + iview.getClass().getSimpleName();
+            L.i(log);
+            saveToSDCard(log);
+            interruptSet.add(iview);
+
+            if (mLastShowViewPattern != null &&
+                    mLastShowViewPattern != viewPattern &&
+                    mLastShowViewPattern.mIView.isDialog()) {
+                L.i("等待对话框:" + mLastShowViewPattern.mIView.getClass().getSimpleName() + " 的关闭");
+                postDelayed(new Runnable() {
+                    @Override
+                    public void run() {
+                        finishIView(iview, param, false);
+                    }
+                }, DEFAULT_ANIM_TIME);
+                return;
+            }
+
+            final Runnable endRunnable = new Runnable() {
                 @Override
                 public void run() {
-                    finishIView(iview, param);
+                    finishIViewInner(viewPattern, param);
                 }
-            }, DEFAULT_ANIM_TIME);
-            return;
-        }
+            };
 
-        final Runnable endRunnable = new Runnable() {
-            @Override
-            public void run() {
-                finishIViewInner(viewPattern, param);
+            if (param.mAsync) {
+                post(endRunnable);
+                return;
             }
-        };
-
-        isFinishing = true;
-
-        if (param.mAsync) {
-            post(endRunnable);
-            return;
+            endRunnable.run();
         }
-        endRunnable.run();
     }
+
 
     /**
      * 关闭操作被中断/取消, 需要恢复一些变量
@@ -1556,10 +1564,9 @@ public class UILayoutImpl extends SwipeBackLayout implements ILayout<UIParam>, U
         return null;
     }
 
-    public void removeViewPattern(ViewPattern viewPattern, final UIParam param) {
+    public void removeViewPattern(final ViewPattern viewPattern, final UIParam param) {
         hideSoftInput();
         viewPattern.mView.setEnabled(false);
-        interruptSet.remove(viewPattern.mIView);
         viewPattern.mIView.onViewUnload();
         final View view = viewPattern.mView;
         //ViewCompat.setAlpha(view, 0);
@@ -1569,7 +1576,9 @@ public class UILayoutImpl extends SwipeBackLayout implements ILayout<UIParam>, U
             public void run() {
                 try {
                     //UI.setView(view, 0, 0);
+                    interruptSet.remove(viewPattern.mIView);
                     removeView(view);
+                    L.e("call: removeViewPattern()-> 关闭界面结束:" + viewPattern.mIView.getClass().getSimpleName());
                 } catch (Exception e) {
                     e.printStackTrace();
                 }
@@ -1583,6 +1592,7 @@ public class UILayoutImpl extends SwipeBackLayout implements ILayout<UIParam>, U
             }
         });
         mAttachViews.remove(viewPattern);
+
         isFinishing = false;
         isBackPress = false;
 

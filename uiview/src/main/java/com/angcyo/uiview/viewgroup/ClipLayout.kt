@@ -4,9 +4,8 @@ import android.animation.Animator
 import android.animation.ObjectAnimator
 import android.animation.ValueAnimator
 import android.content.Context
-import android.graphics.Canvas
-import android.graphics.Path
-import android.graphics.RectF
+import android.graphics.*
+import android.graphics.drawable.Drawable
 import android.util.AttributeSet
 import android.view.animation.AccelerateInterpolator
 import android.view.animation.DecelerateInterpolator
@@ -14,6 +13,7 @@ import android.widget.FrameLayout
 import com.angcyo.uiview.R
 import com.angcyo.uiview.kotlin.density
 import com.angcyo.uiview.resources.RAnimListener
+import com.angcyo.uiview.utils.ClipHelper
 import com.angcyo.uiview.view.UIIViewImpl
 
 /**
@@ -42,17 +42,27 @@ open class ClipLayout(context: Context, attributeSet: AttributeSet? = null) : Fr
         val CLIP_TYPE_RECT = 4
     }
 
-    var clipType = CLIP_TYPE_DEFAULT
+    var clipType = CLIP_TYPE_NONE
 
     private val defaultClipRadius = 3 * density
+
+    var rBackgroundDrawable: Drawable? = null
 
     /**当clipType为CLIP_TYPE_CIRCLE时, 这个值表示圆的半径, 否则就是圆角的半径*/
     var clipRadius = defaultClipRadius
 
+    /**引导模式, 会镂空布局, 只在CLIP_TYPE_CIRCLE生效*/
+    var guidMode = false
+
+    private val paint by lazy {
+        Paint(Paint.ANTI_ALIAS_FLAG)
+    }
+
     init {
         val typedArray = context.obtainStyledAttributes(attributeSet, R.styleable.ClipLayout)
-        clipType = typedArray.getInt(R.styleable.ClipLayout_r_clip_type, CLIP_TYPE_DEFAULT)
+        clipType = typedArray.getInt(R.styleable.ClipLayout_r_clip_type, clipType)
         clipRadius = typedArray.getDimensionPixelOffset(R.styleable.ClipLayout_r_clip_radius, 3).toFloat()
+        rBackgroundDrawable = typedArray.getDrawable(R.styleable.ClipLayout_r_background)
         typedArray.recycle()
 
         setWillNotDraw(false)
@@ -79,34 +89,59 @@ open class ClipLayout(context: Context, attributeSet: AttributeSet? = null) : Fr
     override fun onSizeChanged(w: Int, h: Int, oldw: Int, oldh: Int) {
         super.onSizeChanged(w, h, oldw, oldh)
         roundRectF.set(cx - cr, cy - cr, cx + cr, cy + cr)
+        rBackgroundDrawable?.setBounds(0, 0, measuredWidth, measuredHeight)
     }
 
-    override fun draw(canvas: Canvas) {
-        clipPath.reset()
+    private val guidBitmap by lazy {
+        Bitmap.createBitmap(measuredWidth, measuredHeight, Bitmap.Config.ARGB_8888)
+    }
 
-        when (clipType) {
-            CLIP_TYPE_NONE -> {
+    private val guidCanvas by lazy {
+        Canvas(guidBitmap)
+    }
+
+    var guidMaskColor = Color.parseColor("#40000000")
+    var guidColor = Color.TRANSPARENT
+
+    override fun draw(canvas: Canvas) {
+        if (guidMode) {
+            paint.xfermode = null
+            paint.color = guidMaskColor
+            guidCanvas.drawRect(0f, 0f, measuredWidth.toFloat(), measuredHeight.toFloat(), paint)
+            paint.xfermode = PorterDuffXfermode(PorterDuff.Mode.SRC_OUT)
+            paint.color = guidColor
+            guidCanvas.drawCircle(cx, cy, clipRadius, paint)
+            paint.xfermode = null
+
+            canvas.drawBitmap(guidBitmap, 0f, 0f, null)
+        } else {
+            rBackgroundDrawable?.draw(canvas)
+            clipPath.reset()
+
+            when (clipType) {
+                CLIP_TYPE_NONE -> {
+                }
+                CLIP_TYPE_ROUND -> {
+                    clipPath.addRoundRect(roundRectF, floatArrayOf(clipRadius, clipRadius, clipRadius, clipRadius,
+                            clipRadius, clipRadius, clipRadius, clipRadius), Path.Direction.CW)
+                    canvas.clipPath(clipPath)
+                }
+                CLIP_TYPE_CIRCLE -> {
+                    clipPath.addCircle(cx, cy, clipRadius, Path.Direction.CW)
+                    canvas.clipPath(clipPath)
+                }
+                CLIP_TYPE_DEFAULT -> {
+                    clipPath.addRoundRect(roundRectF, floatArrayOf(defaultClipRadius, defaultClipRadius, defaultClipRadius, defaultClipRadius,
+                            defaultClipRadius, defaultClipRadius, defaultClipRadius, defaultClipRadius), Path.Direction.CW)
+                    canvas.clipPath(clipPath)
+                }
+                CLIP_TYPE_RECT -> {
+                    clipPath.addRect(roundRectF, Path.Direction.CW)
+                    canvas.clipPath(clipPath)
+                }
             }
-            CLIP_TYPE_ROUND -> {
-                clipPath.addRoundRect(roundRectF, floatArrayOf(clipRadius, clipRadius, clipRadius, clipRadius,
-                        clipRadius, clipRadius, clipRadius, clipRadius), Path.Direction.CW)
-                canvas.clipPath(clipPath)
-            }
-            CLIP_TYPE_CIRCLE -> {
-                clipPath.addCircle(cx, cy, clipRadius, Path.Direction.CW)
-                canvas.clipPath(clipPath)
-            }
-            CLIP_TYPE_DEFAULT -> {
-                clipPath.addRoundRect(roundRectF, floatArrayOf(defaultClipRadius, defaultClipRadius, defaultClipRadius, defaultClipRadius,
-                        defaultClipRadius, defaultClipRadius, defaultClipRadius, defaultClipRadius), Path.Direction.CW)
-                canvas.clipPath(clipPath)
-            }
-            CLIP_TYPE_RECT -> {
-                clipPath.addRect(roundRectF, Path.Direction.CW)
-                canvas.clipPath(clipPath)
-            }
+            //canvas.drawColor(Color.RED)
         }
-        //canvas.drawColor(Color.RED)
         super.draw(canvas)
     }
 
@@ -137,6 +172,34 @@ open class ClipLayout(context: Context, attributeSet: AttributeSet? = null) : Fr
         val h: Float = measuredHeight - (measuredHeight - toHeight) * fraction
         return floatArrayOf(w, h)
     }
+
+    fun toMaxFromCircle(cr: Float, onAnimEnd: (() -> Unit)? = null) {
+        if (animator == null) {
+            animator = ObjectAnimator.ofFloat(cr, ClipHelper.calcEndRadius(measuredWidth, measuredHeight, cx, cy)).apply {
+                duration = clipAnimTime.toLong()
+                interpolator = AccelerateInterpolator()
+                addUpdateListener { animation ->
+                    val value: Float = animation.animatedValue as Float
+                    clipType = CLIP_TYPE_CIRCLE
+                    clipRadius = value
+                    postInvalidateOnAnimation()
+                }
+                addListener(object : RAnimListener() {
+                    override fun onAnimationFinish(animation: Animator?) {
+                        super.onAnimationFinish(animation)
+                        animator = null
+                        onAnimEnd?.invoke()
+                    }
+                })
+                clipType = CLIP_TYPE_CIRCLE
+                clipRadius = cr
+                postInvalidateOnAnimation()
+
+                start()
+            }
+        }
+    }
+
 
     /**
      * 以屏幕中心为坐标
@@ -198,5 +261,10 @@ open class ClipLayout(context: Context, attributeSet: AttributeSet? = null) : Fr
                 start()
             }
         }
+    }
+
+    override fun onDetachedFromWindow() {
+        super.onDetachedFromWindow()
+        guidBitmap.recycle()
     }
 }

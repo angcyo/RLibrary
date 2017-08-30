@@ -140,7 +140,7 @@ class ExpandRecordLayout(context: Context, attributeSet: AttributeSet? = null) :
     }
 
     /**控制手势事件*/
-    val gestureCompat: GestureDetectorCompat by lazy {
+    private val gestureCompat: GestureDetectorCompat by lazy {
         GestureDetectorCompat(context, object : GestureDetector.SimpleOnGestureListener() {
             override fun onLongPress(event: MotionEvent) {
                 L.e("call: onLongPress -> ")

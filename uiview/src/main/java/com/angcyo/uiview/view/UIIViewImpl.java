@@ -340,10 +340,10 @@ public abstract class UIIViewImpl implements IView {
     @Override
     public void release() {
         mOnUIViewListener = null;
-        mActivity = null;
+        //mActivity = null;
         mChildILayout = null;
-        mParentILayout = null;
-        mILayout = null;
+        //mParentILayout = null;
+        //mILayout = null;
         mILifecycleList.clear();
     }
 

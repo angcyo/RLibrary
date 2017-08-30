@@ -169,6 +169,14 @@ public class Root {
      * 在SD APP_FOLDER根目录下, 随机创建一个文件名路径
      */
     public static String createFilePath() {
+        return createExternalFilePath();
+    }
+
+    public static String createExternalFilePath() {
         return getAppExternalFolder("") + File.separator + createFileName();
+    }
+
+    public static String createInternalFilePath(String folder) {
+        return getAppExternalFolder(folder) + File.separator + createFileName();
     }
 }
