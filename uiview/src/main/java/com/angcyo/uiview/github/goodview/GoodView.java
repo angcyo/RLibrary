@@ -44,30 +44,19 @@ import com.angcyo.uiview.skin.SkinHelper;
  */
 public class GoodView extends PopupWindow implements IGoodView {
 
+    static GoodView goodView;
     private String mText = TEXT;
-
     private int mTextColor = TEXT_COLOR;
-
     private int mTextSize = TEXT_SIZE;
-
     private int mFromY = FROM_Y_DELTA;
-
     private int mToY = TO_Y_DELTA;
-
     private float mFromAlpha = FROM_ALPHA;
-
     private float mToAlpha = TO_ALPHA;
-
     private int mDuration = DURATION;
-
     private int mDistance = DISTANCE;
-
     private AnimationSet mAnimationSet;
-
     private boolean mChanged = false;
-
     private Context mContext = null;
-
     private TextView mGood = null;
 
     public GoodView(Context context) {
@@ -87,10 +76,14 @@ public class GoodView extends PopupWindow implements IGoodView {
      * 创建并显示一个点赞+1
      */
     public static void build(@NonNull View view) {
-        GoodView goodView = new GoodView(view.getContext());
+        goodView = new GoodView(view.getContext());
         goodView.setTextColor(SkinHelper.getSkin().getThemeSubColor());
         goodView.setText("+1");
         goodView.show(view);
+    }
+
+    public static void release() {
+        goodView = null;
     }
 
     private void initView() {
