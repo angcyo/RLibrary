@@ -212,6 +212,14 @@ public class UIViewPager extends ViewPager implements Runnable, StickLayout.CanS
         lastItem = currentItem;
     }
 
+    @Override
+    protected void onDetachedFromWindow() {
+        super.onDetachedFromWindow();
+        if (mParentUIView != null) {
+            mParentUIView.setChildILayout(null);
+        }
+    }
+
     public void setSlowTouch(boolean slowTouch) {
         this.slowTouch = slowTouch;
     }

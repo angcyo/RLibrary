@@ -136,6 +136,8 @@ public class UITitleBarContainer extends FrameLayout {
     protected void onDetachedFromWindow() {
         super.onDetachedFromWindow();
         isAttachedToWindow = false;
+        mTitleBarPattern.clear();
+        mOnBackListener = null;
     }
 
     private void initTitleBar(Context context) {

@@ -43,4 +43,9 @@ public class ViewPattern {
         builder.append(" interrupt:" + interrupt);
         return builder.toString();
     }
+
+    public void clear() {
+        mIView = null;
+        mView = null;
+    }
 }

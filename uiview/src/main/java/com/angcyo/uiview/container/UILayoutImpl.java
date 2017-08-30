@@ -344,6 +344,13 @@ public class UILayoutImpl extends SwipeBackLayout implements ILayout<UIParam>, U
         mLayoutActivity.getApplication().unregisterActivityLifecycleCallbacks(mCallbacks);
         isAttachedToWindow = false;
         unloadViewInternal();
+        if (mIWindowInsetsListeners != null) {
+            mIWindowInsetsListeners.clear();
+        }
+        mOnIViewChangedListeners.clear();
+        interruptSet.clear();
+        mChildILayout = null;
+        mLayoutActivity = null;
     }
 
     /**
@@ -358,6 +365,8 @@ public class UILayoutImpl extends SwipeBackLayout implements ILayout<UIParam>, U
                 removeView(viewPattern.mView);
             } catch (Exception e) {
                 e.printStackTrace();
+            } finally {
+                viewPattern.clear();
             }
         }
     }
@@ -983,7 +992,7 @@ public class UILayoutImpl extends SwipeBackLayout implements ILayout<UIParam>, U
 
                 topViewStart(newViewPattern, param);
 
-                if (param.isReplaceIViewEmpty() || oldViewPattern.mIView == param.replaceIViewRef.get()) {
+                if (param.isReplaceIViewEmpty() || oldViewPattern.mIView == param.replaceIView) {
                     final Runnable endRunnable = new Runnable() {
                         @Override
                         public void run() {
@@ -1580,6 +1589,8 @@ public class UILayoutImpl extends SwipeBackLayout implements ILayout<UIParam>, U
         for (OnIViewChangedListener listener : mOnIViewChangedListeners) {
             listener.onIViewRemove(this, viewPattern);
         }
+
+        viewPattern.mIView.release();
     }
 
     @Override
@@ -2076,7 +2087,7 @@ public class UILayoutImpl extends SwipeBackLayout implements ILayout<UIParam>, U
      * child layout
      */
     private void showChildLayoutLastView() {
-        if (mChildILayout != null) {
+        if (!isChildILayoutEmpty()) {
             ViewPattern patternAtLast = mChildILayout.getViewPatternAtLast(0);
             if (patternAtLast != null) {
                 patternAtLast.mView.setVisibility(VISIBLE);
@@ -2084,8 +2095,12 @@ public class UILayoutImpl extends SwipeBackLayout implements ILayout<UIParam>, U
         }
     }
 
+    private boolean isChildILayoutEmpty() {
+        return mChildILayout == null;
+    }
+
     private void hideChildLayoutLastView() {
-        if (mChildILayout != null) {
+        if (!isChildILayoutEmpty()) {
             ViewPattern patternAtLast = mChildILayout.getViewPatternAtLast(0);
             if (patternAtLast != null) {
                 patternAtLast.mView.setVisibility(GONE);

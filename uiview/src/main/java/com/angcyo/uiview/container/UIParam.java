@@ -4,8 +4,6 @@ import android.os.Bundle;
 
 import com.angcyo.uiview.view.IView;
 
-import java.lang.ref.WeakReference;
-
 /**
  * Copyright (C) 2016,深圳市红鸟网络科技股份有限公司 All rights reserved.
  * 项目名称：
@@ -43,16 +41,16 @@ public class UIParam {
     /**
      * 需要替换的iview, 只在replaceIView时使用, 用来判断目标的可行性
      */
-    protected WeakReference<IView> replaceIViewRef;
+    protected IView replaceIView;
     /**
      * IView unLoad 时回调
      */
-    protected WeakReference<Runnable> unloadRunnableRef;
-    protected WeakReference<Bundle> mBundleRef;
+    protected Runnable unloadRunnable;
+    protected Bundle mBundle;
 
     public UIParam(boolean anim, boolean async, Bundle bundle) {
         mAnim = anim;
-        mBundleRef = new WeakReference<>(bundle);
+        mBundle = bundle;
         mAsync = async;
     }
 
@@ -112,71 +110,56 @@ public class UIParam {
     }
 
     public boolean isReplaceIViewEmpty() {
-        if (replaceIViewRef == null || replaceIViewRef.get() == null) {
+        if (replaceIView == null) {
             return true;
         }
         return false;
     }
 
     public boolean isUnloadRunnalbeEmpty() {
-        if (unloadRunnableRef == null || unloadRunnableRef.get() == null) {
+        if (unloadRunnable == null) {
             return true;
         }
         return false;
     }
 
     public boolean isBundleEmpty() {
-        if (mBundleRef == null || mBundleRef.get() == null) {
+        if (mBundle == null) {
             return true;
         }
         return false;
     }
 
     public Bundle getBundle() {
-        if (mBundleRef == null) {
-            return null;
-        }
-        return mBundleRef.get();
+        return mBundle;
     }
 
     public UIParam setBundle(Bundle bundle) {
-        mBundleRef = new WeakReference<>(bundle);
+        mBundle = bundle;
         return this;
     }
 
     public IView getReplaceIView() {
-        if (replaceIViewRef == null) {
-            return null;
-        }
-        return replaceIViewRef.get();
+        return replaceIView;
     }
 
     public UIParam setReplaceIView(IView replaceIView) {
-        this.replaceIViewRef = new WeakReference<>(replaceIView);
+        this.replaceIView = replaceIView;
         return this;
     }
 
     public Runnable getUnloadRunnable() {
-        if (unloadRunnableRef == null) {
-            return null;
-        }
-        return unloadRunnableRef.get();
+        return unloadRunnable;
     }
 
     public UIParam setUnloadRunnable(Runnable unloadRunnable) {
-        this.unloadRunnableRef = new WeakReference<>(unloadRunnable);
+        this.unloadRunnable = unloadRunnable;
         return this;
     }
 
     public void clear() {
-        if (mBundleRef != null) {
-            mBundleRef.clear();
-        }
-        if (replaceIViewRef != null) {
-            replaceIViewRef.clear();
-        }
-        if (unloadRunnableRef != null) {
-            unloadRunnableRef.clear();
-        }
+        mBundle = null;
+        replaceIView = null;
+        unloadRunnable = null;
     }
 }

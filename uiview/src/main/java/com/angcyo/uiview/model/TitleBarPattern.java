@@ -205,6 +205,12 @@ public class TitleBarPattern {
         return this;
     }
 
+    public void clear() {
+        mLeftItems.clear();
+        mRightItems.clear();
+        mOnInitTitleLayout = null;
+    }
+
     public interface OnInitTitleLayout {
         void onInitLayout(RTitleCenterLayout parent);
 

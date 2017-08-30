@@ -1049,6 +1049,9 @@ public class RefreshLayout extends ViewGroup {
         @Override
         protected void onDetachedFromWindow() {
             super.onDetachedFromWindow();
+            if (mObjectAnimator != null) {
+                mObjectAnimator.cancel();
+            }
             mBitmap.recycle();
             mBitmap = null;
             mDrawable = null;

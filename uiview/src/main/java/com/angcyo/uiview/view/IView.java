@@ -233,6 +233,8 @@ public interface IView {
 
     boolean needTransitionExitAnim();//星期三 2017-8-9
 
+    void release();//星期二 2017-8-29
+
     enum IViewShowState {
         STATE_NORMAL,
         STATE_VIEW_CREATE,

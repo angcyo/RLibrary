@@ -67,8 +67,8 @@ public abstract class UIIViewImpl implements IView {
     public static final int DEFAULT_CLICK_DELAY_TIME = 300;
 
     protected ILayout mILayout;
-    protected ILayout mParentILayout;//上层ILayout,
-    protected ILayout mChildILayout;//用来管理上层IView的生命周期, 如果有值, 会等于mILayout
+    protected ILayout mParentILayout;//上层ILayout, 用来管理上层IView的生命周期, 如果有值, 会等于mILayout
+    protected ILayout mChildILayout;//
     protected UILayoutActivity mActivity;
     /**
      * 根布局
@@ -162,9 +162,7 @@ public abstract class UIIViewImpl implements IView {
     @Override
     public void onAttachedToILayout(ILayout iLayout) {
         mILayout = iLayout;
-        if (mChildILayout != null) {
-            mILayout.setChildILayout(mChildILayout);
-        }
+        setChildILayout(iLayout);
         if (mParentILayout == null) {
             mParentILayout = iLayout;
         }
@@ -270,7 +268,7 @@ public abstract class UIIViewImpl implements IView {
         }
 
         onViewShow(viewShowCount);
-        if (mChildILayout != null) {
+        if (!isChildILayoutEmpty()) {
             mChildILayout.onLastViewShow(bundle);
         }
 
@@ -303,7 +301,7 @@ public abstract class UIIViewImpl implements IView {
     public void onViewReShow(Bundle bundle) {
         L.d(this.getClass().getSimpleName(), "onViewReShow: " + mIViewStatus);
 
-        if (mChildILayout != null) {
+        if (!isChildILayoutEmpty()) {
             mChildILayout.onLastViewReShow(bundle);
         }
     }
@@ -316,7 +314,7 @@ public abstract class UIIViewImpl implements IView {
 
         notifyLifeViewHide();
 
-        if (mChildILayout != null) {
+        if (!isChildILayoutEmpty()) {
             mChildILayout.onLastViewHide();
         }
     }
@@ -335,6 +333,18 @@ public abstract class UIIViewImpl implements IView {
         if (mOnUIViewListener != null) {
             mOnUIViewListener.onViewUnload(this);
         }
+        setChildILayout(null);
+    }
+
+    @CallSuper
+    @Override
+    public void release() {
+        mOnUIViewListener = null;
+        mActivity = null;
+        mChildILayout = null;
+        mParentILayout = null;
+        mILayout = null;
+        mILifecycleList.clear();
     }
 
     @Override
@@ -663,6 +673,9 @@ public abstract class UIIViewImpl implements IView {
 
     @Override
     public boolean haveChildILayout() {
+        if (isChildILayoutEmpty()) {
+            return false;
+        }
         return mChildILayout != mILayout;
     }
 
@@ -809,9 +822,11 @@ public abstract class UIIViewImpl implements IView {
 
     public void setChildILayout(ILayout childILayout) {
         mChildILayout = childILayout;
-        if (mILayout != null) {
-            mILayout.setChildILayout(mChildILayout);
-        }
+        mILayout.setChildILayout(mChildILayout);
+    }
+
+    private boolean isChildILayoutEmpty() {
+        return mChildILayout == null || mChildILayout == mILayout;
     }
 
     protected void notifySkinChanged(View view, ISkin skin) {
