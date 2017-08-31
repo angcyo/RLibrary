@@ -331,9 +331,9 @@ public class UITitleBarContainer extends FrameLayout {
             } else {
                 //创建图片按钮
                 view = createImageItem(item.icoDrawable, item.listener);
+                view.setMinimumWidth(itemSize);
             }
             view.setVisibility(item.visibility);
-            view.setMinimumWidth(itemSize);
             LinearLayout.LayoutParams layoutParams = new LinearLayout.LayoutParams(-2, -1);
             layoutParams.setMargins(item.leftMargin, item.topMargin, item.rightMargin, item.bottomMargin);
             view.setTag(R.id.tag, i);//方便之后查找这个view
@@ -384,6 +384,8 @@ public class UITitleBarContainer extends FrameLayout {
         int padding = getResources().getDimensionPixelOffset(R.dimen.base_ldpi);
         item.setPadding(padding, 0, padding, 0);
         item.setText(text);
+        item.setSingleLine();
+        item.setMaxLines(1);
         item.setTextSize(TypedValue.COMPLEX_UNIT_PX, SkinHelper.getSkin().getSubTextSize() /*getResources().getDimensionPixelOffset(R.dimen.base_title_size)*/);
         item.setTextColor(color == -1 ? Color.WHITE : color);
         item.setGravity(Gravity.CENTER);

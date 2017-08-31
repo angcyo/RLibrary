@@ -379,7 +379,7 @@ public class UILayoutImpl extends SwipeBackLayout implements ILayout<UIParam>, U
         saveToSDCard(log);
 
         iView.onAttachedToILayout(this);
-        if (checkInterrupt(iView)) return;
+        if (checkInterruptAndRemove(iView)) return;
 
         runnableCount++;
         final Runnable endRunnable = new Runnable() {
@@ -423,6 +423,16 @@ public class UILayoutImpl extends SwipeBackLayout implements ILayout<UIParam>, U
         return false;
     }
 
+    private boolean checkInterruptAndRemove(IView iView) {
+        /**已经被中断启动了*/
+        if (interruptSet.contains(iView)) {
+            interruptSet.remove(iView);
+            L.i("请求启动:" + iView.getClass().getSimpleName() + " --启动被中断!");
+            return true;
+        }
+        return false;
+    }
+
     private void startInner(final IView iView, final UIParam param) {
         if (!isAttachedToWindow) {
             post(new Runnable() {
@@ -434,7 +444,7 @@ public class UILayoutImpl extends SwipeBackLayout implements ILayout<UIParam>, U
             return;
         }
 
-        if (checkInterrupt(iView)) return;
+        if (checkInterruptAndRemove(iView)) return;
 
         final ViewPattern oldViewPattern = getLastViewPattern();
         isStarting = true;
@@ -476,6 +486,7 @@ public class UILayoutImpl extends SwipeBackLayout implements ILayout<UIParam>, U
     }
 
     private ViewPattern startIViewInternal(final IView iView, UIParam param) {
+
         hideSoftInput();
 
         iView.onAttachedToILayout(this);
@@ -707,6 +718,7 @@ public class UILayoutImpl extends SwipeBackLayout implements ILayout<UIParam>, U
 
         final ViewPattern viewPattern = findViewPatternByIView(iview);
         if (viewPattern == null || viewPattern.mIView == null) {
+            interruptSet.add(iview);
             return;
         }
 
@@ -1761,27 +1773,41 @@ public class UILayoutImpl extends SwipeBackLayout implements ILayout<UIParam>, U
 
             //-----------------只有部分界面需要测量, 优化性能---------
             boolean needMeasure = false;
-            if (viewPatternByView == mLastShowViewPattern) {
+            if (!"true".equalsIgnoreCase(String.valueOf(childAt.getTag(R.id.tag_layout)))) {
+                //如果还没有layout过
                 needMeasure = true;
-            } else if (i == count - 1 || i == count - 2) {
+            } else if (viewPatternByView == mLastShowViewPattern) {
+                //最后一个页面
                 needMeasure = true;
-            } else if (indexFromIViews >= 0 && (indexFromIViews == iViewSize - 1 || indexFromIViews == iViewSize - 2)) {
+            } else if (i == count - 1 /*|| i == count - 2*/) {
+                //倒数第一个, 第二个view
                 needMeasure = true;
-            } else if (viewPatternByView.mIView.needForceMeasure()) {
+            } else if (indexFromIViews >= 0 && (indexFromIViews == iViewSize - 1 /*|| indexFromIViews == iViewSize - 2*/)) {
+                //倒数第一个, 第二个iview
                 needMeasure = true;
             } else {
-                IView iView = viewPatternByView.mIView;
-                for (int j = mAttachViews.size() - 1; j >= 0; j--) {
-                    ViewPattern viewPattern = mAttachViews.get(j);
-                    if (viewPattern.mIView.isDialog() || viewPattern.mIView.showOnDialog()) {
-                        needMeasure = true;
-                    } else if (viewPattern == iView) {
-                        break;
-                    } else {
-                        needMeasure = false;
-                        break;
+                if (viewPatternByView.mIView.needForceMeasure()) {
+                    //需要强制测量
+                    needMeasure = true;
+                } else {
+                    IView iView = viewPatternByView.mIView;
+                    for (int j = mAttachViews.size() - 1; j >= 0; j--) {
+                        ViewPattern viewPattern = mAttachViews.get(j);
+                        if (viewPattern.mIView.isDialog() || viewPattern.mIView.showOnDialog()) {
+                            //界面上面全是对话框
+                            needMeasure = true;
+                            if (viewPattern.mIView == iView) {
+                                break;
+                            }
+                        } else if (viewPattern.mIView == iView) {
+                            break;
+                        } else {
+                            needMeasure = false;
+                            break;
+                        }
                     }
                 }
+
 //                if (!"true".equalsIgnoreCase(String.valueOf(childAt.getTag(R.id.tag_layout)))) {
                 //childAt.measure(exactlyMeasure(widthSize), exactlyMeasure(heightSize));
 //                } else {
