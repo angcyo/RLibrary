@@ -65,6 +65,10 @@ public class UIParam {
     public UIParam() {
     }
 
+    public UIParam(Runnable unloadRunnable) {
+        this.unloadRunnable = unloadRunnable;
+    }
+
     public UIParam(boolean anim, boolean isSwipeBack, boolean isQuiet) {
         mAnim = anim;
         this.isSwipeBack = isSwipeBack;

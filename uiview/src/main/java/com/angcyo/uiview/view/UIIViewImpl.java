@@ -61,8 +61,8 @@ import static com.angcyo.uiview.RCrashHandler.getMemoryInfo;
 
 public abstract class UIIViewImpl implements IView {
 
-    public static final int DEFAULT_ANIM_TIME = 200;
-    public static final int DEFAULT_FINISH_ANIM_TIME = 200;
+    public static final int DEFAULT_ANIM_TIME = 216;
+    public static final int DEFAULT_FINISH_ANIM_TIME = 200;//完成动画,尽量比启动动画快一点(相差最好是一帧的时间)
     public static final int DEFAULT_DIALOG_FINISH_ANIM_TIME = 150;
     public static final int DEFAULT_CLICK_DELAY_TIME = 300;
 
@@ -355,7 +355,7 @@ public abstract class UIIViewImpl implements IView {
             translateAnimation = new TranslateAnimation(Animation.RELATIVE_TO_SELF, -0.99f, Animation.RELATIVE_TO_SELF, 0,
                     Animation.RELATIVE_TO_SELF, 0f, Animation.RELATIVE_TO_SELF, 0f);
         } else {
-            translateAnimation = new TranslateAnimation(Animation.RELATIVE_TO_SELF, 0.99f, Animation.RELATIVE_TO_SELF, 0,
+            translateAnimation = new TranslateAnimation(Animation.RELATIVE_TO_SELF, 0.99f, Animation.RELATIVE_TO_SELF, 0f,
                     Animation.RELATIVE_TO_SELF, 0f, Animation.RELATIVE_TO_SELF, 0f);
         }
         setDefaultConfig(translateAnimation, false);
@@ -394,7 +394,7 @@ public abstract class UIIViewImpl implements IView {
             translateAnimation = new TranslateAnimation(Animation.RELATIVE_TO_SELF, 0, Animation.RELATIVE_TO_SELF, -1f,
                     Animation.RELATIVE_TO_SELF, 0f, Animation.RELATIVE_TO_SELF, 0f);
         }
-        setDefaultConfig(translateAnimation, false);
+        setDefaultConfig(translateAnimation, true);
         return translateAnimation;
     }
 
@@ -945,6 +945,11 @@ public abstract class UIIViewImpl implements IView {
 
     @Override
     public boolean needTransitionExitAnim() {
+        return false;
+    }
+
+    @Override
+    public boolean needForceMeasure() {
         return false;
     }
 }

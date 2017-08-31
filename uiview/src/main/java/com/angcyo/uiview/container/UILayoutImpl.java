@@ -11,6 +11,7 @@ import android.graphics.Rect;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Environment;
+import android.support.v4.view.ViewCompat;
 import android.support.v4.widget.ViewDragHelper;
 import android.text.TextUtils;
 import android.util.AttributeSet;
@@ -595,6 +596,8 @@ public class UILayoutImpl extends SwipeBackLayout implements ILayout<UIParam>, U
             return;
         }
 
+        viewPattern.mView.setEnabled(false);
+
         String log = this.getClass().getSimpleName() + " 请求关闭2:" + viewPattern.toString() + " isFinishing:" + isFinishing;
         L.i(log);
         saveToSDCard(log);
@@ -706,6 +709,9 @@ public class UILayoutImpl extends SwipeBackLayout implements ILayout<UIParam>, U
         if (viewPattern == null || viewPattern.mIView == null) {
             return;
         }
+
+        viewPattern.mView.setEnabled(false);
+
         //            if (viewPattern.interrupt) {
 //                log = iview.getClass().getSimpleName() + " 已在中断";
 //                L.i(log);
@@ -1566,18 +1572,29 @@ public class UILayoutImpl extends SwipeBackLayout implements ILayout<UIParam>, U
 
     public void removeViewPattern(final ViewPattern viewPattern, final UIParam param) {
         hideSoftInput();
-        viewPattern.mView.setEnabled(false);
-        viewPattern.mIView.onViewUnload();
         final View view = viewPattern.mView;
         //ViewCompat.setAlpha(view, 0);
-        view.setVisibility(GONE);
+        viewPattern.mIView.onViewUnload();
+
+        view.setEnabled(false);
+        //view.setVisibility(GONE);
+        ViewCompat.setAlpha(view, 0);
+
         post(new Runnable() {
             @Override
             public void run() {
                 try {
-                    //UI.setView(view, 0, 0);
-                    interruptSet.remove(viewPattern.mIView);
                     removeView(view);
+                } catch (Exception e) {
+
+                }
+                try {
+                    //UI.setView(view, 0, 0);
+                    isFinishing = false;
+                    isBackPress = false;
+                    viewPattern.mIView.release();
+                    interruptSet.remove(viewPattern.mIView);
+                    mAttachViews.remove(viewPattern);
                     L.e("call: removeViewPattern()-> 关闭界面结束:" + viewPattern.mIView.getClass().getSimpleName());
                 } catch (Exception e) {
                     e.printStackTrace();
@@ -1588,19 +1605,14 @@ public class UILayoutImpl extends SwipeBackLayout implements ILayout<UIParam>, U
                     } else {
                         param.getUnloadRunnable().run();
                     }
+                    param.clear();
                 }
             }
         });
-        mAttachViews.remove(viewPattern);
-
-        isFinishing = false;
-        isBackPress = false;
 
         for (OnIViewChangedListener listener : mOnIViewChangedListeners) {
             listener.onIViewRemove(this, viewPattern);
         }
-
-        viewPattern.mIView.release();
     }
 
     @Override
@@ -1738,23 +1750,52 @@ public class UILayoutImpl extends SwipeBackLayout implements ILayout<UIParam>, U
         for (int i = 0; i < count; i++) {
             View childAt = getChildAt(i);
 
-            //--------------------------
-            if (i == count - 1) {
-                childAt.measure(exactlyMeasure(widthSize), exactlyMeasure(heightSize));
-            } else if (i == count - 2 && lastIsDialog()) {
-                childAt.measure(exactlyMeasure(widthSize), exactlyMeasure(heightSize));
+            ViewPattern viewPatternByView = findViewPatternByView(childAt);
+            int iViewSize = getIViewSize();
+
+            if (viewPatternByView == null) {
+                continue;
+            }
+
+            int indexFromIViews = getIndexFromIViews(viewPatternByView);
+
+            //-----------------只有部分界面需要测量, 优化性能---------
+            boolean needMeasure = false;
+            if (viewPatternByView == mLastShowViewPattern) {
+                needMeasure = true;
+            } else if (i == count - 1 || i == count - 2) {
+                needMeasure = true;
+            } else if (indexFromIViews >= 0 && (indexFromIViews == iViewSize - 1 || indexFromIViews == iViewSize - 2)) {
+                needMeasure = true;
+            } else if (viewPatternByView.mIView.needForceMeasure()) {
+                needMeasure = true;
             } else {
-                if (!"true".equalsIgnoreCase(String.valueOf(childAt.getTag(R.id.tag_layout)))) {
-                    childAt.measure(exactlyMeasure(widthSize), exactlyMeasure(heightSize));
-                } else {
-                    ViewPattern viewPatternByView = findViewPatternByView(childAt);
-                    if (viewPatternByView != null) {
-                        IView iView = viewPatternByView.mIView;
-                        if (iView != null && iView.haveChildILayout()) {
-                            childAt.measure(exactlyMeasure(widthSize), exactlyMeasure(heightSize));
-                        }
+                IView iView = viewPatternByView.mIView;
+                for (int j = mAttachViews.size() - 1; j >= 0; j--) {
+                    ViewPattern viewPattern = mAttachViews.get(j);
+                    if (viewPattern.mIView.isDialog() || viewPattern.mIView.showOnDialog()) {
+                        needMeasure = true;
+                    } else if (viewPattern == iView) {
+                        break;
+                    } else {
+                        needMeasure = false;
+                        break;
                     }
                 }
+//                if (!"true".equalsIgnoreCase(String.valueOf(childAt.getTag(R.id.tag_layout)))) {
+                //childAt.measure(exactlyMeasure(widthSize), exactlyMeasure(heightSize));
+//                } else {
+//                    ViewPattern viewPatternByView = findViewPatternByView(childAt);
+//                    if (viewPatternByView != null) {
+//                        IView iView = viewPatternByView.mIView;
+//                        if (iView != null && iView.haveChildILayout()) {
+//                            childAt.measure(exactlyMeasure(widthSize), exactlyMeasure(heightSize));
+//                        }
+//                    }
+//                }
+            }
+            if (needMeasure) {
+                childAt.measure(exactlyMeasure(widthSize), exactlyMeasure(heightSize));
             }
             //-----------------------------
 //            if (i == count - 1 || i == count - 2) {
@@ -1772,6 +1813,18 @@ public class UILayoutImpl extends SwipeBackLayout implements ILayout<UIParam>, U
         }
 
         setMeasuredDimension(widthSize, heightSize);
+    }
+
+    private int getIndexFromIViews(ViewPattern viewPattern) {
+        int result = -1;
+        for (int i = 0; i < mAttachViews.size(); i++) {
+            ViewPattern pattern = mAttachViews.get(i);
+            if (pattern == viewPattern) {
+                result = i;
+                break;
+            }
+        }
+        return result;
     }
 
     private boolean lastIsDialog() {
@@ -2106,7 +2159,7 @@ public class UILayoutImpl extends SwipeBackLayout implements ILayout<UIParam>, U
     }
 
     private boolean isChildILayoutEmpty() {
-        return mChildILayout == null;
+        return mChildILayout == null || mChildILayout == this;
     }
 
     private void hideChildLayoutLastView() {
@@ -2236,12 +2289,13 @@ public class UILayoutImpl extends SwipeBackLayout implements ILayout<UIParam>, U
 
         @Override
         public void onAnimationEnd(Animation animation) {
+            if (mRunnable != null) {
+                mRunnable.run();
+                mRunnable = null;
+            }
             if (mView != null) {
                 mView.clearAnimation();
                 mView = null;
-            }
-            if (mRunnable != null) {
-                mRunnable.run();
             }
         }
 

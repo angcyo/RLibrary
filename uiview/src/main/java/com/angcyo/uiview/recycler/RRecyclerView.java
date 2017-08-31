@@ -7,6 +7,7 @@ import android.graphics.Rect;
 import android.support.annotation.ColorInt;
 import android.support.annotation.Nullable;
 import android.support.v4.view.MotionEventCompat;
+import android.support.v4.view.ViewCompat;
 import android.support.v4.widget.ScrollerCompat;
 import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.GridLayoutManager;
@@ -500,6 +501,11 @@ public class RRecyclerView extends RecyclerView {
      * 滚动到底部
      */
     public void scrollToLastBottom(boolean anim) {
+
+        if (!ViewCompat.canScrollVertically(this, 1)) {
+            //已经是底部
+            return;
+        }
 
         final LayoutManager manager = getLayoutManager();
         if (manager == null) {

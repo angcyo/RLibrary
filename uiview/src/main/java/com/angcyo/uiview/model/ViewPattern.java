@@ -36,6 +36,11 @@ public class ViewPattern {
     }
 
     @Override
+    public boolean equals(Object obj) {
+        return mIView == ((ViewPattern) obj).mIView;
+    }
+
+    @Override
     public String toString() {
         StringBuilder builder = new StringBuilder(mIView.getClass().getSimpleName());
         builder.append(" isAnimToStart:" + isAnimToStart);

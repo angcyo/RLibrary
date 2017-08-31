@@ -447,7 +447,7 @@ public class RSoftInputLayout extends FrameLayout implements ILifecycle {
     }
 
     private void showEmojiLayoutInner(int height, boolean isInAnim) {
-        if (isEmojiShow() && height == showEmojiHeight) {
+        if (/*height > 0 && */isEmojiShow() && height == showEmojiHeight) {
             return;
         }
 

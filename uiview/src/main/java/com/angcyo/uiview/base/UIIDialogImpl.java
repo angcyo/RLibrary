@@ -200,9 +200,17 @@ public abstract class UIIDialogImpl extends UIIViewImpl {
      * 结束对话框
      */
     public void finishDialog() {
+        finishIView(this, new UIParam(true, true, false));
+    }
+
+    public void finishDialog(UIParam param) {
         setCanCancel(true);
         //mILayout.finishIView(this);
-        mILayout.finishIView(this, new UIParam(true, true, false));
+        mILayout.finishIView(this, param);
+    }
+
+    public void finishDialog(Runnable endRunnale) {
+        mILayout.finishIView(this, new UIParam(true, true, false).setUnloadRunnable(endRunnale));
     }
 
     @Override

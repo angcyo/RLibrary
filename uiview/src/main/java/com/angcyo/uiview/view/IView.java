@@ -235,6 +235,11 @@ public interface IView {
 
     void release();//星期二 2017-8-29
 
+    /**
+     * 当检测到界面不满足测量条件时, 可以通过此方法强制满足测量条件
+     */
+    boolean needForceMeasure();//是否需要测量
+
     enum IViewShowState {
         STATE_NORMAL,
         STATE_VIEW_CREATE,
