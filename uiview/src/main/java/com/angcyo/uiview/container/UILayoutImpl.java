@@ -1121,6 +1121,7 @@ public class UILayoutImpl extends SwipeBackLayout implements ILayout<UIParam>, U
             ((ILifecycle) topViewPattern.mView).onLifeViewShow();
         }
 
+        setIViewNeedLayout(topViewPattern.mView, true);
         topViewPattern.mView.bringToFront();
         topViewPattern.isAnimToStart = true;
         topViewPattern.isAnimToEnd = false;
@@ -1600,8 +1601,6 @@ public class UILayoutImpl extends SwipeBackLayout implements ILayout<UIParam>, U
     }
 
     public void removeViewPattern(final ViewPattern viewPattern, final UIParam param) {
-        mAttachViews.remove(viewPattern);
-
         hideSoftInput();
         final View view = viewPattern.mView;
         //ViewCompat.setAlpha(view, 0);
@@ -1609,18 +1608,21 @@ public class UILayoutImpl extends SwipeBackLayout implements ILayout<UIParam>, U
 
         view.setEnabled(false);
         ViewCompat.setAlpha(view, 0);
-        view.setVisibility(GONE);
-        try {
-            removeView(view);
-        } catch (Exception e) {
-
-        }
+        //view.setVisibility(GONE);
 
         post(new Runnable() {
             @Override
             public void run() {
                 try {
                     //UI.setView(view, 0, 0);
+                    mAttachViews.remove(viewPattern);
+
+                    try {
+                        removeView(view);
+                    } catch (Exception e) {
+
+                    }
+
                     isFinishing = false;
                     isBackPress = false;
                     viewPattern.mIView.release();
