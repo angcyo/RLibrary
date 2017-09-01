@@ -1235,6 +1235,7 @@ public class UILayoutImpl extends SwipeBackLayout implements ILayout<UIParam>, U
                 bottomViewPattern.mIView.onViewReShow(null);
             }
         };
+        setIViewNeedLayout(bottomViewPattern.mView, true);
         bottomViewPattern.mView.setVisibility(VISIBLE);
         showChildLayoutLastView();
 
@@ -1599,30 +1600,31 @@ public class UILayoutImpl extends SwipeBackLayout implements ILayout<UIParam>, U
     }
 
     public void removeViewPattern(final ViewPattern viewPattern, final UIParam param) {
+        mAttachViews.remove(viewPattern);
+
         hideSoftInput();
         final View view = viewPattern.mView;
         //ViewCompat.setAlpha(view, 0);
         viewPattern.mIView.onViewUnload();
 
         view.setEnabled(false);
-        view.setVisibility(GONE);
         ViewCompat.setAlpha(view, 0);
+        view.setVisibility(GONE);
+        try {
+            removeView(view);
+        } catch (Exception e) {
+
+        }
 
         post(new Runnable() {
             @Override
             public void run() {
-                try {
-                    removeView(view);
-                } catch (Exception e) {
-
-                }
                 try {
                     //UI.setView(view, 0, 0);
                     isFinishing = false;
                     isBackPress = false;
                     viewPattern.mIView.release();
                     interruptSet.remove(viewPattern.mIView);
-                    mAttachViews.remove(viewPattern);
                     L.e("call: removeViewPattern()-> 关闭界面结束:" + viewPattern.mIView.getClass().getSimpleName());
                 } catch (Exception e) {
                     e.printStackTrace();
@@ -1635,6 +1637,7 @@ public class UILayoutImpl extends SwipeBackLayout implements ILayout<UIParam>, U
                     }
                     param.clear();
                 }
+
             }
         });
 
@@ -1736,9 +1739,9 @@ public class UILayoutImpl extends SwipeBackLayout implements ILayout<UIParam>, U
             childAt.layout(0, 0, right, bottom);
             if (childAt.getMeasuredHeight() == getMeasuredHeight() &&
                     childAt.getMeasuredWidth() == getMeasuredWidth()) {
-                childAt.setTag(R.id.tag_layout, "true");
+                setIViewNeedLayout(childAt, true);
             } else {
-                childAt.setTag(R.id.tag_layout, "false");
+                setIViewNeedLayout(childAt, false);
             }
 //            } else {
 //                childAt.setTag(R.id.tag_layout, "false");
@@ -1758,6 +1761,13 @@ public class UILayoutImpl extends SwipeBackLayout implements ILayout<UIParam>, U
                 }
             }
         }
+    }
+
+    /**
+     * 清除已经布局的flag
+     */
+    public void setIViewNeedLayout(View view, boolean layout) {
+        view.setTag(R.id.tag_layout, layout ? "false" : "true");
     }
 
     @Override

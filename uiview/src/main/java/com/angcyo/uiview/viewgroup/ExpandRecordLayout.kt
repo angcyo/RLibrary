@@ -76,6 +76,9 @@ class ExpandRecordLayout(context: Context, attributeSet: AttributeSet? = null) :
 
     var listener: OnRecordListener? = null
 
+    /**是否激活长按事件*/
+    var enableLongPress = true
+
     override fun onAttachedToWindow() {
         super.onAttachedToWindow()
         //expandLayout(false)
@@ -170,7 +173,9 @@ class ExpandRecordLayout(context: Context, attributeSet: AttributeSet? = null) :
                 if (outCircleRect.contains(eventX, eventY)) {
                     intercept = true
                     if (state == STATE_CLOSE) {
-                        postDelayed(longPressRunnable, 200)
+                        if (enableLongPress) {
+                            postDelayed(longPressRunnable, 200)
+                        }
                     }
                 } else if (state == STATE_EXPAND) {
                     intercept = true
