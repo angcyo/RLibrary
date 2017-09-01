@@ -154,6 +154,10 @@ public class RApplication extends Application {
         return app;
     }
 
+    public static void clearGlide() {
+        Glide.get(getApp()).clearMemory();
+    }
+
     @Override
     public void onCreate() {
         super.onCreate();
