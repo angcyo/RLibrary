@@ -711,6 +711,9 @@ public abstract class UIIViewImpl implements IView {
         fullscreen(enable, false);
     }
 
+    /**
+     * @param checkSdk true 表示只在高版本的SDK上使用.
+     */
     public void fullscreen(final boolean enable, boolean checkSdk) {
         Runnable runnable = new Runnable() {
             @Override

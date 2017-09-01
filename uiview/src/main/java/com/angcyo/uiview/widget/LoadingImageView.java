@@ -23,9 +23,9 @@ import com.angcyo.uiview.R;
  */
 public class LoadingImageView extends AppCompatImageView implements Choreographer.FrameCallback {
 
+    static Choreographer mChoreographer = Choreographer.getInstance();
     float degrees = 0;
     boolean isLoading = false;
-
     Runnable loadRunnable = new Runnable() {
         @Override
         public void run() {
@@ -33,8 +33,6 @@ public class LoadingImageView extends AppCompatImageView implements Choreographe
             postDelayed(loadRunnable, 40);//40 = 24 帧, 16 = 60 帧
         }
     };
-
-    static Choreographer mChoreographer = Choreographer.getInstance();
 
     public LoadingImageView(Context context) {
         this(context, null);
@@ -94,13 +92,14 @@ public class LoadingImageView extends AppCompatImageView implements Choreographe
 
     private void startLoad() {
         //post(loadRunnable);
+        removeCallbacks(loadRunnable);
         mChoreographer.removeFrameCallback(this);
         mChoreographer.postFrameCallback(this);
         isLoading = true;
     }
 
     public void endLoad() {
-        //removeCallbacks(loadRunnable);
+        removeCallbacks(loadRunnable);
         mChoreographer.removeFrameCallback(this);
         isLoading = false;
     }

@@ -228,9 +228,12 @@ public interface IView {
 
     /**
      * 是否需要过渡动画, 在低设备上默认会关闭动画, 可以通过这2个方法, 强行开启动画
+     * 2017-9-1 移动至UIParam中
      */
+    @Deprecated()
     boolean needTransitionStartAnim();//星期三 2017-8-9
 
+    @Deprecated
     boolean needTransitionExitAnim();//星期三 2017-8-9
 
     void release();//星期二 2017-8-29

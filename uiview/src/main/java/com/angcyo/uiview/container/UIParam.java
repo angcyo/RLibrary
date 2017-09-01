@@ -39,6 +39,11 @@ public class UIParam {
      */
     public boolean hideLastIView = false;
     /**
+     * 是否需要过渡动画, 在低设备上默认会关闭动画, 可以通过这2个方法, 强行开启动画
+     */
+    public boolean needTransitionStartAnim = false;
+    public boolean needTransitionExitAnim = false;
+    /**
      * 需要替换的iview, 只在replaceIView时使用, 用来判断目标的可行性
      */
     protected IView replaceIView;
@@ -165,5 +170,15 @@ public class UIParam {
         mBundle = null;
         replaceIView = null;
         unloadRunnable = null;
+    }
+
+    public UIParam setNeedTransitionStartAnim(boolean needTransitionStartAnim) {
+        this.needTransitionStartAnim = needTransitionStartAnim;
+        return this;
+    }
+
+    public UIParam setNeedTransitionExitAnim(boolean needTransitionExitAnim) {
+        this.needTransitionExitAnim = needTransitionExitAnim;
+        return this;
     }
 }

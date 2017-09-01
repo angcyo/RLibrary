@@ -873,7 +873,7 @@ public class UILayoutImpl extends SwipeBackLayout implements ILayout<UIParam>, U
             startDialogAnim(mLastShowViewPattern, param.mAnim ? mLastShowViewPattern.mIView.loadShowAnimation() : null, endRunnable);
         } else {
             if (lastShowViewPattern != null) {
-                safeStartAnim(lastShowViewPattern.mView, (needTransitionAnim(lastShowViewPattern, param.isSwipeBack, true) || needAnim(param, false)) ?
+                safeStartAnim(lastShowViewPattern.mView, needAnim(param, false) ?
                         mLastShowViewPattern.mIView.loadOtherHideAnimation() : null, new Runnable() {
                     @Override
                     public void run() {
@@ -881,7 +881,9 @@ public class UILayoutImpl extends SwipeBackLayout implements ILayout<UIParam>, U
                     }
                 });
             }
-            safeStartAnim(mLastShowViewPattern.mView, (needTransitionAnim(mLastShowViewPattern, param.isSwipeBack, false) || needAnim(param, false)) ?
+            safeStartAnim(mLastShowViewPattern.mView, (param.needTransitionStartAnim ||
+                    mLastShowViewPattern.mIView.needTransitionStartAnim() ||
+                    needAnim(param, false)) ?
                     mLastShowViewPattern.mIView.loadShowAnimation() : null, endRunnable);
         }
     }
@@ -1029,7 +1031,7 @@ public class UILayoutImpl extends SwipeBackLayout implements ILayout<UIParam>, U
                         }
                     };
                     viewHide(oldViewPattern);
-                    bottomViewRemove(oldViewPattern, newViewPattern, endRunnable, true, param.mAnim);
+                    bottomViewRemove(oldViewPattern, newViewPattern, endRunnable, true, param);
                 }
 
                 mLastShowViewPattern = newViewPattern;
@@ -1123,21 +1125,21 @@ public class UILayoutImpl extends SwipeBackLayout implements ILayout<UIParam>, U
         topViewPattern.isAnimToStart = true;
         topViewPattern.isAnimToEnd = false;
 
-        if (!needTransitionAnim(topViewPattern, param.isSwipeBack, false) &&
-                !needAnim(param, topViewPattern.mIView.isDialog())) {
+        if (param.needTransitionStartAnim ||
+                topViewPattern.mIView.needTransitionStartAnim() ||
+                needAnim(param, topViewPattern.mIView.isDialog())) {
+            if (topViewPattern.mIView.isDialog()) {
+                //对话框的启动动画,作用在第一个子View上
+                startDialogAnim(topViewPattern, animation, endRunnable);
+            } else {
+                safeStartAnim(topViewPattern.mIView.getAnimView(), animation, endRunnable);
+            }
+        } else {
             if (param.mAsync) {
                 post(endRunnable);
             } else {
                 endRunnable.run();
             }
-            return;
-        }
-
-        if (topViewPattern.mIView.isDialog()) {
-            //对话框的启动动画,作用在第一个子View上
-            startDialogAnim(topViewPattern, animation, endRunnable);
-        } else {
-            safeStartAnim(topViewPattern.mIView.getAnimView(), animation, endRunnable);
         }
     }
 
@@ -1167,8 +1169,7 @@ public class UILayoutImpl extends SwipeBackLayout implements ILayout<UIParam>, U
             ((ILifecycle) topViewPattern.mView).onLifeViewHide();
         }
 
-        if (!needTransitionAnim(topViewPattern, param.isSwipeBack, true) &&
-                !needAnim(param, topViewPattern.mIView.isDialog())) {
+        if (!param.needTransitionExitAnim && !needAnim(param, topViewPattern.mIView.isDialog())) {
             endRunnable.run();
             return;
         }
@@ -1193,6 +1194,7 @@ public class UILayoutImpl extends SwipeBackLayout implements ILayout<UIParam>, U
         return (!RApplication.isLowDevice && param.mAnim);
     }
 
+    @Deprecated
     private boolean needTransitionAnim(ViewPattern viewPattern, boolean isSwipeBack, boolean isExit) {
         if (isSwipeBack) {
             return false;
@@ -1267,7 +1269,7 @@ public class UILayoutImpl extends SwipeBackLayout implements ILayout<UIParam>, U
                 finishEnd();
             }
         };
-        bottomViewRemove(bottomViewPattern, topViewPattern, endRunnable, false, param.mAnim);
+        bottomViewRemove(bottomViewPattern, topViewPattern, endRunnable, false, param);
     }
 
     /**
@@ -1277,7 +1279,7 @@ public class UILayoutImpl extends SwipeBackLayout implements ILayout<UIParam>, U
                                   final ViewPattern topViewPattern,
                                   final Runnable endRunnable,
                                   boolean isRemove,/*是否需要移除bottomViewPattern*/
-                                  boolean anim) {
+                                  final UIParam param) {
         if (bottomViewPattern == null) {
             return;
         }
@@ -1291,7 +1293,7 @@ public class UILayoutImpl extends SwipeBackLayout implements ILayout<UIParam>, U
         if (topViewPattern.mIView.isDialog() && !isRemove) {
             //对话框弹出的时候, 底部IView 不执行周期
         } else {
-            if (needTransitionAnim(bottomViewPattern, false, true) || !RApplication.isLowDevice || anim) {
+            if (!RApplication.isLowDevice || param.mAnim) {
                 final Animation animation = topViewPattern.mIView.loadOtherExitAnimation();
                 animation.setFillAfter(false);
                 safeStartAnim(bottomViewPattern.mIView.getAnimView(), animation, endRunnable, true);
@@ -1603,7 +1605,7 @@ public class UILayoutImpl extends SwipeBackLayout implements ILayout<UIParam>, U
         viewPattern.mIView.onViewUnload();
 
         view.setEnabled(false);
-        //view.setVisibility(GONE);
+        view.setVisibility(GONE);
         ViewCompat.setAlpha(view, 0);
 
         post(new Runnable() {
