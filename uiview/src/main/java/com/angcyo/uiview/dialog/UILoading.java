@@ -128,6 +128,7 @@ public class UILoading extends UIIDialogImpl {
     @Override
     public void onViewUnload() {
         super.onViewUnload();
+        mUILoading = null;
         isShowing = false;
     }
 

@@ -501,8 +501,17 @@ public class RRecyclerView extends RecyclerView {
      * 滚动到底部
      */
     public void scrollToLastBottom(boolean anim) {
+        scrollToLastBottom(anim, true);
+    }
 
-        if (!ViewCompat.canScrollVertically(this, 1)) {
+    public void scrollToLastBottom(boolean anim, boolean checkScroll) {
+        int itemCount = -1;
+
+        if (getAdapter() != null) {
+            itemCount = getAdapter().getItemCount();
+        }
+
+        if (itemCount > 0 && checkScroll && !ViewCompat.canScrollVertically(this, 1)) {
             //已经是底部
             return;
         }
@@ -511,7 +520,7 @@ public class RRecyclerView extends RecyclerView {
         if (manager == null) {
             return;
         }
-        int itemCount = manager.getItemCount();
+        itemCount = manager.getItemCount();
         if (itemCount < 1) {
             return;
         }

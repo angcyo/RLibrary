@@ -94,11 +94,12 @@ public class LoadingImageView extends AppCompatImageView implements Choreographe
 
     private void startLoad() {
         //post(loadRunnable);
+        mChoreographer.removeFrameCallback(this);
         mChoreographer.postFrameCallback(this);
         isLoading = true;
     }
 
-    private void endLoad() {
+    public void endLoad() {
         //removeCallbacks(loadRunnable);
         mChoreographer.removeFrameCallback(this);
         isLoading = false;
