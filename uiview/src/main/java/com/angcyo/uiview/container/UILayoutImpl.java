@@ -446,6 +446,10 @@ public class UILayoutImpl extends SwipeBackLayout implements ILayout<UIParam>, U
             return;
         }
 
+        if (isSwipeDrag()) {
+            restoreCaptureView();
+        }
+
         if (checkInterruptAndRemove(iView)) return;
 
         final ViewPattern oldViewPattern = getLastViewPattern();
@@ -609,6 +613,10 @@ public class UILayoutImpl extends SwipeBackLayout implements ILayout<UIParam>, U
             return;
         }
 
+        if (isSwipeDrag()) {
+            restoreCaptureView();
+        }
+
         viewPattern.mView.setEnabled(false);
 
         String log = this.getClass().getSimpleName() + " 请求关闭2:" + viewPattern.toString() + " isFinishing:" + isFinishing;
@@ -727,13 +735,7 @@ public class UILayoutImpl extends SwipeBackLayout implements ILayout<UIParam>, U
         }
 
         viewPattern.mView.setEnabled(false);
-
-        //            if (viewPattern.interrupt) {
-//                log = iview.getClass().getSimpleName() + " 已在中断";
-//                L.i(log);
-//                saveToSDCard(log);
-//                return;
-//            }
+        
         viewPattern.interrupt = true;//中断启动
 
         if (checkInterrupt && checkInterrupt(iview)) {
@@ -2144,6 +2146,7 @@ public class UILayoutImpl extends SwipeBackLayout implements ILayout<UIParam>, U
     @Override
     protected void onRequestClose() {
         super.onRequestClose();
+        translation(0);
         if (enableRootSwipe && getIViewSize() == 1) {
             mLayoutActivity.finish();
             mLayoutActivity.overridePendingTransition(0, 0);
@@ -2165,10 +2168,10 @@ public class UILayoutImpl extends SwipeBackLayout implements ILayout<UIParam>, U
         isSwipeDrag = false;
         needDragClose = false;
         translation(0);
-        final ViewPattern viewPattern = findLastShowViewPattern(mLastShowViewPattern);
-        if (viewPattern != null) {
-            viewPattern.mView.setVisibility(GONE);
-        }
+//        final ViewPattern viewPattern = findLastShowViewPattern(mLastShowViewPattern);
+//        if (viewPattern != null) {
+//            viewPattern.mView.setVisibility(GONE);
+//        }
         //hideChildLayoutLastView();
         printLog();
     }
@@ -2233,7 +2236,10 @@ public class UILayoutImpl extends SwipeBackLayout implements ILayout<UIParam>, U
     private void translation(float percent) {
         final ViewPattern viewPattern = findLastShowViewPattern(mLastShowViewPattern);
         if (viewPattern != null && !viewPattern.mIView.isDialog()) {
-            viewPattern.mView.setTranslationX(-mTranslationOffsetX * percent);
+            float tx = -mTranslationOffsetX * percent;
+            if (viewPattern.mView.getTranslationX() != tx) {
+                viewPattern.mView.setTranslationX(tx);
+            }
         }
     }
 

@@ -28,8 +28,8 @@ import com.angcyo.uiview.utils.ScreenUtil;
 public abstract class SwipeBackLayout extends FrameLayout {
 
     protected int mViewDragState = ViewDragHelper.STATE_IDLE;
+    protected ViewDragHelper mDragHelper;
     Paint mStatusPaint;
-    private ViewDragHelper mDragHelper;
     private OnPanelSlideListener mListener;
     private int mScreenWidth;
     private int mScreenHeight;
@@ -47,6 +47,11 @@ public abstract class SwipeBackLayout extends FrameLayout {
     private boolean mIsLocked;
     private boolean mIsLeftEdge;
     private float mRawDownX;
+
+    /**
+     * 侧滑被中断了, 需要恢复到原始状态
+     */
+    private boolean isCaptureAbort = false;
     /**
      * The drag helper callback interface for the Left position
      */
@@ -54,6 +59,7 @@ public abstract class SwipeBackLayout extends FrameLayout {
 
         @Override
         public boolean tryCaptureView(View child, int pointerId) {
+            isCaptureAbort = false;
             if (!enableSwipeBack) {
                 return false;
             }
@@ -85,7 +91,7 @@ public abstract class SwipeBackLayout extends FrameLayout {
 
             int left = releasedChild.getLeft();
             int settleLeft = 0;
-            int leftThreshold = (int) (getMeasuredWidth() * 0.2f);//当滑动的距离达到1/5时, 判断为滑动退出
+            int leftThreshold = (int) getMinCloseWidth();//当滑动的距离达到1/5时, 判断为滑动退出
             boolean isVerticalSwiping = Math.abs(yvel) > 5f;//垂直滑动的距离大于5
 
             if (xvel > 0) {
@@ -106,6 +112,10 @@ public abstract class SwipeBackLayout extends FrameLayout {
             postInvalidateOnAnimation();
         }
 
+        private float getMinCloseWidth() {
+            return getMeasuredWidth() * 0.2f;
+        }
+
         @Override
         public void onViewPositionChanged(View changedView, int left, int top, int dx, int dy) {
             super.onViewPositionChanged(changedView, left, top, dx, dy);
@@ -122,18 +132,25 @@ public abstract class SwipeBackLayout extends FrameLayout {
             SwipeBackLayout.this.onViewDragStateChanged(state);
             switch (state) {
                 case ViewDragHelper.STATE_IDLE:
-                    //滚动结束
                     onStateIdle();
-                    if (mTargetView.getLeft() == 0) {
-                        // State Open
+
+                    if (isCaptureAbort) {
                         onRequestOpened();
-                        if (mListener != null) mListener.onRequestOpened();
+
                     } else {
-                        // State Closed
-                        onRequestClose();
-                        if (mListener != null) mListener.onRequestClose();
+                        //滚动结束
+                        if (mTargetView.getLeft() < getMinCloseWidth()) {
+                            // State Open
+                            onRequestOpened();
+                            if (mListener != null) mListener.onRequestOpened();
+                        } else {
+                            // State Closed
+                            onRequestClose();
+                            if (mListener != null) mListener.onRequestClose();
+                        }
+                        mTargetView = null;
                     }
-                    mTargetView = null;
+                    isCaptureAbort = false;
                     break;
                 case ViewDragHelper.STATE_DRAGGING:
                     //开始滚动
@@ -172,6 +189,13 @@ public abstract class SwipeBackLayout extends FrameLayout {
         return Math.max(min, Math.min(max, value));
     }
 
+    public void restoreCaptureView() {
+        if (mTargetView != null) {
+            isCaptureAbort = true;
+            mDragHelper.abort();
+        }
+    }
+
     /**
      * 是否激活滑动删除
      */
@@ -196,6 +220,12 @@ public abstract class SwipeBackLayout extends FrameLayout {
 
         //状态栏遮罩
         setDimStatusBar(false);
+    }
+
+    @Override
+    protected void onDetachedFromWindow() {
+        super.onDetachedFromWindow();
+        mDragHelper.abort();
     }
 
     @Override
