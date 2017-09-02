@@ -340,7 +340,8 @@ public class UILayoutImpl extends SwipeBackLayout implements ILayout<UIParam>, U
     }
 
     @Override
-    protected void onDetachedFromWindow() {
+    protected void
+    onDetachedFromWindow() {
         super.onDetachedFromWindow();
         mLayoutActivity.getApplication().unregisterActivityLifecycleCallbacks(mCallbacks);
         isAttachedToWindow = false;
@@ -367,6 +368,7 @@ public class UILayoutImpl extends SwipeBackLayout implements ILayout<UIParam>, U
             } catch (Exception e) {
                 e.printStackTrace();
             } finally {
+                viewPattern.mIView.release();
                 viewPattern.clear();
             }
         }
