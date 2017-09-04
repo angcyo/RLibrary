@@ -53,6 +53,7 @@
             android:layout_marginEnd="@dimen/base_xhdpi"
             android:background="@drawable/base_round_bg_selector_5x"
             android:textColor="@color/default_base_border"
+            android:textSize="@dimen/default_text_little_size"
             android:visibility="gone"
             tools:text="@string/base_cancel"
             tools:textColor="@android:color/white"/>
@@ -64,6 +65,7 @@
             android:background="@drawable/base_round_bg_selector_5x"
             android:clickable="true"
             android:textColor="@color/default_base_border"
+            android:textSize="@dimen/default_text_little_size"
             tools:text="@string/base_cancel"
             tools:textColor="@android:color/white"/>
 
@@ -73,6 +75,7 @@
             android:background="@drawable/base_round_bg_selector_5x"
             android:clickable="true"
             android:textColor="@color/theme_color_accent"
+            android:textSize="@dimen/default_text_little_size"
             tools:text="@string/base_ok"
             tools:textColor="@android:color/white"/>
     </LinearLayout>
