@@ -1,6 +1,7 @@
 package com.angcyo.uiview.recycler;
 
 import android.content.Context;
+import android.content.res.TypedArray;
 import android.graphics.Canvas;
 import android.graphics.Paint;
 import android.graphics.Rect;
@@ -21,6 +22,7 @@ import android.view.View;
 import android.widget.LinearLayout;
 
 import com.angcyo.library.utils.L;
+import com.angcyo.uiview.R;
 import com.angcyo.uiview.recycler.adapter.RBaseAdapter;
 import com.angcyo.uiview.recycler.recyclerview.adapters.AnimationAdapter;
 import com.angcyo.uiview.recycler.recyclerview.adapters.ScaleInAnimationAdapter;
@@ -52,6 +54,10 @@ public class RRecyclerView extends RecyclerView {
     protected boolean mItemAnim = false;
     protected boolean isFirstAnim = true;//布局动画只执行一次
     protected boolean layoutAnim = false;//是否使用布局动画
+    /**
+     * 当前自动滚动到的位置
+     */
+    protected int curScrollPosition = 0;
     OnTouchListener mInterceptTouchListener;
     OnFlingEndListener mOnFlingEndListener;
     boolean isAutoStart = false;
@@ -82,9 +88,9 @@ public class RRecyclerView extends RecyclerView {
      */
     private boolean isEnableAutoScroll = false;
     /**
-     * 当前自动滚动到的位置
+     * 激活滚动
      */
-    private int curScrollPosition = 0;
+    private boolean enableScroll = false;
     private Runnable autoScrollRunnable = new Runnable() {
         @Override
         public void run() {
@@ -99,7 +105,7 @@ public class RRecyclerView extends RecyclerView {
                 }
             }
 
-            if (isEnableAutoScroll) {
+            if (enableScroll) {
                 postDelayed(autoScrollRunnable, AUTO_SCROLL_TIME);
             }
         }
@@ -115,6 +121,12 @@ public class RRecyclerView extends RecyclerView {
 
     public RRecyclerView(Context context, @Nullable AttributeSet attrs, int defStyle) {
         super(context, attrs, defStyle);
+
+        TypedArray typedArray = context.obtainStyledAttributes(attrs, R.styleable.RRecyclerView);
+        isEnableAutoScroll = typedArray.getBoolean(R.styleable.RRecyclerView_r_enable_auto_scroll, isEnableAutoScroll);
+        enableScroll = typedArray.getBoolean(R.styleable.RRecyclerView_r_enable_scroll, enableScroll);
+        typedArray.recycle();
+
         initView(context);
     }
 
@@ -350,12 +362,12 @@ public class RRecyclerView extends RecyclerView {
         if (actionMasked == MotionEvent.ACTION_DOWN) {
             isFling = false;
 
-            if (isEnableAutoScroll) {
+            if (enableScroll) {
                 stopAutoScroll();
             }
         } else if (actionMasked == MotionEvent.ACTION_UP ||
                 actionMasked == MotionEvent.ACTION_CANCEL) {
-            if (isEnableAutoScroll) {
+            if (enableScroll) {
                 startAutoScroll();
             }
         }
@@ -409,7 +421,8 @@ public class RRecyclerView extends RecyclerView {
 
     public void startAutoScroll() {
         LayoutManager layoutManager = getLayoutManager();
-        if (layoutManager instanceof LinearLayoutManager) {
+        if (enableScroll && getAdapter() != null && getAdapter().getItemCount() > 1 &&
+                layoutManager != null && layoutManager instanceof LinearLayoutManager) {
             curScrollPosition = ((LinearLayoutManager) layoutManager).findFirstVisibleItemPosition();
             autoScroll();
         }
@@ -430,6 +443,10 @@ public class RRecyclerView extends RecyclerView {
         } else {
             stopAutoScroll();
         }
+    }
+
+    public void setEnableScroll(boolean enableScroll) {
+        this.enableScroll = enableScroll;
     }
 
     public void stopAutoScroll() {
@@ -572,6 +589,10 @@ public class RRecyclerView extends RecyclerView {
 //            e.printStackTrace();
 //        }
 //        canvas.restore();
+    }
+
+    public void setCurScrollPosition(int curScrollPosition) {
+        this.curScrollPosition = curScrollPosition;
     }
 
     /**

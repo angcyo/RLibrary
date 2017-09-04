@@ -1,6 +1,8 @@
 package com.angcyo.uiview.kotlin
 
 import android.graphics.Paint
+import android.view.View
+import com.angcyo.uiview.view.UIIViewImpl
 
 /**
  * Copyright (C) 2016,深圳市红鸟网络科技股份有限公司 All rights reserved.
@@ -20,4 +22,10 @@ public fun Int.have(value: Int): Boolean = value != 0 && this and value == value
 /**文本的高度*/
 public fun Paint.textHeight(): Float {
     return descent() - ascent()
+}
+
+public inline fun <T : View> UIIViewImpl.vh(id: Int): Lazy<T> {
+    return lazy {
+        v<T>(id)
+    }
 }

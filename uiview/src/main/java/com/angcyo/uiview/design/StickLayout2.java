@@ -18,6 +18,11 @@ import com.angcyo.uiview.utils.Reflect;
 
 /**
  * Created by angcyo on 2017-03-15.
+ * <p>
+ * 布局规则
+ * 1: 先布局 头部
+ * 2: 内容部分
+ * 3: 悬停布局
  */
 
 public class StickLayout2 extends RelativeLayout {

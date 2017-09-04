@@ -26,11 +26,11 @@ public class RLoopRecyclerView extends RRecyclerView {
     private RPagerSnapHelper mPagerSnapHelper;
 
     public RLoopRecyclerView(Context context, @Nullable AttributeSet attrs) {
-        super(context, attrs);
+        this(context, attrs, 0);
     }
 
     public RLoopRecyclerView(Context context) {
-        super(context);
+        this(context, null);
     }
 
     public RLoopRecyclerView(Context context, @Nullable AttributeSet attrs, int defStyle) {
@@ -41,6 +41,11 @@ public class RLoopRecyclerView extends RRecyclerView {
     protected void onAttachedToWindow() {
         super.onAttachedToWindow();
         initView();
+    }
+
+    @Override
+    protected void onDetachedFromWindow() {
+        super.onDetachedFromWindow();
     }
 
     @Override
@@ -59,20 +64,24 @@ public class RLoopRecyclerView extends RRecyclerView {
             throw new IllegalArgumentException("adapter must  instanceof LoopAdapter!");
         }
         super.setAdapter(adapter);
-        scrollToPosition(getDefaultPosition());//开始时的偏移量
+        curScrollPosition = getDefaultPosition();
+        super.scrollTo(curScrollPosition, false);//开始时的偏移量
     }
 
     /**
      * 默认滚动至
      */
     protected int getDefaultPosition() {
+        if (getAdapter() == null) {
+            return 0;
+        }
         return getAdapter().getItemRawCount() * 10000;
     }
 
-    @Override
-    public void scrollTo(int position, boolean anim) {
-        super.scrollTo(getDefaultPosition() + position, anim);
-    }
+//    @Override
+//    public void scrollTo(int position, boolean anim) {
+//        super.scrollTo(getDefaultPosition() + position, anim);
+//    }
 
     private void initView() {
         if (mPagerSnapHelper == null) {
@@ -95,6 +104,10 @@ public class RLoopRecyclerView extends RRecyclerView {
 
     public interface OnPageListener {
         void onPageSelector(int position);
+    }
+
+    public void resetCurScrollPosition() {
+        curScrollPosition = getDefaultPosition();
     }
 
     /**

@@ -3,6 +3,7 @@ package com.angcyo.uiview.rsen;
 import android.animation.ObjectAnimator;
 import android.animation.ValueAnimator;
 import android.content.Context;
+import android.content.res.TypedArray;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
@@ -146,15 +147,18 @@ public class RefreshLayout extends ViewGroup {
 
     public RefreshLayout(Context context, AttributeSet attrs) {
         super(context, attrs);
-
         initRefreshView();
+
+        TypedArray typedArray = context.obtainStyledAttributes(attrs, R.styleable.RefreshLayout);
+        setNotifyListener(typedArray.getBoolean(R.styleable.RefreshLayout_r_notify_listener, true));
+        typedArray.recycle();
     }
 
     @Override
     protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
         super.onMeasure(widthMeasureSpec, heightMeasureSpec);
-        int widthSize = MeasureSpec.getSize(widthMeasureSpec);
-        int heightSize = MeasureSpec.getSize(heightMeasureSpec);
+        int widthSize = getMeasuredWidth(); //MeasureSpec.getSize(widthMeasureSpec);
+        int heightSize = getMeasuredHeight();  //MeasureSpec.getSize(heightMeasureSpec);
 
         if (isInEditMode()) {
             mTargetView.measure(MeasureSpec.makeMeasureSpec(widthSize, MeasureSpec.EXACTLY),
@@ -184,12 +188,12 @@ public class RefreshLayout extends ViewGroup {
     protected void onLayout(boolean changed, int l, int t, int r, int b) {
 
         if (isInEditMode()) {
-            mTargetView.layout(0, 0, r, getMeasuredHeight());
+            mTargetView.layout(0, 0, getMeasuredWidth(), getMeasuredHeight());
             return;
         }
 
         if (mTargetView != null) {
-            mTargetView.layout(0, 0, r, getMeasuredHeight());
+            mTargetView.layout(0, 0, getMeasuredWidth(), getMeasuredHeight());
         }
         if (mTopView != null) {
             //自动居中布局
@@ -930,6 +934,7 @@ public class RefreshLayout extends ViewGroup {
             setNotifyListener(BOTH);
         } else {
             setNotifyListener(NONE);
+            setPlaceholderView();
         }
     }
 

@@ -25,6 +25,7 @@ public class ContentLayout extends FrameLayout {
      * 允许的最大高度, 如果为-2px,那么就是屏幕高度的一半, 如果是-3px,那么就是屏幕高度的三分之, 以此内推
      */
     private int maxHeight = -1;
+    private int minHeight = -1;
 
     public ContentLayout(Context context) {
         this(context, null);
@@ -39,6 +40,7 @@ public class ContentLayout extends FrameLayout {
 
         TypedArray typedArray = context.obtainStyledAttributes(attrs, R.styleable.ContentLayout);
         maxHeight = typedArray.getDimensionPixelOffset(R.styleable.ContentLayout_r_max_height, -1);
+        minHeight = typedArray.getDimensionPixelOffset(R.styleable.ContentLayout_r_min_height, -1);
         resetMaxHeight();
         typedArray.recycle();
 
@@ -54,6 +56,10 @@ public class ContentLayout extends FrameLayout {
             int num = Math.abs(maxHeight);
             maxHeight = ScreenUtil.screenHeight / num;
         }
+        if (minHeight < -1) {
+            int num = Math.abs(minHeight);
+            minHeight = ScreenUtil.screenHeight / num;
+        }
     }
 
     public void setMaxHeight(int maxHeight) {
@@ -66,7 +72,15 @@ public class ContentLayout extends FrameLayout {
     protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
         int heightMode = MeasureSpec.getMode(heightMeasureSpec);
         if (maxHeight > 0) {
-            super.onMeasure(widthMeasureSpec, MeasureSpec.makeMeasureSpec(maxHeight, heightMode));
+            if (minHeight > 0) {
+                super.onMeasure(widthMeasureSpec, MeasureSpec.makeMeasureSpec(minHeight, MeasureSpec.AT_MOST));
+            } else {
+                super.onMeasure(widthMeasureSpec, MeasureSpec.makeMeasureSpec(maxHeight, MeasureSpec.AT_MOST));
+            }
+            int measuredHeight = getMeasuredHeight();
+            if (measuredHeight > maxHeight) {
+                super.onMeasure(widthMeasureSpec, MeasureSpec.makeMeasureSpec(maxHeight, heightMode));
+            }
         } else {
             super.onMeasure(widthMeasureSpec, heightMeasureSpec);
         }

@@ -50,13 +50,14 @@ public class UIWindow extends UIIDialogImpl {
         return uiWindow;
     }
 
-    public void show(ILayout iLayout) {
-        show(iLayout, 0);
+    public UIWindow show(ILayout iLayout) {
+        return show(iLayout, 0);
     }
 
-    public void show(ILayout iLayout, int yoff) {
+    public UIWindow show(ILayout iLayout, int yoff) {
         offsetY = yoff;
         iLayout.startIView(this);
+        return this;
     }
 
     public UIWindow layout(@LayoutRes int layoutId) {
@@ -88,6 +89,15 @@ public class UIWindow extends UIIDialogImpl {
     protected View inflateDialogView(FrameLayout dialogRootLayout, LayoutInflater inflater) {
         LinearLayout containLayout = new LinearLayout(mActivity);
         containLayout.setOrientation(LinearLayout.VERTICAL);
+
+        if (canCanceledOnOutside()) {
+            containLayout.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    finishDialog();
+                }
+            });
+        }
 
         ImageView triangleView = new ImageView(mActivity);
         triangleView.setImageResource(R.drawable.base_trigon);

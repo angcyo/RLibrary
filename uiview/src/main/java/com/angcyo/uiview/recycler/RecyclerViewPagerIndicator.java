@@ -44,25 +44,27 @@ public class RecyclerViewPagerIndicator extends View {
         mPaint.setStyle(Paint.Style.FILL);
 
         if (isInEditMode()) {
-            mPagerCount = 4;
+            initPagerCount(4);
             mCurrentPager = 1;
         }
     }
 
     public void setupRecyclerViewPager(RecyclerViewPager recyclerViewPager) {
-        mPagerCount = recyclerViewPager.getPagerCount();
         recyclerViewPager.addOnViewPagerListener(new RecyclerViewPager.OnViewPagerListener() {
             @Override
             public void onViewPager(int index) {
-                mCurrentPager = index;
-                postInvalidate();
+                setCurrentPager(index);
             }
         });
-        requestLayout();
+        initPagerCount(recyclerViewPager.getPagerCount());
+    }
+
+    public void setCurrentPager(int index) {
+        mCurrentPager = index;
+        postInvalidate();
     }
 
     public void setUpUIViewPager(RViewPager pager,int pagerCount) {
-        mPagerCount = pagerCount;
         pager.addOnPageChangeListener(new ViewPager.OnPageChangeListener() {
             @Override
             public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
@@ -71,8 +73,7 @@ public class RecyclerViewPagerIndicator extends View {
 
             @Override
             public void onPageSelected(int position) {
-                mCurrentPager = position;
-                postInvalidate();
+                setCurrentPager(position);
             }
 
             @Override
@@ -80,6 +81,11 @@ public class RecyclerViewPagerIndicator extends View {
 
             }
         });
+        initPagerCount(pagerCount);
+    }
+
+    public void initPagerCount(int pagerCount) {
+        mPagerCount = pagerCount;
         requestLayout();
     }
 

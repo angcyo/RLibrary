@@ -17,6 +17,7 @@
     <attr name="r_show_text_color" format="color"/>
     <attr name="r_text_offset" format="dimension"/>
     <attr name="r_max_height" format="dimension"/>
+    <attr name="r_min_height" format="dimension"/>
 
     <!--progress bar-->
     <!--进度颜色-->
@@ -38,6 +39,16 @@
     <declare-styleable name="RRelativeLayout">
         <attr name="r_background"/>
         <attr name="r_max_height"/>
+    </declare-styleable>
+
+    <declare-styleable name="RRecyclerView">
+        <!--是否激活自动滚动-->
+        <attr name="r_enable_auto_scroll" format="boolean"/>
+        <attr name="r_enable_scroll" format="boolean"/>
+    </declare-styleable>
+
+    <declare-styleable name="RefreshLayout">
+        <attr name="r_notify_listener" format="boolean"/>
     </declare-styleable>
 
     <!--View-->
@@ -105,6 +116,7 @@
 
     <declare-styleable name="ContentLayout">
         <attr name="r_max_height"/>
+        <attr name="r_min_height"/>
     </declare-styleable>
 
     <declare-styleable name="TitleBarLayout">
