@@ -2,6 +2,7 @@ package com.angcyo.uiview.github.tablayout;
 
 
 import android.support.annotation.DrawableRes;
+import android.view.View;
 
 import com.angcyo.uiview.github.tablayout.listener.CustomTabEntity;
 
@@ -17,6 +18,8 @@ public class TabEntity implements CustomTabEntity {
     public boolean isHomeNavigation = false;
 
     public boolean isShowBackground = true;
+
+    public int visibility = View.VISIBLE;
 
     public TabEntity(String title) {
         this.title = title;
@@ -92,5 +95,15 @@ public class TabEntity implements CustomTabEntity {
     @Override
     public boolean isShowBackground() {
         return isShowBackground;
+    }
+
+    @Override
+    public int getVisibility() {
+        return visibility;
+    }
+
+    public TabEntity setVisibility(int visibility) {
+        this.visibility = visibility;
+        return this;
     }
 }

@@ -20,4 +20,7 @@ public interface CustomTabEntity {
     boolean isHomeNavigation();
 
     boolean isShowBackground();
+
+    int getVisibility();
+
 }

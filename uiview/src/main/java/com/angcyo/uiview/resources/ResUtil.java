@@ -26,7 +26,6 @@ import android.support.v4.view.ViewCompat;
 import android.util.TypedValue;
 import android.view.View;
 
-import com.angcyo.library.utils.L;
 import com.angcyo.uiview.R;
 import com.angcyo.uiview.RApplication;
 
@@ -509,8 +508,10 @@ public class ResUtil {
     /**
      * 边界无限制的Ripple, 默认状态是透明
      */
-    @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
     public static Drawable generateRippleDrawable(int rippleColor) {
+        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.LOLLIPOP) {
+            return null;
+        }
         RippleDrawable drawable = new RippleDrawable(ColorStateList.valueOf(rippleColor), null, null);
         return drawable;
     }
@@ -518,8 +519,10 @@ public class ResUtil {
     /**
      * 边界被限制的Ripple, 默认状态是透明
      */
-    @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
     public static Drawable generateRippleMaskDrawable(int rippleColor) {
+        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.LOLLIPOP) {
+            return null;
+        }
         RippleDrawable drawable = new RippleDrawable(ColorStateList.valueOf(rippleColor), null, new ColorDrawable(rippleColor));
         return drawable;
     }
@@ -527,8 +530,10 @@ public class ResUtil {
     /**
      * 边界被限制的Ripple, 默认状态是参数content对应的
      */
-    @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
     public static Drawable generateRippleMaskDrawable(int rippleColor, Drawable content) {
+        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.LOLLIPOP) {
+            return null;
+        }
         RippleDrawable drawable = new RippleDrawable(ColorStateList.valueOf(rippleColor), content, new ColorDrawable(rippleColor));
         if (content != null) {
             drawable.setDrawableByLayerId(android.R.id.mask, content);

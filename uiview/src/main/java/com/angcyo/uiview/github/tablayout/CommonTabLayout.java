@@ -290,6 +290,8 @@ public class CommonTabLayout extends FrameLayout implements ValueAnimator.Animat
     private void addTab(final int position, View tabView) {
         CustomTabEntity tabEntity = mTabEntitys.get(position);
 
+        tabView.setVisibility(tabEntity.getVisibility());//2017-9-4
+
         TextView tv_tab_title = (TextView) tabView.findViewById(R.id.tv_tab_title);
         String tabTitle = tabEntity.getTabTitle();
         tv_tab_title.setVisibility(TextUtils.isEmpty(tabTitle) ? View.INVISIBLE : View.VISIBLE);
