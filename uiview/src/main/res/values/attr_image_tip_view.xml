@@ -10,9 +10,18 @@
 
         <attr name="r_tip_text" format="string"/>
         <!--提示文本距离图标中心的偏移-->
-        <attr name="r_tip_text_offset" format="dimension"/>
+        <attr name="r_tip_text_left_offset" format="dimension"/>
+        <attr name="r_tip_text_top_offset" format="dimension"/>
         <attr name="r_no_read_num" format="integer"/>
         <attr name="r_is_tip_mode" format="boolean"/>
+        <attr name="r_drawable_height_measure_mode" format="enum">
+            <enum name="WRAP_CONTENT" value="1"/>
+            <enum name="MATCH_PARENT" value="2"/>
+        </attr>
+        <attr name="r_drawable_width_measure_mode" format="enum">
+            <enum name="WRAP_CONTENT" value="1"/>
+            <enum name="MATCH_PARENT" value="2"/>
+        </attr>
 
         <!--文本图片之间的间隙-->
         <attr name="r_text_space"/>

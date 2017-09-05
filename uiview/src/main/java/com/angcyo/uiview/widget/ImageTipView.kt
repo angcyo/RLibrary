@@ -28,18 +28,27 @@ import kotlin.reflect.KProperty
  */
 class ImageTipView : View {
 
+    companion object {
+        val WRAP_CONTENT = 1
+        val MATCH_PARENT = 2
+    }
+
+    /**图标测量模式*/
+    private var drawableHeightMeasureSpec = WRAP_CONTENT
+    private var drawableWidthMeasureSpec = WRAP_CONTENT
+
     val mPaint: TextPaint by lazy {
-        TextPaint(Paint.ANTI_ALIAS_FLAG).apply { textSize = mShowTextSize * density }
+        TextPaint(Paint.ANTI_ALIAS_FLAG).apply { textSize = showTextSize * density }
     }
 
     /**需要绘制显示的文本*/
-    var mShowText: String? = null
+    var showText: String? = null
         get() {
             return if (mSelected) textSelected else textNormal
         }
 
     /**未读消息数量, -1表示不显示, 0表示显示一个小红点, 1..99显示数字+小红点, 99+显示特殊*/
-    var mTipText: String? = null
+    var tipText: String? = null
         set(value) {
             field = value
             postInvalidate()
@@ -47,8 +56,8 @@ class ImageTipView : View {
 
     var textNormal: String? = null
     var textSelected: String? = null
-    var mShowTextSize = 12f
-    var mTipTextSize = 6f
+    var showTextSize = 12f
+    var tipTextSize = 6f
 
     /**文本提示模式, 图标和提示文本分开, 允许提示文本远离图标绘制, 图标不变形*/
     var isTipModel = false
@@ -64,24 +73,25 @@ class ImageTipView : View {
     /**图片文本之间的间隙*/
     var mTextSpace = 4f
         get() {
-            if (mShowText.isNullOrEmpty()) {
+            if (showText.isNullOrEmpty()) {
                 return 0f
             } else {
                 return field
             }
         }
-    var tipTextSpace = 2f
+    var tipTextLeftOffset = 2f
+    var tipTextTopOffset = 2f
 
     var textWidth = 0
         get() {
-            if (mShowText.isNullOrEmpty()) {
+            if (showText.isNullOrEmpty()) {
                 return 0
             }
-            return mPaint.measureText(mShowText).toInt()
+            return mPaint.measureText(showText).toInt()
         }
     var textHeight = 0f
         get() {
-            if (mShowText.isNullOrEmpty()) {
+            if (showText.isNullOrEmpty()) {
                 return 0f
             } else {
                 return mPaint.fontMetrics.descent - mPaint.fontMetrics.ascent
@@ -145,7 +155,7 @@ class ImageTipView : View {
         textSelected = typedArray.getString(R.styleable.ImageTipView_r_text_selected)
         textNormal = typedArray.getString(R.styleable.ImageTipView_r_text_normal)
 
-        mShowTextSize = typedArray.getDimension(R.styleable.ImageTipView_r_show_text_size, mShowTextSize * density)
+        showTextSize = typedArray.getDimension(R.styleable.ImageTipView_r_show_text_size, showTextSize * density)
         isTipModel = typedArray.getBoolean(R.styleable.ImageTipView_r_is_tip_mode, isTipModel)
 
         mTextColorNormal = typedArray.getColor(R.styleable.ImageTipView_r_text_color_normal, mTextColorNormal)
@@ -155,12 +165,16 @@ class ImageTipView : View {
         mDrawableSelected = typedArray.getDrawable(R.styleable.ImageTipView_r_image_selected)
 
         mTextSpace = typedArray.getDimension(R.styleable.ImageTipView_r_text_space, mTextSpace * density)
-        tipTextSpace = typedArray.getDimension(R.styleable.ImageTipView_r_tip_text_offset, tipTextSpace * density)
+        tipTextLeftOffset = typedArray.getDimension(R.styleable.ImageTipView_r_tip_text_left_offset, tipTextLeftOffset * density)
+        tipTextTopOffset = typedArray.getDimension(R.styleable.ImageTipView_r_tip_text_top_offset, tipTextTopOffset * density)
 
-        mTipText = typedArray.getString(R.styleable.ImageTipView_r_tip_text)
-        mTipTextSize = typedArray.getDimension(R.styleable.ImageTipView_r_tip_text_size, mTipTextSize * density)
+        tipText = typedArray.getString(R.styleable.ImageTipView_r_tip_text)
+        tipTextSize = typedArray.getDimension(R.styleable.ImageTipView_r_tip_text_size, tipTextSize * density)
 
         noReadNum = typedArray.getInteger(R.styleable.ImageTipView_r_no_read_num, noReadNum)
+
+        drawableHeightMeasureSpec = typedArray.getInteger(R.styleable.ImageTipView_r_drawable_height_measure_mode, drawableHeightMeasureSpec)
+        drawableWidthMeasureSpec = typedArray.getInteger(R.styleable.ImageTipView_r_drawable_width_measure_mode, drawableWidthMeasureSpec)
 
         typedArray.recycle()
     }
@@ -175,25 +189,55 @@ class ImageTipView : View {
         var newHeightSpec = heightMeasureSpec
 
         if (widthMode == MeasureSpec.AT_MOST || widthMode == MeasureSpec.UNSPECIFIED) {
+            var imageWidth = 0
+            drawDrawable?.let {
+                imageWidth = it.intrinsicWidth
+            }
             widthSize = Math.max(imageWidth, textWidth)
             newWidthSpec = MeasureSpec.makeMeasureSpec(widthSize, MeasureSpec.EXACTLY)
-        } else {
-            if (isTipModel) {
-            } else {
-                measureDrawableW(mDrawableSelected, widthSize - paddingLeft - paddingRight)
-                measureDrawableW(mDrawableNormal, widthSize - paddingLeft - paddingRight)
-            }
         }
 
         if (heightMode == MeasureSpec.AT_MOST || heightMode == MeasureSpec.UNSPECIFIED) {
+            var imageHeight = 0
+            drawDrawable?.let {
+                imageHeight = it.intrinsicHeight
+            }
+
             heightSize = (imageHeight + textHeight + paddingBottom + paddingTop).toInt()
             newHeightSpec = MeasureSpec.makeMeasureSpec(heightSize, MeasureSpec.EXACTLY)
-        } else {
-            measureDrawableH(mDrawableSelected, heightSize - paddingBottom - paddingTop)
-            measureDrawableH(mDrawableNormal, heightSize - paddingBottom - paddingTop)
         }
 
         super.onMeasure(newWidthSpec, newHeightSpec)
+
+        ensureDrawable()
+    }
+
+    private fun ensureDrawable() {
+        var imageWidth = 0
+        drawDrawable?.let {
+            imageWidth = it.intrinsicWidth
+        }
+
+        var imageHeight = 0
+        drawDrawable?.let {
+            imageHeight = it.intrinsicHeight
+        }
+
+        if (drawableHeightMeasureSpec == MATCH_PARENT) {
+            measureDrawableH(mDrawableNormal, measuredHeight - paddingBottom - paddingTop)
+            measureDrawableH(mDrawableSelected, measuredHeight - paddingBottom - paddingTop)
+        } else {
+            measureDrawableH(mDrawableNormal, imageHeight)
+            measureDrawableH(mDrawableSelected, imageHeight)
+        }
+
+        if (drawableWidthMeasureSpec == MATCH_PARENT) {
+            measureDrawableW(mDrawableNormal, measuredWidth - paddingLeft - paddingRight)
+            measureDrawableW(mDrawableSelected, measuredWidth - paddingLeft - paddingRight)
+        } else {
+            measureDrawableW(mDrawableNormal, imageWidth)
+            measureDrawableW(mDrawableSelected, imageWidth)
+        }
     }
 
     private fun measureDrawableW(drawable: Drawable?, width: Int) {
@@ -247,7 +291,7 @@ class ImageTipView : View {
         if (drawDrawable != null) {
             canvas.save()
             if (isTipModel) {
-                val drawLeft = if (mShowText.isNullOrEmpty() || drawDrawable!!.bounds.width() > textWidth) 0 else (textWidth - drawDrawable!!.bounds.width()) / 2
+                val drawLeft = if (showText.isNullOrEmpty() || drawDrawable!!.bounds.width() > textWidth) 0 else (textWidth - drawDrawable!!.bounds.width()) / 2
                 canvas.translate(paddingLeft.toFloat() + drawLeft, paddingTop.toFloat())
 
                 drawableCx = paddingLeft.toFloat() + drawLeft + drawDrawable!!.bounds.width() / 2
@@ -260,15 +304,15 @@ class ImageTipView : View {
         }
 
         //绘制文本
-        if (!mShowText.isNullOrEmpty()) {
+        if (!showText.isNullOrEmpty()) {
             mPaint.color = textDrawColor
-            mPaint.textSize = mShowTextSize
+            mPaint.textSize = showTextSize
             if (isTipModel) {
-                canvas.drawText(mShowText, paddingLeft.toFloat(),
+                canvas.drawText(showText, paddingLeft.toFloat(),
                         measuredHeight / 2 + subHeight / 2 - mPaint.descent(),
                         mPaint)
             } else {
-                canvas.drawText(mShowText,
+                canvas.drawText(showText,
                         (measuredWidth / 2 - textWidth / 2).toFloat(),
                         measuredHeight / 2 + subHeight / 2 - mPaint.descent(),
                         mPaint)
@@ -278,9 +322,9 @@ class ImageTipView : View {
         //绘制未读消息
         canvas.save()
         if (isTipModel) {
-            canvas.translate(drawableCx + tipTextSpace, paddingTop + 4 * density)//移动到中间位置
+            canvas.translate(drawableCx + tipTextLeftOffset, tipTextTopOffset)//移动到中间位置
         } else {
-            canvas.translate((rawViewWidth / 2).toFloat() + paddingLeft, paddingTop + 4 * density)//移动到中间位置
+            canvas.translate((rawViewWidth / 2).toFloat() + paddingLeft, tipTextTopOffset)//移动到中间位置
         }
         when {
             noReadNum == 0 -> {
@@ -302,8 +346,8 @@ class ImageTipView : View {
                 ninetyNineDrawable.draw(canvas)
             }
         }
-        mTipText?.let {
-            mPaint.textSize = mTipTextSize
+        tipText?.let {
+            mPaint.textSize = tipTextSize
             mPaint.color = Color.WHITE
 
             val paddingTop = 2 * density
@@ -315,6 +359,26 @@ class ImageTipView : View {
             canvas.drawText(it, paddingLeft, paddingTop - mPaint.ascent(), mPaint)
         }
         canvas.restore()
+    }
+
+    fun setDrawableSelectedRes(res: Int) {
+        if (res == -1) {
+            mDrawableSelected = null
+        } else {
+            mDrawableSelected = ContextCompat.getDrawable(context, res)
+        }
+        ensureDrawable()
+        postInvalidate()
+    }
+
+    fun setDrawableNormalRes(res: Int) {
+        if (res == -1) {
+            mDrawableNormal = null
+        } else {
+            mDrawableNormal = ContextCompat.getDrawable(context, res)
+        }
+        ensureDrawable()
+        postInvalidate()
     }
 }
 
