@@ -80,6 +80,8 @@ public class ContentLayout extends FrameLayout {
             int measuredHeight = getMeasuredHeight();
             if (measuredHeight > maxHeight) {
                 super.onMeasure(widthMeasureSpec, MeasureSpec.makeMeasureSpec(maxHeight, heightMode));
+            } else {
+                setMeasuredDimension(getMeasuredWidth(), measuredHeight);
             }
         } else {
             super.onMeasure(widthMeasureSpec, heightMeasureSpec);

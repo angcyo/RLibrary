@@ -27,6 +27,10 @@ class StickTopLayout(context: Context, attributeSet: AttributeSet? = null) : Fra
     /**顶部是否处于可见状态*/
     private var isTopStick = true
 
+    private var handTouch = true
+
+    private var isFirst = true
+
     private val mOverScroller: OverScroller by lazy {
         OverScroller(context)
     }
@@ -36,6 +40,14 @@ class StickTopLayout(context: Context, attributeSet: AttributeSet? = null) : Fra
 
             override fun onScroll(e1: MotionEvent?, e2: MotionEvent?, distanceX: Float, distanceY: Float): Boolean {
                 //L.e("call: onScroll -> $distanceY")
+                if (isFirst) {
+                    isFirst = false
+                    if (distanceY < 0) {
+                        handTouch = false
+                        return false
+                    }
+                }
+
                 if (canScroll) {
                     if (scrollY == 0 && (distanceY < 0 || distanceY < distanceX)) {
                         return false
@@ -61,6 +73,9 @@ class StickTopLayout(context: Context, attributeSet: AttributeSet? = null) : Fra
 
     /**关闭Top*/
     fun closeTop() {
+        if (scrollY == topViewHeight()) {
+            return
+        }
         mOverScroller.startScroll(0, scrollY, 0, topViewHeight() - scrollY, 300)
         postInvalidate()
     }
@@ -77,7 +92,7 @@ class StickTopLayout(context: Context, attributeSet: AttributeSet? = null) : Fra
     override fun scrollTo(x: Int, y: Int) {
         super.scrollTo(x, Math.min(topViewHeight(), Math.max(y, 0)))
         //L.e("call: scrollTo -> $y")
-        isTopStick = y != topViewHeight()
+        isTopStick = scrollY != topViewHeight()
 
         onTopScrollListener?.onTopScroll(isTopStick, y, topViewHeight())
     }
@@ -138,19 +153,21 @@ class StickTopLayout(context: Context, attributeSet: AttributeSet? = null) : Fra
     override fun dispatchTouchEvent(ev: MotionEvent?): Boolean {
         when (MotionEventCompat.getActionMasked(ev)) {
             MotionEvent.ACTION_DOWN -> {
+                handTouch = true
+                isFirst = true
                 mOverScroller.abortAnimation()
                 canScroll = canScroll()
             }
 
             MotionEvent.ACTION_CANCEL, MotionEvent.ACTION_UP -> {
                 //L.e("call: dispatchTouchEvent -> --------------------- ${MotionEventCompat.getActionMasked(ev)}")
-                if (topViewHeight() != 0 &&
-                        scrollY != topViewHeight() &&
-                        scrollY > topViewHeight() * 1f / 3f) {
-                    //如果滚动的距离超过三分一
-                    closeTop()
-                } else if (isTopStick) {
-                    openTop()
+                if (topViewHeight() != 0) {
+                    if (scrollY > topViewHeight() * 1f / 3f) {
+                        //如果滚动的距离超过三分一
+                        closeTop()
+                    } else if (isTopStick) {
+                        openTop()
+                    }
                 }
             }
         }
@@ -163,7 +180,11 @@ class StickTopLayout(context: Context, attributeSet: AttributeSet? = null) : Fra
     }
 
     override fun onInterceptTouchEvent(ev: MotionEvent?): Boolean {
-        return mGestureDetectorCompat.onTouchEvent(ev)
+        if (handTouch) {
+            return mGestureDetectorCompat.onTouchEvent(ev)
+        } else {
+            return false
+        }
     }
 
     var onTopScrollListener: OnTopScrollListener? = null

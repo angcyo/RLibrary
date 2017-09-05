@@ -156,20 +156,51 @@ public class RefreshLayout extends ViewGroup {
 
     @Override
     protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
-        super.onMeasure(widthMeasureSpec, heightMeasureSpec);
-        int widthSize = getMeasuredWidth(); //MeasureSpec.getSize(widthMeasureSpec);
-        int heightSize = getMeasuredHeight();  //MeasureSpec.getSize(heightMeasureSpec);
+//        super.onMeasure(widthMeasureSpec, heightMeasureSpec);
+        int widthSize = MeasureSpec.getSize(widthMeasureSpec);
+        int heightSize = MeasureSpec.getSize(heightMeasureSpec);
 
-        if (isInEditMode()) {
-            mTargetView.measure(MeasureSpec.makeMeasureSpec(widthSize, MeasureSpec.EXACTLY),
-                    MeasureSpec.makeMeasureSpec(heightSize, MeasureSpec.EXACTLY));
-            return;
+        int heightMode = MeasureSpec.getMode(heightMeasureSpec);
+        if (heightMode == MeasureSpec.EXACTLY) {
+
+            if (isInEditMode()) {
+                if (mTargetView == null) {
+                    setMeasuredDimension(widthSize, heightSize);
+                } else {
+                    mTargetView.measure(MeasureSpec.makeMeasureSpec(widthSize, MeasureSpec.EXACTLY),
+                            MeasureSpec.makeMeasureSpec(heightSize, MeasureSpec.EXACTLY));
+                    setMeasuredDimension(mTargetView.getMeasuredWidth(), mTargetView.getMeasuredHeight());
+                }
+                return;
+            }
+
+            if (mTargetView != null) {
+                mTargetView.measure(MeasureSpec.makeMeasureSpec(widthSize, MeasureSpec.EXACTLY),
+                        MeasureSpec.makeMeasureSpec(heightSize, MeasureSpec.EXACTLY));
+                setMeasuredDimension(mTargetView.getMeasuredWidth(), mTargetView.getMeasuredHeight());
+            }
+
+        } else {
+            if (isInEditMode()) {
+                if (mTargetView == null) {
+                    setMeasuredDimension(widthSize, heightSize);
+                } else {
+                    mTargetView.measure(MeasureSpec.makeMeasureSpec(widthSize, MeasureSpec.EXACTLY),
+                            MeasureSpec.makeMeasureSpec(heightSize, heightMode));
+                    setMeasuredDimension(mTargetView.getMeasuredWidth(), mTargetView.getMeasuredHeight());
+                }
+                return;
+            }
+
+            if (mTargetView != null) {
+                mTargetView.measure(MeasureSpec.makeMeasureSpec(widthSize, MeasureSpec.EXACTLY),
+                        MeasureSpec.makeMeasureSpec(heightSize, heightMode));
+                setMeasuredDimension(mTargetView.getMeasuredWidth(), mTargetView.getMeasuredHeight());
+            } else {
+                setMeasuredDimension(widthSize, heightSize);
+            }
         }
 
-        if (mTargetView != null) {
-            mTargetView.measure(MeasureSpec.makeMeasureSpec(widthSize, MeasureSpec.EXACTLY),
-                    MeasureSpec.makeMeasureSpec(heightSize, MeasureSpec.EXACTLY));
-        }
         if (mTopView != null) {
             mTopView.measure(MeasureSpec.makeMeasureSpec(widthSize, MeasureSpec.EXACTLY),
                     MeasureSpec.makeMeasureSpec(heightSize, MeasureSpec.AT_MOST));
