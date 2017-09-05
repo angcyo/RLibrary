@@ -67,6 +67,9 @@ class StickTopLayout(context: Context, attributeSet: AttributeSet? = null) : Fra
 
     /**打开Top*/
     fun openTop() {
+        if (scrollY == 0) {
+            return
+        }
         mOverScroller.startScroll(0, scrollY, 0, -scrollY, 300)
         postInvalidate()
     }
