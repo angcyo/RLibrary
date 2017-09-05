@@ -106,8 +106,13 @@ public class RNineImageLayout extends RelativeLayout implements View.OnClickList
                 //一张图片
                 final int[] widthHeight = mNineImageConfig.getWidthHeight(1);
                 if (widthHeight[0] == -1) {
-                    mImageViews.get(0).measure(getSize(width), getSize(width));
-                    setMeasuredDimension(width, width);
+                    if (widthHeight[1] > 0) {
+                        mImageViews.get(0).measure(getSize(width), getSize(widthHeight[1]));
+                        setMeasuredDimension(width, widthHeight[1]);
+                    } else {
+                        mImageViews.get(0).measure(getSize(width), getSize(width));
+                        setMeasuredDimension(width, width);
+                    }
                 } else if (widthHeight[0] == 0) {
                     int defaultSize = (int) (getResources().getDisplayMetrics().density * 150);//为0时, 采用默认大小
                     mImageViews.get(0).measure(getSize(defaultSize), getSize(defaultSize));
