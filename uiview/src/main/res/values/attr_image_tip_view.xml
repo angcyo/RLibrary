@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <declare-styleable name="ImageTipView">
+        <!--需要显示的文本-->
+        <attr name="r_text_normal"/>
+        <attr name="r_text_selected"/>
+        <attr name="r_show_text_size"/>
+        <attr name="r_tip_text_size" format="dimension"/>
+
+        <attr name="r_tip_text" format="string"/>
+        <!--提示文本距离图标中心的偏移-->
+        <attr name="r_tip_text_offset" format="dimension"/>
+        <attr name="r_no_read_num" format="integer"/>
+        <attr name="r_is_tip_mode" format="boolean"/>
+
+        <!--文本图片之间的间隙-->
+        <attr name="r_text_space"/>
+        <attr name="r_text_color_normal"/>
+        <attr name="r_text_color_selected"/>
+        <!--正常情况下的图片-->
+        <attr name="r_image_normal"/>
+        <!--选中情况下的图片-->
+        <attr name="r_image_selected"/>
+    </declare-styleable>
+
+</resources>
