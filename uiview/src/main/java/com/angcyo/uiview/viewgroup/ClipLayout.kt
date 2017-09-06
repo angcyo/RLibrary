@@ -63,7 +63,7 @@ open class ClipLayout(context: Context, attributeSet: AttributeSet? = null) : Fr
     init {
         val typedArray = context.obtainStyledAttributes(attributeSet, R.styleable.ClipLayout)
         clipType = typedArray.getInt(R.styleable.ClipLayout_r_clip_type, clipType)
-        clipRadius = typedArray.getDimensionPixelOffset(R.styleable.ClipLayout_r_clip_radius, 3).toFloat()
+        clipRadius = typedArray.getDimensionPixelOffset(R.styleable.ClipLayout_r_clip_radius, defaultClipRadius.toInt()).toFloat()
         rBackgroundDrawable = typedArray.getDrawable(R.styleable.ClipLayout_r_background)
         aeqWidth = typedArray.getBoolean(R.styleable.ClipLayout_r_is_aeq_width, aeqWidth)
         typedArray.recycle()
