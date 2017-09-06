@@ -2,6 +2,7 @@ package com.angcyo.uiview.recycler;
 
 import android.content.Context;
 import android.support.annotation.Nullable;
+import android.support.v7.widget.LinearLayoutManager;
 import android.util.AttributeSet;
 
 import com.angcyo.uiview.recycler.adapter.RBaseAdapter;
@@ -68,6 +69,16 @@ public class RLoopRecyclerView extends RRecyclerView {
         super.scrollTo(curScrollPosition, false);//开始时的偏移量
     }
 
+    @Override
+    public void startAutoScroll() {
+        LayoutManager layoutManager = getLayoutManager();
+        if (enableScroll && getAdapter() != null && getAdapter().getItemRawCount() > 1 &&
+                layoutManager != null && layoutManager instanceof LinearLayoutManager) {
+            curScrollPosition = ((LinearLayoutManager) layoutManager).findFirstVisibleItemPosition();
+            autoScroll();
+        }
+    }
+
     /**
      * 默认滚动至
      */
@@ -102,12 +113,12 @@ public class RLoopRecyclerView extends RRecyclerView {
         mOnPageListener = onPageListener;
     }
 
-    public interface OnPageListener {
-        void onPageSelector(int position);
-    }
-
     public void resetCurScrollPosition() {
         curScrollPosition = getDefaultPosition();
+    }
+
+    public interface OnPageListener {
+        void onPageSelector(int position);
     }
 
     /**
@@ -150,10 +161,10 @@ public class RLoopRecyclerView extends RRecyclerView {
         @Override
         final public int getItemCount() {
             int rawCount = getItemRawCount();
-            if (rawCount > 0) {
+            if (rawCount > 1) {
                 return Integer.MAX_VALUE;
             }
-            return 0;
+            return rawCount;
         }
     }
 }

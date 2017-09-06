@@ -58,6 +58,10 @@ public class RRecyclerView extends RecyclerView {
      * 当前自动滚动到的位置
      */
     protected int curScrollPosition = 0;
+    /**
+     * 激活滚动
+     */
+    protected boolean enableScroll = false;
     OnTouchListener mInterceptTouchListener;
     OnFlingEndListener mOnFlingEndListener;
     boolean isAutoStart = false;
@@ -87,10 +91,6 @@ public class RRecyclerView extends RecyclerView {
      * 是否自动滚动
      */
     private boolean isEnableAutoScroll = false;
-    /**
-     * 激活滚动
-     */
-    private boolean enableScroll = false;
     private Runnable autoScrollRunnable = new Runnable() {
         @Override
         public void run() {
@@ -428,7 +428,7 @@ public class RRecyclerView extends RecyclerView {
         }
     }
 
-    private void autoScroll() {
+    protected void autoScroll() {
         if (isAutoStart) {
             return;
         }

@@ -829,6 +829,12 @@ public class CommonTabLayout extends FrameLayout implements ValueAnimator.Animat
         updateTabStyles();
     }
 
+    public void setTextColor(int textSelectColor, int textUnselectColor) {
+        this.mTextSelectColor = textSelectColor;
+        this.mTextUnselectColor = textUnselectColor;
+        updateTabStyles();
+    }
+
     public int getTextUnselectColor() {
         return mTextUnselectColor;
     }

@@ -25,7 +25,7 @@ import android.widget.OverScroller
 class StickTopLayout(context: Context, attributeSet: AttributeSet? = null) : FrameLayout(context, attributeSet) {
 
     /**顶部是否处于可见状态*/
-    private var isTopStick = true
+    var isTopStick = true
 
     private var handTouch = true
 

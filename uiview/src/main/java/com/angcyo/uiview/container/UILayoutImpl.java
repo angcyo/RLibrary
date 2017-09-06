@@ -736,7 +736,7 @@ public class UILayoutImpl extends SwipeBackLayout implements ILayout<UIParam>, U
         }
 
         viewPattern.mView.setEnabled(false);
-        
+
         viewPattern.interrupt = true;//中断启动
 
         if (checkInterrupt && checkInterrupt(iview)) {
