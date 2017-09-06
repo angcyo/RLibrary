@@ -9,6 +9,7 @@ import android.support.annotation.NonNull;
  */
 
 public abstract class UIContentView extends UIBaseRxView {
+
     @NonNull
     @Override
     protected LayoutState getDefaultLayoutState() {

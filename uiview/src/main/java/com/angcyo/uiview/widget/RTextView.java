@@ -53,7 +53,7 @@ public class RTextView extends AppCompatTextView {
     private CharSequence mRawText;
     private int mPaddingLeft;
     private RTextPaint mTextPaint;
-    private int mLeftOffset;
+    private int mLeftOffset = 0, mTopOffset = 0, mBottomOffset = 0;
     private String mLeftString;
 
     public RTextView(Context context) {
@@ -85,7 +85,9 @@ public class RTextView extends AppCompatTextView {
         int color = typedArray.getColor(R.styleable.RTextView_r_left_text_color, getCurrentTextColor());
         mTextPaint.setTextColor(color);
 
-        mLeftOffset = typedArray.getDimensionPixelOffset(R.styleable.RTextView_r_left_text_offset, 0);
+        mLeftOffset = typedArray.getDimensionPixelOffset(R.styleable.RTextView_r_left_text_offset, mLeftOffset);
+        mBottomOffset = typedArray.getDimensionPixelOffset(R.styleable.RTextView_r_left_text_offset, mBottomOffset);
+        mTopOffset = typedArray.getDimensionPixelOffset(R.styleable.RTextView_r_left_text_offset, mTopOffset);
 
         String string = typedArray.getString(R.styleable.RTextView_r_left_text);
         setLeftString(string);
@@ -329,6 +331,18 @@ public class RTextView extends AppCompatTextView {
                 compoundDrawables[2], getDrawable(bottomIco));
     }
 
+    public void setLeftOffset(int leftOffset) {
+        mLeftOffset = leftOffset;
+    }
+
+    public void setTopOffset(int topOffset) {
+        mTopOffset = topOffset;
+    }
+
+    public void setBottomOffset(int bottomOffset) {
+        mBottomOffset = bottomOffset;
+    }
+
     private void initLeftRes() {
         if (leftWidth <= 0) {
             return;
@@ -342,8 +356,8 @@ public class RTextView extends AppCompatTextView {
             colorPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
         }
         colorPaint.setColor(leftColor);
-        leftColorRect.set(mLeftOffset, getPaddingTop(),
-                mLeftOffset + leftWidth, viewHeight - getPaddingBottom());
+        leftColorRect.set(mLeftOffset, getPaddingTop() + mTopOffset,
+                mLeftOffset + leftWidth, viewHeight - getPaddingBottom() - mBottomOffset);
     }
 
     public RTextView setLeftWidth(int leftWidth) {

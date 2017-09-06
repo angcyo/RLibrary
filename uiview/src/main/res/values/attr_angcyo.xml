@@ -56,6 +56,8 @@
     <attr name="r_hint_text" format="string"/>
     <attr name="r_left_text_color" format="color"/>
     <attr name="r_left_text_offset" format="dimension"/>
+    <attr name="r_top_text_offset" format="dimension"/>
+    <attr name="r_bottom_text_offset" format="dimension"/>
 
     <declare-styleable name="RTextView">
         <!--左边竖线的颜色-->
@@ -72,6 +74,8 @@
         <attr name="r_left_text"/>
         <attr name="r_left_text_color"/>
         <attr name="r_left_text_offset"/>
+        <attr name="r_top_text_offset"/>
+        <attr name="r_bottom_text_offset"/>
 
     </declare-styleable>
 

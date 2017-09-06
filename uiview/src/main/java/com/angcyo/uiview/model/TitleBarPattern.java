@@ -245,6 +245,8 @@ public class TitleBarPattern {
         public int rightMargin = 0;
         public int bottomMargin = 0;
 
+        public OnItemInitListener mOnItemInitListener;
+
         private TitleBarItem() {
 
         }
@@ -327,6 +329,15 @@ public class TitleBarPattern {
         public TitleBarItem setBottomMargin(int bottomMargin) {
             this.bottomMargin = bottomMargin;
             return this;
+        }
+
+        public TitleBarItem setOnItemInitListener(OnItemInitListener onItemInitListener) {
+            mOnItemInitListener = onItemInitListener;
+            return this;
+        }
+
+        public interface OnItemInitListener {
+            void onItemInit(View itemView, TitleBarItem item);
         }
     }
 }

@@ -54,6 +54,8 @@ open class ClipLayout(context: Context, attributeSet: AttributeSet? = null) : Fr
     /**引导模式, 会镂空布局, 只在CLIP_TYPE_CIRCLE生效*/
     var guidMode = false
 
+    private var aeqWidth = true
+
     private val paint by lazy {
         Paint(Paint.ANTI_ALIAS_FLAG)
     }
@@ -63,6 +65,7 @@ open class ClipLayout(context: Context, attributeSet: AttributeSet? = null) : Fr
         clipType = typedArray.getInt(R.styleable.ClipLayout_r_clip_type, clipType)
         clipRadius = typedArray.getDimensionPixelOffset(R.styleable.ClipLayout_r_clip_radius, 3).toFloat()
         rBackgroundDrawable = typedArray.getDrawable(R.styleable.ClipLayout_r_background)
+        aeqWidth = typedArray.getBoolean(R.styleable.ClipLayout_r_is_aeq_width, aeqWidth)
         typedArray.recycle()
 
         setWillNotDraw(false)
@@ -88,7 +91,12 @@ open class ClipLayout(context: Context, attributeSet: AttributeSet? = null) : Fr
 
     override fun onSizeChanged(w: Int, h: Int, oldw: Int, oldh: Int) {
         super.onSizeChanged(w, h, oldw, oldh)
-        roundRectF.set(cx - cr, cy - cr, cx + cr, cy + cr)
+        if (aeqWidth) {
+            roundRectF.set(cx - cr, cy - cr, cx + cr, cy + cr)
+        } else {
+            roundRectF.set(paddingLeft.toFloat(), paddingTop.toFloat(),
+                    (measuredWidth - paddingRight).toFloat(), (measuredHeight - paddingBottom).toFloat())
+        }
         rBackgroundDrawable?.setBounds(0, 0, measuredWidth, measuredHeight)
     }
 

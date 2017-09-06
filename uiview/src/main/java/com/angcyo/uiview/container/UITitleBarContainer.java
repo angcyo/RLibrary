@@ -339,6 +339,10 @@ public class UITitleBarContainer extends FrameLayout {
             view.setTag(R.id.tag, i);//方便之后查找这个view
             layout.addView(view, layoutParams);
             views.add(view);
+
+            if (item.mOnItemInitListener != null) {
+                item.mOnItemInitListener.onItemInit(view, item);
+            }
         }
 
 //        for (TitleBarPattern.TitleBarItem item : items) {
@@ -380,7 +384,7 @@ public class UITitleBarContainer extends FrameLayout {
     }
 
     private TextView createTextItem(String text, @ColorInt int color, final OnClickListener listener) {
-        TextView item = new TextView(getContext());
+        TextView item = new RTextView(getContext());
         int padding = getResources().getDimensionPixelOffset(R.dimen.base_ldpi);
         item.setPadding(padding, 0, padding, 0);
         item.setText(text);

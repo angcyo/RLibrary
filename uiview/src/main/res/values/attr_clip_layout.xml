@@ -10,5 +10,7 @@
         </attr>
         <attr name="r_clip_radius" format="dimension"/>
         <attr name="r_background"/>
+        <!--宽高是否相等-->
+        <attr name="r_is_aeq_width" format="boolean"/>
     </declare-styleable>
 </resources>

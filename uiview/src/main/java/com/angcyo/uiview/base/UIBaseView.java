@@ -94,6 +94,8 @@ public abstract class UIBaseView extends UIIViewImpl {
     protected LayoutState mLayoutState = LayoutState.NORMAL;
     protected View.OnClickListener mNonetSettingClickListener, mNonetRefreshClickListener;
     protected OnViewLoadListener mOnViewLoadListener;
+
+    protected boolean haveTitleBar = true;
     private Animation mLoadingAnimation;
     private ClipMode mClipMode;
     private boolean mEnableClip = false;
@@ -143,7 +145,7 @@ public abstract class UIBaseView extends UIIViewImpl {
         mBaseRootLayout.setBackground(getDefaultDrawable());
 
         TitleBarPattern titleBarPattern = getTitleBar();
-        if (titleBarPattern != null) {
+        if (titleBarPattern != null && isHaveTitleBar()) {
             mUITitleBarContainer = new UITitleBarContainer(mActivity);
             mUITitleBarId = R.id.base_root_title_id;//View.generateViewId();
             mUITitleBarContainer.setId(mUITitleBarId);
@@ -444,6 +446,9 @@ public abstract class UIBaseView extends UIIViewImpl {
         showNonetLayout(null, null);
     }
 
+
+    //-----------------以下私有方法------------------//
+
     /**
      * 显示无网络布局
      */
@@ -457,9 +462,6 @@ public abstract class UIBaseView extends UIIViewImpl {
         }
         changeState(mLayoutState, LayoutState.NONET);
     }
-
-
-    //-----------------以下私有方法------------------//
 
     protected void removeOtherView(LayoutState needShowState) {
         mViewHolder.clear();
@@ -968,6 +970,15 @@ public abstract class UIBaseView extends UIIViewImpl {
      */
     public void setOnViewLoadListener(OnViewLoadListener onViewLoadListener) {
         mOnViewLoadListener = onViewLoadListener;
+    }
+
+    public boolean isHaveTitleBar() {
+        return haveTitleBar;
+    }
+
+    public UIBaseView setHaveTitleBar(boolean haveTitleBar) {
+        this.haveTitleBar = haveTitleBar;
+        return this;
     }
 
     /**
