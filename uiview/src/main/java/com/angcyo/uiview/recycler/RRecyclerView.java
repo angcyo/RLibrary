@@ -20,6 +20,7 @@ import android.util.AttributeSet;
 import android.view.MotionEvent;
 import android.view.View;
 import android.widget.LinearLayout;
+import android.widget.OverScroller;
 
 import com.angcyo.library.utils.L;
 import com.angcyo.uiview.R;
@@ -484,8 +485,16 @@ public class RRecyclerView extends RecyclerView {
      */
     public float getLastVelocity() {
         Object mViewFlinger = Reflect.getMember(RecyclerView.class, this, "mViewFlinger");
-        ScrollerCompat mScroller = (ScrollerCompat) Reflect.getMember(mViewFlinger, "mScroller");
-        float currVelocity = mScroller.getCurrVelocity();
+        Object mScroller = Reflect.getMember(mViewFlinger, "mScroller");
+        float currVelocity = 0f;
+        if (mScroller instanceof OverScroller) {
+            currVelocity = ((OverScroller) mScroller).getCurrVelocity();
+        } else if (mScroller instanceof ScrollerCompat) {
+            currVelocity = ((ScrollerCompat) mScroller).getCurrVelocity();
+        } else {
+            throw new IllegalArgumentException("未兼容的mScroller类型:" + mScroller.getClass().getSimpleName());
+        }
+
         if (Float.isNaN(currVelocity)) {
             currVelocity = mLastVelocity;
         } else {
