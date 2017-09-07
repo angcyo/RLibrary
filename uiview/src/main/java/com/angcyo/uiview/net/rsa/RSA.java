@@ -1,5 +1,11 @@
 package com.angcyo.uiview.net.rsa;
 
+import android.text.TextUtils;
+
+import com.angcyo.github.utilcode.utils.TimeUtils;
+
+import java.util.Calendar;
+
 /**
  * Copyright (C) 2016,深圳市红鸟网络科技股份有限公司 All rights reserved.
  * 项目名称：
@@ -31,21 +37,43 @@ public class RSA {
      * 加密
      */
     public static String encode(String data) {
+        return encode(data,false);
+    }
+
+    public static String encode(String data, boolean useSalt) {
+        String data_ = data;
+        if (useSalt) {
+            Calendar cal = Calendar.getInstance();
+            int month = cal.get(Calendar.MONTH) + 1;
+            int year = cal.get(Calendar.YEAR);
+            int day = cal.get(Calendar.DAY_OF_MONTH);
+            data_ = data + "&" + sdbmHash(month * year * day + "");
+        }
+
         String encode = "";
         byte[] encodedData;
         try {
-            encodedData = RSAUtils.encryptByPublicKey(data.getBytes(), PUBLIC_KEY);
+            encodedData = RSAUtils.encryptByPublicKey(data_.getBytes(), PUBLIC_KEY);
             encode = Base64Utils.encode(encodedData);
         } catch (Exception e) {
         }
         return encode.replaceAll("\\n", "");
     }
 
-    public static String encodeInfo(String data) {
+    public static String encodeInfo(String data,boolean useSalt) {
+        String data_ = data;
+        if (useSalt) {
+            Calendar cal = Calendar.getInstance();
+            int month = cal.get(Calendar.MONTH) + 1;
+            int year = cal.get(Calendar.YEAR);
+            int day = cal.get(Calendar.DAY_OF_MONTH);
+            data_ = data + "&" + sdbmHash(month * year * day + "");
+        }
+
         String encode = "";
         byte[] encodedData;
         try {
-            encodedData = RSAUtils.encryptByPublicKey(data.getBytes(), PUBLIC_KEY_INFO);
+            encodedData = RSAUtils.encryptByPublicKey(data_.getBytes(), PUBLIC_KEY_INFO);
             encode = Base64Utils.encode(encodedData);
         } catch (Exception e) {
         }
@@ -65,4 +93,17 @@ public class RSA {
         }
         return target;
     }
+
+    public static long sdbmHash(String str) {
+        if (str == null || str.length() == 0) {
+            return 0;
+        }
+        long hash = 0;
+        for (int i = 0; i < str.length(); i++) {
+            hash = (str.charAt(i) + (hash << 6) + (hash << 16)) - hash;
+        }
+        return hash & 0x7FFFFFFF;
+
+    }
+
 }
