@@ -11,15 +11,16 @@ import com.angcyo.github.utilcode.utils.ImageUtils
 import com.angcyo.library.okhttp.Ok
 import com.angcyo.library.utils.L
 import com.angcyo.uiview.R
-import com.bumptech.glide.*
+import com.bumptech.glide.Glide
+import com.bumptech.glide.Priority
+import com.bumptech.glide.RequestBuilder
 import com.bumptech.glide.load.Transformation
 import com.bumptech.glide.load.engine.DiskCacheStrategy
-import com.bumptech.glide.load.resource.bitmap.BitmapTransformation
-import com.bumptech.glide.load.resource.drawable.GlideDrawable
 import com.bumptech.glide.load.resource.gif.GifDrawable
-import com.bumptech.glide.request.GenericRequest
-import com.bumptech.glide.request.animation.GlideAnimation
+import com.bumptech.glide.request.RequestOptions
 import com.bumptech.glide.request.target.SimpleTarget
+import com.bumptech.glide.request.transition.Transition
+import pl.droidsonroids.gif.GifDrawableBuilder
 import java.io.File
 
 /**
@@ -142,102 +143,108 @@ open class GlideImageView(context: Context, attributeSet: AttributeSet? = null) 
         }
     }
 
-    private fun defaultConfig(request: GenericRequestBuilder<*, *, *, *>, isGif: Boolean) {
-        request.placeholder(placeholderRes)
-                .error(placeholderRes)
+    private fun defaultConfig(isGif: Boolean): RequestOptions {
+        val requestOptions = RequestOptions.placeholderOf(placeholderRes).error(placeholderRes)
 
         if (isGif) {
-            request.diskCacheStrategy(DiskCacheStrategy.SOURCE)
-                    .priority(Priority.HIGH)
+            requestOptions.diskCacheStrategy(DiskCacheStrategy.DATA).priority(Priority.HIGH)
         } else {
-            request.diskCacheStrategy(DiskCacheStrategy.ALL)
-                    .priority(Priority.NORMAL)
+            requestOptions.diskCacheStrategy(DiskCacheStrategy.ALL).priority(Priority.NORMAL)
         }
 
-        when (request) {
-            is DrawableRequestBuilder -> {
-                if (scaleType == ScaleType.CENTER_CROP) {
-                    request.centerCrop()
-                }
-                bitmapTransform?.let {
-                    request.bitmapTransform(it as Transformation<Bitmap>?)
-                }
-            }
-            is BitmapRequestBuilder -> {
-                if (scaleType == ScaleType.CENTER_CROP) {
-                    request.centerCrop()
-                }
-                bitmapTransform?.let {
-                    request.transform(it as BitmapTransformation?)
-                }
-            }
-            is GifRequestBuilder -> {
-                if (scaleType == ScaleType.CENTER_CROP) {
-                    request.centerCrop()
-                }
-                bitmapTransform?.let {
-                    request.transform(it as Transformation<GifDrawable>?)
-                }
-            }
+        if (scaleType == ScaleType.CENTER_CROP) {
+            requestOptions.centerCrop()
         }
 
         when (animType) {
-            AnimType.NONE, AnimType.TRANSITION -> request.dontAnimate()
+            AnimType.NONE, AnimType.TRANSITION -> requestOptions.dontAnimate()
             AnimType.CROSS_FADE -> {
-                when (request) {
-                    is DrawableRequestBuilder -> request.crossFade()
-                    is BitmapRequestBuilder -> request.crossFade()
-                    is GifRequestBuilder -> request.crossFade()
-                }
+            }
+        }
+
+        return requestOptions
+    }
+
+    private fun intoConfig(onDelayInto: () -> Unit) {
+        if (override && (measuredWidth == 0 || measuredHeight == 0)) {
+            post {
+                onDelayInto.invoke()
+            }
+        } else {
+            onDelayInto.invoke()
+        }
+    }
+
+    private fun intoConfigFile(request: RequestBuilder<File>, requestOptions: RequestOptions) {
+        intoConfig {
+            requestOptions.override(measuredWidth, measuredHeight)
+            request.apply(requestOptions)
+            if (animType == AnimType.TRANSITION) {
+                request.into(object : SimpleTarget<File>() {
+                    override fun onResourceReady(resource: File?, transition: Transition<in File>?) {
+                        if (resource != null && placeholderDrawable != null) {
+                            setImageDrawable(placeholderDrawable!!, BitmapDrawable(resources, resource.absolutePath))
+                        }
+                    }
+                })
+            } else {
+                request.into(this)
             }
         }
     }
 
-    private fun intoConfig(request: GenericRequestBuilder<*, *, *, *>, onDelayInto: () -> Unit) {
-        if (override) {
-            if (measuredWidth == 0 || measuredHeight == 0) {
-                post {
-                    onDelayInto.invoke()
-                }
-            } else {
-                request.override(measuredWidth, measuredHeight)
-                if (animType == AnimType.TRANSITION) {
-                    when (request) {
-                        is DrawableTypeRequest -> {
-                            request.into(object : SimpleTarget<GlideDrawable>() {
-                                override fun onResourceReady(resource: GlideDrawable?, glideAnimation: GlideAnimation<in GlideDrawable>?) {
-                                    if (resource != null && placeholderDrawable != null) {
-                                        setImageDrawable(placeholderDrawable!!, resource)
-                                    }
-                                }
-                            })
-                        }
-                        is BitmapTypeRequest -> {
-                            request.into(object : SimpleTarget<Bitmap>() {
-                                override fun onResourceReady(resource: Bitmap?, glideAnimation: GlideAnimation<in Bitmap>?) {
-                                    if (resource != null && placeholderDrawable != null) {
-                                        setImageDrawable(placeholderDrawable!!, BitmapDrawable(resources, resource))
-                                    }
-                                }
-                            })
-                        }
-                        is GifTypeRequest -> {
-                            request.into(object : SimpleTarget<GifDrawable>() {
-                                override fun onResourceReady(resource: GifDrawable?, glideAnimation: GlideAnimation<in GifDrawable>?) {
-                                    if (resource != null && placeholderDrawable != null) {
-                                        setImageDrawable(placeholderDrawable!!, resource)
-                                        resource.start()
-                                    }
-                                }
-                            })
+    private fun intoConfigGifDrawable(request: RequestBuilder<GifDrawable>, requestOptions: RequestOptions) {
+        intoConfig {
+            requestOptions.override(measuredWidth, measuredHeight)
+            request.apply(requestOptions)
+            if (animType == AnimType.TRANSITION) {
+                request.into(object : SimpleTarget<GifDrawable>() {
+                    override fun onResourceReady(resource: GifDrawable?, transition: Transition<in GifDrawable>?) {
+                        if (resource != null && placeholderDrawable != null) {
+                            setImageDrawable(placeholderDrawable!!, resource)
+                            resource.start()
                         }
                     }
-                } else {
-                    request.into(this)
-                }
+                })
+            } else {
+                request.into(this)
             }
-        } else {
-            request.into(this)
+        }
+    }
+
+    private fun intoConfigDrawable(request: RequestBuilder<Drawable>, requestOptions: RequestOptions) {
+        intoConfig {
+            requestOptions.override(measuredWidth, measuredHeight)
+            request.apply(requestOptions)
+            if (animType == AnimType.TRANSITION) {
+                request.into(object : SimpleTarget<Drawable>() {
+                    override fun onResourceReady(resource: Drawable?, transition: Transition<in Drawable>?) {
+                        if (resource != null && placeholderDrawable != null) {
+                            setImageDrawable(placeholderDrawable!!, resource)
+                        }
+                    }
+                })
+            } else {
+                request.into(this)
+            }
+        }
+    }
+
+    private fun intoConfigBitmap(request: RequestBuilder<Bitmap>, requestOptions: RequestOptions) {
+        intoConfig {
+            requestOptions.override(measuredWidth, measuredHeight)
+            request.apply(requestOptions)
+            if (animType == AnimType.TRANSITION) {
+                request.into(object : SimpleTarget<Bitmap>() {
+                    override fun onResourceReady(resource: Bitmap?, transition: Transition<in Bitmap>?) {
+                        if (resource != null && placeholderDrawable != null) {
+                            setImageDrawable(placeholderDrawable!!, BitmapDrawable(resources, resource))
+                        }
+                    }
+                })
+            } else {
+                request.into(this)
+            }
         }
     }
 
@@ -261,10 +268,11 @@ open class GlideImageView(context: Context, attributeSet: AttributeSet? = null) 
     /**取消请求*/
     fun cancelRequest() {
         val tag = this.tag
-        if (tag is GenericRequest<*, *, *, *>) {
-            tag.clear()
-            L.d("cancelRequest() ->" + this.javaClass.simpleName + "  GenericRequest Clear")
-        }
+//        if (tag is GenericRequest<*, *, *, *>) {
+//            tag.clear()
+//            L.d("cancelRequest() ->" + this.javaClass.simpleName + "  GenericRequest Clear")
+//        }
+        Glide.with(this).clear(this)
     }
 
     //加载方法
@@ -287,37 +295,41 @@ open class GlideImageView(context: Context, attributeSet: AttributeSet? = null) 
 
     private fun showGifFile(file: File) {
         val request = Glide.with(context)
+                .downloadOnly()
                 .load(file)
-                .asGif()
 
-        defaultConfig(request, true)
-
-        intoConfig(request) {
-            showGifFile(file)
+        intoConfig {
+            request.apply(defaultConfig(true))
+            request.into(object : SimpleTarget<File>() {
+                override fun onResourceReady(resource: File?, transition: Transition<in File>?) {
+                    resource?.let {
+                        try {
+                            L.e("call: 加载Gif 本地地址 -> ${resource.absolutePath}")
+                            val gifDrawable = GifDrawableBuilder().from(resource).build()
+                            this@GlideImageView.setImageDrawable(gifDrawable)
+                        } catch (e: Exception) {
+                            this@GlideImageView.setImageDrawable(BitmapDrawable(resources, resource.absolutePath))
+                            L.e("call: 加载Gif ${resource.absolutePath} 失败.")
+                        }
+                    }
+                }
+            })
         }
     }
 
     private fun showJpegFile(file: File) {
         val request = Glide.with(context)
-                .load(file)
                 .asBitmap()
+                .load(file)
 
-        defaultConfig(request, false)
-
-        intoConfig(request) {
-            showJpegFile(file)
-        }
+        intoConfigBitmap(request, defaultConfig(false))
     }
 
     private fun showFile(file: File) {
         val request = Glide.with(context)
                 .load(file)
 
-        defaultConfig(request, false)
-
-        intoConfig(request) {
-            showFile(file)
-        }
+        intoConfigDrawable(request, defaultConfig(false))
     }
 
     private fun loadWidthUrl(url: String) {
@@ -367,11 +379,7 @@ open class GlideImageView(context: Context, attributeSet: AttributeSet? = null) 
         val request = Glide.with(context)
                 .load(url)
 
-        defaultConfig(request, false)
-
-        intoConfig(request) {
-            loadUrl(url)
-        }
+        intoConfigDrawable(request, defaultConfig(false))
     }
 
     private fun loadJpegUrl(url: String) {
@@ -380,14 +388,10 @@ open class GlideImageView(context: Context, attributeSet: AttributeSet? = null) 
         }
 
         val request = Glide.with(context)
-                .load(url)
                 .asBitmap()
+                .load(url)
 
-        defaultConfig(request, false)
-
-        intoConfig(request) {
-            loadJpegUrl(url)
-        }
+        intoConfigBitmap(request, defaultConfig(false))
     }
 
     private fun loadGifUrl(url: String) {
@@ -396,13 +400,25 @@ open class GlideImageView(context: Context, attributeSet: AttributeSet? = null) 
         }
 
         val request = Glide.with(context)
+                .downloadOnly()
                 .load(url)
-                .asGif()
 
-        defaultConfig(request, true)
-
-        intoConfig(request) {
-            loadGifUrl(url)
+        intoConfig {
+            request.apply(defaultConfig(true))
+            request.into(object : SimpleTarget<File>() {
+                override fun onResourceReady(resource: File?, transition: Transition<in File>?) {
+                    resource?.let {
+                        try {
+                            L.i("call: 加载Gif 本地地址 -> ${resource.absolutePath}")
+                            val gifDrawable = GifDrawableBuilder().from(resource).build()
+                            this@GlideImageView.setImageDrawable(gifDrawable)
+                        } catch (e: Exception) {
+                            this@GlideImageView.setImageDrawable(BitmapDrawable(resources, resource.absolutePath))
+                            L.i("call: 加载Gif ${resource.absolutePath} 失败.")
+                        }
+                    }
+                }
+            })
         }
     }
 

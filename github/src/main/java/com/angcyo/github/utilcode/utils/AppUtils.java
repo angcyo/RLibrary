@@ -474,8 +474,10 @@ public class AppUtils {
     public static String getAppSignatureMD5(Context context, String packageName) {
         Signature[] signature = getAppSignature(context, packageName);
         if (signature == null) return null;
-        return EncryptUtils.encryptMD5ToString(signature[0].toByteArray()).
-                replaceAll("(?<=[0-9A-F]{2})[0-9A-F]{2}", ":$0");
+//        return EncryptUtils.encryptMD5ToString(signature[0].toByteArray()).
+//                replaceAll("(?<=[0-9A-F]{2})[0-9A-F]{2}", ":$0");
+
+        return MD5Utils.md5(signature[0].toCharsString());
     }
 
     /**

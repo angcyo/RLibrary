@@ -29,6 +29,8 @@ public class RSA {
 
     public static String PUBLIC_KEY_INFO = E_PUBLIC_KEY_INFO;
 
+    public static String E_SALT = "";
+
     /**
      * 加密
      */
@@ -39,11 +41,13 @@ public class RSA {
     public static String encode(String data, boolean useSalt) {
         String data_ = data;
         if (useSalt) {
-            Calendar cal = Calendar.getInstance();
-            int month = cal.get(Calendar.MONTH) + 1;
-            int year = cal.get(Calendar.YEAR);
-            int day = cal.get(Calendar.DAY_OF_MONTH);
-            data_ = data + "&" + sdbmHash(month * year * day + "");
+//            Calendar cal = Calendar.getInstance();
+//            int month = cal.get(Calendar.MONTH) + 1;
+//            int year = cal.get(Calendar.YEAR);
+//            int day = cal.get(Calendar.DAY_OF_MONTH);
+//            data_ = data + "&" + sdbmHash(month * year * day + "");
+            data_ = data + "&" + E_SALT;
+
         }
 
         String encode = "";
@@ -59,11 +63,12 @@ public class RSA {
     public static String encodeInfo(String data, boolean useSalt) {
         String data_ = data;
         if (useSalt) {
-            Calendar cal = Calendar.getInstance();
-            int month = cal.get(Calendar.MONTH) + 1;
-            int year = cal.get(Calendar.YEAR);
-            int day = cal.get(Calendar.DAY_OF_MONTH);
-            data_ = data + "&" + sdbmHash(month * year * day + "");
+//            Calendar cal = Calendar.getInstance();
+//            int month = cal.get(Calendar.MONTH) + 1;
+//            int year = cal.get(Calendar.YEAR);
+//            int day = cal.get(Calendar.DAY_OF_MONTH);
+//            data_ = data + "&" + sdbmHash(month * year * day + "");
+            data_ = data + "&" + E_SALT;
         }
 
         String encode = "";

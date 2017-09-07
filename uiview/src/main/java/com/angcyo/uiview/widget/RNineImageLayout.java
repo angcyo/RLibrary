@@ -14,7 +14,7 @@ import android.widget.RelativeLayout;
 
 import com.angcyo.library.utils.L;
 import com.angcyo.uiview.R;
-import com.bumptech.glide.request.GenericRequest;
+import com.bumptech.glide.Glide;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -335,11 +335,12 @@ public class RNineImageLayout extends RelativeLayout implements View.OnClickList
         if (view == null) {
             return;
         }
-        Object tag = view.getTag();
-        if (tag instanceof GenericRequest) {
-            ((GenericRequest) tag).clear();
-            L.d("onDetachedFromWindow() ->" + this.getClass().getSimpleName() + "  GenericRequest Clear");
-        }
+//        Object tag = view.getTag();
+//        if (tag instanceof GenericRequest) {
+//            ((GenericRequest) tag).clear();
+//            L.d("onDetachedFromWindow() ->" + this.getClass().getSimpleName() + "  GenericRequest Clear");
+//        }
+        Glide.with(this).clear(this);
     }
 
     private int getImageSize() {

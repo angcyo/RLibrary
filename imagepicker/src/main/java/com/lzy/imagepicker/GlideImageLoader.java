@@ -9,13 +9,17 @@ import android.widget.ImageView;
 
 import com.angcyo.library.okhttp.Ok;
 import com.angcyo.library.utils.L;
-import com.bumptech.glide.DrawableRequestBuilder;
-import com.bumptech.glide.GifRequestBuilder;
 import com.bumptech.glide.Glide;
+import com.bumptech.glide.RequestBuilder;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
+import com.bumptech.glide.request.RequestOptions;
+import com.bumptech.glide.request.target.SimpleTarget;
+import com.bumptech.glide.request.transition.Transition;
 import com.lzy.imagepicker.loader.ImageLoader;
 
 import java.io.File;
+
+import pl.droidsonroids.gif.GifDrawableBuilder;
 
 public class GlideImageLoader implements ImageLoader {
 
@@ -43,18 +47,25 @@ public class GlideImageLoader implements ImageLoader {
         File file = new File(url);
         if (file.exists()) {
             if ("GIF".equalsIgnoreCase(ImageUtils.getImageType(file))) {
-                GifRequestBuilder<File> gifRequestBuilder = Glide.with(imageView.getContext())
+                RequestBuilder<File> gifRequestBuilder = Glide.with(imageView.getContext())
+                        .asFile()
                         .load(file)
-                        .asGif()
-                        .diskCacheStrategy(DiskCacheStrategy.SOURCE);
-                gifRequestBuilder.placeholder(placeholderDrawable);
-                gifRequestBuilder.into(imageView);
+                        .apply(RequestOptions.diskCacheStrategyOf(DiskCacheStrategy.DATA).placeholder(placeholderDrawable));
+                gifRequestBuilder.into(new SimpleTarget<File>() {
+                    @Override
+                    public void onResourceReady(File resource, Transition<? super File> transition) {
+                        try {
+                            imageView.setImageDrawable(new GifDrawableBuilder().from(resource).build());
+                        } catch (Exception e) {
+                            e.printStackTrace();
+                        }
+                    }
+                });
             } else {
-                final DrawableRequestBuilder<File> requestBuilder = Glide.with(imageView.getContext())
+                Glide.with(imageView.getContext())
                         .load(file)
-                        .diskCacheStrategy(DiskCacheStrategy.ALL);
-                requestBuilder.placeholder(placeholderDrawable);
-                requestBuilder.into(imageView);
+                        .apply(RequestOptions.diskCacheStrategyOf(DiskCacheStrategy.ALL).placeholder(placeholderDrawable))
+                        .into(imageView);
             }
         } else {
             Ok.instance().type(url, new Ok.OnImageTypeListener() {
@@ -64,20 +75,26 @@ public class GlideImageLoader implements ImageLoader {
 
                     if (imageType != Ok.ImageType.UNKNOWN) {
                         if (imageType == Ok.ImageType.GIF) {
-                            //imageView.setScaleType(ImageView.ScaleType.FIT_XY);
-                            GifRequestBuilder<String> requestBuilder = Glide.with(imageView.getContext())
+                            RequestBuilder<File> gifRequestBuilder = Glide.with(imageView.getContext())
+                                    .asFile()
                                     .load(imageUrl)
-                                    .asGif()
-                                    .diskCacheStrategy(DiskCacheStrategy.SOURCE);
-                            requestBuilder.placeholder(placeholderDrawable);
-                            requestBuilder.into(imageView);
-                        } else {
-                            final DrawableRequestBuilder<String> drawableRequestBuilder = Glide.with(imageView.getContext())
-                                    .load(imageUrl)
-                                    .diskCacheStrategy(DiskCacheStrategy.ALL);
+                                    .apply(RequestOptions.diskCacheStrategyOf(DiskCacheStrategy.DATA).placeholder(placeholderDrawable));
+                            gifRequestBuilder.into(new SimpleTarget<File>() {
+                                @Override
+                                public void onResourceReady(File resource, Transition<? super File> transition) {
+                                    try {
+                                        imageView.setImageDrawable(new GifDrawableBuilder().from(resource).build());
+                                    } catch (Exception e) {
+                                        e.printStackTrace();
+                                    }
+                                }
+                            });
 
-                            drawableRequestBuilder.placeholder(placeholderDrawable);
-                            drawableRequestBuilder.into(imageView);
+                        } else {
+                            Glide.with(imageView.getContext())
+                                    .load(imageUrl)
+                                    .apply(RequestOptions.diskCacheStrategyOf(DiskCacheStrategy.ALL).placeholder(placeholderDrawable))
+                                    .into(imageView);
                         }
                     }
                 }
@@ -92,7 +109,7 @@ public class GlideImageLoader implements ImageLoader {
 
     @Override
     public void displayImage(Activity activity, String path, String thumbPath,
-                             String url, ImageView imageView, int width, int height) {
+                             String url, final ImageView imageView, int width, int height) {
         if (imageView == null) {
             return;
         }
@@ -102,40 +119,45 @@ public class GlideImageLoader implements ImageLoader {
         } else {
             File file = new File(path);
             if ("GIF".equalsIgnoreCase(ImageUtils.getImageType(file))) {
-                GifRequestBuilder<File> gifRequestBuilder = Glide.with(activity)                             //配置上下文
-                        .load(file)      //设置图片路径(fix #8,文件名包含%符号 无法识别和显示)
-                        //.error(R.mipmap.default_image)           //设置错误图片
-                        //.fitCenter()
-                        .asGif()
-                        //.centerCrop()
-                        .diskCacheStrategy(DiskCacheStrategy.SOURCE);
+                RequestBuilder<File> gifRequestBuilder = Glide.with(imageView.getContext())
+                        .asFile()
+                        .load(file);
+                RequestOptions requestOptions = RequestOptions.diskCacheStrategyOf(DiskCacheStrategy.DATA);
 
                 if (TextUtils.isEmpty(thumbPath)) {
-                    gifRequestBuilder.placeholder(R.mipmap.base_zhanweitu_klg)     //设置占位图片
-                            .into(imageView);
+                    requestOptions.placeholder(R.mipmap.base_zhanweitu_klg);     //设置占位图片
                 } else if ("no".equalsIgnoreCase(thumbPath)) {
-                    gifRequestBuilder.into(imageView);
+
                 } else {
-                    gifRequestBuilder.placeholder(new BitmapDrawable(activity.getResources(), thumbPath))
-                            .into(imageView);
+                    requestOptions.placeholder(new BitmapDrawable(activity.getResources(), thumbPath));
                 }
+                gifRequestBuilder.apply(requestOptions);
+                gifRequestBuilder.into(new SimpleTarget<File>() {
+                    @Override
+                    public void onResourceReady(File resource, Transition<? super File> transition) {
+                        try {
+                            imageView.setImageDrawable(new GifDrawableBuilder().from(resource).build());
+                        } catch (Exception e) {
+                            e.printStackTrace();
+                        }
+                    }
+                });
+
             } else {
-                final DrawableRequestBuilder<File> requestBuilder = Glide.with(activity)                             //配置上下文
-                        .load(file)      //设置图片路径(fix #8,文件名包含%符号 无法识别和显示)
-                        //.error(R.mipmap.default_image)           //设置错误图片
-                        //.fitCenter()
-                        //.centerCrop()
-                        .diskCacheStrategy(DiskCacheStrategy.ALL);
+                RequestOptions requestOptions = RequestOptions.diskCacheStrategyOf(DiskCacheStrategy.ALL);
+
+                RequestBuilder<Drawable> builder = Glide.with(imageView.getContext())
+                        .load(file);
 
                 if (TextUtils.isEmpty(thumbPath)) {
-                    requestBuilder.placeholder(R.mipmap.base_zhanweitu_klg)     //设置占位图片
-                            .into(imageView);
+                    requestOptions.placeholder(R.mipmap.base_zhanweitu_klg);     //设置占位图片
+
                 } else if ("no".equalsIgnoreCase(thumbPath)) {
-                    requestBuilder.into(imageView);
                 } else {
-                    requestBuilder.placeholder(new BitmapDrawable(activity.getResources(), thumbPath))
-                            .into(imageView);
+                    requestOptions.placeholder(new BitmapDrawable(activity.getResources(), thumbPath));
                 }
+                builder.apply(requestOptions);
+                builder.into(imageView);
             }
         }
 
@@ -157,27 +179,36 @@ public class GlideImageLoader implements ImageLoader {
                     if (imageType != Ok.ImageType.UNKNOWN) {
                         if (imageType == Ok.ImageType.GIF) {
                             //imageView.setScaleType(ImageView.ScaleType.FIT_XY);
-                            Glide.with(imageView.getContext())
+                            RequestBuilder<File> gifRequestBuilder = Glide.with(imageView.getContext())
+                                    .asFile()
                                     .load(imageUrl)
-                                    .asGif()
-                                    .placeholder(R.mipmap.base_zhanweitu_klg)
-                                    .diskCacheStrategy(DiskCacheStrategy.SOURCE)
-                                    .into(imageView);
+                                    .apply(RequestOptions.diskCacheStrategyOf(DiskCacheStrategy.DATA).placeholder(R.mipmap.base_zhanweitu_klg));
+                            gifRequestBuilder.into(new SimpleTarget<File>() {
+                                @Override
+                                public void onResourceReady(File resource, Transition<? super File> transition) {
+                                    try {
+                                        imageView.setImageDrawable(new GifDrawableBuilder().from(resource).build());
+                                    } catch (Exception e) {
+                                        e.printStackTrace();
+                                    }
+                                }
+                            });
+
                         } else {
-                            final DrawableRequestBuilder<String> drawableRequestBuilder = Glide.with(activity)                             //配置上下文
-                                    .load(imageUrl)                                       //设置图片路径(fix #8,文件名包含%符号 无法识别和显示)
-                                    //.error(R.mipmap.default_image)                    //设置错误图片
-                                    //.fitCenter()
-                                    //.centerCrop()
-                                    .diskCacheStrategy(DiskCacheStrategy.ALL);
+                            RequestOptions requestOptions = RequestOptions.diskCacheStrategyOf(DiskCacheStrategy.ALL);
+
+                            RequestBuilder<Drawable> builder = Glide.with(imageView.getContext())
+                                    .load(imageUrl);
 
                             if (TextUtils.isEmpty(thumbPath)) {
-                                drawableRequestBuilder.placeholder(R.mipmap.base_zhanweitu_klg)     //设置占位图片
-                                        .into(imageView);
+                                requestOptions.placeholder(R.mipmap.base_zhanweitu_klg);     //设置占位图片
+
+                            } else if ("no".equalsIgnoreCase(thumbPath)) {
                             } else {
-                                drawableRequestBuilder.placeholder(new BitmapDrawable(activity.getResources(), thumbPath))
-                                        .into(imageView);
+                                requestOptions.placeholder(new BitmapDrawable(activity.getResources(), thumbPath));
                             }
+                            builder.apply(requestOptions);
+                            builder.into(imageView);
                         }
                     }
                 }

@@ -11,7 +11,7 @@ import android.widget.TextView;
 
 import com.angcyo.library.utils.L;
 import com.angcyo.uiview.R;
-import com.bumptech.glide.request.GenericRequest;
+import com.bumptech.glide.Glide;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -236,11 +236,12 @@ public class RTextImageLayout extends ViewGroup {
         if (view == null) {
             return;
         }
-        Object tag = view.getTag();
-        if (tag instanceof GenericRequest) {
-            ((GenericRequest) tag).clear();
-            L.d("onDetachedFromWindow() -> " + this.getClass().getSimpleName() + " GenericRequest Clear");
-        }
+//        Object tag = view.getTag();
+//        if (tag instanceof GenericRequest) {
+//            ((GenericRequest) tag).clear();
+//            L.d("onDetachedFromWindow() -> " + this.getClass().getSimpleName() + " GenericRequest Clear");
+//        }
+        Glide.with(this).clear(this);
     }
 
     /**

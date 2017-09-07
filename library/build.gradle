@@ -47,7 +47,10 @@ dependencies {
     //compile 'com.squareup.picasso:picasso:2.5.2'
 
     /*https://github.com/bumptech/glide*/
-    compile 'com.github.bumptech.glide:glide:3.8.0'
+    //compile 'com.github.bumptech.glide:glide:3.8.0'
+    compile 'com.github.bumptech.glide:glide:4.0.0'
+    annotationProcessor 'com.github.bumptech.glide:compiler:4.0.0'
+    compile 'pl.droidsonroids.gif:android-gif-drawable:1.2.8'
 
     /*https://github.com/facebook/fresco*/
     //compile 'com.facebook.fresco:fresco:1.1.0'
@@ -113,7 +116,6 @@ dependencies {
     //手势图片 https://github.com/chrisbanes/PhotoView
     //compile 'com.github.chrisbanes.photoview:library:1.2.4'
     compile 'com.github.chrisbanes:PhotoView:2.0.0'
-
 
     //汉字转拼音 https://github.com/promeG/TinyPinyin
     compile 'com.github.promeg:tinypinyin:2.0.3' // ~80KB

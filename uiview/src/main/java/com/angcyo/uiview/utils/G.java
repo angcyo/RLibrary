@@ -4,9 +4,10 @@ import android.app.Activity;
 import android.graphics.drawable.Drawable;
 import android.widget.ImageView;
 
-import com.bumptech.glide.DrawableTypeRequest;
 import com.bumptech.glide.Glide;
+import com.bumptech.glide.RequestBuilder;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
+import com.bumptech.glide.request.RequestOptions;
 
 /**
  * Copyright (C) 2016,深圳市红鸟网络科技股份有限公司 All rights reserved.
@@ -22,15 +23,20 @@ import com.bumptech.glide.load.engine.DiskCacheStrategy;
 public class G {
     public static void showImage(Activity activity, ImageView imageView, String image,
                                  Drawable placeholder, boolean anim) {
-        DrawableTypeRequest<String> request = Glide.with(activity)
+        RequestOptions requestOptions = RequestOptions.diskCacheStrategyOf(DiskCacheStrategy.ALL);
+
+        RequestBuilder<Drawable> builder = Glide.with(activity)
                 .load(image);
-        request.diskCacheStrategy(DiskCacheStrategy.ALL);
+
         if (placeholder != null) {
-            request.placeholder(placeholder);
+            requestOptions.placeholder(placeholder);     //设置占位图片
+
         }
         if (!anim) {
-            request.dontAnimate();
+            requestOptions.dontAnimate();
         }
-        request.into(imageView);
+
+        builder.apply(requestOptions);
+        builder.into(imageView);
     }
 }

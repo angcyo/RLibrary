@@ -17,9 +17,9 @@ import com.angcyo.library.utils.L;
 import com.angcyo.library.widget.DragPhotoView;
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
-import com.bumptech.glide.load.resource.gif.GifDrawable;
-import com.bumptech.glide.request.animation.GlideAnimation;
+import com.bumptech.glide.request.RequestOptions;
 import com.bumptech.glide.request.target.SimpleTarget;
+import com.bumptech.glide.request.transition.Transition;
 import com.github.chrisbanes.photoview.OnPhotoTapListener;
 import com.github.chrisbanes.photoview.PhotoView;
 import com.lzy.imagepicker.ImageDataSource;
@@ -36,6 +36,8 @@ import com.lzy.imagepicker.view.SimpleCircleProgressBar;
 
 import java.io.File;
 import java.util.ArrayList;
+
+import pl.droidsonroids.gif.GifDrawableBuilder;
 
 
 /**
@@ -167,7 +169,7 @@ public class ImagePageAdapter extends PagerAdapter {
             if (!TextUtils.isEmpty(thumbPath)) {
                 File thumbFile = new File(thumbPath);
                 if (thumbFile.exists()) {
-                    Glide.with(mActivity).load(thumbFile).dontAnimate().into(thumbImageView);
+                    Glide.with(mActivity).load(thumbFile).apply(RequestOptions.noAnimation()).into(thumbImageView);
                 }
             }
         }
@@ -178,7 +180,7 @@ public class ImagePageAdapter extends PagerAdapter {
                 File videoThumbFile = new File(imageItem.videoThumbPath);
                 if (videoThumbFile.exists()) {
                     thumbImageView.setScaleType(ImageView.ScaleType.CENTER_CROP);
-                    Glide.with(mActivity).load(videoThumbFile).dontAnimate().into(thumbImageView);
+                    Glide.with(mActivity).load(videoThumbFile).apply(RequestOptions.noAnimation()).into(thumbImageView);
                 }
             }
             thumbImageView.setOnClickListener(new View.OnClickListener() {
@@ -289,28 +291,32 @@ public class ImagePageAdapter extends PagerAdapter {
                 if (imageType != Ok.ImageType.UNKNOWN) {
                     if (imageType == Ok.ImageType.GIF) {
                         Glide.with(imageView.getContext())
+                                .downloadOnly()
                                 .load(imageItem.url)
-                                .asGif()
-                                .diskCacheStrategy(DiskCacheStrategy.SOURCE)
-                                .into(new SimpleTarget<GifDrawable>() {
+                                .apply(RequestOptions.diskCacheStrategyOf(DiskCacheStrategy.DATA))
+                                .into(new SimpleTarget<File>() {
                                     @Override
-                                    public void onResourceReady(GifDrawable resource, GlideAnimation<? super GifDrawable> glideAnimation) {
+                                    public void onResourceReady(File resource, Transition<? super File> transition) {
                                         if (progressView == null || photoView == null) {
                                             return;
                                         }
                                         imageView.setVisibility(View.GONE);
                                         progressView.setVisibility(View.GONE);
                                         progressView.stop();
-                                        photoView.setImageDrawable(resource);
-                                        resource.start();
+
+                                        try {
+                                            photoView.setImageDrawable(new GifDrawableBuilder().from(resource).build());
+                                        } catch (Exception e) {
+                                            e.printStackTrace();
+                                        }
 
                                         currentImageView = photoView;
                                     }
                                 });
                     } else {
-                        Glide.with(mActivity).load(imageItem.url).asBitmap().into(new SimpleTarget<Bitmap>() {
+                        Glide.with(mActivity).asBitmap().load(imageItem.url).into(new SimpleTarget<Bitmap>() {
                             @Override
-                            public void onResourceReady(Bitmap resource, GlideAnimation<? super Bitmap> glideAnimation) {
+                            public void onResourceReady(Bitmap resource, Transition<? super Bitmap> transition) {
                                 if (progressView == null || photoView == null) {
                                     return;
                                 }
@@ -360,15 +366,15 @@ public class ImagePageAdapter extends PagerAdapter {
         return POSITION_NONE;
     }
 
+    public View getCurrentImageView() {
+        return currentImageView;
+    }
+
     public interface PhotoViewClickListener {
         void OnPhotoTapListener(View view, float v, float v1);
     }
 
     public interface PhotoViewLongClickListener {
         void onLongClickListener(PhotoView photoView, int position, ImageItem item);
-    }
-
-    public View getCurrentImageView() {
-        return currentImageView;
     }
 }
