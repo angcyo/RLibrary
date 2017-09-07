@@ -1,9 +1,5 @@
 package com.angcyo.uiview.net.rsa;
 
-import android.text.TextUtils;
-
-import com.angcyo.github.utilcode.utils.TimeUtils;
-
 import java.util.Calendar;
 
 /**
@@ -37,7 +33,7 @@ public class RSA {
      * 加密
      */
     public static String encode(String data) {
-        return encode(data,false);
+        return encode(data, false);
     }
 
     public static String encode(String data, boolean useSalt) {
@@ -60,7 +56,7 @@ public class RSA {
         return encode.replaceAll("\\n", "");
     }
 
-    public static String encodeInfo(String data,boolean useSalt) {
+    public static String encodeInfo(String data, boolean useSalt) {
         String data_ = data;
         if (useSalt) {
             Calendar cal = Calendar.getInstance();

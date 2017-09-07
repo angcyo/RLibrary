@@ -499,6 +499,7 @@ public class RRecyclerView extends RecyclerView {
         if (manager == null) {
             return;
         }
+        stopScroll();
         if (manager instanceof LinearLayoutManager) {
             if (anim) {
                 smoothScrollToPosition(position);
