@@ -8,6 +8,7 @@ import android.graphics.drawable.Drawable
 import android.support.v4.content.ContextCompat
 import android.util.AttributeSet
 import com.angcyo.github.utilcode.utils.ImageUtils
+import com.angcyo.library.glide.GlideApp
 import com.angcyo.library.okhttp.Ok
 import com.angcyo.library.utils.L
 import com.angcyo.uiview.R
@@ -272,7 +273,9 @@ open class GlideImageView(context: Context, attributeSet: AttributeSet? = null) 
 //            tag.clear()
 //            L.d("cancelRequest() ->" + this.javaClass.simpleName + "  GenericRequest Clear")
 //        }
-        Glide.with(this).clear(this)
+        if (!isInEditMode) {
+            GlideApp.with(this).clear(this)
+        }
     }
 
     //加载方法
