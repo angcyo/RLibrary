@@ -941,6 +941,12 @@ public abstract class UIIViewImpl implements IView {
         RSoftInputLayout.hideSoftInput(view);
     }
 
+    public void requestBackPressed() {
+        if (mILayout != null) {
+            mILayout.requestBackPressed();
+        }
+    }
+
     @Override
     public boolean needTransitionStartAnim() {
         return false;

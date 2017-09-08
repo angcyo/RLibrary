@@ -268,12 +268,13 @@ open class GlideImageView(context: Context, attributeSet: AttributeSet? = null) 
 
     /**取消请求*/
     fun cancelRequest() {
-        val tag = this.tag
+//        val tag = this.tag
 //        if (tag is GenericRequest<*, *, *, *>) {
 //            tag.clear()
 //            L.d("cancelRequest() ->" + this.javaClass.simpleName + "  GenericRequest Clear")
 //        }
-        if (!isInEditMode) {
+        if (isInEditMode) {
+        } else {
             GlideApp.with(this).clear(this)
         }
     }

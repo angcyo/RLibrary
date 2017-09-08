@@ -2,6 +2,7 @@ package com.angcyo.uiview.recycler;
 
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.PagerSnapHelper;
 import android.support.v7.widget.RecyclerView;
 import android.view.View;
@@ -10,7 +11,7 @@ import android.view.ViewGroup;
 /**
  * Copyright (C) 2016,深圳市红鸟网络科技股份有限公司 All rights reserved.
  * 项目名称：
- * 类的描述：让第一个Pager Item 的left为0
+ * 类的描述：让第一个Pager Item 的left 和 top 为0
  * 创建人员：Robi
  * 创建时间：2017/02/27 14:10
  * 修改人员：Robi
@@ -21,7 +22,12 @@ import android.view.ViewGroup;
 public class RPagerSnapHelper extends PagerSnapHelper {
 
     OnPageListener mOnPageListener;
-    int mCurrentPosition = 0;
+    int mCurrentPosition = -1;
+
+    /**
+     * 默认是横向Pager
+     */
+    int mOrientation = LinearLayoutManager.HORIZONTAL;
 
     public int getCurrentPosition() {
         return mCurrentPosition;
@@ -60,6 +66,11 @@ public class RPagerSnapHelper extends PagerSnapHelper {
                     }
                 }
             });
+
+            RecyclerView.LayoutManager layoutManager = recyclerView.getLayoutManager();
+            if (layoutManager instanceof LinearLayoutManager) {
+                mOrientation = ((LinearLayoutManager) layoutManager).getOrientation();
+            }
         }
     }
 
@@ -70,24 +81,54 @@ public class RPagerSnapHelper extends PagerSnapHelper {
         int position = params.getViewAdapterPosition();
         int left = targetView.getLeft();
         int right = targetView.getRight();
+        int top = targetView.getTop();
+        int bottom = targetView.getBottom();
         ViewGroup viewGroup = (ViewGroup) targetView.getParent();
 
         int[] out = new int[]{0, 0};
-        boolean isLastItem = position == layoutManager.getItemCount() - 1/*最后一个*/ && right == viewGroup.getMeasuredWidth();
+        boolean isLastItem;
+        if (mOrientation == LinearLayoutManager.HORIZONTAL) {
+            isLastItem = position == layoutManager.getItemCount() - 1/*最后一个*/ && right == viewGroup.getMeasuredWidth();
+            out[0] = left;
+            out[1] = 0;
+        } else {
+            isLastItem = position == layoutManager.getItemCount() - 1/*最后一个*/ && bottom == viewGroup.getMeasuredHeight();
+            out[0] = 0;
+            out[1] = top;
+        }
 
-//        if (left == 0 || isLastItem) {
-//            return out;
-//        }
+        if (mOnPageListener != null && mCurrentPosition != position) {
+            int currentPosition = mCurrentPosition;
+            boolean listener = false;
+            if (mOrientation == LinearLayoutManager.HORIZONTAL && (out[0] == 0 || isLastItem)) {
+                listener = true;
+            } else if (mOrientation == LinearLayoutManager.VERTICAL && (out[1] == 0 || isLastItem)) {
+                listener = true;
+            }
 
-        out[0] = left;
-        out[1] = 0;
-        if (mOnPageListener != null && mCurrentPosition != position && (out[0] == 0 || isLastItem)) {
-            mOnPageListener.onPageSelector(mCurrentPosition = position);
+            if (listener) {
+                mCurrentPosition = position;
+                mOnPageListener.onPageSelector(mCurrentPosition);
+                mOnPageListener.onPageSelector(currentPosition, mCurrentPosition);
+            }
         }
         return out;
     }
 
-    public interface OnPageListener {
-        void onPageSelector(int position);
+    public RPagerSnapHelper setOrientation(int orientation) {
+        mOrientation = orientation;
+        return this;
+    }
+
+    public static abstract class OnPageListener {
+
+        @Deprecated
+        public void onPageSelector(int position) {
+
+        }
+
+        public void onPageSelector(int fromPosition, int toPosition) {
+
+        }
     }
 }
