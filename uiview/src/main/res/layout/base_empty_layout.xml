@@ -27,7 +27,7 @@
             android:gravity="center"
             android:text="~这里空空如许~"
             android:textColor="@color/default_base_border"
-            android:textSize="@dimen/default_text_size"/>
+            android:textSize="@dimen/default_text_little_size"/>
     </LinearLayout>
 
 </FrameLayout>

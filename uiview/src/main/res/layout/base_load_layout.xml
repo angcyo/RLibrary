@@ -23,6 +23,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="10dp"
+            android:textSize="@dimen/default_text_little_size"
             android:text="~小二还在路上,请稍等~"
             android:textColor="@color/default_base_border"/>
     </LinearLayout>

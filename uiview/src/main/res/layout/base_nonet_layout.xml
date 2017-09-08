@@ -25,7 +25,8 @@
             android:layout_height="wrap_content"
             android:layout_marginTop="10dp"
             android:text="~请检查网络, 否则小二不会回来的~"
-            android:textColor="@color/default_base_border"/>
+            android:textColor="@color/default_base_border"
+            android:textSize="@dimen/default_text_little_size"/>
 
         <LinearLayout
             android:layout_width="match_parent"
@@ -43,7 +44,8 @@
                 android:paddingLeft="@dimen/base_xhdpi"
                 android:paddingRight="@dimen/base_xhdpi"
                 android:paddingTop="@dimen/base_mdpi"
-                android:text="打开网络设置"/>
+                android:text="打开网络设置"
+                android:textSize="@dimen/default_text_little_size"/>
 
             <TextView
                 android:id="@+id/base_refresh_view"
@@ -55,7 +57,8 @@
                 android:paddingLeft="@dimen/base_xhdpi"
                 android:paddingRight="@dimen/base_xhdpi"
                 android:paddingTop="@dimen/base_mdpi"
-                android:text="刷新试试"/>
+                android:text="刷新试试"
+                android:textSize="@dimen/default_text_little_size"/>
 
         </LinearLayout>
 
