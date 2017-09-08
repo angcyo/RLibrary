@@ -1479,6 +1479,7 @@ public class UILayoutImpl extends SwipeBackLayout implements ILayout<UIParam>, U
             dialogPattern.mView.setOnClickListener(new OnClickListener() {
                 @Override
                 public void onClick(View v) {
+                    L.i("点击在对话框外-> " + dialogPattern.mIView.getClass().getSimpleName());
                     if (dialogPattern.mIView.canCanceledOnOutside()) {
                         finishIView(dialogPattern.mView);
                     }
@@ -1490,6 +1491,8 @@ public class UILayoutImpl extends SwipeBackLayout implements ILayout<UIParam>, U
             RGestureDetector.onDoubleTap(dialogPattern.mView, new RGestureDetector.OnDoubleTapListener() {
                 @Override
                 public void onDoubleTap() {
+                    L.i("双击在对话框外-> " + dialogPattern.mIView.getClass().getSimpleName());
+
                     if (dialogPattern.mIView.canCanceledOnOutside()) {
                         finishIView(dialogPattern.mView);
                     }
