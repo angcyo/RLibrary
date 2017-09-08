@@ -474,12 +474,18 @@ public class UITitleBarContainer extends FrameLayout {
         }
     }
 
+    /**
+     * 请注意,左边有一个返回按钮
+     */
     public void showLeftItem(int index) {
         if (mLeftControlLayout.getChildCount() > index) {
             mLeftControlLayout.getChildAt(index).setVisibility(VISIBLE);
         }
     }
 
+    /**
+     * 请注意,左边有一个返回按钮
+     */
     public void hideLeftItem(int index) {
         if (mLeftControlLayout.getChildCount() > index) {
             mLeftControlLayout.getChildAt(index).setVisibility(GONE);
