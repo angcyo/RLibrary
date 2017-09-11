@@ -34,9 +34,9 @@ import retrofit2.adapter.rxjava.RxJavaCallAdapterFactory;
  * Created by angcyo on 2016-03-20 23:53.
  */
 public class RRetrofit {
+    public static final String SERVICE_URL = "http://service.klgwl.com/";
     public static String DEBUG_URL = "http://192.168.1.35/";
     public static String RELEASE_URL = "http://api.klgwl.com/";
-
     public static String BASE_URL = RELEASE_URL;
 
     //    //切换服务器, 1外网 -1内网

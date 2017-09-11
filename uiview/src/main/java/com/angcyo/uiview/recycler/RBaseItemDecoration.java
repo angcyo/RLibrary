@@ -342,7 +342,7 @@ public class RBaseItemDecoration extends RecyclerView.ItemDecoration {
                     } else {
                         if (isEndOfGrid(itemCount, viewLayoutPosition, spanCount)) {
                             drawDrawableV(c, view);
-                            
+
                             if (drawLastHLine) {
                                 drawDrawableH(c, view);
                             }

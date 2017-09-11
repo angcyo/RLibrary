@@ -240,11 +240,23 @@ public class Rx<Rx> extends Observable<Rx> {
                                         }
                                     } else {
                                         //请求成功, 但是有错误
-                                        JSONObject errorObject = jsonObject.getJSONObject("error");
+                                        JSONObject errorObject = null;
 
-                                        throw new RException(errorObject.getInt("code"),
-                                                errorObject.getString("msg"),
-                                                errorObject.getString("more"));
+                                        int errorCode = result;
+                                        String errorMsg = "";
+                                        String errorMore = "no more";
+
+                                        try {
+                                            errorObject = jsonObject.getJSONObject("error");
+                                            errorCode = errorObject.getInt("code");
+                                            errorMsg = errorObject.getString("msg");
+                                            errorMore = errorObject.getString("more");
+                                        } catch (JSONException e) {
+                                            //e.printStackTrace();
+                                            errorMsg = jsonObject.getString("data");
+                                        }
+
+                                        throw new RException(errorCode, errorMsg, errorMore);
                                     }
                                 } catch (JSONException | IOException e) {
                                     e.printStackTrace();
@@ -295,11 +307,23 @@ public class Rx<Rx> extends Observable<Rx> {
                                         }
                                     } else {
                                         //请求成功, 但是有错误
-                                        JSONObject errorObject = jsonObject.getJSONObject("error");
+                                        JSONObject errorObject = null;
 
-                                        throw new RException(errorObject.getInt("code"),
-                                                errorObject.getString("msg"),
-                                                errorObject.getString("more"));
+                                        int errorCode = result;
+                                        String errorMsg = "";
+                                        String errorMore = "no more";
+
+                                        try {
+                                            errorObject = jsonObject.getJSONObject("error");
+                                            errorCode = errorObject.getInt("code");
+                                            errorMsg = errorObject.getString("msg");
+                                            errorMore = errorObject.getString("more");
+                                        } catch (JSONException e) {
+                                            //e.printStackTrace();
+                                            errorMsg = jsonObject.getString("data");
+                                        }
+
+                                        throw new RException(errorCode, errorMsg, errorMore);
                                     }
                                 } catch (JSONException | IOException e) {
                                     e.printStackTrace();
@@ -351,11 +375,23 @@ public class Rx<Rx> extends Observable<Rx> {
                                         }
                                     } else {
                                         //请求成功, 但是有错误
-                                        JSONObject errorObject = jsonObject.getJSONObject("error");
+                                        JSONObject errorObject = null;
 
-                                        throw new RException(errorObject.getInt("code"),
-                                                errorObject.getString("msg"),
-                                                errorObject.getString("more"));
+                                        int errorCode = result;
+                                        String errorMsg = "";
+                                        String errorMore = "no more";
+
+                                        try {
+                                            errorObject = jsonObject.getJSONObject("error");
+                                            errorCode = errorObject.getInt("code");
+                                            errorMsg = errorObject.getString("msg");
+                                            errorMore = errorObject.getString("more");
+                                        } catch (JSONException e) {
+                                            //e.printStackTrace();
+                                            errorMsg = jsonObject.getString("data");
+                                        }
+
+                                        throw new RException(errorCode, errorMsg, errorMore);
                                     }
                                 } catch (JSONException | IOException e) {
                                     e.printStackTrace();
@@ -407,11 +443,23 @@ public class Rx<Rx> extends Observable<Rx> {
                                         }
                                     } else {
                                         //请求成功, 但是有错误
-                                        JSONObject errorObject = jsonObject.getJSONObject("error");
+                                        JSONObject errorObject = null;
 
-                                        throw new RException(errorObject.getInt("code"),
-                                                errorObject.getString("msg"),
-                                                errorObject.getString("more"));
+                                        int errorCode = result;
+                                        String errorMsg = "";
+                                        String errorMore = "no more";
+
+                                        try {
+                                            errorObject = jsonObject.getJSONObject("error");
+                                            errorCode = errorObject.getInt("code");
+                                            errorMsg = errorObject.getString("msg");
+                                            errorMore = errorObject.getString("more");
+                                        } catch (JSONException e) {
+                                            //e.printStackTrace();
+                                            errorMsg = jsonObject.getString("data");
+                                        }
+
+                                        throw new RException(errorCode, errorMsg, errorMore);
                                     }
                                 } catch (JSONException | IOException e) {
                                     e.printStackTrace();

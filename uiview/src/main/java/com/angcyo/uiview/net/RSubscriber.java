@@ -60,6 +60,7 @@ public abstract class RSubscriber<T> extends Subscriber<T> {
         L.e("----------------------------------------异常处理----------------------------------------");
         int errorCode;
         String errorMsg;
+        String errorMore = "no more";
         boolean error = true, nonet = false;
 
         if (e instanceof UnknownHostException ||
@@ -76,6 +77,7 @@ public abstract class RSubscriber<T> extends Subscriber<T> {
         } else if (e instanceof RException) {
             errorMsg = ((RException) e).getMsg();
             errorCode = ((RException) e).getCode();
+            errorMore = ((RException) e).getMore();
         } else {
             errorMsg = "未知错误:" + e.getMessage();
             errorCode = -40000;
@@ -83,7 +85,7 @@ public abstract class RSubscriber<T> extends Subscriber<T> {
 
         e.printStackTrace();
 
-        L.d("订阅异常->" + this.getClass().getSimpleName() + " " + errorCode);
+        L.d("订阅异常->" + this.getClass().getSimpleName() + " [" + errorCode + "]" + errorMsg);
         L.e("-----------------------------------------End-------------------------------------------");
 
         if (errorCode == RSubscriber.NO_NETWORK) {
@@ -95,7 +97,7 @@ public abstract class RSubscriber<T> extends Subscriber<T> {
             nonet = true;
         }
 
-        RException exception = new RException(errorCode, errorMsg, "no more").setThrowable(e);
+        RException exception = new RException(errorCode, errorMsg, errorMore).setThrowable(e);
 
         try {
             onError(errorCode, errorMsg);
