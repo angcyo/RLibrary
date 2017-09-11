@@ -30,7 +30,8 @@ public class RBaseItemDecoration extends RecyclerView.ItemDecoration {
     /**
      * 是否绘制最后一个item的分割线
      */
-    boolean drawLastLine = false;
+    boolean drawLastVLine = false;
+    boolean drawLastHLine = false;
 
     public RBaseItemDecoration() {
         this(1);
@@ -61,7 +62,20 @@ public class RBaseItemDecoration extends RecyclerView.ItemDecoration {
     }
 
     public RBaseItemDecoration setDrawLastLine(boolean drawLastLine) {
-        this.drawLastLine = drawLastLine;
+        this.drawLastVLine = drawLastLine;
+        this.drawLastHLine = drawLastLine;
+        return this;
+    }
+
+
+    public RBaseItemDecoration setDrawLastVLine(boolean drawLastVLine) {
+        this.drawLastVLine = drawLastVLine;
+        return this;
+
+    }
+
+    public RBaseItemDecoration setDrawLastHLine(boolean drawLastHLine) {
+        this.drawLastHLine = drawLastHLine;
         return this;
     }
 
@@ -92,7 +106,7 @@ public class RBaseItemDecoration extends RecyclerView.ItemDecoration {
 
                 if (itemCount == 1 || adapterPosition == itemCount - 1) {
                     //第一个, 或者最后一个
-                    if (!drawLastLine) {
+                    if (!drawLastHLine || !drawLastVLine) {
                         continue;
                     }
                 }
@@ -143,7 +157,7 @@ public class RBaseItemDecoration extends RecyclerView.ItemDecoration {
                 //水平方向
                 if (itemCount == 1 || viewLayoutPosition == itemCount - 1) {
                     //这里可以决定,第一个item的分割线
-                    if (drawLastLine) {
+                    if (drawLastHLine) {
                         outRect.set(0, 0, (int) mDividerSize, 0);//默认只有右边有分割线, 你也可以把左边的分割线添加出来}
                     } else {
                         outRect.set(0, 0, 0, 0);//默认只有右边有分割线, 你也可以把左边的分割线添加出来}
@@ -162,7 +176,7 @@ public class RBaseItemDecoration extends RecyclerView.ItemDecoration {
                 //垂直方向
                 if (itemCount == 1 || viewLayoutPosition == itemCount - 1) {
                     //这里可以决定,第一个item的分割线
-                    if (drawLastLine) {
+                    if (drawLastVLine) {
                         outRect.set(0, 0, 0, (int) mDividerSize);//默认只有右边有分割线, 你也可以把左边的分割线添加出来
                     } else {
                         outRect.set(0, 0, 0, 0);
@@ -214,40 +228,53 @@ public class RBaseItemDecoration extends RecyclerView.ItemDecoration {
      */
     private void offsetsOfGrid(Rect outRect, GridLayoutManager layoutManager, int viewLayoutPosition) {
         final int spanCount = layoutManager.getSpanCount();
+        int itemCount = layoutManager.getItemCount();
 
+        int right = 0, bottom = 0;
         if (layoutManager.getOrientation() == LinearLayoutManager.VERTICAL) {
             //垂直方向
-            if (isLastOfGrid(layoutManager.getItemCount(), viewLayoutPosition, spanCount)/*判断是否是最后一排*/) {
-                //最后一排的item, 不添加底部分割线,为了美观
-                outRect.set(0, 0, (int) mDividerSize, 0);
-            } else {
-                if (isEndOfGrid(viewLayoutPosition, spanCount)/*判断是否是最靠右的一排*/) {
-                    //最靠右的一排,不添加右边的分割线, 为了美观
-                    outRect.set(0, 0, 0, (int) mDividerSize);
+            bottom = (int) mDividerSize;
+            right = (int) mDividerSize;
+
+            if (isLastOfGrid(itemCount, viewLayoutPosition, spanCount)/*判断是否是最后一排*/) {
+                if (drawLastHLine) {
                 } else {
-                    outRect.set(0, 0, (int) mDividerSize, (int) mDividerSize);
+                    bottom = 0;
+                }
+            }
+            if (isEndOfGrid(itemCount, viewLayoutPosition, spanCount)/*判断是否是最靠右的一排*/) {
+                if (drawLastVLine) {
+                } else {
+                    right = 0;
                 }
             }
         } else {
             //水平方向
-            if (isLastOfGrid(layoutManager.getItemCount(), viewLayoutPosition, spanCount)) {
-                outRect.set(0, 0, 0, (int) mDividerSize);
-            } else {
-                if (isEndOfGrid(viewLayoutPosition, spanCount)) {
-                    outRect.set(0, 0, (int) mDividerSize, 0);
+            bottom = (int) mDividerSize;
+            right = (int) mDividerSize;
+
+            if (isLastOfGrid(itemCount, viewLayoutPosition, spanCount)/*判断是否是最后一排*/) {
+                if (drawLastVLine) {
                 } else {
-                    outRect.set(0, 0, (int) mDividerSize, (int) mDividerSize);
+                    right = 0;
+                }
+            }
+            if (isEndOfGrid(itemCount, viewLayoutPosition, spanCount)/*判断是否是最靠底部的一排*/) {
+                if (drawLastHLine) {
+                } else {
+                    bottom = 0;
                 }
             }
         }
 
+        outRect.set(0, 0, right, bottom);
     }
 
     /**
      * 判断 viewLayoutPosition 是否是一排的结束位置 (垂直水平通用)
      */
-    private boolean isEndOfGrid(int viewLayoutPosition, int spanCount) {
-        return viewLayoutPosition % spanCount == spanCount - 1;
+    private boolean isEndOfGrid(int itemCount, int viewLayoutPosition, int spanCount) {
+        return viewLayoutPosition % spanCount == spanCount - 1 || itemCount - 1 == viewLayoutPosition;
     }
 
     /**
@@ -259,32 +286,41 @@ public class RBaseItemDecoration extends RecyclerView.ItemDecoration {
         if (viewLayoutPosition >= ceil * spanCount - spanCount) {
             result = true;
         }
-        return result && !drawLastLine;
+        return result;
     }
 
     private void drawGrid(Canvas c, RecyclerView.LayoutManager manager) {
         final GridLayoutManager layoutManager = (GridLayoutManager) manager;
+        final int spanCount = layoutManager.getSpanCount();
+        int itemCount = layoutManager.getItemCount();
 
         final int firstItem = layoutManager.findFirstVisibleItemPosition();
         for (int i = 0; i < layoutManager.getChildCount(); i++) {
             final View view = layoutManager.findViewByPosition(firstItem + i);
             if (view != null) {
-                final int spanCount = layoutManager.getSpanCount();
                 final RecyclerView.LayoutParams layoutParams = (RecyclerView.LayoutParams) view.getLayoutParams();
                 final int viewLayoutPosition = layoutParams.getViewLayoutPosition();//布局时当前View的位置
 
                 if (layoutManager.getOrientation() == LinearLayoutManager.VERTICAL) {
                     //垂直方向
-                    if (isLastOfGrid(layoutManager.getItemCount(), viewLayoutPosition, spanCount)/*判断是否是最后一排*/) {
-                        //最后一排的item, 不添加底部分割线,为了美观
-                        if (viewLayoutPosition != layoutManager.getItemCount() - 1) {
-                            //如果不是最后一个,过滤掉最后一个.最后一item不滑分割线
+                    if (isLastOfGrid(itemCount, viewLayoutPosition, spanCount)/*判断是否是最后一排*/) {
+                        if (viewLayoutPosition == itemCount - 1 /*最后一个*/) {
+                            if (drawLastVLine) {
+                                drawDrawableV(c, view);
+                            }
+                            if (drawLastHLine) {
+                                drawDrawableH(c, view);
+                            }
+                        } else {
                             drawDrawableV(c, view);
                         }
                     } else {
-                        if (isEndOfGrid(viewLayoutPosition, spanCount)/*判断是否是最靠右的一排*/) {
-                            //最靠右的一排,不添加右边的分割线, 为了美观
+                        if (isEndOfGrid(itemCount, viewLayoutPosition, spanCount)/*判断是否是最靠右的一排*/) {
                             drawDrawableH(c, view);
+
+                            if (drawLastVLine) {
+                                drawDrawableV(c, view);
+                            }
                         } else {
                             drawDrawableH(c, view);
                             drawDrawableV(c, view);
@@ -292,14 +328,24 @@ public class RBaseItemDecoration extends RecyclerView.ItemDecoration {
                     }
                 } else {
                     //水平方向
-                    if (isLastOfGrid(layoutManager.getItemCount(), viewLayoutPosition, spanCount)) {
-                        if (viewLayoutPosition != layoutManager.getItemCount() - 1) {
-                            //如果不是最后一个,过滤掉最后一个.最后一item不滑分割线
+                    if (isLastOfGrid(itemCount, viewLayoutPosition, spanCount)) {
+                        if (viewLayoutPosition == itemCount - 1 /*最后一个*/) {
+                            if (drawLastVLine) {
+                                drawDrawableV(c, view);
+                            }
+                            if (drawLastHLine) {
+                                drawDrawableH(c, view);
+                            }
+                        } else {
                             drawDrawableH(c, view);
                         }
                     } else {
-                        if (isEndOfGrid(viewLayoutPosition, spanCount)) {
+                        if (isEndOfGrid(itemCount, viewLayoutPosition, spanCount)) {
                             drawDrawableV(c, view);
+                            
+                            if (drawLastHLine) {
+                                drawDrawableH(c, view);
+                            }
                         } else {
                             drawDrawableH(c, view);
                             drawDrawableV(c, view);
@@ -319,7 +365,7 @@ public class RBaseItemDecoration extends RecyclerView.ItemDecoration {
                 view.getRight() + p.rightMargin,
                 view.getTop() + mMarginStart,
                 (int) (view.getRight() + p.rightMargin + mDividerSize),
-                view.getBottom() - mMarginEnd);
+                (int) (view.getBottom() - mMarginEnd + mDividerSize));
         drawDrawable(c, mDividerDrawableV);
     }
 

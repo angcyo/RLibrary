@@ -30,7 +30,7 @@ import com.angcyo.uiview.viewgroup.RRelativeLayout;
  */
 public class ItemInfoLayout extends RRelativeLayout {
 
-    public static int DEFAULT_TEXT_SIZE = 15;//sp
+    public static int DEFAULT_TEXT_SIZE = 16;//sp
     public static int DEFAULT_DARK_TEXT_SIZE = 14;//sp
     public static int DEFAULT_DRAW_PADDING_SIZE = 10;//dp
 
