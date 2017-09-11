@@ -45,6 +45,8 @@ public class RTextView extends AppCompatTextView {
     int leftWidth = 0;
     @ColorInt
     int leftColor;
+    int leftStringColor;
+    int leftStringSize;
 
     boolean hasUnderline = false;
 
@@ -81,9 +83,9 @@ public class RTextView extends AppCompatTextView {
 
         //绘制左边的提示文本
         mPaddingLeft = getPaddingLeft();
+        leftStringColor = typedArray.getColor(R.styleable.RTextView_r_left_text_color, getCurrentTextColor());
+        leftStringSize = typedArray.getDimensionPixelOffset(R.styleable.RTextView_r_left_text_size, (int) (leftStringSize * density()));
         ensurePaint();
-        int color = typedArray.getColor(R.styleable.RTextView_r_left_text_color, getCurrentTextColor());
-        mTextPaint.setTextColor(color);
 
         mLeftOffset = typedArray.getDimensionPixelOffset(R.styleable.RTextView_r_left_text_offset, mLeftOffset);
         mBottomOffset = typedArray.getDimensionPixelOffset(R.styleable.RTextView_r_left_text_offset, mBottomOffset);
@@ -109,6 +111,7 @@ public class RTextView extends AppCompatTextView {
     private void ensurePaint() {
         if (mTextPaint == null) {
             mTextPaint = new RTextPaint(getPaint());
+            mTextPaint.setTextSize(leftStringSize);
         }
     }
 
@@ -152,6 +155,8 @@ public class RTextView extends AppCompatTextView {
             //居中绘制文本
             canvas.save();
             canvas.translate(-getPaddingLeft() + getScrollX(), 0);
+            mTextPaint.setTextColor(leftStringColor);
+            mTextPaint.setTextSize(leftStringSize);
             mTextPaint.drawOriginText(canvas, mLeftString, getPaddingLeft() + mPaddingLeft,
                     (getMeasuredHeight() - getPaddingBottom() - getPaddingTop()) / 2 +
                             getPaddingTop() + mTextPaint.getTextHeight() / 2);

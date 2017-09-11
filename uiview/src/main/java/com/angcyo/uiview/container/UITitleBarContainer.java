@@ -24,11 +24,11 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.angcyo.uiview.R;
+import com.angcyo.uiview.kotlin.ViewExKt;
 import com.angcyo.uiview.model.TitleBarPattern;
 import com.angcyo.uiview.recycler.RBaseViewHolder;
 import com.angcyo.uiview.resources.ResUtil;
 import com.angcyo.uiview.skin.SkinHelper;
-import com.angcyo.uiview.view.RClickListener;
 import com.angcyo.uiview.widget.RTextView;
 import com.angcyo.uiview.widget.RTitleCenterLayout;
 
@@ -323,16 +323,19 @@ public class UITitleBarContainer extends FrameLayout {
         int itemSize = getResources().getDimensionPixelSize(R.dimen.base_title_bar_item_size);
 
         for (int i = 0; i < items.size(); i++) {
-            TitleBarPattern.TitleBarItem item = items.get(i);
+            final TitleBarPattern.TitleBarItem item = items.get(i);
             View view;
             if (item.icoDrawable == null) {
                 //不是图片, 就创建文本按钮
-                view = createTextItem(item.text, item.textColor, item.listener);
+                view = createTextItem(item.text, item.textColor);
             } else {
                 //创建图片按钮
-                view = createImageItem(item.icoDrawable, item.listener);
+                view = createImageItem(item.icoDrawable);
                 view.setMinimumWidth(itemSize);
             }
+
+            ViewExKt.setOnRClicklistener(view, item.listener);
+
             view.setVisibility(item.visibility);
             LinearLayout.LayoutParams layoutParams = new LinearLayout.LayoutParams(-2, -1);
             layoutParams.setMargins(item.leftMargin, item.topMargin, item.rightMargin, item.bottomMargin);
@@ -359,31 +362,16 @@ public class UITitleBarContainer extends FrameLayout {
 //        }
     }
 
-    private ImageView createImageItem(Drawable drawable, final OnClickListener listener) {
+    private ImageView createImageItem(Drawable drawable) {
         ImageView item = new ImageView(getContext());
         item.setImageDrawable(drawable);
         item.setScaleType(ImageView.ScaleType.CENTER);
         item.setBackgroundResource(R.drawable.base_bg2_selector);
         item.setBackgroundResource(R.drawable.base_bg2_selector);
-        if (listener instanceof RClickListener) {
-            item.setOnClickListener(listener);
-        } else {
-            item.setOnClickListener(new RClickListener(300) {
-                @Override
-                public void onRClick(View view) {
-                    if (listener != null) {
-                        listener.onClick(view);
-                    }
-                }
-            });
-        }
-        if (listener == null) {
-            item.setClickable(false);
-        }
         return item;
     }
 
-    private TextView createTextItem(String text, @ColorInt int color, final OnClickListener listener) {
+    private TextView createTextItem(String text, @ColorInt int color) {
         TextView item = new RTextView(getContext());
         int padding = getResources().getDimensionPixelOffset(R.dimen.base_ldpi);
         item.setPadding(padding, 0, padding, 0);
@@ -394,21 +382,6 @@ public class UITitleBarContainer extends FrameLayout {
         item.setTextColor(color == -1 ? Color.WHITE : color);
         item.setGravity(Gravity.CENTER);
         item.setBackgroundResource(R.drawable.base_bg2_selector);
-        if (listener instanceof RClickListener) {
-            item.setOnClickListener(listener);
-        } else {
-            item.setOnClickListener(new RClickListener(300) {
-                @Override
-                public void onRClick(View view) {
-                    if (listener != null) {
-                        listener.onClick(view);
-                    }
-                }
-            });
-        }
-        if (listener == null) {
-            item.setClickable(false);
-        }
         return item;
     }
 

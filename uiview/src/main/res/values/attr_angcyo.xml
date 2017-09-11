@@ -74,6 +74,7 @@
         <attr name="r_left_text"/>
         <attr name="r_left_text_color"/>
         <attr name="r_left_text_offset"/>
+        <attr name="r_left_text_size" format="dimension"/>
         <attr name="r_top_text_offset"/>
         <attr name="r_bottom_text_offset"/>
 

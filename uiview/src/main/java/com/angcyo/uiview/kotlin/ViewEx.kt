@@ -4,6 +4,7 @@ import android.graphics.Paint
 import android.support.v4.content.ContextCompat
 import android.view.View
 import android.widget.TextView
+import com.angcyo.uiview.view.RClickListener
 
 /**
  * Kotlin View的扩展
@@ -16,12 +17,14 @@ public fun <V : View> View.v(id: Int): V? {
     return view as V?
 }
 
-public val View.scaledDensity: Float get() {
-    return resources.displayMetrics.scaledDensity
-}
-public val View.density: Float get() {
-    return resources.displayMetrics.density
-}
+public val View.scaledDensity: Float
+    get() {
+        return resources.displayMetrics.scaledDensity
+    }
+public val View.density: Float
+    get() {
+        return resources.displayMetrics.density
+    }
 
 /**返回居中绘制文本的y坐标*/
 public fun View.getDrawCenterTextCy(paint: Paint): Float {
@@ -74,4 +77,22 @@ public fun View.exactlyMeasure(size: Int): Int {
 /**Wrap_Content*/
 public fun View.atmostMeasure(size: Int): Int {
     return View.MeasureSpec.makeMeasureSpec(size, View.MeasureSpec.AT_MOST)
+}
+
+public fun View.setOnRClicklistener(listener: View.OnClickListener?) {
+    if (listener == null) {
+        this.isClickable = false
+        this.setOnClickListener(null)
+    } else {
+        if (listener is RClickListener) {
+            this.setOnClickListener(listener)
+        } else {
+            this.setOnClickListener(object : RClickListener(300) {
+                override fun onRClick(view: View?) {
+                    listener.onClick(view)
+                }
+            })
+        }
+    }
+
 }

@@ -86,6 +86,7 @@ public class RefreshLayout extends ViewGroup {
     public static final long ANIM_TIME = 300;
     protected View mTopView, mBottomView, mTargetView, mTipView;
     float downY, downX, lastY;
+    boolean checkInnerChildScroll = false;
     private OverScroller mScroller;
     private int mTouchSlop;
     /**
@@ -114,11 +115,11 @@ public class RefreshLayout extends ViewGroup {
      * 是否激活延迟加载, 防止刷新太快,就结束了.
      */
     private boolean delayLoadEnd = true;
-    private long refreshTime = 0;
     /**
      * 是否需要通知事件, 如果为false, 那么只有滑动效果, 没有事件监听
      */
     //private boolean mNotifyListener = true;
+    private long refreshTime = 0;
     /**
      * 设置通知事件的方向, 其他方向不通知监听.
      */
@@ -918,24 +919,30 @@ public class RefreshLayout extends ViewGroup {
         return false;
     }
 
+    public void setCheckInnerChildScroll(boolean checkInnerChildScroll) {
+        this.checkInnerChildScroll = checkInnerChildScroll;
+    }
+
     /**
      * Child是否可以滚动
      *
      * @param direction 如果是大于0, 表示视图底部没有数据了, 即不能向上滚动了, 反之...
      */
     protected boolean innerCanChildScrollVertically(View view, int direction, float rawX, float rawY) {
-        //项目特殊处理,可以注释掉
-        if (view instanceof RecyclerView) {
-            RecyclerView recyclerView = (RecyclerView) view;
-            if (recyclerView.getChildCount() > 0) {
-                View childAt = recyclerView.getChildAt(0);
-                Rect rect = new Rect();
-                childAt.getGlobalVisibleRect(rect);
-                if (childAt instanceof RecyclerView && rect.contains(((int) rawX), (int) rawY)) {
-                    return ViewCompat.canScrollVertically(childAt, direction);
+        if (checkInnerChildScroll) {
+            //项目特殊处理,可以注释掉
+            if (view instanceof RecyclerView) {
+                RecyclerView recyclerView = (RecyclerView) view;
+                if (recyclerView.getChildCount() > 0) {
+                    View childAt = recyclerView.getChildAt(0);
+                    Rect rect = new Rect();
+                    childAt.getGlobalVisibleRect(rect);
+                    if (childAt instanceof RecyclerView && rect.contains(((int) rawX), (int) rawY)) {
+                        return ViewCompat.canScrollVertically(childAt, direction);
+                    }
                 }
+                return ViewCompat.canScrollVertically(view, direction);
             }
-            return ViewCompat.canScrollVertically(view, direction);
         }
         //---------------ebd-----------------
 

@@ -121,6 +121,14 @@ public class RTextPaint {
         }
     }
 
+    public TextPaint getTextPaint() {
+        return mTextPaint;
+    }
+
+    public void setTextPaint(TextPaint textPaint) {
+        mTextPaint = textPaint;
+    }
+
     private static class Holder {
         static RTextPaint instance = new RTextPaint();
     }
