@@ -246,12 +246,15 @@ public class RExTextView extends RTextView {
 
                         //找出需要剔除多少个字符,才够空间绘制
                         int startPosition = -1;
-                        for (int i = 0; i < textLength; i++) {
-                            CharSequence charSequence = sequence.subSequence(lineStart - i, lineStart);
-                            float textWidth = getPaint().measureText(String.valueOf(charSequence));
-                            if (textWidth > needWidth) {
-                                startPosition = lineStart - i - 1;//多预留一个位置, 防止不够宽度无法绘制
-                                break;
+                        for (int i = 0; i < textLength && lineStart > 0; i++) {
+                            int start = lineStart - i;
+                            if (start >= 0 && start < lineStart) {
+                                CharSequence charSequence = sequence.subSequence(start, lineStart);
+                                float textWidth = getPaint().measureText(String.valueOf(charSequence));
+                                if (textWidth > needWidth) {
+                                    startPosition = lineStart - i - 1;//多预留一个位置, 防止不够宽度无法绘制
+                                    break;
+                                }
                             }
                         }
 

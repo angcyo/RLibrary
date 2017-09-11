@@ -1326,6 +1326,7 @@ public class UILayoutImpl extends SwipeBackLayout implements ILayout<UIParam>, U
      */
     private void viewHide(final ViewPattern viewPattern, boolean hide) {
         if (viewPattern == null ||
+                viewPattern.mIView == null ||
                 viewPattern.mIView.getIViewShowState() == IView.IViewShowState.STATE_VIEW_HIDE) {
             return;
         }
@@ -1346,6 +1347,7 @@ public class UILayoutImpl extends SwipeBackLayout implements ILayout<UIParam>, U
     private void viewShow(final ViewPattern viewPattern, final Bundle bundle) {
         isStarting = false;
         if (viewPattern == null ||
+                viewPattern.mIView == null ||
                 viewPattern.mIView.getIViewShowState() == IView.IViewShowState.STATE_VIEW_SHOW) {
             return;
         }
@@ -1861,36 +1863,12 @@ public class UILayoutImpl extends SwipeBackLayout implements ILayout<UIParam>, U
                         }
                     }
                 }
-
-//                if (!"true".equalsIgnoreCase(String.valueOf(childAt.getTag(R.id.tag_layout)))) {
-                //childAt.measure(exactlyMeasure(widthSize), exactlyMeasure(heightSize));
-//                } else {
-//                    ViewPattern viewPatternByView = findViewPatternByView(childAt);
-//                    if (viewPatternByView != null) {
-//                        IView iView = viewPatternByView.mIView;
-//                        if (iView != null && iView.haveChildILayout()) {
-//                            childAt.measure(exactlyMeasure(widthSize), exactlyMeasure(heightSize));
-//                        }
-//                    }
-//                }
             }
             //needMeasure = true;
             if (needMeasure) {
                 childAt.measure(exactlyMeasure(widthSize), exactlyMeasure(heightSize));
+                L.e("测量: " + viewPatternByView.mIView.getClass().getSimpleName());
             }
-            //-----------------------------
-//            if (i == count - 1 || i == count - 2) {
-//                childAt.measure(exactlyMeasure(widthSize), exactlyMeasure(heightSize));
-//            }
-//            if (i == count - 2) {
-////                if (mAttachViews.get(i).mIView.showOnDialog() || mAttachViews.get(i).mIView.isDialog()) {
-////                    childAt.measure(MeasureSpec.makeMeasureSpec(widthSize, MeasureSpec.EXACTLY),
-////                            MeasureSpec.makeMeasureSpec(heightSize, MeasureSpec.EXACTLY));
-////                } else
-//                if (childNeedMeasure(mAttachViews.get(i).mIView) || childNeedMeasure(childAt, widthSize, heightSize)) {
-//                    childAt.measure(exactlyMeasure(widthSize), exactlyMeasure(heightSize));
-//                }
-//            }
         }
 
         setMeasuredDimension(widthSize, heightSize);
