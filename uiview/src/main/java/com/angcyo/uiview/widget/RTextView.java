@@ -72,11 +72,7 @@ public class RTextView extends AppCompatTextView {
 
         //绘制左边的提示竖线
         TypedArray typedArray = context.obtainStyledAttributes(attrs, R.styleable.RTextView);
-        if (isInEditMode()) {
-            leftColor = Color.GREEN;
-        } else {
-            leftColor = typedArray.getColor(R.styleable.RTextView_r_left_color, SkinHelper.getSkin().getThemeColor());
-        }
+        leftColor = typedArray.getColor(R.styleable.RTextView_r_left_color, isInEditMode() ? Color.GREEN : SkinHelper.getSkin().getThemeColor());
         leftWidth = typedArray.getDimensionPixelOffset(R.styleable.RTextView_r_left_width, 0);
         hasUnderline = typedArray.getBoolean(R.styleable.RTextView_r_has_underline, false);
         mBackgroundDrawable = typedArray.getDrawable(R.styleable.RTextView_r_background);
@@ -87,9 +83,9 @@ public class RTextView extends AppCompatTextView {
         leftStringSize = typedArray.getDimensionPixelOffset(R.styleable.RTextView_r_left_text_size, (int) (leftStringSize * density()));
         ensurePaint();
 
-        mLeftOffset = typedArray.getDimensionPixelOffset(R.styleable.RTextView_r_left_text_offset, mLeftOffset);
-        mBottomOffset = typedArray.getDimensionPixelOffset(R.styleable.RTextView_r_left_text_offset, mBottomOffset);
-        mTopOffset = typedArray.getDimensionPixelOffset(R.styleable.RTextView_r_left_text_offset, mTopOffset);
+        mLeftOffset = typedArray.getDimensionPixelOffset(R.styleable.RTextView_r_left_margin, mLeftOffset);
+        mBottomOffset = typedArray.getDimensionPixelOffset(R.styleable.RTextView_r_bottom_margin, mBottomOffset);
+        mTopOffset = typedArray.getDimensionPixelOffset(R.styleable.RTextView_r_top_margin, mTopOffset);
 
         String string = typedArray.getString(R.styleable.RTextView_r_left_text);
         setLeftString(string);

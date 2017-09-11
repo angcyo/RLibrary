@@ -46,8 +46,7 @@ public class RSA {
 //            int year = cal.get(Calendar.YEAR);
 //            int day = cal.get(Calendar.DAY_OF_MONTH);
 //            data_ = data + "&" + sdbmHash(month * year * day + "");
-            data_ = data + "&" + E_SALT;
-
+//            data_ = data + "&" + E_SALT;
         }
 
         String encode = "";
@@ -60,16 +59,11 @@ public class RSA {
         return encode.replaceAll("\\n", "");
     }
 
-    public static String encodeInfo(String data, boolean useSalt) {
+    public static String encodeInfo(String data) {
         String data_ = data;
-        if (useSalt) {
-//            Calendar cal = Calendar.getInstance();
-//            int month = cal.get(Calendar.MONTH) + 1;
-//            int year = cal.get(Calendar.YEAR);
-//            int day = cal.get(Calendar.DAY_OF_MONTH);
-//            data_ = data + "&" + sdbmHash(month * year * day + "");
-            data_ = data + "&" + E_SALT;
-        }
+//        if (useSalt) {
+//            data_ = data + "&" + E_SALT;
+//        }
 
         String encode = "";
         byte[] encodedData;

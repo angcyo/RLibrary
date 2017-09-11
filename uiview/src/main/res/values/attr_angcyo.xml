@@ -66,6 +66,8 @@
         <attr name="r_left_width" format="dimension"/>
         <!--距离view左边的距离-->
         <attr name="r_left_margin" format="dimension"/>
+        <attr name="r_top_margin" format="dimension"/>
+        <attr name="r_bottom_margin" format="dimension"/>
         <!--是否有下划线-->
         <attr name="r_has_underline" format="boolean"/>
 
