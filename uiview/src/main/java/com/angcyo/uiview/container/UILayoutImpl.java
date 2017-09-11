@@ -33,6 +33,7 @@ import com.angcyo.uiview.model.ViewPattern;
 import com.angcyo.uiview.resources.AnimUtil;
 import com.angcyo.uiview.rsen.RGestureDetector;
 import com.angcyo.uiview.skin.ISkin;
+import com.angcyo.uiview.utils.Debug;
 import com.angcyo.uiview.view.ILifecycle;
 import com.angcyo.uiview.view.IView;
 import com.angcyo.uiview.view.UIIViewImpl;
@@ -1331,6 +1332,7 @@ public class UILayoutImpl extends SwipeBackLayout implements ILayout<UIParam>, U
             return;
         }
         saveToSDCard(viewPattern.mIView.getClass().getSimpleName() + " onViewHide()");
+        setIViewNeedLayout(viewPattern.mView, false);
         viewPattern.mIView.onViewHide();
         if (hide && !viewPattern.mIView.isDialog()) {
             viewPattern.mView.setVisibility(GONE);
@@ -1767,9 +1769,9 @@ public class UILayoutImpl extends SwipeBackLayout implements ILayout<UIParam>, U
             childAt.layout(0, 0, right, bottom);
             if (childAt.getMeasuredHeight() == getMeasuredHeight() &&
                     childAt.getMeasuredWidth() == getMeasuredWidth()) {
-                setIViewNeedLayout(childAt, true);
-            } else {
                 setIViewNeedLayout(childAt, false);
+            } else {
+                setIViewNeedLayout(childAt, true);
             }
 //            } else {
 //                childAt.setTag(R.id.tag_layout, "false");
@@ -1813,6 +1815,7 @@ public class UILayoutImpl extends SwipeBackLayout implements ILayout<UIParam>, U
 //        val heightMode = MeasureSpec.getMode(heightMeasureSpec)
 
         int count = getChildCount();
+        Debug.logTimeStart("开始测量, 共:" + getAttachViewSize());
         for (int i = 0; i < count; i++) {
             View childAt = getChildAt(i);
 
@@ -1840,9 +1843,9 @@ public class UILayoutImpl extends SwipeBackLayout implements ILayout<UIParam>, U
                 //倒数第一个, 第二个iview
                 needMeasure = true;
             } else {
-                if (viewPatternByView.mIView.needForceMeasure() ||
+                if (viewPatternByView.mIView.needForceMeasure() /*||
                         viewPatternByView.mIView.haveParentILayout() ||
-                        viewPatternByView.mIView.haveChildILayout()) {
+                        viewPatternByView.mIView.haveChildILayout()*/) {
                     //需要强制测量
                     needMeasure = true;
                 } else {
@@ -1870,6 +1873,7 @@ public class UILayoutImpl extends SwipeBackLayout implements ILayout<UIParam>, U
                 L.e("测量: " + viewPatternByView.mIView.getClass().getSimpleName());
             }
         }
+        Debug.logTimeEnd("测量结束");
 
         setMeasuredDimension(widthSize, heightSize);
     }
