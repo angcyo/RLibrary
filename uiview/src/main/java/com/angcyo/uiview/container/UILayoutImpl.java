@@ -458,6 +458,7 @@ public class UILayoutImpl extends SwipeBackLayout implements ILayout<UIParam>, U
         if (param.start_mode == UIParam.SINGLE_TOP) {
             if (oldViewPattern != null && oldViewPattern.mIView == iView) {
                 //如果已经是最前显示, 调用onViewShow方法
+                setIViewNeedLayout(oldViewPattern.mView, true);
                 oldViewPattern.mIView.onViewShow(param.getBundle());
                 isStarting = false;
             } else {
@@ -656,6 +657,9 @@ public class UILayoutImpl extends SwipeBackLayout implements ILayout<UIParam>, U
 //            return;
 //        }
 
+        if (lastViewPattern != null && lastViewPattern.mView != null) {
+            setIViewNeedLayout(lastViewPattern.mView, true);
+        }
         topViewFinish(lastViewPattern, viewPattern, param);
         if (isOnTop) {
             bottomViewStart(lastViewPattern, viewPattern, param.mAnim, param.isQuiet);
@@ -1767,15 +1771,18 @@ public class UILayoutImpl extends SwipeBackLayout implements ILayout<UIParam>, U
             View childAt = getChildAt(i);
 //            if (i == count - 1 || i == count - 2) {
             childAt.layout(0, 0, right, bottom);
-            if (childAt.getMeasuredHeight() == getMeasuredHeight() &&
-                    childAt.getMeasuredWidth() == getMeasuredWidth()) {
-                setIViewNeedLayout(childAt, false);
-            } else {
+            if (getMeasuredWidth() == 0 || getMeasuredHeight() == 0) {
                 setIViewNeedLayout(childAt, true);
+            } else if (childAt.getMeasuredWidth() == 0 || childAt.getMeasuredHeight() == 0) {
+                setIViewNeedLayout(childAt, true);
+            } else {
+                if (childAt.getMeasuredHeight() == getMeasuredHeight() &&
+                        childAt.getMeasuredWidth() == getMeasuredWidth()) {
+                    setIViewNeedLayout(childAt, false);
+                } else {
+                    setIViewNeedLayout(childAt, true);
+                }
             }
-//            } else {
-//                childAt.setTag(R.id.tag_layout, "false");
-//            }
         }
 //        for (int i = 0; i < getChildCount(); i++) {
 //            View childAt = getChildAt(i);
@@ -1798,6 +1805,9 @@ public class UILayoutImpl extends SwipeBackLayout implements ILayout<UIParam>, U
      */
     public void setIViewNeedLayout(View view, boolean layout) {
         view.setTag(R.id.tag_layout, layout ? "false" : "true");
+        if (layout) {
+            view.forceLayout();
+        }
     }
 
     @Override
@@ -1852,7 +1862,9 @@ public class UILayoutImpl extends SwipeBackLayout implements ILayout<UIParam>, U
                     IView iView = viewPatternByView.mIView;
                     for (int j = mAttachViews.size() - 1; j >= 0; j--) {
                         ViewPattern viewPattern = mAttachViews.get(j);
-                        if (viewPattern.mIView.isDialog() || viewPattern.mIView.showOnDialog()) {
+                        if (viewPattern.mIView.isDialog() ||
+                                viewPattern.mIView.showOnDialog() ||
+                                viewPattern.isAnimToEnd) {
                             //界面上面全是对话框
                             needMeasure = true;
                             if (viewPattern.mIView == iView) {
@@ -2320,7 +2332,7 @@ public class UILayoutImpl extends SwipeBackLayout implements ILayout<UIParam>, U
             stringBuilder.append(viewPattern.mView.getRight());
             stringBuilder.append(" B:");
             stringBuilder.append(viewPattern.mView.getBottom());
-            stringBuilder.append(" layout:");
+            stringBuilder.append(" need layout:");
             stringBuilder.append(viewPattern.mView.getTag(R.id.tag_layout));
             stringBuilder.append("\n");
         }
