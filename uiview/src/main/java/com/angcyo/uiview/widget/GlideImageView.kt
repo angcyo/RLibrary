@@ -70,6 +70,7 @@ open class GlideImageView(context: Context, attributeSet: AttributeSet? = null) 
         defaultPlaceholderDrawable = typedArray.getDrawable(R.styleable.GlideImageView_r_placeholder_drawable)
         if (defaultPlaceholderDrawable != null) {
             placeholderDrawable = defaultPlaceholderDrawable
+            setImageDrawable(defaultPlaceholderDrawable)
         }
         typedArray.recycle()
     }
@@ -88,11 +89,13 @@ open class GlideImageView(context: Context, attributeSet: AttributeSet? = null) 
         mShowGifTip = false
         override = true
         placeholderRes = R.drawable.base_image_placeholder_shape
-        if (defaultPlaceholderDrawable != null) {
-            placeholderDrawable = defaultPlaceholderDrawable
-        }
         animType = AnimType.DEFAULT
         bitmapTransform = null
+
+        if (defaultPlaceholderDrawable != null) {
+            placeholderDrawable = defaultPlaceholderDrawable
+            setImageDrawable(defaultPlaceholderDrawable)
+        }
         url = ""
     }
 

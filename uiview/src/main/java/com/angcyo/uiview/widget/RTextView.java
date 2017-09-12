@@ -46,7 +46,7 @@ public class RTextView extends AppCompatTextView {
     @ColorInt
     int leftColor;
     int leftStringColor;
-    int leftStringSize;
+    int leftStringSize = 14;
 
     boolean hasUnderline = false;
 

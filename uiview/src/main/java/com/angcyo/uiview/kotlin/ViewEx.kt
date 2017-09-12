@@ -69,6 +69,10 @@ public fun View.getColor(id: Int): Int {
     return ContextCompat.getColor(context, id)
 }
 
+public fun View.getDimensionPixelOffset(id: Int): Int {
+    return resources.getDimensionPixelOffset(id)
+}
+
 /**Match_Parent*/
 public fun View.exactlyMeasure(size: Int): Int {
     return View.MeasureSpec.makeMeasureSpec(size, View.MeasureSpec.EXACTLY)

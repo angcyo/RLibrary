@@ -50,6 +50,7 @@ import java.io.InputStream;
 import java.io.PrintWriter;
 import java.lang.reflect.Field;
 import java.math.BigDecimal;
+import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
@@ -71,7 +72,10 @@ import static com.angcyo.uiview.utils.RUtils.ImageType.UNKNOWN;
  */
 public class RUtils {
 
-
+    /**
+     * 人民币符号
+     */
+    public static final String RMB = "￥";
     private static final String[][] MIME_MapTable = {
             //{后缀名，MIME类型}
             {".3gp", "video/3gpp"},
@@ -1251,6 +1255,15 @@ public class RUtils {
             return bigDecimal.setScale(bitNum, BigDecimal.ROUND_DOWN).floatValue();
 
         }
+    }
+
+    public static String getDataTime(String pattern, long date) {
+        DateFormat dateFormat = new SimpleDateFormat(pattern, Locale.CHINA);
+        return dateFormat.format(new Date(date));
+    }
+
+    public static String getDataTime() {
+        return getDataTime("yyyy-MM-dd HH:mm", System.currentTimeMillis());
     }
 
     public enum ImageType {

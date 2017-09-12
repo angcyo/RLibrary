@@ -69,14 +69,15 @@ abstract class UISlidingTabView : UIContentView(), UIBaseView.OnViewLoadListener
         tabLayout.indicatorCornerRadius = 3 * density() //指示器的圆角
         tabLayout.indicatorMarginLeft = 0f //指示器左偏移的距离
         tabLayout.tabPadding = 5 * density()
+        tabLayout.setTextSizePx(SkinHelper.getSkin().mainTextSize)
         tabLayout.isTabSpaceEqual = false //tab 是否平分 TabLayout的宽度
     }
 
     open fun initViewPager(viewPager: UIViewPager) {
-
+        viewPager.offscreenPageLimit = getPageCount()
     }
 
-    /**创建页面*/
+    /**重写此方法, 创建页面*/
     open fun createPages(pages: ArrayList<TabPageBean>) {
 
     }

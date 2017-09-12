@@ -8,6 +8,7 @@ import android.util.AttributeSet;
 import android.view.Gravity;
 
 import com.angcyo.uiview.R;
+import com.angcyo.uiview.kotlin.ViewExKt;
 import com.angcyo.uiview.resources.ResUtil;
 import com.angcyo.uiview.skin.SkinHelper;
 
@@ -36,6 +37,10 @@ public class Button extends RTextView {
      * 可自定义的圆角边框样式
      */
     public static final int ROUND_BORDER = 3;
+    /**
+     * 正常边框, 按下主题颜色填充
+     */
+    public static final int ROUND_BORDER_FILL = 4;
 
     int mButtonStyle = DEFAULT;
 
@@ -53,42 +58,50 @@ public class Button extends RTextView {
     }
 
     private void initButton() {
+        int themeSubColor;
+        int themeDarkColor;
+
         if (isInEditMode()) {
-            if (mButtonStyle == ROUND) {
-                setBackground(ResUtil.ripple(Color.BLUE,
-                        ResUtil.selector(
-                                ResUtil.createDrawable(Color.BLUE, 300),
-                                ResUtil.createDrawable(Color.BLUE, 300)
-                        )));
-            } else if (mButtonStyle == ROUND_BORDER) {
-                setBackground(ResUtil.ripple(Color.BLUE,
-                        ResUtil.selector(
-                                ResUtil.createDrawable(Color.BLUE, Color.TRANSPARENT, (int) (1 * density()), 300),
-                                ResUtil.createDrawable(Color.BLUE, Color.TRANSPARENT, (int) (1 * density()), 300)
-                        )));
-                setTextColor(ColorStateList.valueOf(Color.BLUE));
-            } else {
+            themeSubColor = Color.BLUE;
+            themeDarkColor = Color.BLUE;
+        } else {
+            themeSubColor = SkinHelper.getSkin().getThemeSubColor();
+            themeDarkColor = SkinHelper.getSkin().getThemeDarkColor();
+        }
+        if (mButtonStyle == ROUND) {
+            setBackground(ResUtil.ripple(themeSubColor,
+                    ResUtil.selector(
+                            ResUtil.createDrawable(themeSubColor, 300),
+                            ResUtil.createDrawable(themeDarkColor, 300)
+                    )));
+            setTextColor(ColorStateList.valueOf(Color.WHITE));
+        } else if (mButtonStyle == ROUND_BORDER) {
+            setBackground(ResUtil.ripple(themeSubColor,
+                    ResUtil.selector(
+                            ResUtil.createDrawable(themeSubColor, Color.TRANSPARENT, (int) (1 * density()), 300),
+                            ResUtil.createDrawable(themeDarkColor, Color.TRANSPARENT, (int) (1 * density()), 300)
+                    )));
+            setTextColor(ColorStateList.valueOf(themeSubColor));
+        } else if (mButtonStyle == ROUND_BORDER_FILL) {
+            setBackground(ResUtil.ripple(themeSubColor,
+                    ResUtil.selector(
+                            ResUtil.createDrawable(ViewExKt.getColor(this, R.color.default_base_line),
+                                    Color.TRANSPARENT, ViewExKt.getDimensionPixelOffset(this, R.dimen.base_line),
+                                    ViewExKt.getDimensionPixelOffset(this, R.dimen.base_round_little_radius)),
+                            ResUtil.createDrawable(themeSubColor,
+                                    ViewExKt.getDimensionPixelOffset(this, R.dimen.base_round_little_radius))
+                    )));
+            setTextColor(ResUtil.generateTextColor(Color.WHITE, ViewExKt.getColor(this, R.color.base_text_color)));
+        } else {
+            setTextColor(ColorStateList.valueOf(Color.WHITE));
+            if (isInEditMode()) {
                 setBackground(ResUtil.generateRippleRoundMaskDrawable(getResources().getDimensionPixelOffset(R.dimen.base_round_little_radius),
                         Color.WHITE, Color.BLUE, Color.BLUE));
-            }
-        } else {
-            if (mButtonStyle == ROUND) {
-                setBackground(ResUtil.ripple(SkinHelper.getSkin().getThemeSubColor(),
-                        ResUtil.selector(
-                                ResUtil.createDrawable(SkinHelper.getSkin().getThemeSubColor(), 300),
-                                ResUtil.createDrawable(SkinHelper.getSkin().getThemeDarkColor(), 300)
-                        )));
-            } else if (mButtonStyle == ROUND_BORDER) {
-                setBackground(ResUtil.ripple(SkinHelper.getSkin().getThemeSubColor(),
-                        ResUtil.selector(
-                                ResUtil.createDrawable(SkinHelper.getSkin().getThemeSubColor(), Color.TRANSPARENT, (int) (1 * density()), 300),
-                                ResUtil.createDrawable(SkinHelper.getSkin().getThemeDarkColor(), Color.TRANSPARENT, (int) (1 * density()), 300)
-                        )));
-                setTextColor(ColorStateList.valueOf(SkinHelper.getSkin().getThemeSubColor()));
             } else {
                 setBackground(SkinHelper.getSkin().getThemeMaskBackgroundRoundSelector());
             }
         }
+
     }
 
     @Override
@@ -97,7 +110,6 @@ public class Button extends RTextView {
 
         setGravity(Gravity.CENTER);
         setClickable(true);
-        setTextColor(ColorStateList.valueOf(Color.WHITE));
     }
 
     @Override

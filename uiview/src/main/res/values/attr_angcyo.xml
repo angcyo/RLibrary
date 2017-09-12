@@ -137,6 +137,7 @@
             <enum name="ROUND" value="2"/>
             <!--圆角边框-->
             <enum name="ROUND_BORDER" value="3"/>
+            <enum name="ROUND_BORDER_FILL" value="4"/>
         </attr>
     </declare-styleable>
 

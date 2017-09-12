@@ -797,6 +797,11 @@ public class SlidingTabLayout extends HorizontalScrollView implements ViewPager.
         updateTabStyles();
     }
 
+    public void setTextSizePx(float textsize) {
+        this.mTextsize = textsize;
+        updateTabStyles();
+    }
+
     public int getTextSelectColor() {
         return mTextSelectColor;
     }
