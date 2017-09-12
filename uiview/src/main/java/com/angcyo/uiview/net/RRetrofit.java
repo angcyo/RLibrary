@@ -35,6 +35,10 @@ import retrofit2.adapter.rxjava.RxJavaCallAdapterFactory;
  */
 public class RRetrofit {
     public static final String SERVICE_URL = "http://service.klgwl.com/";
+    /**
+     * 默认超时时间
+     */
+    public static final int DEFAULT_TIMEOUT = 20;
     public static String DEBUG_URL = "http://192.168.1.35/";
     public static String RELEASE_URL = "http://api.klgwl.com/";
     public static String BASE_URL = RELEASE_URL;
@@ -136,9 +140,9 @@ public class RRetrofit {
         okHttpBuilder
                 .addInterceptor(new CacheInterceptor(false))
                 .addNetworkInterceptor(new CacheInterceptor(DEBUG, cacheType))
-                .connectTimeout(20, TimeUnit.SECONDS)
-                .readTimeout(20, TimeUnit.SECONDS)
-                .writeTimeout(20, TimeUnit.SECONDS)
+                .connectTimeout(DEFAULT_TIMEOUT, TimeUnit.SECONDS)
+                .readTimeout(DEFAULT_TIMEOUT, TimeUnit.SECONDS)
+                .writeTimeout(DEFAULT_TIMEOUT, TimeUnit.SECONDS)
                 .cache(new Cache(new File(RApplication.getApp().getCacheDir(), "ok_cache"), 10240 * 1024))
         ;
 

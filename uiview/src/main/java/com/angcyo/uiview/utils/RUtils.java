@@ -49,6 +49,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.PrintWriter;
 import java.lang.reflect.Field;
+import java.math.BigDecimal;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
@@ -1221,6 +1222,35 @@ public class RUtils {
             }
         }
         return bigBitmap;
+    }
+
+    /**
+     * 保留小数点后几位
+     */
+    public static float decimal(double value, int bitNum, boolean halfUp) {
+        BigDecimal bigDecimal = BigDecimal.valueOf(value);
+
+        /*
+        *         L.e("call:  -> ")
+        L.e("call: 测试小数点0 -> ${bigDecimal.toFloat()}")
+        L.e("call: 测试小数点2 -> ${bigDecimal.setScale(bitNum, BigDecimal.ROUND_HALF_DOWN).toFloat()}")
+        L.e("call: 测试小数点1 -> ${bigDecimal.setScale(bitNum, BigDecimal.ROUND_CEILING).toFloat()}")
+        L.e("call: 测试小数点1 -> ${bigDecimal.setScale(bitNum, BigDecimal.ROUND_DOWN).toFloat()}")
+        L.e("call: 测试小数点1 -> ${bigDecimal.setScale(bitNum, BigDecimal.ROUND_FLOOR).toFloat()}")
+        L.e("call: 测试小数点1 -> ${bigDecimal.setScale(bitNum, BigDecimal.ROUND_UP).toFloat()}")
+        L.e("call: 测试小数点1 -> ${bigDecimal.setScale(bitNum, BigDecimal.ROUND_HALF_EVEN).toFloat()}")
+
+        val myformat = java.text.DecimalFormat("0.000000")
+        val str = myformat.format(value)
+        L.e("call 1:  -> $str")
+        L.e("call 2:  -> ${String.format(Locale.CHINA, "%.6f", value)}")
+        */
+        if (halfUp) {
+            return bigDecimal.setScale(bitNum, BigDecimal.ROUND_UP).floatValue();
+        } else {
+            return bigDecimal.setScale(bitNum, BigDecimal.ROUND_DOWN).floatValue();
+
+        }
     }
 
     public enum ImageType {

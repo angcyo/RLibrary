@@ -335,6 +335,7 @@ public class UITitleBarContainer extends FrameLayout {
             }
 
             ViewExKt.setOnRClicklistener(view, item.listener);
+            view.setBackgroundResource(R.drawable.base_bg2_selector_v21);
 
             view.setVisibility(item.visibility);
             LinearLayout.LayoutParams layoutParams = new LinearLayout.LayoutParams(-2, -1);
@@ -366,8 +367,6 @@ public class UITitleBarContainer extends FrameLayout {
         ImageView item = new ImageView(getContext());
         item.setImageDrawable(drawable);
         item.setScaleType(ImageView.ScaleType.CENTER);
-        item.setBackgroundResource(R.drawable.base_bg2_selector);
-        item.setBackgroundResource(R.drawable.base_bg2_selector);
         return item;
     }
 
@@ -381,7 +380,6 @@ public class UITitleBarContainer extends FrameLayout {
         item.setTextSize(TypedValue.COMPLEX_UNIT_PX, SkinHelper.getSkin().getSubTextSize() /*getResources().getDimensionPixelOffset(R.dimen.base_title_size)*/);
         item.setTextColor(color == -1 ? Color.WHITE : color);
         item.setGravity(Gravity.CENTER);
-        item.setBackgroundResource(R.drawable.base_bg2_selector);
         return item;
     }
 
