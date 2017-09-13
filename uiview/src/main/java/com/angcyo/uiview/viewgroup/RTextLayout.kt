@@ -23,12 +23,10 @@ import com.angcyo.uiview.widget.RTextView
  * Version: 1.0.0
  */
 open class RTextLayout(context: Context, attributeSet: AttributeSet? = null) : FrameLayout(context, attributeSet) {
-    lateinit var leftTextView: RTextView
-    lateinit var rightTextView: RTextView
+    var leftTextView: RTextView = RTextView(context)
+    var rightTextView: RTextView = RTextView(context)
 
     init {
-        leftTextView = RTextView(context)
-        rightTextView = RTextView(context)
 
         leftTextView.setTextColor(getColor(R.color.base_text_color))
         rightTextView.setTextColor(getColor(R.color.base_text_color_dark))

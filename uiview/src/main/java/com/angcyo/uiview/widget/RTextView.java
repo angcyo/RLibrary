@@ -17,6 +17,7 @@ import android.text.InputFilter;
 import android.text.Spannable;
 import android.text.SpannableStringBuilder;
 import android.text.Spanned;
+import android.text.TextPaint;
 import android.text.TextUtils;
 import android.text.style.ForegroundColorSpan;
 import android.util.AttributeSet;
@@ -153,9 +154,16 @@ public class RTextView extends AppCompatTextView {
             canvas.translate(-getPaddingLeft() + getScrollX(), 0);
             mTextPaint.setTextColor(leftStringColor);
             mTextPaint.setTextSize(leftStringSize);
-            mTextPaint.drawOriginText(canvas, mLeftString, getPaddingLeft() + mPaddingLeft,
-                    (getMeasuredHeight() - getPaddingBottom() - getPaddingTop()) / 2 +
-                            getPaddingTop() + mTextPaint.getTextHeight() / 2);
+//            mTextPaint.drawOriginText(canvas, mLeftString, getPaddingLeft() + mPaddingLeft,
+//                    (getMeasuredHeight() - getPaddingBottom() - getPaddingTop()) / 2 +
+//                            getPaddingTop() + mTextPaint.getTextHeight() / 2
+//            );
+            TextPaint textPaint = mTextPaint.getTextPaint();
+            Paint.FontMetrics fontMetrics = textPaint.getFontMetrics();
+            canvas.drawText(mLeftString,
+                    getPaddingLeft() + mPaddingLeft,
+                    getPaddingTop() - fontMetrics.top /*fontMetrics.ascent + fontMetrics.descent*/,
+                    textPaint);
             canvas.restore();
         }
     }

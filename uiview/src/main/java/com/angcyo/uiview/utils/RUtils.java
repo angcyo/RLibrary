@@ -720,7 +720,9 @@ public class RUtils {
         String unit;
         String num;
         int decimal = 0;
-        if (number.length() > 7) {
+        if (number.length() > 9) {
+            return "9千万+";
+        } else if (number.length() > 7) {
             unit = "千万";
 
             int end = number.length() - 7;

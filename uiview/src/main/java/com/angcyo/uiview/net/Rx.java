@@ -32,7 +32,7 @@ public class Rx<Rx> extends Observable<Rx> {
      * 网络请求错误, 重试的次数
      */
     public static final long RETRY_COUNT = 0;
-    public static final long RETRY_ERROR_COUNT = 0;
+    public static final long RETRY_ERROR_COUNT = 5;
     public static final Observable.Transformer<T, T> ioSchedulersTransformer = new Observable.Transformer<T, T>() {
         @Override
         public Observable<T> call(Observable<T> tObservable) {
@@ -55,6 +55,22 @@ public class Rx<Rx> extends Observable<Rx> {
 
     protected Rx(OnSubscribe<Rx> f) {
         super(f);
+    }
+
+    /**
+     * 是否需要重试, token过期或者无效
+     */
+    public static boolean needRetryOnError(RException throwable) {
+        return throwable.getCode() == 1018 ||
+                throwable.getCode() == 1019 ||
+                throwable.getCode() == 3003;
+    }
+
+    public static boolean needRetryOnError(Throwable throwable) {
+        if (throwable instanceof RException) {
+            return needRetryOnError((RException) throwable);
+        }
+        return false;
     }
 
     public static final <T> Observable.Transformer<T, T> applyNewThreadSchedulers() {
@@ -168,11 +184,16 @@ public class Rx<Rx> extends Observable<Rx> {
                             public Boolean call(Integer integer, Throwable throwable) {
                                 if (throwable instanceof RException) {
                                     if (needRetryOnError((RException) throwable)) {
-                                        if (integer < RETRY_ERROR_COUNT) {
-                                            onErrorRetryRunnable.run();
-                                            return true;
-                                        }
+//                                        if (integer < RETRY_ERROR_COUNT) {
+                                        onErrorRetryRunnable.run();
+//                                            return true;
+//                                        }
                                     }
+                                }
+                                try {
+                                    Thread.sleep(500);
+                                } catch (Exception e) {
+
                                 }
                                 L.e("retry ..." + integer + " " + throwable);
                                 return false;
@@ -220,11 +241,16 @@ public class Rx<Rx> extends Observable<Rx> {
                             public Boolean call(Integer integer, Throwable throwable) {
                                 if (throwable instanceof RException) {
                                     if (needRetryOnError((RException) throwable)) {
-                                        if (integer < RETRY_ERROR_COUNT) {
-                                            onErrorRetryRunnable.run();
-                                            return true;
-                                        }
+//                                        if (integer < RETRY_ERROR_COUNT) {
+                                        onErrorRetryRunnable.run();
+//                                            return true;
+//                                        }
                                     }
+                                }
+                                try {
+                                    Thread.sleep(500);
+                                } catch (Exception e) {
+
                                 }
                                 L.e("retry ..." + integer + " " + throwable);
                                 return false;
@@ -305,22 +331,21 @@ public class Rx<Rx> extends Observable<Rx> {
                                 return null;
                             }
                         })
-                        .retryWhen(new Func1<Observable<? extends Throwable>, Observable<?>>() {
-                            @Override
-                            public Observable<?> call(Observable<? extends Throwable> observable) {
-                                return observable;
-                            }
-                        })
                         .retry(new Func2<Integer, Throwable, Boolean>() {
                             @Override
                             public Boolean call(Integer integer, Throwable throwable) {
                                 if (throwable instanceof RException) {
                                     if (needRetryOnError((RException) throwable)) {
-                                        if (integer < RETRY_ERROR_COUNT) {
-                                            onErrorRetryRunnable.run();
-                                            return true;
-                                        }
+//                                        if (integer < RETRY_ERROR_COUNT) {
+                                        onErrorRetryRunnable.run();
+//                                            return true;
+//                                        }
                                     }
+                                }
+                                try {
+                                    Thread.sleep(500);
+                                } catch (Exception e) {
+
                                 }
                                 L.e("retry ..." + integer + " " + throwable);
                                 return false;
@@ -396,11 +421,16 @@ public class Rx<Rx> extends Observable<Rx> {
                             public Boolean call(Integer integer, Throwable throwable) {
                                 if (throwable instanceof RException) {
                                     if (needRetryOnError((RException) throwable)) {
-                                        if (integer < RETRY_ERROR_COUNT) {
-                                            onErrorRetryRunnable.run();
-                                            return true;
-                                        }
+//                                        if (integer < RETRY_ERROR_COUNT) {
+                                        onErrorRetryRunnable.run();
+//                                            return true;
+//                                        }
                                     }
+                                }
+                                try {
+                                    Thread.sleep(500);
+                                } catch (Exception e) {
+
                                 }
                                 L.e("retry ..." + integer + " " + throwable);
                                 return false;
@@ -479,11 +509,16 @@ public class Rx<Rx> extends Observable<Rx> {
                             public Boolean call(Integer integer, Throwable throwable) {
                                 if (throwable instanceof RException) {
                                     if (needRetryOnError((RException) throwable)) {
-                                        if (integer < RETRY_ERROR_COUNT) {
-                                            onErrorRetryRunnable.run();
-                                            return true;
-                                        }
+//                                        if (integer < RETRY_ERROR_COUNT) {
+                                        onErrorRetryRunnable.run();
+//                                            return true;
+//                                        }
                                     }
+                                }
+                                try {
+                                    Thread.sleep(500);
+                                } catch (Exception e) {
+
                                 }
                                 L.e("retry ..." + integer + " " + throwable);
                                 return false;
@@ -493,15 +528,6 @@ public class Rx<Rx> extends Observable<Rx> {
                         .observeOn(AndroidSchedulers.mainThread());
             }
         };
-    }
-
-    /**
-     * 是否需要重试
-     */
-    public static boolean needRetryOnError(RException throwable) {
-        return throwable.getCode() == 1018 ||
-                throwable.getCode() == 1019 ||
-                throwable.getCode() == 3003;
     }
 
     public static <T> Observable.Transformer<ResponseBody, List<T>> transformerList(final Class<T> type, final int successCode) {
@@ -573,9 +599,14 @@ public class Rx<Rx> extends Observable<Rx> {
                                     if (needRetryOnError((RException) throwable)) {
                                         if (integer < RETRY_ERROR_COUNT) {
                                             onErrorRetryRunnable.run();
-                                            return true;
+//                                            return true;
                                         }
                                     }
+                                }
+                                try {
+                                    Thread.sleep(500);
+                                } catch (Exception e) {
+
                                 }
                                 L.e("retry ..." + integer + " " + throwable);
                                 return false;
