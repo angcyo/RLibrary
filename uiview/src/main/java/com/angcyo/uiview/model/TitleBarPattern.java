@@ -56,6 +56,11 @@ public class TitleBarPattern {
      * 当 {@link #isFloating} 为true时, 可以 使用此参数自动设置 内容的 paddingTop值
      */
     public boolean isFixContentHeight = false;
+
+    /**
+     * 处理状态栏的高度
+     */
+    public boolean isFixStatusHeight = true;
     /**
      * 标题
      */
@@ -76,6 +81,7 @@ public class TitleBarPattern {
         mTitleString = titleString;
     }
 
+    @Deprecated
     public static TitleBarPattern fix(TitleBarPattern from, TitleBarPattern to) {
         if (to == null) {
             to = from;
@@ -152,6 +158,11 @@ public class TitleBarPattern {
         if (mTitleSize != -1) {
             textView.setTextSize(mTitleSize);
         }
+        return this;
+    }
+
+    public TitleBarPattern setFixStatusHeight(boolean fixStatusHeight) {
+        isFixStatusHeight = fixStatusHeight;
         return this;
     }
 

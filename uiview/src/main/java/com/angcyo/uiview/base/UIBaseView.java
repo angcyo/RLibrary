@@ -171,6 +171,10 @@ public abstract class UIBaseView extends UIIViewImpl {
             FrameLayout.LayoutParams params = new FrameLayout.LayoutParams(-1, -1);
             mBaseRootLayout.addView(mBaseContentRootLayout, params);
 
+            if (!titleBarPattern.isFixStatusHeight) {
+                mUITitleBarContainer.setPadding(0, 0, 0, 0);
+            }
+
             mBaseRootLayout.addView(mUITitleBarContainer, new ViewGroup.LayoutParams(-1, -2));
 
             mBaseRootLayout.setFloatingTitleView(titleBarPattern.isFloating);
@@ -178,7 +182,10 @@ public abstract class UIBaseView extends UIIViewImpl {
             if (titleBarPattern.isFloating) {
                 if (titleBarPattern.isFixContentHeight) {
                     mBaseContentRootLayout.setPadding(mBaseContentRootLayout.getPaddingLeft(),
-                            mBaseContentRootLayout.getPaddingTop() + mActivity.getResources().getDimensionPixelOffset(R.dimen.title_bar_height),
+                            mBaseContentRootLayout.getPaddingTop() +
+                                    (titleBarPattern.isFixStatusHeight ?
+                                            mActivity.getResources().getDimensionPixelOffset(R.dimen.title_bar_height) :
+                                            mActivity.getResources().getDimensionPixelOffset(R.dimen.action_bar_height)),
                             mBaseContentRootLayout.getPaddingRight(), mBaseContentRootLayout.getPaddingBottom());
                 }
             } else {

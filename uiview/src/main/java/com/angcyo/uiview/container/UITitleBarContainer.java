@@ -163,14 +163,15 @@ public class UITitleBarContainer extends FrameLayout {
             mLayoutFullscreen = ResUtil.isLayoutFullscreen((Activity) context);
             if (mLayoutFullscreen) {
                 mStatusBarHeight = getResources().getDimensionPixelSize(R.dimen.status_bar_height);
-                mTitleBarLayout.setClipToPadding(false);
-                mTitleBarLayout.setClipChildren(false);
-                mTitleBarLayout.setPadding(getPaddingLeft(),
-                        getPaddingTop() + mStatusBarHeight,
-                        getPaddingRight(), getPaddingBottom());
-                ViewGroup.LayoutParams layoutParams = mTitleBarLayout.getLayoutParams();
-                layoutParams.height += mStatusBarHeight;
-                mTitleBarLayout.setLayoutParams(layoutParams);
+//                mTitleBarLayout.setClipToPadding(false);
+//                mTitleBarLayout.setClipChildren(false);
+//                mTitleBarLayout.setPadding(getPaddingLeft(),
+//                        getPaddingTop() + mStatusBarHeight,
+//                        getPaddingRight(), getPaddingBottom());
+//                ViewGroup.LayoutParams layoutParams = mTitleBarLayout.getLayoutParams();
+//                layoutParams.height += mStatusBarHeight;
+//                mTitleBarLayout.setLayoutParams(layoutParams);
+                setPadding(0, mStatusBarHeight, 0, 0);
             }
         }
     }
