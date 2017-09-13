@@ -537,6 +537,10 @@ public abstract class UIIViewImpl implements IView {
         finishIView(this, param);
     }
 
+    public void finishIView(final Runnable unloadRunnable) {
+        finishIView(new UIParam(unloadRunnable));
+    }
+
     public void finishIView(final IView iView, boolean anim) {
         finishIView(iView, anim, false);
     }
