@@ -381,7 +381,7 @@ class ImageTipView : View {
                     }
                     needTextWidth = mPaint.textWidth(it)
                 }
-                canvas.drawText(it, paddingLeft, paddingTop + mPaint.textHeight(), mPaint)
+                canvas.drawText(it, paddingLeft, paddingTop + mPaint.textHeight() - mPaint.descent(), mPaint)
             }
         }
         canvas.restore()
