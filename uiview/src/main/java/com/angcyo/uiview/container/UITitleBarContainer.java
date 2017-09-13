@@ -335,7 +335,7 @@ public class UITitleBarContainer extends FrameLayout {
                 view.setMinimumWidth(itemSize);
             }
 
-            ViewExKt.setOnRClicklistener(view, item.listener);
+            ViewExKt.setOnRClickListener(view, item.listener);
             view.setBackgroundResource(R.drawable.base_bg2_selector_v21);
 
             view.setVisibility(item.visibility);

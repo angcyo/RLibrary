@@ -20,9 +20,10 @@ import com.angcyo.uiview.view.UIIViewImpl
 public fun Int.have(value: Int): Boolean = value != 0 && this and value == value
 
 /**文本的高度*/
-public fun Paint.textHeight(): Float {
-    return descent() - ascent()
-}
+public fun Paint.textHeight(): Float = descent() - ascent()
+
+/**文本的宽度*/
+public fun Paint.textWidth(text: String): Float = this.measureText(text)
 
 public inline fun <T : View> UIIViewImpl.vh(id: Int): Lazy<T> {
     return lazy {

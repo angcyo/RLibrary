@@ -18,13 +18,9 @@ public fun <V : View> View.v(id: Int): V? {
 }
 
 public val View.scaledDensity: Float
-    get() {
-        return resources.displayMetrics.scaledDensity
-    }
+    get() = resources.displayMetrics.scaledDensity
 public val View.density: Float
-    get() {
-        return resources.displayMetrics.density
-    }
+    get() = resources.displayMetrics.density
 
 /**返回居中绘制文本的y坐标*/
 public fun View.getDrawCenterTextCy(paint: Paint): Float {
@@ -48,42 +44,26 @@ public fun TextView.getDrawCenterTextCy(): Float {
 }
 
 /**文本的高度*/
-public fun <T> T.textHeight(paint: Paint): Float {
-    return paint.descent() - paint.ascent()
-}
+public fun <T> T.textHeight(paint: Paint): Float = paint.descent() - paint.ascent()
 
-public fun TextView.textHeight(): Float {
-    return paint.descent() - paint.ascent()
-}
+public fun TextView.textHeight(): Float = paint.descent() - paint.ascent()
 
 /**文本宽度*/
-public fun View.textWidth(paint: Paint, text: String): Float {
-    return paint.measureText(text)
-}
+public fun View.textWidth(paint: Paint, text: String): Float = paint.measureText(text)
 
-public fun TextView.textWidth(text: String): Float {
-    return paint.measureText(text)
-}
+public fun TextView.textWidth(text: String): Float = paint.measureText(text)
 
-public fun View.getColor(id: Int): Int {
-    return ContextCompat.getColor(context, id)
-}
+public fun View.getColor(id: Int): Int = ContextCompat.getColor(context, id)
 
-public fun View.getDimensionPixelOffset(id: Int): Int {
-    return resources.getDimensionPixelOffset(id)
-}
+public fun View.getDimensionPixelOffset(id: Int): Int = resources.getDimensionPixelOffset(id)
 
 /**Match_Parent*/
-public fun View.exactlyMeasure(size: Int): Int {
-    return View.MeasureSpec.makeMeasureSpec(size, View.MeasureSpec.EXACTLY)
-}
+public fun View.exactlyMeasure(size: Int): Int = View.MeasureSpec.makeMeasureSpec(size, View.MeasureSpec.EXACTLY)
 
 /**Wrap_Content*/
-public fun View.atmostMeasure(size: Int): Int {
-    return View.MeasureSpec.makeMeasureSpec(size, View.MeasureSpec.AT_MOST)
-}
+public fun View.atmostMeasure(size: Int): Int = View.MeasureSpec.makeMeasureSpec(size, View.MeasureSpec.AT_MOST)
 
-public fun View.setOnRClicklistener(listener: View.OnClickListener?) {
+public fun View.setOnRClickListener(listener: View.OnClickListener?) {
     if (listener == null) {
         this.isClickable = false
         this.setOnClickListener(null)

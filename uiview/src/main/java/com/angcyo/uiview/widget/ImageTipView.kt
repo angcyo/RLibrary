@@ -11,6 +11,8 @@ import android.util.AttributeSet
 import android.view.View
 import com.angcyo.uiview.R
 import com.angcyo.uiview.kotlin.density
+import com.angcyo.uiview.kotlin.textHeight
+import com.angcyo.uiview.kotlin.textWidth
 import kotlin.properties.ReadOnlyProperty
 import kotlin.properties.ReadWriteProperty
 import kotlin.reflect.KProperty
@@ -53,11 +55,15 @@ class ImageTipView : View {
             field = value
             postInvalidate()
         }
+    var tipTextSize = 9f
+    var tipTextColor = Color.WHITE
+    /**提示文本是否有背景, .9红色背景*/
+    var tipTextBg = true
 
     var textNormal: String? = null
     var textSelected: String? = null
     var showTextSize = 12f
-    var tipTextSize = 6f
+
 
     /**文本提示模式, 图标和提示文本分开, 允许提示文本远离图标绘制, 图标不变形*/
     var isTipModel = false
@@ -170,6 +176,8 @@ class ImageTipView : View {
 
         tipText = typedArray.getString(R.styleable.ImageTipView_r_tip_text)
         tipTextSize = typedArray.getDimension(R.styleable.ImageTipView_r_tip_text_size, tipTextSize * density)
+        tipTextColor = typedArray.getColor(R.styleable.ImageTipView_r_tip_text_color, tipTextColor)
+        tipTextBg = typedArray.getBoolean(R.styleable.ImageTipView_r_tip_text_bg, tipTextBg)
 
         noReadNum = typedArray.getInteger(R.styleable.ImageTipView_r_no_read_num, noReadNum)
 
@@ -281,9 +289,8 @@ class ImageTipView : View {
 
     override fun onDraw(canvas: Canvas) {
         if (isInEditMode) {
-            canvas.drawColor(Color.DKGRAY)
+            canvas.drawColor(Color.YELLOW)
         }
-
 
         var drawableCx = (rawViewWidth / 2).toFloat() + paddingLeft
 
@@ -347,16 +354,35 @@ class ImageTipView : View {
             }
         }
         tipText?.let {
-            mPaint.textSize = tipTextSize
-            mPaint.color = Color.WHITE
+            if ("0".equals(it, true)) {
+                //不绘制0
+            } else {
+                mPaint.textSize = tipTextSize
+                mPaint.color = tipTextColor
 
-            val paddingTop = 2 * density
-            val paddingLeft = 2 * paddingTop
-            newMessageDrawable.setBounds(0, 0,
-                    (mPaint.measureText(it, 0, it.length) + 2 * paddingLeft).toInt(),
-                    (mPaint.descent() - mPaint.ascent() + 2 * paddingTop).toInt())
-            newMessageDrawable.draw(canvas)
-            canvas.drawText(it, paddingLeft, paddingTop - mPaint.ascent(), mPaint)
+                val paddingTop = 2 * density
+                val paddingLeft = 2 * paddingTop
+                if (tipTextBg) {
+                    newMessageDrawable.setBounds(0, 0,
+                            (mPaint.measureText(it, 0, it.length) + 2 * paddingLeft).toInt(),
+                            (mPaint.descent() - mPaint.ascent() + 2 * paddingTop).toInt())
+                    newMessageDrawable.draw(canvas)
+                }
+
+                //需要绘制文本的宽度
+                var needTextWidth = mPaint.textWidth(it)
+                //剩余空间的宽度
+                var spaceWidth = measuredWidth - (drawableCx + tipTextLeftOffset) - paddingLeft
+                while (needTextWidth > spaceWidth) {
+                    //如果空间不足, 减少字体大小
+                    mPaint.textSize -= 2 * density
+                    if (mPaint.textSize < 4 * density) {
+                        break
+                    }
+                    needTextWidth = mPaint.textWidth(it)
+                }
+                canvas.drawText(it, paddingLeft, paddingTop + mPaint.textHeight(), mPaint)
+            }
         }
         canvas.restore()
     }
