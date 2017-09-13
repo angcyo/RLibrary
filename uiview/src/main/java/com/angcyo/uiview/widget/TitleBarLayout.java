@@ -19,6 +19,7 @@ import com.angcyo.uiview.view.UIIViewImpl;
 public class TitleBarLayout extends FrameLayout {
 
     boolean enablePadding = true;
+    boolean fitActionBar = false;
 
     /**
      * 允许的最大高度, 如果为-2px,那么就是屏幕高度的一半, 如果是-3px,那么就是屏幕高度的三分之, 以此内推
@@ -34,6 +35,7 @@ public class TitleBarLayout extends FrameLayout {
 
         TypedArray typedArray = context.obtainStyledAttributes(attrs, R.styleable.TitleBarLayout);
         maxHeight = typedArray.getDimensionPixelOffset(R.styleable.TitleBarLayout_r_max_height, -1);
+        fitActionBar = typedArray.getBoolean(R.styleable.TitleBarLayout_r_fit_action_bar_height, fitActionBar);
 
         enablePadding = UIIViewImpl.isLollipop();
 
@@ -77,14 +79,23 @@ public class TitleBarLayout extends FrameLayout {
         int heightMode = MeasureSpec.getMode(heightMeasureSpec);
         int heightSize = MeasureSpec.getSize(heightMeasureSpec);
         int statusBarHeight = getResources().getDimensionPixelSize(R.dimen.status_bar_height);
+        int actionBarHeight = getResources().getDimensionPixelSize(R.dimen.action_bar_height);
 
-        if (enablePadding) {
-            setPadding(getPaddingLeft(), statusBarHeight, getPaddingRight(), getPaddingBottom());
-            if (maxHeight > 0) {
-                maxHeight += statusBarHeight;
-            }
-            heightSize += statusBarHeight;
+        if (fitActionBar && enablePadding) {
+            statusBarHeight = getResources().getDimensionPixelSize(R.dimen.title_bar_height);
+        } else if (enablePadding) {
+
+        } else if (fitActionBar) {
+            statusBarHeight = actionBarHeight;
+        } else {
+            statusBarHeight = 0;
         }
+
+        setPadding(getPaddingLeft(), statusBarHeight, getPaddingRight(), getPaddingBottom());
+        if (maxHeight > 0) {
+            maxHeight += statusBarHeight;
+        }
+        heightSize += statusBarHeight;
 
         if (maxHeight > 0) {
             super.onMeasure(widthMeasureSpec, MeasureSpec.makeMeasureSpec(Math.min(maxHeight, heightSize), heightMode));
