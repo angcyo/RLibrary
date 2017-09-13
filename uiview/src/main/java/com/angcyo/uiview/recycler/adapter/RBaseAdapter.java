@@ -32,6 +32,13 @@ public abstract class RBaseAdapter<T> extends RecyclerView.Adapter<RBaseViewHold
      * 是否激活加载更多
      */
     protected boolean mEnableLoadMore = false;
+
+    /**
+     * 激活加载到倒数第几个item时, 回调加载更多, 此值需要mEnableLoadMore=true
+     * -1, 表示关闭
+     */
+    protected int mEnableLoadMoreWithLastIndex = -1;
+
     protected ILoadMore mLoadMore;
     protected OnAdapterLoadMoreListener mLoadMoreListener;
     /**
@@ -175,13 +182,17 @@ public abstract class RBaseAdapter<T> extends RecyclerView.Adapter<RBaseViewHold
 
     @Override
     public void onBindViewHolder(RBaseViewHolder holder, int position) {
-       //L.e("call: onBindViewHolder([holder, position])-> " + position);
+        //L.e("call: onBindViewHolder([holder, position])-> " + position);
         try {
             if (isStateLayout()) {
                 if (mIShowState != null) {
                     mIShowState.setShowState(mShowState);
                 }
-            } else if (mEnableLoadMore && isLast(position)) {
+            } else if (mEnableLoadMore &&
+                    (isLast(position) ||
+                            (mEnableLoadMoreWithLastIndex > 0 &&
+                                    (getAllDataCount() - position) <= mEnableLoadMoreWithLastIndex)
+                    )) {
                 /**如果第一个就是加载更多的布局, 需要调用加载更多么?*/
                 onBindLoadMore(position);
                 onBindLoadMoreView(holder, position);
@@ -297,6 +308,13 @@ public abstract class RBaseAdapter<T> extends RecyclerView.Adapter<RBaseViewHold
     }
 
     //--------------需要实现的方法------------//
+
+    /**
+     * 获取数据的数量
+     */
+    public int getAllDataCount() {
+        return mAllDatas == null ? 0 : mAllDatas.size();
+    }
 
     @Override
     public int getItemCount() {
@@ -548,6 +566,10 @@ public abstract class RBaseAdapter<T> extends RecyclerView.Adapter<RBaseViewHold
         //L.v("call: onChildViewDetachedFromWindow -> " + adapterPosition + " " + layoutPosition + " " + view);
     }
 
+    public RBaseAdapter<T> setEnableLoadMoreWithLastIndex(int enableLoadMoreWithLastIndex) {
+        mEnableLoadMoreWithLastIndex = enableLoadMoreWithLastIndex;
+        return this;
+    }
 
     public interface OnAdapterLoadMoreListener {
         void onAdapterLodeMore(RBaseAdapter baseAdapter);

@@ -959,6 +959,12 @@ public abstract class UIIViewImpl implements IView {
         }
     }
 
+    public void setIViewNeedLayout(boolean layout) {
+        if (mILayout instanceof UILayoutImpl) {
+            ((UILayoutImpl) mILayout).setIViewNeedLayout(mRootView, layout);
+        }
+    }
+
     @Override
     public boolean needTransitionStartAnim() {
         return false;
