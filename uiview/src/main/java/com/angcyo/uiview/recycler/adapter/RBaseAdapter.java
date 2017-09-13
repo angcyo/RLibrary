@@ -188,15 +188,16 @@ public abstract class RBaseAdapter<T> extends RecyclerView.Adapter<RBaseViewHold
                 if (mIShowState != null) {
                     mIShowState.setShowState(mShowState);
                 }
-            } else if (mEnableLoadMore &&
-                    (isLast(position) ||
-                            (mEnableLoadMoreWithLastIndex > 0 &&
-                                    (getAllDataCount() - position) <= mEnableLoadMoreWithLastIndex)
-                    )) {
+            } else if (mEnableLoadMore && isLast(position)) {
                 /**如果第一个就是加载更多的布局, 需要调用加载更多么?*/
                 onBindLoadMore(position);
                 onBindLoadMoreView(holder, position);
             } else {
+                if (mEnableLoadMore &&
+                        ((mEnableLoadMoreWithLastIndex > 0 &&
+                                (getAllDataCount() - position) <= mEnableLoadMoreWithLastIndex))) {
+                    onBindLoadMore(position);
+                }
                 onBindView(holder, position, mAllDatas.size() > position ? mAllDatas.get(position) : null);
             }
         } catch (Exception e) {
