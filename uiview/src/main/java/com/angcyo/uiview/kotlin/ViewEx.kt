@@ -1,6 +1,7 @@
 package com.angcyo.uiview.kotlin
 
 import android.graphics.Paint
+import android.graphics.drawable.Drawable
 import android.support.v4.content.ContextCompat
 import android.view.View
 import android.widget.TextView
@@ -54,6 +55,8 @@ public fun View.textWidth(paint: Paint, text: String): Float = paint.measureText
 public fun TextView.textWidth(text: String): Float = paint.measureText(text)
 
 public fun View.getColor(id: Int): Int = ContextCompat.getColor(context, id)
+
+public fun View.getDrawable(id: Int): Drawable = ContextCompat.getDrawable(context, id)
 
 public fun View.getDimensionPixelOffset(id: Int): Int = resources.getDimensionPixelOffset(id)
 

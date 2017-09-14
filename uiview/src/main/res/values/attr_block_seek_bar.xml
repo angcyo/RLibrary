@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <declare-styleable name="BlockSeekBar">
+        <!--所有值, 非百分比-->
+        <attr name="r_block_progress" format="integer"/>
+        <attr name="r_block_max_progress" format="integer"/>
+        <attr name="r_block_min_width" format="integer"/>
+        <attr name="r_block_progress_color" format="color"/>
+        <attr name="r_block_progress_bg_color" format="color"/>
+    </declare-styleable>
+</resources>
