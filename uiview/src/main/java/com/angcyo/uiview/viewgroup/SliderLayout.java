@@ -9,8 +9,6 @@ import android.view.View;
 import android.widget.FrameLayout;
 import android.widget.OverScroller;
 
-import com.angcyo.uiview.utils.T_;
-
 /**
  * Copyright (C) 2016,深圳市红鸟网络科技股份有限公司 All rights reserved.
  * 项目名称：
@@ -107,16 +105,16 @@ public class SliderLayout extends FrameLayout {
     @Override
     protected void onLayout(boolean changed, int l, int t, int r, int b) {
         refreshLayout();
-        for (int i = 0; i < getChildCount(); i++) {
-            View childAt = getChildAt(i);
-            final int finalI = i;
-            childAt.setOnClickListener(new OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    T_.show("Position:" + finalI);
-                }
-            });
-        }
+//        for (int i = 0; i < getChildCount(); i++) {
+//            View childAt = getChildAt(i);
+//            final int finalI = i;
+//            childAt.setOnClickListener(new OnClickListener() {
+//                @Override
+//                public void onClick(View v) {
+//                    T_.show("Position:" + finalI);
+//                }
+//            });
+//        }
     }
 
     @Override
