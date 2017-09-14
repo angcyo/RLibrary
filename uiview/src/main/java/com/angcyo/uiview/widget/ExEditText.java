@@ -117,6 +117,8 @@ public class ExEditText extends AppCompatEditText {
     private ValueAnimator rollAnim;
     private int lastRollAnimValue = -100;
 
+    private boolean showContentMenu = true;
+
     public ExEditText(Context context) {
         super(context);
     }
@@ -239,6 +241,12 @@ public class ExEditText extends AppCompatEditText {
 
         mMaxNumber = typedArray.getFloat(R.styleable.ExEditText_r_max_number, mMaxNumber);
         mDecimalCount = typedArray.getInteger(R.styleable.ExEditText_r_decimal_count, mDecimalCount);
+
+        showContentMenu = typedArray.getBoolean(R.styleable.ExEditText_r_show_content_menu, showContentMenu);
+        if (showContentMenu) {
+        } else {
+            setLongClickable(false);
+        }
 
         typedArray.recycle();
 
@@ -1238,6 +1246,17 @@ public class ExEditText extends AppCompatEditText {
         rollAnim.start();
     }
 
+    @Override
+    public boolean showContextMenu() {
+        //L.e("call: showContextMenu([])-> ");
+        if (showContentMenu) {
+            return super.showContextMenu();
+        } else {
+            setLongClickable(false);
+            return false;
+        }
+    }
+
     public interface getIdFromUserName {
         String userId(String userName);
     }
@@ -1367,6 +1386,12 @@ public class ExEditText extends AppCompatEditText {
         }
     }
 
+//    @Override
+//    protected void onCreateContextMenu(ContextMenu menu) {
+//        L.e("call: onCreateContextMenu([menu])-> ");
+//        super.onCreateContextMenu(menu);
+//    }
+
     /**
      * {@code @}文本的开始位置和结束位置
      */
@@ -1399,4 +1424,35 @@ public class ExEditText extends AppCompatEditText {
             }
         }
     }
+
+//    @Override
+//    public boolean showContextMenu(float x, float y) {
+//        L.e("call: showContextMenu([x, y])-> ");
+//        return super.showContextMenu(x, y);
+//    }
+//
+//    @Override
+//    public boolean onTextContextMenuItem(int id) {
+//        L.e("call: onTextContextMenuItem([id])-> ");
+//        return super.onTextContextMenuItem(id);
+//    }
+//
+//    @Override
+//    public void setOnCreateContextMenuListener(OnCreateContextMenuListener l) {
+//        L.e("call: setOnCreateContextMenuListener([l])-> ");
+//        super.setOnCreateContextMenuListener(l);
+//    }
+//
+//    @Override
+//    public void createContextMenu(ContextMenu menu) {
+//        L.e("call: createContextMenu([menu])-> ");
+//        super.createContextMenu(menu);
+//    }
+//
+//
+//    @Override
+//    protected ContextMenu.ContextMenuInfo getContextMenuInfo() {
+//        L.e("call: getContextMenuInfo([])-> ");
+//        return super.getContextMenuInfo();
+//    }
 }

@@ -18,6 +18,7 @@
     <attr name="r_text_offset" format="dimension"/>
     <attr name="r_max_height" format="dimension"/>
     <attr name="r_min_height" format="dimension"/>
+    <attr name="r_show_content_menu" format="boolean"/>
 
     <!--progress bar-->
     <!--进度颜色-->
@@ -79,6 +80,7 @@
         <attr name="r_left_text_size" format="dimension"/>
         <attr name="r_top_text_offset"/>
         <attr name="r_bottom_text_offset"/>
+        <attr name="r_show_content_menu"/>
 
     </declare-styleable>
 
@@ -92,6 +94,8 @@
         <attr name="r_max_number" format="float"/>
         <!--允许小数点后几位-->
         <attr name="r_decimal_count" format="integer"/>
+
+        <attr name="r_show_content_menu"/>
     </declare-styleable>
 
     <declare-styleable name="JumpAdProgressBar">
