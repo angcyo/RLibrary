@@ -39,7 +39,7 @@ class StickTopLayout(context: Context, attributeSet: AttributeSet? = null) : Fra
         GestureDetectorCompat(getContext(), object : GestureDetector.SimpleOnGestureListener() {
 
             override fun onScroll(e1: MotionEvent?, e2: MotionEvent?, distanceX: Float, distanceY: Float): Boolean {
-                //L.e("call: onScroll -> $distanceY")
+                //L.e("call: onScroll ->${e1?.y}:${e2?.y} $distanceX:$distanceY")
                 if (isFirst) {
                     isFirst = false
                     if (distanceY < 0) {
@@ -49,7 +49,7 @@ class StickTopLayout(context: Context, attributeSet: AttributeSet? = null) : Fra
                 }
 
                 if (canScroll) {
-                    if (scrollY == 0 && (distanceY < 0 || distanceY < distanceX)) {
+                    if (scrollY == 0 && (distanceY < 10 || distanceY < distanceX)) {
                         return false
                     } else {
                         //top 打开状态,并且是向上滚动 拦截事件
