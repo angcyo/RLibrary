@@ -416,7 +416,7 @@ open class GlideImageView(context: Context, attributeSet: AttributeSet? = null) 
                 override fun onResourceReady(resource: File?, transition: Transition<in File>?) {
                     resource?.let {
                         try {
-                            L.i("call: 加载Gif 本地地址 -> ${resource.absolutePath}")
+                            //L.i("call: 加载Gif 本地地址 -> ${resource.absolutePath}")
                             val gifDrawable = GifDrawableBuilder().from(resource).build()
                             this@GlideImageView.setImageDrawable(gifDrawable)
                         } catch (e: Exception) {
