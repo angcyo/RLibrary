@@ -242,11 +242,7 @@ public class ExEditText extends AppCompatEditText {
         mMaxNumber = typedArray.getFloat(R.styleable.ExEditText_r_max_number, mMaxNumber);
         mDecimalCount = typedArray.getInteger(R.styleable.ExEditText_r_decimal_count, mDecimalCount);
 
-        showContentMenu = typedArray.getBoolean(R.styleable.ExEditText_r_show_content_menu, showContentMenu);
-        if (showContentMenu) {
-        } else {
-            setLongClickable(false);
-        }
+        setShowContentMenu(typedArray.getBoolean(R.styleable.ExEditText_r_show_content_menu, showContentMenu));
 
         typedArray.recycle();
 
@@ -1141,17 +1137,35 @@ public class ExEditText extends AppCompatEditText {
         return false;
     }
 
+    public void setShowContentMenu(boolean showContentMenu) {
+        this.showContentMenu = showContentMenu;
+        if (showContentMenu) {
+        } else {
+            setLongClickable(false);
+        }
+    }
+
     /**
      * 设置是否是密码类型
      */
     public void setIsPassword(boolean isPassword) {
         int inputType = getInputType();
         if (isPassword) {
+            setShowContentMenu(false);
             setInputType(inputType | EditorInfo.TYPE_CLASS_TEXT | EditorInfo.TYPE_TEXT_VARIATION_PASSWORD);
         } else {
             setInputType(inputType & ~EditorInfo.TYPE_TEXT_VARIATION_PASSWORD);
         }
     }
+
+//    public void setIsWebEmail(boolean isWebEmail) {
+//        int inputType = getInputType();
+//        if (isWebEmail) {
+//            setInputType(inputType | EditorInfo.TYPE_TEXT_VARIATION_WEB_EMAIL_ADDRESS);
+//        } else {
+//            setInputType(inputType & ~EditorInfo.TYPE_TEXT_VARIATION_WEB_EMAIL_ADDRESS);
+//        }
+//    }
 
     public void setIsText(boolean isText) {
         int inputType = getInputType();
