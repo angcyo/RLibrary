@@ -252,9 +252,7 @@ public class ExEditText extends AppCompatEditText {
 
         setLeftString(string);
 
-
         mTextPaint.setTextColor(color);
-
     }
 
     public boolean canVerticalScroll() {
@@ -602,7 +600,10 @@ public class ExEditText extends AppCompatEditText {
             checkMentionString();
         }
 
-        if (isInputTypeNumber()) {
+        if (isInputTypeNumber() &&
+                mMaxNumber != Float.MAX_VALUE &&
+                mDecimalCount != Integer.MAX_VALUE) {
+
             if (!TextUtils.isEmpty(text)) {
                 Float value;
                 try {
