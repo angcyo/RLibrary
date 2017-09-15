@@ -65,12 +65,23 @@ public class RLoopRecyclerView extends RRecyclerView {
             throw new IllegalArgumentException("adapter must  instanceof LoopAdapter!");
         }
         super.setAdapter(adapter);
+
+    }
+
+    /**
+     * 恢复默认的滚动位置
+     */
+    public void resetScrollPosition() {
         curScrollPosition = getDefaultPosition();
         super.scrollTo(curScrollPosition, false);//开始时的偏移量
     }
 
     @Override
     public void startAutoScroll() {
+        if (curScrollPosition <= 0) {
+            resetScrollPosition();
+        }
+
         LayoutManager layoutManager = getLayoutManager();
         if (enableScroll && getAdapter() != null && getAdapter().getItemRawCount() > 1 &&
                 layoutManager != null && layoutManager instanceof LinearLayoutManager) {
@@ -111,10 +122,6 @@ public class RLoopRecyclerView extends RRecyclerView {
 
     public void setOnPageListener(OnPageListener onPageListener) {
         mOnPageListener = onPageListener;
-    }
-
-    public void resetCurScrollPosition() {
-        curScrollPosition = getDefaultPosition();
     }
 
     public interface OnPageListener {

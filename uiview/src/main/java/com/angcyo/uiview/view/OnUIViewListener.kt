@@ -1,5 +1,7 @@
 package com.angcyo.uiview.view
 
+import com.angcyo.uiview.model.TitleBarPattern
+
 /**
  * Copyright (C) 2016,深圳市红鸟网络科技股份有限公司 All rights reserved.
  * 项目名称：
@@ -29,6 +31,11 @@ abstract class OnUIViewListener {
     }
 
     open fun onViewLoadDataSuccess() {
+
+    }
+
+    /**当开始显示TitleBar时, 会回调此方法*/
+    open fun onCreateTitleBar(titleBarPattern: TitleBarPattern) {
 
     }
 }

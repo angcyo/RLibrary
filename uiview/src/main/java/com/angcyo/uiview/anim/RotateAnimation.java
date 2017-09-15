@@ -4,6 +4,7 @@ import android.graphics.Camera;
 import android.graphics.Matrix;
 import android.os.Build;
 import android.text.TextUtils;
+import android.view.View;
 import android.view.animation.Animation;
 import android.view.animation.Transformation;
 
@@ -55,6 +56,10 @@ public class RotateAnimation extends Animation {
         this(cX, cY, ROTATE_DECREASE);
     }
 
+    public RotateAnimation(View view) {
+        this(view.getMeasuredWidth() / 2, view.getMeasuredHeight() / 2, ROTATE_DECREASE);
+    }
+
     @Override
     public void initialize(int width, int height, int parentWidth, int parentHeight) {
         // 在构造函数之后、getTransformation()之前调用本方法。
@@ -94,7 +99,8 @@ public class RotateAnimation extends Animation {
         camera.save();
         camera.translate(0.0f, 0.0f, depth);
         //L.e("call: applyTransformation([interpolatedTime, transformation])-> x:" + camera.getLocationX() + " y:" + camera.getLocationY() + " z:" + camera.getLocationZ());\
-        if (TextUtils.equals(Build.MANUFACTURER, "HUAWEI") && Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP /*华为手机处理圆角, 偶尔会失败.*/) {
+        if (TextUtils.equals(Build.MANUFACTURER, "HUAWEI") &&
+                Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP /*华为手机处理圆角, 偶尔会失败.*/) {
             camera.setLocation(0, 0, -160);
         }
         camera.rotateY(degree);

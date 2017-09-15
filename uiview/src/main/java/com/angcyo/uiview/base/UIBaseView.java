@@ -146,6 +146,10 @@ public abstract class UIBaseView extends UIIViewImpl {
 
         TitleBarPattern titleBarPattern = getTitleBar();
         if (titleBarPattern != null && isHaveTitleBar()) {
+            if (mOnUIViewListener != null) {
+                mOnUIViewListener.onCreateTitleBar(titleBarPattern);
+            }
+
             mUITitleBarContainer = new UITitleBarContainer(mActivity);
             mUITitleBarId = R.id.base_root_title_id;//View.generateViewId();
             mUITitleBarContainer.setId(mUITitleBarId);

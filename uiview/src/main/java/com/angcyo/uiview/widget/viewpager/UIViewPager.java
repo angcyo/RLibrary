@@ -19,6 +19,7 @@ import com.angcyo.uiview.skin.SkinHelper;
 import com.angcyo.uiview.utils.Reflect;
 import com.angcyo.uiview.utils.UI;
 import com.angcyo.uiview.view.UIIViewImpl;
+import com.angcyo.uiview.view.UIView;
 
 import java.util.ArrayList;
 
@@ -111,13 +112,19 @@ public class UIViewPager extends ViewPager implements Runnable, StickLayout.CanS
     @Override
     public void setAdapter(PagerAdapter adapter) {
         super.setAdapter(adapter);
-        post(new Runnable() {
+        if (isOnAttachedToWindow) {
+            check();
+        }
+    }
+
+    private void check() {
+        postDelayed(new Runnable() {
             @Override
             public void run() {
                 lastItem = -1;
                 checkPageChanged();
             }
-        });
+        }, UIIViewImpl.DEFAULT_DELAY_ANIM_TIME);
     }
 
     @Override
@@ -194,7 +201,12 @@ public class UIViewPager extends ViewPager implements Runnable, StickLayout.CanS
 //                        mParentUIView.setChildILayout(null);
 //                    }
                     if (available instanceof OnPagerShowListener) {
-                        ((OnPagerShowListener) available).onHideInPager(this);
+                        post(new Runnable() {
+                            @Override
+                            public void run() {
+                                ((OnPagerShowListener) available).onHideInPager(UIViewPager.this);
+                            }
+                        });
                     }
                 }
             } else if (currentItem == position) {
@@ -202,8 +214,14 @@ public class UIViewPager extends ViewPager implements Runnable, StickLayout.CanS
                     if (mParentUIView != null && available instanceof UILayoutImpl) {
                         mParentUIView.setChildILayout((ILayout) available);
                     }
+
                     if (available instanceof OnPagerShowListener) {
-                        ((OnPagerShowListener) available).onShowInPager(this);
+                        post(new Runnable() {
+                            @Override
+                            public void run() {
+                                ((OnPagerShowListener) available).onShowInPager(UIViewPager.this);
+                            }
+                        });
                     }
                 }
             }
@@ -212,9 +230,22 @@ public class UIViewPager extends ViewPager implements Runnable, StickLayout.CanS
         lastItem = currentItem;
     }
 
+
+    boolean isOnAttachedToWindow = false;
+
+    @Override
+    protected void onAttachedToWindow() {
+        super.onAttachedToWindow();
+        isOnAttachedToWindow = true;
+        if (getAdapter() != null && lastItem == -1) {
+            check();
+        }
+    }
+
     @Override
     protected void onDetachedFromWindow() {
         super.onDetachedFromWindow();
+        isOnAttachedToWindow = false;
         if (mParentUIView != null) {
             mParentUIView.setChildILayout(null);
         }

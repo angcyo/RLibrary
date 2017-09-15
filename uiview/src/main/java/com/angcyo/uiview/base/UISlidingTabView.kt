@@ -1,5 +1,6 @@
 package com.angcyo.uiview.base
 
+import android.os.Bundle
 import android.view.LayoutInflater
 import com.angcyo.uiview.R
 import com.angcyo.uiview.container.ContentLayout
@@ -51,12 +52,23 @@ abstract class UISlidingTabView : UIContentView(), UIBaseView.OnViewLoadListener
         super.onViewLoad()
 
         createPages(pages)
-        mViewPager.adapter = createAdapter()
-
         initTabLayout(mSlidingTab)
         initViewPager(mViewPager)
 
+        mViewPager.adapter = createAdapter()
         mSlidingTab.setViewPager(mViewPager)
+    }
+
+    override fun onViewShowFirst(bundle: Bundle?) {
+        super.onViewShowFirst(bundle)
+
+//        createPages(pages)
+//        mViewPager.adapter = createAdapter()
+//
+//        initTabLayout(mSlidingTab)
+//        initViewPager(mViewPager)
+//
+//        mSlidingTab.setViewPager(mViewPager)
     }
 
     open fun initTabLayout(tabLayout: SlidingTabLayout) {
