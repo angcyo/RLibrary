@@ -63,6 +63,7 @@ import static com.angcyo.uiview.RCrashHandler.getMemoryInfo;
 public abstract class UIIViewImpl implements IView {
 
     public static final int DEFAULT_ANIM_TIME = 200;
+    public static final int DEFAULT_DELAY_ANIM_TIME = 260;
     public static final int DEFAULT_FINISH_ANIM_TIME = 200;//完成动画,尽量比启动动画快一点(相差最好是一帧的时间)
     public static final int DEFAULT_DIALOG_FINISH_ANIM_TIME = 150;
     public static final int DEFAULT_CLICK_DELAY_TIME = 300;

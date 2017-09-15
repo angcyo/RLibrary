@@ -50,6 +50,7 @@ import java.util.Set;
 import java.util.Stack;
 
 import static com.angcyo.uiview.view.UIIViewImpl.DEFAULT_ANIM_TIME;
+import static com.angcyo.uiview.view.UIIViewImpl.DEFAULT_DELAY_ANIM_TIME;
 
 /**
  * 可以用来显示IView的布局, 每一层的管理
@@ -460,6 +461,7 @@ public class UILayoutImpl extends SwipeBackLayout implements ILayout<UIParam>, U
                 //如果已经是最前显示, 调用onViewShow方法
                 setIViewNeedLayout(oldViewPattern.mView, true);
                 oldViewPattern.mIView.onViewShow(param.getBundle());
+                oldViewPattern.mIView.onViewReShow(param.getBundle());
                 isStarting = false;
             } else {
                 ViewPattern viewPatternByIView = findViewPatternByClass(iView.getClass());
@@ -478,6 +480,13 @@ public class UILayoutImpl extends SwipeBackLayout implements ILayout<UIParam>, U
                     mAttachViews.remove(viewPatternByIView);
                     mAttachViews.push(viewPatternByIView);
                     startIViewAnim(oldViewPattern, viewPatternByIView, param, true);
+                    final ViewPattern finalViewPatternByIView = viewPatternByIView;
+                    postDelayed(new Runnable() {
+                        @Override
+                        public void run() {
+                            finalViewPatternByIView.mIView.onViewReShow(param.getBundle());
+                        }
+                    }, DEFAULT_DELAY_ANIM_TIME);
                 }
             }
         } else {
@@ -1025,14 +1034,51 @@ public class UILayoutImpl extends SwipeBackLayout implements ILayout<UIParam>, U
             @Override
             public void run() {
                 final ViewPattern oldViewPattern = getLastViewPattern();
-                final ViewPattern newViewPattern = startIViewInternal(iView, param);
+                ViewPattern newViewPattern = null;
 
-                //3:
-                newViewPattern.mIView.onViewLoad();
+                if (param.start_mode == UIParam.SINGLE_TOP) {
+                    if (oldViewPattern != null && oldViewPattern.mIView == iView) {
+                        //如果已经是最前显示, 调用onViewShow方法
+                        setIViewNeedLayout(oldViewPattern.mView, true);
+                        oldViewPattern.mIView.onViewShow(param.getBundle());
+                        oldViewPattern.mIView.onViewReShow(param.getBundle());
+                        isStarting = false;
 
-                topViewStart(newViewPattern, param);
+                        newViewPattern = oldViewPattern;
+                    } else {
+                        ViewPattern viewPatternByIView = findViewPatternByClass(iView.getClass());
+                        if (viewPatternByIView == null) {
+                            //这个IView 还不存在
+                            newViewPattern = startIViewInternal(iView, param);
+//                    startIViewAnim(oldViewPattern, newViewPattern, param);
+                            viewPatternByIView = newViewPattern;
+                            startIViewAnim(oldViewPattern, viewPatternByIView, param, false);
 
-                if (param.isReplaceIViewEmpty() || oldViewPattern.mIView == param.replaceIView) {
+                        } else {
+                            //这个IView 存在, 但是不在最前显示
+//                    bottomViewFinish(oldViewPattern, viewPatternByIView, param);
+//                    topViewStart(viewPatternByIView, param);
+                            newViewPattern = viewPatternByIView;
+                            mAttachViews.remove(viewPatternByIView);
+                            mAttachViews.push(viewPatternByIView);
+                            startIViewAnim(oldViewPattern, viewPatternByIView, param, true);
+                            final ViewPattern finalViewPatternByIView = viewPatternByIView;
+                            postDelayed(new Runnable() {
+                                @Override
+                                public void run() {
+                                    finalViewPatternByIView.mIView.onViewReShow(param.getBundle());
+                                }
+                            }, DEFAULT_DELAY_ANIM_TIME);
+                        }
+                    }
+                } else {
+                    newViewPattern = startIViewInternal(iView, param);
+                    //3:
+                    newViewPattern.mIView.onViewLoad();
+                    topViewStart(newViewPattern, param);
+                }
+
+                if (param.isReplaceIViewEmpty() || (oldViewPattern != null && oldViewPattern.mIView == param.replaceIView)) {
                     final Runnable endRunnable = new Runnable() {
                         @Override
                         public void run() {
