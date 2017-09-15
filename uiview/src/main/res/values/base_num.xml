@@ -34,4 +34,6 @@
     <!--最大标签选中数量-->
     <integer name="max_tags_count">3</integer>
     <integer name="max_music_name_show_count">20</integer>
+    <!--允许评论的最大字符数-->
+    <integer name="max_comment_count">140</integer>
 </resources>

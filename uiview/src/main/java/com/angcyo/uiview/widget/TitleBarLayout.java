@@ -35,9 +35,9 @@ public class TitleBarLayout extends FrameLayout {
 
         TypedArray typedArray = context.obtainStyledAttributes(attrs, R.styleable.TitleBarLayout);
         maxHeight = typedArray.getDimensionPixelOffset(R.styleable.TitleBarLayout_r_max_height, -1);
-        fitActionBar = typedArray.getBoolean(R.styleable.TitleBarLayout_r_fit_action_bar_height, fitActionBar);
-
         enablePadding = UIIViewImpl.isLollipop();
+        fitActionBar = typedArray.getBoolean(R.styleable.TitleBarLayout_r_fit_action_bar_height, fitActionBar);
+        enablePadding = typedArray.getBoolean(R.styleable.TitleBarLayout_r_fit_status_bar_height, enablePadding);
 
         resetMaxHeight();
         typedArray.recycle();

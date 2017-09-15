@@ -133,6 +133,7 @@
     <declare-styleable name="TitleBarLayout">
         <attr name="r_max_height"/>
         <attr name="r_fit_action_bar_height" format="boolean"/>
+        <attr name="r_fit_status_bar_height" format="boolean"/>
     </declare-styleable>
 
     <declare-styleable name="Button">

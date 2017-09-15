@@ -943,7 +943,7 @@ public class CommonTabLayout extends FrameLayout implements ValueAnimator.Animat
             }
 
             if (!mIconVisible) {
-                setMsgMargin(position, 0, 0);
+                setMsgMargin(position, 0, dp2px(2));
             } else {
                 setMsgMargin(position, -6,
                         mIconGravity == Gravity.LEFT || mIconGravity == Gravity.RIGHT ? -6 : 6);

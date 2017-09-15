@@ -15,6 +15,7 @@ import android.support.annotation.ColorRes;
 import android.support.annotation.DimenRes;
 import android.support.annotation.DrawableRes;
 import android.support.annotation.IdRes;
+import android.support.annotation.IntegerRes;
 import android.support.annotation.StringRes;
 import android.support.v4.content.ContextCompat;
 import android.support.v4.view.ViewPager;
@@ -748,6 +749,10 @@ public abstract class UIIViewImpl implements IView {
     @ColorInt
     public int getColor(@ColorRes int id) {
         return ContextCompat.getColor(mActivity, id);
+    }
+
+    public int getInteger(@IntegerRes int id) {
+        return getResources().getInteger(id);
     }
 
     //2017-06-10
