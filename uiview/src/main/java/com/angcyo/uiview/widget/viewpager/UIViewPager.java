@@ -19,7 +19,6 @@ import com.angcyo.uiview.skin.SkinHelper;
 import com.angcyo.uiview.utils.Reflect;
 import com.angcyo.uiview.utils.UI;
 import com.angcyo.uiview.view.UIIViewImpl;
-import com.angcyo.uiview.view.UIView;
 
 import java.util.ArrayList;
 
@@ -124,7 +123,7 @@ public class UIViewPager extends ViewPager implements Runnable, StickLayout.CanS
                 lastItem = -1;
                 checkPageChanged();
             }
-        }, UIIViewImpl.DEFAULT_DELAY_ANIM_TIME);
+        }, 0/*UIIViewImpl.DEFAULT_DELAY_ANIM_TIME*/);
     }
 
     @Override

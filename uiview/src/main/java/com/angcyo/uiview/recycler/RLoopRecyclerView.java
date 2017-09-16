@@ -80,6 +80,13 @@ public class RLoopRecyclerView extends RRecyclerView {
     public void startAutoScroll() {
         if (curScrollPosition <= 0) {
             resetScrollPosition();
+            post(new Runnable() {
+                @Override
+                public void run() {
+                    startAutoScroll();
+                }
+            });
+            return;
         }
 
         LayoutManager layoutManager = getLayoutManager();
