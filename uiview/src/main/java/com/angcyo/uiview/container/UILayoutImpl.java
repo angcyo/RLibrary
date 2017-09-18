@@ -287,8 +287,11 @@ public class UILayoutImpl extends SwipeBackLayout implements ILayout<UIParam>, U
      */
     @Override
     protected boolean canTryCaptureView(View child) {
-        if (isBackPress || mLastShowViewPattern == null ||
-                mLastShowViewPattern.isAnimToStart || isFinishing ||
+        if (isBackPress ||
+                mLastShowViewPattern == null ||
+                mLastShowViewPattern.interrupt ||
+                mLastShowViewPattern.isAnimToStart ||
+                isFinishing ||
                 mViewDragState != ViewDragHelper.STATE_IDLE ||
                 needDragClose) {
             return false;
@@ -392,9 +395,13 @@ public class UILayoutImpl extends SwipeBackLayout implements ILayout<UIParam>, U
                 runnableCount--;
             }
         };
-        if (isFinishing || (mLastShowViewPattern != null
-                && mLastShowViewPattern.mIView.isDialog()
-                && !iView.showOnDialog())) {
+        if (isFinishing ||
+                (mLastShowViewPattern != null && mLastShowViewPattern.interrupt) ||
+                (mLastShowViewPattern != null && mLastShowViewPattern.mIView.isDialog() && !iView.showOnDialog())
+                ) {
+            ensureLastShowViewPattern();
+
+            L.i(mLastShowViewPattern);
             //如果在对话框上,启动一个IView的时候, 切启动的iView不是对话框
             runnableCount--;
             postDelayed(new Runnable() {
@@ -748,6 +755,8 @@ public class UILayoutImpl extends SwipeBackLayout implements ILayout<UIParam>, U
             return;
         }
 
+        L.i("关闭：" + iview.getClass().getSimpleName() + " -- " + viewPattern.mIView.getClass().getSimpleName());
+
         viewPattern.mView.setEnabled(false);
 
         viewPattern.interrupt = true;//中断启动
@@ -762,10 +771,18 @@ public class UILayoutImpl extends SwipeBackLayout implements ILayout<UIParam>, U
             L.i(log);
             saveToSDCard(log);
 
+//            L.i(mLastShowViewPattern);
+//            L.i(viewPattern);
+//            L.i(mLastShowViewPattern != viewPattern);
+
+
             if (mLastShowViewPattern != null &&
                     mLastShowViewPattern != viewPattern &&
                     mLastShowViewPattern.mIView.isDialog()) {
-                L.i("等待对话框:" + mLastShowViewPattern.mIView.getClass().getSimpleName() + " 的关闭");
+                ensureLastShowViewPattern();
+
+                logLayoutInfo();
+                L.i(iview.getClass().getSimpleName() + " 等待对话框:" + mLastShowViewPattern.mIView.getClass().getSimpleName() + " 的关闭");
                 postDelayed(new Runnable() {
                     @Override
                     public void run() {
@@ -791,6 +808,19 @@ public class UILayoutImpl extends SwipeBackLayout implements ILayout<UIParam>, U
         }
     }
 
+    private void ensureLastShowViewPattern() {
+        if (mLastShowViewPattern == null) {
+            if (!mAttachViews.isEmpty()) {
+                mLastShowViewPattern = mAttachViews.lastElement();
+            }
+        } else {
+            if (mAttachViews.contains(mLastShowViewPattern)) {
+
+            } else {
+                mLastShowViewPattern = mAttachViews.lastElement();
+            }
+        }
+    }
 
     /**
      * 关闭操作被中断/取消, 需要恢复一些变量
@@ -1111,11 +1141,14 @@ public class UILayoutImpl extends SwipeBackLayout implements ILayout<UIParam>, U
      * 获取最前显示的视图信息
      */
     public ViewPattern getLastViewPattern() {
-//        if (mAttachViews.isEmpty()) {
-//            return null;
-//        }
-//        return mAttachViews.lastElement();
         return mLastShowViewPattern;
+    }
+
+    public ViewPattern getLastViewPatternInAttach() {
+        if (mAttachViews.isEmpty()) {
+            return null;
+        }
+        return mAttachViews.lastElement();
     }
 
     private void startIViewAnim(final ViewPattern oldViewPattern, final ViewPattern newViewPattern,
@@ -2117,6 +2150,7 @@ public class UILayoutImpl extends SwipeBackLayout implements ILayout<UIParam>, U
     @Override
     public boolean onInterceptTouchEvent(MotionEvent ev) {
         if (isFinishing || isStarting) {
+            L.i("拦截事件：" + ev.getActionMasked() + " isFinishing:" + isFinishing + " isStarting:" + isStarting);
             return true;
         }
         return super.onInterceptTouchEvent(ev);

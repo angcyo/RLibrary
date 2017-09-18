@@ -972,6 +972,11 @@ public abstract class UIIViewImpl implements IView {
     }
 
     @Override
+    public String toString() {
+        return super.toString() + " " + this.getClass().getSimpleName();
+    }
+
+    @Override
     public boolean needTransitionStartAnim() {
         return false;
     }

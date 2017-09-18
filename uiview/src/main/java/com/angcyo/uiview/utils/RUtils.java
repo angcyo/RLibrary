@@ -1,5 +1,6 @@
 package com.angcyo.uiview.utils;
 
+import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.app.DownloadManager;
 import android.content.Context;
@@ -51,6 +52,7 @@ import java.io.PrintWriter;
 import java.lang.reflect.Field;
 import java.math.BigDecimal;
 import java.text.DateFormat;
+import java.text.DecimalFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
@@ -289,6 +291,7 @@ public class RUtils {
      * @param context 上下文
      * @return 返回手机号码 tel number
      */
+    @SuppressLint("MissingPermission")
     public static String getTelNumber(Context context) {
         TelephonyManager tm = (TelephonyManager) context
                 .getSystemService(Context.TELEPHONY_SERVICE);
@@ -1233,29 +1236,51 @@ public class RUtils {
     /**
      * 保留小数点后几位
      */
-    public static float decimal(double value, int bitNum, boolean halfUp) {
-        BigDecimal bigDecimal = BigDecimal.valueOf(value);
+    public static String decimal(float value, int bitNum, boolean halfUp) {
+//        BigDecimal bigDecimal = new BigDecimal(value);
+//
+//        /*
+//        *         L.e("call:  -> ")
+//        L.e("call: 测试小数点0 -> ${bigDecimal.toFloat()}")
+//        L.e("call: 测试小数点2 -> ${bigDecimal.setScale(bitNum, BigDecimal.ROUND_HALF_DOWN).toFloat()}")
+//        L.e("call: 测试小数点1 -> ${bigDecimal.setScale(bitNum, BigDecimal.ROUND_CEILING).toFloat()}")
+//        L.e("call: 测试小数点1 -> ${bigDecimal.setScale(bitNum, BigDecimal.ROUND_DOWN).toFloat()}")
+//        L.e("call: 测试小数点1 -> ${bigDecimal.setScale(bitNum, BigDecimal.ROUND_FLOOR).toFloat()}")
+//        L.e("call: 测试小数点1 -> ${bigDecimal.setScale(bitNum, BigDecimal.ROUND_UP).toFloat()}")
+//        L.e("call: 测试小数点1 -> ${bigDecimal.setScale(bitNum, BigDecimal.ROUND_HALF_EVEN).toFloat()}")
+//
+//        val myformat = java.text.DecimalFormat("0.000000")
+//        val str = myformat.format(value)
+//        L.e("call 1:  -> $str")
+//        L.e("call 2:  -> ${String.format(Locale.CHINA, "%.6f", value)}")
+//        */
+//        if (halfUp) {
+//            return bigDecimal.setScale(bitNum, BigDecimal.ROUND_HALF_UP).floatValue();
+//        } else {
+//            return bigDecimal.setScale(bitNum, BigDecimal.ROUND_DOWN).floatValue();
+//        }
 
-        /*
-        *         L.e("call:  -> ")
-        L.e("call: 测试小数点0 -> ${bigDecimal.toFloat()}")
-        L.e("call: 测试小数点2 -> ${bigDecimal.setScale(bitNum, BigDecimal.ROUND_HALF_DOWN).toFloat()}")
-        L.e("call: 测试小数点1 -> ${bigDecimal.setScale(bitNum, BigDecimal.ROUND_CEILING).toFloat()}")
-        L.e("call: 测试小数点1 -> ${bigDecimal.setScale(bitNum, BigDecimal.ROUND_DOWN).toFloat()}")
-        L.e("call: 测试小数点1 -> ${bigDecimal.setScale(bitNum, BigDecimal.ROUND_FLOOR).toFloat()}")
-        L.e("call: 测试小数点1 -> ${bigDecimal.setScale(bitNum, BigDecimal.ROUND_UP).toFloat()}")
-        L.e("call: 测试小数点1 -> ${bigDecimal.setScale(bitNum, BigDecimal.ROUND_HALF_EVEN).toFloat()}")
-
-        val myformat = java.text.DecimalFormat("0.000000")
-        val str = myformat.format(value)
-        L.e("call 1:  -> $str")
-        L.e("call 2:  -> ${String.format(Locale.CHINA, "%.6f", value)}")
-        */
         if (halfUp) {
-            return bigDecimal.setScale(bitNum, BigDecimal.ROUND_UP).floatValue();
+            //四舍五入
+            StringBuilder parrern = new StringBuilder("0");
+            if (bitNum > 0) {
+                parrern.append(".");
+            }
+            for (int i = 0; i < bitNum; i++) {
+                parrern.append("0");
+            }
+            DecimalFormat format = new DecimalFormat(parrern.toString());
+            return format.format(value);
         } else {
-            return bigDecimal.setScale(bitNum, BigDecimal.ROUND_DOWN).floatValue();
-
+            StringBuilder parrern = new StringBuilder("%");
+            if (bitNum > 0) {
+                parrern.append(".");
+                parrern.append(bitNum);
+                parrern.append("f");
+                return String.format(Locale.CHINA, parrern.toString(), value);
+            } else {
+                return String.format(Locale.CHINA, "%s", value);
+            }
         }
     }
 

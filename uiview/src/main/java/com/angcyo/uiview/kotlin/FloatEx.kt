@@ -15,6 +15,6 @@ import com.angcyo.uiview.utils.RUtils
  */
 
 /**保留小数点后几位*/
-public fun Float.decimal(bitNum: Int = 2 /*小数点后几位*/, halfUp: Boolean = true /*四舍五入*/): Float {
-    return RUtils.decimal(this.toDouble(), bitNum, halfUp)
+public fun Float.decimal(bitNum: Int = 2 /*小数点后几位*/, halfUp: Boolean = true /*四舍五入*/): String {
+    return RUtils.decimal(this, bitNum, halfUp)
 }

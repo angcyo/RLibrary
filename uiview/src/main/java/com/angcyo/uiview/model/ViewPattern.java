@@ -42,10 +42,18 @@ public class ViewPattern {
 
     @Override
     public String toString() {
-        StringBuilder builder = new StringBuilder(mIView.getClass().getSimpleName());
-        builder.append(" isAnimToStart:" + isAnimToStart);
-        builder.append(" isAnimToEnd:" + isAnimToEnd);
-        builder.append(" interrupt:" + interrupt);
+        StringBuilder builder = new StringBuilder();
+        builder.append("\n");
+        builder.append(" mIView:").append(mIView);
+        builder.append("\n");
+        builder.append(" mView:").append(mView);
+        builder.append("\n");
+        builder.append(" isAnimToStart:").append(isAnimToStart);
+        builder.append("\n");
+        builder.append(" isAnimToEnd:").append(isAnimToEnd);
+        builder.append("\n");
+        builder.append(" interrupt:").append(interrupt);
+        builder.append("\n");
         return builder.toString();
     }
 
