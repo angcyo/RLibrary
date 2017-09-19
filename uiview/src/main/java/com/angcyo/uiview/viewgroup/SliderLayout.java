@@ -147,7 +147,7 @@ public class SliderLayout extends FrameLayout {
         int top = getPaddingTop();
         int childCount = getChildCount();
 
-        //计算每个item view,能够效果的高度
+        //计算每个item view,能够消耗的高度
         for (int i = 0; i < childCount; i++) {
             View childAt = getChildAt(i);
             int needOffset = (childCount - 1 - i) * DEFAULT_MAX_OFFSET;
