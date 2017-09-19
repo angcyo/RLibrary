@@ -30,3 +30,11 @@ public inline fun <T : View> UIIViewImpl.vh(id: Int): Lazy<T> {
         v<T>(id)
     }
 }
+
+public fun Float.max0() = Math.max(0f, this)
+public fun Int.max0() = Math.max(0, this)
+
+/**这个值允许的最小值*/
+public fun Float.minValue(value: Float) = Math.max(value, this)
+
+public fun Int.minValue(value: Int) = Math.max(value, this)

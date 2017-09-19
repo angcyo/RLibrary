@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <declare-styleable name="RRatingBar">
+        <!--当前评分 [1-r_rating_count]-->
+        <attr name="r_cur_rating" format="integer"/>
+        <!--总评分-->
+        <attr name="r_rating_count" format="integer"/>
+        <!--星星之间的空隙-->
+        <attr name="r_rating_space" format="dimension"/>
+        <!--最小评分-->
+        <attr name="r_min_rating" format="integer"/>
+    </declare-styleable>
+</resources>
