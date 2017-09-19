@@ -144,9 +144,21 @@ class RRatingBar(context: Context, attributeSet: AttributeSet? = null) : View(co
                 index = i + 1
             }
         }
-        if (index.minValue(minRating) != curRating) {
-            curRating = index
+
+        val oldValue = curRating
+        val value = index.minValue(minRating)
+        if (value != curRating) {
+            curRating = value
             postInvalidate()
+            onRatingChangeListener?.onRatingChange(oldValue, value)
+        }
+    }
+
+    var onRatingChangeListener: OnRatingChangeListener? = null
+
+    public abstract class OnRatingChangeListener {
+        open fun onRatingChange(from: Int, to: Int) {
+
         }
     }
 }
