@@ -21,7 +21,7 @@ import com.angcyo.uiview.kotlin.getDrawable
 class BlockSeekBar(context: Context, attributeSet: AttributeSet? = null) : View(context, attributeSet) {
 
     /**不规则高度列表*/
-    private val heightList = listOf(0.5f, 0.6f, 0.7f, 0.8f, 1f, 0.8f)
+    private val heightList = listOf(0.5f, 0.7f, 0.9f, 1.0f, 0.8f, 0.6f)
 
     private val tempRectF = RectF()
     private val clipRectF = RectF()
