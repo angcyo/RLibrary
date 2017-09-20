@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <declare-styleable name="SearchEditText">
+        <attr name="r_search_drawable" format="reference"/>
+        <attr name="r_search_tip_text" format="string"/>
+        <attr name="r_search_tip_text_size" format="dimension"/>
+        <attr name="r_search_tip_text_left_offset" format="dimension"/>
+        <attr name="r_search_tip_text_color" format="color"/>
+
+    </declare-styleable>
+</resources>

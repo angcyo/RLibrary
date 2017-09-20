@@ -228,7 +228,7 @@ public class ExEditText extends AppCompatEditText {
         this.mDecimalCount = mDecimalCount;
     }
 
-    private void initView(Context context, AttributeSet attrs) {
+    protected void initView(Context context, AttributeSet attrs) {
         mPaddingLeft = getPaddingLeft();
 
         ensurePaint();

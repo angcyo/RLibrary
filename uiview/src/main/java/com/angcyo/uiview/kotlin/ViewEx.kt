@@ -23,6 +23,12 @@ public val View.scaledDensity: Float
 public val View.density: Float
     get() = resources.displayMetrics.density
 
+public val View.viewDrawWith: Int
+    get() = measuredWidth - paddingLeft - paddingRight
+
+public val View.viewDrawHeight: Int
+    get() = measuredHeight - paddingTop - paddingBottom
+
 /**返回居中绘制文本的y坐标*/
 public fun View.getDrawCenterTextCy(paint: Paint): Float {
     val rawHeight = measuredHeight - paddingTop - paddingBottom
