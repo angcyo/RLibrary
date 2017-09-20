@@ -22,11 +22,13 @@ abstract class RAnimListener : AnimatorListenerAdapter() {
     override fun onAnimationEnd(animation: Animator?) {
         super.onAnimationEnd(animation)
         onAnimationFinish(animation)
+        onAnimationFinish(animation, false)
     }
 
     override fun onAnimationCancel(animation: Animator?) {
         super.onAnimationCancel(animation)
         onAnimationFinish(animation)
+        onAnimationFinish(animation, true)
     }
 
     override fun onAnimationPause(animation: Animator?) {
@@ -46,7 +48,12 @@ abstract class RAnimListener : AnimatorListenerAdapter() {
     }
 
     /**动画完成, 或者取消都会执行*/
+    @Deprecated("")
     open fun onAnimationFinish(animation: Animator?) {
+
+    }
+
+    open fun onAnimationFinish(animation: Animator?, cancel: Boolean) {
 
     }
 

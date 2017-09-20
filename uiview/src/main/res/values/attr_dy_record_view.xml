@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <declare-styleable name="DYRecordView">
+        <attr name="r_show_text"/>
+        <attr name="r_show_text_size"/>
+        <attr name="r_show_text_color"/>
+        <attr name="r_circle_color" format="color"/>
+        <attr name="r_circle_default_radius" format="dimension"/>
+        <attr name="r_circle_max_scale" format="float"/>
+        <attr name="r_default_circle_offset_bottom" format="dimension"/>
+    </declare-styleable>
+</resources>

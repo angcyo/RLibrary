@@ -38,3 +38,8 @@ public fun Int.max0() = Math.max(0, this)
 public fun Float.minValue(value: Float) = Math.max(value, this)
 
 public fun Int.minValue(value: Int) = Math.max(value, this)
+
+/**这个值允许的最大值*/
+public fun Float.maxValue(value: Float) = Math.min(value, this)
+
+public fun Int.maxValue(value: Int) = Math.min(value, this)
