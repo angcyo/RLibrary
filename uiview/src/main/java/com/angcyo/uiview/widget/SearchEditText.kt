@@ -27,7 +27,7 @@ class SearchEditText(context: Context, attributeSet: AttributeSet? = null) : ExE
 
     var searchTipText = "搜索一下"
     var searchTipTextSize = 14 * density
-    var searchTipTextColor = getColor(R.color.base_text_color_dark)
+    var searchTipTextColor = getColor(R.color.base_text_color_dark2)
     /**文本偏移searchDrawable的距离*/
     var searchTipTextLeftOffset = 0f
 
@@ -99,7 +99,7 @@ class SearchEditText(context: Context, attributeSet: AttributeSet? = null) : ExE
         var left = 0
         searchDrawable?.let {
             canvas.save()
-            if (isFocused) {
+            if (isFocused || !isEmpty) {
                 canvas.translate(rawPaddingLeft.toFloat() + scrollX, paddingTop.toFloat() + (viewDrawHeight - drawHeight) / 2)
                 it.draw(canvas)
             } else {
@@ -110,7 +110,7 @@ class SearchEditText(context: Context, attributeSet: AttributeSet? = null) : ExE
             canvas.restore()
         }
 
-        if (!TextUtils.isEmpty(searchTipText) && !isFocused) {
+        if (!TextUtils.isEmpty(searchTipText) && isEmpty && !isFocused) {
             canvas.save()
             canvas.translate(rawPaddingLeft + (viewDrawWith - drawWidth) / 2, paddingTop.toFloat() + (viewDrawHeight - drawHeight) / 2)
 

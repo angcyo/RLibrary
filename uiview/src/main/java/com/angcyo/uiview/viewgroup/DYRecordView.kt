@@ -156,6 +156,8 @@ class DYRecordView(context: Context, attributeSet: AttributeSet? = null) : View(
         textPaint.textSize = showTextSizeDraw
         canvas.drawText(showText, getDrawCenterTextCx(textPaint, showText), cy + textHeight(textPaint) / 2 - textPaint.descent(), textPaint)
         canvas.restore()
+
+        recordingListener()
     }
 
     override fun onTouchEvent(event: MotionEvent): Boolean {
@@ -173,6 +175,7 @@ class DYRecordView(context: Context, attributeSet: AttributeSet? = null) : View(
                     touchInAnimator?.cancel()
                     breathAnimator?.cancel()
                     reset()
+                    endRecordListener()
                 }
             }
             return gestureCompat.onTouchEvent(event)
@@ -285,6 +288,63 @@ class DYRecordView(context: Context, attributeSet: AttributeSet? = null) : View(
                 })
                 start()
             }
+        }
+        startRecordListener()
+    }
+
+    private var isRecording = false
+    private var startRecordTime = 0L
+    //开始录制
+    private fun startRecordListener() {
+        if (isRecording) {
+            return
+        }
+        isRecording = true
+        startRecordTime = System.currentTimeMillis()
+        onRecordListener?.onRecordStart()
+    }
+
+    //结束录制
+    private fun endRecordListener() {
+        if (isRecording) {
+            isRecording = false
+            val progress = getRecordProgress()
+            startRecordTime = 0L
+            onRecordListener?.onRecordEnd(progress)
+        }
+    }
+
+    //录制中
+    private var recordProgress = -1
+
+    private fun recordingListener() {
+        if (isRecording) {
+            val progress = getRecordProgress()
+            if (recordProgress != progress) {
+                recordProgress = progress
+                onRecordListener?.onRecording(progress)
+            }
+        }
+    }
+
+    private fun getRecordProgress(): Int {
+        val currentTimeMillis = System.currentTimeMillis()
+        return ((currentTimeMillis - startRecordTime) / 1000).toInt()
+    }
+
+    var onRecordListener: OnRecordListener? = null
+
+    public abstract class OnRecordListener {
+        open fun onRecordStart() {
+
+        }
+
+        open fun onRecordEnd(time: Int) {
+
+        }
+
+        open fun onRecording(time: Int /*录制了多少秒*/) {
+
         }
     }
 }

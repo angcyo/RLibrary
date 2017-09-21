@@ -8,7 +8,6 @@ import android.support.v4.util.ArrayMap;
 import android.view.View;
 import android.widget.CompoundButton;
 
-import com.angcyo.library.utils.L;
 import com.angcyo.uiview.recycler.RBaseViewHolder;
 import com.angcyo.uiview.recycler.RRecyclerView;
 import com.angcyo.uiview.utils.Reflect;
@@ -54,6 +53,11 @@ public abstract class RModelAdapter<T> extends RBaseAdapter<T> {
 
     public RModelAdapter(Context context, List<T> datas) {
         super(context, datas);
+    }
+
+    public RModelAdapter(Context context, int model) {
+        super(context);
+        mModel = model;
     }
 
     public static void checkedButton(CompoundButton compoundButton, boolean checked) {
@@ -546,6 +550,14 @@ public abstract class RModelAdapter<T> extends RBaseAdapter<T> {
 
     public void removeSelectorPosition(int position) {
         mSelector.remove(position);
+        notifySelectorChange();
+    }
+
+    /**
+     * 清空所有选择
+     */
+    public void clearSelectorPosition() {
+        mSelector.clear();
         notifySelectorChange();
     }
 

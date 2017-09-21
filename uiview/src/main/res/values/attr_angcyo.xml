@@ -145,6 +145,7 @@
             <enum name="ROUND_BORDER" value="3"/>
             <enum name="ROUND_BORDER_FILL" value="4"/>
         </attr>
+        <attr name="r_button_left_drawable" format="reference"/>
     </declare-styleable>
 
     <declare-styleable name="RRangeBar">

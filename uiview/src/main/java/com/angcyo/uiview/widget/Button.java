@@ -3,7 +3,9 @@ package com.angcyo.uiview.widget;
 import android.content.Context;
 import android.content.res.ColorStateList;
 import android.content.res.TypedArray;
+import android.graphics.Canvas;
 import android.graphics.Color;
+import android.graphics.drawable.Drawable;
 import android.util.AttributeSet;
 import android.view.Gravity;
 
@@ -44,6 +46,11 @@ public class Button extends RTextView {
 
     int mButtonStyle = DEFAULT;
 
+    /**
+     * 由于系统的drawableLeft, 并不会显示在居中文本的左边, 所以自定义此属性
+     */
+    Drawable textLeftDrawable;
+
     public Button(Context context) {
         this(context, null);
     }
@@ -52,6 +59,10 @@ public class Button extends RTextView {
         super(context, attrs);
         TypedArray typedArray = context.obtainStyledAttributes(attrs, R.styleable.Button);
         mButtonStyle = typedArray.getInt(R.styleable.Button_r_button_style, DEFAULT);
+        textLeftDrawable = typedArray.getDrawable(R.styleable.Button_r_button_left_drawable);
+        if (textLeftDrawable != null) {
+            textLeftDrawable.setBounds(0, 0, textLeftDrawable.getIntrinsicWidth(), textLeftDrawable.getIntrinsicHeight());
+        }
         typedArray.recycle();
 
         initButton();
@@ -119,6 +130,28 @@ public class Button extends RTextView {
         if ((heightMode == MeasureSpec.AT_MOST || heightMode == MeasureSpec.UNSPECIFIED) &&
                 getPaddingTop() == 0 && getPaddingBottom() == 0) {
             setMeasuredDimension(getMeasuredWidth(), getResources().getDimensionPixelOffset(R.dimen.default_button_height));
+        }
+    }
+
+    @Override
+    protected void onDraw(Canvas canvas) {
+        super.onDraw(canvas);
+        if (textLeftDrawable != null) {
+            canvas.save();
+//            Layout layout = getLayout();
+            //layout.getLineStart()
+
+//            canvas.translate(rawPaddingLeft + (viewDrawWith - drawWidth) / 2, paddingTop.toFloat() + (viewDrawHeight - drawHeight) / 2)
+
+            canvas.translate(getMeasuredWidth() / 2 -
+                            ViewExKt.textWidth(this, String.valueOf(getText())) / 2 -
+                            textLeftDrawable.getIntrinsicWidth() -
+                            getCompoundDrawablePadding(),
+                    getMeasuredHeight() / 2 - textLeftDrawable.getIntrinsicHeight() / 2);
+
+            textLeftDrawable.draw(canvas);
+
+            canvas.restore();
         }
     }
 }

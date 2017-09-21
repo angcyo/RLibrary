@@ -77,30 +77,46 @@ public class TitleBarLayout extends FrameLayout {
     @Override
     protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
         int heightMode = MeasureSpec.getMode(heightMeasureSpec);
+        int widthMode = MeasureSpec.getMode(widthMeasureSpec);
         int heightSize = MeasureSpec.getSize(heightMeasureSpec);
+        int widthSize = MeasureSpec.getSize(widthMeasureSpec);
         int statusBarHeight = getResources().getDimensionPixelSize(R.dimen.status_bar_height);
         int actionBarHeight = getResources().getDimensionPixelSize(R.dimen.action_bar_height);
+        int topHeight = 0;
 
         if (fitActionBar && enablePadding) {
-            statusBarHeight = getResources().getDimensionPixelSize(R.dimen.title_bar_height);
+            topHeight = statusBarHeight + actionBarHeight;
         } else if (enablePadding) {
-
+            topHeight = statusBarHeight;
         } else if (fitActionBar) {
-            statusBarHeight = actionBarHeight;
+            topHeight = actionBarHeight;
         } else {
-            statusBarHeight = 0;
+            topHeight = 0;
         }
 
-        setPadding(getPaddingLeft(), statusBarHeight, getPaddingRight(), getPaddingBottom());
+        setPadding(getPaddingLeft(), topHeight, getPaddingRight(), getPaddingBottom());
         if (maxHeight > 0) {
-            maxHeight += statusBarHeight;
+            maxHeight += topHeight;
         }
-        heightSize += statusBarHeight;
+        heightSize += topHeight;
 
         if (maxHeight > 0) {
             super.onMeasure(widthMeasureSpec, MeasureSpec.makeMeasureSpec(Math.min(maxHeight, heightSize), heightMode));
         } else {
-            super.onMeasure(widthMeasureSpec, MeasureSpec.makeMeasureSpec(heightSize, heightMode));
+            if (heightMode == MeasureSpec.EXACTLY) {
+                int childWidth = widthSize;
+                if (getChildCount() > 0) {
+                    getChildAt(0).measure(widthMeasureSpec, MeasureSpec.makeMeasureSpec(heightSize - 2 * topHeight, heightMode));
+                    childWidth = getChildAt(0).getMeasuredWidth();
+                }
+                if (widthMode == MeasureSpec.EXACTLY) {
+                    setMeasuredDimension(widthSize, heightSize);
+                } else {
+                    setMeasuredDimension(childWidth, heightSize);
+                }
+            } else {
+                super.onMeasure(widthMeasureSpec, MeasureSpec.makeMeasureSpec(heightSize, heightMode));
+            }
         }
     }
 }

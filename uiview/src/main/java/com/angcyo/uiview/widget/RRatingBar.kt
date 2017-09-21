@@ -43,6 +43,8 @@ class RRatingBar(context: Context, attributeSet: AttributeSet? = null) : View(co
         curRating = typedArray.getInteger(R.styleable.RRatingBar_r_cur_rating, curRating)
         ratingNum = typedArray.getInteger(R.styleable.RRatingBar_r_rating_count, ratingNum)
         minRating = typedArray.getInteger(R.styleable.RRatingBar_r_min_rating, minRating)
+        ratingNormalDrawable = typedArray.getDrawable(R.styleable.RRatingBar_r_normal_rating)
+        ratingSelectorDrawable = typedArray.getDrawable(R.styleable.RRatingBar_r_selected_rating)
         ratingSpace = typedArray.getDimensionPixelOffset(R.styleable.RRatingBar_r_rating_space, ratingSpace.toInt()).toFloat()
         typedArray.recycle()
     }

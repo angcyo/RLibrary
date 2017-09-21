@@ -188,6 +188,7 @@ public abstract class RBaseAdapter<T> extends RecyclerView.Adapter<RBaseViewHold
                 if (mIShowState != null) {
                     mIShowState.setShowState(mShowState);
                 }
+                onBindShowStateView(mIShowState, mShowState);
             } else if (mEnableLoadMore && isLast(position)) {
                 /**如果第一个就是加载更多的布局, 需要调用加载更多么?*/
                 onBindLoadMore(position);
@@ -204,6 +205,13 @@ public abstract class RBaseAdapter<T> extends RecyclerView.Adapter<RBaseViewHold
             L.e("请及时处理此处BUG.(RBaseAdapter.java:192)#onBindViewHolder");
             e.printStackTrace();
         }
+    }
+
+    /**
+     * 不同的状态, 显示不同的布局
+     */
+    protected void onBindShowStateView(IShowState iShowState, int showState) {
+
     }
 
     @Override

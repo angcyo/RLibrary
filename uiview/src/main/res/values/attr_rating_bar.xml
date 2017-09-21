@@ -9,5 +9,11 @@
         <attr name="r_rating_space" format="dimension"/>
         <!--最小评分-->
         <attr name="r_min_rating" format="integer"/>
+
+        <attr name="r_normal_rating" format="reference"/>
+
+        <attr name="r_selected_rating" format="reference"/>
+
+
     </declare-styleable>
 </resources>

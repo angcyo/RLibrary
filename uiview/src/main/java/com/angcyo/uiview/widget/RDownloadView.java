@@ -45,23 +45,27 @@ public class RDownloadView extends AppCompatImageView implements Runnable {
 
     public RDownloadView(Context context) {
         super(context);
-        initView();
+        initView(context);
     }
 
     public RDownloadView(Context context, AttributeSet attrs) {
         super(context, attrs);
-        initView();
+        initView(context);
     }
 
     public RDownloadView(Context context, AttributeSet attrs, int defStyleAttr) {
         super(context, attrs, defStyleAttr);
-        initView();
+        initView(context);
     }
 
-    private void initView() {
+    private void initView(Context context) {
         normalDrawable = ContextCompat.getDrawable(getContext(), R.drawable.base_icon_download);
         finishDrawable = ContextCompat.getDrawable(getContext(), R.drawable.base_icon_yixiazai);
-        finishDrawable.mutate().setColorFilter(SkinHelper.getSkin().getThemeSubColor(), PorterDuff.Mode.MULTIPLY);
+        if (isInEditMode()) {
+            SkinHelper.init(context);
+        } else {
+            finishDrawable.mutate().setColorFilter(SkinHelper.getSkin().getThemeSubColor(), PorterDuff.Mode.MULTIPLY);
+        }
 
         normalDrawable.setBounds(0, 0, normalDrawable.getIntrinsicWidth(), normalDrawable.getIntrinsicHeight());
         finishDrawable.setBounds(0, 0, normalDrawable.getIntrinsicWidth(), normalDrawable.getIntrinsicHeight());
@@ -83,12 +87,12 @@ public class RDownloadView extends AppCompatImageView implements Runnable {
 
         int heightSize = MeasureSpec.getSize(heightMeasureSpec);
         int heightMode = MeasureSpec.getMode(heightMeasureSpec);
-        if (widthMode == MeasureSpec.AT_MOST || widthMode== MeasureSpec.UNSPECIFIED) {
+        if (widthMode == MeasureSpec.AT_MOST || widthMode == MeasureSpec.UNSPECIFIED) {
             widthSize = Math.max(normalDrawable.getIntrinsicWidth(),
                     finishDrawable.getIntrinsicWidth()) + getPaddingLeft() + getPaddingRight();
         }
 
-        if (heightMode == MeasureSpec.AT_MOST || heightMode== MeasureSpec.UNSPECIFIED) {
+        if (heightMode == MeasureSpec.AT_MOST || heightMode == MeasureSpec.UNSPECIFIED) {
             heightSize = Math.max(normalDrawable.getIntrinsicHeight(),
                     finishDrawable.getIntrinsicHeight()) + getPaddingBottom() + getPaddingTop();
         }
