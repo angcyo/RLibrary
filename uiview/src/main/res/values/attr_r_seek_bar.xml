@@ -1,14 +1,14 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <declare-styleable name="RSeekBar">
-        <attr name="r_cur_progress" format="integer"/>
-        <attr name="r_second_progress" format="integer"/>
+        <attr name="r_cur_progress"/>
+        <attr name="r_second_progress"/>
         <attr name="r_thumb_type" format="enum">
             <enum name="CIRCLE" value="1"/>
             <enum name="DEFAULT" value="0"/>
         </attr>
         <attr name="r_track_color" format="color"/>
-        <attr name="r_second_progress_color" format="color"/>
+        <attr name="r_second_progress_color"/>
         <attr name="r_track_bg_color" format="color"/>
         <attr name="r_thumb_color" format="color"/>
         <attr name="r_thumb_width" format="dimension"/>
