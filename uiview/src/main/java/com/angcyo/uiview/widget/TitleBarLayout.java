@@ -107,6 +107,9 @@ public class TitleBarLayout extends FrameLayout {
             if (heightMode == MeasureSpec.EXACTLY) {
                 int childWidth = widthSize;
                 if (getChildCount() > 0) {
+                    if (heightSize == ScreenUtil.screenHeight) {
+                        heightSize -= topHeight;
+                    }
                     getChildAt(0).measure(widthMeasureSpec, MeasureSpec.makeMeasureSpec(heightSize, heightMode));
                     childWidth = getChildAt(0).getMeasuredWidth();
                 }
