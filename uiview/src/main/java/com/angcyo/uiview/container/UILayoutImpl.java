@@ -267,8 +267,12 @@ public class UILayoutImpl extends SwipeBackLayout implements ILayout<UIParam>, U
     @Override
     public void onLastViewReShow(Bundle bundle) {
         if (mLastShowViewPattern != null) {
-            mLastShowViewPattern.mView.setVisibility(VISIBLE);
-            mLastShowViewPattern.mIView.onViewReShow(bundle);
+            if (mLastShowViewPattern.mView != null) {
+                mLastShowViewPattern.mView.setVisibility(VISIBLE);
+            }
+            if (mLastShowViewPattern.mIView != null) {
+                mLastShowViewPattern.mIView.onViewReShow(bundle);
+            }
         }
     }
 
