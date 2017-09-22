@@ -179,18 +179,23 @@ public abstract class UIBaseView extends UIIViewImpl {
                 mUITitleBarContainer.setPadding(0, 0, 0, 0);
             }
 
+            if (titleBarPattern.titleBarPaddingTop > 0) {
+                mUITitleBarContainer.setPadding(mUITitleBarContainer.getPaddingLeft(),
+                        mUITitleBarContainer.getPaddingTop() + titleBarPattern.titleBarPaddingTop,
+                        mUITitleBarContainer.getPaddingRight(), mUITitleBarContainer.getPaddingBottom());
+            }
+
             mBaseRootLayout.addView(mUITitleBarContainer, new ViewGroup.LayoutParams(-1, -2));
 
             mBaseRootLayout.setFloatingTitleView(titleBarPattern.isFloating);
 
             if (titleBarPattern.isFloating) {
                 if (titleBarPattern.isFixContentHeight) {
-                    mBaseContentRootLayout.setPadding(mBaseContentRootLayout.getPaddingLeft(),
-                            mBaseContentRootLayout.getPaddingTop() +
-                                    (titleBarPattern.isFixStatusHeight ?
-                                            mActivity.getResources().getDimensionPixelOffset(R.dimen.title_bar_height) :
-                                            mActivity.getResources().getDimensionPixelOffset(R.dimen.action_bar_height)),
-                            mBaseContentRootLayout.getPaddingRight(), mBaseContentRootLayout.getPaddingBottom());
+                    mBaseContentRootLayout.setPadding(
+                            mBaseContentRootLayout.getPaddingLeft(),
+                            (mBaseContentRootLayout.getPaddingTop() + (titleBarPattern.isFixStatusHeight ? mActivity.getResources().getDimensionPixelOffset(R.dimen.title_bar_height) : mActivity.getResources().getDimensionPixelOffset(R.dimen.action_bar_height))) + titleBarPattern.titleBarPaddingTop,
+                            mBaseContentRootLayout.getPaddingRight(),
+                            mBaseContentRootLayout.getPaddingBottom());
                 }
             } else {
             }

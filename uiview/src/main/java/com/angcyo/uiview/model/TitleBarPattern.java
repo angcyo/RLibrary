@@ -61,6 +61,11 @@ public class TitleBarPattern {
      * 处理状态栏的高度
      */
     public boolean isFixStatusHeight = true;
+
+    /**
+     * 标题栏的PaddingTop
+     */
+    public int titleBarPaddingTop = 0;
     /**
      * 标题
      */
@@ -158,6 +163,11 @@ public class TitleBarPattern {
         if (mTitleSize != -1) {
             textView.setTextSize(mTitleSize);
         }
+        return this;
+    }
+
+    public TitleBarPattern setTitleBarPaddingTop(int titleBarPaddingTop) {
+        this.titleBarPaddingTop = titleBarPaddingTop;
         return this;
     }
 

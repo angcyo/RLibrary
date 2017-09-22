@@ -17,8 +17,11 @@
 package com.liulishuo.filedownloader.services;
 
 
+import com.liulishuo.filedownloader.model.ConnectionModel;
 import com.liulishuo.filedownloader.model.FileDownloadModel;
 import com.liulishuo.filedownloader.model.FileDownloadStatus;
+import com.liulishuo.filedownloader.util.FileDownloadHelper;
+import com.liulishuo.filedownloader.util.FileDownloadUtils;
 
 import java.util.List;
 
@@ -32,8 +35,9 @@ import java.util.List;
  * since that data is no longer available for resumption of its task pass.
  *
  * @see DefaultDatabaseImpl
- * @see FileDownloadMgr#isBreakpointAvailable(int, FileDownloadModel)
+ * @see FileDownloadUtils#isBreakpointAvailable(int, FileDownloadModel)
  */
+@SuppressWarnings("UnusedParameters")
 public interface FileDownloadDatabase {
 
     /**
@@ -42,6 +46,44 @@ public interface FileDownloadDatabase {
      * @param id the download id.
      */
     FileDownloadModel find(final int id);
+
+    /**
+     * Find the connection model which download identify is {@code id}
+     *
+     * @param id the download id.
+     */
+    List<ConnectionModel> findConnectionModel(int id);
+
+    /**
+     * Delete all connection model store on database through the download id.
+     *
+     * @param id the download id.
+     */
+    void removeConnections(int id);
+
+    /**
+     * Insert the {@code model} to connection table.
+     *
+     * @param model the connection model.
+     */
+    void insertConnectionModel(ConnectionModel model);
+
+    /**
+     * Update the currentOffset with {@code currentOffset} which id is {@code id}, index is
+     * {@code index}
+     *
+     * @param id            the download id.
+     * @param index         the connection index.
+     * @param currentOffset the current offset.
+     */
+    void updateConnectionModel(int id, int index, long currentOffset);
+
+    /**
+     * Update the count of connection.
+     *
+     * @param count the connection count.
+     */
+    void updateConnectionCount(int id, int count);
 
     /**
      * Insert the model to the database.
@@ -58,13 +100,6 @@ public interface FileDownloadDatabase {
     void update(final FileDownloadModel downloadModel);
 
     /**
-     * Update the batch of datum compare to the {@code downloadModelList}
-     *
-     * @param downloadModelList the list of model.
-     */
-    void update(final List<FileDownloadModel> downloadModelList);
-
-    /**
      * Remove the model which identify is {@code id}.
      *
      * @param id the download id.
@@ -77,62 +112,115 @@ public interface FileDownloadDatabase {
      */
     void clear();
 
+
+    /**
+     * Update when the old one is overdue.
+     */
+    void updateOldEtagOverdue(int id, String newEtag, long sofar, long total, int connectionCount);
+
     /**
      * Update the data because of the download status alternative to {@link FileDownloadStatus#connected}.
      *
-     * @param model    the data in the model will be updated.
+     * @param id       the download id.
      * @param total    the new total bytes.
-     * @param etag     the new etag.
-     * @param fileName the new file name.
+     * @param etag     the new etag. this value will be {@code null} when we can't find it on response header.
+     * @param filename the new file name. this value will be {@code null} when its no need to store.
      */
-    void updateConnected(final FileDownloadModel model, final long total, final String etag,
-                         final String fileName);
+    void updateConnected(int id, long total, String etag, String filename);
 
     /**
-     * Update the data because of the download status alternative to {@link FileDownloadStatus#progress}.
+     * Update the sofar bytes with the status {@code progress}, so don't forget to store the
+     * {@link FileDownloadStatus#progress} too.
      *
-     * @param model the data in the model will be updated.
-     * @param soFar the new so far bytes.
+     * @param sofarBytes the current sofar bytes.
      */
-    void updateProgress(final FileDownloadModel model, final long soFar);
+    void updateProgress(int id, long sofarBytes);
 
     /**
      * Update the data because of the download status alternative to {@link FileDownloadStatus#error}.
      *
-     * @param model     the data in the model will be updated.
+     * @param id        the download id.
      * @param throwable the new exception.
      * @param sofar     the new so far bytes.
      */
-    void updateError(final FileDownloadModel model, final Throwable throwable, final long sofar);
+    void updateError(int id, Throwable throwable, long sofar);
 
     /**
      * Update the data because of the download status alternative to {@link FileDownloadStatus#retry}.
      *
-     * @param model     the data in the model will be updated.
+     * @param id        the download id.
      * @param throwable the new exception.
      */
-    void updateRetry(final FileDownloadModel model, final Throwable throwable);
+    void updateRetry(int id, Throwable throwable);
 
     /**
      * Update the data because of the download status alternative to {@link FileDownloadStatus#completed}.
+     * The latest version will remove model from DB.
      *
-     * @param model the data in the model will be updated.
+     * @param id    the download id.
      * @param total the new total bytes.
      */
-    void updateComplete(final FileDownloadModel model, final long total);
+    void updateCompleted(int id, final long total);
 
     /**
      * Update the data because of the download status alternative to {@link FileDownloadStatus#paused}.
      *
-     * @param model the data in the model will be updated.
+     * @param id    the download id.
      * @param sofar the new so far bytes.
      */
-    void updatePause(final FileDownloadModel model, final long sofar);
+    void updatePause(int id, final long sofar);
 
     /**
      * Update the data because of the download status alternative to {@link FileDownloadStatus#pending}.
      *
-     * @param model the data in the model will be updated.
+     * @param id the download id.
      */
-    void updatePending(final FileDownloadModel model);
+    void updatePending(int id);
+
+    /**
+     * Get the maintainer for the database, this maintainer will be used when the database is initializing.
+     * <p>
+     * The maintainer will return all data on the database.
+     * <p>
+     * Demo: {@link com.liulishuo.filedownloader.services.DefaultDatabaseImpl.Maintainer}
+     *
+     * @return the maintainer for maintain the database.
+     */
+    Maintainer maintainer();
+
+    /**
+     * the maintainer for the database, this maintainer will be used when the database is initializing.
+     */
+    @SuppressWarnings("EmptyMethod")
+    interface Maintainer extends Iterable<FileDownloadModel> {
+        /**
+         * invoke this method when the operation for maintain is finished.
+         */
+        void onFinishMaintain();
+
+        /**
+         * invoke this method when the {@code model} is invalid and has been removed.
+         *
+         * @param model the removed invalid model.
+         */
+        void onRemovedInvalidData(FileDownloadModel model);
+
+        /**
+         * invoke this method when the {@code model} is valid to save and has been refreshed.
+         *
+         * @param model the refreshed valid model.
+         */
+        void onRefreshedValidData(FileDownloadModel model);
+
+        /**
+         * invoke this method when the {@link FileDownloadModel#id} is changed because of the
+         * different {@link FileDownloadHelper.IdGenerator}, which generate the new id for the task.
+         * <p>
+         * tips: you need to update the filedownloader-table and the connection-table.
+         *
+         * @param oldId          the old id for the {@code modelWithNewId}
+         * @param modelWithNewId the model with the new id.
+         */
+        void changeFileDownloadModelId(int oldId, FileDownloadModel modelWithNewId);
+    }
 }

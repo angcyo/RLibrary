@@ -605,6 +605,7 @@ public interface BaseDownloadTask {
         /**
          * @return {@code true} if the task has already finished.
          */
+        @SuppressWarnings("BooleanMethodIsAlwaysInverted")
         boolean isOver();
 
         /**
@@ -665,6 +666,13 @@ public interface BaseDownloadTask {
          * @return the object as a lock for synchronized with the pause area.
          */
         Object getPauseLock();
+
+        /**
+         * Whether contain finish listener or not.
+         *
+         * @return {@code true} if there is finish listener on the task.
+         */
+        boolean isContainFinishListener();
     }
 
     /**

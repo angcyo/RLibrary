@@ -83,6 +83,7 @@ public class TitleBarLayout extends FrameLayout {
         int statusBarHeight = getResources().getDimensionPixelSize(R.dimen.status_bar_height);
         int actionBarHeight = getResources().getDimensionPixelSize(R.dimen.action_bar_height);
         int topHeight = 0;
+        int viewHeight = 0;
 
         if (fitActionBar && enablePadding) {
             topHeight = statusBarHeight + actionBarHeight;
@@ -98,24 +99,24 @@ public class TitleBarLayout extends FrameLayout {
         if (maxHeight > 0) {
             maxHeight += topHeight;
         }
-        heightSize += topHeight;
 
         if (maxHeight > 0) {
-            super.onMeasure(widthMeasureSpec, MeasureSpec.makeMeasureSpec(Math.min(maxHeight, heightSize), heightMode));
+            super.onMeasure(widthMeasureSpec, MeasureSpec.makeMeasureSpec(Math.min(maxHeight, heightSize + topHeight), heightMode));
         } else {
+            viewHeight = heightSize + topHeight;
             if (heightMode == MeasureSpec.EXACTLY) {
                 int childWidth = widthSize;
                 if (getChildCount() > 0) {
-                    getChildAt(0).measure(widthMeasureSpec, MeasureSpec.makeMeasureSpec(heightSize - 2 * topHeight, heightMode));
+                    getChildAt(0).measure(widthMeasureSpec, MeasureSpec.makeMeasureSpec(heightSize, heightMode));
                     childWidth = getChildAt(0).getMeasuredWidth();
                 }
                 if (widthMode == MeasureSpec.EXACTLY) {
-                    setMeasuredDimension(widthSize, heightSize);
+                    setMeasuredDimension(widthSize, viewHeight);
                 } else {
-                    setMeasuredDimension(childWidth, heightSize);
+                    setMeasuredDimension(childWidth, viewHeight);
                 }
             } else {
-                super.onMeasure(widthMeasureSpec, MeasureSpec.makeMeasureSpec(heightSize, heightMode));
+                super.onMeasure(widthMeasureSpec, MeasureSpec.makeMeasureSpec(viewHeight, heightMode));
             }
         }
     }

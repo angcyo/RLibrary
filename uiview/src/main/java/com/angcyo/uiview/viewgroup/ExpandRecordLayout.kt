@@ -50,6 +50,9 @@ class ExpandRecordLayout(context: Context, attributeSet: AttributeSet? = null) :
     /**所有child View的高度*/
     private var childHeight: Int = 0
 
+    /**是否绘制圆圈, 如果不绘制, 就是标准的底部折叠, 展开布局*/
+    var drawCircle = true
+
     init {
         val typedArray = context.obtainStyledAttributes(attributeSet, R.styleable.ExpandRecordLayout)
         circleMaxOffset = typedArray.getDimensionPixelOffset(R.styleable.ExpandRecordLayout_r_expand_record_circle_max_offset, circleMaxOffset.toInt()).toFloat()
@@ -379,50 +382,54 @@ class ExpandRecordLayout(context: Context, attributeSet: AttributeSet? = null) :
 
     override fun dispatchDraw(canvas: Canvas) {
         super.dispatchDraw(canvas)
-        // canvas.drawColor(Color.RED)
-        val cx = measuredWidth / 2
-        val cr = circleDrawRadius
-        val cy = measuredHeight - childHeight - cr - circleOffset
+        if (drawCircle) {
+            // canvas.drawColor(Color.RED)
+            val cx = measuredWidth / 2
+            val cr = circleDrawRadius
+            val cy = measuredHeight - childHeight - cr - circleOffset
 
-        paint.style = Paint.Style.FILL_AND_STROKE
-        paint.strokeWidth = 0f
-
-        //绘制外圈
-        outCircleRect.set(cx - outCircleDrawRadius * outCircleScale,
-                cy - outCircleDrawRadius * outCircleScale,
-                cx + outCircleDrawRadius * outCircleScale,
-                cy + outCircleDrawRadius * outCircleScale)
-        paint.color = outCircleColor
-        canvas.drawCircle(cx.toFloat(), cy, outCircleDrawRadius * outCircleScale, paint)
-
-        //绘制内圈
-        circleRect.set((cx - cr).toInt(), (cy - cr).toInt(), (cx + cr).toInt(), (cy + cr).toInt())
-        paint.color = circleColor
-        canvas.drawCircle(cx.toFloat(), cy, cr * circleScale, paint)
-
-        //绘制进度
-        if (isLongPress) {
-            paint.style = Paint.Style.STROKE
-            paint.color = circleColor
-
-            paint.strokeWidth = 10 * density
-            outCircleRect.inset(progressWidth / 2, progressWidth / 2)
-
+            paint.style = Paint.Style.FILL_AND_STROKE
             paint.strokeWidth = 0f
-            paint.color = progressColor
 
-            //绘制进度文本
-            val time = "${(progressAnimator.currentPlayTime / 1000.0).toInt()} s"
-            canvas.drawText(time, cx - paint.measureText(time) / 2, outCircleRect.top - textOffset, paint)
+            //绘制外圈
+            outCircleRect.set(cx - outCircleDrawRadius * outCircleScale,
+                    cy - outCircleDrawRadius * outCircleScale,
+                    cx + outCircleDrawRadius * outCircleScale,
+                    cy + outCircleDrawRadius * outCircleScale)
+            paint.color = outCircleColor
+            canvas.drawCircle(cx.toFloat(), cy, outCircleDrawRadius * outCircleScale, paint)
 
-            //进度的宽度
-            paint.strokeWidth = progressWidth
-            canvas.drawArc(outCircleRect, -90f, progress, false, paint)
+            //绘制内圈
+            circleRect.set((cx - cr).toInt(), (cy - cr).toInt(), (cx + cr).toInt(), (cy + cr).toInt())
+            paint.color = circleColor
+            canvas.drawCircle(cx.toFloat(), cy, cr * circleScale, paint)
+
+            //绘制进度
+            if (isLongPress) {
+                paint.style = Paint.Style.STROKE
+                paint.color = circleColor
+
+                paint.strokeWidth = 10 * density
+                outCircleRect.inset(progressWidth / 2, progressWidth / 2)
+
+                paint.strokeWidth = 0f
+                paint.color = progressColor
+
+                //绘制进度文本
+                val time = "${(progressAnimator.currentPlayTime / 1000.0).toInt()} s"
+                canvas.drawText(time, cx - paint.measureText(time) / 2, outCircleRect.top - textOffset, paint)
+
+                //进度的宽度
+                paint.strokeWidth = progressWidth
+                canvas.drawArc(outCircleRect, -90f, progress, false, paint)
+            }
         }
     }
 
     override fun scrollTo(x: Int, y: Int) {
         super.scrollTo(x, y)
+        val oldState = state
+
         state = when (y) {
             0 -> {
                 if (visibility == View.INVISIBLE) {
@@ -437,6 +444,12 @@ class ExpandRecordLayout(context: Context, attributeSet: AttributeSet? = null) :
                 STATE_CLOSE
             }
             else -> STATE_SCROLL_ING
+        }
+
+        listener?.let {
+            if (oldState != state) {
+                it.onExpandStateChange(oldState, state)
+            }
         }
     }
 
@@ -476,10 +489,25 @@ class ExpandRecordLayout(context: Context, attributeSet: AttributeSet? = null) :
         const val MIN_SCALE = 0.5f
     }
 
-    interface OnRecordListener {
-        fun onTick(layout: ExpandRecordLayout)
-        fun onRecordStart()
-        fun onRecording(progress: Int)
-        fun onRecordEnd(progress: Int)
+    public abstract class OnRecordListener {
+        open fun onTick(layout: ExpandRecordLayout) {
+
+        }
+
+        open fun onRecordStart() {
+
+        }
+
+        open fun onRecording(progress: Int) {
+
+        }
+
+        open fun onRecordEnd(progress: Int) {
+
+        }
+
+        open fun onExpandStateChange(fromState: Int, toState: Int) {
+
+        }
     }
 }

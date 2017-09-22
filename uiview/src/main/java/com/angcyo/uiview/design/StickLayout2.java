@@ -315,11 +315,13 @@ public class StickLayout2 extends RelativeLayout {
                 downY = moveY;
                 downX = moveX;
 
-                if (Math.abs(offsetX) - Math.abs(offsetY) >
-                        ViewConfiguration.get(getContext()).getScaledTouchSlop()) {
+                int touchSlop = ViewConfiguration.get(getContext()).getScaledTouchSlop();
+
+                if (Math.abs(offsetX) - Math.abs(offsetY) > 0
+                        /*ViewConfiguration.get(getContext()).getScaledTouchSlop()*/) {
                     mWantV = false;
-                } else if (Math.abs(offsetY) - Math.abs(offsetX) >
-                        ViewConfiguration.get(getContext()).getScaledTouchSlop()) {
+                } else if (Math.abs(offsetY) - Math.abs(offsetX) > 0
+                        /*ViewConfiguration.get(getContext()).getScaledTouchSlop()*/) {
                     mWantV = true;
                 } else {
                     if (isFirst) {
@@ -328,13 +330,17 @@ public class StickLayout2 extends RelativeLayout {
                 }
 
                 boolean first = isFirst;
-                isFirst = false;
+                if (Math.abs(offsetX) >= touchSlop || Math.abs(offsetY) >= touchSlop) {
+                    isFirst = false;
+                }
 
                 //L.e("dispatchTouchEvent() -> " + offsetX + " " + offsetY + " w:" + wantV + "  f:" + first);
 
                 if (first) {
                     if (!mWantV) {
-                        handleTouch = false;
+                        if (Math.abs(offsetX) >= touchSlop || Math.abs(offsetY) >= touchSlop) {
+                            handleTouch = false;
+                        }
                         break;
                     }
                 } else {

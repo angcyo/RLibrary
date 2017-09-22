@@ -18,6 +18,7 @@ import com.angcyo.uiview.kotlin.getDrawCenterTextCx
 import com.angcyo.uiview.kotlin.maxValue
 import com.angcyo.uiview.kotlin.textHeight
 import com.angcyo.uiview.resources.RAnimListener
+import com.angcyo.uiview.skin.SkinHelper
 
 /**
  * Copyright (C) 2016,深圳市红鸟网络科技股份有限公司 All rights reserved.
@@ -64,6 +65,11 @@ class DYRecordView(context: Context, attributeSet: AttributeSet? = null) : View(
         }
         showTextSize = typedArray.getDimensionPixelOffset(R.styleable.DYRecordView_r_show_text_size, showTextSize.toInt()).toFloat()
         showTextColor = typedArray.getColor(R.styleable.DYRecordView_r_show_text_color, showTextColor)
+        if (isInEditMode) {
+            circleColor = Color.RED
+        } else {
+            circleColor = SkinHelper.getSkin().themeSubColor
+        }
         circleColor = typedArray.getColor(R.styleable.DYRecordView_r_circle_color, circleColor)
         circleDefaultRadius = typedArray.getDimensionPixelOffset(R.styleable.DYRecordView_r_circle_default_radius, circleDefaultRadius.toInt()).toFloat()
         circleMaxScale = typedArray.getFloat(R.styleable.DYRecordView_r_circle_max_scale, circleMaxScale)
@@ -166,19 +172,27 @@ class DYRecordView(context: Context, attributeSet: AttributeSet? = null) : View(
         } else {
             when (event.actionMasked) {
                 MotionEvent.ACTION_CANCEL, MotionEvent.ACTION_UP -> {
-                    drawEndCX = drawCX
-                    drawEndCY = drawCY
-                    circleDrawEndRadius = circleDrawRadius
-                    circleInnerDrawEndScale = circleInnerDrawScale
-                    showTextSizeDrawEnd = showTextSizeDraw
-
-                    touchInAnimator?.cancel()
-                    breathAnimator?.cancel()
-                    reset()
-                    endRecordListener()
+                    endRecord()
                 }
             }
             return gestureCompat.onTouchEvent(event)
+        }
+    }
+
+    /**调用此方法, 结束录制*/
+    fun endRecord(notify: Boolean = true) {
+        drawEndCX = drawCX
+        drawEndCY = drawCY
+        circleDrawEndRadius = circleDrawRadius
+        circleInnerDrawEndScale = circleInnerDrawScale
+        showTextSizeDrawEnd = showTextSizeDraw
+
+        touchInAnimator?.cancel()
+        breathAnimator?.cancel()
+        reset()
+
+        if (notify) {
+            endRecordListener()
         }
     }
 
@@ -310,7 +324,7 @@ class DYRecordView(context: Context, attributeSet: AttributeSet? = null) : View(
             isRecording = false
             val progress = getRecordProgress()
             startRecordTime = 0L
-            onRecordListener?.onRecordEnd(progress)
+            onRecordListener?.onRecordEnd(progress[0], progress[1])
         }
     }
 
@@ -320,16 +334,16 @@ class DYRecordView(context: Context, attributeSet: AttributeSet? = null) : View(
     private fun recordingListener() {
         if (isRecording) {
             val progress = getRecordProgress()
-            if (recordProgress != progress) {
-                recordProgress = progress
-                onRecordListener?.onRecording(progress)
+            if (recordProgress != progress[1]) {
+                recordProgress = progress[1]
+                onRecordListener?.onRecording(progress[0], progress[1])
             }
         }
     }
 
-    private fun getRecordProgress(): Int {
+    private fun getRecordProgress(): IntArray {
         val currentTimeMillis = System.currentTimeMillis()
-        return ((currentTimeMillis - startRecordTime) / 1000).toInt()
+        return intArrayOf(((currentTimeMillis - startRecordTime) / 1000).toInt(), ((currentTimeMillis - startRecordTime).toInt()))
     }
 
     var onRecordListener: OnRecordListener? = null
@@ -339,11 +353,11 @@ class DYRecordView(context: Context, attributeSet: AttributeSet? = null) : View(
 
         }
 
-        open fun onRecordEnd(time: Int) {
+        open fun onRecordEnd(second: Int, millisecond: Int) {
 
         }
 
-        open fun onRecording(time: Int /*录制了多少秒*/) {
+        open fun onRecording(second: Int /*录制了多少秒*/, millisecond: Int /*毫秒单位*/) {
 
         }
     }

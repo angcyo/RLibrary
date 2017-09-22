@@ -46,10 +46,6 @@ public class Button extends RTextView {
 
     int mButtonStyle = DEFAULT;
 
-    /**
-     * 由于系统的drawableLeft, 并不会显示在居中文本的左边, 所以自定义此属性
-     */
-    Drawable textLeftDrawable;
 
     public Button(Context context) {
         this(context, null);
@@ -59,10 +55,6 @@ public class Button extends RTextView {
         super(context, attrs);
         TypedArray typedArray = context.obtainStyledAttributes(attrs, R.styleable.Button);
         mButtonStyle = typedArray.getInt(R.styleable.Button_r_button_style, DEFAULT);
-        textLeftDrawable = typedArray.getDrawable(R.styleable.Button_r_button_left_drawable);
-        if (textLeftDrawable != null) {
-            textLeftDrawable.setBounds(0, 0, textLeftDrawable.getIntrinsicWidth(), textLeftDrawable.getIntrinsicHeight());
-        }
         typedArray.recycle();
 
         initButton();
@@ -136,22 +128,5 @@ public class Button extends RTextView {
     @Override
     protected void onDraw(Canvas canvas) {
         super.onDraw(canvas);
-        if (textLeftDrawable != null) {
-            canvas.save();
-//            Layout layout = getLayout();
-            //layout.getLineStart()
-
-//            canvas.translate(rawPaddingLeft + (viewDrawWith - drawWidth) / 2, paddingTop.toFloat() + (viewDrawHeight - drawHeight) / 2)
-
-            canvas.translate(getMeasuredWidth() / 2 -
-                            ViewExKt.textWidth(this, String.valueOf(getText())) / 2 -
-                            textLeftDrawable.getIntrinsicWidth() -
-                            getCompoundDrawablePadding(),
-                    getMeasuredHeight() / 2 - textLeftDrawable.getIntrinsicHeight() / 2);
-
-            textLeftDrawable.draw(canvas);
-
-            canvas.restore();
-        }
     }
 }

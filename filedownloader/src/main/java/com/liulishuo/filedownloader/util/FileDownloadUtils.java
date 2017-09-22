@@ -26,6 +26,10 @@ import android.os.Environment;
 import android.os.StatFs;
 import android.text.TextUtils;
 
+import com.liulishuo.filedownloader.connection.FileDownloadConnection;
+import com.liulishuo.filedownloader.download.CustomComponentHolder;
+import com.liulishuo.filedownloader.exception.FileDownloadGiveUpRetryException;
+import com.liulishuo.filedownloader.model.FileDownloadModel;
 import com.liulishuo.filedownloader.services.FileDownloadService;
 import com.liulishuo.filedownloader.stream.FileDownloadOutputStream;
 
@@ -38,6 +42,8 @@ import java.util.List;
 import java.util.Locale;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+
+import static com.liulishuo.filedownloader.model.FileDownloadModel.TOTAL_VALUE_IN_CHUNKED_RESOURCE;
 
 /**
  * The utils for FileDownloader.
@@ -60,7 +66,7 @@ public class FileDownloadUtils {
      *                        <p/>
      *                        Default 65536, which follow the value in
      *                        com.android.providers.downloads.Constants.
-     * @see com.liulishuo.filedownloader.services.FileDownloadRunnable#onProgress(long, long, FileDownloadOutputStream)
+     * @see com.liulishuo.filedownloader.download.DownloadStatusCallback#onProgress(long)
      * @see #setMinProgressTime(long)
      */
     public static void setMinProgressStep(int minProgressStep) throws IllegalAccessException {
@@ -87,7 +93,7 @@ public class FileDownloadUtils {
      *                        <p/>
      *                        Default 2000, which follow the value in
      *                        com.android.providers.downloads.Constants.
-     * @see com.liulishuo.filedownloader.services.FileDownloadRunnable#onProgress(long, long, FileDownloadOutputStream)
+     * @see com.liulishuo.filedownloader.download.DownloadStatusCallback#onProgress(long)
      * @see #setMinProgressStep(int)
      */
     public static void setMinProgressTime(long minProgressTime) throws IllegalAccessException {
@@ -187,7 +193,7 @@ public class FileDownloadUtils {
      * @return The download id.
      */
     public static int generateId(final String url, final String path) {
-        return generateId(url, path, false);
+        return CustomComponentHolder.getImpl().getIdGeneratorInstance().generateId(url, path, false);
     }
 
     /**
@@ -199,14 +205,10 @@ public class FileDownloadUtils {
      * @return The download id.
      */
     public static int generateId(final String url, final String path, final boolean pathAsDirectory) {
-        if (pathAsDirectory) {
-            return md5(formatString("%sp%s@dir", url, path)).hashCode();
-        } else {
-            return md5(formatString("%sp%s", url, path)).hashCode();
-        }
+        return CustomComponentHolder.getImpl().getIdGeneratorInstance().generateId(url, path, pathAsDirectory);
     }
 
-    private static String md5(String string) {
+    public static String md5(String string) {
         byte[] hash;
         try {
             hash = MessageDigest.getInstance("MD5").digest(string.getBytes("UTF-8"));
@@ -280,6 +282,11 @@ public class FileDownloadUtils {
             int pid = android.os.Process.myPid();
             final ActivityManager activityManager = (ActivityManager) context.
                     getSystemService(Context.ACTIVITY_SERVICE);
+
+            if (activityManager == null) {
+                FileDownloadLog.w(FileDownloadUtils.class, "fail to get the activity manager!");
+                return false;
+            }
 
             final List<ActivityManager.RunningAppProcessInfo> runningAppProcessInfoList =
                     activityManager.getRunningAppProcesses();
@@ -461,12 +468,18 @@ public class FileDownloadUtils {
         return FILEDOWNLOADER_PREFIX + "-" + name;
     }
 
-    public static boolean isNetworkOnWifiType() {
+    public static boolean isNetworkNotOnWifiType() {
         final ConnectivityManager manager = (ConnectivityManager) FileDownloadHelper.getAppContext().
                 getSystemService(Context.CONNECTIVITY_SERVICE);
+
+        if (manager == null) {
+            FileDownloadLog.w(FileDownloadUtils.class, "failed to get connectivity manager!");
+            return true;
+        }
+
         final NetworkInfo info = manager.getActiveNetworkInfo();
 
-        return info != null && info.getType() == ConnectivityManager.TYPE_WIFI;
+        return info == null || info.getType() != ConnectivityManager.TYPE_WIFI;
     }
 
     public static boolean checkPermission(String permission) {
@@ -481,5 +494,218 @@ public class FileDownloadUtils {
         } catch (NumberFormatException e) {
             return -1;
         }
+    }
+
+    public static String findEtag(final int id, FileDownloadConnection connection) {
+        if (connection == null) {
+            throw new RuntimeException("connection is null when findEtag");
+        }
+
+        final String newEtag = connection.getResponseHeaderField("Etag");
+
+        if (FileDownloadLog.NEED_LOG) {
+            FileDownloadLog.d(FileDownloadUtils.class, "etag find %s for task(%d)", newEtag, id);
+        }
+
+        return newEtag;
+    }
+
+    public static long findContentLength(final int id, FileDownloadConnection connection) {
+        long contentLength = FileDownloadUtils.convertContentLengthString(connection.getResponseHeaderField("Content-Length"));
+        final String transferEncoding = connection.getResponseHeaderField("Transfer-Encoding");
+
+        if (contentLength < 0) {
+            final boolean isEncodingChunked = transferEncoding != null && transferEncoding.equals("chunked");
+            if (!isEncodingChunked) {
+                // not chunked transfer encoding data
+                if (FileDownloadProperties.getImpl().HTTP_LENIENT) {
+                    // do not response content-length either not chunk transfer encoding,
+                    // but HTTP lenient is true, so handle as the case of transfer encoding chunk
+                    contentLength = TOTAL_VALUE_IN_CHUNKED_RESOURCE;
+                    if (FileDownloadLog.NEED_LOG) {
+                        FileDownloadLog.d(FileDownloadUtils.class, "%d response header is not legal but " +
+                                "HTTP lenient is true, so handle as the case of " +
+                                "transfer encoding chunk", id);
+                    }
+                } else {
+                    throw new FileDownloadGiveUpRetryException("can't know the size of the " +
+                            "download file, and its Transfer-Encoding is not Chunked " +
+                            "either.\nyou can ignore such exception by add " +
+                            "http.lenient=true to the filedownloader.properties");
+                }
+            } else {
+                contentLength = TOTAL_VALUE_IN_CHUNKED_RESOURCE;
+            }
+        }
+
+        return contentLength;
+    }
+
+    public static String findFilename(FileDownloadConnection connection, String url) {
+        String filename = FileDownloadUtils.parseContentDisposition(connection.
+                getResponseHeaderField("Content-Disposition"));
+
+        if (TextUtils.isEmpty(filename)) {
+            filename = FileDownloadUtils.generateFileName(url);
+        }
+
+        return filename;
+    }
+
+    public static FileDownloadOutputStream createOutputStream(final String path) throws IOException {
+
+        if (TextUtils.isEmpty(path)) {
+            throw new RuntimeException("found invalid internal destination path, empty");
+        }
+
+        //noinspection ConstantConditions
+        if (!FileDownloadUtils.isFilenameValid(path)) {
+            throw new RuntimeException(
+                    FileDownloadUtils.formatString("found invalid internal destination filename" +
+                            " %s", path));
+        }
+
+        File file = new File(path);
+
+        if (file.exists() && file.isDirectory()) {
+            throw new RuntimeException(
+                    FileDownloadUtils.formatString("found invalid internal destination path[%s]," +
+                            " & path is directory[%B]", path, file.isDirectory()));
+        }
+        if (!file.exists()) {
+            if (!file.createNewFile()) {
+                throw new IOException(
+                        FileDownloadUtils.formatString("create new file error  %s",
+                                file.getAbsolutePath()));
+            }
+        }
+
+        return CustomComponentHolder.getImpl().createOutputStream(file);
+    }
+
+    public static boolean isBreakpointAvailable(final int id, final FileDownloadModel model) {
+        return isBreakpointAvailable(id, model, null);
+    }
+
+    /**
+     * @return can resume by break point
+     */
+    public static boolean isBreakpointAvailable(final int id, final FileDownloadModel model,
+                                                final Boolean outputStreamSupportSeek) {
+        if (model == null) {
+            if (FileDownloadLog.NEED_LOG) {
+                FileDownloadLog.d(FileDownloadUtils.class, "can't continue %d model == null", id);
+            }
+            return false;
+        }
+
+        if (model.getTempFilePath() == null) {
+            if (FileDownloadLog.NEED_LOG) {
+                FileDownloadLog.d(FileDownloadUtils.class, "can't continue %d temp path == null", id);
+            }
+            return false;
+        }
+
+        return isBreakpointAvailable(id, model, model.getTempFilePath(), outputStreamSupportSeek);
+    }
+
+    public static boolean isBreakpointAvailable(final int id, final FileDownloadModel model,
+                                                final String path,
+                                                final Boolean outputStreamSupportSeek) {
+        boolean result = false;
+
+        do {
+            if (path == null) {
+                if (FileDownloadLog.NEED_LOG) {
+                    FileDownloadLog.d(FileDownloadUtils.class, "can't continue %d path = null", id);
+                }
+                break;
+            }
+
+            File file = new File(path);
+            final boolean isExists = file.exists();
+            final boolean isDirectory = file.isDirectory();
+
+            if (!isExists || isDirectory) {
+                if (FileDownloadLog.NEED_LOG) {
+                    FileDownloadLog.d(FileDownloadUtils.class, "can't continue %d file not suit, exists[%B], directory[%B]",
+                            id, isExists, isDirectory);
+                }
+                break;
+            }
+
+            final long fileLength = file.length();
+            final long currentOffset = model.getSoFar();
+
+            if (model.getConnectionCount() <= 1 && currentOffset == 0) {
+                // the sofar is stored on connection table
+                if (FileDownloadLog.NEED_LOG) {
+                    FileDownloadLog.d(FileDownloadUtils.class, "can't continue %d the downloaded-record is zero.",
+                            id);
+                }
+                break;
+            }
+
+            final long totalLength = model.getTotal();
+            if (fileLength < currentOffset ||
+                    (totalLength != TOTAL_VALUE_IN_CHUNKED_RESOURCE  // not chunk transfer encoding data
+                            &&
+                            (fileLength > totalLength || currentOffset >= totalLength))
+                    ) {
+                // dirty data.
+                if (FileDownloadLog.NEED_LOG) {
+                    FileDownloadLog.d(FileDownloadUtils.class, "can't continue %d dirty data" +
+                                    " fileLength[%d] sofar[%d] total[%d]",
+                            id, fileLength, currentOffset, totalLength);
+                }
+                break;
+            }
+
+            if (outputStreamSupportSeek != null && !outputStreamSupportSeek &&
+                    totalLength == fileLength) {
+                if (FileDownloadLog.NEED_LOG) {
+                    FileDownloadLog.d(FileDownloadUtils.class, "can't continue %d, because of the " +
+                                    "output stream doesn't support seek, but the task has already " +
+                                    "pre-allocated, so we only can download it from the very beginning.",
+                            id);
+                }
+                break;
+            }
+
+            result = true;
+        } while (false);
+
+
+        return result;
+    }
+
+    public static void deleteTaskFiles(String targetFilepath, String tempFilePath) {
+        deleteTempFile(tempFilePath);
+        deleteTargetFile(targetFilepath);
+    }
+
+    public static void deleteTempFile(String tempFilePath) {
+        if (tempFilePath != null) {
+            final File tempFile = new File(tempFilePath);
+            if (tempFile.exists()) {
+                //noinspection ResultOfMethodCallIgnored
+                tempFile.delete();
+            }
+        }
+    }
+
+    public static void deleteTargetFile(String targetFilePath) {
+        if (targetFilePath != null) {
+            final File targetFile = new File(targetFilePath);
+            if (targetFile.exists()) {
+                //noinspection ResultOfMethodCallIgnored
+                targetFile.delete();
+            }
+        }
+    }
+
+    public static boolean isNeedSync(long bytesDelta, long timestampDelta){
+        return bytesDelta > FileDownloadUtils.getMinProgressStep() &&
+                timestampDelta > FileDownloadUtils.getMinProgressTime();
     }
 }

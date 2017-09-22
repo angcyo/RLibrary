@@ -1,0 +1,77 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:paddingEnd="@dimen/base_xxhdpi"
+    android:paddingStart="@dimen/base_xxhdpi">
+
+    <ImageView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:src="@drawable/base_beijng_backgrond" />
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:paddingEnd="@dimen/base_xxhdpi"
+        android:paddingStart="@dimen/base_xxhdpi"
+        android:paddingTop="@dimen/base_120dpi">
+
+        <ImageView
+            android:id="@+id/base_version_cancel_view"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="right"
+            android:layout_marginEnd="@dimen/base_ldpi"
+            android:src="@drawable/base_icon_cha_button" />
+
+        <com.angcyo.uiview.widget.RTextView
+            android:id="@+id/base_version_title_view"
+            style="@style/BaseMainTextStyle"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:paddingBottom="@dimen/base_xhdpi"
+            android:paddingTop="@dimen/base_xhdpi"
+            android:textSize="20dp"
+            android:textStyle="bold"
+            tools:text="测试文本" />
+
+        <com.angcyo.uiview.widget.RTextView
+            android:id="@+id/base_version_content_view"
+            style="@style/BaseDarkTextStyle"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="top"
+            android:minHeight="80dp"
+            tools:text="测试文本\nasdf\nnasdf" />
+
+    </LinearLayout>
+
+    <com.angcyo.uiview.widget.SimpleProgressBar
+        android:id="@+id/progress_bar"
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/base_ldpi"
+        android:layout_gravity="center_horizontal|bottom"
+        android:layout_marginBottom="@dimen/base_70dpi"
+        android:paddingEnd="@dimen/base_ldpi"
+        android:paddingStart="@dimen/base_ldpi"
+        android:visibility="gone"
+        tools:visibility="visible" />
+
+    <com.angcyo.uiview.widget.RTextView
+        android:id="@+id/base_version_download_view"
+        style="@style/BaseMainTextStyle"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center_horizontal|bottom"
+        android:layout_marginBottom="@dimen/base_xxhdpi"
+        android:background="@drawable/base_icon_naniu_button"
+        android:gravity="center"
+        android:text="立即更新"
+        android:textColor="@color/base_white"
+        android:textSize="18dp"
+        android:textStyle="bold" />
+
+</FrameLayout>

@@ -24,6 +24,7 @@ import android.content.Context;
 import android.content.ServiceConnection;
 import android.os.IBinder;
 
+import com.liulishuo.filedownloader.download.CustomComponentHolder;
 import com.liulishuo.filedownloader.event.DownloadServiceConnectChangedEvent;
 import com.liulishuo.filedownloader.model.FileDownloadStatus;
 import com.liulishuo.filedownloader.model.FileDownloadTaskAtom;
@@ -38,8 +39,6 @@ import java.util.List;
 
 /**
  * The basic entrance for FileDownloader.
- * <p>
- * https://github.com/lingochamp/FileDownloader
  *
  * @see com.liulishuo.filedownloader.services.FileDownloadService The service for FileDownloader.
  * @see FileDownloadProperties
@@ -47,45 +46,84 @@ import java.util.List;
 @SuppressWarnings("WeakerAccess")
 public class FileDownloader {
 
-    private final static Object INIT_QUEUES_HANDLER_LOCK = new Object();
-    private final static Object INIT_LOST_CONNECTED_HANDLER_LOCK = new Object();
-    private Runnable pauseAllRunnable;
-    private IQueuesHandler mQueuesHandler;
-    private ILostServiceConnectedHandler mLostConnectedHandler;
-
     /**
-     * Initialize the FileDownloader.
+     * You can invoke this method anytime before you using the FileDownloader.
+     * <p>
+     * If you want to register your own customize components please using {@link #setupOnApplicationOnCreate(Application)}
+     * on the {@link Application#onCreate()} instead.
      *
-     * @see #init(Context, DownloadMgrInitialParams.InitCustomMaker)
+     * @param context the context of Application or Activity etc..
      */
-    public static void init(final Context context) {
-        init(context.getApplicationContext(), null);
+    public static void setup(Context context) {
+        FileDownloadHelper.holdContext(context.getApplicationContext());
     }
 
     /**
-     * * Initialize the FileDownloader.
-     * <p>
-     * <strong>Note:</strong> This method just hold {@code context} and {@code maker}, so it is very
-     * light(it is maybe need to spend 5ms for load some relate classes).
-     * <p>
-     * You need to invoke this method in {@link Application#onCreate()}, since the FileDownloadService
-     * is running with the {@link android.app.Service#START_STICKY}, so it is just if you invoke this
-     * this method in {@link Application#onCreate()}, FileDownloader can make sure the {@code maker}
-     * can be assigned corrected each time when FileDownloadService is launching.
-     *
-     * @param context The context.
-     * @param maker   Used to customize the download service, this value can be {@code null}.
-     * @see #init(Context)
+     * Using this method to setup the FileDownloader only you want to register your own customize
+     * components for Filedownloader, otherwise just using {@link #setup(Context)} instead.
+     * <p/>
+     * Please invoke this method on the {@link Application#onCreate()} because of the customize
+     * components must be assigned before FileDownloader is running.
+     * <p/>
+     * Such as:
+     * <p/>
+     * class MyApplication extends Application {
+     *     ...
+     *     public void onCreate() {
+     *          ...
+     *          FileDownloader.setupOnApplicationOnCreate(this)
+     *              .idGenerator(new MyIdGenerator())
+     *              .database(new MyDatabase())
+     *              ...
+     *              .commit();
+     *          ...
+     *     }
+     *     ...
+     * }
+     * @param application the application.
+     * @return the customize components maker.
      */
-    public static void init(final Context context,
-                            /**Nullable **/final DownloadMgrInitialParams.InitCustomMaker maker) {
-        if (FileDownloadLog.NEED_LOG) {
-            FileDownloadLog.d(FileDownloader.class, "init Downloader");
-        }
-
+    public static DownloadMgrInitialParams.InitCustomMaker setupOnApplicationOnCreate(Application application) {
+        final Context context = application.getApplicationContext();
         FileDownloadHelper.holdContext(context);
 
-        FileDownloadServiceProxy.getImpl().setInitCustomMaker(maker);
+        DownloadMgrInitialParams.InitCustomMaker customMaker = new DownloadMgrInitialParams.InitCustomMaker();
+        CustomComponentHolder.getImpl().setInitCustomMaker(customMaker);
+
+        return customMaker;
+    }
+
+    /**
+     * @deprecated please use {@link #setup(Context)} instead.
+     */
+    public static void init(final Context context) {
+        if (context == null)
+            throw new IllegalArgumentException("the provided context must not be null!");
+
+        setup(context);
+    }
+
+
+    /**
+     * @deprecated please using {@link #setupOnApplicationOnCreate(Application)} instead.
+     */
+    public static void init(final Context context,
+                            final DownloadMgrInitialParams.InitCustomMaker maker) {
+        if (FileDownloadLog.NEED_LOG) {
+            FileDownloadLog.d(FileDownloader.class, "init Downloader with params: %s %s",
+                    context, maker);
+        }
+
+        if (context == null)
+            throw new IllegalArgumentException("the provided context must not be null!");
+
+        FileDownloadHelper.holdContext(context.getApplicationContext());
+
+        CustomComponentHolder.getImpl().setInitCustomMaker(maker);
+    }
+
+    private final static class HolderClass {
+        private final static FileDownloader INSTANCE = new FileDownloader();
     }
 
     public static FileDownloader getImpl() {
@@ -196,6 +234,7 @@ public class FileDownloader {
                 getQueuesHandler().startQueueParallel(listener);
     }
 
+
     /**
      * Pause the download queue by the same {@code listener}.
      *
@@ -210,6 +249,8 @@ public class FileDownloader {
             task.getOrigin().pause();
         }
     }
+
+    private Runnable pauseAllRunnable;
 
     /**
      * Pause all tasks running in FileDownloader.
@@ -687,6 +728,9 @@ public class FileDownloader {
         return new FileDownloadLineAsync();
     }
 
+    private final static Object INIT_QUEUES_HANDLER_LOCK = new Object();
+    private IQueuesHandler mQueuesHandler;
+
     IQueuesHandler getQueuesHandler() {
         if (mQueuesHandler == null) {
             synchronized (INIT_QUEUES_HANDLER_LOCK) {
@@ -697,6 +741,9 @@ public class FileDownloader {
         }
         return mQueuesHandler;
     }
+
+    private final static Object INIT_LOST_CONNECTED_HANDLER_LOCK = new Object();
+    private ILostServiceConnectedHandler mLostConnectedHandler;
 
     ILostServiceConnectedHandler getLostConnectedHandler() {
         if (mLostConnectedHandler == null) {
@@ -709,10 +756,6 @@ public class FileDownloader {
         }
 
         return mLostConnectedHandler;
-    }
-
-    private final static class HolderClass {
-        private final static FileDownloader INSTANCE = new FileDownloader();
     }
 
 

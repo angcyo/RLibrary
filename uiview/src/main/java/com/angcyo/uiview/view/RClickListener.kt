@@ -19,13 +19,19 @@ import com.angcyo.uiview.utils.T_
  */
 abstract class RClickListener : View.OnClickListener {
 
+    companion object {
+        val DEFAULT_DELAY_CLICK_TIME = 300
+    }
+
     /**快速点击间隔时间(毫秒), 0表示不延迟处理*/
-    var delayTime = 0
+    var delayTime = DEFAULT_DELAY_CLICK_TIME
 
     /**是否只在有网络的情况下可以点击*/
     var checkNet = false
 
-    constructor()
+    constructor() {
+        this.delayTime = DEFAULT_DELAY_CLICK_TIME
+    }
 
     constructor(delayTime: Int) {
         this.delayTime = delayTime

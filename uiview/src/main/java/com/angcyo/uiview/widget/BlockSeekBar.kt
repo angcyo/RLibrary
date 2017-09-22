@@ -21,7 +21,7 @@ import com.angcyo.uiview.kotlin.getDrawable
 class BlockSeekBar(context: Context, attributeSet: AttributeSet? = null) : View(context, attributeSet) {
 
     /**不规则高度列表*/
-    private val heightList = listOf(0.5f, 0.7f, 0.9f, 1.0f, 0.8f, 0.6f)
+    private val heightList = listOf(0.5f, 0.7f, 0.9f, 1.0f, 0.8f, 0.6f, 0.3f, 0.7f, 0.8f)
 
     private val tempRectF = RectF()
     private val clipRectF = RectF()
@@ -33,13 +33,13 @@ class BlockSeekBar(context: Context, attributeSet: AttributeSet? = null) : View(
     }
 
     /**每一个的宽度*/
-    private var blockWidth = 6 * density
+    private var blockWidth = 4 * density
 
     /**圆角大小*/
     private var roundSize = 4 * density
 
     /**空隙大小*/
-    private var spaceSize = 4 * density
+    private var spaceSize = 2 * density
 
     /**滑块*/
     private var sliderDrawable: Drawable? = null
@@ -219,7 +219,7 @@ class BlockSeekBar(context: Context, attributeSet: AttributeSet? = null) : View(
             //将比率转换成进度
             blockProgress = progress
 
-            L.e("call: onSeekChange -> $blockProgress ${blockProgress + blockMinWidth}")
+            //L.e("call: onSeekChange -> $blockProgress ${blockProgress + blockMinWidth}")
             blockSeekListener?.onSeekChange(this, blockProgress, blockProgress + blockMinWidth)
             postInvalidate()
         }

@@ -81,6 +81,7 @@
         <attr name="r_background"/>
 
         <attr name="r_left_text"/>
+        <attr name="r_left_drawable" format="reference"/>
         <attr name="r_left_text_color"/>
         <attr name="r_left_text_offset"/>
         <attr name="r_left_text_size" format="dimension"/>

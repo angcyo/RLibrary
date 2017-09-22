@@ -172,7 +172,7 @@ public class SimpleProgressBar extends View {
     @Override
     protected void onSizeChanged(int w, int h, int oldw, int oldh) {
         super.onSizeChanged(w, h, oldw, oldh);
-        mRect.set(0, 0, w, h);
+        mRect.set(getPaddingLeft(), getPaddingTop(), w - getPaddingRight(), h - getPaddingBottom());
         if (mProgressStyle == STYLE_CIRCLE) {
             mRect.inset(mProgressWidth, mProgressWidth);
         }
@@ -180,6 +180,8 @@ public class SimpleProgressBar extends View {
 
     @Override
     protected void onDraw(Canvas canvas) {
+        canvas.save();
+        canvas.translate(getPaddingLeft(), getPaddingTop());
         if (mProgressStyle == STYLE_RECT) {
             mPaint.setStyle(Paint.Style.FILL);
             if (incertitudeProgress) {
@@ -206,17 +208,20 @@ public class SimpleProgressBar extends View {
                 canvas.drawArc(mRect, -90f, 360 * mProgress / 100f, false, mPaint);
             }
 
-            //绘制进度文本
-            mPaint.setStyle(Paint.Style.FILL_AND_STROKE);
-            mPaint.setTextSize(mProgressTextSize);
-            mPaint.setColor(mProgressTextColor);
-            mPaint.setStrokeWidth(1);
-            String text = mProgress + "%";
-            canvas.drawText(text,
-                    ViewExKt.getDrawCenterTextCx(this, mPaint, text),
-                    ViewExKt.getDrawCenterTextCy(this, mPaint),
-                    mPaint);
+            if (!incertitudeProgress) {
+                //绘制进度文本
+                mPaint.setStyle(Paint.Style.FILL_AND_STROKE);
+                mPaint.setTextSize(mProgressTextSize);
+                mPaint.setColor(mProgressTextColor);
+                mPaint.setStrokeWidth(1);
+                String text = mProgress + "%";
+                canvas.drawText(text,
+                        ViewExKt.getDrawCenterTextCx(this, mPaint, text),
+                        ViewExKt.getDrawCenterTextCy(this, mPaint),
+                        mPaint);
+            }
         }
+        canvas.restore();
     }
 
     @Override

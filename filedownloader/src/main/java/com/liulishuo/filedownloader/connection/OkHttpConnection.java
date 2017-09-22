@@ -25,6 +25,7 @@ import okhttp3.Response;
  * 修改备注：
  * Version: 1.0.0
  */
+@Deprecated
 public class OkHttpConnection implements FileDownloadConnection {
 
     private static OkHttpClient sOkHttpClient;
@@ -42,11 +43,11 @@ public class OkHttpConnection implements FileDownloadConnection {
             long rTime = 20_000;
             long cTime = 20_000;
 
-            if (configuration != null) {
-                wTime = configuration.getReadTimeout();
-                rTime = configuration.getReadTimeout();
-                cTime = configuration.getConnectTimeout();
-            }
+//            if (configuration != null) {
+//                wTime = configuration.getReadTimeout();
+//                rTime = configuration.getReadTimeout();
+//                cTime = configuration.getConnectTimeout();
+//            }
 
             sOkHttpClient = new OkHttpClient.Builder()
                     .writeTimeout(wTime, TimeUnit.MILLISECONDS)

@@ -89,19 +89,22 @@ public class ProgressNotify {
 
                 L.e("准备安装-> " + targetFile.getAbsolutePath());
                 mBuilder.setContentIntent(PendingIntent.getActivity(mContext, requestCode,
-                        IntentUtils.getInstallAppIntent(targetFile), PendingIntent.FLAG_UPDATE_CURRENT));// 该通知要启动的Intent
+                        IntentUtils.getInstallAppIntent(targetFile), PendingIntent.FLAG_CANCEL_CURRENT));// 该通知要启动的Intent
             } else {
                 L.e("需要安装的文件不存在-> " + targetFile.getAbsolutePath());
             }
+
+            mBuilder.setOngoing(false);
         } else {
             mProgressRemoteViews.setProgressBar(R.id.progressBar, 100, progress, false);
             remoteViews = mProgressRemoteViews;
+
+            mBuilder.setOngoing(true);
         }
 
         remoteViews.setImageViewResource(R.id.image_view, logo);
         remoteViews.setTextViewText(R.id.text_view, title);
 
-        mBuilder.setOngoing(true);
         mBuilder.setSmallIcon(logo);// 设置顶部状态栏的小图标, 必须设置.
         mBuilder.setContent(remoteViews);
         mBuilder.setWhen(System.currentTimeMillis());

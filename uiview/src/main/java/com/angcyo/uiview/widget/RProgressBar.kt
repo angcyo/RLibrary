@@ -37,7 +37,7 @@ open class RProgressBar(context: Context, attributeSet: AttributeSet? = null) : 
         val PROGRESS_TYPE_ROUND_INCERTITUDE = 6
     }
 
-    var progressBarType = PROGRESS_TYPE_CIRCLE
+    var progressBarType = PROGRESS_TYPE_RECT
         set(value) {
             field = value
             if (field > 3) {
@@ -47,7 +47,7 @@ open class RProgressBar(context: Context, attributeSet: AttributeSet? = null) : 
         }
 
     /**进度条背景颜色*/
-    var progressBgColor by RefreshProperty(Color.parseColor("#40000000"))
+    var progressBgColor by RefreshProperty(Color.parseColor("#80000000"))
     /**进度条颜色*/
     var progressColor by RefreshProperty(Color.WHITE)
     /**第二进度*/
@@ -63,7 +63,7 @@ open class RProgressBar(context: Context, attributeSet: AttributeSet? = null) : 
     /**圆角进度条的圆角半径*/
     var progressRoundRadius by RefreshProperty(6 * density)
     /**圆形进度条的宽度*/
-    var progressWidth by RefreshProperty(4 * density)
+    var progressWidth by RefreshProperty(3 * density)
 
     /**圆形进度条, 开始绘制的角度*/
     var circleProgressStartAngle = -90f
@@ -267,7 +267,10 @@ open class RProgressBar(context: Context, attributeSet: AttributeSet? = null) : 
 
     fun addStepPoint(vararg point: Int) {
         for (p in point) {
-            stepPointList.add(p)
+            if (stepPointList.contains(p)) {
+            } else {
+                stepPointList.add(p)
+            }
         }
         postInvalidate()
     }
@@ -275,5 +278,21 @@ open class RProgressBar(context: Context, attributeSet: AttributeSet? = null) : 
     fun clearStepPoint() {
         stepPointList.clear()
         postInvalidate()
+    }
+
+    fun getLastStepPoint(): Int {
+        if (stepPointList.isEmpty()) {
+            return 0
+        }
+        return stepPointList.last()
+    }
+
+    fun removeLastStepPoint(): Boolean {
+        if (!stepPointList.isEmpty()) {
+            stepPointList.removeAt(stepPointList.size - 1)
+            curProgress = getLastStepPoint()
+            return true
+        }
+        return false
     }
 }

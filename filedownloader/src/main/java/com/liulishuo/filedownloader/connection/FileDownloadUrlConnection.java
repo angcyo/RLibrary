@@ -122,17 +122,11 @@ public class FileDownloadUrlConnection implements FileDownloadConnection {
         }
 
         FileDownloadConnection create(URL url) throws IOException {
-            if (mConfiguration.isUseOkHttp()) {
-                return new OkHttpConnection(url, mConfiguration);
-            }
             return new FileDownloadUrlConnection(url, mConfiguration);
         }
 
         @Override
         public FileDownloadConnection create(String originUrl) throws IOException {
-            if (mConfiguration.isUseOkHttp()) {
-                return new OkHttpConnection(originUrl, mConfiguration);
-            }
             return new FileDownloadUrlConnection(originUrl, mConfiguration);
         }
     }
@@ -144,10 +138,6 @@ public class FileDownloadUrlConnection implements FileDownloadConnection {
         private Proxy proxy;
         private Integer readTimeout;
         private Integer connectTimeout;
-        /**
-         * 是否使用OkHttp作为网络引擎, 默认使用 {@link URLConnection}.
-         */
-        private boolean useOkHttp = true;
 
         /**
          * The connection will be made through the specified proxy.
@@ -194,21 +184,6 @@ public class FileDownloadUrlConnection implements FileDownloadConnection {
             return this;
         }
 
-        public boolean isUseOkHttp() {
-            return useOkHttp;
-        }
 
-        public Configuration setUseOkHttp(boolean useOkHttp) {
-            this.useOkHttp = useOkHttp;
-            return this;
-        }
-
-        public Integer getReadTimeout() {
-            return readTimeout;
-        }
-
-        public Integer getConnectTimeout() {
-            return connectTimeout;
-        }
     }
 }

@@ -8,6 +8,9 @@
     <color name="theme_color_accent">#0BD1A0</color>
     <color name="transparent">#00000000</color>
     <color name="transparent_dark">#40000000</color>
+    <color name="transparent_dark20">#20000000</color>
+    <color name="transparent_dark40">#40000000</color>
+    <color name="transparent_dark80">#80000000</color>
     <color name="base_status_bar_dim">#20000000</color>
 
     <color name="base_red">#FC3C38</color>

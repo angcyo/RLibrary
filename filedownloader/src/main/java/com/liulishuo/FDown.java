@@ -1,12 +1,16 @@
 package com.liulishuo;
 
+import android.app.Application;
 import android.content.Context;
 import android.os.Environment;
+import android.support.v4.util.ArrayMap;
 
 import com.liulishuo.filedownloader.BaseDownloadTask;
+import com.liulishuo.filedownloader.FileDownloadList;
 import com.liulishuo.filedownloader.FileDownloadQueueSet;
 import com.liulishuo.filedownloader.FileDownloader;
 import com.liulishuo.filedownloader.connection.FileDownloadUrlConnection;
+import com.liulishuo.filedownloader.connection.OkHttp3Connection;
 import com.liulishuo.filedownloader.services.DownloadMgrInitialParams;
 import com.liulishuo.filedownloader.util.FileDownloadLog;
 import com.liulishuo.filedownloader.util.FileDownloadUtils;
@@ -16,6 +20,7 @@ import java.net.Proxy;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
+import java.util.concurrent.ConcurrentHashMap;
 
 /**
  * Copyright (C) 2016,深圳市红鸟网络科技股份有限公司 All rights reserved.
@@ -44,20 +49,26 @@ public class FDown {
         FileDownloader.getImpl().unBindServiceIfIdle();
     }
 
-    public static void init(Context context, boolean debug) {
+    public static void init(Application context, boolean debug) {
         /**
          * just for cache Application's Context, and ':filedownloader' progress will NOT be launched
          * by below code, so please do not worry about performance.
          * @see FileDownloader#init(Context)
          */
-        FileDownloader.init(context, new DownloadMgrInitialParams.InitCustomMaker()
-                .connectionCreator(new FileDownloadUrlConnection
-                        .Creator(new FileDownloadUrlConnection.Configuration()
-                        .setUseOkHttp(true)// use ok http
-                        .connectTimeout(15_000) // set connection timeout.
-                        .readTimeout(15_000) // set read timeout.
-                        .proxy(Proxy.NO_PROXY) // set proxy
-                )));
+//        FileDownloader.init(context,
+//                new DownloadMgrInitialParams.InitCustomMaker()
+//                        .connectionCreator(new FileDownloadUrlConnection
+//                                .Creator(new FileDownloadUrlConnection.Configuration()
+//                                .setUseOkHttp(true)// use ok http
+//                                .connectTimeout(15_000) // set connection timeout.
+//                                .readTimeout(15_000) // set read timeout.
+//                                .proxy(Proxy.NO_PROXY) // set proxy
+//                        )));
+//星期五 2017-9-22
+//        FileDownloader.init(context, new DownloadMgrInitialParams.InitCustomMaker()
+//                .connectionCreator(new OkHttp3Connection.Creator()));
+
+        FileDownloader.setupOnApplicationOnCreate(context).connectionCreator(new OkHttp3Connection.Creator());
 
         FileDownloadLog.NEED_LOG = debug;
 
@@ -170,6 +181,13 @@ public class FDown {
         Object tag;
         boolean isForceReDownload;
 
+
+        //        static ArrayMap<Integer, String> taskMap = new ArrayMap();
+        /**
+         * 保存url 和 创建的任务id
+         */
+        static ConcurrentHashMap<String, Integer> taskMap = new ConcurrentHashMap<>();
+
         private Builder(String url) {
             this.url = url;
             tag = url;
@@ -196,14 +214,36 @@ public class FDown {
          * @return 返回任务id, 可以用来取消下载
          */
         public int download(FDownListener listener) {
-            return FileDownloader.getImpl().create(url)
-                    .setPath(fullPath, false)
-                    .setCallbackProgressTimes(mCallbackProgressTimes)/**每隔多少毫秒回调一次进度*/
-                    .setMinIntervalUpdateSpeed(mCallbackProgressMinIntervalMillis)/**每隔多少毫秒回调一次速度*/
-                    .setTag(tag)/**附加对象*/
-                    .setForceReDownload(isForceReDownload)/**如果文件存在是否重新下载*/
-                    .setListener(listener)
-                    .start();
+            int id = -1;
+            Integer integer = taskMap.get(url);
+            if (integer != null && integer > 0) {
+                id = integer;
+                BaseDownloadTask.IRunningTask runningTask = FileDownloadList.getImpl().get(integer);
+                if (runningTask != null) {
+                    runningTask.getOrigin().setListener(listener);
+                } else {
+                    id = -1;
+                }
+            }
+
+            if (id == -1) {
+                id = FileDownloader.getImpl().create(url)
+                        .setPath(fullPath, false)
+                        .setCallbackProgressTimes(mCallbackProgressTimes)/**每隔多少毫秒回调一次进度*/
+                        .setMinIntervalUpdateSpeed(mCallbackProgressMinIntervalMillis)/**每隔多少毫秒回调一次速度*/
+                        .setTag(tag)/**附加对象*/
+                        .setForceReDownload(isForceReDownload)/**如果文件存在是否重新下载*/
+                        .addFinishListener(new BaseDownloadTask.FinishListener() {
+                            @Override
+                            public void over(BaseDownloadTask task) {
+                                taskMap.remove(task.getUrl());
+                            }
+                        })
+                        .setListener(listener)
+                        .start();
+                taskMap.put(url, id);
+            }
+            return id;
         }
     }
 }

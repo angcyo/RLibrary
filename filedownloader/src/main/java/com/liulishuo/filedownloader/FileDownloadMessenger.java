@@ -208,7 +208,7 @@ class FileDownloadMessenger implements IFileDownloadMessenger {
         }
 
         if (mIsDiscard || mTask.getOrigin().getListener() == null) {
-            if (FileDownloadMonitor.isValid() &&
+            if ((FileDownloadMonitor.isValid() || mTask.isContainFinishListener()) &&
                     snapshot.getStatus() == FileDownloadStatus.blockComplete) {
                 // there is a FileDownloadMonitor, so we have to ensure the 'BaseDownloadTask#over'
                 // can be invoked.
@@ -227,11 +227,12 @@ class FileDownloadMessenger implements IFileDownloadMessenger {
         // If this task is in the over state, try to retire this messenger.
         if (FileDownloadStatus.isOver(status)) {
             if (!parcelQueue.isEmpty()) {
+                final MessageSnapshot queueTopTask = parcelQueue.peek();
                 throw new IllegalStateException(
-                        FileDownloadUtils.formatString("the messenger[%s] has already " +
+                        FileDownloadUtils.formatString("the messenger[%s](with id[%d]) has already " +
                                         "accomplished all his job, but there still are some messages in" +
-                                        " parcel queue[%d]",
-                                this, parcelQueue.size()));
+                                        " parcel queue[%d] queue-top-status[%d]",
+                                this, queueTopTask.getId(), parcelQueue.size(), queueTopTask.getStatus()));
             }
             mTask = null;
         }
@@ -391,6 +392,6 @@ class FileDownloadMessenger implements IFileDownloadMessenger {
 
     @Override
     public String toString() {
-        return FileDownloadUtils.formatString("%d:%s", mTask.getOrigin().getId(), super.toString());
+        return FileDownloadUtils.formatString("%d:%s", mTask == null ? -1 : mTask.getOrigin().getId(), super.toString());
     }
 }

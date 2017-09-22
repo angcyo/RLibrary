@@ -25,6 +25,7 @@ import com.liulishuo.filedownloader.util.FileDownloadLog;
 import com.liulishuo.filedownloader.util.FileDownloadUtils;
 
 import java.io.File;
+import java.io.IOException;
 import java.security.InvalidParameterException;
 import java.util.ArrayList;
 
@@ -154,7 +155,7 @@ public class DownloadTaskHunter implements ITaskHunter, ITaskHunter.IStarter, IT
                     mTask.setFileName(filename);
                 }
 
-                mSpeedMonitor.start();
+                mSpeedMonitor.start(mSoFarBytes);
 
                 // notify
                 mMessenger.notifyConnected(snapshot);
@@ -185,7 +186,6 @@ public class DownloadTaskHunter implements ITaskHunter, ITaskHunter.IStarter, IT
                 this.mThrowable = snapshot.getThrowable();
                 this.mSoFarBytes = snapshot.getLargeSofarBytes();
 
-                mSpeedMonitor.end(this.mSoFarBytes);
                 // to FileDownloadList
                 FileDownloadList.getImpl().remove(mTask.getRunningTask(), snapshot);
 
@@ -201,7 +201,6 @@ public class DownloadTaskHunter implements ITaskHunter, ITaskHunter.IStarter, IT
                 this.mSoFarBytes = snapshot.getLargeTotalBytes();
                 this.mTotalBytes = snapshot.getLargeTotalBytes();
 
-                mSpeedMonitor.end(this.mSoFarBytes);
                 // to FileDownloadList
                 FileDownloadList.getImpl().remove(mTask.getRunningTask(), snapshot);
 
@@ -239,7 +238,7 @@ public class DownloadTaskHunter implements ITaskHunter, ITaskHunter.IStarter, IT
                         this.mTotalBytes = snapshot.getLargeTotalBytes();
                         this.mSoFarBytes = snapshot.getLargeSofarBytes();
 
-                        mSpeedMonitor.start();
+                        mSpeedMonitor.start(mSoFarBytes);
 
                         mMessenger.
                                 notifyPending(((MessageSnapshot.IWarnMessageSnapshot) snapshot).
@@ -288,6 +287,7 @@ public class DownloadTaskHunter implements ITaskHunter, ITaskHunter.IStarter, IT
                     getStatus());
         }
 
+        mSpeedMonitor.end(this.mSoFarBytes);
         if (mTask.getFinishListenerList() != null) {
             @SuppressWarnings("unchecked") final ArrayList<BaseDownloadTask.FinishListener>
                     listenersCopy =
@@ -419,8 +419,6 @@ public class DownloadTaskHunter implements ITaskHunter, ITaskHunter.IStarter, IT
             FileDownloadServiceProxy.getImpl().pause(origin.getId());
         }
 
-        mSpeedMonitor.end(mSoFarBytes);
-
         // For make sure already added event mListener for receive paused event
         FileDownloadList.getImpl().add(runningTask);
         FileDownloadList.getImpl().remove(runningTask, MessageSnapshotTaker.catchPause(origin));
@@ -518,7 +516,7 @@ public class DownloadTaskHunter implements ITaskHunter, ITaskHunter.IStarter, IT
         mStatus = FileDownloadStatus.INVALID_STATUS;
     }
 
-    private void prepare() {
+    private void prepare() throws IOException {
         final BaseDownloadTask.IRunningTask runningTask = mTask.getRunningTask();
         final BaseDownloadTask origin = runningTask.getOrigin();
 
@@ -543,8 +541,12 @@ public class DownloadTaskHunter implements ITaskHunter, ITaskHunter.IStarter, IT
         }
 
         if (!dir.exists()) {
-            //noinspection ResultOfMethodCallIgnored
-            dir.mkdirs();
+            if (!dir.mkdirs() && !dir.exists()) {
+                throw new IOException(FileDownloadUtils.
+                        formatString("Create parent directory failed, please make sure " +
+                                        "you have permission to create file or directory on the path: %s",
+                                dir.getAbsolutePath()));
+            }
         }
     }
 
@@ -616,7 +618,7 @@ public class DownloadTaskHunter implements ITaskHunter, ITaskHunter.IStarter, IT
                 //noinspection StatementWithEmptyBody
                 if (!lostConnectedHandler.dispatchTaskStart(runningTask)) {
                     final MessageSnapshot snapshot = prepareErrorMessage(
-                            new RuntimeException("Occur Unknow Error, when request to start" +
+                            new RuntimeException("Occur Unknown Error, when request to start" +
                                     " maybe some problem in binder, maybe the process was killed in " +
                                     "unexpected."));
 

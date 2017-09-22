@@ -23,6 +23,7 @@ import android.text.style.ForegroundColorSpan;
 import android.util.AttributeSet;
 
 import com.angcyo.uiview.R;
+import com.angcyo.uiview.kotlin.ViewExKt;
 import com.angcyo.uiview.skin.SkinHelper;
 import com.angcyo.uiview.utils.RTextPaint;
 import com.angcyo.uiview.utils.Reflect;
@@ -59,6 +60,11 @@ public class RTextView extends AppCompatTextView {
     private int mLeftOffset = 0, mTopOffset = 0, mBottomOffset = 0;
     private String mLeftString;
 
+    /**
+     * 由于系统的drawableLeft, 并不会显示在居中文本的左边, 所以自定义此属性
+     */
+    Drawable textLeftDrawable;
+
     public RTextView(Context context) {
         this(context, null);
     }
@@ -90,6 +96,11 @@ public class RTextView extends AppCompatTextView {
 
         String string = typedArray.getString(R.styleable.RTextView_r_left_text);
         setLeftString(string);
+
+        textLeftDrawable = typedArray.getDrawable(R.styleable.RTextView_r_left_drawable);
+        if (textLeftDrawable != null) {
+            textLeftDrawable.setBounds(0, 0, textLeftDrawable.getIntrinsicWidth(), textLeftDrawable.getIntrinsicHeight());
+        }
         typedArray.recycle();
 
         initView();
@@ -164,6 +175,24 @@ public class RTextView extends AppCompatTextView {
                     getPaddingLeft() + mPaddingLeft,
                     getPaddingTop() - fontMetrics.top /*fontMetrics.ascent + fontMetrics.descent*/,
                     textPaint);
+            canvas.restore();
+        }
+
+        if (textLeftDrawable != null) {
+            canvas.save();
+//            Layout layout = getLayout();
+            //layout.getLineStart()
+
+//            canvas.translate(rawPaddingLeft + (viewDrawWith - drawWidth) / 2, paddingTop.toFloat() + (viewDrawHeight - drawHeight) / 2)
+
+            canvas.translate(getMeasuredWidth() / 2 -
+                            ViewExKt.textWidth(this, String.valueOf(getText())) / 2 -
+                            textLeftDrawable.getIntrinsicWidth() -
+                            getCompoundDrawablePadding(),
+                    getMeasuredHeight() / 2 - textLeftDrawable.getIntrinsicHeight() / 2);
+
+            textLeftDrawable.draw(canvas);
+
             canvas.restore();
         }
     }

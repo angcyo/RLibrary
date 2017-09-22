@@ -37,6 +37,9 @@ public class UIProgressDialog extends UIIDialogImpl {
     TextView tipTextView;
     SimpleProgressBar progressBar;
 
+    boolean incertitudeProgress = false;
+    int progressWidth = -1;
+
     private UIProgressDialog() {
         setGravity(Gravity.CENTER);
         setCanTouchOnOutside(false);
@@ -60,6 +63,19 @@ public class UIProgressDialog extends UIIDialogImpl {
         return this;
     }
 
+    public UIProgressDialog setIncertitudeProgress(boolean incertitudeProgress) {
+        this.incertitudeProgress = incertitudeProgress;
+        if (progressBar != null) {
+            progressBar.setIncertitudeProgress(incertitudeProgress);
+        }
+        return this;
+    }
+
+    public UIProgressDialog setProgressWidth(int progressWidth) {
+        this.progressWidth = progressWidth;
+        return this;
+    }
+
     @Override
     protected View inflateDialogView(FrameLayout dialogRootLayout, LayoutInflater inflater) {
         return inflate(R.layout.base_progress_dialog_layout);
@@ -72,6 +88,10 @@ public class UIProgressDialog extends UIIDialogImpl {
         resetTextView();
         progressBar = mViewHolder.v(R.id.base_progress_view);
         progressBar.setProgress(progress);
+        if (progressWidth > 0) {
+            progressBar.setProgressWidth(progressWidth);
+        }
+        progressBar.setIncertitudeProgress(incertitudeProgress);
     }
 
     private void resetTextView() {

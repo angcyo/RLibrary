@@ -15,15 +15,11 @@
  */
 package com.liulishuo.filedownloader.exception;
 
-import com.liulishuo.filedownloader.model.FileDownloadModel;
-
 /**
  * Throwing this exception, when we can't know the size of the download file, and its Transfer-Encoding
  * is not Chunked either.
  * <p/>
  * When you occur this type exception, the chance of retry will be ignored.
- *
- * @see com.liulishuo.filedownloader.services.FileDownloadRunnable#loop(FileDownloadModel)
  */
 public class FileDownloadGiveUpRetryException extends RuntimeException {
     public FileDownloadGiveUpRetryException(final String detailMessage) {
