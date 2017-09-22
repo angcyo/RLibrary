@@ -127,6 +127,10 @@ class RRatingBar(context: Context, attributeSet: AttributeSet? = null) : View(co
     }
 
     override fun onTouchEvent(event: MotionEvent): Boolean {
+        if (!isEnabled) {
+            return super.onTouchEvent(event)
+        }
+
         val action = MotionEventCompat.getActionMasked(event)
         when (action) {
             MotionEvent.ACTION_DOWN -> {
