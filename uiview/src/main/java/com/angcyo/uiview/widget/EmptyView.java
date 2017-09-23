@@ -35,21 +35,30 @@ public class EmptyView extends View {
      */
     int mGroupCount = 10;
 
-    int mDefaultGroupHeight = 80;//px
+    /**
+     * 每个大的矩形, 对应多少个小的矩形
+     */
+    int mGroupLittleCount = 4;
+
+    int mDefaultGroupHeight = 80;//
 
     /**
      * 横向空隙大小
      */
-    int mHSpace = 10;//px
+    int mHSpace = 10;//
     /**
      * 竖向空隙大小
      */
-    int mVSpace = 10;//px
+    int mVSpace = 10;//
+    int mLittleVSpace = 6;//
+
+    int littlePaddingTop = 10;
+    int littlePaddingBottom = 10;
 
     /**
      * 圆角大小
      */
-    int mRoundRadius = 6;//px
+    int mRoundRadius = 6;//
 
     RectF mRectF;
     RectF mRectFLittle;
@@ -72,6 +81,9 @@ public class EmptyView extends View {
         mHSpace *= getDensity();
         mVSpace *= getDensity();
         mRoundRadius *= getDensity();
+        mLittleVSpace *= getDensity();
+        littlePaddingBottom *= getDensity();
+        littlePaddingTop *= getDensity();
 
         if (!isInEditMode()) {
             final TypedArray array = context.obtainStyledAttributes(attrs, R.styleable.EmptyView);
@@ -88,7 +100,6 @@ public class EmptyView extends View {
 
         mPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
         mPaint.setColor(defaultColor);
-
 
         mRectF = new RectF();
         mRectFLittle = new RectF();
@@ -227,25 +238,33 @@ public class EmptyView extends View {
 
     private void drawLittleRect(Canvas canvas) {
 
-        int height = (mDefaultGroupHeight - 2 * mVSpace) / 3;
+        int height = (mDefaultGroupHeight - littlePaddingTop - littlePaddingBottom - (mGroupLittleCount - 1) * mLittleVSpace) / mGroupLittleCount;
         final int right = getMeasuredWidth() - getPaddingRight() - getPaddingLeft();
 
         final int left = mDefaultGroupHeight + mHSpace;
 
-        mRectFLittle.set(left, 0, left + (right - left) * ratio(0.6f), height);
-        canvas.drawRoundRect(mRectFLittle, mRoundRadius, mRoundRadius, mPaint);
+        int top = littlePaddingTop;
+        for (int i = 0; i < mGroupLittleCount; i++) {
+            mRectFLittle.set(left, top, left + (right - left) * ratio(0.3f + 0.3f * mRandom.nextFloat()), top + height);
+            canvas.drawRoundRect(mRectFLittle, mRoundRadius, mRoundRadius, mPaint);
+            top += height + mLittleVSpace;
+            if ((top + littlePaddingBottom) > mDefaultGroupHeight) {
+                break;
+            }
+        }
 
 //        mRectFLittle.set(mDefaultGroupHeight + mHSpace, height + mVSpace,
 //                (getPaddingLeft() + mDefaultGroupHeight / 2 + mHSpace / 2 + right / 2) * ratio(0.3f),
 //                2 * height + mVSpace);
-        mRectFLittle.set(left, height + mVSpace, left + (right - left) * ratio(0.3f),
-                2 * height + mVSpace);
-        canvas.drawRoundRect(mRectFLittle, mRoundRadius, mRoundRadius, mPaint);
 
-        mRectFLittle.set(left,
-                2 * height + 2 * mVSpace, left + (right - left) * ratio(0.5f),
-                3 * height + 2 * mVSpace);
-        canvas.drawRoundRect(mRectFLittle, mRoundRadius, mRoundRadius, mPaint);
+//        mRectFLittle.set(left, height + mVSpace, left + (right - left) * ratio(0.3f),
+//                2 * height + mVSpace);
+//        canvas.drawRoundRect(mRectFLittle, mRoundRadius, mRoundRadius, mPaint);
+//
+//        mRectFLittle.set(left,
+//                2 * height + 2 * mVSpace, left + (right - left) * ratio(0.5f),
+//                3 * height + 2 * mVSpace);
+//        canvas.drawRoundRect(mRectFLittle, mRoundRadius, mRoundRadius, mPaint);
     }
 
     private float ratio(float min) {
