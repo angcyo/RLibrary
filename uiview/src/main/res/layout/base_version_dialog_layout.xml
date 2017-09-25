@@ -36,7 +36,7 @@
             android:paddingTop="@dimen/base_xhdpi"
             android:textSize="20dp"
             android:textStyle="bold"
-            tools:text="测试文本" />
+            tools:text="测试文本标题" />
 
         <com.angcyo.uiview.widget.RTextView
             android:id="@+id/base_version_content_view"
@@ -44,8 +44,9 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:gravity="top"
+            android:lineSpacingExtra="4dp"
             android:minHeight="80dp"
-            tools:text="测试文本\nasdf\nnasdf" />
+            tools:text="测试文本内容\nasdf\nnasdf" />
 
     </LinearLayout>
 

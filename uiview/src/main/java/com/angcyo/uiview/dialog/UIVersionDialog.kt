@@ -26,7 +26,7 @@ class UIVersionDialog : UIIDialogRxImpl() {
     /**版本提示内容*/
     var versionContent = ""
         set(value) {
-            field = value
+            field = value.replace("\\\\\\\\n", "\n").replace("\\\\n", "\n").replace("\\n", "\n")
             contentView?.text = field
         }
 

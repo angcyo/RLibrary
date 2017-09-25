@@ -1292,6 +1292,26 @@ public class RUtils {
         return getDataTime("yyyy-MM-dd HH:mm", System.currentTimeMillis());
     }
 
+    /**
+     * 从url中,  返回文件后缀, 也可以从文件路径中返回, 不包含.字符
+     */
+    public static String getFileSuffix(String url, String defaultSuffix) {
+        String fileSuffix = defaultSuffix;
+        try {
+            String[] split = url.split("\\?")[0].split("\\.");
+            if (split.length > 1) {
+                fileSuffix = split[split.length - 1];
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return fileSuffix;
+    }
+
+    public static String getFileSuffix(String url) {
+        return getFileSuffix(url, "");
+    }
+
     public enum ImageType {
         JPEG, GIF, PNG, BMP, UNKNOWN
     }
