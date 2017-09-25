@@ -21,8 +21,10 @@ import android.text.TextPaint;
 import android.text.TextUtils;
 import android.text.style.ForegroundColorSpan;
 import android.util.AttributeSet;
+import android.view.Gravity;
 
 import com.angcyo.uiview.R;
+import com.angcyo.uiview.kotlin.ExKt;
 import com.angcyo.uiview.kotlin.ViewExKt;
 import com.angcyo.uiview.skin.SkinHelper;
 import com.angcyo.uiview.utils.RTextPaint;
@@ -53,17 +55,16 @@ public class RTextView extends AppCompatTextView {
     boolean hasUnderline = false;
 
     boolean isAttached = false;
-    private Drawable mBackgroundDrawable;
-    private CharSequence mRawText;
-    private int mPaddingLeft;
-    private RTextPaint mTextPaint;
-    private int mLeftOffset = 0, mTopOffset = 0, mBottomOffset = 0;
-    private String mLeftString;
-
     /**
      * 由于系统的drawableLeft, 并不会显示在居中文本的左边, 所以自定义此属性
      */
     Drawable textLeftDrawable;
+    private Drawable mBackgroundDrawable;
+    private CharSequence mRawText;
+    private int mPaddingLeft;
+    private RTextPaint mTextPaint;
+    private int mLeftOffset = 0, mTopOffset = 0, mBottomOffset = 0, textLeftOffset = (int) (2 * density());
+    private String mLeftString;
 
     public RTextView(Context context) {
         this(context, null);
@@ -93,6 +94,7 @@ public class RTextView extends AppCompatTextView {
         mLeftOffset = typedArray.getDimensionPixelOffset(R.styleable.RTextView_r_left_margin, mLeftOffset);
         mBottomOffset = typedArray.getDimensionPixelOffset(R.styleable.RTextView_r_bottom_margin, mBottomOffset);
         mTopOffset = typedArray.getDimensionPixelOffset(R.styleable.RTextView_r_top_margin, mTopOffset);
+        textLeftOffset = typedArray.getDimensionPixelOffset(R.styleable.RTextView_r_left_text_offset, textLeftOffset);
 
         String string = typedArray.getString(R.styleable.RTextView_r_left_text);
         setLeftString(string);
@@ -110,7 +112,7 @@ public class RTextView extends AppCompatTextView {
         mLeftString = leftString;
         if (!TextUtils.isEmpty(mLeftString)) {
             float textWidth = mTextPaint.getTextWidth(mLeftString);
-            setPadding((int) (mPaddingLeft + textWidth + mLeftOffset), getPaddingTop(), getPaddingRight(), getPaddingBottom());
+            setPadding((int) (mPaddingLeft + textWidth + textLeftOffset), getPaddingTop(), getPaddingRight(), getPaddingBottom());
         } else {
             setPadding(mPaddingLeft, getPaddingTop(), getPaddingRight(), getPaddingBottom());
         }
@@ -171,10 +173,38 @@ public class RTextView extends AppCompatTextView {
 //            );
             TextPaint textPaint = mTextPaint.getTextPaint();
             Paint.FontMetrics fontMetrics = textPaint.getFontMetrics();
+//            canvas.drawText(mLeftString,
+//                    getPaddingLeft() + mPaddingLeft,
+//                    getPaddingTop() - fontMetrics.ascent + fontMetrics.descent /*fontMetrics.ascent + fontMetrics.descent*/,
+//                    textPaint);
+            float textY = 0;
+            if (ExKt.have(getGravity(), Gravity.BOTTOM)) {
+                if (isInEditMode()) {
+                    textPaint.setColor(Color.RED);
+                }
+                textY = getMeasuredHeight() - getPaddingBottom() - fontMetrics.descent;
+            } else if (ExKt.have(getGravity(), Gravity.TOP)) {
+                if (isInEditMode()) {
+                    textPaint.setColor(Color.GREEN);
+                }
+                textY = getPaddingTop() - fontMetrics.ascent;
+            } else if (ExKt.have(getGravity(), Gravity.CENTER_VERTICAL)) {
+                if (isInEditMode()) {
+                    textPaint.setColor(Color.BLUE);
+                }
+                textY = getMeasuredHeight() - getPaddingBottom() - (fontMetrics.descent - fontMetrics.ascent) / 2;
+            } else {
+                if (isInEditMode()) {
+                    textPaint.setColor(Color.YELLOW);
+                }
+                textY = getPaddingTop() - fontMetrics.ascent + fontMetrics.descent; /*fontMetrics.ascent + fontMetrics.descent*/
+            }
+
             canvas.drawText(mLeftString,
                     getPaddingLeft() + mPaddingLeft,
-                    getPaddingTop() - fontMetrics.top /*fontMetrics.ascent + fontMetrics.descent*/,
+                    textY,
                     textPaint);
+
             canvas.restore();
         }
 
