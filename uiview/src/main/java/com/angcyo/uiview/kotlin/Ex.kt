@@ -1,6 +1,7 @@
 package com.angcyo.uiview.kotlin
 
 import android.graphics.Paint
+import android.text.TextUtils
 import android.view.View
 import com.angcyo.uiview.view.UIIViewImpl
 
@@ -45,3 +46,5 @@ public fun Int.minValue(value: Int) = Math.max(value, this)
 public fun Float.maxValue(value: Float) = Math.min(value, this)
 
 public fun Int.maxValue(value: Int) = Math.min(value, this)
+
+public fun String.int() = if ((TextUtils.isEmpty(this) || "null".equals(this, true))) 0 else this.toInt()
