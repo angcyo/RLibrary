@@ -502,13 +502,22 @@ public abstract class RBaseAdapter<T> extends RecyclerView.Adapter<RBaseViewHold
      * @see IShowState
      */
     public void setShowState(int showState) {
-        if (mShowState == showState) {
+        int oldState = this.mShowState;
+
+        if (oldState == showState) {
             return;
         }
-        mShowState = showState;
+        this.mShowState = showState;
 
-        if (mIShowState == null || showState == IShowState.NORMAL) {
-            if (mIShowState != null && mIShowState instanceof ItemShowStateLayout) {
+        if (isEnableLoadMore()) {
+            setLoadMoreEnd();
+        }
+
+        if (mIShowState == null ||
+                oldState == IShowState.NORMAL ||
+                showState == IShowState.NORMAL) {
+            if (mIShowState != null &&
+                    mIShowState instanceof ItemShowStateLayout) {
                 if (animToShowState) {
                     ((ItemShowStateLayout) mIShowState).animToHide(new Runnable() {
                         @Override
