@@ -2,7 +2,7 @@
 <resources>
     <declare-styleable name="RRatingBar">
         <!--当前评分 [1-r_rating_count]-->
-        <attr name="r_cur_rating" format="integer"/>
+        <attr name="r_cur_rating" format="float"/>
         <!--总评分-->
         <attr name="r_rating_count" format="integer"/>
         <!--星星之间的空隙-->

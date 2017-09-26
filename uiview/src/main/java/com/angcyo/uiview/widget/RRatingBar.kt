@@ -2,15 +2,14 @@ package com.angcyo.uiview.widget
 
 import android.content.Context
 import android.graphics.Canvas
+import android.graphics.RectF
+import android.graphics.drawable.Drawable
 import android.support.v4.view.MotionEventCompat
 import android.util.AttributeSet
 import android.view.MotionEvent
 import android.view.View
 import com.angcyo.uiview.R
-import com.angcyo.uiview.kotlin.density
-import com.angcyo.uiview.kotlin.getDrawable
-import com.angcyo.uiview.kotlin.max0
-import com.angcyo.uiview.kotlin.minValue
+import com.angcyo.uiview.kotlin.*
 import kotlin.properties.ReadWriteProperty
 import kotlin.reflect.KProperty
 
@@ -27,10 +26,14 @@ class RRatingBar(context: Context, attributeSet: AttributeSet? = null) : View(co
     var ratingNormalDrawable by LayoutProperty(getDrawable(R.drawable.base_wujiaoxing_20_n))
 
     /**星星的数量*/
-    var ratingNum: Int by RefreshProperty(5)
+    var ratingNum: Float by RefreshProperty(5f)
 
-    /**当前评分 [1-ratingNum], 小于0, 表示没有*/
-    var curRating by RefreshProperty(2)
+    /**当前评分 [0-ratingNum], 小于0, 表示没有*/
+    var curRating = 0f
+        set(value) {
+            field = value.maxValue(ratingNum.toFloat())
+            postInvalidate()
+        }
 
     /**评分最小允许的值*/
     var minRating = 0
@@ -40,8 +43,8 @@ class RRatingBar(context: Context, attributeSet: AttributeSet? = null) : View(co
 
     init {
         val typedArray = context.obtainStyledAttributes(attributeSet, R.styleable.RRatingBar)
-        curRating = typedArray.getInteger(R.styleable.RRatingBar_r_cur_rating, curRating)
-        ratingNum = typedArray.getInteger(R.styleable.RRatingBar_r_rating_count, ratingNum)
+        curRating = typedArray.getFloat(R.styleable.RRatingBar_r_cur_rating, curRating)
+        ratingNum = typedArray.getInteger(R.styleable.RRatingBar_r_rating_count, ratingNum.toInt()).toFloat()
         minRating = typedArray.getInteger(R.styleable.RRatingBar_r_min_rating, minRating)
         val normalDrawable = typedArray.getDrawable(R.styleable.RRatingBar_r_normal_rating)
         val selectorDrawable = typedArray.getDrawable(R.styleable.RRatingBar_r_selected_rating)
@@ -100,28 +103,38 @@ class RRatingBar(context: Context, attributeSet: AttributeSet? = null) : View(co
             return ratingNormalDrawable.bounds.width()
         }
 
+    private val progressClipRect by lazy {
+        RectF()
+    }
+
     override fun onDraw(canvas: Canvas) {
         //调用此方法, 不禁用view本身的功能, 比如:原本的background属性
         super.onDraw(canvas)
 
-        //确保星星的有效数量
-        val num = Math.max(0, Math.min(curRating, ratingNum))
-
         //绘制未选中星星
-        var left = paddingLeft
-        for (i in num until ratingNum) {
-            canvas.save()
-            canvas.translate(left + i * ratingWidth + i * ratingSpace, paddingTop.toFloat())
-            ratingNormalDrawable.draw(canvas)
-            canvas.restore()
+        drawDrawable(canvas, ratingNormalDrawable)
+
+        //计算进度
+        val floor = Math.floor(curRating.toDouble()).toFloat()
+
+        var right = paddingLeft + ratingWidth * floor + ratingSpace * floor
+        if (floor.compareTo(curRating) != 0) {
+            //半星
+            right += ratingWidth / 2
         }
 
+        progressClipRect.set(0f, 0f, right, measuredHeight.toFloat())
+        canvas.clipRect(progressClipRect)
         //绘制选中星星
-        left = paddingLeft
-        for (i in 0 until num) {
+        drawDrawable(canvas, ratingSelectorDrawable)
+    }
+
+    private fun drawDrawable(canvas: Canvas, drawable: Drawable) {
+        var left = paddingLeft
+        for (i in 0 until ratingNum.toInt()) {
             canvas.save()
             canvas.translate(left + i * ratingWidth + i * ratingSpace, paddingTop.toFloat())
-            ratingSelectorDrawable.draw(canvas)
+            drawable.draw(canvas)
             canvas.restore()
         }
     }
@@ -150,15 +163,17 @@ class RRatingBar(context: Context, attributeSet: AttributeSet? = null) : View(co
     /*根据x的坐标, 计算星星的个数*/
     private fun calcRating(x: Float) {
         var left = paddingLeft
-        var index = 0
-        for (i in 0 until ratingNum) {
+        var index = 0f
+        for (i in 0 until ratingNum.toInt()) {
             if (x > left + i * ratingWidth + i * ratingSpace) {
-                index = i + 1
+                index = i.toFloat() + 1f
+            } else if (x > left + (i - 1).minValue(0) * ratingWidth + ratingWidth / 2 + i * ratingSpace) {
+                index = i.toFloat() + 0.5f
             }
         }
 
         val oldValue = curRating
-        val value = index.minValue(minRating)
+        val value: Float = index.minValue(minRating)
         if (value != curRating) {
             curRating = value
             postInvalidate()
@@ -169,7 +184,7 @@ class RRatingBar(context: Context, attributeSet: AttributeSet? = null) : View(co
     var onRatingChangeListener: OnRatingChangeListener? = null
 
     public abstract class OnRatingChangeListener {
-        open fun onRatingChange(from: Int, to: Int) {
+        open fun onRatingChange(from: Float, to: Float) {
 
         }
     }
