@@ -66,6 +66,17 @@ public class RTextView extends AppCompatTextView {
     private int mLeftOffset = 0, mTopOffset = 0, mBottomOffset = 0, textLeftOffset = (int) (2 * density());
     private String mLeftString;
 
+    /**
+     * 是否显示 未读小红点
+     */
+    private boolean showNoRead = false;
+    /**
+     * 小红点半径
+     */
+    private float noReadRadius = 4 * density();
+    private float noReadPaddingTop = 2 * density();
+    private float noReadPaddingRight = 2 * density();
+
     public RTextView(Context context) {
         this(context, null);
     }
@@ -103,6 +114,11 @@ public class RTextView extends AppCompatTextView {
         if (textLeftDrawable != null) {
             textLeftDrawable.setBounds(0, 0, textLeftDrawable.getIntrinsicWidth(), textLeftDrawable.getIntrinsicHeight());
         }
+
+        noReadRadius = typedArray.getDimensionPixelOffset(R.styleable.RTextView_r_noread_radius, (int) noReadRadius);
+        noReadPaddingRight = typedArray.getDimensionPixelOffset(R.styleable.RTextView_r_noread_padding_right, (int) noReadPaddingRight);
+        noReadPaddingTop = typedArray.getDimensionPixelOffset(R.styleable.RTextView_r_noread_padding_top, (int) noReadPaddingTop);
+
         typedArray.recycle();
 
         initView();
@@ -224,6 +240,15 @@ public class RTextView extends AppCompatTextView {
             textLeftDrawable.draw(canvas);
 
             canvas.restore();
+        }
+
+        if (showNoRead /*|| isInEditMode()*/) {
+            //未读小红点
+            TextPaint textPaint = mTextPaint.getTextPaint();
+            textPaint.setStyle(Paint.Style.FILL);
+            textPaint.setColor(Color.RED);
+            //默认位置在右上角
+            canvas.drawCircle(getMeasuredWidth() - noReadPaddingRight - noReadRadius, noReadPaddingTop + noReadRadius, noReadRadius, textPaint);
         }
     }
 
@@ -501,5 +526,27 @@ public class RTextView extends AppCompatTextView {
         }
 
         setTextEx(builder, BufferType.NORMAL);
+    }
+
+    /**
+     * 是否显示未读小红点
+     */
+    public void setShowNoRead(boolean showNoRead) {
+        this.showNoRead = showNoRead;
+    }
+
+    /**
+     * 设置小红点半径
+     */
+    public void setNoReadRadius(float noReadRadius) {
+        this.noReadRadius = noReadRadius;
+    }
+
+    public void setNoReadPaddingTop(float noReadPaddingTop) {
+        this.noReadPaddingTop = noReadPaddingTop;
+    }
+
+    public void setNoReadPaddingRight(float noReadPaddingRight) {
+        this.noReadPaddingRight = noReadPaddingRight;
     }
 }
