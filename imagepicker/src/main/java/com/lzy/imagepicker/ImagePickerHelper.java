@@ -111,13 +111,17 @@ public class ImagePickerHelper {
      * 根据路径,删除选中的图片
      */
     public static void deleteItemFromSelected(String path) {
-        if (TextUtils.isEmpty(path)) {
+        deleteImageItem(ImagePicker.getInstance().getSelectedImages(), path);
+    }
+
+
+    public static void deleteImageItem(ArrayList<ImageItem> imageItems, String path) {
+        if (TextUtils.isEmpty(path) || imageItems == null || imageItems.isEmpty()) {
             return;
         }
-        ArrayList<ImageItem> selectedImages = ImagePicker.getInstance().getSelectedImages();
-        for (ImageItem item : selectedImages) {
+        for (ImageItem item : imageItems) {
             if (TextUtils.equals(item.path, path)) {
-                selectedImages.remove(item);
+                imageItems.remove(item);
                 break;
             }
         }

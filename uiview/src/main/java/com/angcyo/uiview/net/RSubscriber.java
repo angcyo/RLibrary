@@ -1,12 +1,14 @@
 package com.angcyo.uiview.net;
 
 import com.angcyo.library.utils.L;
+import com.angcyo.uiview.utils.T_;
 import com.fasterxml.jackson.core.JsonParseException;
 import com.fasterxml.jackson.databind.JsonMappingException;
 
 import java.net.SocketException;
 import java.net.SocketTimeoutException;
 import java.net.UnknownHostException;
+import java.util.Locale;
 
 import retrofit2.HttpException;
 import rx.Subscriber;
@@ -24,7 +26,9 @@ import rx.Subscriber;
  */
 public abstract class RSubscriber<T> extends Subscriber<T> {
 
-    public static final int NO_NETWORK = -50000;
+    public static final int NO_NETWORK = -400;
+    public static final int UNKNOWN_ERROR = -401;
+    public static final int DATA_ERROR = -403;
 
     @Override
     public void onStart() {
@@ -73,14 +77,14 @@ public abstract class RSubscriber<T> extends Subscriber<T> {
             errorCode = NO_NETWORK;
         } else if (e instanceof JsonParseException || e instanceof JsonMappingException) {
             errorMsg = "恐龙君打了个盹，请稍后再试!"; //   "数据解析错误:" + e.getMessage();
-            errorCode = -40001;
+            errorCode = DATA_ERROR;
         } else if (e instanceof RException) {
             errorMsg = ((RException) e).getMsg();
             errorCode = ((RException) e).getCode();
             errorMore = ((RException) e).getMore();
         } else {
             errorMsg = "未知错误:" + e.getMessage();
-            errorCode = -40000;
+            errorCode = UNKNOWN_ERROR;
         }
 
         e.printStackTrace();
@@ -119,6 +123,9 @@ public abstract class RSubscriber<T> extends Subscriber<T> {
      */
     public void onError(int code, String msg) {
         //L.w("call: onError([code, msg])-> " + code + " " + msg);
+        if (code == UNKNOWN_ERROR || code == DATA_ERROR || code == NO_NETWORK) {
+            T_.error(String.format(Locale.CHINA, "[%d]%s", code, msg));
+        }
     }
 
     /**

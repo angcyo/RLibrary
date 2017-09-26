@@ -53,6 +53,15 @@ public class RImageView extends CircleImageView {
     private Drawable mGifTipDrawable;
     private float mDensity;
 
+    /**
+     * 是否显示单击时的遮罩蒙层
+     */
+    private boolean mShowClickMask = true;
+
+    public void setShowClickMask(boolean mShowClickMask) {
+        this.mShowClickMask = mShowClickMask;
+    }
+
     public RImageView(Context context) {
         this(context, null);
     }
@@ -193,7 +202,7 @@ public class RImageView extends CircleImageView {
     }
 
     private void setColor(Drawable drawable, @ColorInt int color) {
-        if (drawable != null) {
+        if (mShowClickMask && drawable != null) {
             if (showMask(drawable)) {
 //                LayerDrawable layerDrawable = (LayerDrawable) drawable;
 //                int numberOfLayers = layerDrawable.getNumberOfLayers();
@@ -279,7 +288,7 @@ public class RImageView extends CircleImageView {
             mGifTipDrawable.draw(canvas);
             canvas.restore();
         }
-        if (mShowMask) {
+        if (mShowClickMask && mShowMask) {
             canvas.drawColor(Color.parseColor("#80000000"));
         }
     }

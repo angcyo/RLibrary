@@ -80,7 +80,8 @@ class DYProgressBar(context: Context, attributeSet: AttributeSet? = null) : View
 
     private var valueAnimator: ValueAnimator? = null
 
-    private fun startAnimator() {
+    /**开始进度动画*/
+    fun startAnimator() {
         if (valueAnimator == null) {
             valueAnimator = ValueAnimator.ofFloat(0f, 1f).apply {
                 interpolator = AccelerateInterpolator()
@@ -98,10 +99,13 @@ class DYProgressBar(context: Context, attributeSet: AttributeSet? = null) : View
         }
     }
 
-    private fun stopAnimator() {
+    /**停止进度动画*/
+    fun stopAnimator() {
         drawProgressColor = progressColor
         valueAnimator?.cancel()
         valueAnimator = null
+        drawProgressRect.setEmpty()
+        postInvalidate()
     }
 
     override fun onVisibilityChanged(changedView: View?, visibility: Int) {
