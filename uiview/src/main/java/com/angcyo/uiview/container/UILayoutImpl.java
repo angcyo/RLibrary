@@ -1831,11 +1831,6 @@ public class UILayoutImpl extends SwipeBackLayout implements ILayout<UIParam>, U
     }
 
     @Override
-    public boolean dispatchTouchEvent(MotionEvent ev) {
-        return super.dispatchTouchEvent(ev);
-    }
-
-    @Override
     protected void onSizeChanged(int w, int h, int oldw, int oldh) {
         super.onSizeChanged(w, h, oldw, oldh);
     }
@@ -1967,7 +1962,7 @@ public class UILayoutImpl extends SwipeBackLayout implements ILayout<UIParam>, U
             //needMeasure = true;
             if (needMeasure) {
                 childAt.measure(exactlyMeasure(widthSize), exactlyMeasure(heightSize));
-                L.e("测量: " + viewPatternByView.mIView.getClass().getSimpleName());
+                L.i("测量: " + viewPatternByView.mIView.getClass().getSimpleName());
             }
         }
         //Debug.logTimeEnd("测量结束");
@@ -2147,20 +2142,17 @@ public class UILayoutImpl extends SwipeBackLayout implements ILayout<UIParam>, U
         return null;
     }
 
-    @Override
-    public boolean onTouchEvent(MotionEvent event) {
-        super.onTouchEvent(event);
-        return true;
-    }
 
     @Override
-    public boolean onInterceptTouchEvent(MotionEvent ev) {
+    public boolean dispatchTouchEvent(MotionEvent ev) {
         int actionMasked = ev.getActionMasked();
+        if (actionMasked == MotionEvent.ACTION_DOWN) {
+            if (mLastShowViewPattern != null) {
+                View view = ViewGroupExKt.findView((ViewGroup) mLastShowViewPattern.mView, ev.getRawX(), ev.getRawY());
+                L.w("touch on -> " + view);
 
-        if (mLastShowViewPattern != null) {
-            if (mLastShowViewPattern.mIView.hideSoftInputOnTouchDown()) {
-                if (actionMasked == MotionEvent.ACTION_DOWN) {
-                    View view = ViewGroupExKt.findView((ViewGroup) mLastShowViewPattern.mView, ev.getRawX(), ev.getRawY());
+                if (mLastShowViewPattern.mIView.hideSoftInputOnTouchDown()) {
+                    //L.e("call: onInterceptTouchEvent([ev])-> " + RSoftInputLayout.getSoftKeyboardHeight(this));
                     //L.e("call: onInterceptTouchEvent([ev])-> " + view);
                     if (view != null) {
                         if (view instanceof EditText || view.getTag() != null) {
@@ -2171,12 +2163,24 @@ public class UILayoutImpl extends SwipeBackLayout implements ILayout<UIParam>, U
                 }
             }
         }
+        return super.dispatchTouchEvent(ev);
+    }
+
+    @Override
+    public boolean onInterceptTouchEvent(MotionEvent ev) {
+        int actionMasked = ev.getActionMasked();
 
         if (isFinishing || isStarting) {
             L.i("拦截事件：" + actionMasked + " isFinishing:" + isFinishing + " isStarting:" + isStarting);
             return true;
         }
         return super.onInterceptTouchEvent(ev);
+    }
+
+    @Override
+    public boolean onTouchEvent(MotionEvent event) {
+        super.onTouchEvent(event);
+        return true;
     }
 
     @Override

@@ -113,6 +113,14 @@ public class RSoftInputLayout extends FrameLayout implements ILifecycle {
         manager.showSoftInput(view, 0);
     }
 
+    public static int getSoftKeyboardHeight(View view) {
+        int screenHeight = view.getResources().getDisplayMetrics().heightPixels;
+        Rect rect = new Rect();
+        view.getWindowVisibleDisplayFrame(rect);
+        int visibleBottom = rect.bottom;
+        return screenHeight - visibleBottom;
+    }
+
     public void setEnableSoftInput(boolean enableSoftInput) {
         this.enableSoftInput = enableSoftInput;
         if (enableSoftInput) {
@@ -432,11 +440,7 @@ public class RSoftInputLayout extends FrameLayout implements ILifecycle {
      * 获取键盘的高度
      */
     public int getSoftKeyboardHeight() {
-        int screenHeight = getScreenHeightPixels();
-        Rect rect = new Rect();
-        getWindowVisibleDisplayFrame(rect);
-        int visibleBottom = rect.bottom;
-        return screenHeight - visibleBottom;
+        return getSoftKeyboardHeight(this);
     }
 
     /**

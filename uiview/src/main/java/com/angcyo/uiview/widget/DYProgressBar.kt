@@ -36,7 +36,7 @@ class DYProgressBar(context: Context, attributeSet: AttributeSet? = null) : View
     var progressColor = Color.WHITE
 
     /**保底进度*/
-    var startProgress = 0.4f
+    var startProgress = 0.1f
 
     var bgLineHeight = 1 * density
     var bgLineColor = SkinHelper.getTranColor(progressColor, 0x80)
