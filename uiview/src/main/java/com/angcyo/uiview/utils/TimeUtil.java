@@ -175,6 +175,78 @@ public class TimeUtil {
         }
     }
 
+    public static String getTimeShowRentString(long milliseconds) {
+        String dataString;
+        String timeStringBy24;
+
+        Date currentTime = new Date(milliseconds);
+        Date today = new Date();
+        Calendar todayStart = Calendar.getInstance();
+        todayStart.set(Calendar.HOUR_OF_DAY, 0);
+        todayStart.set(Calendar.MINUTE, 0);
+        todayStart.set(Calendar.SECOND, 0);
+        todayStart.set(Calendar.MILLISECOND, 0);
+        Date todaybegin = todayStart.getTime();
+        Date tomorrowBegin = new Date(todaybegin.getTime() + 3600 * 24 * 1000);
+        Date lastdaybegin = new Date(tomorrowBegin.getTime() + 3600 * 24 * 1000);// 后天
+        Date last_daybegin = new Date(lastdaybegin.getTime() + 3600 * 24 * 1000);// 大后天
+
+
+        SimpleDateFormat dateformatter2 = new SimpleDateFormat("yyyy-MM-dd HH:mm", Locale.getDefault());
+        dataString = dateformatter2.format(currentTime);
+
+        if (currentTime.after(last_daybegin)) {
+            dataString = dateformatter2.format(currentTime);
+        } else if (currentTime.after(lastdaybegin)) {
+            dataString += " 后天";
+        } else if (currentTime.after(tomorrowBegin)){
+            dataString += " 明天";
+        } else if (currentTime.after(todaybegin)) {
+            dataString += " 今天";
+        }else {
+            dataString = dateformatter2.format(currentTime);
+        }
+
+        return dataString /*+ " " + timeStringBy24*/;
+
+    }
+
+    public static String getTimeShowRentString2(long milliseconds) {
+        String dataString = "";
+        String timeStringBy24;
+
+        Date currentTime = new Date(milliseconds);
+        Date today = new Date();
+        Calendar todayStart = Calendar.getInstance();
+        todayStart.set(Calendar.HOUR_OF_DAY, 0);
+        todayStart.set(Calendar.MINUTE, 0);
+        todayStart.set(Calendar.SECOND, 0);
+        todayStart.set(Calendar.MILLISECOND, 0);
+        Date todaybegin = todayStart.getTime();
+        Date tomorrowBegin = new Date(todaybegin.getTime() + 3600 * 24 * 1000);
+        Date lastdaybegin = new Date(tomorrowBegin.getTime() + 3600 * 24 * 1000);// 后天
+        Date last_daybegin = new Date(lastdaybegin.getTime() + 3600 * 24 * 1000);// 大后天
+
+
+//        SimpleDateFormat dateformatter2 = new SimpleDateFormat("yyyy-MM-dd HH:mm", Locale.getDefault());
+//        dataString = dateformatter2.format(currentTime);
+
+        if (currentTime.after(last_daybegin)) {
+            dataString = "";
+        } else if (currentTime.after(lastdaybegin)) {
+            dataString += " 后天";
+        } else if (currentTime.after(tomorrowBegin)){
+            dataString += " 明天";
+        } else if (currentTime.after(todaybegin)) {
+            dataString += " 今天";
+        }else {
+            dataString = "";
+        }
+
+        return dataString /*+ " " + timeStringBy24*/;
+
+    }
+
     /**
      * 根据不同时间段，显示不同时间
      *

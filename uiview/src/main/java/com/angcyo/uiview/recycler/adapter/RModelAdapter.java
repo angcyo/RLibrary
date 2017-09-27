@@ -324,8 +324,21 @@ public abstract class RModelAdapter<T> extends RBaseAdapter<T> {
     }
 
     public void unSelectorAll(boolean refresh) {
+        List<Integer> allSelectorList = getAllSelectorList();
         mSelector.clear();
+
         if (refresh) {
+            //取消选择
+            for (int position : allSelectorList) {
+                RBaseViewHolder viewHolder = getViewHolderFromPosition(position);
+                if (viewHolder != null) {
+                    if (!onUnSelectorPosition(viewHolder, position, false)) {
+                        onBindModelView(mModel, false, viewHolder, position,
+                                getAllDatas().size() > position ? getAllDatas().get(position) : null);
+                    }
+                }
+            }
+
             notifySelectorChange();
         }
     }

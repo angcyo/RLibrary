@@ -17,7 +17,7 @@ public class NumericWheelAdapter implements WheelAdapter {
     private static final int DEFAULT_MIN_VALUE = 0;
 
     // Values
-    private int minValue;
+    protected int minValue;
     private int maxValue;
 
     /**
