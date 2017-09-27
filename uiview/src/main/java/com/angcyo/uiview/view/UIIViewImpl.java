@@ -990,4 +990,9 @@ public abstract class UIIViewImpl implements IView {
     public boolean needForceMeasure() {
         return false;
     }
+
+    @Override
+    public boolean hideSoftInputOnTouchDown() {
+        return false;
+    }
 }

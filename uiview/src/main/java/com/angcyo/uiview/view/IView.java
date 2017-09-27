@@ -243,6 +243,11 @@ public interface IView {
      */
     boolean needForceMeasure();//是否需要测量
 
+    /**
+     * 点击界面其他地方, 自动隐藏键盘 (如果点击在EditText, 或者 tag不为null 的view上, 不会隐藏键盘)
+     */
+    boolean hideSoftInputOnTouchDown();
+
     enum IViewShowState {
         STATE_NORMAL,
         STATE_VIEW_CREATE,

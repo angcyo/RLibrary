@@ -22,6 +22,7 @@ import android.view.ViewGroup;
 import android.view.WindowInsets;
 import android.view.animation.Animation;
 import android.view.inputmethod.InputMethodManager;
+import android.widget.EditText;
 
 import com.angcyo.library.utils.L;
 import com.angcyo.uiview.R;
@@ -29,6 +30,7 @@ import com.angcyo.uiview.RApplication;
 import com.angcyo.uiview.RCrashHandler;
 import com.angcyo.uiview.Root;
 import com.angcyo.uiview.base.UILayoutActivity;
+import com.angcyo.uiview.kotlin.ViewGroupExKt;
 import com.angcyo.uiview.model.ViewPattern;
 import com.angcyo.uiview.resources.AnimUtil;
 import com.angcyo.uiview.rsen.RGestureDetector;
@@ -2153,8 +2155,25 @@ public class UILayoutImpl extends SwipeBackLayout implements ILayout<UIParam>, U
 
     @Override
     public boolean onInterceptTouchEvent(MotionEvent ev) {
+        int actionMasked = ev.getActionMasked();
+
+        if (mLastShowViewPattern != null) {
+            if (mLastShowViewPattern.mIView.hideSoftInputOnTouchDown()) {
+                if (actionMasked == MotionEvent.ACTION_DOWN) {
+                    View view = ViewGroupExKt.findView((ViewGroup) mLastShowViewPattern.mView, ev.getRawX(), ev.getRawY());
+                    //L.e("call: onInterceptTouchEvent([ev])-> " + view);
+                    if (view != null) {
+                        if (view instanceof EditText || view.getTag() != null) {
+                        } else {
+                            hideSoftInput();
+                        }
+                    }
+                }
+            }
+        }
+
         if (isFinishing || isStarting) {
-            L.i("拦截事件：" + ev.getActionMasked() + " isFinishing:" + isFinishing + " isStarting:" + isStarting);
+            L.i("拦截事件：" + actionMasked + " isFinishing:" + isFinishing + " isStarting:" + isStarting);
             return true;
         }
         return super.onInterceptTouchEvent(ev);
