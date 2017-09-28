@@ -28,7 +28,7 @@
     <!--动态字符长度限制-->
     <integer name="dynamic_status_text_count">2000</integer>
     <!--最大录制视频长度-->
-    <integer name="max_video_record_length">30</integer>
+    <integer name="max_video_record_length">15</integer>
     <!--视频最大裁剪长度-->
     <integer name="max_video_edit_record_length">60</integer>
     <!--最大标签选中数量-->
