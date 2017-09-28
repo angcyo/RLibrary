@@ -2,12 +2,14 @@ package com.angcyo.uiview.widget;
 
 import android.content.Context;
 import android.graphics.Color;
+import android.support.v4.content.ContextCompat;
 import android.support.v7.widget.AppCompatTextView;
 import android.util.AttributeSet;
 import android.util.TypedValue;
 import android.view.Gravity;
 import android.view.View;
 
+import com.angcyo.uiview.R;
 import com.angcyo.uiview.kotlin.ViewExKt;
 import com.angcyo.uiview.resources.ResUtil;
 import com.angcyo.uiview.skin.SkinHelper;
@@ -49,12 +51,21 @@ public class RTextCheckView extends AppCompatTextView implements View.OnClickLis
             setPadding(paddStart, paddTop, paddStart, paddTop);
         } else if (getTag().toString().contains("skin")) {
             float density = ViewExKt.getDensity(this);
-            setBackground(ResUtil.selector(
-                    ResUtil.createDrawable(Color.parseColor("#E0E0E0"), Color.TRANSPARENT, (int) (1 * density), 3 * density),
-                    ResUtil.createDrawable(SkinHelper.getSkin().getThemeSubColor(), 3 * density),
-                    ResUtil.createDrawable(SkinHelper.getSkin().getThemeSubColor(), 3 * density),
-                    ResUtil.createDrawable(Color.parseColor("#E0E0E0"), 3 * density)
-            ));
+            if (isInEditMode()) {
+                setBackground(ResUtil.selector(
+                        ResUtil.createDrawable(Color.parseColor("#E0E0E0"), Color.TRANSPARENT, (int) (1 * density), 3 * density),
+                        ResUtil.createDrawable(ContextCompat.getColor(getContext(), R.color.theme_color_accent), 3 * density),
+                        ResUtil.createDrawable(ContextCompat.getColor(getContext(), R.color.theme_color_primary), 3 * density),
+                        ResUtil.createDrawable(Color.parseColor("#E0E0E0"), 3 * density)
+                ));
+            } else {
+                setBackground(ResUtil.selector(
+                        ResUtil.createDrawable(Color.parseColor("#E0E0E0"), Color.TRANSPARENT, (int) (1 * density), 3 * density),
+                        ResUtil.createDrawable(SkinHelper.getSkin().getThemeSubColor(), 3 * density),
+                        ResUtil.createDrawable(SkinHelper.getSkin().getThemeSubColor(), 3 * density),
+                        ResUtil.createDrawable(Color.parseColor("#E0E0E0"), 3 * density)
+                ));
+            }
             setTextColor(ResUtil.generateTextColor(Color.WHITE, Color.WHITE, Color.BLACK));
         }
     }

@@ -48,6 +48,3 @@ dependencies {
     compile project(':RLibrary:github')
     compile "org.jetbrains.kotlin:kotlin-stdlib-jre7:$kotlin_version"
 }
-repositories {
-    mavenCentral()
-}

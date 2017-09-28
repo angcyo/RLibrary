@@ -452,6 +452,10 @@ public class CommonTabLayout extends FrameLayout implements ValueAnimator.Animat
     }
 
     private void calcIndicatorRect() {
+        if (mCurrentTab < 0) {
+            return;
+        }
+
         View currentTabView = mTabsContainer.getChildAt(this.mCurrentTab);
         float left = currentTabView.getLeft();
         float right = currentTabView.getRight();
