@@ -1312,6 +1312,22 @@ public class RUtils {
         return getFileSuffix(url, "");
     }
 
+    /**
+     * 获取文件名, 包含后缀
+     */
+    public static String getFileName(String url) {
+        return getFileName(url, "/");
+    }
+
+    public static String getFileName(String url, String regex) {
+        if (TextUtils.isEmpty(url)) {
+            return "";
+        }
+        String[] split = url.split(regex);
+
+        return split[split.length - 1];
+    }
+
     public enum ImageType {
         JPEG, GIF, PNG, BMP, UNKNOWN
     }
