@@ -2148,14 +2148,22 @@ public class UILayoutImpl extends SwipeBackLayout implements ILayout<UIParam>, U
         int actionMasked = ev.getActionMasked();
         if (actionMasked == MotionEvent.ACTION_DOWN) {
             if (mLastShowViewPattern != null) {
-                View view = ViewGroupExKt.findView((ViewGroup) mLastShowViewPattern.mView, ev.getRawX(), ev.getRawY());
-                L.w("touch on -> " + view);
+                View view = null;
+                if (L.LOG_DEBUG) {
+                    view = ViewGroupExKt.findView((ViewGroup) mLastShowViewPattern.mView, ev.getRawX(), ev.getRawY());
+                    L.w("touch on -> " + view);
+                }
 
                 if (mLastShowViewPattern.mIView.hideSoftInputOnTouchDown()) {
+                    if (view == null) {
+                        view = ViewGroupExKt.findView((ViewGroup) mLastShowViewPattern.mView, ev.getRawX(), ev.getRawY());
+                    }
                     //L.e("call: onInterceptTouchEvent([ev])-> " + RSoftInputLayout.getSoftKeyboardHeight(this));
                     //L.e("call: onInterceptTouchEvent([ev])-> " + view);
                     if (view != null) {
                         if (view instanceof EditText || view.getTag() != null) {
+                            L.w("touch on EditText or tag not null");
+
                         } else {
                             hideSoftInput();
                         }
