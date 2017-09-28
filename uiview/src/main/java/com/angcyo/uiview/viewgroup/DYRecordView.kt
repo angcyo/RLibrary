@@ -35,7 +35,7 @@ class DYRecordView(context: Context, attributeSet: AttributeSet? = null) : View(
     companion object {
         /**内圈呼吸的半径范围*/
         val INNER_CIRCLE_MIN_R = 0.8f
-        val INNER_CIRCLE_MAX_R = 0.9f
+        val INNER_CIRCLE_MAX_R = 0.95f
     }
 
     var showText = "按住拍"
