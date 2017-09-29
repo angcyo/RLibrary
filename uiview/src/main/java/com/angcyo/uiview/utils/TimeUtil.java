@@ -392,7 +392,10 @@ public class TimeUtil {
     public static String getElapseTimeForShow2(int milliseconds) {
         if (milliseconds == 0) {
             return "暂未接单";
+        } else if (milliseconds < 60 * 1000) {
+            return milliseconds / 1000 + "秒";
         }
+
         StringBuilder sb = new StringBuilder();
         int seconds = milliseconds / 1000;
         if (seconds < 1)
@@ -403,7 +406,11 @@ public class TimeUtil {
         }
         int minute = (seconds - 60 * 60 * hour) / 60;
         if (minute != 0) {
-            sb.append(minute).append("分");
+            if (hour > 0) {
+                sb.append(minute).append("分钟");
+            } else {
+                sb.append(minute).append("分钟");
+            }
         }
         return sb.toString();
     }

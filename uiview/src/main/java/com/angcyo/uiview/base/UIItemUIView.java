@@ -137,7 +137,10 @@ public abstract class UIItemUIView<T extends Item> extends UIRecyclerUIView<Stri
         if (mExBaseAdapter != null) {
             for (int i = 0; i < mItems.size(); i++) {
                 T item = mItems.get(i);
-                item.onBindView(mExBaseAdapter.getViewHolderFromPosition(i), i, item);
+                RBaseViewHolder viewHolder = mExBaseAdapter.getViewHolderFromPosition(i);
+                if (viewHolder != null) {
+                    item.onBindView(viewHolder, i, item);
+                }
             }
         }
     }
