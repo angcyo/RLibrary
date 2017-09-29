@@ -41,7 +41,8 @@ public abstract class UILayoutActivity extends StyleActivity {
     @Override
     protected void onCreateView() {
         mLayout = new UILayoutImpl(this);
-        mLayout.getLayout().setTag(R.id.tag, UILayoutImpl.TAG_MAIN);
+        ((UILayoutImpl) mLayout).setMainLayout(true);
+
         initUILayout(mLayout);
         if (isEnableSwipeMenu()) {
             mSwipeLayout = new RSwipeLayout(this, null);

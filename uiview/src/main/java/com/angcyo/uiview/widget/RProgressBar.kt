@@ -68,6 +68,9 @@ open class RProgressBar(context: Context, attributeSet: AttributeSet? = null) : 
     /**圆形进度条, 开始绘制的角度*/
     var circleProgressStartAngle = -90f
 
+    /**没有进度的时候, 是否绘制背景*/
+    var drawBgOnNoProgress = true
+
     init {
         val typedArray = context.obtainStyledAttributes(attributeSet, R.styleable.RProgressBar)
         progressBarType = typedArray.getInteger(R.styleable.RProgressBar_r_progress_bar_type, progressBarType)
@@ -79,6 +82,7 @@ open class RProgressBar(context: Context, attributeSet: AttributeSet? = null) : 
         secondProgress = typedArray.getInteger(R.styleable.RProgressBar_r_second_progress, secondProgress)
         progressWidth = typedArray.getDimensionPixelOffset(R.styleable.RProgressBar_r_progress_width, progressWidth.toInt()).toFloat()
         progressRoundRadius = typedArray.getDimensionPixelOffset(R.styleable.RProgressBar_r_progress_round_radius, progressRoundRadius.toInt()).toFloat()
+        drawBgOnNoProgress = typedArray.getBoolean(R.styleable.RProgressBar_r_draw_bg_on_no_progress, drawBgOnNoProgress)
 
         typedArray.recycle()
     }
@@ -157,9 +161,11 @@ open class RProgressBar(context: Context, attributeSet: AttributeSet? = null) : 
         paint.style = Paint.Style.STROKE
 
         //进度背景
-        paint.color = progressBgColor
-        paint.strokeWidth = progressWidth
-        canvas.drawArc(tempRectF, 0f, 360f, false, paint)
+        if (drawBgOnNoProgress || curProgress > 0) {
+            paint.color = progressBgColor
+            paint.strokeWidth = progressWidth
+            canvas.drawArc(tempRectF, 0f, 360f, false, paint)
+        }
 
         //第二进度
         if (!isIncertitude) {
@@ -190,8 +196,10 @@ open class RProgressBar(context: Context, attributeSet: AttributeSet? = null) : 
         paint.style = Paint.Style.FILL
 
         //进度背景
-        paint.color = progressBgColor
-        canvas.drawRect(tempRectF, paint)
+        if (drawBgOnNoProgress || curProgress > 0) {
+            paint.color = progressBgColor
+            canvas.drawRect(tempRectF, paint)
+        }
 
         //第二进度
         if (!isIncertitude) {
@@ -219,8 +227,10 @@ open class RProgressBar(context: Context, attributeSet: AttributeSet? = null) : 
         paint.style = Paint.Style.FILL
 
         //进度背景
-        paint.color = progressBgColor
-        canvas.drawRoundRect(tempRectF, progressRoundRadius, progressRoundRadius, paint)
+        if (drawBgOnNoProgress || curProgress > 0) {
+            paint.color = progressBgColor
+            canvas.drawRoundRect(tempRectF, progressRoundRadius, progressRoundRadius, paint)
+        }
 
         //第二进度
         if (!isIncertitude) {

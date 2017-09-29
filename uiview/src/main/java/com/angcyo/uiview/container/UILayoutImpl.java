@@ -294,6 +294,10 @@ public class UILayoutImpl extends SwipeBackLayout implements ILayout<UIParam>, U
      */
     @Override
     protected boolean canTryCaptureView(View child) {
+        if (!isMainLayout()) {
+            return false;
+        }
+
         if (isBackPress ||
                 mLastShowViewPattern == null ||
                 mLastShowViewPattern.interrupt ||
@@ -2144,6 +2148,23 @@ public class UILayoutImpl extends SwipeBackLayout implements ILayout<UIParam>, U
         return null;
     }
 
+    /**
+     * 是否是主要的layout
+     */
+    public boolean isMainLayout() {
+        return TextUtils.equals(String.valueOf(getTag(R.id.tag)), TAG_MAIN);
+    }
+
+    /**
+     * 设置
+     */
+    public void setMainLayout(boolean main) {
+        if (main) {
+            setTag(R.id.tag, UILayoutImpl.TAG_MAIN);
+        } else {
+            setTag(R.id.tag, "");
+        }
+    }
 
     @Override
     public boolean dispatchTouchEvent(MotionEvent ev) {
@@ -2151,13 +2172,13 @@ public class UILayoutImpl extends SwipeBackLayout implements ILayout<UIParam>, U
         if (actionMasked == MotionEvent.ACTION_DOWN) {
             if (mLastShowViewPattern != null) {
                 View view = null;
-                if (L.LOG_DEBUG && TextUtils.equals(String.valueOf(getTag(R.id.tag)), TAG_MAIN)) {
+                if (L.LOG_DEBUG && isMainLayout()) {
                     view = ViewGroupExKt.findView((ViewGroup) mLastShowViewPattern.mView, ev.getRawX(), ev.getRawY());
                     L.w("touch on -> " + view);
                 }
 
                 if (mLastShowViewPattern.mIView.hideSoftInputOnTouchDown()) {
-                    if (view == null && TextUtils.equals(String.valueOf(getTag(R.id.tag)), TAG_MAIN)) {
+                    if (view == null && isMainLayout()) {
                         view = ViewGroupExKt.findView((ViewGroup) mLastShowViewPattern.mView, ev.getRawX(), ev.getRawY());
                     }
                     //L.e("call: onInterceptTouchEvent([ev])-> " + RSoftInputLayout.getSoftKeyboardHeight(this));
