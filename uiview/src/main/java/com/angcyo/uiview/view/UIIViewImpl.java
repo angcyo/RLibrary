@@ -1002,4 +1002,9 @@ public abstract class UIIViewImpl implements IView {
     public boolean hideSoftInputOnTouchDown() {
         return false;
     }
+
+    @Override
+    public void onViewShowOnDialogFinish() {
+        L.d(this.getClass().getSimpleName(), "onViewShowOnDialogFinish: " + mIViewStatus);
+    }
 }

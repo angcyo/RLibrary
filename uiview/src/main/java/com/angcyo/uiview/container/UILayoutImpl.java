@@ -1350,6 +1350,7 @@ public class UILayoutImpl extends SwipeBackLayout implements ILayout<UIParam>, U
 
         if (topViewPattern.mIView.isDialog()) {
             //对话框结束时, 不执行生命周期
+            bottomViewPattern.mIView.onViewShowOnDialogFinish();
         } else {
             if (RApplication.isLowDevice || !anim || quiet) {
                 endRunnable.run();

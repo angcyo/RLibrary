@@ -244,9 +244,14 @@ public interface IView {
     boolean needForceMeasure();//是否需要测量
 
     /**
-     * 点击界面其他地方, 自动隐藏键盘 (如果点击在EditText, 或者 tag不为null 的view上, 不会隐藏键盘)
+     * 点击界面其他地方, 自动隐藏键盘 (如果点击在EditText, 或者 tag不为null 的view上, 不会隐藏键盘) 星期四 2017-9-28
      */
     boolean hideSoftInputOnTouchDown();
+
+    /**
+     * 当对话框关闭时, 走这个特殊回调 星期五 2017-9-29
+     */
+    void onViewShowOnDialogFinish();
 
     enum IViewShowState {
         STATE_NORMAL,
