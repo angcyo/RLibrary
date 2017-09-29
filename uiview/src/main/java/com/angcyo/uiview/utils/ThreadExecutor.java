@@ -14,14 +14,22 @@ import java.util.concurrent.Executors;
 public class ThreadExecutor {
     static private ThreadExecutor instance;
     private final Executor mCallbackPoster;
+    private final Executor mCallbackPosterDelay;
     private final ExecutorService mExecutorService;
     private final Handler handler = new Handler(Looper.getMainLooper());
+    private int delayTime = 0;
 
     private ThreadExecutor() {
         mCallbackPoster = new Executor() {
             @Override
             public void execute(Runnable command) {
                 handler.post(command);
+            }
+        };
+        mCallbackPosterDelay = new Executor() {
+            @Override
+            public void execute(Runnable command) {
+                handler.postDelayed(command, delayTime);
             }
         };
 
@@ -33,10 +41,19 @@ public class ThreadExecutor {
     }
 
     public void onMain(Runnable runnable) {
-        mCallbackPoster.execute(runnable);
+        onMain(0, runnable);
     }
 
     public void onThread(Runnable runnable) {
         mExecutorService.execute(runnable);
+    }
+
+    public void onMain(int delayTime, Runnable runnable) {
+        this.delayTime = delayTime;
+        if (delayTime > 0) {
+            mCallbackPosterDelay.execute(runnable);
+        } else {
+            mCallbackPoster.execute(runnable);
+        }
     }
 }

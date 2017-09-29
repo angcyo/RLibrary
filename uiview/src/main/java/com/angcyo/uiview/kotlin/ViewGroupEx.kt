@@ -81,18 +81,32 @@ public fun ViewGroup.findView(targetView: View, touchRawX: Float, touchRawY: Flo
 //        L.e("call: ------------------end -> ")
         rect.offset(0, -offsetTop)
 
+        fun check(view: View): View? {
+            if (view.measuredHeight != 0 &&
+                    view.measuredWidth != 0 &&
+                    (view.left != view.right) &&
+                    (view.top != view.bottom) &&
+                    rect.contains(touchRawX.toInt(), touchRawY.toInt())) {
+                return view
+            }
+            return null
+        }
+
         if (childAt is ViewGroup && childAt.childCount > 0) {
             val resultView = childAt.findView(targetView, touchRawX, touchRawY, offsetTop)
             if (resultView != null && resultView != targetView) {
                 touchView = resultView
                 break
+            } else {
+                val check = check(childAt)
+                if (check != null) {
+                    touchView = childAt
+                    break
+                }
             }
         } else {
-            if (childAt.measuredHeight != 0 &&
-                    childAt.measuredWidth != 0 &&
-                    (childAt.left != childAt.right && childAt.left != 0) &&
-                    (childAt.top != childAt.bottom && childAt.top != 0) &&
-                    rect.contains(touchRawX.toInt(), touchRawY.toInt())) {
+            val check = check(childAt)
+            if (check != null) {
                 touchView = childAt
                 break
             }

@@ -62,6 +62,7 @@ import static com.angcyo.uiview.view.UIIViewImpl.DEFAULT_DELAY_ANIM_TIME;
 public class UILayoutImpl extends SwipeBackLayout implements ILayout<UIParam>, UIViewPager.OnPagerShowListener {
 
     private static final String TAG = "UILayoutImpl";
+    public static final String TAG_MAIN = "main";
     public static String LAYOUT_INFO = "";
     /**
      * 已经追加到内容层的View
@@ -2149,13 +2150,13 @@ public class UILayoutImpl extends SwipeBackLayout implements ILayout<UIParam>, U
         if (actionMasked == MotionEvent.ACTION_DOWN) {
             if (mLastShowViewPattern != null) {
                 View view = null;
-                if (L.LOG_DEBUG) {
+                if (L.LOG_DEBUG && TextUtils.equals(String.valueOf(getTag(R.id.tag)), TAG_MAIN)) {
                     view = ViewGroupExKt.findView((ViewGroup) mLastShowViewPattern.mView, ev.getRawX(), ev.getRawY());
                     L.w("touch on -> " + view);
                 }
 
                 if (mLastShowViewPattern.mIView.hideSoftInputOnTouchDown()) {
-                    if (view == null) {
+                    if (view == null && TextUtils.equals(String.valueOf(getTag(R.id.tag)), TAG_MAIN)) {
                         view = ViewGroupExKt.findView((ViewGroup) mLastShowViewPattern.mView, ev.getRawX(), ev.getRawY());
                     }
                     //L.e("call: onInterceptTouchEvent([ev])-> " + RSoftInputLayout.getSoftKeyboardHeight(this));

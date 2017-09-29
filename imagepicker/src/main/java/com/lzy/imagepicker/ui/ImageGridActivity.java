@@ -201,6 +201,10 @@ public class ImageGridActivity extends ImageBaseActivity implements ImageDataSou
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+        if (permissions.length < 1 || grantResults.length < 1) {
+            return;
+        }
+
         if (requestCode == REQUEST_PERMISSION_STORAGE) {
             if (grantResults[0] == PackageManager.PERMISSION_GRANTED) {
                 startLoadMedia();

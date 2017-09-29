@@ -51,10 +51,10 @@ abstract class RClickListener : View.OnClickListener {
 
     final override fun onClick(v: View?) {
         if (NetworkStateReceiver.getNetType().value() < 2) {
-            //3G网络, 网络不佳
-            onNetPoor()
 
             if (checkNet) {
+                //3G网络, 网络不佳
+                onNetPoor()
                 return
             }
         }

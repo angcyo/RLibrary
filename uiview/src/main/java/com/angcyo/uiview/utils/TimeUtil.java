@@ -56,7 +56,7 @@ public class TimeUtil {
     }
 
     public static String getNowDatetime() {
-       return getDatetime(System.currentTimeMillis());
+        return getDatetime(System.currentTimeMillis());
     }
 
     public static String getDatetime(long time) {
@@ -79,8 +79,8 @@ public class TimeUtil {
         return getDateTimeString(milliseconds, "yyyyMMdd");
     }
 
-    public static String getDividerDateFormat(long millis){
-        return getDateTimeString(millis,"MM/yyyy");
+    public static String getDividerDateFormat(long millis) {
+        return getDateTimeString(millis, "MM/yyyy");
     }
 
     public static String getTimeString(long milliseconds) {
@@ -199,11 +199,11 @@ public class TimeUtil {
             dataString = dateformatter2.format(currentTime);
         } else if (currentTime.after(lastdaybegin)) {
             dataString += " 后天";
-        } else if (currentTime.after(tomorrowBegin)){
+        } else if (currentTime.after(tomorrowBegin)) {
             dataString += " 明天";
         } else if (currentTime.after(todaybegin)) {
             dataString += " 今天";
-        }else {
+        } else {
             dataString = dateformatter2.format(currentTime);
         }
 
@@ -235,11 +235,11 @@ public class TimeUtil {
             dataString = "";
         } else if (currentTime.after(lastdaybegin)) {
             dataString += " 后天";
-        } else if (currentTime.after(tomorrowBegin)){
+        } else if (currentTime.after(tomorrowBegin)) {
             dataString += " 明天";
         } else if (currentTime.after(todaybegin)) {
             dataString += " 今天";
-        }else {
+        } else {
             dataString = "";
         }
 
@@ -385,6 +385,25 @@ public class TimeUtil {
         int second = (seconds - 60 * 60 * hour - 60 * minute);
         if (second != 0) {
             sb.append(second).append("秒");
+        }
+        return sb.toString();
+    }
+
+    public static String getElapseTimeForShow2(int milliseconds) {
+        if (milliseconds == 0) {
+            return "暂未接单";
+        }
+        StringBuilder sb = new StringBuilder();
+        int seconds = milliseconds / 1000;
+        if (seconds < 1)
+            seconds = 1;
+        int hour = seconds / (60 * 60);
+        if (hour != 0) {
+            sb.append(hour).append("小时");
+        }
+        int minute = (seconds - 60 * 60 * hour) / 60;
+        if (minute != 0) {
+            sb.append(minute).append("分");
         }
         return sb.toString();
     }

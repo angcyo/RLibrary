@@ -13,6 +13,7 @@ import android.view.View;
 import android.view.inputmethod.InputMethodManager;
 
 import com.angcyo.library.utils.L;
+import com.angcyo.uiview.R;
 import com.angcyo.uiview.container.ILayout;
 import com.angcyo.uiview.container.RSwipeLayout;
 import com.angcyo.uiview.container.UILayoutImpl;
@@ -40,6 +41,7 @@ public abstract class UILayoutActivity extends StyleActivity {
     @Override
     protected void onCreateView() {
         mLayout = new UILayoutImpl(this);
+        mLayout.getLayout().setTag(R.id.tag, UILayoutImpl.TAG_MAIN);
         initUILayout(mLayout);
         if (isEnableSwipeMenu()) {
             mSwipeLayout = new RSwipeLayout(this, null);
