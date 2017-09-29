@@ -123,7 +123,11 @@ public abstract class RSubscriber<T> extends Subscriber<T> {
      */
     public void onError(int code, String msg) {
         //L.w("call: onError([code, msg])-> " + code + " " + msg);
-        if (code == UNKNOWN_ERROR || code == DATA_ERROR || code == NO_NETWORK) {
+        if (code == NO_NETWORK) {
+            T_.error(String.format(Locale.CHINA, "[%d]%s", code, msg));
+        } else if (code == DATA_ERROR) {
+            T_.error(String.format(Locale.CHINA, "[%d]%s", code, msg));
+        } else if (code == UNKNOWN_ERROR) {
             T_.error(String.format(Locale.CHINA, "[%d]%s", code, msg));
         }
     }

@@ -120,13 +120,25 @@ public abstract class UIItemUIView<T extends Item> extends UIRecyclerUIView<Stri
     }
 
     /**
-     * 更新布局
+     * 更新布局, 重新创建了items, 如果item的数量有变化, 建议使用这个方法
      */
     public void refreshLayout() {
         mItems.clear();
         createItems(mItems);
         if (mExBaseAdapter != null) {
             mExBaseAdapter.notifyDataSetChanged();
+        }
+    }
+
+    /**
+     * 如果只是要更新item的数据, 建议使用此方法
+     */
+    public void updateItemsLayout() {
+        if (mExBaseAdapter != null) {
+            for (int i = 0; i < mItems.size(); i++) {
+                T item = mItems.get(i);
+                item.onBindView(mExBaseAdapter.getViewHolderFromPosition(i), i, item);
+            }
         }
     }
 
