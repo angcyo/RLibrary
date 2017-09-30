@@ -77,7 +77,14 @@ public class UIViewPager extends ViewPager implements Runnable, StickLayout.CanS
 
     public static void setEdgetEffect(Object edgeEffectCompat, @ColorInt int color) {
         Object mEdgeEffect = Reflect.getMember(edgeEffectCompat, "mEdgeEffect");
-        Object mPaint = Reflect.getMember(mEdgeEffect, "mPaint");
+        Object mPaint;
+
+        if (mEdgeEffect != null) {
+            mPaint = Reflect.getMember(mEdgeEffect, "mPaint");
+        } else {
+            mPaint = Reflect.getMember(edgeEffectCompat, "mPaint");
+        }
+
         if (mPaint instanceof Paint) {
             ((Paint) mPaint).setColor(color);
         }
