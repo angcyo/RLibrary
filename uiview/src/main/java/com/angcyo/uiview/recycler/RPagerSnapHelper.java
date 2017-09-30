@@ -33,6 +33,13 @@ public class RPagerSnapHelper extends PagerSnapHelper {
         return mCurrentPosition;
     }
 
+    public RPagerSnapHelper() {
+    }
+
+    public RPagerSnapHelper(int mCurrentPosition) {
+        this.mCurrentPosition = mCurrentPosition;
+    }
+
     public RPagerSnapHelper setCurrentPosition(int currentPosition) {
         mCurrentPosition = currentPosition;
         return this;
