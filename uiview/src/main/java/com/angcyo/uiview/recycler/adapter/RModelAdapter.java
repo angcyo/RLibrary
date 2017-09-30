@@ -102,7 +102,7 @@ public abstract class RModelAdapter<T> extends RBaseAdapter<T> {
     @Override
     public void onViewRecycled(RBaseViewHolder holder) {
         super.onViewRecycled(holder);
-        mBaseViewHolderMap.remove(holder.getAdapterPosition());
+        //mBaseViewHolderMap.remove(holder.getAdapterPosition());
         //L.e("call: onViewRecycled([holder])->--------------------------------------------- " + holder.getAdapterPosition());
     }
 
