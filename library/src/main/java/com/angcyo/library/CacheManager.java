@@ -106,6 +106,30 @@ public class CacheManager {
                 .observeOn(AndroidSchedulers.mainThread());
     }
 
+    public static Observable<Boolean> clearCacheFolder(final String... paths) {
+        return Observable
+                .create(new SyncOnSubscribe<Integer, Boolean>() {
+                    @Override
+                    protected Integer generateState() {
+                        return 1;
+                    }
+
+                    @Override
+                    protected Integer next(Integer state, Observer<? super Boolean> observer) {
+                        if (state > 0) {
+                            for (String path : paths) {
+                                deleteFolderFile(path, false);
+                            }
+                            observer.onNext(true);
+                            observer.onCompleted();
+                        }
+                        return -1;
+                    }
+                })
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread());
+    }
+
     /**
      * 获取指定文件夹内所有文件大小的和
      *
@@ -135,7 +159,7 @@ public class CacheManager {
      * @param filePath       filePath
      * @param deleteThisPath deleteThisPath
      */
-    private boolean deleteFolderFile(String filePath, boolean deleteThisPath) {
+    private static boolean deleteFolderFile(String filePath, boolean deleteThisPath) {
         if (!TextUtils.isEmpty(filePath)) {
             File file = new File(filePath);
             return deleteFolderFile(file, deleteThisPath);
@@ -143,7 +167,7 @@ public class CacheManager {
         return false;
     }
 
-    private boolean deleteFolderFile(File file, boolean deleteThisPath) {
+    private static boolean deleteFolderFile(File file, boolean deleteThisPath) {
         try {
             if (file.isDirectory()) {
                 File files[] = file.listFiles();
