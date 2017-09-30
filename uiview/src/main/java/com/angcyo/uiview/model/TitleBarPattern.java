@@ -266,6 +266,11 @@ public class TitleBarPattern {
         public int rightMargin = 0;
         public int bottomMargin = 0;
 
+        /**
+         * 0表示不透明, 1表示全透明
+         */
+        public float alpha = 0f;
+
         public OnItemInitListener mOnItemInitListener;
 
         private TitleBarItem() {
@@ -354,6 +359,11 @@ public class TitleBarPattern {
 
         public TitleBarItem setOnItemInitListener(OnItemInitListener onItemInitListener) {
             mOnItemInitListener = onItemInitListener;
+            return this;
+        }
+
+        public TitleBarItem setAlpha(float alpha) {
+            this.alpha = alpha;
             return this;
         }
 
