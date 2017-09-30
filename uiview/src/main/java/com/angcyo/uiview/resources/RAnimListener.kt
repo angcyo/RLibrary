@@ -15,20 +15,29 @@ import android.animation.AnimatorListenerAdapter
  * Version: 1.0.0
  */
 abstract class RAnimListener : AnimatorListenerAdapter() {
+
+    private var isCancel = false
+
     override fun onAnimationRepeat(animation: Animator?) {
         super.onAnimationRepeat(animation)
     }
 
     override fun onAnimationEnd(animation: Animator?) {
         super.onAnimationEnd(animation)
-        onAnimationFinish(animation)
-        onAnimationFinish(animation, false)
+        if (isCancel) {
+            //当动画被取消的时候, 系统会回调onAnimationCancel, 然后 onAnimationEnd
+            //所以, 这里过滤一下
+        } else {
+            onAnimationFinish(animation)
+            onAnimationFinish(animation, false)
+        }
     }
 
     override fun onAnimationCancel(animation: Animator?) {
         super.onAnimationCancel(animation)
+        isCancel = true
         onAnimationFinish(animation)
-        onAnimationFinish(animation, true)
+        onAnimationFinish(animation, isCancel)
     }
 
     override fun onAnimationPause(animation: Animator?) {
@@ -37,12 +46,15 @@ abstract class RAnimListener : AnimatorListenerAdapter() {
 
     override fun onAnimationStart(animation: Animator?) {
         super.onAnimationStart(animation)
+        isCancel = false
     }
 
     override fun onAnimationResume(animation: Animator?) {
         super.onAnimationResume(animation)
+        isCancel = false
     }
 
+    /**自定义的进度回调*/
     open fun onAnimationProgress(animation: Animator?, progress: Float /*0-1f*/) {
 
     }

@@ -268,10 +268,12 @@ class DYRecordView(context: Context, attributeSet: AttributeSet? = null) : View(
                     postInvalidate()
                 }
                 addListener(object : RAnimListener() {
-                    override fun onAnimationEnd(animation: Animator?) {
-                        super.onAnimationEnd(animation)
+                    override fun onAnimationFinish(animation: Animator?, cancel: Boolean) {
+                        super.onAnimationFinish(animation, cancel)
                         touchInAnimator = null
-                        startBreath()
+                        if (!cancel) {
+                            startBreath()
+                        }
                     }
                 })
                 start()
@@ -286,7 +288,7 @@ class DYRecordView(context: Context, attributeSet: AttributeSet? = null) : View(
         if (breathAnimator == null) {
             breathAnimator = ValueAnimator.ofFloat(0f, 1f).apply {
                 interpolator = LinearInterpolator()
-                duration = 700
+                duration = 300
                 repeatMode = ValueAnimator.REVERSE
                 repeatCount = ValueAnimator.INFINITE
                 addUpdateListener { animation ->

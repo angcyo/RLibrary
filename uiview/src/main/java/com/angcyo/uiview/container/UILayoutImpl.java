@@ -671,6 +671,9 @@ public class UILayoutImpl extends SwipeBackLayout implements ILayout<UIParam>, U
             /*对话框的处理*/
             if (viewPattern.mIView.isDialog() &&
                     !viewPattern.mIView.canCancel()) {
+                interruptSet.remove(viewPattern.mIView);
+                viewPattern.interrupt = false;
+                viewPattern.mView.setEnabled(true);
                 finishEnd();
                 return;
             }
@@ -769,7 +772,6 @@ public class UILayoutImpl extends SwipeBackLayout implements ILayout<UIParam>, U
         L.i("关闭：" + iview.getClass().getSimpleName() + " -- " + viewPattern.mIView.getClass().getSimpleName());
 
         viewPattern.mView.setEnabled(false);
-
         viewPattern.interrupt = true;//中断启动
 
         if (checkInterrupt && checkInterrupt(iview)) {
@@ -785,7 +787,6 @@ public class UILayoutImpl extends SwipeBackLayout implements ILayout<UIParam>, U
 //            L.i(mLastShowViewPattern);
 //            L.i(viewPattern);
 //            L.i(mLastShowViewPattern != viewPattern);
-
 
             if (mLastShowViewPattern != null &&
                     mLastShowViewPattern != viewPattern &&
