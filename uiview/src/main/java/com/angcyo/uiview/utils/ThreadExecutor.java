@@ -41,7 +41,6 @@ public class ThreadExecutor {
     }
 
     public void onMain(Runnable runnable) {
-
         onMain(0, runnable);
     }
 

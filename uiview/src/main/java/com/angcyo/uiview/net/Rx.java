@@ -6,6 +6,7 @@ import com.angcyo.github.type.TypeBuilder;
 import com.angcyo.library.utils.L;
 import com.angcyo.uiview.utils.Json;
 import com.angcyo.uiview.utils.T;
+import com.angcyo.uiview.utils.ThreadExecutor;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -46,12 +47,26 @@ public class Rx<Rx> extends Observable<Rx> {
         }
     };
 
-    public static Runnable onErrorRetryRunnable = new Runnable() {
-        @Override
-        public void run() {
+    static Runnable onErrorRetryRunnable;
 
+    public static void setOnErrorRetryRunnable(Runnable onErrorRetryRunnable) {
+        onErrorRetryRunnable = onErrorRetryRunnable;
+    }
+
+    public static void runErrorRetry() {
+        if (onErrorRetryRunnable != null) {
+            ThreadExecutor.instance().onThread(new Runnable() {
+                @Override
+                public void run() {
+                    try {
+                        onErrorRetryRunnable.run();
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                    }
+                }
+            });
         }
-    };
+    }
 
     protected Rx(OnSubscribe<Rx> f) {
         super(f);
