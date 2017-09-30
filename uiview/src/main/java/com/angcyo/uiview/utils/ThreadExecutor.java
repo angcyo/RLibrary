@@ -41,6 +41,7 @@ public class ThreadExecutor {
     }
 
     public void onMain(Runnable runnable) {
+
         onMain(0, runnable);
     }
 
@@ -53,7 +54,13 @@ public class ThreadExecutor {
         if (delayTime > 0) {
             mCallbackPosterDelay.execute(runnable);
         } else {
-            mCallbackPoster.execute(runnable);
+            if (RUtils.isMainThread()) {
+                if (runnable != null) {
+                    runnable.run();
+                }
+            } else {
+                mCallbackPoster.execute(runnable);
+            }
         }
     }
 }

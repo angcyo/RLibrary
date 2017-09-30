@@ -11,11 +11,13 @@ import android.graphics.RectF;
 import android.support.v4.view.ViewCompat;
 import android.util.AttributeSet;
 import android.view.View;
+import android.view.animation.DecelerateInterpolator;
 import android.view.animation.LinearInterpolator;
 
 import com.angcyo.uiview.R;
 import com.angcyo.uiview.kotlin.ViewExKt;
 import com.angcyo.uiview.skin.SkinHelper;
+import com.angcyo.uiview.utils.ThreadExecutor;
 
 
 /**
@@ -113,7 +115,14 @@ public class SimpleProgressBar extends View {
                 ViewCompat.animate(this).translationY(0).setDuration(300).start();
             }
         }
-        mProgress = progress;
+        //mProgress = progress;
+        final int finalProgress = progress;
+        ThreadExecutor.instance().onMain(new Runnable() {
+            @Override
+            public void run() {
+                animToProgress(mProgress, finalProgress);
+            }
+        });
         postInvalidate();
     }
 
@@ -278,5 +287,31 @@ public class SimpleProgressBar extends View {
 
     public void setProgressTextSize(float progressTextSize) {
         mProgressTextSize = progressTextSize;
+    }
+
+
+    private ValueAnimator animator;
+
+    /**
+     * 动画的方式执行动画
+     */
+    private void animToProgress(int startP, int endP) {
+        if (animator == null) {
+
+        } else {
+            animator.cancel();
+        }
+
+        animator = ValueAnimator.ofInt(startP, endP);
+        animator.setDuration(200);
+        animator.setInterpolator(new DecelerateInterpolator());
+        animator.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
+            @Override
+            public void onAnimationUpdate(ValueAnimator valueAnimator) {
+                mProgress = (int) valueAnimator.getAnimatedValue();
+                postInvalidateOnAnimation();
+            }
+        });
+        animator.start();
     }
 }
