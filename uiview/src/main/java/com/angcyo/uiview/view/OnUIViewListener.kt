@@ -1,6 +1,9 @@
 package com.angcyo.uiview.view
 
+import android.view.LayoutInflater
+import com.angcyo.uiview.container.ContentLayout
 import com.angcyo.uiview.model.TitleBarPattern
+import com.angcyo.uiview.recycler.RBaseViewHolder
 
 /**
  * Copyright (C) 2016,深圳市红鸟网络科技股份有限公司 All rights reserved.
@@ -36,6 +39,14 @@ abstract class OnUIViewListener {
 
     /**当开始显示TitleBar时, 会回调此方法*/
     open fun onCreateTitleBar(titleBarPattern: TitleBarPattern) {
+
+    }
+
+    open fun inflateContentLayout(uiview: UIIViewImpl, baseContentLayout: ContentLayout?, inflater: LayoutInflater?) {
+
+    }
+
+    open fun initOnShowContentLayout(uiview: UIIViewImpl, viewHolder: RBaseViewHolder) {
 
     }
 }

@@ -262,6 +262,9 @@ public abstract class UIBaseView extends UIIViewImpl {
      */
     protected void initOnShowContentLayout() {
         L.d("call: initOnShowContentLayout([])-> ");
+        if (mOnUIViewListener != null) {
+            mOnUIViewListener.initOnShowContentLayout(this, mViewHolder);
+        }
     }
 
     /**
@@ -570,6 +573,9 @@ public abstract class UIBaseView extends UIIViewImpl {
         removeOtherView(LayoutState.CONTENT);
         if (mBaseContentLayout.getChildCount() == 0) {
             inflateContentLayout(mBaseContentLayout, LayoutInflater.from(mActivity));
+            if (mOnUIViewListener != null) {
+                mOnUIViewListener.inflateContentLayout(this, mBaseContentLayout, LayoutInflater.from(mActivity));
+            }
             //不使用 butterknife
             //ButterKnife.bind(this, mBaseContentLayout);
             initOnShowContentLayout();
