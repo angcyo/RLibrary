@@ -13,11 +13,11 @@
 
     <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="240dp"
+        android:layout_marginTop="@dimen/base_120dpi"
         android:orientation="vertical"
         android:paddingEnd="@dimen/base_xxhdpi"
-        android:paddingStart="@dimen/base_xxhdpi"
-        android:paddingTop="@dimen/base_120dpi">
+        android:paddingStart="@dimen/base_xxhdpi">
 
         <ImageView
             android:id="@+id/base_version_cancel_view"
@@ -25,7 +25,8 @@
             android:layout_height="wrap_content"
             android:layout_gravity="right"
             android:layout_marginEnd="@dimen/base_ldpi"
-            android:src="@drawable/base_icon_cha_button" />
+            android:src="@drawable/base_icon_cha_button"
+            tools:visibility="gone" />
 
         <com.angcyo.uiview.widget.RTextView
             android:id="@+id/base_version_title_view"
@@ -38,15 +39,21 @@
             android:textStyle="bold"
             tools:text="测试文本标题" />
 
-        <com.angcyo.uiview.widget.RTextView
-            android:id="@+id/base_version_content_view"
-            style="@style/BaseDarkTextStyle"
+        <ScrollView
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:gravity="top"
-            android:lineSpacingExtra="4dp"
-            android:minHeight="80dp"
-            tools:text="测试文本内容\nasdf\nnasdf" />
+            android:layout_height="0dp"
+            android:layout_weight="1">
+
+            <com.angcyo.uiview.widget.RTextView
+                android:id="@+id/base_version_content_view"
+                style="@style/BaseDarkTextStyle"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="top"
+                android:lineSpacingExtra="4dp"
+                tools:text="测试文本内容\nasdf\nnasdf" />
+
+        </ScrollView>
 
     </LinearLayout>
 
@@ -55,7 +62,7 @@
         android:layout_width="match_parent"
         android:layout_height="@dimen/base_ldpi"
         android:layout_gravity="center_horizontal|bottom"
-        android:layout_marginBottom="@dimen/base_70dpi"
+        android:layout_marginBottom="55dp"
         android:paddingEnd="@dimen/base_ldpi"
         android:paddingStart="@dimen/base_ldpi"
         android:visibility="gone"
@@ -67,7 +74,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="center_horizontal|bottom"
-        android:layout_marginBottom="@dimen/base_xxhdpi"
+        android:layout_marginBottom="@dimen/base_xhdpi"
         android:background="@drawable/base_icon_naniu_button"
         android:gravity="center"
         android:text="立即更新"

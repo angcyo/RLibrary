@@ -34,7 +34,7 @@ class UIVersionDialog : UIIDialogRxImpl() {
     var isForceUpdate = false
         set(value) {
             field = value
-            cancelView?.visibility = if (field) View.INVISIBLE else View.VISIBLE
+            cancelView?.visibility = if (field) View.GONE else View.VISIBLE
 
             setCanCancel(!isForceUpdate)
         }
