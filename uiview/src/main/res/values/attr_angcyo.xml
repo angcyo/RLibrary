@@ -145,6 +145,8 @@
         <attr name="r_max_height" />
         <attr name="r_fit_action_bar_height" format="boolean" />
         <attr name="r_fit_status_bar_height" format="boolean" />
+        <!--是否是屏幕高度, 如果是, 那么在测量child的时候, 会减去topHeight-->
+        <attr name="r_is_screen_height" format="boolean" />
     </declare-styleable>
 
     <declare-styleable name="Button">

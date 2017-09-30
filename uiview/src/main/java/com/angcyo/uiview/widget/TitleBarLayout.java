@@ -20,6 +20,7 @@ public class TitleBarLayout extends FrameLayout {
 
     boolean enablePadding = true;
     boolean fitActionBar = false;
+    boolean isScreenHeight = false;
 
     /**
      * 允许的最大高度, 如果为-2px,那么就是屏幕高度的一半, 如果是-3px,那么就是屏幕高度的三分之, 以此内推
@@ -38,6 +39,7 @@ public class TitleBarLayout extends FrameLayout {
         enablePadding = UIIViewImpl.isLollipop();
         fitActionBar = typedArray.getBoolean(R.styleable.TitleBarLayout_r_fit_action_bar_height, fitActionBar);
         enablePadding = typedArray.getBoolean(R.styleable.TitleBarLayout_r_fit_status_bar_height, enablePadding);
+        isScreenHeight = typedArray.getBoolean(R.styleable.TitleBarLayout_r_is_screen_height, isScreenHeight);
 
         resetMaxHeight();
         typedArray.recycle();
@@ -107,7 +109,7 @@ public class TitleBarLayout extends FrameLayout {
             if (heightMode == MeasureSpec.EXACTLY) {
                 int childWidth = widthSize;
                 if (getChildCount() > 0) {
-                    if (heightSize == ScreenUtil.screenHeight) {
+                    if (heightSize == ScreenUtil.screenHeight || isScreenHeight) {
                         heightSize -= topHeight;
                     }
                     getChildAt(0).measure(widthMeasureSpec, MeasureSpec.makeMeasureSpec(heightSize - getPaddingBottom(), heightMode));

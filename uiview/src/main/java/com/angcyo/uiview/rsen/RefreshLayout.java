@@ -85,7 +85,7 @@ public class RefreshLayout extends ViewGroup {
     public static final String TIP_VIEW = "tip_view";
     public static final long ANIM_TIME = 300;
     protected View mTopView, mBottomView, mTargetView, mTipView;
-    float downY, downX, lastY;
+    float downRawY, downRawX, downY, downX, lastY;
     boolean checkInnerChildScroll = false;
     private OverScroller mScroller;
     private int mTouchSlop;
@@ -397,6 +397,9 @@ public class RefreshLayout extends ViewGroup {
             float x = event.getX();
             float dy = y - downY;
             float dx = x - downX;
+
+            boolean touchIntercept = Math.abs(downRawY - y) > 10;
+
             if ((Math.abs(dy) > Math.abs(dx)) && Math.abs(dy) > mTouchSlop) {
                 int scrollY = getScrollY();
                 if (mCurState == TOP && dy < 0 && scrollY < 0) {
@@ -417,18 +420,24 @@ public class RefreshLayout extends ViewGroup {
                             !innerCanChildScrollVertically(mTargetView, -1, event.getRawX(), event.getRawY())) {
                         order = TOP;
                         //L.e("call: onInterceptTouchEvent([event])-> 3");
-                        return true;
+                        return super.onInterceptTouchEvent(event) || touchIntercept;
+
                     } else if (dy < 0 && canScrollUp() &&
                             !innerCanChildScrollVertically(mTargetView, 1, event.getRawX(), event.getRawY())) {
                         order = BOTTOM;
                         //L.e("call: onInterceptTouchEvent([event])-> 4");
-                        return true;
+                        //return true;//this 星期六 2017-9-30
+                        return super.onInterceptTouchEvent(event) || touchIntercept;
+
                     } else {
                         if (getScrollY() > 0 && dy > 0) {
-                            return true;
+                            //return true;//this 星期六 2017-9-30
+                            return super.onInterceptTouchEvent(event) || touchIntercept;
+
                         }
                         if (getScrollY() < 0 && dy < 0) {
-                            return true;
+                            // return true;//this 星期六 2017-9-30
+                            return super.onInterceptTouchEvent(event) || touchIntercept;
                         }
                     }
                 }
@@ -503,6 +512,9 @@ public class RefreshLayout extends ViewGroup {
     private void handleTouchDown(MotionEvent event) {
         downY = event.getY();
         downX = event.getX();
+        downRawX = downX;
+        downRawY = downY;
+
         lastY = downY;
         mScroller.abortAnimation();
     }

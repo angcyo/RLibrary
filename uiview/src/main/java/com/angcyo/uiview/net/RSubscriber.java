@@ -126,9 +126,13 @@ public abstract class RSubscriber<T> extends Subscriber<T> {
         if (code == NO_NETWORK) {
             T_.error(String.format(Locale.CHINA, "[%d]%s", code, msg));
         } else if (code == DATA_ERROR) {
-            T_.error(String.format(Locale.CHINA, "[%d]%s", code, msg));
+            if (L.LOG_DEBUG) {
+                T_.error(String.format(Locale.CHINA, "[%d]%s", code, msg));
+            }
         } else if (code == UNKNOWN_ERROR) {
-            T_.error(String.format(Locale.CHINA, "[%d]%s", code, msg));
+            if (L.LOG_DEBUG) {
+                T_.error(String.format(Locale.CHINA, "[%d]%s", code, msg));
+            }
         }
     }
 
