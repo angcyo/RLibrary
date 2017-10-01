@@ -9,6 +9,7 @@ import android.widget.ImageView;
 import com.angcyo.uiview.R;
 import com.angcyo.uiview.recycler.RBaseViewHolder;
 import com.angcyo.uiview.resources.ResUtil;
+import com.angcyo.uiview.utils.ScreenUtil;
 import com.angcyo.uiview.utils.UI;
 
 import java.util.List;
@@ -52,6 +53,11 @@ public class RAddPhotoAdapter<T> extends RBaseAdapter<T> {
      */
     private int excludeWidth = 0;
 
+    /**
+     * 请使用此属性, 实现分割线的功能
+     */
+    private int itemPadding = ScreenUtil.dip2px(5);
+
     public RAddPhotoAdapter(Context context) {
         super(context);
     }
@@ -91,11 +97,13 @@ public class RAddPhotoAdapter<T> extends RBaseAdapter<T> {
     protected void onBindView(RBaseViewHolder holder, final int position, final T bean) {
         int itemSize = getItemSize();
         UI.setViewHeight(holder.itemView, itemSize);
+        holder.itemView.setPadding(itemPadding, itemPadding, itemPadding, itemPadding);
 
         final ImageView imageView = holder.v(R.id.base_image_view);
         final ImageView deleteView = holder.v(R.id.base_delete_view);
 
         if (holder.getItemViewType() == TYPE_ADD) {
+
             deleteView.setVisibility(View.GONE);
             imageView.setImageResource(getAddViewImageResource(position));
             imageView.setScaleType(ImageView.ScaleType.FIT_XY);
@@ -108,6 +116,7 @@ public class RAddPhotoAdapter<T> extends RBaseAdapter<T> {
                 }
             });
         } else {
+
             imageView.setScaleType(ImageView.ScaleType.CENTER_CROP);
             deleteView.setVisibility(mDeleteModel ? View.VISIBLE : View.GONE);
             if (mConfigCallback != null) {
@@ -198,6 +207,11 @@ public class RAddPhotoAdapter<T> extends RBaseAdapter<T> {
         int screenWidth = ResUtil.getScreenWidth(mContext) - excludeWidth;
         int itemSize = screenWidth / mItemCountLine;
         return itemSize;
+    }
+
+    public RAddPhotoAdapter setItemPadding(int itemPadding) {
+        this.itemPadding = itemPadding;
+        return this;
     }
 
     protected int getAddViewImageResource(int position) {
