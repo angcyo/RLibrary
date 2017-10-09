@@ -93,6 +93,11 @@ public abstract class SingleItem implements Item {
         }
     }
 
+    @Override
+    public int getItemLayoutId() {
+        return -1;
+    }
+
     public enum Type {
         /**
          * 距离很大的Line

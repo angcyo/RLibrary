@@ -21,4 +21,9 @@ public interface Item {
     void setItemOffsets2(Rect rect, int edge);
 
     void draw(Canvas canvas, TextPaint paint, View itemView, Rect offsetRect, int itemCount, int position);
+
+    /**
+     * Item对应的布局id, -1表示默认
+     */
+    int getItemLayoutId();
 }

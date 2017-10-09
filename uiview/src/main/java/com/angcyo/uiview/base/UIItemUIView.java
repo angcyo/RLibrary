@@ -109,7 +109,14 @@ public abstract class UIItemUIView<T extends Item> extends UIRecyclerUIView<Stri
 
             @Override
             protected int getItemLayoutId(int viewType) {
-                return UIItemUIView.this.getItemLayoutId(viewType);
+                T t = mItems.get(viewType);
+                int itemLayoutId = t.getItemLayoutId();
+
+                if (itemLayoutId == -1) {
+                    return UIItemUIView.this.getItemLayoutId(viewType);
+                } else {
+                    return itemLayoutId;
+                }
             }
 
             @Override
