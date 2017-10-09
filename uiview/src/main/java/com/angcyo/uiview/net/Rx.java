@@ -107,7 +107,13 @@ public class Rx<Rx> extends Observable<Rx> {
     }
 
     public static <T, R> Subscription base(T t, Func1<? super T, ? extends R> func) {
-        return Observable.just(t).map(func).compose(applyIOSchedulers()).subscribe();
+        return Observable.just(t).map(func).compose(applyIOSchedulers()).subscribe(new RSubscriber<Object>() {
+
+            @Override
+            public void onError(int code, String msg) {
+                //super.onError(code, msg);
+            }
+        });
     }
 
     /**
@@ -139,9 +145,19 @@ public class Rx<Rx> extends Observable<Rx> {
 
     public static <T, R> Subscription base(T t, Func1<? super T, ? extends R> func, Scheduler scheduler) {
         return scheduler == Schedulers.newThread() ?
-                Observable.just(t).map(func).compose(applyNewThreadSchedulers()).subscribe()
+                Observable.just(t).map(func).compose(applyNewThreadSchedulers()).subscribe(new RSubscriber<Object>() {
+                    @Override
+                    public void onError(int code, String msg) {
+                        //super.onError(code, msg);
+                    }
+                })
                 :
-                Observable.just(t).map(func).compose(applyIOSchedulers()).subscribe();
+                Observable.just(t).map(func).compose(applyIOSchedulers()).subscribe(new RSubscriber<Object>() {
+                    @Override
+                    public void onError(int code, String msg) {
+                        //super.onError(code, msg);
+                    }
+                });
     }
 
     public static <R> Subscription base(Func1<String, ? extends R> func) {
