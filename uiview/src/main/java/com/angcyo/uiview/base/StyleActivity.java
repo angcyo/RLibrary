@@ -86,6 +86,18 @@ public abstract class StyleActivity extends AppCompatActivity {
     }
 
     @Override
+    protected void onPause() {
+        super.onPause();
+        L.e(this.getClass().getSimpleName() + "call: onPause([])-> taskId:" + getTaskId());
+    }
+
+    @Override
+    protected void onStop() {
+        super.onStop();
+        L.e(this.getClass().getSimpleName() + "call: onStop([])-> taskId:" + getTaskId());
+    }
+
+    @Override
     protected void onDestroy() {
         super.onDestroy();
         L.e(this.getClass().getSimpleName() + " call: onDestroy([])-> taskId:" + getTaskId());

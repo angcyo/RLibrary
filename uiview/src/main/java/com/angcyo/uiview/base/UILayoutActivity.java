@@ -13,7 +13,6 @@ import android.view.View;
 import android.view.inputmethod.InputMethodManager;
 
 import com.angcyo.library.utils.L;
-import com.angcyo.uiview.R;
 import com.angcyo.uiview.container.ILayout;
 import com.angcyo.uiview.container.RSwipeLayout;
 import com.angcyo.uiview.container.UILayoutImpl;
@@ -163,7 +162,8 @@ public abstract class UILayoutActivity extends StyleActivity {
     }
 
     public void finishSelf() {
-        finish();
+        //finish();
+        onUIBackPressed();
         //overridePendingTransition(R.anim.base_tran_to_top, R.anim.base_tran_to_bottom);
     }
 

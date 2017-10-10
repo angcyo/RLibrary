@@ -54,30 +54,34 @@ public class T2 {
         TextView titleView = find(layout, R.id.base_toast_text_view);
         ImageView imageView = find(layout, R.id.base_toast_image_view);
 
-        titleView.setText(charSequence);
-        if (type == TYPE_NONE) {
-            imageView.setVisibility(View.GONE);
-        } else {
-            imageView.setVisibility(View.VISIBLE);
-            switch (type % 4) {
-                case TYPE_OK:
-                    imageView.setImageResource(R.drawable.base_ok);
-                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-                        imageView.setImageTintList(ColorStateList.valueOf(SkinHelper.getSkin().getThemeSubColor()));
-                    }
-                    break;
-                case TYPE_INFO:
-                    imageView.setImageResource(R.drawable.base_info);
-                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-                        imageView.setImageTintList(ColorStateList.valueOf(SkinHelper.getSkin().getThemeSubColor()));
-                    }
-                    break;
-                case TYPE_ERROR:
-                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-                        imageView.setImageTintList(ColorStateList.valueOf(Color.parseColor("#d62119")));
-                    }
-                    imageView.setImageResource(R.drawable.base_failed_red);
-                    break;
+        if (titleView != null) {
+            titleView.setText(charSequence);
+        }
+        if (imageView != null) {
+            if (type == TYPE_NONE) {
+                imageView.setVisibility(View.GONE);
+            } else {
+                imageView.setVisibility(View.VISIBLE);
+                switch (type % 4) {
+                    case TYPE_OK:
+                        imageView.setImageResource(R.drawable.base_ok);
+                        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+                            imageView.setImageTintList(ColorStateList.valueOf(SkinHelper.getSkin().getThemeSubColor()));
+                        }
+                        break;
+                    case TYPE_INFO:
+                        imageView.setImageResource(R.drawable.base_info);
+                        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+                            imageView.setImageTintList(ColorStateList.valueOf(SkinHelper.getSkin().getThemeSubColor()));
+                        }
+                        break;
+                    case TYPE_ERROR:
+                        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+                            imageView.setImageTintList(ColorStateList.valueOf(Color.parseColor("#d62119")));
+                        }
+                        imageView.setImageResource(R.drawable.base_failed_red);
+                        break;
+                }
             }
         }
         toast.show();

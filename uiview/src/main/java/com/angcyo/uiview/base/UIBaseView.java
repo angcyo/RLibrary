@@ -832,13 +832,13 @@ public abstract class UIBaseView extends UIIViewImpl {
                 }
             });
             if (mILayout != null) {
-                mILayout.requestBackPressed(new UIParam(true, true, false));
+                mILayout.requestBackPressed(new UIParam(true, true, false).setClickOnTitleBack(true));
             }
             return false;
         } else {
             mEnableClip = false;
             if (mILayout != null) {
-                mILayout.requestBackPressed(new UIParam(true, false, false));
+                mILayout.requestBackPressed(new UIParam(true, false, false).setClickOnTitleBack(true));
             }
             return true;
         }

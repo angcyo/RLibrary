@@ -44,6 +44,10 @@ public class UIParam {
     public boolean needTransitionStartAnim = false;
     public boolean needTransitionExitAnim = false;
     /**
+     * 点击在标题栏上的返回按钮, 用来控制当只有一个UIView时, 关闭Activity的
+     */
+    public boolean clickOnTitleBack = false;
+    /**
      * 需要替换的iview, 只在replaceIView时使用, 用来判断目标的可行性
      */
     protected IView replaceIView;
@@ -163,6 +167,11 @@ public class UIParam {
 
     public UIParam setUnloadRunnable(Runnable unloadRunnable) {
         this.unloadRunnable = unloadRunnable;
+        return this;
+    }
+
+    public UIParam setClickOnTitleBack(boolean clickOnTitleBack) {
+        this.clickOnTitleBack = clickOnTitleBack;
         return this;
     }
 
