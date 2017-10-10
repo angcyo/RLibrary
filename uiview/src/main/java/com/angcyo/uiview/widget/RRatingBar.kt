@@ -118,10 +118,12 @@ class RRatingBar(context: Context, attributeSet: AttributeSet? = null) : View(co
         val floor = Math.floor(curRating.toDouble()).toFloat()
 
         var right = paddingLeft + ratingWidth * floor + ratingSpace * floor
-        if (floor.compareTo(curRating) != 0) {
-            //半星
-            right += ratingWidth / 2
-        }
+//        if (floor.compareTo(curRating) != 0) {
+//            //半星
+//            right += ratingWidth / 2
+//        }
+
+        right += ratingWidth * (curRating - floor)
 
         progressClipRect.set(0f, 0f, right, measuredHeight.toFloat())
         canvas.clipRect(progressClipRect)

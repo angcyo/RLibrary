@@ -17,6 +17,7 @@ import com.angcyo.uiview.container.UILayoutImpl;
 import com.angcyo.uiview.design.StickLayout;
 import com.angcyo.uiview.skin.SkinHelper;
 import com.angcyo.uiview.utils.Reflect;
+import com.angcyo.uiview.utils.SafeRunnable;
 import com.angcyo.uiview.utils.UI;
 import com.angcyo.uiview.view.UIIViewImpl;
 
@@ -207,9 +208,9 @@ public class UIViewPager extends ViewPager implements Runnable, StickLayout.CanS
 //                        mParentUIView.setChildILayout(null);
 //                    }
                     if (available instanceof OnPagerShowListener) {
-                        post(new Runnable() {
+                        post(new SafeRunnable() {
                             @Override
-                            public void run() {
+                            public void onRun() {
                                 ((OnPagerShowListener) available).onHideInPager(UIViewPager.this);
                             }
                         });
@@ -222,9 +223,9 @@ public class UIViewPager extends ViewPager implements Runnable, StickLayout.CanS
                     }
 
                     if (available instanceof OnPagerShowListener) {
-                        post(new Runnable() {
+                        post(new SafeRunnable() {
                             @Override
-                            public void run() {
+                            public void onRun() {
                                 ((OnPagerShowListener) available).onShowInPager(UIViewPager.this);
                             }
                         });
