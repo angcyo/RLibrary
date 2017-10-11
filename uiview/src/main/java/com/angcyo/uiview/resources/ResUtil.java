@@ -5,6 +5,8 @@ import android.content.Context;
 import android.content.res.ColorStateList;
 import android.content.res.Resources;
 import android.content.res.TypedArray;
+import android.graphics.ColorMatrix;
+import android.graphics.ColorMatrixColorFilter;
 import android.graphics.Paint;
 import android.graphics.PorterDuff;
 import android.graphics.RectF;
@@ -19,7 +21,6 @@ import android.graphics.drawable.shapes.RoundRectShape;
 import android.graphics.drawable.shapes.Shape;
 import android.os.Build;
 import android.support.annotation.DrawableRes;
-import android.support.annotation.RequiresApi;
 import android.support.v4.content.ContextCompat;
 import android.support.v4.graphics.drawable.DrawableCompat;
 import android.support.v4.view.ViewCompat;
@@ -28,6 +29,9 @@ import android.view.View;
 
 import com.angcyo.uiview.R;
 import com.angcyo.uiview.RApplication;
+
+import static android.view.View.LAYER_TYPE_HARDWARE;
+import static android.view.View.LAYER_TYPE_NONE;
 
 
 /**
@@ -692,6 +696,24 @@ public class ResUtil {
             return new RippleDrawable(ColorStateList.valueOf(rippleColor), contentDrawable, contentDrawable);
         } else {
             return contentDrawable;
+        }
+    }
+
+    /**
+     * 设置View的灰度
+     */
+    public static void setGreyscale(View v, boolean greyscale) {
+        if (greyscale) {
+            // Create a paint object with 0 saturation (black and white)
+            ColorMatrix cm = new ColorMatrix();
+            cm.setSaturation(0);
+            Paint greyscalePaint = new Paint();
+            greyscalePaint.setColorFilter(new ColorMatrixColorFilter(cm));
+            // Create a hardware layer with the greyscale paint
+            v.setLayerType(LAYER_TYPE_HARDWARE, greyscalePaint);
+        } else {
+            // Remove the hardware layer
+            v.setLayerType(LAYER_TYPE_NONE, null);
         }
     }
 }
