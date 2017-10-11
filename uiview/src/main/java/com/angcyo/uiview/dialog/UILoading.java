@@ -61,6 +61,7 @@ public class UILoading extends UIIDialogImpl {
 
     public static void hide() {
         if (isShowing && mUILoading != null) {
+            mUILoading.setCanCancel(true);
             mUILoading.finishIView(mUILoading, new UIParam(true, true, false));
             isShowing = false;
         }

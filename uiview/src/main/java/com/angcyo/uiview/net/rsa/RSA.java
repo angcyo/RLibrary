@@ -1,7 +1,5 @@
 package com.angcyo.uiview.net.rsa;
 
-import java.util.Calendar;
-
 /**
  * Copyright (C) 2016,深圳市红鸟网络科技股份有限公司 All rights reserved.
  * 项目名称：
@@ -25,9 +23,16 @@ public class RSA {
 
     public static final String E_PUBLIC_KEY_INFO = "7LeYKWnAg7XZJ0h8LWRIQxLSwYeCFp8Hp5Y07uxVqowiT3IpCzrYdM9EItQy+q+R/NKZxi7BZaBpFfrqJb8OhhmwilWwOtqJzIL6pGOeElUE9y9N/S5cz9yYW44RSxB/FEabGylujRrc02hSMLyL2VRHAAQSlxrR1kPUDaG9AR6yfbaxWc7KFPI9l2qDcMKYF/AwlX5NshcsreQMlLJ/evPbOr/ZoyJ4AM0S8qA82gD8+4AMhebdSwjeHjUo3WQZACzm150CKiXksYkEZh/18ZQvvonvvEGpJBn45g==";
 
+    /**
+     * 第三方授权key
+     */
+    public static final String E_PUBLIC_KEY_AUTH = "q/fwydQ8fHc9y1u85KlJJdjF0TeqZYy8VoyebrgFWqB6v9mJJV0C3NN5aSdXQ/yF3p73dpM7ZoA3Te4UwRtPGDQQZjQ1uHvBn/deLwMeS1rFk71Vde/NropY84eVpS56+LbXWR8RBBGMPbyQjOdqo3gqGSCj9vXjLAcNR5tHC1eYINNmhLq9m9OMFwczMnElOJil4fcvKgAW/YftD6X47je8BMoaQnHXiKCri5ArS6U3Ae5H5lWBxBfSaGchJwLRtko2H2tlzlLMD8VevC+Ji+asmgAdXWGtHFIYjg==";
+
     public static String PUBLIC_KEY = E_PUBLIC_KEY;
 
     public static String PUBLIC_KEY_INFO = E_PUBLIC_KEY_INFO;
+
+    public static String PUBLIC_KEY_AUTH = E_PUBLIC_KEY_AUTH;
 
     public static String E_SALT = "";
 
@@ -69,6 +74,18 @@ public class RSA {
         byte[] encodedData;
         try {
             encodedData = RSAUtils.encryptByPublicKey(data_.getBytes(), PUBLIC_KEY_INFO);
+            encode = Base64Utils.encode(encodedData);
+        } catch (Exception e) {
+        }
+        return encode.replaceAll("\\n", "");
+    }
+
+    public static String encodeAuth(String data) {
+        String data_ = data;
+        String encode = "";
+        byte[] encodedData;
+        try {
+            encodedData = RSAUtils.encryptByPublicKey(data_.getBytes(), PUBLIC_KEY_AUTH);
             encode = Base64Utils.encode(encodedData);
         } catch (Exception e) {
         }
