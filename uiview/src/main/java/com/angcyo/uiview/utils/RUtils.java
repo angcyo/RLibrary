@@ -1166,6 +1166,19 @@ public class RUtils {
         }
     }
 
+    /**
+     * 保存View的截图
+     */
+    public static Bitmap saveView(View view) {
+        view.setDrawingCacheEnabled(true);
+        view.buildDrawingCache();
+        Bitmap drawingCache = view.getDrawingCache();
+        Bitmap bitmap = drawingCache.copy(drawingCache.getConfig(), false);
+        view.destroyDrawingCache();
+        view.setDrawingCacheEnabled(false);
+        return bitmap;
+    }
+
     public static Bitmap saveRecyclerViewBitmap(String path, RecyclerView view, int bgColor) {
         return saveRecyclerViewBitmap(path, view, bgColor, Integer.MAX_VALUE);
     }

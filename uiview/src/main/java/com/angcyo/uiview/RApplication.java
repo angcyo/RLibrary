@@ -74,6 +74,7 @@ public class RApplication extends Application {
             L.e("call: getIMEI([])-> " + imei);
         } catch (Exception e) {
             e.printStackTrace();
+            L.e("call: getIMEI([])-> " + imei + " " + e.getMessage());
         }
         return imei;
     }
