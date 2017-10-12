@@ -1341,6 +1341,17 @@ public class RUtils {
         return split[split.length - 1];
     }
 
+    /**
+     * 获取bitmap对象的大小, 字节
+     */
+    public static long getBitmapSize(Bitmap bitmap) {
+        if (bitmap.isRecycled()) {
+            return 0;
+        }
+        // Pre HC-MR1
+        return bitmap.getRowBytes() * bitmap.getHeight();
+    }
+
     public enum ImageType {
         JPEG, GIF, PNG, BMP, UNKNOWN
     }
