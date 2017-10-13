@@ -288,7 +288,7 @@ class DYRecordView(context: Context, attributeSet: AttributeSet? = null) : View(
         if (breathAnimator == null) {
             breathAnimator = ValueAnimator.ofFloat(0f, 1f).apply {
                 interpolator = LinearInterpolator()
-                duration = 300
+                duration = 500
                 repeatMode = ValueAnimator.REVERSE
                 repeatCount = ValueAnimator.INFINITE
                 addUpdateListener { animation ->
