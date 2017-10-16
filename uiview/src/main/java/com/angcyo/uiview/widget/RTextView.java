@@ -529,6 +529,36 @@ public class RTextView extends AppCompatTextView {
     }
 
     /**
+     * 设置是否显示删除线
+     */
+    public void setDeleteLine(boolean bool) {
+        addFlags(bool, Paint.STRIKE_THRU_TEXT_FLAG);
+    }
+
+    /**
+     * 设置是否显示下划线
+     */
+    public void setUnderLine(boolean bool) {
+        addFlags(bool, Paint.UNDERLINE_TEXT_FLAG);
+    }
+
+    /**
+     * 设置是否加粗文本
+     */
+    public void setBoldText(boolean bool) {
+        addFlags(bool, Paint.FAKE_BOLD_TEXT_FLAG);
+    }
+
+    public void addFlags(boolean add, int flat) {
+        TextPaint paint = getPaint();
+        if (add) {
+            paint.setFlags(flat);
+        } else {
+            paint.setFlags(paint.getFlags() & ~flat);
+        }
+    }
+
+    /**
      * 是否显示未读小红点
      */
     public void setShowNoRead(boolean showNoRead) {
