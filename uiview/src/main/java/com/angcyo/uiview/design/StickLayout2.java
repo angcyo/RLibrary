@@ -39,6 +39,7 @@ public class StickLayout2 extends RelativeLayout {
      * 是否滚动了, 滚动了之后, 拦截Touch事件, 防止传递给子View
      */
     boolean isScroll = false;
+    boolean isNestedScrollAccepted = false;
     private OverScroller mOverScroller;
     private GestureDetectorCompat mGestureDetectorCompat;
     private int maxScrollY, topHeight;
@@ -348,7 +349,9 @@ public class StickLayout2 extends RelativeLayout {
                         ev.setLocation(lastX, moveY);
                     }
                 }
-                offsetTo(offsetY);
+                if (!isNestedScrollAccepted) {
+                    offsetTo(offsetY);
+                }
 
                 lastOffsetY = offsetY;
                 //L.e("call: dispatchTouchEvent([ev])-> move..." + ensureOffset(offsetY));
@@ -451,11 +454,6 @@ public class StickLayout2 extends RelativeLayout {
         initScrollTarget();
     }
 
-    @Override
-    public boolean onStartNestedScroll(View child, View target, int nestedScrollAxes) {
-        return true;
-    }
-
     /**
      * 滚动结束后时的速率
      */
@@ -471,9 +469,28 @@ public class StickLayout2 extends RelativeLayout {
     }
 
     @Override
+    public boolean onStartNestedScroll(View child, View target, int nestedScrollAxes) {
+        return true;
+    }
+
+    @Override
+    public void onNestedScrollAccepted(View child, View target, int axes) {
+        super.onNestedScrollAccepted(child, target, axes);
+        isNestedScrollAccepted = true;
+        mOverScroller.abortAnimation();
+    }
+
+    @Override
+    public void onStopNestedScroll(View child) {
+        super.onStopNestedScroll(child);
+        isNestedScrollAccepted = false;
+    }
+
+    @Override
     public void onNestedPreScroll(View target, int dx, int dy, int[] consumed) {
         super.onNestedPreScroll(target, dx, dy, consumed);
         //L.e("call: onNestedPreScroll([target, dx, dy, consumed])-> scroll..." + dy);
+        offsetTo(dy);
         if (dy > 0) {
             consumed[1] = (int) Math.min(dy, ensureOffset(lastOffsetY));
         }
