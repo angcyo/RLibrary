@@ -32,7 +32,7 @@ import rx.functions.Func2;
 
 public abstract class UILayoutActivity extends StyleActivity {
 
-    protected ILayout mLayout;
+    protected UILayoutImpl mLayout;
     protected RxPermissions mRxPermissions;
     protected RSwipeLayout mSwipeLayout;
     private boolean destroyed = false;
@@ -40,7 +40,7 @@ public abstract class UILayoutActivity extends StyleActivity {
     @Override
     protected void onCreateView() {
         mLayout = new UILayoutImpl(this);
-        ((UILayoutImpl) mLayout).setMainLayout(true);
+        mLayout.setMainLayout(true);
 
         initUILayout(mLayout);
         if (isEnableSwipeMenu()) {
@@ -197,6 +197,10 @@ public abstract class UILayoutActivity extends StyleActivity {
         super.moveTaskToBack(true);
     }
 
+    public void startIView(final IView iView, UIParam uiParam) {
+        mLayout.startIView(iView, uiParam);
+    }
+
     public void startIView(final IView iView, boolean needAnim) {
         mLayout.startIView(iView, new UIParam(needAnim));
     }
@@ -215,7 +219,7 @@ public abstract class UILayoutActivity extends StyleActivity {
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
-        ((UILayoutImpl) mLayout).onActivityResult(requestCode, resultCode, data);
+        mLayout.onActivityResult(requestCode, resultCode, data);
     }
 
     public boolean isDestroyedCompatible() {

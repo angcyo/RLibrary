@@ -55,10 +55,6 @@ public abstract class RSubscriber<T> extends Subscriber<T> {
         }
     }
 
-    public void onSucceed(T bean) {
-
-    }
-
     @Override
     final public void onError(Throwable e) {
         L.e("----------------------------------------异常处理----------------------------------------");
@@ -89,7 +85,7 @@ public abstract class RSubscriber<T> extends Subscriber<T> {
 
         e.printStackTrace();
 
-        L.d("订阅异常->" + this.getClass().getSimpleName() + " [" + errorCode + "]" + errorMsg);
+        L.e("订阅异常->" + this.getClass().getSimpleName() + " [" + errorCode + "]" + errorMsg);
         L.e("-----------------------------------------End-------------------------------------------");
 
         if (errorCode == RSubscriber.NO_NETWORK) {
@@ -118,6 +114,10 @@ public abstract class RSubscriber<T> extends Subscriber<T> {
 //        }
     }
 
+    public void onSucceed(T bean) {
+
+    }
+
     /**
      * 统一错误处理, 多用来弹出Toast
      */
@@ -141,7 +141,7 @@ public abstract class RSubscriber<T> extends Subscriber<T> {
      * 不管是成功订阅,还是异常,都会执行的方法
      */
     public void onEnd(boolean isError, boolean isNoNetwork, RException e) {
-        L.e("订阅结束-> isError:" + isError + " isNoNetwork:" + isNoNetwork + " Throwable:" + e);
+        L.w("订阅结束-> isError:" + isError + " isNoNetwork:" + isNoNetwork + " Throwable:" + e);
     }
 
 //    public void onEnd(boolean isError, int errorCode, boolean isNoNetwork, RException e) {

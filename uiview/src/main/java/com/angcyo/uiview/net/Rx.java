@@ -216,7 +216,7 @@ public class Rx<Rx> extends Observable<Rx> {
                                 if (throwable instanceof RException) {
                                     if (needRetryOnError((RException) throwable)) {
 //                                        if (integer < RETRY_ERROR_COUNT) {
-                                        onErrorRetryRunnable.run();
+                                        runErrorRetry();
 //                                            return true;
 //                                        }
                                     }
@@ -273,7 +273,7 @@ public class Rx<Rx> extends Observable<Rx> {
                                 if (throwable instanceof RException) {
                                     if (needRetryOnError((RException) throwable)) {
 //                                        if (integer < RETRY_ERROR_COUNT) {
-                                        onErrorRetryRunnable.run();
+                                        runErrorRetry();
 //                                            return true;
 //                                        }
                                     }
@@ -368,7 +368,7 @@ public class Rx<Rx> extends Observable<Rx> {
                                 if (throwable instanceof RException) {
                                     if (needRetryOnError((RException) throwable)) {
 //                                        if (integer < RETRY_ERROR_COUNT) {
-                                        onErrorRetryRunnable.run();
+                                        runErrorRetry();
 //                                            return true;
 //                                        }
                                     }
@@ -453,7 +453,7 @@ public class Rx<Rx> extends Observable<Rx> {
                                 if (throwable instanceof RException) {
                                     if (needRetryOnError((RException) throwable)) {
 //                                        if (integer < RETRY_ERROR_COUNT) {
-                                        onErrorRetryRunnable.run();
+                                        runErrorRetry();
 //                                            return true;
 //                                        }
                                     }
@@ -541,7 +541,7 @@ public class Rx<Rx> extends Observable<Rx> {
                                 if (throwable instanceof RException) {
                                     if (needRetryOnError((RException) throwable)) {
 //                                        if (integer < RETRY_ERROR_COUNT) {
-                                        onErrorRetryRunnable.run();
+                                        runErrorRetry();
 //                                            return true;
 //                                        }
                                     }
@@ -629,7 +629,7 @@ public class Rx<Rx> extends Observable<Rx> {
                                 if (throwable instanceof RException) {
                                     if (needRetryOnError((RException) throwable)) {
                                         if (integer < RETRY_ERROR_COUNT) {
-                                            onErrorRetryRunnable.run();
+                                            runErrorRetry();
 //                                            return true;
                                         }
                                     }

@@ -25,11 +25,6 @@ public class ViewPattern {
         mView = view;
     }
 
-    public ViewPattern setIView(IView IView) {
-        mIView = IView;
-        return this;
-    }
-
     public ViewPattern setView(View view) {
         mView = view;
         return this;
@@ -38,6 +33,15 @@ public class ViewPattern {
     @Override
     public boolean equals(Object obj) {
         return mIView == ((ViewPattern) obj).mIView;
+    }
+
+    public <T extends IView> T getIView() {
+        return (T) mIView;
+    }
+
+    public ViewPattern setIView(IView IView) {
+        mIView = IView;
+        return this;
     }
 
     @Override

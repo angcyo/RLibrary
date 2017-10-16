@@ -1980,7 +1980,7 @@ public class UILayoutImpl extends SwipeBackLayout implements ILayout<UIParam>, U
             //needMeasure = true;
             if (needMeasure) {
                 childAt.measure(exactlyMeasure(widthSize), exactlyMeasure(heightSize));
-                L.i("测量: " + viewPatternByView.mIView.getClass().getSimpleName());
+                L.d("测量: " + viewPatternByView.mIView.getClass().getSimpleName());
             }
         }
         //Debug.logTimeEnd("测量结束");

@@ -254,7 +254,7 @@ public class RRetrofit {
 
             String data = "请求URL:" + request.method() + ":" + request.url().url().toString();
             if (log) {
-                L.i(data);
+                L.d(data);
             }
 
             try {

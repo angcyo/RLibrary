@@ -30,7 +30,7 @@ public class Reflect {
             memberField.setAccessible(true);
             result = memberField.get(target);
         } catch (Exception e) {
-            L.i("错误:" + cls.getSimpleName() + " ->" + e.getMessage());
+            //L.i("错误:" + cls.getSimpleName() + " ->" + e.getMessage());
         }
         return result;
     }

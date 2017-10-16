@@ -34,6 +34,16 @@
         <item name="android:layout_marginRight">10dp</item>
     </style>
 
+    <!--透明Activity 主题-->
+    <style name="BaseTranslucentTheme" parent="@android:style/Theme.Translucent.NoTitleBar">
+        <item name="android:windowBackground">@android:color/transparent</item>
+        <item name="android:colorBackgroundCacheHint">@null</item>
+        <item name="android:windowIsTranslucent">true</item>
+        <item name="android:windowAnimationStyle">@android:style/Animation</item>
+        <item name="android:windowNoTitle">true</item>
+        <item name="android:windowContentOverlay">@null</item>
+    </style>
+
     <!--窗口平移动画-->
     <style name="WindowTranAnim" parent="@android:style/Animation.Translucent">
         <item name="android:windowEnterAnimation">@anim/default_window_tran_enter_anim</item>
