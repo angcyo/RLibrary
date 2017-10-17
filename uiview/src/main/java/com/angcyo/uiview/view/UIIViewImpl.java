@@ -45,6 +45,8 @@ import com.angcyo.uiview.resources.AnimUtil;
 import com.angcyo.uiview.skin.ISkin;
 import com.angcyo.uiview.utils.RUtils;
 import com.angcyo.uiview.utils.ThreadExecutor;
+import com.angcyo.uiview.viewgroup.TouchBackLayout;
+import com.angcyo.uiview.viewgroup.TouchLayout;
 import com.angcyo.uiview.widget.RSoftInputLayout;
 import com.angcyo.uiview.widget.viewpager.UIViewPager;
 
@@ -174,7 +176,11 @@ public abstract class UIIViewImpl implements IView {
     public View inflateContentView(UILayoutActivity activity, ILayout iLayout, FrameLayout container, LayoutInflater inflater) {
         L.d(this.getClass().getSimpleName(), "inflateContentView: ");
         mActivity = activity;
-        return inflateBaseView(container, inflater);
+        View baseView = inflateBaseView(container, inflater);
+        if (enableTouchBack() && baseView instanceof TouchBackLayout) {
+            initTouchBackLayout((TouchBackLayout) baseView);
+        }
+        return baseView;
     }
 
     protected abstract View inflateBaseView(FrameLayout container, LayoutInflater inflater);
@@ -1011,5 +1017,27 @@ public abstract class UIIViewImpl implements IView {
     @Override
     public boolean enableTouchBack() {
         return false;
+    }
+
+    /**
+     * 初始化下拉返回layout
+     */
+    protected void initTouchBackLayout(TouchBackLayout layout) {
+        if (enableTouchBack()) {
+            layout.setEnableTouchBack(true);
+            layout.setHandleTouchType(TouchLayout.HANDLE_TOUCH_TYPE_DISPATCH);
+            layout.setOnTouchBackListener(new TouchBackLayout.OnTouchBackListener() {
+                @Override
+                public void onTouchBackListener(TouchBackLayout layout, int scrollY, int maxScrollY) {
+                    layout.setBackgroundColor(
+                            AnimUtil.evaluateColor(scrollY * 1f / maxScrollY,
+                                    getColor(R.color.transparent_dark80),
+                                    Color.TRANSPARENT));
+                    if (scrollY >= maxScrollY) {
+                        finishIView(new UIParam(false, true, false));
+                    }
+                }
+            });
+        }
     }
 }
