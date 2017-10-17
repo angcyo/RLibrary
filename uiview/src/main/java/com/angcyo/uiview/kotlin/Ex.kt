@@ -32,6 +32,9 @@ public inline fun <T : View> UIIViewImpl.vh(id: Int): Lazy<T> {
     }
 }
 
+public fun Float.abs() = Math.abs(this)
+public fun Int.abs() = Math.abs(this)
+
 public fun Float.max0() = Math.max(0f, this)
 public fun Int.max0() = Math.max(0, this)
 

@@ -2318,10 +2318,11 @@ public class UILayoutImpl extends SwipeBackLayout implements ILayout<UIParam>, U
             needDragClose = true;
             mLastShowViewPattern.mView.setVisibility(GONE);
             mLastShowViewPattern.mView.setAlpha(0f);
-            finishIView(mLastShowViewPattern.mIView, new UIParam(false, true, false));
+            swipeBackIView(mLastShowViewPattern.mIView);
         }
         printLog();
     }
+
 
     /**
      * 默认状态
@@ -2490,6 +2491,13 @@ public class UILayoutImpl extends SwipeBackLayout implements ILayout<UIParam>, U
         L.e(LAYOUT_INFO);
         saveToSDCard(LAYOUT_INFO);
         return LAYOUT_INFO;
+    }
+
+    /**
+     * 滑动返回的形式, 关闭一个IView
+     */
+    public void swipeBackIView(IView iView) {
+        finishIView(iView, new UIParam(false, true, false));
     }
 
     /**

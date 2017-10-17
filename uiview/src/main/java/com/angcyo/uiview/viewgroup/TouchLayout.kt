@@ -34,7 +34,7 @@ open class TouchLayout(context: Context, attributeSet: AttributeSet? = null) : F
     }
 
     /*用来检测手指滑动方向*/
-    private val orientationGestureDetector = GestureDetectorCompat(context, object : GestureDetector.SimpleOnGestureListener() {
+    protected val orientationGestureDetector = GestureDetectorCompat(context, object : GestureDetector.SimpleOnGestureListener() {
         override fun onFling(e1: MotionEvent?, e2: MotionEvent?, velocityX: Float, velocityY: Float): Boolean {
             //L.e("call: onFling -> \n$e1 \n$e2 \n$velocityX $velocityY")
 
@@ -51,7 +51,7 @@ open class TouchLayout(context: Context, attributeSet: AttributeSet? = null) : F
                 }
             }
 
-            return super.onFling(e1, e2, velocityX, velocityY)
+            return true
         }
 
         override fun onScroll(e1: MotionEvent?, e2: MotionEvent?, distanceX: Float, distanceY: Float): Boolean {
@@ -70,26 +70,30 @@ open class TouchLayout(context: Context, attributeSet: AttributeSet? = null) : F
                 }
             }
 
-            return super.onScroll(e1, e2, distanceX, distanceY)
+            return true
         }
 
     })
 
     @CallSuper
-    override fun dispatchTouchEvent(ev: MotionEvent?): Boolean {
+    override fun dispatchTouchEvent(ev: MotionEvent): Boolean {
         //orientationGestureDetector.onTouchEvent(ev)
         return super.dispatchTouchEvent(ev)
     }
 
     @CallSuper
-    override fun onInterceptTouchEvent(ev: MotionEvent?): Boolean {
+    override fun onInterceptTouchEvent(ev: MotionEvent): Boolean {
         orientationGestureDetector.onTouchEvent(ev)
         return super.onInterceptTouchEvent(ev)
     }
 
-    override fun onTouchEvent(event: MotionEvent?): Boolean {
+    override fun onTouchEvent(event: MotionEvent): Boolean {
+        //orientationGestureDetector.onTouchEvent(event)
         return super.onTouchEvent(event)
     }
+
+    fun isVertical(orientation: ORIENTATION) = orientation == ORIENTATION.TOP || orientation == ORIENTATION.BOTTOM
+    fun isHorizontal(orientation: ORIENTATION) = orientation == ORIENTATION.LEFT || orientation == ORIENTATION.RIGHT
 
     /**Fling操作的处理方法*/
     open fun onFlingChange(orientation: ORIENTATION, velocity: Float) {
@@ -98,6 +102,6 @@ open class TouchLayout(context: Context, attributeSet: AttributeSet? = null) : F
 
     /**Scroll操作的处理方法*/
     open fun onScrollChange(orientation: ORIENTATION, distance: Float) {
-       //L.e("call: onScrollChange -> $orientation $distance")
+        //L.e("call: onScrollChange -> $orientation $distance")
     }
 }

@@ -23,8 +23,7 @@ import com.angcyo.uiview.utils.UI
  * 修改备注：
  * Version: 1.0.0
  */
-@Deprecated("写不下去, 还是用 StickLayout2吧" +
-        "")
+@Deprecated("写不下去, 还是用 StickLayout2吧")
 open class TouchStickLayout_d(context: Context, attributeSet: AttributeSet? = null) : TouchLayout(context, attributeSet) {
 
     /**布局方式, 采用的是垂直方向的线性布局方式*/
@@ -46,11 +45,11 @@ open class TouchStickLayout_d(context: Context, attributeSet: AttributeSet? = nu
         }
     }
 
-    override fun onInterceptTouchEvent(ev: MotionEvent?): Boolean {
+    override fun onInterceptTouchEvent(ev: MotionEvent): Boolean {
         return super.onInterceptTouchEvent(ev)
     }
 
-    override fun onTouchEvent(event: MotionEvent?): Boolean {
+    override fun onTouchEvent(event: MotionEvent): Boolean {
         return super.onTouchEvent(event)
     }
 
