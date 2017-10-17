@@ -104,8 +104,10 @@ open class TouchBackLayout(context: Context, attributeSet: AttributeSet? = null)
 
     /*接收内嵌滚动*/
     override fun onStartNestedScroll(child: View?, target: View?, nestedScrollAxes: Int): Boolean {
-        return if (enableTouchBack && target?.parent is RefreshLayout) {
-            (target.parent as RefreshLayout).isEnabled = false
+        return if (enableTouchBack) {
+            if (target?.parent is RefreshLayout) {
+                (target.parent as RefreshLayout).isEnabled = false
+            }
             true
         } else {
             false
