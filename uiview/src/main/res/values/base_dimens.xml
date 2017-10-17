@@ -9,7 +9,7 @@
 
     <dimen name="textSize_sidebar">10dp</dimen>
     <dimen name="large_textSize_sidebar">32dp</dimen>
-    <dimen name="textSize_sidebar_choose">12dp</dimen>
+    <dimen name="textSize_sidebar_choose">8dp</dimen>
     <dimen name="textSize_sidebar_padding">20dp</dimen>
     <dimen name="radius_sidebar">22dp</dimen>
     <dimen name="ball_radius_sidebar">24dp</dimen>

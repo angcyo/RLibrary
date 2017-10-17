@@ -125,8 +125,9 @@ dependencies {
     compile 'com.github.promeg:tinypinyin:2.0.3' // ~80KB
 
     //图片加载库的过渡效果支持库 https://github.com/wasabeef
-    compile 'jp.wasabeef:blurry:2.1.0'
-    compile 'jp.wasabeef:glide-transformations:2.0.2'
+    //https://github.com/wasabeef/glide-transformations
+    compile 'jp.wasabeef:blurry:2.1.1'
+    compile 'jp.wasabeef:glide-transformations:3.0.1'
     // If you want to use the GPU Filters
     //compile 'jp.co.cyberagent.android.gpuimage:gpuimage-library:1.4.1'
 

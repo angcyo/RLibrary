@@ -4,10 +4,12 @@ import android.animation.ArgbEvaluator;
 import android.app.Activity;
 import android.content.Context;
 import android.content.res.TypedArray;
+import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
 import android.graphics.drawable.Drawable;
 import android.support.annotation.ColorInt;
+import android.support.v4.content.ContextCompat;
 import android.support.v4.view.ViewCompat;
 import android.text.TextUtils;
 import android.util.AttributeSet;
@@ -508,5 +510,22 @@ public class UITitleBarContainer extends FrameLayout {
                 ViewCompat.setTranslationY(this, 0);
             }
         }
+    }
+
+    private Drawable mBackgroundDrawable;
+
+    public void setRBackgroundDrawable(Drawable mBackgroundDrawable) {
+        this.mBackgroundDrawable = mBackgroundDrawable;
+        setWillNotDraw(mBackgroundDrawable != null);
+        postInvalidate();
+    }
+
+    @Override
+    public void draw(Canvas canvas) {
+        if (mBackgroundDrawable != null) {
+            mBackgroundDrawable.setBounds(canvas.getClipBounds());
+            mBackgroundDrawable.draw(canvas);
+        }
+        super.draw(canvas);
     }
 }
