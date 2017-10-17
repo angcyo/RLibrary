@@ -26,12 +26,19 @@ open class TouchLayout(context: Context, attributeSet: AttributeSet? = null) : F
         const val scrollDistanceSlop = 0
         /**当Fling速度大于多少时, 视为Fling*/
         const val flingVelocitySlop = 0
+
+        const val HANDLE_TOUCH_TYPE_DISPATCH = 1
+        const val HANDLE_TOUCH_TYPE_INTERCEPT = 2
+        const val HANDLE_TOUCH_TYPE_TOUCH = 3
     }
 
     /**4个方向*/
     enum class ORIENTATION {
         LEFT, RIGHT, TOP, BOTTOM
     }
+
+    /**采用什么方式, 处理touch事件 */
+    var handleTouchType = HANDLE_TOUCH_TYPE_INTERCEPT
 
     /*用来检测手指滑动方向*/
     protected val orientationGestureDetector = GestureDetectorCompat(context, object : GestureDetector.SimpleOnGestureListener() {
@@ -77,18 +84,22 @@ open class TouchLayout(context: Context, attributeSet: AttributeSet? = null) : F
 
     @CallSuper
     override fun dispatchTouchEvent(ev: MotionEvent): Boolean {
-        //orientationGestureDetector.onTouchEvent(ev)
+        if (handleTouchType == HANDLE_TOUCH_TYPE_DISPATCH) {
+            orientationGestureDetector.onTouchEvent(ev)
+        }
         return super.dispatchTouchEvent(ev)
     }
 
     @CallSuper
     override fun onInterceptTouchEvent(ev: MotionEvent): Boolean {
-        orientationGestureDetector.onTouchEvent(ev)
+        if (handleTouchType == HANDLE_TOUCH_TYPE_INTERCEPT) {
+            orientationGestureDetector.onTouchEvent(ev)
+        }
         return super.onInterceptTouchEvent(ev)
     }
 
     override fun onTouchEvent(event: MotionEvent): Boolean {
-        //orientationGestureDetector.onTouchEvent(event)
+        orientationGestureDetector.onTouchEvent(event)
         return super.onTouchEvent(event)
     }
 

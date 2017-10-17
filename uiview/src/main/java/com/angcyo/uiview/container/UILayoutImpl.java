@@ -2186,7 +2186,16 @@ public class UILayoutImpl extends SwipeBackLayout implements ILayout<UIParam>, U
                 View view = null;
                 if (L.LOG_DEBUG && isMainLayout()) {
                     view = ViewGroupExKt.findView((ViewGroup) mLastShowViewPattern.mView, ev.getRawX(), ev.getRawY());
-                    L.w("touch on -> " + view);
+                    StringBuilder builder = new StringBuilder("touch on -> ");
+                    if (view == null) {
+                        builder.append("null");
+                    } else {
+                        if (view.hasOnClickListeners()) {
+                            builder.append("hasClick ");
+                        }
+                        builder.append(view);
+                    }
+                    L.w(builder.toString());
                 }
 
                 if (mLastShowViewPattern.mIView.hideSoftInputOnTouchDown()) {

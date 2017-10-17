@@ -37,6 +37,8 @@ open class TouchBackLayout(context: Context, attributeSet: AttributeSet? = null)
             }
         }
 
+    private var isFling = false
+
     init {
         scrollTo(0, -offsetScrollTop)
     }
@@ -46,6 +48,7 @@ open class TouchBackLayout(context: Context, attributeSet: AttributeSet? = null)
             val currY = mOverScroller.currY
             scrollTo(0, currY)
             postInvalidate()
+        } else {
         }
     }
 
@@ -63,42 +66,64 @@ open class TouchBackLayout(context: Context, attributeSet: AttributeSet? = null)
 
     override fun onInterceptTouchEvent(ev: MotionEvent): Boolean {
         val touchEvent = super.onInterceptTouchEvent(ev)
+        if (enableTouchBack) {
 
-        if (ev.actionMasked == MotionEvent.ACTION_MOVE && !isNestedAccepted && scrollY != 0) {
-            return true
+            if (ev.actionMasked == MotionEvent.ACTION_MOVE && !isNestedAccepted && scrollY != 0) {
+                return true
+            }
+
+            return touchEvent
+        } else {
+            return false
         }
-
-        return touchEvent
     }
 
-    override fun onTouchEvent(event: MotionEvent): Boolean {
-        orientationGestureDetector.onTouchEvent(event)
-        return super.onTouchEvent(event)
-    }
+//    override fun onTouchEvent(event: MotionEvent): Boolean {
+//        orientationGestureDetector.onTouchEvent(event)
+//        return super.onTouchEvent(event)
+//    }
 
     /*touch up时的, 恢复操作*/
     override fun dispatchTouchEvent(ev: MotionEvent): Boolean {
+        val dispatchTouchEvent = super.dispatchTouchEvent(ev)
         val actionMasked = ev.actionMasked
         when (actionMasked) {
+            MotionEvent.ACTION_DOWN -> {
+                isFling = false
+            }
             MotionEvent.ACTION_UP -> {
-                isNestedAccepted = false
-
                 if (offsetScrollTop.abs() > scrollY.abs()) {
                     offsetScrollTop = 0
                     scrollToDefault()
                 } else {
-                    resetScroll()
+                    if (!isFling) {
+                        resetScroll()
+                    }
                 }
+                isNestedAccepted = false
             }
         }
-        return super.dispatchTouchEvent(ev)
+        return dispatchTouchEvent
     }
 
     /*外面的滚动处理*/
     override fun onScrollChange(orientation: ORIENTATION, distance: Float) {
         super.onScrollChange(orientation, distance)
-        if (isVertical(orientation) && !isNestedAccepted) {
+        if (enableTouchBack && isVertical(orientation) && !isNestedAccepted) {
             scrollBy(0, calcConsumedDy(distance.toInt()))
+        }
+    }
+
+    override fun onFlingChange(orientation: ORIENTATION, velocity: Float) {
+        super.onFlingChange(orientation, velocity)
+        if (isVertical(orientation) && !isNestedAccepted) {
+            if (velocity > 1000) {
+                isFling = true
+                scrollToBack()
+            } else if (velocity < -1000) {
+                isFling = true
+                scrollToDefault()
+            }
         }
     }
 
@@ -114,7 +139,7 @@ open class TouchBackLayout(context: Context, attributeSet: AttributeSet? = null)
         }
     }
 
-    var isNestedAccepted = false
+    private var isNestedAccepted = false
 
     override fun onNestedScrollAccepted(child: View?, target: View?, axes: Int) {
         super.onNestedScrollAccepted(child, target, axes)
