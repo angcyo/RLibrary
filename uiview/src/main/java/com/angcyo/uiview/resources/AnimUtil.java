@@ -12,6 +12,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.view.ViewTreeObserver;
 import android.view.animation.Animation;
+import android.view.animation.BounceInterpolator;
 import android.view.animation.DecelerateInterpolator;
 import android.view.animation.LayoutAnimationController;
 import android.view.animation.LinearInterpolator;
@@ -469,4 +470,16 @@ public class AnimUtil {
             }
         }
     }
+
+    public static void scaleBounceView(View view) {
+        ViewCompat.setScaleX(view, 0.5f);
+        ViewCompat.setScaleY(view, 0.5f);
+        view.animate()
+                .scaleX(1f)
+                .scaleY(1f)
+                .setInterpolator(new BounceInterpolator())
+                .setDuration(300)
+                .start();
+    }
+
 }
