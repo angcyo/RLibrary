@@ -282,6 +282,11 @@ public class RRecyclerView extends RecyclerView {
         }
     }
 
+//    @Override
+//    public RBaseAdapter getAdapter() {
+//        return (RBaseAdapter) super.getAdapter();
+//    }
+
     @Override
     public void setAdapter(Adapter adapter) {
         if (adapter instanceof RBaseAdapter) {
