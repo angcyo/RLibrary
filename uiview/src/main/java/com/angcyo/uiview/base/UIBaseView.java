@@ -38,6 +38,7 @@ import com.angcyo.uiview.skin.SkinHelper;
 import com.angcyo.uiview.utils.ClipHelper;
 import com.angcyo.uiview.utils.ScreenUtil;
 import com.angcyo.uiview.view.UIIViewImpl;
+import com.angcyo.uiview.viewgroup.TouchBackLayout;
 import com.angcyo.uiview.widget.EmptyView;
 import com.angcyo.uiview.widget.SoftRelativeLayout;
 
@@ -137,6 +138,17 @@ public abstract class UIBaseView extends UIIViewImpl {
         //包含标题栏的根布局
         mBaseRootLayout = new SoftRelativeLayout(mActivity);
         mBaseRootLayout.setEnableClip(mEnableClip && enableEnterClip());
+        if (enableTouchBack()) {
+            mBaseRootLayout.setEnableTouchBack(true);
+            mBaseRootLayout.setOnTouchBackListener(new TouchBackLayout.OnTouchBackListener() {
+                @Override
+                public void onTouchBackListener(TouchBackLayout layout, int scrollY, int maxScrollY) {
+                    if (scrollY >= maxScrollY) {
+                        finishIView(new UIParam(false, true, false));
+                    }
+                }
+            });
+        }
 
         mBaseRootId = R.id.base_root_layout_id;//View.generateViewId();
         mBaseRootLayout.setId(mBaseRootId);

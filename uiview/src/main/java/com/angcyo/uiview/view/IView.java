@@ -198,7 +198,7 @@ public interface IView {
     void onAttachedToILayout(ILayout iLayout);
 
     /**
-     * 是否可以滑动关闭
+     * 是否可以左边侧滑关闭
      */
     boolean canTryCaptureView();//星期二 2017-2-14
 
@@ -252,6 +252,11 @@ public interface IView {
      * 当对话框关闭时, 走这个特殊回调 星期五 2017-9-29
      */
     void onViewShowOnDialogFinish();
+
+    /**
+     * 是否支持下拉返回
+     */
+    boolean enableTouchBack(); //星期二 2017-10-17
 
     enum IViewShowState {
         STATE_NORMAL,

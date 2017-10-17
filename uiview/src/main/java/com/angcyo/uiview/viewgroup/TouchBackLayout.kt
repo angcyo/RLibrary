@@ -6,6 +6,7 @@ import android.view.MotionEvent
 import android.view.View
 import android.widget.OverScroller
 import com.angcyo.uiview.kotlin.abs
+import com.angcyo.uiview.rsen.RefreshLayout
 import com.angcyo.uiview.utils.UI
 
 /**
@@ -21,10 +22,13 @@ import com.angcyo.uiview.utils.UI
  */
 open class TouchBackLayout(context: Context, attributeSet: AttributeSet? = null) : TouchLayout(context, attributeSet) {
     /*所有child的高度和*/
-    private var viewMaxHeight: Int = 0
+    //private var viewMaxHeight: Int = 0
     private var mOverScroller: OverScroller = OverScroller(getContext())
 
-    /*顶部留出多少空间, 用来实现半屏效果*/
+    /**是否激活下拉返回*/
+    var enableTouchBack = false
+
+    /**顶部留出多少空间, 用来实现半屏效果*/
     var offsetScrollTop = 0
         set(value) {
             field = value
@@ -100,7 +104,12 @@ open class TouchBackLayout(context: Context, attributeSet: AttributeSet? = null)
 
     /*接收内嵌滚动*/
     override fun onStartNestedScroll(child: View?, target: View?, nestedScrollAxes: Int): Boolean {
-        return true
+        return if (enableTouchBack && target?.parent is RefreshLayout) {
+            (target.parent as RefreshLayout).isEnabled = false
+            true
+        } else {
+            false
+        }
     }
 
     var isNestedAccepted = false
@@ -163,8 +172,10 @@ open class TouchBackLayout(context: Context, attributeSet: AttributeSet? = null)
     }
 
     override fun scrollTo(x: Int, y: Int) {
-        super.scrollTo(x, y)
-        onTouchBackListener?.onTouchBackListener(this, y.abs(), measuredHeight)
+        if (enableTouchBack) {
+            super.scrollTo(x, y)
+            onTouchBackListener?.onTouchBackListener(this, y.abs(), measuredHeight)
+        }
     }
 
     var onTouchBackListener: OnTouchBackListener? = null

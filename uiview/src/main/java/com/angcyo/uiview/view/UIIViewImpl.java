@@ -1007,4 +1007,9 @@ public abstract class UIIViewImpl implements IView {
     public void onViewShowOnDialogFinish() {
         L.d(this.getClass().getSimpleName(), "onViewShowOnDialogFinish: " + mIViewStatus);
     }
+
+    @Override
+    public boolean enableTouchBack() {
+        return false;
+    }
 }

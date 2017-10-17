@@ -11,12 +11,12 @@ import android.view.View;
 import android.view.WindowInsets;
 import android.view.animation.DecelerateInterpolator;
 import android.view.inputmethod.InputMethodManager;
-import android.widget.FrameLayout;
 
 import com.angcyo.uiview.R;
 import com.angcyo.uiview.container.IWindowInsetsListener;
 import com.angcyo.uiview.utils.ClipHelper;
 import com.angcyo.uiview.view.ILifecycle;
+import com.angcyo.uiview.viewgroup.TouchBackLayout;
 
 import java.util.ArrayList;
 
@@ -31,7 +31,7 @@ import java.util.ArrayList;
  * 修改备注：
  * Version: 1.0.0
  */
-public class SoftRelativeLayout extends FrameLayout implements ILifecycle {
+public class SoftRelativeLayout extends TouchBackLayout implements ILifecycle {
     boolean isViewShow = false;
     boolean mFitSystemWindow = false;
     ClipHelper mClipHelper;
