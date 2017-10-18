@@ -571,6 +571,49 @@ public class RCrashHandler implements Thread.UncaughtExceptionHandler {
         }
     }
 
+    public static void resetStartActivity(Context context, Throwable ex) {
+        try {
+            Class<? extends Activity> restartClass = getRestartActivityClassWithIntentFilter(context);
+            if (restartClass != null) {
+                Intent intent = new Intent(context, restartClass);
+                intent.addFlags(getStartIntentFlags());
+                Bundle args = new Bundle();
+                if (ex != null) {
+                    args.putString("msg", getMsgFromThrowable(ex));
+                }
+                intent.putExtras(args);
+                context.startActivity(intent);
+//                isShow = true;
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    public static void resetStartActivity(Context context) {
+        resetStartActivity(context, null);
+    }
+
+    public static void resetStartActivityWidthClass(Context context, Class<? extends Activity> restartClass) {
+        try {
+            if (restartClass != null) {
+                Intent intent = new Intent(context, restartClass);
+                intent.addFlags(getStartIntentFlags());
+                Bundle args = new Bundle();
+                intent.putExtras(args);
+                context.startActivity(intent);
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    private static String getMsgFromThrowable(Throwable ex) {
+        StringWriter stringWriter = new StringWriter();
+        ex.printStackTrace(new PrintWriter(stringWriter));
+        return stringWriter.toString();
+    }
+
     @Override
     public void uncaughtException(Thread thread, Throwable ex) {
 //        boolean isShow = false;
@@ -578,22 +621,8 @@ public class RCrashHandler implements Thread.UncaughtExceptionHandler {
         ex.printStackTrace();
 
         if (!L.LOG_DEBUG) {
-            try {
-                Class<? extends Activity> restartClass = getRestartActivityClassWithIntentFilter(context);
-                if (restartClass != null) {
-                    Intent intent = new Intent(context, restartClass);
-                    intent.addFlags(getStartIntentFlags());
-                    Bundle args = new Bundle();
-                    args.putString("msg", getMsgFromThrowable(ex));
-                    intent.putExtras(args);
-                    context.startActivity(intent);
-//                isShow = true;
-                }
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
+            resetStartActivity(context, ex);
         }
-
 
         try {
             saveToSDCard(ex);
@@ -618,12 +647,6 @@ public class RCrashHandler implements Thread.UncaughtExceptionHandler {
 
         System.exit(0);
         Process.killProcess(Process.myPid());
-    }
-
-    private String getMsgFromThrowable(Throwable ex) {
-        StringWriter stringWriter = new StringWriter();
-        ex.printStackTrace(new PrintWriter(stringWriter));
-        return stringWriter.toString();
     }
 
     private void saveToSDCard(Throwable ex) throws Exception {

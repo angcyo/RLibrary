@@ -25,6 +25,7 @@ import android.net.Uri;
 import android.os.Build;
 import android.os.Environment;
 import android.os.Looper;
+import android.provider.Settings;
 import android.support.v4.content.FileProvider;
 import android.support.v7.widget.RecyclerView;
 import android.telephony.TelephonyManager;
@@ -1351,6 +1352,16 @@ public class RUtils {
         }
         // Pre HC-MR1
         return bitmap.getRowBytes() * bitmap.getHeight();
+    }
+
+    /**
+     * 打开应用详情界面
+     */
+    public static void openAppDetailView(Activity activity, String packageName) {
+        Intent intent = new Intent();
+        intent.setAction(Settings.ACTION_APPLICATION_DETAILS_SETTINGS);
+        intent.setData(Uri.parse("package:" + packageName));
+        activity.startActivity(intent);
     }
 
     public enum ImageType {

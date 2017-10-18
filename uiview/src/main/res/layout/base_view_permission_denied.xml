@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:gravity="center_horizontal"
+        android:orientation="vertical"
+        android:paddingBottom="@dimen/base_50dpi"
+        android:paddingEnd="@dimen/base_xxhdpi"
+        android:paddingStart="@dimen/base_xxhdpi"
+        android:paddingTop="@dimen/base_50dpi">
+
+        <com.angcyo.uiview.widget.RTextView
+            style="@style/BaseMainTextStyle"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="@dimen/base_hdpi"
+            android:gravity="start"
+            android:text="程序需要以下权限, 请手动开启:"
+            android:textStyle="bold"/>
+
+        <ScrollView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+            <com.angcyo.uiview.widget.RTextView
+                android:id="@+id/base_text_view"
+                style="@style/BaseMainTextStyle"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="start"
+                tools:text="测试文本"/>
+
+        </ScrollView>
+
+        <com.angcyo.uiview.widget.Button
+            android:id="@+id/base_button_view"
+            style="@style/BaseMainTextStyle"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/base_xxhdpi"
+            android:text="手动开启权限"/>
+
+    </LinearLayout>
+
+</FrameLayout>

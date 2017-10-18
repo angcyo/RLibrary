@@ -6,9 +6,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.pm.ActivityInfo;
 import android.graphics.Color;
-import android.net.Uri;
 import android.os.Build;
-import android.provider.Settings;
 import android.view.View;
 import android.view.inputmethod.InputMethodManager;
 
@@ -17,7 +15,7 @@ import com.angcyo.uiview.container.ILayout;
 import com.angcyo.uiview.container.RSwipeLayout;
 import com.angcyo.uiview.container.UILayoutImpl;
 import com.angcyo.uiview.container.UIParam;
-import com.angcyo.uiview.utils.T_;
+import com.angcyo.uiview.iview.PermissionDeniedUIView;
 import com.angcyo.uiview.view.IView;
 import com.tbruyelle.rxpermissions.Permission;
 import com.tbruyelle.rxpermissions.RxPermissions;
@@ -79,21 +77,22 @@ public abstract class UILayoutActivity extends StyleActivity {
     }
 
     protected void checkPermissions() {
-        checkPermissions(needPermissions(), new Action1<Boolean>() {
+        checkPermissionsResult(needPermissions(), new Action1<String>() {
             @Override
-            public void call(Boolean aBoolean) {
-                if (aBoolean) {
-                    onLoadViewAfterPermission(getIntent());
+            public void call(String string) {
+//                onPermissionDenied(string);
+                if (string.contains("0")) {
+                    //有权限被拒绝
+                    onPermissionDenied(string);
                 } else {
-                    finishSelf();
-                    notifyAppDetailView();
-                    T_.show("必要的权限被拒绝!");
+                    //所有权限通过
+                    onLoadViewAfterPermission(getIntent());
                 }
             }
         });
     }
 
-    public void checkPermissions(String[] permissions, final Action1<Boolean> onResult) {
+    public void checkPermissionsResult(String[] permissions, final Action1<String> onResult) {
         if (mRxPermissions == null) {
             mRxPermissions = new RxPermissions(this);
         }
@@ -110,7 +109,7 @@ public abstract class UILayoutActivity extends StyleActivity {
                 .scan(new Func2<String, String, String>() {
                     @Override
                     public String call(String s, String s2) {
-                        return s + "\n" + s2;
+                        return s + ":" + s2;
                     }
                 })
                 .last()
@@ -118,14 +117,8 @@ public abstract class UILayoutActivity extends StyleActivity {
                     @Override
                     public void call(String s) {
                         L.e("\n" + UILayoutActivity.this.getClass().getSimpleName() + " 权限状态-->\n"
-                                + s.replaceAll("1", " 允许").replaceAll("0", " 拒绝"));
-                        if (s.contains("0")) {
-                            //有权限被拒绝
-                            onResult.call(false);
-                        } else {
-                            //所欲权限通过
-                            onResult.call(true);
-                        }
+                                + s.replaceAll("1", " 允许").replaceAll("0", " 拒绝").replaceAll(":", "\n"));
+                        onResult.call(s);
                     }
                 });
 //                .subscribe(new Action1<Permission>() {
@@ -141,11 +134,38 @@ public abstract class UILayoutActivity extends StyleActivity {
 //                });
     }
 
+    public void checkPermissions(String[] permissions, final Action1<Boolean> onResult) {
+        checkPermissionsResult(permissions, new Action1<String>() {
+            @Override
+            public void call(String s) {
+                if (s.contains("0")) {
+                    //有权限被拒绝
+                    onResult.call(false);
+                } else {
+                    //所欲权限通过
+                    onResult.call(true);
+                }
+            }
+        });
+    }
+
     /**
      * 权限通过后回调
      */
     protected void onLoadViewAfterPermission(Intent intent) {
 
+    }
+
+    /**
+     * 权限拒绝后回调
+     */
+    protected void onPermissionDenied(String permission) {
+        startIView(new PermissionDeniedUIView(
+                        permission.replaceAll("1", "").replaceAll("0", "")),
+                false);
+//        finishSelf();
+        //notifyAppDetailView();
+//        T_.show("必要的权限被拒绝!");
     }
 
     protected String[] needPermissions() {
@@ -207,13 +227,6 @@ public abstract class UILayoutActivity extends StyleActivity {
 
     public void startIView(IView iView) {
         startIView(iView, true);
-    }
-
-    public void notifyAppDetailView() {
-        Intent intent = new Intent();
-        intent.setAction(Settings.ACTION_APPLICATION_DETAILS_SETTINGS);
-        intent.setData(Uri.parse("package:" + getPackageName()));
-        startActivity(intent);
     }
 
     @Override
