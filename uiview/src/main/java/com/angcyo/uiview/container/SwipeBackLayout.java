@@ -1,6 +1,5 @@
 package com.angcyo.uiview.container;
 
-import android.annotation.TargetApi;
 import android.content.Context;
 import android.graphics.Canvas;
 import android.graphics.Color;
@@ -15,17 +14,17 @@ import android.support.v4.widget.ViewDragHelper;
 import android.util.AttributeSet;
 import android.view.MotionEvent;
 import android.view.View;
-import android.widget.FrameLayout;
 
 import com.angcyo.uiview.R;
 import com.angcyo.uiview.utils.ScreenUtil;
+import com.angcyo.uiview.viewgroup.TouchLayout;
 
 /**
  * 支持滑动退出的父布局
  * Created by angcyo on 2016-12-18.
  */
 
-public abstract class SwipeBackLayout extends FrameLayout {
+public abstract class SwipeBackLayout extends TouchLayout {
 
     protected int mViewDragState = ViewDragHelper.STATE_IDLE;
     protected ViewDragHelper mDragHelper;
@@ -166,20 +165,11 @@ public abstract class SwipeBackLayout extends FrameLayout {
     private boolean mDimStatusBar = false;
 
     public SwipeBackLayout(Context context) {
-        super(context);
+        super(context, null);
     }
 
     public SwipeBackLayout(Context context, AttributeSet attrs) {
         super(context, attrs);
-    }
-
-    public SwipeBackLayout(Context context, AttributeSet attrs, int defStyleAttr) {
-        super(context, attrs, defStyleAttr);
-    }
-
-    @TargetApi(Build.VERSION_CODES.LOLLIPOP)
-    public SwipeBackLayout(Context context, AttributeSet attrs, int defStyleAttr, int defStyleRes) {
-        super(context, attrs, defStyleAttr, defStyleRes);
     }
 
     /**
@@ -231,6 +221,14 @@ public abstract class SwipeBackLayout extends FrameLayout {
     @Override
     public void draw(Canvas canvas) {
         super.draw(canvas);
+        drawSwipeLine(canvas);
+        drawDimStatusBar(canvas);
+    }
+
+    /**
+     * 绘制侧滑时, 左边的渐变线
+     */
+    protected void drawSwipeLine(Canvas canvas) {
         if (mTargetView != null && mTargetView.getLeft() != getMeasuredWidth()) {
             mDimRect.set(mTargetView.getLeft() - dimWidth, 0, mTargetView.getLeft(), getMeasuredHeight());
             mPaint.setAlpha((int) (255 * (1 - (mTargetView.getLeft() * 1f / getMeasuredWidth()))));
@@ -238,7 +236,12 @@ public abstract class SwipeBackLayout extends FrameLayout {
                     new int[]{Color.TRANSPARENT, Color.parseColor("#40000000")}, null, Shader.TileMode.CLAMP));
             canvas.drawRect(mDimRect, mPaint);
         }
+    }
 
+    /**
+     * 绘制状态栏遮罩
+     */
+    protected void drawDimStatusBar(Canvas canvas) {
         if (mDimStatusBar &&
                 getMeasuredHeight() == ScreenUtil.screenHeight) {
             canvas.drawRect(0, 0,
@@ -262,6 +265,7 @@ public abstract class SwipeBackLayout extends FrameLayout {
 
     @Override
     public boolean onInterceptTouchEvent(MotionEvent ev) {
+        super.onInterceptTouchEvent(ev);
         boolean interceptForDrag = false;
 
         if (mIsLocked) {
@@ -299,6 +303,7 @@ public abstract class SwipeBackLayout extends FrameLayout {
 
     @Override
     public boolean onTouchEvent(MotionEvent event) {
+        super.onTouchEvent(event);
         if (mIsLocked) {
             return false;
         }

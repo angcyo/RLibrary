@@ -4,7 +4,6 @@ import android.content.Context
 import android.util.AttributeSet
 import android.view.MotionEvent
 import android.view.View
-import android.widget.OverScroller
 import com.angcyo.uiview.kotlin.abs
 import com.angcyo.uiview.rsen.RefreshLayout
 import com.angcyo.uiview.utils.UI
@@ -23,7 +22,6 @@ import com.angcyo.uiview.utils.UI
 open class TouchBackLayout(context: Context, attributeSet: AttributeSet? = null) : TouchLayout(context, attributeSet) {
     /*所有child的高度和*/
     //private var viewMaxHeight: Int = 0
-    private var mOverScroller: OverScroller = OverScroller(getContext())
 
     /**是否激活下拉返回*/
     var enableTouchBack = false
@@ -41,15 +39,6 @@ open class TouchBackLayout(context: Context, attributeSet: AttributeSet? = null)
 
     init {
         scrollTo(0, -offsetScrollTop)
-    }
-
-    override fun computeScroll() {
-        if (mOverScroller.computeScrollOffset()) {
-            val currY = mOverScroller.currY
-            scrollTo(0, currY)
-            postInvalidate()
-        } else {
-        }
     }
 
 //    /**布局方式, 采用的是垂直方向的线性布局方式*/
@@ -85,6 +74,10 @@ open class TouchBackLayout(context: Context, attributeSet: AttributeSet? = null)
 
     /*touch up时的, 恢复操作*/
     override fun dispatchTouchEvent(ev: MotionEvent): Boolean {
+        if (!enableTouchBack) {
+            return super.dispatchTouchEvent(ev)
+        }
+
         val dispatchTouchEvent = super.dispatchTouchEvent(ev)
         val actionMasked = ev.actionMasked
         when (actionMasked) {
@@ -178,12 +171,12 @@ open class TouchBackLayout(context: Context, attributeSet: AttributeSet? = null)
     }
 
     fun scrollToBack() {
-        mOverScroller.startScroll(0, scrollY, 0, -measuredHeight - scrollY, 300)
+        startScrollY(-measuredHeight - scrollY)
         postInvalidate()
     }
 
     fun scrollToDefault() {
-        mOverScroller.startScroll(0, scrollY, 0, -offsetScrollTop - scrollY, 300)
+        startScrollY(-offsetScrollTop - scrollY)
         postInvalidate()
     }
 

@@ -7,6 +7,7 @@ import android.util.AttributeSet
 import android.view.GestureDetector
 import android.view.MotionEvent
 import android.widget.FrameLayout
+import android.widget.OverScroller
 
 /**
  * Copyright (C) 2016,深圳市红鸟网络科技股份有限公司 All rights reserved.
@@ -39,6 +40,8 @@ open class TouchLayout(context: Context, attributeSet: AttributeSet? = null) : F
 
     /**采用什么方式, 处理touch事件 */
     var handleTouchType = HANDLE_TOUCH_TYPE_INTERCEPT
+
+    protected val overScroller = OverScroller(context)
 
     /*用来检测手指滑动方向*/
     protected val orientationGestureDetector = GestureDetectorCompat(context, object : GestureDetector.SimpleOnGestureListener() {
@@ -101,6 +104,39 @@ open class TouchLayout(context: Context, attributeSet: AttributeSet? = null) : F
     override fun onTouchEvent(event: MotionEvent): Boolean {
         orientationGestureDetector.onTouchEvent(event)
         return super.onTouchEvent(event)
+    }
+
+    override fun computeScroll() {
+        if (overScroller.computeScrollOffset()) {
+            scrollTo(overScroller.currX, overScroller.currY)
+            postInvalidate()
+        }
+    }
+
+    open fun startScrollY(dy: Int) {
+        startScroll(0, dy)
+    }
+
+    open fun startScrollX(dx: Int) {
+        startScroll(dx, 0)
+    }
+
+    open fun startScroll(dx: Int, dy: Int) {
+        overScroller.startScroll(scrollX, scrollY, dx, dy, 300)
+        postInvalidate()
+    }
+
+    open fun startFlingY(velocityY: Int, maxDy: Int) {
+        startFling(0, velocityY, 0, maxDy)
+    }
+
+    open fun startFlingX(velocityX: Int, maxDx: Int) {
+        startFling(velocityX, 0, maxDx, 0)
+    }
+
+    open fun startFling(velocityX: Int, velocityY: Int, maxDx: Int, maxDy: Int) {
+        overScroller.fling(scrollX, scrollY, velocityX, velocityY, 0, maxDx, 0, maxDy, measuredWidth, measuredHeight)
+        postInvalidate()
     }
 
     fun isVertical(orientation: ORIENTATION) = orientation == ORIENTATION.TOP || orientation == ORIENTATION.BOTTOM

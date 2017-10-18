@@ -1,6 +1,5 @@
 package com.angcyo.uiview.container;
 
-import android.annotation.TargetApi;
 import android.app.Activity;
 import android.app.Application;
 import android.content.Context;
@@ -39,6 +38,8 @@ import com.angcyo.uiview.view.ILifecycle;
 import com.angcyo.uiview.view.IView;
 import com.angcyo.uiview.view.UIIViewImpl;
 import com.angcyo.uiview.widget.viewpager.UIViewPager;
+
+import org.jetbrains.annotations.NotNull;
 
 import java.io.BufferedWriter;
 import java.io.File;
@@ -207,17 +208,6 @@ public class UILayoutImpl extends SwipeBackLayout implements ILayout<UIParam>, U
 
     public UILayoutImpl(Context context, AttributeSet attrs) {
         super(context, attrs);
-        initLayout();
-    }
-
-    public UILayoutImpl(Context context, AttributeSet attrs, int defStyleAttr) {
-        super(context, attrs, defStyleAttr);
-        initLayout();
-    }
-
-    @TargetApi(Build.VERSION_CODES.LOLLIPOP)
-    public UILayoutImpl(Context context, AttributeSet attrs, int defStyleAttr, int defStyleRes) {
-        super(context, attrs, defStyleAttr, defStyleRes);
         initLayout();
     }
 
@@ -987,6 +977,11 @@ public class UILayoutImpl extends SwipeBackLayout implements ILayout<UIParam>, U
 
     @Override
     public boolean requestBackPressed(final UIParam param) {
+        if (isInDebugLayout) {
+            closeDebugLayout();
+            return false;
+        }
+
         if (isSwipeDrag) {
             return false;
         }
@@ -1853,8 +1848,126 @@ public class UILayoutImpl extends SwipeBackLayout implements ILayout<UIParam>, U
         super.onSizeChanged(w, h, oldw, oldh);
     }
 
+    int hSpace = (int) (30 * getResources().getDisplayMetrics().density);
+    int vSpace = (int) (30 * getResources().getDisplayMetrics().density);
+    int viewMaxHeight = 0;
+
+    @Override
+    protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
+        //of java
+        int widthSize = MeasureSpec.getSize(widthMeasureSpec);
+//        int widthMode = MeasureSpec.getMode(widthMeasureSpec);
+        int heightSize = MeasureSpec.getSize(heightMeasureSpec);
+//        int heightMode = MeasureSpec.getMode(heightMeasureSpec);
+
+        //of kotlin
+//        var widthSize = MeasureSpec.getSize(widthMeasureSpec)
+//        val widthMode = MeasureSpec.getMode(widthMeasureSpec)
+//        var heightSize = MeasureSpec.getSize(heightMeasureSpec)
+//        val heightMode = MeasureSpec.getMode(heightMeasureSpec)
+
+        int count = getChildCount();
+        if (isInDebugLayout) {
+            //int hCount = count > 9 ? 4 : (count > 6 ? 3 : 2);//横向放3个
+            //int vCount = (int) Math.max(2, Math.ceil(count * 1f / hCount));//竖向至少2行
+
+            //int wSize = (getMeasuredWidth() - (hCount + 1) * hSpace) / hCount;
+            //int hSize = (getMeasuredHeight() - (vCount + 1) * vSpace) / vCount;
+            int wSize = getMeasuredWidth() - 2 * hSpace;
+            int hSize = getMeasuredHeight() - 4 * vSpace;
+
+            for (int i = 0; i < count; i++) {
+                View childAt = getChildAt(i);
+                childAt.measure(exactlyMeasure(wSize), exactlyMeasure(hSize));
+            }
+        } else {
+            //Debug.logTimeStart("开始测量, 共:" + getAttachViewSize());
+            for (int i = 0; i < count; i++) {
+                View childAt = getChildAt(i);
+
+                ViewPattern viewPatternByView = findViewPatternByView(childAt);
+                int iViewSize = getIViewSize();
+
+                if (viewPatternByView == null) {
+                    continue;
+                }
+
+                int indexFromIViews = getIndexFromIViews(viewPatternByView);
+
+                //-----------------只有部分界面需要测量, 优化性能---------
+                boolean needMeasure = false;
+                if (!"true".equalsIgnoreCase(String.valueOf(childAt.getTag(R.id.tag_layout)))) {
+                    //如果还没有layout过
+                    needMeasure = true;
+                } else if (viewPatternByView == mLastShowViewPattern) {
+                    //最后一个页面
+                    needMeasure = true;
+                } else if (i == count - 1 /*|| i == count - 2*/) {
+                    //倒数第一个, 第二个view
+                    needMeasure = true;
+                } else if (indexFromIViews >= 0 && (indexFromIViews == iViewSize - 1 /*|| indexFromIViews == iViewSize - 2*/)) {
+                    //倒数第一个, 第二个iview
+                    needMeasure = true;
+                } else {
+                    if (viewPatternByView.mIView.needForceMeasure() ||
+                            viewPatternByView.mIView.haveParentILayout() /*||
+                        viewPatternByView.mIView.haveChildILayout()*/) {
+                        //需要强制测量
+                        needMeasure = true;
+                    } else {
+                        IView iView = viewPatternByView.mIView;
+                        for (int j = mAttachViews.size() - 1; j >= 0; j--) {
+                            ViewPattern viewPattern = mAttachViews.get(j);
+                            if (viewPattern.mIView.isDialog() ||
+                                    viewPattern.mIView.showOnDialog() ||
+                                    viewPattern.isAnimToEnd) {
+                                //界面上面全是对话框
+                                needMeasure = true;
+                                if (viewPattern.mIView == iView) {
+                                    break;
+                                }
+                            } else if (viewPattern.mIView == iView) {
+                                break;
+                            } else {
+                                needMeasure = false;
+                                break;
+                            }
+                        }
+                    }
+                }
+                //needMeasure = true;
+                if (needMeasure) {
+                    childAt.measure(exactlyMeasure(widthSize), exactlyMeasure(heightSize));
+                    L.d("测量: " + viewPatternByView.mIView.getClass().getSimpleName());
+                }
+            }
+            //Debug.logTimeEnd("测量结束");
+        }
+
+        setMeasuredDimension(widthSize, heightSize);
+    }
+
     @Override
     protected void onLayout(boolean changed, int left, int top, int right, int bottom) {
+        //L.e("debug layout 1 " + isInDebugLayout + " " + getScrollX() + " " + getScrollY());
+        if (isInDebugLayout) {
+            int count = getChildCount();
+
+            int l = hSpace;
+            int t = vSpace;
+
+            int wSize = getMeasuredWidth() - 2 * hSpace;
+            int hSize = getMeasuredHeight() - 4 * vSpace;
+
+            for (int i = 0; i < count; i++) {
+                View childAt = getChildAt(i);
+                childAt.layout(l, t, l + wSize, t + hSize);
+                t += hSize + vSpace;
+            }
+            viewMaxHeight = t;
+            return;
+        }
+
         int l = 0;
         if (isWantSwipeBack /*&& !requestLayout*/) {
             if (getChildCount() > 0) {
@@ -1868,7 +1981,8 @@ public class UILayoutImpl extends SwipeBackLayout implements ILayout<UIParam>, U
         for (int i = 0; i < count; i++) {
             View childAt = getChildAt(i);
 //            if (i == count - 1 || i == count - 2) {
-            childAt.layout(0, 0, right, bottom);
+            childAt.layout(0, 0, getMeasuredWidth(), getMeasuredHeight());
+            //L.e("debug layout 2 " + right + ' ' + bottom + ' ' + childAt.getMeasuredHeight());
             if (getMeasuredWidth() == 0 || getMeasuredHeight() == 0) {
                 setIViewNeedLayout(childAt, true);
             } else if (childAt.getMeasuredWidth() == 0 || childAt.getMeasuredHeight() == 0) {
@@ -1906,86 +2020,6 @@ public class UILayoutImpl extends SwipeBackLayout implements ILayout<UIParam>, U
         if (layout) {
             view.forceLayout();
         }
-    }
-
-    @Override
-    protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
-        //of java
-        int widthSize = MeasureSpec.getSize(widthMeasureSpec);
-//        int widthMode = MeasureSpec.getMode(widthMeasureSpec);
-        int heightSize = MeasureSpec.getSize(heightMeasureSpec);
-//        int heightMode = MeasureSpec.getMode(heightMeasureSpec);
-
-        //of kotlin
-//        var widthSize = MeasureSpec.getSize(widthMeasureSpec)
-//        val widthMode = MeasureSpec.getMode(widthMeasureSpec)
-//        var heightSize = MeasureSpec.getSize(heightMeasureSpec)
-//        val heightMode = MeasureSpec.getMode(heightMeasureSpec)
-
-        int count = getChildCount();
-        //Debug.logTimeStart("开始测量, 共:" + getAttachViewSize());
-        for (int i = 0; i < count; i++) {
-            View childAt = getChildAt(i);
-
-            ViewPattern viewPatternByView = findViewPatternByView(childAt);
-            int iViewSize = getIViewSize();
-
-            if (viewPatternByView == null) {
-                continue;
-            }
-
-            int indexFromIViews = getIndexFromIViews(viewPatternByView);
-
-            //-----------------只有部分界面需要测量, 优化性能---------
-            boolean needMeasure = false;
-            if (!"true".equalsIgnoreCase(String.valueOf(childAt.getTag(R.id.tag_layout)))) {
-                //如果还没有layout过
-                needMeasure = true;
-            } else if (viewPatternByView == mLastShowViewPattern) {
-                //最后一个页面
-                needMeasure = true;
-            } else if (i == count - 1 /*|| i == count - 2*/) {
-                //倒数第一个, 第二个view
-                needMeasure = true;
-            } else if (indexFromIViews >= 0 && (indexFromIViews == iViewSize - 1 /*|| indexFromIViews == iViewSize - 2*/)) {
-                //倒数第一个, 第二个iview
-                needMeasure = true;
-            } else {
-                if (viewPatternByView.mIView.needForceMeasure() ||
-                        viewPatternByView.mIView.haveParentILayout() /*||
-                        viewPatternByView.mIView.haveChildILayout()*/) {
-                    //需要强制测量
-                    needMeasure = true;
-                } else {
-                    IView iView = viewPatternByView.mIView;
-                    for (int j = mAttachViews.size() - 1; j >= 0; j--) {
-                        ViewPattern viewPattern = mAttachViews.get(j);
-                        if (viewPattern.mIView.isDialog() ||
-                                viewPattern.mIView.showOnDialog() ||
-                                viewPattern.isAnimToEnd) {
-                            //界面上面全是对话框
-                            needMeasure = true;
-                            if (viewPattern.mIView == iView) {
-                                break;
-                            }
-                        } else if (viewPattern.mIView == iView) {
-                            break;
-                        } else {
-                            needMeasure = false;
-                            break;
-                        }
-                    }
-                }
-            }
-            //needMeasure = true;
-            if (needMeasure) {
-                childAt.measure(exactlyMeasure(widthSize), exactlyMeasure(heightSize));
-                L.d("测量: " + viewPatternByView.mIView.getClass().getSimpleName());
-            }
-        }
-        //Debug.logTimeEnd("测量结束");
-
-        setMeasuredDimension(widthSize, heightSize);
     }
 
     private int getIndexFromIViews(ViewPattern viewPattern) {
@@ -2222,6 +2256,14 @@ public class UILayoutImpl extends SwipeBackLayout implements ILayout<UIParam>, U
     public boolean onInterceptTouchEvent(MotionEvent ev) {
         int actionMasked = ev.getActionMasked();
 
+        if (handleDebugLayout(ev)) {
+            return true;
+        }
+
+        if (isInDebugLayout) {
+            return true;
+        }
+
         if (isFinishing || isStarting) {
             L.i("拦截事件：" + actionMasked + " isFinishing:" + isFinishing + " isStarting:" + isStarting);
             return true;
@@ -2231,8 +2273,32 @@ public class UILayoutImpl extends SwipeBackLayout implements ILayout<UIParam>, U
 
     @Override
     public boolean onTouchEvent(MotionEvent event) {
-        super.onTouchEvent(event);
+        handleDebugLayout(event);
+        if (isInDebugLayout) {
+            getOrientationGestureDetector().onTouchEvent(event);
+        } else {
+            super.onTouchEvent(event);
+        }
         return true;
+    }
+
+    /**
+     * 多点按下, 是否处理
+     */
+    protected boolean handleDebugLayout(MotionEvent ev) {
+        int actionMasked = ev.getActionMasked();
+        if (L.LOG_DEBUG &&
+                actionMasked == MotionEvent.ACTION_POINTER_DOWN &&
+                ev.getPointerCount() == 3) {
+            //debug模式下, 三指按下
+            if (isInDebugLayout) {
+                closeDebugLayout();
+            } else {
+                startDebugLayout();
+            }
+            return true;
+        }
+        return false;
     }
 
     @Override
@@ -2516,6 +2582,83 @@ public class UILayoutImpl extends SwipeBackLayout implements ILayout<UIParam>, U
         void onIViewAdd(final UILayoutImpl uiLayout, final ViewPattern viewPattern);
 
         void onIViewRemove(final UILayoutImpl uiLayout, final ViewPattern viewPattern);
+    }
+
+    boolean isInDebugLayout = false;
+
+    public void startDebugLayout() {
+        if (!isInDebugLayout) {
+            isInDebugLayout = true;
+            getOverScroller().abortAnimation();
+            requestLayout();
+            for (int i = 0; i < getChildCount(); i++) {
+                View childAt = getChildAt(i);
+                //childAt.startAnimation(AnimationUtils.loadAnimation(mLayoutActivity, R.anim.base_scale_to_min));
+                AnimUtil.scaleBounceView(childAt);
+            }
+        }
+    }
+
+    public void closeDebugLayout() {
+        if (isInDebugLayout) {
+            isInDebugLayout = false;
+            getOverScroller().abortAnimation();
+            scrollTo(0, 0);
+            requestLayout();
+            for (int i = 0; i < getChildCount(); i++) {
+                View childAt = getChildAt(i);
+                //childAt.startAnimation(AnimationUtils.loadAnimation(mLayoutActivity, R.anim.base_scale_to_max));
+                AnimUtil.scaleBounceView(childAt);
+            }
+        }
+    }
+
+    @Override
+    protected void drawSwipeLine(Canvas canvas) {
+        if (!isInDebugLayout) {
+            super.drawSwipeLine(canvas);
+        }
+    }
+
+    @Override
+    protected void drawDimStatusBar(Canvas canvas) {
+        if (!isInDebugLayout) {
+            super.drawDimStatusBar(canvas);
+        }
+    }
+
+    @Override
+    public void scrollTo(int x, int y) {
+        int maxScrollY = viewMaxHeight - getMeasuredHeight();
+        if (y > maxScrollY) {
+            y = maxScrollY;
+        }
+        if (y < 0) {
+            y = 0;
+        }
+        super.scrollTo(x, y);
+    }
+
+    @Override
+    public void onFlingChange(@NotNull ORIENTATION orientation, float velocity) {
+        super.onFlingChange(orientation, velocity);
+        if (isInDebugLayout && isVertical(orientation)) {
+            if (velocity > 1000) {
+                //快速向下滑动
+                startFlingY(-(int) velocity, getScrollY());
+            } else if (velocity < -1000) {
+                //快速向上滑动
+                startFlingY(-(int) velocity, viewMaxHeight);
+            }
+        }
+    }
+
+    @Override
+    public void onScrollChange(@NotNull ORIENTATION orientation, float distance) {
+        super.onScrollChange(orientation, distance);
+        if (isInDebugLayout && isVertical(orientation)) {
+            scrollBy(0, (int) distance);
+        }
     }
 
     static class AnimRunnable implements Animation.AnimationListener {
