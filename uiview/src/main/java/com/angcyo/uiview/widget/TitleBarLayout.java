@@ -33,17 +33,17 @@ public class TitleBarLayout extends FrameLayout {
 
     public TitleBarLayout(Context context, AttributeSet attrs) {
         super(context, attrs);
+        if (!isInEditMode()) {
+            TypedArray typedArray = context.obtainStyledAttributes(attrs, R.styleable.TitleBarLayout);
+            maxHeight = typedArray.getDimensionPixelOffset(R.styleable.TitleBarLayout_r_max_height, -1);
+            enablePadding = UIIViewImpl.isLollipop();
+            fitActionBar = typedArray.getBoolean(R.styleable.TitleBarLayout_r_fit_action_bar_height, fitActionBar);
+            enablePadding = typedArray.getBoolean(R.styleable.TitleBarLayout_r_fit_status_bar_height, enablePadding);
+            isScreenHeight = typedArray.getBoolean(R.styleable.TitleBarLayout_r_is_screen_height, isScreenHeight);
 
-        TypedArray typedArray = context.obtainStyledAttributes(attrs, R.styleable.TitleBarLayout);
-        maxHeight = typedArray.getDimensionPixelOffset(R.styleable.TitleBarLayout_r_max_height, -1);
-        enablePadding = UIIViewImpl.isLollipop();
-        fitActionBar = typedArray.getBoolean(R.styleable.TitleBarLayout_r_fit_action_bar_height, fitActionBar);
-        enablePadding = typedArray.getBoolean(R.styleable.TitleBarLayout_r_fit_status_bar_height, enablePadding);
-        isScreenHeight = typedArray.getBoolean(R.styleable.TitleBarLayout_r_is_screen_height, isScreenHeight);
-
-        resetMaxHeight();
-        typedArray.recycle();
-
+            resetMaxHeight();
+            typedArray.recycle();
+        }
         initLayout();
     }
 
