@@ -1021,6 +1021,7 @@ public class RUtils {
             if (mCamera != null) {
                 try {
                     mCamera.release();
+                    Thread.sleep(100);
                 } catch (Exception e) {
                     return false;
                 }
