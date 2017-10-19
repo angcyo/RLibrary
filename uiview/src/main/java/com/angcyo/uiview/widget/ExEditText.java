@@ -880,9 +880,15 @@ public class ExEditText extends AppCompatEditText {
         if (text == null) {
             return;
         }
-        int start = getSelectionStart();
-        int end = getSelectionEnd();
+        where = Math.max(where, 0);
+
+        int start = Math.max(getSelectionStart(), 0);
+        int end = Math.max(getSelectionEnd(), 0);
         int length = text.length();
+
+        if (length < 0) {
+            return;
+        }
 
         if (start == end) {
             getText().insert(where, text);
