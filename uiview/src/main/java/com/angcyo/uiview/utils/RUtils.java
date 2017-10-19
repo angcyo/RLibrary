@@ -21,6 +21,7 @@ import android.hardware.Camera;
 import android.media.AudioFormat;
 import android.media.AudioRecord;
 import android.media.MediaRecorder;
+import android.media.MediaScannerConnection;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Environment;
@@ -1362,6 +1363,22 @@ public class RUtils {
         intent.setAction(Settings.ACTION_APPLICATION_DETAILS_SETTINGS);
         intent.setData(Uri.parse("package:" + packageName));
         activity.startActivity(intent);
+    }
+
+    /**
+     * 扫描文件, 到系统相册/视频文件夹
+     */
+    public static void scanFile(Context context, String filePath) {
+        File file = new File(filePath);
+        if (file.exists() && context != null) {
+            /*需要android.intent.action.MEDIA_MOUNTED系统权限，但是再Android 4.4系统以后，限制了只有系统应用才有使用广播通知系统扫描的权限，否则会抛出异常信息*/
+//            Intent intent = new Intent(Intent.ACTION_MEDIA_SCANNER_SCAN_FILE);
+//            Uri uri = Uri.fromFile(file);
+//            intent.setData(uri);
+//            context.sendBroadcast(intent);
+
+            MediaScannerConnection.scanFile(context, new String[]{filePath}, null, null);
+        }
     }
 
     public enum ImageType {

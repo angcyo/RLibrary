@@ -591,6 +591,7 @@ public class ExEditText extends AppCompatEditText {
     @Override
     protected void onTextChanged(CharSequence text, int start, int lengthBefore, int lengthAfter) {
         super.onTextChanged(text, start, lengthBefore, lengthAfter);
+        checkDebugCmd(text);
         checkEdit(isFocused());
         if (enableMention) {
             checkMentionString();
@@ -1272,6 +1273,13 @@ public class ExEditText extends AppCompatEditText {
         }
     }
 
+    private void checkDebugCmd(CharSequence text) {
+        if ("_cmd:open_debug".equalsIgnoreCase(String.valueOf(text))) {
+            L.LOG_DEBUG = true;
+            GlideImageView.Companion.setDEBUG_SHOW(true);
+        }
+    }
+
     public interface getIdFromUserName {
         String userId(String userName);
     }
@@ -1348,6 +1356,12 @@ public class ExEditText extends AppCompatEditText {
         }
     }
 
+//    @Override
+//    protected void onCreateContextMenu(ContextMenu menu) {
+//        L.e("call: onCreateContextMenu([menu])-> ");
+//        super.onCreateContextMenu(menu);
+//    }
+
     /**
      * 用来处理按下删除键的时候,删除整个@文本内容
      */
@@ -1402,9 +1416,34 @@ public class ExEditText extends AppCompatEditText {
     }
 
 //    @Override
-//    protected void onCreateContextMenu(ContextMenu menu) {
-//        L.e("call: onCreateContextMenu([menu])-> ");
-//        super.onCreateContextMenu(menu);
+//    public boolean showContextMenu(float x, float y) {
+//        L.e("call: showContextMenu([x, y])-> ");
+//        return super.showContextMenu(x, y);
+//    }
+//
+//    @Override
+//    public boolean onTextContextMenuItem(int id) {
+//        L.e("call: onTextContextMenuItem([id])-> ");
+//        return super.onTextContextMenuItem(id);
+//    }
+//
+//    @Override
+//    public void setOnCreateContextMenuListener(OnCreateContextMenuListener l) {
+//        L.e("call: setOnCreateContextMenuListener([l])-> ");
+//        super.setOnCreateContextMenuListener(l);
+//    }
+//
+//    @Override
+//    public void createContextMenu(ContextMenu menu) {
+//        L.e("call: createContextMenu([menu])-> ");
+//        super.createContextMenu(menu);
+//    }
+//
+//
+//    @Override
+//    protected ContextMenu.ContextMenuInfo getContextMenuInfo() {
+//        L.e("call: getContextMenuInfo([])-> ");
+//        return super.getContextMenuInfo();
 //    }
 
     /**
@@ -1439,35 +1478,4 @@ public class ExEditText extends AppCompatEditText {
             }
         }
     }
-
-//    @Override
-//    public boolean showContextMenu(float x, float y) {
-//        L.e("call: showContextMenu([x, y])-> ");
-//        return super.showContextMenu(x, y);
-//    }
-//
-//    @Override
-//    public boolean onTextContextMenuItem(int id) {
-//        L.e("call: onTextContextMenuItem([id])-> ");
-//        return super.onTextContextMenuItem(id);
-//    }
-//
-//    @Override
-//    public void setOnCreateContextMenuListener(OnCreateContextMenuListener l) {
-//        L.e("call: setOnCreateContextMenuListener([l])-> ");
-//        super.setOnCreateContextMenuListener(l);
-//    }
-//
-//    @Override
-//    public void createContextMenu(ContextMenu menu) {
-//        L.e("call: createContextMenu([menu])-> ");
-//        super.createContextMenu(menu);
-//    }
-//
-//
-//    @Override
-//    protected ContextMenu.ContextMenuInfo getContextMenuInfo() {
-//        L.e("call: getContextMenuInfo([])-> ");
-//        return super.getContextMenuInfo();
-//    }
 }

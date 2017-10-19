@@ -3,6 +3,9 @@ package com.angcyo.uiview.widget
 import android.app.Activity
 import android.content.Context
 import android.graphics.Bitmap
+import android.graphics.Canvas
+import android.graphics.Color
+import android.graphics.Paint
 import android.graphics.drawable.BitmapDrawable
 import android.graphics.drawable.Drawable
 import android.support.v4.content.ContextCompat
@@ -12,6 +15,9 @@ import com.angcyo.library.glide.GlideApp
 import com.angcyo.library.okhttp.Ok
 import com.angcyo.library.utils.L
 import com.angcyo.uiview.R
+import com.angcyo.uiview.kotlin.density
+import com.angcyo.uiview.kotlin.textHeight
+import com.angcyo.uiview.kotlin.textWidth
 import com.bumptech.glide.Glide
 import com.bumptech.glide.Priority
 import com.bumptech.glide.RequestBuilder
@@ -38,6 +44,10 @@ import java.io.File
 open class GlideImageView(context: Context, attributeSet: AttributeSet? = null) : RImageView(context, attributeSet) {
 
     private var defaultPlaceholderDrawable: Drawable? = null
+
+    companion object {
+        var DEBUG_SHOW = false
+    }
 
     /**是否要检查Url的图片类型为Gif, 可以用来显示Gif指示图*/
     var checkGif = false
@@ -447,6 +457,39 @@ open class GlideImageView(context: Context, attributeSet: AttributeSet? = null) 
         }
 
         return true
+    }
+
+    val debugPaint: Paint by lazy {
+        val p = Paint(Paint.ANTI_ALIAS_FLAG)
+        p.strokeJoin = Paint.Join.ROUND
+        p.strokeCap = Paint.Cap.ROUND
+        p.style = Paint.Style.STROKE
+        p.color = Color.WHITE
+        p.textSize = 9 * density
+        p
+    }
+
+    override fun draw(canvas: Canvas?) {
+        super.draw(canvas)
+        if (DEBUG_SHOW) {
+            val urlText = "url:$url"
+            var startPosition = 0
+            val urlTextHeight = textHeight(debugPaint)
+
+            var startTop = urlTextHeight
+            val oneWidth = textWidth(debugPaint, urlText.substring(0, 1))
+            for (i in 0..urlText.length) {
+                val subSequence = urlText.subSequence(startPosition, i).toString()
+                if (oneWidth * subSequence.length > measuredWidth - oneWidth || i == urlText.length) {
+                    canvas?.drawText(subSequence, 0f, startTop, debugPaint)
+                    startTop += urlTextHeight
+                    startPosition = i
+                }
+            }
+
+            val sizeText = "w:$measuredWidth h:$measuredHeight"
+            canvas?.drawText(sizeText, 0f, startTop, debugPaint)
+        }
     }
 }
 
