@@ -6,6 +6,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.graphics.Canvas;
 import android.graphics.Color;
+import android.graphics.Paint;
 import android.graphics.Rect;
 import android.os.Build;
 import android.os.Bundle;
@@ -29,6 +30,7 @@ import com.angcyo.uiview.RApplication;
 import com.angcyo.uiview.RCrashHandler;
 import com.angcyo.uiview.Root;
 import com.angcyo.uiview.base.UILayoutActivity;
+import com.angcyo.uiview.kotlin.ViewExKt;
 import com.angcyo.uiview.kotlin.ViewGroupExKt;
 import com.angcyo.uiview.model.ViewPattern;
 import com.angcyo.uiview.resources.AnimUtil;
@@ -1852,6 +1854,14 @@ public class UILayoutImpl extends SwipeBackLayout implements ILayout<UIParam>, U
     int vSpace = (int) (30 * getResources().getDisplayMetrics().density);
     int viewMaxHeight = 0;
 
+    private int getDebugWidthSize() {
+        return getMeasuredWidth() - 2 * hSpace;
+    }
+
+    private int getDebugHeightSize() {
+        return getMeasuredHeight() - 4 * vSpace;
+    }
+
     @Override
     protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
         //of java
@@ -1873,8 +1883,8 @@ public class UILayoutImpl extends SwipeBackLayout implements ILayout<UIParam>, U
 
             //int wSize = (getMeasuredWidth() - (hCount + 1) * hSpace) / hCount;
             //int hSize = (getMeasuredHeight() - (vCount + 1) * vSpace) / vCount;
-            int wSize = getMeasuredWidth() - 2 * hSpace;
-            int hSize = getMeasuredHeight() - 4 * vSpace;
+            int wSize = getDebugWidthSize();
+            int hSize = getDebugHeightSize();
 
             for (int i = 0; i < count; i++) {
                 View childAt = getChildAt(i);
@@ -1956,8 +1966,8 @@ public class UILayoutImpl extends SwipeBackLayout implements ILayout<UIParam>, U
             int l = hSpace;
             int t = vSpace;
 
-            int wSize = getMeasuredWidth() - 2 * hSpace;
-            int hSize = getMeasuredHeight() - 4 * vSpace;
+            int wSize = getDebugWidthSize();
+            int hSize = getDebugHeightSize();
 
             for (int i = 0; i < count; i++) {
                 View childAt = getChildAt(i);
@@ -2649,6 +2659,48 @@ public class UILayoutImpl extends SwipeBackLayout implements ILayout<UIParam>, U
             } else if (velocity < -1000) {
                 //快速向上滑动
                 startFlingY(-(int) velocity, viewMaxHeight);
+            }
+        }
+    }
+
+    Paint debugPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
+
+    private void initDebugPaint() {
+        debugPaint.setStrokeJoin(Paint.Join.ROUND);
+        debugPaint.setStyle(Paint.Style.STROKE);
+        debugPaint.setStrokeCap(Paint.Cap.ROUND);
+        debugPaint.setTextSize(14 * getResources().getDisplayMetrics().density);
+        debugPaint.setColor(Color.WHITE);
+    }
+
+    @Override
+    public void draw(Canvas canvas) {
+        super.draw(canvas);
+        if (isInDebugLayout) {
+            initDebugPaint();
+            int childCount = getChildCount();
+
+            int l = hSpace;
+            int t = vSpace;
+
+            int wSize = getDebugWidthSize();
+            int hSize = getDebugHeightSize();
+
+            for (int i = 0; i < childCount; i++) {
+                View childAt = getChildAt(i);
+
+                ViewPattern viewPatternByView = findViewPatternByView(childAt);
+
+                if (viewPatternByView == null) {
+                    continue;
+                }
+
+                float textHeight = ViewExKt.textHeight(this, debugPaint);
+
+                canvas.drawText(viewPatternByView.mIView.getClass().getSimpleName(),
+                        hSpace, t + textHeight, debugPaint);
+
+                t += hSize + vSpace;
             }
         }
     }
