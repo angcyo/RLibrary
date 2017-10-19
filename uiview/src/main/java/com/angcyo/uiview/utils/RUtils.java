@@ -10,6 +10,7 @@ import android.content.pm.PackageManager;
 import android.content.res.Configuration;
 import android.content.res.Resources;
 import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
 import android.graphics.Matrix;
 import android.graphics.Paint;
@@ -46,6 +47,8 @@ import com.angcyo.uiview.Root;
 import com.angcyo.uiview.widget.RExTextView;
 
 import java.io.BufferedWriter;
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileWriter;
@@ -1396,6 +1399,46 @@ public class RUtils {
     public static void abandonAudioFocus(Context context) {
         AudioManager audioManager = (AudioManager) context.getSystemService(Context.AUDIO_SERVICE);
         audioManager.abandonAudioFocus(null);//放弃焦点
+    }
+
+    /**
+     * 简单的压缩图片
+     * 图片对象有可能会很大, 但是转成成 bytes之后, 会很小, 此方法会判断不准确
+     */
+    @Deprecated
+    public static Bitmap compressBitmap(Bitmap image) {
+
+        ByteArrayOutputStream baos = new ByteArrayOutputStream();
+        image.compress(Bitmap.CompressFormat.JPEG, 100, baos);// 质量压缩方法，这里100表示不压缩，把压缩后的数据存放到baos中
+        int options = 90;
+
+        while (baos.toByteArray().length / 1024 > 200) { // 循环判断如果压缩后图片是否大于200kb,大于继续压缩
+            baos.reset(); // 重置baos即清空baos
+            image.compress(Bitmap.CompressFormat.JPEG, options, baos);// 这里压缩options%，把压缩后的数据存放到baos中
+            options -= 10;// 每次都减少10
+        }
+
+        ByteArrayInputStream isBm = new ByteArrayInputStream(baos.toByteArray());// 把压缩后的数据baos存放到ByteArrayInputStream中
+        Bitmap bitmap = BitmapFactory.decodeStream(isBm, null, null);// 把ByteArrayInputStream数据生成图片
+        return bitmap;
+    }
+
+    public final static Bitmap compressBitmap(Bitmap image, int inSampleSize) {
+        try {
+            ByteArrayOutputStream baos = new ByteArrayOutputStream();
+            image.compress(Bitmap.CompressFormat.PNG, 100, baos);
+            byte[] bts = baos.toByteArray();
+
+            final BitmapFactory.Options options = new BitmapFactory.Options();
+//            options.inJustDecodeBounds = true;
+//            BitmapFactory.decodeByteArray(bts, 0, bts.length, options);
+            options.inSampleSize = inSampleSize;
+//            options.inJustDecodeBounds = false;
+            return BitmapFactory.decodeByteArray(bts, 0, bts.length, options);
+        } catch (Exception e) {
+            e.printStackTrace();
+            return image;
+        }
     }
 
     public enum ImageType {

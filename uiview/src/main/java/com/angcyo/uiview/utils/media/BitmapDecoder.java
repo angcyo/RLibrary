@@ -7,6 +7,7 @@ import android.graphics.BitmapFactory;
 import android.media.MediaMetadataRetriever;
 import android.os.Build;
 
+import com.angcyo.uiview.utils.RUtils;
 import com.angcyo.uiview.utils.ScreenUtil;
 import com.angcyo.uiview.utils.file.AttachmentStore;
 
@@ -266,6 +267,25 @@ public class BitmapDecoder {
             Bitmap thumbnail = createVideoThumbnail(videoPath);
             if (thumbnail != null) {
                 AttachmentStore.saveBitmap(thumbnail, thumbPath, true);
+                return true;
+            }
+        }
+        return false;
+    }
+
+    public static boolean extractThumbnailAndCompress(String videoPath, String thumbPath) {
+        if (!AttachmentStore.isFileExist(thumbPath)) {
+//            Bitmap thumbnail = ThumbnailUtils.createVideoThumbnail(videoPath, MediaStore.Images.Thumbnails.MINI_KIND);
+            Bitmap thumbnail = createVideoThumbnail(videoPath);
+            if (thumbnail != null) {
+                Bitmap bitmap;// = RUtils.compressBitmap(thumbnail);//BitmapHelper.compressBitmap(thumbnail, 600, 800);
+                //L.e("call: extractThumbnailAndCompress([videoPath, thumbPath])1-> " + thumbnail.getByteCount() + " " + bitmap.getByteCount());
+                bitmap = RUtils.compressBitmap(thumbnail, 2);
+                //L.e("call: extractThumbnailAndCompress([videoPath, thumbPath])2-> " + thumbnail.getByteCount() + " " + bitmap.getByteCount());
+                //bitmap = RUtils.compressBitmap(thumbnail, 8);
+                //L.e("call: extractThumbnailAndCompress([videoPath, thumbPath])3-> " + thumbnail.getByteCount() + " " + bitmap.getByteCount());
+
+                AttachmentStore.saveBitmap(bitmap, thumbPath, true);
                 return true;
             }
         }
