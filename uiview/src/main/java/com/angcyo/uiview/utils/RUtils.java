@@ -19,6 +19,7 @@ import android.graphics.drawable.ColorDrawable;
 import android.graphics.drawable.Drawable;
 import android.hardware.Camera;
 import android.media.AudioFormat;
+import android.media.AudioManager;
 import android.media.AudioRecord;
 import android.media.MediaRecorder;
 import android.media.MediaScannerConnection;
@@ -1379,6 +1380,22 @@ public class RUtils {
 
             MediaScannerConnection.scanFile(context, new String[]{filePath}, null, null);
         }
+    }
+
+    /**
+     * 请求拿到音频焦点
+     */
+    public static void requestAudioFocus(Context context) {
+        AudioManager audioManager = (AudioManager) context.getSystemService(Context.AUDIO_SERVICE);
+        audioManager.requestAudioFocus(null, AudioManager.STREAM_MUSIC, AudioManager.AUDIOFOCUS_GAIN_TRANSIENT);//请求焦点
+    }
+
+    /**
+     * 释放音频焦点
+     */
+    public static void abandonAudioFocus(Context context) {
+        AudioManager audioManager = (AudioManager) context.getSystemService(Context.AUDIO_SERVICE);
+        audioManager.abandonAudioFocus(null);//放弃焦点
     }
 
     public enum ImageType {
