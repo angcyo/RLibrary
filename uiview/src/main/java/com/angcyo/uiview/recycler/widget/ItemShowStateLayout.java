@@ -1,13 +1,20 @@
 package com.angcyo.uiview.recycler.widget;
 
 import android.content.Context;
+import android.content.Intent;
+import android.provider.Settings;
+import android.support.annotation.DrawableRes;
 import android.support.v4.view.ViewCompat;
 import android.text.TextUtils;
 import android.util.AttributeSet;
 import android.view.View;
+import android.view.ViewGroup;
 import android.view.animation.DecelerateInterpolator;
 import android.widget.FrameLayout;
+import android.widget.ImageView;
+import android.widget.TextView;
 
+import com.angcyo.uiview.R;
 import com.angcyo.uiview.view.UIIViewImpl;
 
 /**
@@ -83,6 +90,13 @@ public class ItemShowStateLayout extends FrameLayout implements IShowState {
     }
 
     @Override
+    public void addView(View child, int index, ViewGroup.LayoutParams params) {
+        super.addView(child, index, params);
+        initView();
+        initNonetLayout(-1, null, null);
+    }
+
+    @Override
     public int getShowState() {
         return mShowState;
     }
@@ -103,6 +117,49 @@ public class ItemShowStateLayout extends FrameLayout implements IShowState {
             } else {
                 showView(this);
             }
+        }
+    }
+
+    /**
+     * 初始化空布局数据
+     */
+    public void initEmptyLayout(@DrawableRes int emptyImage, String emptyText) {
+        if (mShowState == EMPTY && emptyView != null) {
+            ImageView emptyImageView = emptyView.findViewById(R.id.base_empty_image_view);
+            TextView emptyTextView = emptyView.findViewById(R.id.base_empty_tip_view);
+
+            if (emptyImage != -1) {
+                emptyImageView.setImageResource(emptyImage);
+            }
+
+            if (emptyText != null) {
+                emptyTextView.setText(emptyText);
+            }
+        }
+    }
+
+    public void initNonetLayout(@DrawableRes int nonetImage, String nonetText, View.OnClickListener refreshListener) {
+        if (mShowState == NONET && nonetView != null) {
+            ImageView nonetImageView = nonetView.findViewById(R.id.base_nonet_image_view);
+            TextView nonetTextView = nonetView.findViewById(R.id.base_nonet_tip_view);
+
+            if (nonetImage != -1) {
+                nonetImageView.setImageResource(nonetImage);
+            }
+
+            if (nonetText != null) {
+                nonetTextView.setText(nonetText);
+            }
+
+            nonetView.findViewById(R.id.base_setting_view).setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    Intent intent = new Intent(Settings.ACTION_SETTINGS);
+                    getContext().startActivity(intent);
+                }
+            });
+
+            nonetView.findViewById(R.id.base_refresh_view).setOnClickListener(refreshListener);
         }
     }
 }

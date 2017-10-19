@@ -82,6 +82,18 @@ public abstract class RBaseAdapter<T> extends RecyclerView.Adapter<RBaseViewHold
         return this;
     }
 
+    @Override
+    public void onViewAttachedToWindow(RBaseViewHolder holder) {
+        super.onViewAttachedToWindow(holder);
+//        L.w("onViewAttachedToWindow");
+    }
+
+    @Override
+    public void onViewDetachedFromWindow(RBaseViewHolder holder) {
+        super.onViewDetachedFromWindow(holder);
+//        L.w("onViewDetachedFromWindow");
+    }
+
     /**
      * 返回是否激活加载更多
      */
@@ -109,6 +121,28 @@ public abstract class RBaseAdapter<T> extends RecyclerView.Adapter<RBaseViewHold
         }
     }
 
+    //是否该显示状态布局
+    protected boolean isStateLayout() {
+        return mEnableShowState && mShowState != IShowState.NORMAL;
+    }
+
+    @NonNull
+    protected RBaseViewHolder createBaseViewHolder(int viewType, View itemView) {
+        return new RBaseViewHolder(itemView, viewType);
+    }
+
+//    /**用来实现...*/
+//    @NonNull
+//    protected RBaseViewHolder createItemViewHolder(ViewGroup parent, int viewType) {
+//        return null;
+//    }
+
+    @Override
+    final public void onBindViewHolder(RBaseViewHolder holder, int position, List<Object> payloads) {
+        super.onBindViewHolder(holder, position, payloads);
+        //L.e("call: onBindViewHolder([holder, position, payloads])-> " + position);
+    }
+
     @Override
     final public int getItemViewType(int position) {
         if (isStateLayout()) {
@@ -118,11 +152,6 @@ public abstract class RBaseAdapter<T> extends RecyclerView.Adapter<RBaseViewHold
             return ITEM_TYPE_LOAD_MORE;
         }
         return getItemType(position);
-    }
-
-    //是否该显示状态布局
-    protected boolean isStateLayout() {
-        return mEnableShowState && mShowState != IShowState.NORMAL;
     }
 
     @Override
@@ -163,22 +192,6 @@ public abstract class RBaseAdapter<T> extends RecyclerView.Adapter<RBaseViewHold
         return viewHolder;
     }
 
-    @NonNull
-    protected RBaseViewHolder createBaseViewHolder(int viewType, View itemView) {
-        return new RBaseViewHolder(itemView, viewType);
-    }
-
-//    /**用来实现...*/
-//    @NonNull
-//    protected RBaseViewHolder createItemViewHolder(ViewGroup parent, int viewType) {
-//        return null;
-//    }
-
-    @Override
-    final public void onBindViewHolder(RBaseViewHolder holder, int position, List<Object> payloads) {
-        super.onBindViewHolder(holder, position, payloads);
-        //L.e("call: onBindViewHolder([holder, position, payloads])-> " + position);
-    }
 
     @Override
     public void onBindViewHolder(RBaseViewHolder holder, int position) {
@@ -187,8 +200,8 @@ public abstract class RBaseAdapter<T> extends RecyclerView.Adapter<RBaseViewHold
             if (isStateLayout()) {
                 if (mIShowState != null) {
                     mIShowState.setShowState(mShowState);
+                    onBindShowStateView((ItemShowStateLayout) mIShowState, mShowState);
                 }
-                onBindShowStateView(mIShowState, mShowState);
             } else if (mEnableLoadMore && isLast(position)) {
                 /**如果第一个就是加载更多的布局, 需要调用加载更多么?*/
                 onBindLoadMore(position);
@@ -210,22 +223,13 @@ public abstract class RBaseAdapter<T> extends RecyclerView.Adapter<RBaseViewHold
     /**
      * 不同的状态, 显示不同的布局
      */
-    protected void onBindShowStateView(IShowState iShowState, int showState) {
+    protected void onBindShowStateView(ItemShowStateLayout showStateLayout, int showState) {
 
     }
 
-    @Override
-    public void onViewAttachedToWindow(RBaseViewHolder holder) {
-        super.onViewAttachedToWindow(holder);
-//        L.w("onViewAttachedToWindow");
-    }
-
-    @Override
-    public void onViewDetachedFromWindow(RBaseViewHolder holder) {
-        super.onViewDetachedFromWindow(holder);
-//        L.w("onViewDetachedFromWindow");
-    }
-
+    /**
+     * @see #onBindLoadMoreView(RBaseViewHolder, int)
+     */
     @Deprecated
     private void onBindLoadMore(int position) {
         if (mLoadState == ILoadMore.NORMAL
