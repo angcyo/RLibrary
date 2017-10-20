@@ -166,17 +166,31 @@ class DYRecordView(context: Context, attributeSet: AttributeSet? = null) : View(
         recordingListener()
     }
 
+    private var isTouchDown = true
+
     override fun onTouchEvent(event: MotionEvent): Boolean {
-        if (!isEnabled) {
-            return super.onTouchEvent(event)
+        //L.e("call: onTouchEvent -> ${isEnabled} $event")
+        if (isEnabled) {
+            when (event.actionMasked) {
+                MotionEvent.ACTION_DOWN -> isTouchDown = true
+            }
+            //return super.onTouchEvent(event)
         } else {
+            when (event.actionMasked) {
+                MotionEvent.ACTION_DOWN -> isTouchDown = false
+            }
+        }
+
+        if (isTouchDown) {
             when (event.actionMasked) {
                 MotionEvent.ACTION_CANCEL, MotionEvent.ACTION_UP -> {
                     endRecord()
                 }
             }
             return gestureCompat.onTouchEvent(event)
+        } else {
         }
+        return true
     }
 
     /**调用此方法, 结束录制*/
@@ -350,7 +364,7 @@ class DYRecordView(context: Context, attributeSet: AttributeSet? = null) : View(
 
     var onRecordListener: OnRecordListener? = null
 
-    public abstract class OnRecordListener {
+    abstract class OnRecordListener {
         open fun onRecordStart() {
 
         }

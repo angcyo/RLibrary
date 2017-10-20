@@ -7,6 +7,8 @@ import android.graphics.BitmapFactory;
 import android.media.MediaMetadataRetriever;
 import android.os.Build;
 
+import com.angcyo.uiview.R;
+import com.angcyo.uiview.RApplication;
 import com.angcyo.uiview.utils.RUtils;
 import com.angcyo.uiview.utils.ScreenUtil;
 import com.angcyo.uiview.utils.file.AttachmentStore;
@@ -273,6 +275,9 @@ public class BitmapDecoder {
         return false;
     }
 
+    /**
+     * 截取并压缩视频帧
+     */
     public static boolean extractThumbnailAndCompress(String videoPath, String thumbPath) {
         if (!AttachmentStore.isFileExist(thumbPath)) {
 //            Bitmap thumbnail = ThumbnailUtils.createVideoThumbnail(videoPath, MediaStore.Images.Thumbnails.MINI_KIND);
@@ -280,7 +285,7 @@ public class BitmapDecoder {
             if (thumbnail != null) {
                 Bitmap bitmap;// = RUtils.compressBitmap(thumbnail);//BitmapHelper.compressBitmap(thumbnail, 600, 800);
                 //L.e("call: extractThumbnailAndCompress([videoPath, thumbPath])1-> " + thumbnail.getByteCount() + " " + bitmap.getByteCount());
-                bitmap = RUtils.compressBitmap(thumbnail, 2);
+                bitmap = RUtils.compressBitmap(thumbnail, 4);
                 //L.e("call: extractThumbnailAndCompress([videoPath, thumbPath])2-> " + thumbnail.getByteCount() + " " + bitmap.getByteCount());
                 //bitmap = RUtils.compressBitmap(thumbnail, 8);
                 //L.e("call: extractThumbnailAndCompress([videoPath, thumbPath])3-> " + thumbnail.getByteCount() + " " + bitmap.getByteCount());
@@ -292,25 +297,45 @@ public class BitmapDecoder {
         return false;
     }
 
+    /**
+     * 截图视频帧, 视频截图
+     */
     public static Bitmap createVideoThumbnail(String filePath) {
         Bitmap bitmap = null;
         MediaMetadataRetriever retriever = new MediaMetadataRetriever();
-        try {
-            retriever.setDataSource(filePath);
-            bitmap = retriever.getFrameAtTime(1);
-        } catch (IllegalArgumentException ex) {
-            // Assume this is a corrupt video file
-        } catch (RuntimeException ex) {
-            // Assume this is a corrupt video file.
-        } finally {
+        int[] times = new int[]{
+                MediaMetadataRetriever.OPTION_NEXT_SYNC,
+                MediaMetadataRetriever.OPTION_CLOSEST_SYNC,
+                MediaMetadataRetriever.OPTION_CLOSEST
+        };
+
+        int index = 0;
+        retriever.setDataSource(filePath);
+
+        while (index < times.length) {
             try {
-                retriever.release();
+                bitmap = retriever.getFrameAtTime(1000 * (index + 1), times[index]);
             } catch (Exception ex) {
-                // Ignore failures while cleaning up.
+                // Assume this is a corrupt video file
+            }
+
+            if (bitmap == null) {
+                index++;
+
+                try {
+                    Thread.sleep(100);
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+            } else {
+                break;
             }
         }
 
-        if (bitmap == null) return null;
+        retriever.release();
+
+        if (bitmap == null)
+            return BitmapFactory.decodeResource(RApplication.getApp().getResources(), R.drawable.default_image);
 
         return bitmap;
     }
