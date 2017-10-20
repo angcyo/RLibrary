@@ -153,6 +153,9 @@ public class RCameraPreview extends TextureView {
             @Override
             public void run() {
                 try {
+                    if (mCamera != null) {
+                        mCamera.release();
+                    }
                     mCamera = Camera.open(Camera.CameraInfo.CAMERA_FACING_BACK);
                     mCamera.setPreviewTexture(surfaceTexture);
                     initFromCameraParameters(mCamera);
@@ -174,7 +177,10 @@ public class RCameraPreview extends TextureView {
             return;
         }
         if (mCamera != null) {
+            mCamera.setPreviewCallback(null);
             mCamera.stopPreview();
+            mCamera.release();
+            mCamera = null;
         }
         isPreview = false;
     }

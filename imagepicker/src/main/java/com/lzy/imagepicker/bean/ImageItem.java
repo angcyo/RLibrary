@@ -7,8 +7,6 @@ import android.os.Parcelable;
 
 import com.lzy.imagepicker.ImageDataSource;
 
-import java.io.Serializable;
-
 /**
  * ================================================
  * 作    者：jeasonlzy（廖子尧 Github地址：https://github.com/jeasonlzy0216
@@ -29,7 +27,7 @@ public class ImageItem implements Parcelable {
     public int width;         //宽度
     public int height;        //高度
     public String mimeType;   //类型
-    public long addTime;      //创建时间
+    public long addTime = -1;      //创建时间
 
     //星期二 2017-6-13 支持扫描视频文件
     public long videoDuration = -1;//视频时长
@@ -61,7 +59,10 @@ public class ImageItem implements Parcelable {
     public boolean equals(Object o) {
         try {
             ImageItem other = (ImageItem) o;
-            return this.path.equalsIgnoreCase(other.path) && this.addTime == other.addTime;
+            return this.path.equalsIgnoreCase(other.path)/* &&
+                    (this.addTime != -1 &&
+                            other.addTime != -1 &&
+                            this.addTime == other.addTime)*/;
         } catch (ClassCastException e) {
             e.printStackTrace();
         }

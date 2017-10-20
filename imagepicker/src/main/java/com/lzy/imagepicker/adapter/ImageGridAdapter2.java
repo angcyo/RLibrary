@@ -22,6 +22,7 @@ import com.lzy.imagepicker.bean.ImageItem;
 import com.lzy.imagepicker.ui.ImageBaseActivity;
 import com.lzy.imagepicker.ui.ImageGridActivity;
 import com.lzy.imagepicker.view.ImagePickerImageView;
+import com.lzy.imagepicker.view.RCameraPreview;
 
 import java.lang.ref.WeakReference;
 import java.util.ArrayList;
@@ -103,9 +104,20 @@ public class ImageGridAdapter2 extends RecyclerView.Adapter<ImageViewHolder> {
             convertView.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
+                    if (imagePicker.isMultiMode() && imagePicker.getSelectImageCount() >= imagePicker.getSelectLimit()) {
+                        Toast.makeText(mActivity.getApplicationContext(),
+                                "选择已达上限.",
+                                Toast.LENGTH_SHORT).show();
+                        return;
+                    }
+
                     if (!((ImageBaseActivity) mActivity).checkPermission(Manifest.permission.CAMERA)) {
                         ActivityCompat.requestPermissions(mActivity, new String[]{Manifest.permission.CAMERA}, ImageGridActivity.REQUEST_PERMISSION_CAMERA);
                     } else {
+                        if (mTextureView instanceof RCameraPreview) {
+                            ((RCameraPreview) mTextureView).stopPreview();
+                        }
+
                         if (loadType == VIDEO) {
                             imagePicker.recordVideo(mActivity, ImagePicker.REQUEST_CODE_RECORD_VIDEO);
                         } else {

@@ -410,7 +410,10 @@ public class ImageGridActivity extends ImageBaseActivity implements ImageDataSou
         ImagePicker.galleryAddPic(this, imagePicker.getTakeImageFile());
         ImageItem imageItem = new ImageItem();
         imageItem.path = imagePicker.getTakeImageFile().getAbsolutePath();
-        imagePicker.clearSelectedImages();
+        if (imagePicker.isMultiMode()) {
+        } else {
+            imagePicker.clearSelectedImages();
+        }
         imagePicker.addSelectedImageItem(0, imageItem, true);
         if (imagePicker.isCrop()) {
             Intent intent = new Intent(ImageGridActivity.this, ImageCropActivity.class);

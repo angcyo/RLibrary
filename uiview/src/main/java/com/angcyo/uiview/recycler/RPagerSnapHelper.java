@@ -11,7 +11,7 @@ import android.view.ViewGroup;
 /**
  * Copyright (C) 2016,深圳市红鸟网络科技股份有限公司 All rights reserved.
  * 项目名称：
- * 类的描述：让第一个Pager Item 的left 和 top 为0
+ * 类的描述：让第一个Pager Item 的left 和 top 为0 (处理当item的宽度不是全屏的时候, 并添加pager 的listener)
  * 创建人员：Robi
  * 创建时间：2017/02/27 14:10
  * 修改人员：Robi
@@ -29,15 +29,15 @@ public class RPagerSnapHelper extends PagerSnapHelper {
      */
     int mOrientation = LinearLayoutManager.HORIZONTAL;
 
-    public int getCurrentPosition() {
-        return mCurrentPosition;
-    }
-
     public RPagerSnapHelper() {
     }
 
     public RPagerSnapHelper(int mCurrentPosition) {
         this.mCurrentPosition = mCurrentPosition;
+    }
+
+    public int getCurrentPosition() {
+        return mCurrentPosition;
     }
 
     public RPagerSnapHelper setCurrentPosition(int currentPosition) {
