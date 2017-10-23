@@ -3,20 +3,16 @@ package com.liulishuo;
 import android.app.Application;
 import android.content.Context;
 import android.os.Environment;
-import android.support.v4.util.ArrayMap;
 
 import com.liulishuo.filedownloader.BaseDownloadTask;
 import com.liulishuo.filedownloader.FileDownloadList;
 import com.liulishuo.filedownloader.FileDownloadQueueSet;
 import com.liulishuo.filedownloader.FileDownloader;
-import com.liulishuo.filedownloader.connection.FileDownloadUrlConnection;
 import com.liulishuo.filedownloader.connection.OkHttp3Connection;
-import com.liulishuo.filedownloader.services.DownloadMgrInitialParams;
 import com.liulishuo.filedownloader.util.FileDownloadLog;
 import com.liulishuo.filedownloader.util.FileDownloadUtils;
 
 import java.io.File;
-import java.net.Proxy;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
@@ -32,8 +28,8 @@ import java.util.concurrent.ConcurrentHashMap;
  * 创建人员：Robi
  * 创建时间：2017/05/04 14:09
  * 修改人员：Robi
- * 修改时间：2017/05/04 14:09
- * 修改备注：
+ * 修改时间：by angcyo:2017-10-23 9:17:11
+ * 修改备注：更新至 1.6.8
  * Version: 1.0.0
  */
 public class FDown {

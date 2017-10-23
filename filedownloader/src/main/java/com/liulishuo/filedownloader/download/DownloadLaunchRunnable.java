@@ -48,6 +48,7 @@ import java.util.concurrent.Callable;
 import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
 import java.util.concurrent.ThreadPoolExecutor;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 /**
  * You can use this to launch downloading, on here the download will be launched separate following
@@ -105,8 +106,10 @@ public class DownloadLaunchRunnable implements Runnable, ProcessCallback {
     private boolean acceptPartial;
     private boolean isChunked;
 
-    private volatile boolean alive;
+    private final AtomicBoolean alive;
     private volatile boolean paused;
+    private volatile boolean error;
+    private volatile Exception errorException;
 
     private String redirectedUrl;
 
@@ -114,7 +117,7 @@ public class DownloadLaunchRunnable implements Runnable, ProcessCallback {
                                    IThreadPoolMonitor threadPoolMonitor,
                                    final int minIntervalMillis, int callbackProgressMaxCount,
                                    boolean isForceReDownload, boolean isWifiRequired, int maxRetryTimes) {
-        this.alive = true;
+        this.alive = new AtomicBoolean(true);
         this.paused = false;
         this.isTriedFixRangeNotSatisfiable = false;
 
@@ -135,7 +138,7 @@ public class DownloadLaunchRunnable implements Runnable, ProcessCallback {
                                    IThreadPoolMonitor threadPoolMonitor,
                                    final int minIntervalMillis, int callbackProgressMaxCount,
                                    boolean isForceReDownload, boolean isWifiRequired, int maxRetryTimes) {
-        this.alive = true;
+        this.alive = new AtomicBoolean(true);
         this.paused = false;
         this.isTriedFixRangeNotSatisfiable = false;
 
@@ -173,8 +176,6 @@ public class DownloadLaunchRunnable implements Runnable, ProcessCallback {
                 // if runnable is null, then that one must be completed and removed
             }
         }
-
-        statusCallback.onPaused();
     }
 
     public void pending() {
@@ -335,7 +336,21 @@ public class DownloadLaunchRunnable implements Runnable, ProcessCallback {
                 break;
             } while (true);
         } finally {
-            alive = false;
+            statusCallback.discardAllMessage();
+
+            if (paused) {
+                statusCallback.onPausedDirectly();
+            } else if (error) {
+                statusCallback.onErrorDirectly(errorException);
+            } else {
+                try {
+                    statusCallback.onCompletedDirectly();
+                } catch (IOException e) {
+                    statusCallback.onErrorDirectly(e);
+                }
+            }
+
+            alive.set(false);
         }
     }
 
@@ -436,6 +451,12 @@ public class DownloadLaunchRunnable implements Runnable, ProcessCallback {
                 // 1. checkout whether accept partial
                 // 2. 201 means new resources so range must be from beginning otherwise it can't match
                 // local range.
+                isPreconditionFailed = true;
+                break;
+            }
+
+            if (code == HTTP_REQUESTED_RANGE_NOT_SATISFIABLE && model.getSoFar() > 0) {
+                // On the first connection range not satisfiable, there must something wrong, so have to retry.
                 isPreconditionFailed = true;
                 break;
             }
@@ -715,8 +736,7 @@ public class DownloadLaunchRunnable implements Runnable, ProcessCallback {
     }
 
     @Override
-    public void onCompleted(DownloadRunnable doneRunnable, long startOffset, long endOffset)
-            throws IOException {
+    public void onCompleted(DownloadRunnable doneRunnable, long startOffset, long endOffset) {
         if (paused) {
             if (FileDownloadLog.NEED_LOG) {
                 FileDownloadLog.d(this, "the task[%d] has already been paused, so pass the" +
@@ -724,8 +744,6 @@ public class DownloadLaunchRunnable implements Runnable, ProcessCallback {
             }
             return;
         }
-
-        boolean allConnectionCompleted = false;
 
         final int doneConnectionIndex = doneRunnable == null ? -1 : doneRunnable.connectionIndex;
         if (FileDownloadLog.NEED_LOG) {
@@ -738,20 +756,10 @@ public class DownloadLaunchRunnable implements Runnable, ProcessCallback {
                 FileDownloadLog.e(this, "the single task not completed corrected(%d, %d != %d) " +
                         "for task(%d)", startOffset, endOffset, model.getTotal(), model.getId());
             }
-
-            allConnectionCompleted = true;
         } else {
             synchronized (downloadRunnableList) {
                 downloadRunnableList.remove(doneRunnable);
             }
-
-            if (downloadRunnableList.size() <= 0) {
-                allConnectionCompleted = true;
-            }
-        }
-
-        if (allConnectionCompleted) {
-            statusCallback.onCompleted();
         }
     }
 
@@ -776,6 +784,9 @@ public class DownloadLaunchRunnable implements Runnable, ProcessCallback {
 
     @Override
     public void onError(Exception exception) {
+        error = true;
+        errorException = exception;
+
         if (paused) {
             if (FileDownloadLog.NEED_LOG) {
                 FileDownloadLog.d(this, "the task[%d] has already been paused, so pass the" +
@@ -793,8 +804,6 @@ public class DownloadLaunchRunnable implements Runnable, ProcessCallback {
                 // if runnable is null, then that one must be completed and removed
             }
         }
-
-        statusCallback.onError(exception);
     }
 
     @Override
@@ -921,7 +930,7 @@ public class DownloadLaunchRunnable implements Runnable, ProcessCallback {
     }
 
     public boolean isAlive() {
-        return alive || this.statusCallback.isAlive();
+        return alive.get() || this.statusCallback.isAlive();
     }
 
     public String getTempFilePath() {
