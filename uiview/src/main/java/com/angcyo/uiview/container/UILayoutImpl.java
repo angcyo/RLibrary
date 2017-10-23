@@ -1883,8 +1883,8 @@ public class UILayoutImpl extends SwipeBackLayout implements ILayout<UIParam>, U
 
             //int wSize = (getMeasuredWidth() - (hCount + 1) * hSpace) / hCount;
             //int hSize = (getMeasuredHeight() - (vCount + 1) * vSpace) / vCount;
-            int wSize = getDebugWidthSize();
-            int hSize = getDebugHeightSize();
+            int wSize = getMeasuredWidth();//getDebugWidthSize();
+            int hSize = getMeasuredHeight();//getDebugHeightSize();
 
             for (int i = 0; i < count; i++) {
                 View childAt = getChildAt(i);
@@ -1963,18 +1963,23 @@ public class UILayoutImpl extends SwipeBackLayout implements ILayout<UIParam>, U
         if (isInDebugLayout) {
             int count = getChildCount();
 
-            int l = hSpace;
-            int t = vSpace;
+//            int l = hSpace;
+//            int t = vSpace;
 
-            int wSize = getDebugWidthSize();
-            int hSize = getDebugHeightSize();
+            int l = 0;
+            int t = -vSpace;
+
+            int wSize = getMeasuredWidth();//getDebugWidthSize();
+            int hSize = getMeasuredHeight();//getDebugHeightSize();
 
             for (int i = 0; i < count; i++) {
                 View childAt = getChildAt(i);
                 childAt.layout(l, t, l + wSize, t + hSize);
-                t += hSize + vSpace;
+                t += getDebugHeightSize() + vSpace;
+//                t += hSize + vSpace;
             }
-            viewMaxHeight = t;
+//            viewMaxHeight = t;
+            viewMaxHeight = t + 2 * vSpace;
             return;
         }
 
@@ -2604,7 +2609,7 @@ public class UILayoutImpl extends SwipeBackLayout implements ILayout<UIParam>, U
             for (int i = 0; i < getChildCount(); i++) {
                 View childAt = getChildAt(i);
                 //childAt.startAnimation(AnimationUtils.loadAnimation(mLayoutActivity, R.anim.base_scale_to_min));
-                AnimUtil.scaleBounceView(childAt);
+                AnimUtil.scaleBounceView(childAt, getDebugWidthSize() * 1f / getMeasuredWidth(), getDebugHeightSize() * 1f / getMeasuredHeight());
             }
         }
     }

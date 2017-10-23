@@ -87,6 +87,9 @@ open class TouchLayout(context: Context, attributeSet: AttributeSet? = null) : F
 
     @CallSuper
     override fun dispatchTouchEvent(ev: MotionEvent): Boolean {
+        if (ev.actionMasked == MotionEvent.ACTION_DOWN) {
+            overScroller.abortAnimation()
+        }
         if (handleTouchType == HANDLE_TOUCH_TYPE_DISPATCH) {
             orientationGestureDetector.onTouchEvent(ev)
         }

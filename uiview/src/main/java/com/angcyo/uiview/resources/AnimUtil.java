@@ -482,4 +482,15 @@ public class AnimUtil {
                 .start();
     }
 
+    public static void scaleBounceView(View view, float x, float y) {
+        ViewCompat.setScaleX(view, 0.5f);
+        ViewCompat.setScaleY(view, 0.5f);
+        view.animate()
+                .scaleX(x)
+                .scaleY(y)
+                .setInterpolator(new BounceInterpolator())
+                .setDuration(300)
+                .start();
+    }
+
 }
