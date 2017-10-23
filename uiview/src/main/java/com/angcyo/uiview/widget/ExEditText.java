@@ -1260,8 +1260,8 @@ public class ExEditText extends AppCompatEditText {
         });
         rollAnim.addListener(new RAnimListener() {
             @Override
-            public void onAnimationEnd(Animator animation) {
-                super.onAnimationEnd(animation);
+            public void onAnimationFinish(Animator animation, boolean cancel) {
+                super.onAnimationFinish(animation, cancel);
                 setInputText(String.format(Locale.CHINA, "%.2f", toValue));
             }
         });

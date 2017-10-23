@@ -77,6 +77,11 @@ public class UILayoutImpl extends SwipeBackLayout implements ILayout<UIParam>, U
     protected ViewPattern mLastShowViewPattern;
     protected boolean isAttachedToWindow = false;
     protected UILayoutActivity mLayoutActivity;
+    int hSpace = (int) (30 * getResources().getDisplayMetrics().density);
+    int vSpace = (int) (30 * getResources().getDisplayMetrics().density);
+    int viewMaxHeight = 0;
+    boolean isInDebugLayout = false;
+    Paint debugPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
     /**
      * 是否正在退出界面
      */
@@ -1850,10 +1855,6 @@ public class UILayoutImpl extends SwipeBackLayout implements ILayout<UIParam>, U
         super.onSizeChanged(w, h, oldw, oldh);
     }
 
-    int hSpace = (int) (30 * getResources().getDisplayMetrics().density);
-    int vSpace = (int) (30 * getResources().getDisplayMetrics().density);
-    int viewMaxHeight = 0;
-
     private int getDebugWidthSize() {
         return getMeasuredWidth() - 2 * hSpace;
     }
@@ -1883,8 +1884,8 @@ public class UILayoutImpl extends SwipeBackLayout implements ILayout<UIParam>, U
 
             //int wSize = (getMeasuredWidth() - (hCount + 1) * hSpace) / hCount;
             //int hSize = (getMeasuredHeight() - (vCount + 1) * vSpace) / vCount;
-            int wSize = getMeasuredWidth();//getDebugWidthSize();
-            int hSize = getMeasuredHeight();//getDebugHeightSize();
+            int wSize = widthSize;//getDebugWidthSize();
+            int hSize = heightSize;//getDebugHeightSize();
 
             for (int i = 0; i < count; i++) {
                 View childAt = getChildAt(i);
@@ -2070,7 +2071,6 @@ public class UILayoutImpl extends SwipeBackLayout implements ILayout<UIParam>, U
         }
         return false;
     }
-
 
     private boolean childNeedMeasure(View child, int viewWidth, int viewHeight) {
         if (child == null) {
@@ -2413,7 +2413,6 @@ public class UILayoutImpl extends SwipeBackLayout implements ILayout<UIParam>, U
         printLog();
     }
 
-
     /**
      * 默认状态
      */
@@ -2590,17 +2589,6 @@ public class UILayoutImpl extends SwipeBackLayout implements ILayout<UIParam>, U
         finishIView(iView, new UIParam(false, true, false));
     }
 
-    /**
-     * IView 添加,移除监听
-     */
-    public interface OnIViewChangedListener {
-        void onIViewAdd(final UILayoutImpl uiLayout, final ViewPattern viewPattern);
-
-        void onIViewRemove(final UILayoutImpl uiLayout, final ViewPattern viewPattern);
-    }
-
-    boolean isInDebugLayout = false;
-
     public void startDebugLayout() {
         if (!isInDebugLayout) {
             isInDebugLayout = true;
@@ -2668,8 +2656,6 @@ public class UILayoutImpl extends SwipeBackLayout implements ILayout<UIParam>, U
         }
     }
 
-    Paint debugPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
-
     private void initDebugPaint() {
         debugPaint.setStrokeJoin(Paint.Join.ROUND);
         debugPaint.setStyle(Paint.Style.STROKE);
@@ -2716,6 +2702,15 @@ public class UILayoutImpl extends SwipeBackLayout implements ILayout<UIParam>, U
         if (isInDebugLayout && isVertical(orientation)) {
             scrollBy(0, (int) distance);
         }
+    }
+
+    /**
+     * IView 添加,移除监听
+     */
+    public interface OnIViewChangedListener {
+        void onIViewAdd(final UILayoutImpl uiLayout, final ViewPattern viewPattern);
+
+        void onIViewRemove(final UILayoutImpl uiLayout, final ViewPattern viewPattern);
     }
 
     static class AnimRunnable implements Animation.AnimationListener {

@@ -229,8 +229,9 @@ class DYRecordView(context: Context, attributeSet: AttributeSet? = null) : View(
                     postInvalidate()
                 }
                 addListener(object : RAnimListener() {
-                    override fun onAnimationEnd(animation: Animator?) {
-                        super.onAnimationEnd(animation)
+
+                    override fun onAnimationFinish(animation: Animator?, cancel: Boolean) {
+                        super.onAnimationFinish(animation, cancel)
                         resetAnimator = null
                     }
                 })
@@ -311,8 +312,9 @@ class DYRecordView(context: Context, attributeSet: AttributeSet? = null) : View(
                     postInvalidate()
                 }
                 addListener(object : RAnimListener() {
-                    override fun onAnimationEnd(animation: Animator?) {
-                        super.onAnimationEnd(animation)
+
+                    override fun onAnimationFinish(animation: Animator?, cancel: Boolean) {
+                        super.onAnimationFinish(animation, cancel)
                         breathAnimator = null
                     }
                 })

@@ -22,7 +22,7 @@ abstract class RAnimListener : AnimatorListenerAdapter() {
         super.onAnimationRepeat(animation)
     }
 
-    override fun onAnimationEnd(animation: Animator?) {
+    final override fun onAnimationEnd(animation: Animator?) {
         super.onAnimationEnd(animation)
         if (isCancel) {
             //当动画被取消的时候, 系统会回调onAnimationCancel, 然后 onAnimationEnd
@@ -33,7 +33,7 @@ abstract class RAnimListener : AnimatorListenerAdapter() {
         }
     }
 
-    override fun onAnimationCancel(animation: Animator?) {
+    final override fun onAnimationCancel(animation: Animator?) {
         super.onAnimationCancel(animation)
         isCancel = true
         onAnimationFinish(animation)

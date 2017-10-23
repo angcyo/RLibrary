@@ -42,10 +42,13 @@ class BasePointRefreshView(context: Context) : View(context),
             postInvalidateOnAnimation()
         }
         anim.addListener(object : RAnimListener() {
-            override fun onAnimationCancel(animation: Animator?) {
-                super.onAnimationCancel(animation)
-                currentPoint = 0
-                postInvalidateOnAnimation()
+
+            override fun onAnimationFinish(animation: Animator?, cancel: Boolean) {
+                super.onAnimationFinish(animation, cancel)
+                if (cancel) {
+                    currentPoint = 0
+                    postInvalidateOnAnimation()
+                }
             }
         })
         anim.repeatCount = Animation.INFINITE
