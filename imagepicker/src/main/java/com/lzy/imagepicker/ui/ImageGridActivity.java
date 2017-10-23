@@ -296,6 +296,12 @@ public class ImageGridActivity extends ImageBaseActivity implements ImageDataSou
 
         //mProgressBar.stop();
         mProgressBar.setVisibility(View.GONE);
+
+        if (imageFolders.isEmpty()) {
+            findViewById(R.id.empty_view).setVisibility(View.VISIBLE);
+        } else {
+            findViewById(R.id.empty_view).setVisibility(View.GONE);
+        }
     }
 
     @Override

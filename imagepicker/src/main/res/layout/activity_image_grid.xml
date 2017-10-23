@@ -1,6 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:id="@+id/content"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
@@ -9,9 +8,9 @@
 
     <include
         android:id="@+id/top_bar"
-        layout="@layout/include_top_bar"/>
+        layout="@layout/include_top_bar" />
 
-    <RelativeLayout
+    <FrameLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:background="#111111">
@@ -39,13 +38,13 @@
             android:paddingBottom="50dp"
             android:paddingLeft="2dp"
             android:paddingRight="2dp"
-            android:paddingTop="2dp"/>
+            android:paddingTop="2dp" />
 
         <RelativeLayout
             android:id="@+id/footer_bar"
             android:layout_width="match_parent"
             android:layout_height="48dp"
-            android:layout_alignParentBottom="true"
+            android:layout_gravity="bottom"
             android:background="#DC22292C">
 
             <Button
@@ -57,14 +56,14 @@
                 android:drawablePadding="4dp"
                 android:drawableRight="@mipmap/text_indicator"
                 android:ellipsize="end"
+                android:maxLines="1"
                 android:paddingLeft="16dp"
                 android:paddingRight="16dp"
                 android:singleLine="true"
-                android:maxLines="1"
                 android:text="全部图片"
                 android:textAllCaps="false"
                 android:textColor="#FFFFFF"
-                android:textSize="16dp"/>
+                android:textSize="16dp" />
 
             <Button
                 android:id="@+id/btn_preview"
@@ -77,7 +76,7 @@
                 android:text="预览(3)"
                 android:textAllCaps="false"
                 android:textColor="#FFFFFF"
-                android:textSize="16dp"/>
+                android:textSize="16dp" />
 
             <View
                 android:layout_width="1px"
@@ -85,7 +84,17 @@
                 android:layout_marginBottom="12dp"
                 android:layout_marginTop="12dp"
                 android:layout_toLeftOf="@id/btn_preview"
-                android:background="#cc111111"/>
+                android:background="#cc111111" />
         </RelativeLayout>
-    </RelativeLayout>
+
+        <TextView
+            android:id="@+id/empty_view"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:clickable="true"
+            android:gravity="center"
+            android:text="暂无媒体数据"
+            android:textColor="@android:color/white"
+            android:visibility="gone" />
+    </FrameLayout>
 </LinearLayout>

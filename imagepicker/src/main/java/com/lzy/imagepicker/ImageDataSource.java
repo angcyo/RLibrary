@@ -10,6 +10,7 @@ import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.LoaderManager;
 import android.support.v4.content.CursorLoader;
 import android.support.v4.content.Loader;
+import android.widget.Toast;
 
 import com.lzy.imagepicker.bean.ImageFolder;
 import com.lzy.imagepicker.bean.ImageItem;
@@ -165,7 +166,7 @@ public class ImageDataSource implements LoaderManager.LoaderCallbacks<Cursor> {
             }
 
             //防止没有图片报异常
-            if (data.getCount() > 0) {
+            if (data.getCount() > 0 && !allImages.isEmpty()) {
                 //构造所有图片的集合
                 ImageFolder allImagesFolder = new ImageFolder();
                 if (mLoaderType == IMAGE) {
@@ -179,6 +180,8 @@ public class ImageDataSource implements LoaderManager.LoaderCallbacks<Cursor> {
                 allImagesFolder.cover = allImages.get(0);
                 allImagesFolder.images = allImages;
                 imageFolders.add(0, allImagesFolder);  //确保第一条是所有图片
+            } else {
+                Toast.makeText(activity, "没有找到媒体数据", Toast.LENGTH_SHORT).show();
             }
         }
 
