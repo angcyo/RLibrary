@@ -11,7 +11,6 @@ import android.graphics.drawable.Drawable
 import android.support.v4.content.ContextCompat
 import android.util.AttributeSet
 import com.angcyo.github.utilcode.utils.ImageUtils
-import com.angcyo.library.glide.GlideApp
 import com.angcyo.library.okhttp.Ok
 import com.angcyo.library.utils.L
 import com.angcyo.uiview.R
@@ -73,7 +72,7 @@ open class GlideImageView(context: Context, attributeSet: AttributeSet? = null) 
     /**动画样式*/
     var animType = AnimType.DEFAULT
 
-    var bitmapTransform: Transformation<*>? = null
+    var bitmapTransform: Transformation<Bitmap>? = null
 
     init {
         val typedArray = context.obtainStyledAttributes(attributeSet, R.styleable.GlideImageView)
@@ -174,6 +173,10 @@ open class GlideImageView(context: Context, attributeSet: AttributeSet? = null) 
             AnimType.NONE, AnimType.TRANSITION -> requestOptions.dontAnimate()
             AnimType.CROSS_FADE -> {
             }
+        }
+
+        if (bitmapTransform != null) {
+            requestOptions.transform(bitmapTransform!!)
         }
 
         return requestOptions
@@ -288,7 +291,7 @@ open class GlideImageView(context: Context, attributeSet: AttributeSet? = null) 
 //        }
         if (isInEditMode) {
         } else {
-            GlideApp.with(this).clear(this)
+            Glide.with(this).clear(this)
         }
     }
 
