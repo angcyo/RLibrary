@@ -4,6 +4,7 @@ import android.support.v4.view.ViewCompat;
 import android.support.v4.view.ViewPropertyAnimatorCompat;
 import android.view.View;
 import android.view.animation.DecelerateInterpolator;
+import android.widget.EditText;
 
 import com.daimajia.androidanimations.library.Techniques;
 import com.daimajia.androidanimations.library.YoYo;
@@ -32,6 +33,9 @@ public class Anim {
      */
     public static void band(View target) {
         YoYo.with(Techniques.RubberBand).interpolate(new DecelerateInterpolator()).duration(300).playOn(target);
+        if (target instanceof EditText) {
+            target.requestFocus();
+        }
     }
 
     public static ViewPropertyAnimatorCompat anim(final View target) {
