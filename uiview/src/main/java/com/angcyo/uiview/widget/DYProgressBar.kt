@@ -117,7 +117,7 @@ class DYProgressBar(context: Context, attributeSet: AttributeSet? = null) : View
 
     override fun onAttachedToWindow() {
         super.onAttachedToWindow()
-        startAnimator()
+        //startAnimator()
     }
 
     override fun onDetachedFromWindow() {

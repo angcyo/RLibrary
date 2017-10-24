@@ -171,18 +171,32 @@ public class FDown {
         queueSet.start();
     }
 
+    public static void cancelListener(String url) {
+        Integer integer = Builder.taskMap.get(url);
+        if (integer != null) {
+            cancelListener(integer);
+        }
+    }
+
+    public static void cancelListener(int id) {
+        BaseDownloadTask.IRunningTask runningTask = FileDownloadList.getImpl().get(id);
+        if (runningTask != null) {
+            runningTask.getOrigin().setListener(null);
+        }
+    }
+
     public static class Builder {
-        String url;
-        String fullPath;
-        Object tag;
-        boolean isForceReDownload;
-
-
-        //        static ArrayMap<Integer, String> taskMap = new ArrayMap();
         /**
          * 保存url 和 创建的任务id
          */
         static ConcurrentHashMap<String, Integer> taskMap = new ConcurrentHashMap<>();
+        String url;
+        String fullPath;
+        Object tag;
+
+
+        //        static ArrayMap<Integer, String> taskMap = new ArrayMap();
+        boolean isForceReDownload;
 
         private Builder(String url) {
             this.url = url;
