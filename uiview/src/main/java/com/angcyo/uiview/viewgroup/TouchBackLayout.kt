@@ -53,11 +53,18 @@ open class TouchBackLayout(context: Context, attributeSet: AttributeSet? = null)
 //        viewMaxHeight = top
 //    }
 
+    private var downY: Float = 0f
+
     override fun onInterceptTouchEvent(ev: MotionEvent): Boolean {
         val touchEvent = super.onInterceptTouchEvent(ev)
         if (enableTouchBack) {
 
-            if (ev.actionMasked == MotionEvent.ACTION_MOVE && !isNestedAccepted && scrollY != 0) {
+            if (ev.actionMasked == MotionEvent.ACTION_DOWN) {
+                downY = ev.y
+            } else if (ev.actionMasked == MotionEvent.ACTION_MOVE &&
+                    !isNestedAccepted &&
+                    scrollY != 0 &&
+                    (ev.y - downY).abs() > 10) {
                 return true
             }
 
@@ -193,8 +200,9 @@ open class TouchBackLayout(context: Context, attributeSet: AttributeSet? = null)
 
     override fun scrollTo(x: Int, y: Int) {
         if (enableTouchBack) {
+            val oldY = scrollY
             super.scrollTo(x, y)
-            onTouchBackListener?.onTouchBackListener(this, y.abs(), measuredHeight)
+            onTouchBackListener?.onTouchBackListener(this, oldY.abs(), y.abs(), measuredHeight)
         }
     }
 
@@ -202,6 +210,7 @@ open class TouchBackLayout(context: Context, attributeSet: AttributeSet? = null)
 
     interface OnTouchBackListener {
         fun onTouchBackListener(layout: TouchBackLayout,
+                                oldScrollY: Int /*已经做了abs处理, 确保是正数*/,
                                 scrollY: Int /*已经做了abs处理, 确保是正数*/,
                                 maxScrollY: Int /*允许滚动的最大距离, 当达到最大距离, 视为back*/)
     }

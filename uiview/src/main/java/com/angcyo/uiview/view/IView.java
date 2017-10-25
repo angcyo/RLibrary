@@ -258,6 +258,11 @@ public interface IView {
      */
     boolean enableTouchBack(); //星期二 2017-10-17
 
+    /**
+     * 下拉返回时, top偏移的距离
+     */
+    int getOffsetScrollTop(); //星期二 2017-10-24
+
     enum IViewShowState {
         STATE_NORMAL,
         STATE_VIEW_CREATE,

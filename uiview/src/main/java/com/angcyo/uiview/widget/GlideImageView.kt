@@ -100,6 +100,7 @@ open class GlideImageView(context: Context, attributeSet: AttributeSet? = null) 
         placeholderRes = R.drawable.base_image_placeholder_shape
         animType = AnimType.DEFAULT
         bitmapTransform = null
+        setImageDrawable(null)
 
         if (defaultPlaceholderDrawable != null) {
             placeholderDrawable = defaultPlaceholderDrawable

@@ -3,6 +3,7 @@ package com.angcyo.uiview.skin;
 import android.graphics.Color;
 import android.graphics.drawable.Drawable;
 import android.os.Build;
+import android.support.v4.content.ContextCompat;
 
 import com.angcyo.uiview.R;
 import com.angcyo.uiview.RApplication;
@@ -75,7 +76,9 @@ public class SkinImpl implements ISkin {
         return ResUtil.generateRippleRoundMaskDrawable(RApplication.getApp()
                         .getResources()
                         .getDimensionPixelOffset(R.dimen.base_round_little_radius),
-                Color.WHITE, getThemeDarkColor(), getThemeSubColor()
+                Color.WHITE, getThemeDarkColor(),
+                ContextCompat.getColor(RApplication.getApp(), R.color.base_color_disable),
+                getThemeSubColor()
         );
     }
 

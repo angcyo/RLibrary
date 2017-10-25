@@ -106,7 +106,7 @@ open class TouchLayout(context: Context, attributeSet: AttributeSet? = null) : F
 
     override fun onTouchEvent(event: MotionEvent): Boolean {
         orientationGestureDetector.onTouchEvent(event)
-        return super.onTouchEvent(event)
+        return true
     }
 
     override fun computeScroll() {

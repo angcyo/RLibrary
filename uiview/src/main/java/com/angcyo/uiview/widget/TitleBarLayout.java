@@ -87,6 +87,8 @@ public class TitleBarLayout extends FrameLayout {
         int topHeight = 0;
         int viewHeight = 0;
 
+        int screenHeight = getResources().getDisplayMetrics().heightPixels;
+
         if (fitActionBar && enablePadding) {
             topHeight = statusBarHeight + actionBarHeight;
         } else if (enablePadding) {
@@ -105,11 +107,11 @@ public class TitleBarLayout extends FrameLayout {
         if (maxHeight > 0) {
             super.onMeasure(widthMeasureSpec, MeasureSpec.makeMeasureSpec(Math.min(maxHeight, heightSize + topHeight), heightMode));
         } else {
-            viewHeight = heightSize + topHeight;
+            viewHeight = Math.min(heightSize + topHeight, screenHeight);
             if (heightMode == MeasureSpec.EXACTLY) {
                 int childWidth = widthSize;
                 if (getChildCount() > 0) {
-                    if (heightSize == ScreenUtil.screenHeight || isScreenHeight) {
+                    if (heightSize == screenHeight || isScreenHeight) {
                         heightSize -= topHeight;
                     }
                     getChildAt(0).measure(widthMeasureSpec, MeasureSpec.makeMeasureSpec(heightSize - getPaddingBottom(), heightMode));

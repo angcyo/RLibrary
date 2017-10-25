@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="utf-8"?>
+<com.angcyo.uiview.viewgroup.RLinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:background="@drawable/base_bg_selector"
+    android:gravity="center_vertical"
+    android:orientation="horizontal"
+    android:paddingBottom="@dimen/base_ldpi"
+    android:paddingEnd="@dimen/base_xhdpi"
+    android:paddingStart="@dimen/base_xhdpi"
+    android:paddingTop="@dimen/base_ldpi">
+
+    <com.angcyo.uiview.widget.GlideImageView
+        android:id="@+id/base_image_view"
+        android:layout_width="30dp"
+        android:layout_height="30dp"/>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:paddingStart="@dimen/base_xhdpi">
+
+        <com.angcyo.uiview.widget.RTextView
+            android:id="@+id/base_name_view"
+            style="@style/BaseMainTextStyle"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:textSize="14dp"
+            tools:text="Name"/>
+
+        <FrameLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+            <com.angcyo.uiview.widget.RTextView
+                android:id="@+id/base_tip_view"
+                style="@style/BaseDarkTextStyle"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textSize="12dp"
+                tools:text="12 MB"/>
+
+            <com.angcyo.uiview.widget.RTextView
+                android:id="@+id/base_auth_view"
+                style="@style/BaseDarkTextStyle"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_horizontal"
+                android:textSize="12dp"
+                tools:text="drw"/>
+
+            <com.angcyo.uiview.widget.RTextView
+                android:id="@+id/base_time_view"
+                style="@style/BaseDarkTextStyle"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="right"
+                android:textSize="12dp"
+                tools:text="2017/10/25"/>
+
+        </FrameLayout>
+    </LinearLayout>
+
+</com.angcyo.uiview.viewgroup.RLinearLayout>

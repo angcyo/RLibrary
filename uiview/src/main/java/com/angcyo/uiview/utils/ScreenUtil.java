@@ -21,8 +21,8 @@ import java.lang.reflect.Field;
 
 public class ScreenUtil {
     private static final String TAG = "Demo.ScreenUtil";
-    public static int screenWidth;
-    public static int screenHeight;
+    public static int screenWidth = 1080;
+    public static int screenHeight = 1920;
     public static int screenMin;// 宽高中，小的一边
     public static int screenMax;// 宽高中，较大的值
     public static float density;

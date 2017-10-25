@@ -101,5 +101,6 @@ public class RLinearLayout extends LinearLayout {
 
     public void setRBackgroundDrawable(Drawable drawable) {
         mBackgroundDrawable = drawable;
+        postInvalidate();
     }
 }

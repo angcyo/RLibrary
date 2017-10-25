@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="utf-8"?>
+<com.angcyo.uiview.widget.TitleBarLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/base_white">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical"
+        android:paddingTop="@dimen/base_xhdpi">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center_vertical"
+            android:orientation="horizontal"
+            android:paddingEnd="@dimen/base_xhdpi"
+            android:paddingStart="@dimen/base_xhdpi">
+
+            <com.angcyo.uiview.viewgroup.RHorizontalScrollView
+                android:id="@+id/current_file_path_layout"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:background="@drawable/base_bg_selector"
+                android:scrollbars="none">
+
+                <com.angcyo.uiview.widget.RTextView
+                    android:id="@+id/current_file_path_view"
+                    style="@style/BaseMainTextStyle"
+                    android:layout_width="wrap_content"
+                    android:layout_height="@dimen/base_40dpi"
+                    tools:text="/sdcard/"/>
+
+            </com.angcyo.uiview.viewgroup.RHorizontalScrollView>
+
+            <com.angcyo.uiview.widget.Button
+                android:id="@+id/base_selector_button"
+                android:layout_width="wrap_content"
+                android:layout_height="30dp"
+                android:layout_marginStart="@dimen/base_xhdpi"
+                android:paddingEnd="@dimen/base_xhdpi"
+                android:paddingStart="@dimen/base_xhdpi"
+                android:text="选择"/>
+
+        </LinearLayout>
+
+        <com.angcyo.uiview.recycler.RRecyclerView
+            android:id="@+id/base_recycler_view"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="1"
+            tools:padding="@dimen/base_xhdpi"/>
+
+    </LinearLayout>
+</com.angcyo.uiview.widget.TitleBarLayout>

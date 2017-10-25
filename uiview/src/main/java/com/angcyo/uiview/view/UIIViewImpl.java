@@ -1019,20 +1019,28 @@ public abstract class UIIViewImpl implements IView {
         return false;
     }
 
+    @Override
+    public int getOffsetScrollTop() {
+        return 0;
+    }
+
     /**
      * 初始化下拉返回layout
      */
     protected void initTouchBackLayout(TouchBackLayout layout) {
         if (enableTouchBack()) {
             layout.setEnableTouchBack(true);
+            layout.setOffsetScrollTop(getOffsetScrollTop());
             layout.setHandleTouchType(TouchLayout.HANDLE_TOUCH_TYPE_DISPATCH);
             layout.setOnTouchBackListener(new TouchBackLayout.OnTouchBackListener() {
                 @Override
-                public void onTouchBackListener(TouchBackLayout layout, int scrollY, int maxScrollY) {
-                    layout.setBackgroundColor(
-                            AnimUtil.evaluateColor(scrollY * 1f / maxScrollY,
-                                    getColor(R.color.transparent_dark80),
-                                    Color.TRANSPARENT));
+                public void onTouchBackListener(TouchBackLayout layout, int oldScrollY, int scrollY, int maxScrollY) {
+                    if (oldScrollY != scrollY) {
+                        layout.setBackgroundColor(
+                                AnimUtil.evaluateColor(scrollY * 1f / maxScrollY,
+                                        getColor(R.color.transparent_dark80),
+                                        Color.TRANSPARENT));
+                    }
                     if (scrollY >= maxScrollY) {
                         finishIView(new UIParam(false, true, false));
                     }

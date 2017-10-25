@@ -5,7 +5,7 @@ import android.content.res.ColorStateList;
 import android.content.res.TypedArray;
 import android.graphics.Canvas;
 import android.graphics.Color;
-import android.graphics.drawable.Drawable;
+import android.support.v4.content.ContextCompat;
 import android.util.AttributeSet;
 import android.view.Gravity;
 
@@ -63,26 +63,31 @@ public class Button extends RTextView {
     private void initButton() {
         int themeSubColor;
         int themeDarkColor;
+        int disableColor;
 
         if (isInEditMode()) {
             themeSubColor = Color.BLUE;
             themeDarkColor = Color.BLUE;
+            disableColor = Color.GRAY;
         } else {
             themeSubColor = SkinHelper.getSkin().getThemeSubColor();
             themeDarkColor = SkinHelper.getSkin().getThemeDarkColor();
+            disableColor = ContextCompat.getColor(getContext(), R.color.base_color_disable);
         }
         if (mButtonStyle == ROUND) {
             setBackground(ResUtil.ripple(themeSubColor,
                     ResUtil.selector(
                             ResUtil.createDrawable(themeSubColor, 300),
-                            ResUtil.createDrawable(themeDarkColor, 300)
+                            ResUtil.createDrawable(themeDarkColor, 300),
+                            ResUtil.createDrawable(disableColor, 300)
                     )));
             setTextColor(ColorStateList.valueOf(Color.WHITE));
         } else if (mButtonStyle == ROUND_BORDER) {
             setBackground(ResUtil.ripple(themeSubColor,
                     ResUtil.selector(
                             ResUtil.createDrawable(themeSubColor, Color.TRANSPARENT, (int) (1 * density()), 300),
-                            ResUtil.createDrawable(themeDarkColor, Color.TRANSPARENT, (int) (1 * density()), 300)
+                            ResUtil.createDrawable(themeDarkColor, Color.TRANSPARENT, (int) (1 * density()), 300),
+                            ResUtil.createDrawable(disableColor, Color.TRANSPARENT, (int) (1 * density()), 300)
                     )));
             setTextColor(ColorStateList.valueOf(themeSubColor));
         } else if (mButtonStyle == ROUND_BORDER_FILL) {
@@ -92,6 +97,8 @@ public class Button extends RTextView {
                                     Color.TRANSPARENT, ViewExKt.getDimensionPixelOffset(this, R.dimen.base_line),
                                     ViewExKt.getDimensionPixelOffset(this, R.dimen.base_round_little_radius)),
                             ResUtil.createDrawable(themeSubColor,
+                                    ViewExKt.getDimensionPixelOffset(this, R.dimen.base_round_little_radius)),
+                            ResUtil.createDrawable(disableColor,
                                     ViewExKt.getDimensionPixelOffset(this, R.dimen.base_round_little_radius))
                     )));
             setTextColor(ResUtil.generateTextColor(Color.WHITE, ViewExKt.getColor(this, R.color.base_text_color)));
@@ -99,7 +106,7 @@ public class Button extends RTextView {
             setTextColor(ColorStateList.valueOf(Color.WHITE));
             if (isInEditMode()) {
                 setBackground(ResUtil.generateRippleRoundMaskDrawable(getResources().getDimensionPixelOffset(R.dimen.base_round_little_radius),
-                        Color.WHITE, Color.BLUE, Color.BLUE));
+                        Color.WHITE, Color.BLUE, disableColor, Color.BLUE));
             } else {
                 setBackground(SkinHelper.getSkin().getThemeMaskBackgroundRoundSelector());
             }
