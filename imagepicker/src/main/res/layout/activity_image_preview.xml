@@ -33,6 +33,7 @@
             android:paddingLeft="8dp"
             android:text="原图(3.07M)"
             android:textColor="#FFF"
+            android:visibility="gone"
             android:textSize="14dp"/>
 
         <com.lzy.imagepicker.view.SuperCheckBox
