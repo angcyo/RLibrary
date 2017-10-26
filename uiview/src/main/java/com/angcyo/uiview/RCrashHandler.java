@@ -4,14 +4,12 @@ import android.app.Activity;
 import android.app.ActivityManager;
 import android.app.AlarmManager;
 import android.app.PendingIntent;
-import android.content.ActivityNotFoundException;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.ApplicationInfo;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
 import android.content.pm.ResolveInfo;
-import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Environment;
@@ -22,7 +20,6 @@ import android.util.Log;
 import android.view.View;
 
 import com.angcyo.github.utilcode.utils.ClipboardUtils;
-import com.angcyo.github.utilcode.utils.CmdUtil;
 import com.angcyo.github.utilcode.utils.FileUtils;
 import com.angcyo.library.utils.L;
 import com.angcyo.uiview.base.UIViewConfig;
@@ -31,7 +28,6 @@ import com.angcyo.uiview.container.UILayoutImpl;
 import com.angcyo.uiview.dialog.UIDialog;
 import com.angcyo.uiview.recycler.RBaseViewHolder;
 import com.angcyo.uiview.utils.RUtils;
-import com.angcyo.uiview.utils.T_;
 import com.angcyo.uiview.view.UIIViewImpl;
 import com.orhanobut.hawk.Hawk;
 
@@ -511,25 +507,13 @@ public class RCrashHandler implements Thread.UncaughtExceptionHandler {
                     .setCancelListener(new View.OnClickListener() {
                         @Override
                         public void onClick(View v) {
-                            joinQQGroup(iLayout.getLayout().getContext(), QQ_GROUP_KEY);
+                            RUtils.joinQQGroup(iLayout.getLayout().getContext(), QQ_GROUP_KEY);
                         }
                     })
                     .setOkListener(new View.OnClickListener() {
                         @Override
                         public void onClick(View v) {
-                            try {
-
-                                if (CmdUtil.checkApkExist(iLayout.getLayout().getContext(), "com.tencent.mobileqq")) {
-                                    String url = "mqqwpa://im/chat?chat_type=wpa&uin=" + QQ;
-                                    Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse(url));
-                                    intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-                                    iLayout.getLayout().getContext().startActivity(intent);
-                                } else {
-                                    T_.error("您没有安装腾讯QQ");
-                                }
-                            } catch (ActivityNotFoundException e) {
-                                e.printStackTrace();
-                            }
+                            RUtils.chatQQ(iLayout.getLayout().getContext(), QQ);
                         }
                     })
                     .setViewConfig(new UIViewConfig() {
@@ -556,20 +540,6 @@ public class RCrashHandler implements Thread.UncaughtExceptionHandler {
         Hawk.put(RCrashHandler.KEY_IS_CRASH, false);
     }
 
-    private static boolean joinQQGroup(Context context, String key) {
-        Intent intent = new Intent();
-        intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-        intent.setData(Uri.parse("mqqopensdkapi://bizAgent/qm/qr?url=http%3A%2F%2Fqm.qq.com%2Fcgi-bin%2Fqm%2Fqr%3Ffrom%3Dapp%26p%3Dandroid%26k%3D" + key));
-        // 此Flag可根据具体产品需要自定义，如设置，则在加群界面按返回，返回手Q主界面，不设置，按返回会返回到呼起产品界面    //intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
-        try {
-            context.startActivity(intent);
-            return true;
-        } catch (Exception e) {
-            // 未安装手Q或安装的版本不支持
-            T_.error("您没有安装腾讯QQ");
-            return false;
-        }
-    }
 
     public static void resetStartActivity(Context context, Throwable ex) {
         try {

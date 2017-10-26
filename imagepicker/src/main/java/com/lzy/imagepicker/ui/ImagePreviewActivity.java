@@ -75,9 +75,9 @@ public class ImagePreviewActivity extends ImagePreviewBaseActivity implements Im
         mCbOrigin.setOnCheckedChangeListener(this);
         mCbOrigin.setChecked(isOrigin);
 
-        if (loadType != IMAGE) {
+//        if (loadType != IMAGE) {
             mCbOrigin.setVisibility(View.GONE);
-        }
+//        }
 
         //初始化当前页面的状态
         onImageSelected(0, null, false);

@@ -3,6 +3,7 @@ package com.angcyo.uiview.utils;
 import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.app.DownloadManager;
+import android.content.ActivityNotFoundException;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageInfo;
@@ -38,6 +39,7 @@ import android.util.LruCache;
 import android.view.View;
 import android.view.WindowManager;
 
+import com.angcyo.github.utilcode.utils.CmdUtil;
 import com.angcyo.github.utilcode.utils.ImageUtils;
 import com.angcyo.github.utilcode.utils.PhoneUtils;
 import com.angcyo.library.utils.L;
@@ -172,6 +174,42 @@ public class RUtils {
         activity.startActivity(Intent.createChooser(intent, "选择邮件客户端"));
     }
 
+    /**
+     * 快速加群
+     */
+    public static boolean joinQQGroup(Context context, String key) {
+        Intent intent = new Intent();
+        intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+        intent.setData(Uri.parse("mqqopensdkapi://bizAgent/qm/qr?url=http%3A%2F%2Fqm.qq.com%2Fcgi-bin%2Fqm%2Fqr%3Ffrom%3Dapp%26p%3Dandroid%26k%3D" + key));
+        // 此Flag可根据具体产品需要自定义，如设置，则在加群界面按返回，返回手Q主界面，不设置，按返回会返回到呼起产品界面    //intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+        try {
+            context.startActivity(intent);
+            return true;
+        } catch (Exception e) {
+            // 未安装手Q或安装的版本不支持
+            T_.error("您没有安装腾讯QQ");
+            return false;
+        }
+    }
+
+    /**
+     * qq咨询
+     */
+    public static void chatQQ(Context context, String qq) {
+        try {
+            if (CmdUtil.checkApkExist(context, "com.tencent.mobileqq")) {
+                String url = "mqqwpa://im/chat?chat_type=wpa&uin=" + qq;
+                Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse(url));
+                intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                context.startActivity(intent);
+            } else {
+                T_.error("您没有安装腾讯QQ");
+            }
+        } catch (ActivityNotFoundException e) {
+            e.printStackTrace();
+            T_.error("您没有安装腾讯QQ");
+        }
+    }
 
     /**
      * 去除字符串左右的字符
