@@ -752,7 +752,9 @@ public class ExEditText extends AppCompatEditText {
      */
     public boolean isPassword() {
         final String string = string().trim();
-        return !TextUtils.isEmpty(string) && string.matches("^[a-zA-Z0-9_-]{6,12}$");
+        int min = 6;
+        int max = getResources().getInteger(R.integer.password_count);
+        return !TextUtils.isEmpty(string) && string.matches("^[a-zA-Z0-9_-]{" + min + "," + max + "}$");
     }
 
     /**
