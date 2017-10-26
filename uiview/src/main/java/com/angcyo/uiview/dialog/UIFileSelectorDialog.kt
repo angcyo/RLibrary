@@ -220,7 +220,14 @@ open class UIFileSelectorDialog : UIIDialogImpl {
                     if (L.LOG_DEBUG) {
                         if (bean.isFile) {
                             itemView.setOnLongClickListener {
-                                RUtils.shareFile(mActivity, bean.absolutePath)
+                                UIBottomItemDialog.build()
+                                        .addItem("打开") {
+                                            RUtils.openFile(mActivity, File(bean.absolutePath))
+                                        }
+                                        .addItem("分享") {
+                                            RUtils.shareFile(mActivity, bean.absolutePath)
+                                        }
+                                        .showDialog(mParentILayout)
                                 false
                             }
                         }
@@ -234,7 +241,7 @@ open class UIFileSelectorDialog : UIIDialogImpl {
     private fun resetPath(path: String) {
         //L.e("call: resetPath -> $path")
         targetPath = path
-        mViewHolder.view(R.id.base_selector_button).isEnabled = false
+        //mViewHolder.view(R.id.base_selector_button).isEnabled = false
         mViewHolder.tv(R.id.current_file_path_view).text = targetPath
 
         scrollView?.let {

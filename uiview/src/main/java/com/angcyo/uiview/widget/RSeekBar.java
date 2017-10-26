@@ -36,7 +36,7 @@ public class RSeekBar extends View {
      * 浮子类型
      */
     public static final int THUMB_CIRCLE = 1;//圆
-    public static final int THUMB_DEFAULT = 0;//默认
+    public static final int THUMB_DEFAULT = 0;//默认 (圆角矩形)
 
     /**
      * 轨道背景颜色

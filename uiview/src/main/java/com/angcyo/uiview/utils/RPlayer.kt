@@ -25,6 +25,9 @@ class RPlayer {
 
     var audioStreamType = AudioManager.STREAM_MUSIC
 
+    var leftVolume: Float = 0.5f
+    var rightVolume: Float = 0.5f
+
     /**当前播放的状态*/
     private var playState: AtomicInteger = AtomicInteger(STATE_NORMAL)
 
@@ -52,6 +55,8 @@ class RPlayer {
         mediaPlay?.let {
             it.isLooping = isLoop
             it.setAudioStreamType(audioStreamType)
+            it.setVolume(leftVolume, rightVolume)
+
             it.setOnErrorListener { mp, what, extra ->
                 //L.e("call: startPlay -> $what $extra")
                 playState.set(STATE_ERROR)
@@ -101,6 +106,15 @@ class RPlayer {
             it.release()
         }
         mediaPlay = null
+    }
+
+    /**设置音量*/
+    fun setVolume(value: Float) {
+        leftVolume = value
+        rightVolume = value
+        mediaPlay?.let {
+            it.setVolume(value, value)
+        }
     }
 
     private fun isPlaying() = playState.get() == STATE_PLAYING

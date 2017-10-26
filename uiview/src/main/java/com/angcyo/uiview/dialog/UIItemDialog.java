@@ -202,16 +202,19 @@ public class UIItemDialog extends UIIDialogImpl {
         textView.setTextColor(SkinHelper.getSkin().getThemeSubColor());
         textView.setTextSize(TypedValue.COMPLEX_UNIT_PX, SkinHelper.getSkin().getMainTextSize());
         textView.setGravity(Gravity.CENTER);
-        textView.setOnClickListener(new RClickListener(1000) {
-            @Override
-            public void onRClick(View view) {
-                info.mClickListener.onClick(view);
-                if (info.autoCloseDialog) {
-                    finishDialog();
+        if (info.mClickListener instanceof RClickListener) {
+            textView.setOnClickListener(info.mClickListener);
+        } else {
+            textView.setOnClickListener(new RClickListener(1000) {
+                @Override
+                public void onRClick(View view) {
+                    info.mClickListener.onClick(view);
+                    if (info.autoCloseDialog) {
+                        finishDialog();
+                    }
                 }
-            }
-        });
-
+            });
+        }
         return textView;
     }
 
