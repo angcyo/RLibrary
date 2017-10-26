@@ -57,8 +57,7 @@ public class Root {
         return file.getAbsolutePath();
     }
 
-    private static Properties loadProperties(Function2<Properties, Writer, Void> function) {
-        Writer writer = null;
+    private static Properties loadProperties(Function2<Properties, String, Void> function) {
         Reader reader = null;
 
         try {
@@ -70,24 +69,17 @@ public class Root {
                 file.createNewFile();
             }
             reader = new FileReader(file.getAbsolutePath());
-            writer = new FileWriter(file.getAbsolutePath());
 
             Properties pro = new Properties();
             pro.load(reader);
             if (function != null) {
-                function.invoke(pro, writer);
+                function.invoke(pro, file.getAbsolutePath());
             }
             return pro;
         } catch (Exception e) {
             e.printStackTrace();
         } finally {
-            if (writer != null) {
-                try {
-                    writer.close();
-                } catch (IOException e1) {
-                    e1.printStackTrace();
-                }
-            }
+
             if (reader != null) {
                 try {
                     reader.close();
@@ -107,9 +99,9 @@ public class Root {
         if (TextUtils.isEmpty(key) || TextUtils.isEmpty(value)) {
             return;
         }
-        loadProperties(new Function2<Properties, Writer, Void>() {
+        loadProperties(new Function2<Properties, String, Void>() {
             @Override
-            public Void invoke(Properties properties, Writer writer) {
+            public Void invoke(Properties properties, String path) {
                 for (Enumeration e = properties.propertyNames(); e.hasMoreElements(); ) {
                     String s = (String) e.nextElement(); // 遍历所有元素
                     if (s.equals(key)) {
@@ -119,10 +111,20 @@ public class Root {
                     }
                 }
                 properties.setProperty(key, value);
+                Writer writer = null;
                 try {
+                    writer = new FileWriter(path);
                     properties.store(writer, new Date().toString());
                 } catch (IOException e) {
                     e.printStackTrace();
+                }finally {
+                    if (writer != null) {
+                        try {
+                            writer.close();
+                        } catch (IOException e1) {
+                            e1.printStackTrace();
+                        }
+                    }
                 }
                 return null;
             }
@@ -136,9 +138,9 @@ public class Root {
         }
         String value = null;
         try {
-            value = loadProperties(new Function2<Properties, Writer, Void>() {
+            value = loadProperties(new Function2<Properties, String, Void>() {
                 @Override
-                public Void invoke(Properties properties, Writer writer) {
+                public Void invoke(Properties properties, String writer) {
                     return null;
                 }
             }).getProperty(key);
