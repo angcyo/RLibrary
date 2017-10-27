@@ -46,6 +46,8 @@ public class Luban {
     private static final String TAG = "angcyo";
     private static String DEFAULT_DISK_CACHE_DIR = "luban_disk_cache";
 
+    private static int sQuality = 90;
+
     private static volatile Luban INSTANCE;
 
     private final File mCacheDir;
@@ -667,7 +669,7 @@ public class Luban {
         if (!result.exists() && !result.mkdirs()) return null;
 
         ByteArrayOutputStream stream = new ByteArrayOutputStream();
-        int options = 60;
+        int options = sQuality;
         bitmap.compress(Bitmap.CompressFormat.JPEG, options, stream);
 
         while (stream.toByteArray().length / 1024 > size && options > 6) {
