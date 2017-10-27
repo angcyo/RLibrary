@@ -69,6 +69,9 @@ open class GlideImageView(context: Context, attributeSet: AttributeSet? = null) 
 
     var override = true
 
+    /**跳过内存缓存*/
+    var skipMemoryCache = true
+
     /**动画样式*/
     var animType = AnimType.DEFAULT
 
@@ -97,6 +100,7 @@ open class GlideImageView(context: Context, attributeSet: AttributeSet? = null) 
         showAsGifImage = false
         mShowGifTip = false
         override = true
+        skipMemoryCache = true
         placeholderRes = R.drawable.base_image_placeholder_shape
         animType = AnimType.DEFAULT
         bitmapTransform = null
@@ -158,8 +162,17 @@ open class GlideImageView(context: Context, attributeSet: AttributeSet? = null) 
     }
 
     private fun defaultConfig(isGif: Boolean): RequestOptions {
-        val requestOptions = RequestOptions.placeholderOf(placeholderRes).error(placeholderRes)
+        val requestOptions = RequestOptions
+                .placeholderOf(placeholderRes)
+                .error(placeholderRes)
+                .skipMemoryCache(skipMemoryCache)
 
+        /**DiskCacheStrategy.SOURCE：缓存原始数据，
+         * DiskCacheStrategy.RESULT：缓存变换(如缩放、裁剪等)后的资源数据，
+         * DiskCacheStrategy.NONE：什么都不缓存
+         * ，DiskCacheStrategy.ALL：缓存SOURC和RESULT。
+         * 默认采用DiskCacheStrategy.RESULT策略，
+         * 对于download only操作要使用DiskCacheStrategy.SOURCE。*/
         if (isGif) {
             requestOptions.diskCacheStrategy(DiskCacheStrategy.DATA).priority(Priority.HIGH)
         } else {
