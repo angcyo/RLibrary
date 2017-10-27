@@ -22,7 +22,7 @@ public class BaseSkin extends SkinImpl {
     protected Context mContext;
 
     public BaseSkin(Context context) {
-        mContext = context;
+        mContext = context.getApplicationContext();
     }
 
     final public int getColor(@ColorRes int id) {
