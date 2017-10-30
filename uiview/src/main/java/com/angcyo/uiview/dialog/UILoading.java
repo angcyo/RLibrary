@@ -25,9 +25,9 @@ import com.angcyo.uiview.container.UIParam;
  */
 public class UILoading extends UIIDialogImpl {
 
-    static boolean isShowing = false;
+    protected static boolean isShowing = false;
 
-    static UILoading mUILoading;
+    private static UILoading mUILoading;
 
     protected ViewGroup mBaseLoadingRootLayout;
 
@@ -37,7 +37,7 @@ public class UILoading extends UIIDialogImpl {
 
     String mLoadingTipText = "别怕, 马上就好...";
 
-    private UILoading() {
+    protected UILoading() {
     }
 
 
@@ -116,7 +116,7 @@ public class UILoading extends UIIDialogImpl {
         initLoadingUI();
     }
 
-    private void initLoadingUI() {
+    protected void initLoadingUI() {
         mBaseLoadingTipView.setText(mLoadingTipText);
     }
 
