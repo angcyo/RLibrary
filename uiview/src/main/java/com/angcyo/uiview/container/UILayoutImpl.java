@@ -634,8 +634,6 @@ public class UILayoutImpl extends SwipeBackLayout implements ILayout<UIParam>, U
      * @param param isQuiet 如果为true, 上层的视图,将取消生命周期 {@link IView#onViewShow()}  的回调
      */
     private void finishIViewInner(final ViewPattern viewPattern, final UIParam param) {
-        isFinishing = true;
-
         if (viewPattern == null || viewPattern.isAnimToEnd) {
             finishEnd();
             return;
@@ -686,6 +684,8 @@ public class UILayoutImpl extends SwipeBackLayout implements ILayout<UIParam>, U
 //            isFinishing = false;
 //            return;
 //        }
+
+        isFinishing = true;
 
         if (lastViewPattern != null && lastViewPattern.mView != null) {
             setIViewNeedLayout(lastViewPattern.mView, true);
