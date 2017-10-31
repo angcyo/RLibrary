@@ -1037,6 +1037,22 @@ public class UILayoutImpl extends SwipeBackLayout implements ILayout<UIParam>, U
         return mAttachViews.size();
     }
 
+    /**
+     * 判断界面是否还在
+     */
+    private boolean isIViewExist(final IView iView) {
+        boolean exist = false;
+        if (iView != null) {
+            for (ViewPattern viewPattern : mAttachViews) {
+                if (viewPattern.mIView == iView) {
+                    exist = true;
+                    break;
+                }
+            }
+        }
+        return exist;
+    }
+
     @Override
     public void replaceIView(final IView iView, final UIParam param) {
         if (iView == null) {
@@ -1055,7 +1071,8 @@ public class UILayoutImpl extends SwipeBackLayout implements ILayout<UIParam>, U
             return;
         }
 
-        if (mLastShowViewPattern != null && mLastShowViewPattern.mIView.isDialog() &&
+        if (mLastShowViewPattern != null &&
+                mLastShowViewPattern.mIView.isDialog() &&
                 (!iView.isDialog() || !iView.showOnDialog())) {
             L.i("等待对话框:" + mLastShowViewPattern.mIView.getClass().getSimpleName() + " 的关闭");
             postDelayed(new Runnable() {
@@ -1067,8 +1084,13 @@ public class UILayoutImpl extends SwipeBackLayout implements ILayout<UIParam>, U
             return;
         }
 
-        if (mLastShowViewPattern != null && !param.isReplaceIViewEmpty() && mLastShowViewPattern.mIView != param.replaceIView) {
-            L.i("replace目标不满足, 等待:" + mLastShowViewPattern.mIView.getClass().getSimpleName() + " 的关闭");
+        if (mLastShowViewPattern != null &&
+                !param.isReplaceIViewEmpty() &&
+                mLastShowViewPattern.mIView != param.replaceIView &&
+                isIViewExist(param.replaceIView)) {
+            L.i(param.replaceIView.getClass().getSimpleName() +
+                    " 请求替换 " + iView.getClass().getSimpleName() +
+                    " LastIs:" + mLastShowViewPattern.mIView.getClass().getSimpleName());
             postDelayed(new Runnable() {
                 @Override
                 public void run() {
