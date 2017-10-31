@@ -4,10 +4,13 @@ import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.app.DownloadManager;
 import android.content.ActivityNotFoundException;
+import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
+import android.content.pm.ActivityInfo;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
+import android.content.pm.ResolveInfo;
 import android.content.res.Configuration;
 import android.content.res.Resources;
 import android.graphics.Bitmap;
@@ -543,6 +546,35 @@ public class RUtils {
         Intent webIntent = new Intent(Intent.ACTION_VIEW, webPage);
         webIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
         context.startActivity(webIntent);
+    }
+
+    /**
+     * 通过Url打开指定app
+     */
+    public static void openAppFromUrl(Context context, String url) {
+        if (TextUtils.isEmpty(url)) {
+            return;
+        }
+
+        Intent intent = new Intent(Intent.ACTION_VIEW);
+        intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+        intent.addCategory(Intent.CATEGORY_BROWSABLE);
+        intent.setData(Uri.parse(url));
+
+        PackageManager packageManager = context.getPackageManager();
+        List<ResolveInfo> resolveInfos = packageManager.queryIntentActivities(intent, PackageManager.GET_RESOLVED_FILTER);
+        int size = resolveInfos.size();
+        if (size > 0) {
+            if (size == 1) {
+                ActivityInfo activityInfo = resolveInfos.get(0).activityInfo;
+                //T_.show("正在打开:" + activityInfo.applicationInfo.loadLabel(packageManager));
+
+                intent.setComponent(new ComponentName(activityInfo.packageName, activityInfo.name));
+                context.startActivity(intent);
+            } else {
+                context.startActivity(intent);
+            }
+        }
     }
 
     /**
