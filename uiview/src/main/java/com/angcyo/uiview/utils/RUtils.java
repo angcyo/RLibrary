@@ -1479,6 +1479,24 @@ public class RUtils {
         }
     }
 
+    /**
+     * 获取图片的宽高
+     */
+    public final static int[] getBitmapSize(String filePath) {
+        int[] size = new int[]{-1, -1};
+        try {
+            final BitmapFactory.Options options = new BitmapFactory.Options();
+            options.inJustDecodeBounds = true;
+            BitmapFactory.decodeFile(filePath, options);
+
+            size[0] = options.outWidth;
+            size[1] = options.outHeight;
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return size;
+    }
+
     public enum ImageType {
         JPEG, GIF, PNG, BMP, UNKNOWN
     }

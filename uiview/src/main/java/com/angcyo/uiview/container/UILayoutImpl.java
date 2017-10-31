@@ -1067,6 +1067,17 @@ public class UILayoutImpl extends SwipeBackLayout implements ILayout<UIParam>, U
             return;
         }
 
+        if (mLastShowViewPattern != null && !param.isReplaceIViewEmpty() && mLastShowViewPattern.mIView != param.replaceIView) {
+            L.i("replace目标不满足, 等待:" + mLastShowViewPattern.mIView.getClass().getSimpleName() + " 的关闭");
+            postDelayed(new Runnable() {
+                @Override
+                public void run() {
+                    replaceIView(iView, param);
+                }
+            }, DEFAULT_ANIM_TIME);
+            return;
+        }
+
         runnableCount++;
 
         final Runnable runnable = new Runnable() {
