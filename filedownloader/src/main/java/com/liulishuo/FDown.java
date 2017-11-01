@@ -4,6 +4,7 @@ import android.app.Application;
 import android.content.Context;
 import android.os.Environment;
 
+import com.angcyo.library.utils.L;
 import com.liulishuo.filedownloader.BaseDownloadTask;
 import com.liulishuo.filedownloader.FileDownloadList;
 import com.liulishuo.filedownloader.FileDownloadQueueSet;
@@ -65,6 +66,9 @@ public class FDown {
 //                .connectionCreator(new OkHttp3Connection.Creator()));
 
         FileDownloader.setupOnApplicationOnCreate(context).connectionCreator(new OkHttp3Connection.Creator());
+
+        FileDownloader.setGlobalPost2UIInterval(mCallbackProgressTimes);
+        FileDownloader.setGlobalHandleSubPackageSize(mCallbackProgressMinIntervalMillis);
 
         FileDownloadLog.NEED_LOG = debug;
 
@@ -230,6 +234,7 @@ public class FDown {
                 id = integer;
                 BaseDownloadTask.IRunningTask runningTask = FileDownloadList.getImpl().get(integer);
                 if (runningTask != null) {
+                    L.e("已经在下载中 " + integer + " 重置下载监听-> " + url);
                     runningTask.getOrigin().setListener(listener);
                 } else {
                     id = -1;
@@ -237,11 +242,14 @@ public class FDown {
             }
 
             if (id == -1) {
+                L.e("准备下载-> " + url);
                 id = FileDownloader.getImpl().create(url)
                         .setPath(fullPath, false)
-                        .setCallbackProgressTimes(mCallbackProgressTimes)/**每隔多少毫秒回调一次进度*/
-                        .setMinIntervalUpdateSpeed(mCallbackProgressMinIntervalMillis)/**每隔多少毫秒回调一次速度*/
+                        //.setCallbackProgressTimes(mCallbackProgressTimes)//设置整个下载过程中FileDownloadListener#progress最大回调次数
+                        .setCallbackProgressMinInterval(mCallbackProgressTimes)//设置每个FileDownloadListener#progress之间回调间隔(ms)
+                        .setMinIntervalUpdateSpeed(0)//设置下载中刷新下载速度的最小间隔
                         .setTag(tag)/**附加对象*/
+                        //.setAutoRetryTimes(0)//当请求或下载或写文件过程中存在错误时，自动重试次数，默认为0次
                         .setForceReDownload(isForceReDownload)/**如果文件存在是否重新下载*/
                         .addFinishListener(new BaseDownloadTask.FinishListener() {
                             @Override

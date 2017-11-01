@@ -116,6 +116,7 @@ public class RAddPhotoAdapter<T> extends RBaseAdapter<T> {
                 }
             });
         } else {
+            deleteView.setImageResource(getDeleteViewImageResource(position));
 
             imageView.setScaleType(ImageView.ScaleType.CENTER_CROP);
             deleteView.setVisibility(mDeleteModel ? View.VISIBLE : View.GONE);
@@ -214,8 +215,18 @@ public class RAddPhotoAdapter<T> extends RBaseAdapter<T> {
         return this;
     }
 
+    /**
+     * 添加按钮的资源
+     */
     protected int getAddViewImageResource(int position) {
         return R.drawable.base_add_border;
+    }
+
+    /**
+     * 删除按钮的资源
+     */
+    protected int getDeleteViewImageResource(int position) {
+        return R.drawable.base_delete;
     }
 
     public static abstract class ConfigCallback {

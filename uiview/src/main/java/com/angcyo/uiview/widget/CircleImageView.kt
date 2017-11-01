@@ -38,6 +38,9 @@ open class CircleImageView(context: Context, attributeSet: AttributeSet? = null)
     var lineWidth = 0f
     var lineColor: Int = Color.WHITE
 
+    /**是否绘制边框*/
+    var drawBorder = true
+
     /**4个角的圆角信息*/
     val radius: FloatArray
         get() {
@@ -107,7 +110,9 @@ open class CircleImageView(context: Context, attributeSet: AttributeSet? = null)
                     save = canvas.save()
                 }
                 super.onDraw(canvas)
-                canvas.drawPath(clipPath, paint)
+                if (drawBorder) {
+                    canvas.drawPath(clipPath, paint)
+                }
                 canvas.restoreToCount(save)
 
                 //canvas.drawRoundRect(roundRectF, roundRadius, roundRadius, paint)

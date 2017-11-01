@@ -5,7 +5,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
-    <com.angcyo.uiview.widget.RImageView
+    <com.angcyo.uiview.widget.GlideImageView
         android:id="@+id/base_image_view"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
