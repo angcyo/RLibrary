@@ -28,6 +28,9 @@ class RPlayer {
     var leftVolume: Float = 0.5f
     var rightVolume: Float = 0.5f
 
+    /**正在播放的url*/
+    private var playUrl = ""
+
     /**当前播放的状态*/
     private var playState: AtomicInteger = AtomicInteger(STATE_NORMAL)
 
@@ -40,9 +43,15 @@ class RPlayer {
         const val STATE_STOP = 3
         /**资源释放*/
         const val STATE_RELEASE = 4
+
+        const val STATE_PAUSE = 5
+
+        /**播放完成*/
+        const val STATE_COMPLETION = 6
         const val STATE_ERROR = -1
     }
 
+    @Synchronized
     fun init() {
         if (mediaPlay == null) {
             mediaPlay = MediaPlayer()
@@ -51,7 +60,22 @@ class RPlayer {
 
     /**@param url 可是有效的网络, 和有效的本地地址*/
     fun startPlay(url: String) {
-        stopPlay()
+        if (playUrl == url) {
+            if (playState.get() == STATE_PLAYING) {
+
+            } else {
+                mediaPlay?.let {
+                    setPlayState(STATE_PLAYING)
+                    it.start()
+                }
+            }
+            return
+        } else {
+            stopPlay()
+        }
+        if (mediaPlay == null) {
+            init()
+        }
         mediaPlay?.let {
             it.isLooping = isLoop
             it.setAudioStreamType(audioStreamType)
@@ -59,13 +83,14 @@ class RPlayer {
 
             it.setOnErrorListener { mp, what, extra ->
                 //L.e("call: startPlay -> $what $extra")
-                playState.set(STATE_ERROR)
+                setPlayState(STATE_ERROR)
                 onPlayListener?.onPlayError(what, extra)
 
-                false
+                it.reset()
+                true
             }
             it.setOnCompletionListener {
-                playState.set(STATE_NORMAL)
+                setPlayState(STATE_COMPLETION)
                 onPlayListener?.onPlayCompletion(it.duration)
                 it.reset()
             }
@@ -73,14 +98,15 @@ class RPlayer {
                 //L.e("call: startPlay -> onPrepared ${it.duration}")
                 onPlayListener?.onPreparedCompletion(it.duration)
                 if (playState.get() == STATE_NORMAL) {
-                    playState.set(STATE_PLAYING)
+                    setPlayState(STATE_PLAYING)
                     startProgress()
                     it.start()
                 }
             }
             it.setDataSource(url)
+            playUrl = url
 
-            playState.set(STATE_NORMAL)
+            setPlayState(STATE_NORMAL)
             it.prepareAsync()
         }
     }
@@ -95,12 +121,23 @@ class RPlayer {
             it.reset()
         }
 
-        playState.set(STATE_STOP)
+        setPlayState(STATE_STOP)
+    }
+
+    fun pausePlay() {
+
+        mediaPlay?.let {
+            if (isPlaying()) {
+                it.pause()
+            }
+        }
+
+        setPlayState(STATE_PAUSE)
     }
 
     /**释放资源, 下次需要重新创建*/
     fun release() {
-        playState.set(STATE_RELEASE)
+        setPlayState(STATE_RELEASE)
         stopPlay()
         mediaPlay?.let {
             it.release()
@@ -118,11 +155,25 @@ class RPlayer {
     }
 
     private fun isPlaying() = playState.get() == STATE_PLAYING
+    private fun isPause() = playState.get() == STATE_PAUSE
+
+    private fun setPlayState(state: Int) {
+        val oldState = playState.get()
+        playState.set(state)
+
+        when (state) {
+            STATE_STOP, STATE_RELEASE, STATE_ERROR, STATE_COMPLETION -> playUrl = ""
+        }
+
+        if (oldState != state) {
+            onPlayListener?.onPlayStateChange(playUrl, oldState, state)
+        }
+    }
 
     /*开始进度读取*/
     private fun startProgress() {
         Thread(Runnable {
-            while (isPlaying() &&
+            while ((isPlaying() || isPause()) &&
                     mediaPlay != null &&
                     onPlayListener != null) {
                 ThreadExecutor.instance().onMain {
@@ -152,5 +203,9 @@ class RPlayer {
 
         /**播放错误*/
         fun onPlayError(what: Int, extra: Int)
+
+        /**播放状态回调*/
+        fun onPlayStateChange(playUrl: String, from: Int, to: Int)
+
     }
 }
