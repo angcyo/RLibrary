@@ -8,6 +8,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.widget.FrameLayout
 import android.widget.HorizontalScrollView
+import com.angcyo.github.utilcode.utils.FileUtils
 import com.angcyo.library.utils.L
 import com.angcyo.uiview.R
 import com.angcyo.uiview.Root
@@ -22,6 +23,7 @@ import com.angcyo.uiview.recycler.widget.IShowState
 import com.angcyo.uiview.skin.SkinHelper
 import com.angcyo.uiview.utils.RUtils
 import com.angcyo.uiview.utils.ScreenUtil
+import com.angcyo.uiview.utils.file.FileUtil
 import com.angcyo.uiview.viewgroup.RLinearLayout
 import java.io.File
 import java.text.SimpleDateFormat
@@ -205,8 +207,7 @@ open class UIFileSelectorDialog : UIIDialogImpl {
                         if (bean.isDirectory) {
                             resetPath(bean.absolutePath)
                         } else if (bean.isFile) {
-                            selectorFilePath = bean.absolutePath
-                            mViewHolder.view(R.id.base_selector_button).isEnabled = true
+                            setSelectorFilePath(bean.absolutePath)
 
                             selectorItemView?.let {
                                 selectorItemView(it, false)
@@ -220,9 +221,15 @@ open class UIFileSelectorDialog : UIIDialogImpl {
                     if (L.LOG_DEBUG) {
                         if (bean.isFile) {
                             itemView.setOnLongClickListener {
+                                val file = File(bean.absolutePath)
                                 UIBottomItemDialog.build()
                                         .addItem("打开") {
-                                            RUtils.openFile(mActivity, File(bean.absolutePath))
+                                            RUtils.openFile(mActivity, file)
+                                        }
+                                        .addItem("删除") {
+                                            FileUtils.deleteFile(file)
+                                            resetPath(file.path)
+                                            setSelectorFilePath("")
                                         }
                                         .addItem("分享") {
                                             RUtils.shareFile(mActivity, bean.absolutePath)
@@ -236,6 +243,11 @@ open class UIFileSelectorDialog : UIIDialogImpl {
             }
             resetPath(targetPath)
         }
+    }
+
+    private fun setSelectorFilePath(path: String) {
+        selectorFilePath = path
+        mViewHolder.view(R.id.base_selector_button).isEnabled = File(selectorFilePath).exists()
     }
 
     private fun resetPath(path: String) {

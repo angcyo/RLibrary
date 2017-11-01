@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+    tools:background="@color/base_chat_bg_color">
+
+    <com.angcyo.uiview.widget.RTextView
+        android:id="@+id/base_input_tip_view"
+        style="@style/BaseDarkTextStyle"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/base_xhdpi"
+        android:padding="@dimen/base_xhdpi"
+        android:visibility="gone"
+        tools:text="测试文本"
+        tools:visibility="visible"/>
+
+    <com.angcyo.uiview.widget.ExEditText
+        android:id="@+id/base_edit_text_view"
+        style="@style/BaseMainTextStyle"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@color/base_white"
+        android:imeOptions="actionDone"
+        android:minHeight="@dimen/base_item_size"
+        android:padding="@dimen/base_xhdpi"
+        android:textColor="@color/base_text_color"
+        android:textColorHint="@color/base_text_color_dark"
+        tools:layout_height="300dp"/>
+
+    <com.angcyo.uiview.widget.viewpager.TextIndicator
+        android:id="@+id/base_single_text_indicator_view"
+        style="@style/BaseDarkTextStyle"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="end"
+        android:layout_marginEnd="@dimen/base_xhdpi"
+        android:layout_marginTop="@dimen/base_ldpi"
+        android:textSize="@dimen/default_text_little_size"
+        android:visibility="invisible"
+        tools:text="100/100"
+        tools:visibility="visible"/>
+
+</LinearLayout>
