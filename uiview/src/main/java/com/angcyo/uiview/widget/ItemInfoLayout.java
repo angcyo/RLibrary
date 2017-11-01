@@ -132,7 +132,7 @@ public class ItemInfoLayout extends RRelativeLayout {
         super.onMeasure(widthMeasureSpec, heightMeasureSpec);
         if (heightMode == MeasureSpec.AT_MOST || heightMode == MeasureSpec.UNSPECIFIED) {
             setMeasuredDimension(getMeasuredWidth(),
-                    getResources().getDimensionPixelOffset(R.dimen.default_button_height));
+                    getResources().getDimensionPixelOffset(R.dimen.default_button_height) + getPaddingTop() + getPaddingBottom());
         }
     }
 
