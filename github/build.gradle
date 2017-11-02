@@ -11,6 +11,6 @@ android {
 }
 
 dependencies {
-    compile fileTree(include: ['*.jar'], dir: 'libs')
-    provided project(':RLibrary:library')
+    //api fileTree(include: ['*.jar'], dir: 'libs')
+    api project(':RLibrary:library')
 }

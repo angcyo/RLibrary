@@ -170,6 +170,8 @@ public class ImagePageAdapter extends PagerAdapter {
                 File thumbFile = new File(thumbPath);
                 if (thumbFile.exists()) {
                     Glide.with(mActivity).load(thumbFile).apply(RequestOptions.noAnimation()).into(thumbImageView);
+                } else {
+                    Glide.with(mActivity).load(thumbPath).apply(RequestOptions.noAnimation()).into(thumbImageView);
                 }
             }
         }
@@ -329,6 +331,10 @@ public class ImagePageAdapter extends PagerAdapter {
                             }
                         });
                     }
+                } else {
+                    imageView.setVisibility(View.GONE);
+                    progressView.setVisibility(View.GONE);
+                    progressView.stop();
                 }
             }
 

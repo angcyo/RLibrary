@@ -42,9 +42,11 @@ android {
 //    }
 }
 
+
+//https://developer.android.google.cn/studio/build/gradle-plugin-3-0-0-migration.html#new_configurations
 dependencies {
-    compile project(':RLibrary:library')
-    compile project(':RLibrary:rcode')
-    compile project(':RLibrary:github')
-    compile "org.jetbrains.kotlin:kotlin-stdlib-jre7:$kotlin_version"
+    api project(':RLibrary:library')
+    api project(':RLibrary:rcode')
+    api project(':RLibrary:github')
+    compileOnly "org.jetbrains.kotlin:kotlin-stdlib-jre7:$kotlin_version"
 }
