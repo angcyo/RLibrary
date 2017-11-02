@@ -44,6 +44,18 @@ public class UI {
         }
     }
 
+    public static void setViewMarginTop(View view, int top) {
+        ViewGroup.LayoutParams layoutParams = view.getLayoutParams();
+        if (layoutParams instanceof ViewGroup.MarginLayoutParams) {
+            ((ViewGroup.MarginLayoutParams) layoutParams).topMargin = top;
+            view.setLayoutParams(layoutParams);
+
+            if (view.getParent() != null) {
+                view.getParent().requestLayout();
+            }
+        }
+    }
+
     public static void setViewWidth(View view, int width) {
         ViewGroup.LayoutParams layoutParams = view.getLayoutParams();
         layoutParams.width = width;

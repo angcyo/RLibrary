@@ -85,7 +85,7 @@ open class CircleImageView(context: Context, attributeSet: AttributeSet? = null)
             NORMAL -> {
                 super.onDraw(canvas)
             }
-            ROUND, CIRCLE -> {
+            ROUND, CIRCLE, ROUND_RECT -> {
                 val size = Math.min(measuredHeight - paddingTop - paddingBottom,
                         measuredWidth - paddingLeft - paddingRight)
                 val cx = (paddingLeft + size / 2).toFloat()
@@ -97,7 +97,12 @@ open class CircleImageView(context: Context, attributeSet: AttributeSet? = null)
                 if (showType == CIRCLE) {
                     clipPath.addCircle(cx, cy, cr, Path.Direction.CW)
                 } else {
-                    roundRectF.set(cx - cr, cy - cr, cx + cr, cy + cr)
+                    if (showType == ROUND_RECT) {
+                        roundRectF.set(paddingLeft.toFloat(), paddingTop.toFloat(),
+                                (measuredWidth - paddingRight).toFloat(), (measuredHeight - paddingBottom).toFloat())
+                    } else {
+                        roundRectF.set(cx - cr, cy - cr, cx + cr, cy + cr)
+                    }
                     clipPath.addRoundRect(roundRectF, radius, Path.Direction.CW)
                 }
 
@@ -130,6 +135,7 @@ open class CircleImageView(context: Context, attributeSet: AttributeSet? = null)
     companion object {
         const val NORMAL = 0
         const val CIRCLE = 1
-        const val ROUND = 2
+        const val ROUND = 2 //正方形的圆角
+        const val ROUND_RECT = 3 //长方形的圆角
     }
 }

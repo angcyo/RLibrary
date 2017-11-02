@@ -8,6 +8,8 @@
             <enum name="CIRCLE" value="1"/>
             <!--圆角-->
             <enum name="ROUND" value="2"/>
+            <!--长方形圆角-->
+            <enum name="ROUND_RECT" value="3"/>
         </attr>
         <!--ROUND 状态时, 圆角的大小-->
         <attr name="r_round_radius" format="dimension"/>

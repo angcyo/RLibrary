@@ -91,6 +91,14 @@ public class ImagePickerHelper {
         return list;
     }
 
+    public static ArrayList<String> getImages(List<ImageItem> images) {
+        ArrayList<String> list = new ArrayList<>();
+        for (ImageItem item : images) {
+            list.add(item.path);
+        }
+        return list;
+    }
+
     /**
      * 获取items, 包括视频类型
      */

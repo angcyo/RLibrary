@@ -14,7 +14,6 @@ import android.text.format.Formatter;
 import android.util.Log;
 
 import com.angcyo.library.utils.L;
-import com.angcyo.uiview.github.luban.OnCompressListener;
 import com.angcyo.uiview.utils.RUtils;
 import com.angcyo.uiview.utils.file.FileUtil;
 
@@ -27,6 +26,7 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.util.ArrayList;
+import java.util.List;
 import java.util.UUID;
 
 import rx.Observable;
@@ -796,6 +796,14 @@ public class Luban {
 
         public ImageItem(String url) {
             this.url = url;
+        }
+
+        public static ArrayList<String> getImages(List<ImageItem> images) {
+            ArrayList<String> list = new ArrayList<>();
+            for (ImageItem item : images) {
+                list.add(item.path);
+            }
+            return list;
         }
 
         public static ImageItem get(String string) {

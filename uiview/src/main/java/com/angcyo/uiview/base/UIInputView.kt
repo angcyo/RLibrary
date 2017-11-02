@@ -76,6 +76,8 @@ abstract class UIInputView : UIItemUIView<SingleItem>() {
 
     @CallSuper
     open protected fun initItemView(holder: RBaseViewHolder) {
+        holder.itemView.setPadding(0, (10 * density()).toInt(), 0, 0)
+
         tipView = holder.v(R.id.base_input_tip_view)
         editView = holder.v(R.id.base_edit_text_view)
         indicatorView = holder.v(R.id.base_single_text_indicator_view)

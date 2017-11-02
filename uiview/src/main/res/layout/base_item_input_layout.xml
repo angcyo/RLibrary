@@ -12,7 +12,6 @@
         style="@style/BaseDarkTextStyle"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="@dimen/base_xhdpi"
         android:padding="@dimen/base_xhdpi"
         android:visibility="gone"
         tools:text="测试文本"
