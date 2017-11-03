@@ -1991,8 +1991,21 @@ public class UILayoutImpl extends SwipeBackLayout implements ILayout<UIParam>, U
                     childAt.measure(exactlyMeasure(widthSize), exactlyMeasure(heightSize));
                     L.d("测量: " + viewPatternByView.mIView.getClass().getSimpleName());
                 } else {
-                    if (isSwipeDrag && i == count - 2) {
-                        childAt.setVisibility(VISIBLE);
+                    if (i == count - 2) {
+                        View lastView = getChildAt(i + 1);
+                        ViewPattern lastViewPattern = findViewPatternByView(lastView);
+
+                        if (isSwipeDrag) {
+                            childAt.setVisibility(VISIBLE);
+                        } else if (lastViewPattern != null &&
+                                lastViewPattern.mIView != null &&
+                                (lastViewPattern.mIView.needTransitionExitAnim() ||
+                                        lastViewPattern.mIView.needTransitionStartAnim())
+                                ) {
+                            childAt.setVisibility(VISIBLE);
+                        } else {
+                            childAt.setVisibility(GONE);
+                        }
                     } else {
                         childAt.setVisibility(GONE);
                     }

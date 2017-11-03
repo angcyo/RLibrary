@@ -100,7 +100,7 @@ public class DragPhotoView extends PhotoView {
         if (drawable != null) {
             int width = drawable.getIntrinsicWidth();
             int height = drawable.getIntrinsicHeight();
-            if (width > 2000 || height > 2000) {
+            if (width > 2600 || height > 2600) {
                 isLargeBitmap = true;
                 float maxScale = 8f;
 
