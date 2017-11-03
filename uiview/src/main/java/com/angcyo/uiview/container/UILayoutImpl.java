@@ -1995,12 +1995,13 @@ public class UILayoutImpl extends SwipeBackLayout implements ILayout<UIParam>, U
                         View lastView = getChildAt(i + 1);
                         ViewPattern lastViewPattern = findViewPatternByView(lastView);
 
-                        if (isSwipeDrag) {
+                        if (isSwipeDrag || isStarting || isFinishing) {
                             childAt.setVisibility(VISIBLE);
                         } else if (lastViewPattern != null &&
                                 lastViewPattern.mIView != null &&
                                 (lastViewPattern.mIView.needTransitionExitAnim() ||
-                                        lastViewPattern.mIView.needTransitionStartAnim())
+                                        lastViewPattern.mIView.needTransitionStartAnim() ||
+                                        lastViewPattern.interrupt)
                                 ) {
                             childAt.setVisibility(VISIBLE);
                         } else {
