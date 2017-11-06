@@ -350,7 +350,7 @@ public abstract class SwipeBackLayout extends TouchLayout {
     }
 
     /**
-     * 需要返回了
+     * 滚动到,需要关闭界面
      */
     protected void onRequestClose() {
 
@@ -358,7 +358,7 @@ public abstract class SwipeBackLayout extends TouchLayout {
 
 
     /**
-     * 需要打开
+     * 滚动到, 默认状态
      */
     protected void onRequestOpened() {
 

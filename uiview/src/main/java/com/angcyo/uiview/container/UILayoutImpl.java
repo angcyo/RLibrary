@@ -1150,6 +1150,7 @@ public class UILayoutImpl extends SwipeBackLayout implements ILayout<UIParam>, U
                     topViewStart(newViewPattern, param);
                 }
 
+                //需要替换的IView和最后一个界面的IView相等. 如果 isReplaceIViewEmpty, 那么强制替换最后一个IView
                 if (param.isReplaceIViewEmpty() || (oldViewPattern != null && oldViewPattern.mIView == param.replaceIView)) {
                     final Runnable endRunnable = new Runnable() {
                         @Override
@@ -1258,6 +1259,7 @@ public class UILayoutImpl extends SwipeBackLayout implements ILayout<UIParam>, U
                 viewShow(topViewPattern, param.getBundle());
                 topViewPattern.isAnimToStart = false;
                 isStarting = false;
+                onStartIViewEnd(topViewPattern);
                 printLog();
             }
         };
@@ -1797,6 +1799,8 @@ public class UILayoutImpl extends SwipeBackLayout implements ILayout<UIParam>, U
 
                     ensureLastViewPattern();
 
+                    onFinishIViewEnd(viewPattern);
+
                     L.e("call: removeViewPattern()-> 关闭界面结束:" + viewPattern.mIView.getClass().getSimpleName());
                 } catch (Exception e) {
                     e.printStackTrace();
@@ -1929,73 +1933,33 @@ public class UILayoutImpl extends SwipeBackLayout implements ILayout<UIParam>, U
             for (int i = 0; i < count; i++) {
                 View childAt = getChildAt(i);
 
-                ViewPattern viewPatternByView = findViewPatternByView(childAt);
-                int iViewSize = getIViewSize();
+                boolean[] childState = checkChildState(i);
 
-                if (viewPatternByView == null) {
+                if (childState == null) {
                     continue;
                 }
+                ViewPattern viewPatternByView = findViewPatternByView(childAt);
 
-                int indexFromIViews = getIndexFromIViews(viewPatternByView);
+                boolean needMeasure = childState[0];//是否需要测量
+                boolean needVisible = childState[1];//是否需要显示
 
-                //-----------------只有部分界面需要测量, 优化性能---------
-                boolean needMeasure = false;
-
-//                if (i == count - 1) {
-//                    needMeasure = true;
-//                }
-
-                if ("true".equalsIgnoreCase(String.valueOf(childAt.getTag(R.id.tag_need_layout)))) {
-                    //如果还没有layout过
-                    needMeasure = true;
-                } else if (viewPatternByView == mLastShowViewPattern) {
-                    //最后一个页面
-                    needMeasure = true;
-                } else if (i == count - 1 /*|| i == count - 2*/) {
-                    //倒数第一个, 第二个view
-                    needMeasure = true;
-                } else if (indexFromIViews >= 0 && (indexFromIViews == iViewSize - 1 /*|| indexFromIViews == iViewSize - 2*/)) {
-                    //倒数第一个, 第二个iview
-                    needMeasure = true;
-                } else {
-                    if (viewPatternByView.mIView.needForceMeasure() ||
-                            viewPatternByView.mIView.haveParentILayout() /*||
-                        viewPatternByView.mIView.haveChildILayout()*/) {
-                        //需要强制测量
-                        needMeasure = true;
-                    } else {
-                        IView iView = viewPatternByView.mIView;
-                        for (int j = mAttachViews.size() - 1; j >= 0; j--) {
-                            ViewPattern viewPattern = mAttachViews.get(j);
-                            if (viewPattern.mIView.isDialog() ||
-                                    viewPattern.mIView.showOnDialog() ||
-                                    viewPattern.isAnimToEnd) {
-                                //界面上面全是对话框
-                                needMeasure = true;
-                                if (viewPattern.mIView == iView) {
-                                    break;
-                                }
-                            } else if (viewPattern.mIView == iView) {
-                                break;
-                            } else {
-                                needMeasure = false;
-                                break;
-                            }
-                        }
-                    }
-                }
+                boolean isTransition = isSwipeDrag || isStarting || isFinishing;
 
                 //needMeasure = true;
                 if (needMeasure) {
-                    childAt.setVisibility(VISIBLE);
+                    if (needVisible) {
+                        childAt.setVisibility(VISIBLE);
+                    } else {
+                        childAt.setVisibility(INVISIBLE);
+                    }
                     childAt.measure(exactlyMeasure(widthSize), exactlyMeasure(heightSize));
-                    L.d("测量: " + viewPatternByView.mIView.getClass().getSimpleName());
+                    L.d("测量 needVisible " + needVisible + ": " + viewPatternByView.mIView.getClass().getSimpleName());
                 } else {
                     if (i == count - 2) {
                         View lastView = getChildAt(i + 1);
                         ViewPattern lastViewPattern = findViewPatternByView(lastView);
 
-                        if (isSwipeDrag || isStarting || isFinishing) {
+                        if (isTransition) {
                             childAt.setVisibility(VISIBLE);
                         } else if (lastViewPattern != null &&
                                 lastViewPattern.mIView != null &&
@@ -2112,6 +2076,105 @@ public class UILayoutImpl extends SwipeBackLayout implements ILayout<UIParam>, U
             }
         }
         return result;
+    }
+
+    /**
+     * child的测量和显示状态
+     */
+    private boolean[] checkChildState(int childIndex) {
+        View childAt = getChildAt(childIndex);
+        int childCount = getChildCount();
+
+        ViewPattern viewPatternByView = findViewPatternByView(childAt);
+        int iViewSize = getIViewSize();
+
+        if (viewPatternByView == null) {
+            return null;
+        }
+
+        int indexFromIViews = getIndexFromIViews(viewPatternByView);
+
+        //-----------------只有部分界面需要测量, 优化性能---------
+        boolean needMeasure = false;//是否需要测量
+        boolean needVisible = false;//是否需要显示
+
+//                if (i == count - 1) {
+//                    //needMeasure = true;
+//                    needVisible = true;
+//                }
+
+        if ("true".equalsIgnoreCase(String.valueOf(childAt.getTag(R.id.tag_need_layout)))) {
+            //如果还没有layout过
+            needMeasure = true;
+            needVisible = true;
+        } else if (viewPatternByView == mLastShowViewPattern) {
+            //最后一个页面
+            needMeasure = true;
+            needVisible = true;
+        } else if (childIndex == childCount - 1 /*|| i == count - 2*/) {
+            //倒数第一个, 第二个view
+            needMeasure = true;
+            needVisible = true;
+        } else if (indexFromIViews >= 0 && (indexFromIViews == iViewSize - 1 /*|| indexFromIViews == iViewSize - 2*/)) {
+            //倒数第一个, 第二个iview
+            needMeasure = true;
+            needVisible = true;
+        } else {
+            if (viewPatternByView.mIView.needForceMeasure() ||
+                    viewPatternByView.mIView.haveParentILayout() /*||
+                        viewPatternByView.mIView.haveChildILayout()*/) {
+                //需要强制测量
+                needMeasure = true;
+            } else {
+                IView iView = viewPatternByView.mIView;
+                for (int j = mAttachViews.size() - 1; j >= 0; j--) {
+                    ViewPattern viewPattern = mAttachViews.get(j);
+                    if (viewPattern.mIView.isDialog() ||
+                            viewPattern.mIView.showOnDialog() ||
+                            viewPattern.isAnimToEnd) {
+                        //界面上面全是对话框
+                        needMeasure = true;
+                        needVisible = true;
+                        if (viewPattern.mIView == iView) {
+                            break;
+                        }
+                    } else if (viewPattern.mIView == iView) {
+                        break;
+                    } else {
+                        needMeasure = false;
+                        break;
+                    }
+                }
+            }
+        }
+
+        return new boolean[]{needMeasure, needVisible};
+    }
+
+    /**
+     * 重新设置View的显示状态
+     */
+    private void resetChildState() {
+        for (int i = 0; i < getChildCount(); i++) {
+            boolean[] childState = checkChildState(i);
+
+            if (childState == null) {
+                continue;
+            }
+
+            View childAt = getChildAt(i);
+
+            boolean needMeasure = childState[0];//是否需要测量
+            boolean needVisible = childState[1];//是否需要显示
+
+            if (needVisible) {
+                childAt.setVisibility(View.VISIBLE);
+            } else {
+                if (childAt.getVisibility() == View.VISIBLE) {
+                    childAt.setVisibility(View.GONE);
+                }
+            }
+        }
     }
 
     private boolean lastIsDialog() {
@@ -2486,6 +2549,7 @@ public class UILayoutImpl extends SwipeBackLayout implements ILayout<UIParam>, U
         isSwipeDrag = false;
         needDragClose = false;
         translation(0);
+        resetChildState();
 //        final ViewPattern viewPattern = findLastShowViewPattern(mLastShowViewPattern);
 //        if (viewPattern != null) {
 //            viewPattern.mView.setVisibility(GONE);
@@ -2520,7 +2584,9 @@ public class UILayoutImpl extends SwipeBackLayout implements ILayout<UIParam>, U
         final ViewPattern viewPattern = findLastShowViewPattern(mLastShowViewPattern);
         if (viewPattern != null && !viewPattern.mIView.isDialog()) {
             mTranslationOffsetX = getMeasuredWidth() * 0.3f;
-            viewPattern.mView.setVisibility(VISIBLE);
+            if (viewPattern.mView.getVisibility() == View.GONE) {
+                viewPattern.mView.setVisibility(VISIBLE);
+            }
             viewPattern.mView.setTranslationX(-mTranslationOffsetX);
         }
         showChildLayoutLastView();
@@ -2767,6 +2833,20 @@ public class UILayoutImpl extends SwipeBackLayout implements ILayout<UIParam>, U
         if (isInDebugLayout && isVertical(orientation)) {
             scrollBy(0, (int) distance);
         }
+    }
+
+    /**
+     * 启动一个IView完成后, ReplaceIView 也会执行此方法
+     */
+    protected void onStartIViewEnd(ViewPattern viewPattern) {
+        resetChildState();
+    }
+
+    /**
+     * 当结束一个界面, Remove后, 执行此方法
+     */
+    protected void onFinishIViewEnd(ViewPattern viewPattern) {
+
     }
 
     /**
