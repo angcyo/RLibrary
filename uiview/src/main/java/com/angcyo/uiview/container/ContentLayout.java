@@ -11,7 +11,7 @@ import com.angcyo.uiview.utils.ScreenUtil;
 /**
  * Copyright (C) 2016,深圳市红鸟网络科技股份有限公司 All rights reserved.
  * 项目名称：
- * 类的描述：
+ * 类的描述：UIBaseView 内容布局的根布局
  * 创建人员：Robi
  * 创建时间：2017/07/11 11:46
  * 修改人员：Robi

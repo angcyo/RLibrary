@@ -1026,6 +1026,20 @@ public class RefreshLayout extends ViewGroup {
         mTipView.postDelayed(hideTipRunnable, 1000);
     }
 
+
+    @Override
+    protected void onDetachedFromWindow() {
+        super.onDetachedFromWindow();
+        mRefreshListeners.clear();
+        mBottomViewMoveListeners.clear();
+        mTopViewMoveListeners.clear();
+
+        mTipView = null;
+        mTargetView = null;
+        mBottomView = null;
+        mTopView = null;
+    }
+
     /**
      * 支持的刷新方向
      */
@@ -1110,6 +1124,7 @@ public class RefreshLayout extends ViewGroup {
             mBitmap.recycle();
             mBitmap = null;
             mDrawable = null;
+            mObjectAnimator = null;
         }
 
         @Override
@@ -1326,4 +1341,5 @@ public class RefreshLayout extends ViewGroup {
 
         }
     }
+
 }

@@ -256,6 +256,7 @@ public class UIViewPager extends ViewPager implements Runnable, StickLayout.CanS
         if (mParentUIView != null) {
             mParentUIView.setChildILayout(null);
         }
+        mParentUIView = null;
     }
 
     public void setSlowTouch(boolean slowTouch) {

@@ -23,7 +23,7 @@ import java.util.ArrayList;
 /**
  * Copyright (C) 2016,深圳市红鸟网络科技股份有限公司 All rights reserved.
  * 项目名称：
- * 类的描述：针对键盘 弹出隐藏的问题, 进行修复
+ * 类的描述：针对键盘 弹出隐藏的问题, 进行修复(UIBaseView 的根布局)
  * 创建人员：Robi
  * 创建时间：2016/12/02 11:30
  * 修改人员：Robi
@@ -429,6 +429,17 @@ public class SoftRelativeLayout extends TouchBackLayout implements ILifecycle {
 
     public void setOnInterceptTouchListener(OnInterceptTouchListener onInterceptTouchListener) {
         mOnInterceptTouchListener = onInterceptTouchListener;
+    }
+
+    @Override
+    protected void onDetachedFromWindow() {
+        super.onDetachedFromWindow();
+        if (mOnWindowInsetsListeners != null) {
+            mOnWindowInsetsListeners.clear();
+            mOnWindowInsetsListeners = null;
+        }
+        mOnInterceptTouchListener = null;
+        mClipHelper = null;
     }
 
     public interface OnInterceptTouchListener {

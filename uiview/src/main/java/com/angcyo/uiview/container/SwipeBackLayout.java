@@ -35,7 +35,7 @@ public abstract class SwipeBackLayout extends TouchLayout {
     /**
      * 正在滑动的view
      */
-    private View mTargetView;
+    protected View mTargetView;
     /**
      * 阴影的绘制区域
      */

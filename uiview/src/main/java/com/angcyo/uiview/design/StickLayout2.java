@@ -513,4 +513,15 @@ public class StickLayout2 extends RelativeLayout {
     public void setOnScrollListener(StickLayout.OnScrollListener onScrollListener) {
         mOnScrollListener = onScrollListener;
     }
+
+    @Override
+    protected void onDetachedFromWindow() {
+        super.onDetachedFromWindow();
+        if (mScrollTarget != null && mScrollTarget.getRecyclerView() instanceof RRecyclerView) {
+            ((RRecyclerView) mScrollTarget.getRecyclerView()).setOnFlingEndListener(null);
+        }
+        mOnScrollListener = null;
+        mOnFlingEndListener = null;
+        mOnScrollListener = null;
+    }
 }

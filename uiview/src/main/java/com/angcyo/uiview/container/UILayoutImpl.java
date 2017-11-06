@@ -355,8 +355,7 @@ public class UILayoutImpl extends SwipeBackLayout implements ILayout<UIParam>, U
     }
 
     @Override
-    protected void
-    onDetachedFromWindow() {
+    protected void onDetachedFromWindow() {
         super.onDetachedFromWindow();
         mLayoutActivity.getApplication().unregisterActivityLifecycleCallbacks(mCallbacks);
         isAttachedToWindow = false;
@@ -1782,6 +1781,10 @@ public class UILayoutImpl extends SwipeBackLayout implements ILayout<UIParam>, U
                     viewPattern.interrupt = false;
                     mAttachViews.remove(viewPattern);
 
+                    if (mTargetView == view) {
+                        mTargetView = null;
+                    }
+
                     try {
                         removeView(view);
                     } catch (Exception e) {
@@ -1926,6 +1929,7 @@ public class UILayoutImpl extends SwipeBackLayout implements ILayout<UIParam>, U
 
             for (int i = 0; i < count; i++) {
                 View childAt = getChildAt(i);
+                childAt.setVisibility(VISIBLE);
                 childAt.measure(exactlyMeasure(wSize), exactlyMeasure(hSize));
             }
         } else {
@@ -2726,10 +2730,15 @@ public class UILayoutImpl extends SwipeBackLayout implements ILayout<UIParam>, U
             requestLayout();
             for (int i = 0; i < getChildCount(); i++) {
                 View childAt = getChildAt(i);
-                childAt.setVisibility(VISIBLE);
                 //childAt.startAnimation(AnimationUtils.loadAnimation(mLayoutActivity, R.anim.base_scale_to_min));
                 AnimUtil.scaleBounceView(childAt, getDebugWidthSize() * 1f / getMeasuredWidth(), getDebugHeightSize() * 1f / getMeasuredHeight());
             }
+            postDelayed(new Runnable() {
+                @Override
+                public void run() {
+                    scrollTo(0, Integer.MAX_VALUE);//滚动到最后一个IView
+                }
+            }, 16);
         }
     }
 
@@ -2737,7 +2746,7 @@ public class UILayoutImpl extends SwipeBackLayout implements ILayout<UIParam>, U
         if (isInDebugLayout) {
             isInDebugLayout = false;
             getOverScroller().abortAnimation();
-            scrollTo(0, 0);
+            scrollTo(0, 0);//恢复滚动坐标
             requestLayout();
             for (int i = 0; i < getChildCount(); i++) {
                 View childAt = getChildAt(i);

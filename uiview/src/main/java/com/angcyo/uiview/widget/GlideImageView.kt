@@ -508,5 +508,19 @@ open class GlideImageView(context: Context, attributeSet: AttributeSet? = null) 
             canvas?.drawText(sizeText, 0f, startTop, debugPaint)
         }
     }
+
+    override fun onDetachedFromWindow() {
+        super.onDetachedFromWindow()
+        Glide.get(context).clearMemory()
+        try {
+            if (drawable is BitmapDrawable) {
+                //(drawable as BitmapDrawable).bitmap.recycle()
+            } else if (drawable is pl.droidsonroids.gif.GifDrawable) {
+                (drawable as pl.droidsonroids.gif.GifDrawable).recycle()
+            }
+        } catch (e: Exception) {
+            e.printStackTrace()
+        }
+    }
 }
 
