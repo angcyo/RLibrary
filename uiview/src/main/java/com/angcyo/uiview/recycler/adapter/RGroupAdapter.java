@@ -187,6 +187,31 @@ public class RGroupAdapter<H, G extends RGroupData, F> extends RExBaseAdapter<H,
     }
 
     @Override
+    protected int getItemLayoutId(int viewType) {
+
+        //这种做法, 当数据Item特别多的时候, 会影响性能
+        for (int j = 0; j < getDataCount(); j++) {
+            RGroupData groupData = getGroupDataFromPosition(j);
+            if (groupData == null) {
+                continue;
+            }
+
+            int groupIndex = getGroupIndex(j);
+            if (groupIndex >= 0 && groupData.getGroupItemType(groupIndex) == viewType) {
+                //有分组
+                return groupData.getGroupLayoutId(groupIndex);
+            }
+
+            int dataIndex = getDataIndex(j);
+            if (dataIndex >= 0 && groupData.getDataItemType(dataIndex) == viewType) {
+                return groupData.getDataLayoutId(dataIndex);
+            }
+        }
+
+        return super.getItemLayoutId(viewType);
+    }
+
+    @Override
     protected int getDataItemType(int posInData) {
         int groupIndex = getGroupIndex(posInData);
         if (groupIndex >= 0) {

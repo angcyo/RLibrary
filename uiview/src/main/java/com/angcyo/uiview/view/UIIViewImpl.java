@@ -724,7 +724,7 @@ public abstract class UIIViewImpl implements IView {
      */
     //星期三 2017-3-1
     public void fullscreen(boolean enable) {
-        fullscreen(enable, false);
+        fullscreen(enable, true);
     }
 
     /**

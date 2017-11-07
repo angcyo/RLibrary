@@ -48,7 +48,7 @@ public class RGroupData<T> {
     }
 
     /**
-     * 分组的数量, 返回0表示没有分组信息
+     * 分组头部的数量, 返回0表示没有头部信息
      */
     public int getGroupCount() {
         return 1;
@@ -121,12 +121,16 @@ public class RGroupData<T> {
     }
 
 
-//    /**
-//     * @param indexInGroup 当有多个分组时, index表示从0开始的索引
-//     */
-//    public abstract int getGroupLayoutId(int indexInGroup);
-//
-//    public abstract int getDataLayoutId(int indexInData);
+    /**
+     * @param indexInGroup 当有多个分组时, index表示从0开始的索引
+     */
+    public int getGroupLayoutId(int indexInGroup) {
+        return -1;
+    }
+
+    public int getDataLayoutId(int indexInData) {
+        return -1;
+    }
 
     public int getGroupItemType(int indexInGroup) {
         return TYPE_GROUP_HEAD;

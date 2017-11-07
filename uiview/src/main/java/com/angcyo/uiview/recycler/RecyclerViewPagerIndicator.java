@@ -14,7 +14,7 @@ import com.angcyo.uiview.widget.viewpager.RViewPager;
 /**
  * Copyright (C) 2016,深圳市红鸟网络科技股份有限公司 All rights reserved.
  * 项目名称：
- * 类的描述：
+ * 类的描述：简单的圈圈指示器
  * 创建人员：Robi
  * 创建时间：2017/01/03 14:31
  * 修改人员：Robi

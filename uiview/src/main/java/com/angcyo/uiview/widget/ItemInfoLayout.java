@@ -5,6 +5,7 @@ import android.content.res.TypedArray;
 import android.graphics.Color;
 import android.graphics.drawable.Drawable;
 import android.support.annotation.DrawableRes;
+import android.support.v4.content.ContextCompat;
 import android.text.TextUtils;
 import android.util.AttributeSet;
 import android.util.TypedValue;
@@ -38,6 +39,7 @@ public class ItemInfoLayout extends RRelativeLayout {
     public static int DEFAULT_DARK_TEXT_COLOR = Color.parseColor("#999999");
     RTextView mTextView, mDarkTextView;
     ImageView mImageView;//扩展字段,用来显示一张网络图片 星期二 2017-2-21
+    View mLineView;//用来显示底部分割线
     /**
      * 主要的文本信息属性
      */
@@ -70,6 +72,7 @@ public class ItemInfoLayout extends RRelativeLayout {
      * 是否是红点模式
      */
     private boolean isRedDotMode = false;
+    private boolean showLine = false;
 
     public ItemInfoLayout(Context context) {
         this(context, null);
@@ -146,6 +149,9 @@ public class ItemInfoLayout extends RRelativeLayout {
         mTextView = new RTextView(getContext());
         mDarkTextView = new RTextView(getContext());
         mImageView = new ImageView(getContext());
+        mLineView = new View(getContext());
+        mLineView.setVisibility(showLine ? View.VISIBLE : View.GONE);
+        mLineView.setBackgroundColor(ContextCompat.getColor(getContext(), R.color.base_chat_bg_color));
 
         mTextView.setTag(itemTag);
         mTextView.setText(itemText);
@@ -191,9 +197,13 @@ public class ItemInfoLayout extends RRelativeLayout {
         }
         //mImageView.setBackgroundColor(Color.RED);
 
+        LayoutParams lineParam = new LayoutParams(-1, getResources().getDimensionPixelOffset(R.dimen.base_line));
+        lineParam.addRule(RelativeLayout.ALIGN_PARENT_BOTTOM);
+
         addView(mTextView, params);
         addView(mDarkTextView, paramsDark);
         addView(mImageView, imageParam);
+        addView(mLineView, lineParam);
     }
 
     /**
@@ -324,5 +334,16 @@ public class ItemInfoLayout extends RRelativeLayout {
             }
         }
         return this;
+    }
+
+    public View getLineView() {
+        return mLineView;
+    }
+
+    public void setShowLine(boolean showLine) {
+        this.showLine = showLine;
+        if (mLineView != null) {
+            mLineView.setVisibility(showLine ? View.VISIBLE : View.GONE);
+        }
     }
 }

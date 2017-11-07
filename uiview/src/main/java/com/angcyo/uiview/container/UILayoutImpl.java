@@ -2109,47 +2109,53 @@ public class UILayoutImpl extends SwipeBackLayout implements ILayout<UIParam>, U
 
         if ("true".equalsIgnoreCase(String.valueOf(childAt.getTag(R.id.tag_need_layout)))) {
             //如果还没有layout过
-            needMeasure = true;
+            //needMeasure = true;
             needVisible = true;
         } else if (viewPatternByView == mLastShowViewPattern) {
             //最后一个页面
-            needMeasure = true;
+            //needMeasure = true;
             needVisible = true;
         } else if (childIndex == childCount - 1 /*|| i == count - 2*/) {
             //倒数第一个, 第二个view
-            needMeasure = true;
+            //needMeasure = true;
             needVisible = true;
         } else if (indexFromIViews >= 0 && (indexFromIViews == iViewSize - 1 /*|| indexFromIViews == iViewSize - 2*/)) {
             //倒数第一个, 第二个iview
-            needMeasure = true;
+            //needMeasure = true;
             needVisible = true;
         } else {
-            if (viewPatternByView.mIView.needForceMeasure() ||
-                    viewPatternByView.mIView.haveParentILayout() /*||
-                        viewPatternByView.mIView.haveChildILayout()*/) {
-                //需要强制测量
-                needMeasure = true;
-            } else {
-                IView iView = viewPatternByView.mIView;
-                for (int j = mAttachViews.size() - 1; j >= 0; j--) {
-                    ViewPattern viewPattern = mAttachViews.get(j);
-                    if (viewPattern.mIView.isDialog() ||
-                            viewPattern.mIView.showOnDialog() ||
-                            viewPattern.isAnimToEnd) {
-                        //界面上面全是对话框
-                        needMeasure = true;
-                        needVisible = true;
-                        if (viewPattern.mIView == iView) {
-                            break;
-                        }
-                    } else if (viewPattern.mIView == iView) {
-                        break;
-                    } else {
-                        needMeasure = false;
+//            if (viewPatternByView.mIView.needForceMeasure() ||
+//                    viewPatternByView.mIView.haveParentILayout() /*||
+//                        viewPatternByView.mIView.haveChildILayout()*/) {
+//                //需要强制测量
+//                needMeasure = true;
+//            } else {
+            IView iView = viewPatternByView.mIView;
+            for (int j = mAttachViews.size() - 1; j >= 0; j--) {
+                ViewPattern viewPattern = mAttachViews.get(j);
+                if (viewPattern.mIView.isDialog() ||
+                        viewPattern.mIView.showOnDialog() ||
+                        viewPattern.isAnimToEnd) {
+                    //界面上面全是对话框
+                    //needMeasure = true;
+                    needVisible = true;
+                    if (viewPattern.mIView == iView) {
                         break;
                     }
+                } else if (viewPattern.mIView == iView) {
+                    break;
+                } else {
+                    needMeasure = false;
+                    break;
                 }
             }
+//            }
+        }
+
+        if (needVisible ||
+                (viewPatternByView.mIView.needForceMeasure() ||
+                        viewPatternByView.mIView.haveParentILayout())) {
+            needMeasure = true;
         }
 
         return new boolean[]{needMeasure, needVisible};
@@ -2174,7 +2180,9 @@ public class UILayoutImpl extends SwipeBackLayout implements ILayout<UIParam>, U
             if (needVisible) {
                 childAt.setVisibility(View.VISIBLE);
             } else {
-                if (childAt.getVisibility() == View.VISIBLE) {
+                if (needMeasure) {
+                    childAt.setVisibility(View.INVISIBLE);
+                } else {
                     childAt.setVisibility(View.GONE);
                 }
             }
@@ -2537,7 +2545,7 @@ public class UILayoutImpl extends SwipeBackLayout implements ILayout<UIParam>, U
             mLayoutActivity.overridePendingTransition(0, 0);
         } else {
             needDragClose = true;
-            mLastShowViewPattern.mView.setVisibility(GONE);
+            //mLastShowViewPattern.mView.setVisibility(GONE);
             mLastShowViewPattern.mView.setAlpha(0f);
             swipeBackIView(mLastShowViewPattern.mIView);
         }
@@ -2625,6 +2633,7 @@ public class UILayoutImpl extends SwipeBackLayout implements ILayout<UIParam>, U
         final ViewPattern viewPattern = findLastShowViewPattern(mLastShowViewPattern);
         if (viewPattern != null && !viewPattern.mIView.isDialog()) {
             float tx = -mTranslationOffsetX * percent;
+            viewPattern.mView.setVisibility(View.VISIBLE);
             if (viewPattern.mView.getTranslationX() != tx) {
                 viewPattern.mView.setTranslationX(tx);
             }

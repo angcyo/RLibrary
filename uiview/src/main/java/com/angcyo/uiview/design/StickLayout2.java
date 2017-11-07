@@ -45,7 +45,7 @@ public class StickLayout2 extends RelativeLayout {
     private int maxScrollY, topHeight;
     private RRecyclerView.OnFlingEndListener mOnFlingEndListener;
     private boolean handleTouch = true;
-    private float lastOffsetY;
+    private int lastOffsetY;
     private float mLastVelocity = 0f;
     private boolean isFling;
     /**
@@ -310,7 +310,7 @@ public class StickLayout2 extends RelativeLayout {
 
                 float moveY = ev.getY() + 0.5f;
                 float moveX = ev.getX() + 0.5f;
-                float offsetY = downY - moveY;
+                int offsetY = (int) (downY - moveY);
                 float offsetX = downX - moveX;
 
                 downY = moveY;
@@ -365,10 +365,10 @@ public class StickLayout2 extends RelativeLayout {
         return super.dispatchTouchEvent(ev);
     }
 
-    private float ensureOffset(float offsetY) {
+    private int ensureOffset(int offsetY) {
         int scrollY = getScrollY();
         int maxScrollY = this.maxScrollY;
-        float scrollOffset = 0;
+        int scrollOffset = 0;
 
         int maxOffset = maxScrollY - scrollY;
         int minOffset = 0 - scrollY;
@@ -398,7 +398,7 @@ public class StickLayout2 extends RelativeLayout {
         postInvalidate();
     }
 
-    private boolean offsetTo(float offsetY) {
+    private boolean offsetTo(int offsetY) {
         if (Math.abs(offsetY) > 0) {
             if (offsetY < 0) {
                 //手指下滑
@@ -410,7 +410,7 @@ public class StickLayout2 extends RelativeLayout {
 
                 if (!scrollVertically) {
                     isScroll = true;
-                    scrollBy(0, (int) (offsetY));
+                    scrollBy(0, offsetY);
                 } else {
                     return true;
                 }
@@ -419,7 +419,8 @@ public class StickLayout2 extends RelativeLayout {
                     return true;
                 }
                 isScroll = true;
-                scrollBy(0, (int) (offsetY));
+                scrollBy(0, offsetY);
+                lastOffsetY = offsetY;
             }
         }
         return false;
@@ -492,8 +493,9 @@ public class StickLayout2 extends RelativeLayout {
         //L.e("call: onNestedPreScroll([target, dx, dy, consumed])-> scroll..." + dy);
         offsetTo(dy);
         if (dy > 0) {
-            consumed[1] = (int) Math.min(dy, ensureOffset(lastOffsetY));
+            consumed[1] = Math.min(dy, ensureOffset(lastOffsetY));
         }
+        //L.e("call: onNestedPreScroll([target, dx, dy, consumed])-> scroll..." + dy + " " + consumed[1] + "   " + lastOffsetY);
     }
 
 //    @Override

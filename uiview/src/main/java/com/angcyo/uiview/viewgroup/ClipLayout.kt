@@ -32,13 +32,13 @@ open class ClipLayout(context: Context, attributeSet: AttributeSet? = null) : Fr
     companion object {
         /**不剪切*/
         val CLIP_TYPE_NONE = 0
-        /**默认(小圆角)*/
+        /**默认(有一定小圆角的CLIP_TYPE_ROUND)*/
         val CLIP_TYPE_DEFAULT = 1
-        /**圆角*/
+        /**圆角(可以通过aeqWidth属性, 切换正方形还是长方形)*/
         val CLIP_TYPE_ROUND = 2
         /**圆*/
         val CLIP_TYPE_CIRCLE = 3
-        /**直角矩形*/
+        /**直角矩形(无圆角状态)*/
         val CLIP_TYPE_RECT = 4
     }
 
@@ -54,6 +54,7 @@ open class ClipLayout(context: Context, attributeSet: AttributeSet? = null) : Fr
     /**引导模式, 会镂空布局, 只在CLIP_TYPE_CIRCLE生效*/
     var guidMode = false
 
+    /**是否是等宽矩形*/
     private var aeqWidth = true
 
     private val paint by lazy {

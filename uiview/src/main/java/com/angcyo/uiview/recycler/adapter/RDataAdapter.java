@@ -9,7 +9,7 @@ import java.util.List;
 /**
  * Copyright (C) 2016,深圳市红鸟网络科技股份有限公司 All rights reserved.
  * 项目名称：
- * 类的描述：
+ * 类的描述：当Item之间无关联, 一条一条数据往下布局时, 可以使用此类
  * 创建人员：Robi
  * 创建时间：2017/08/10 14:26
  * 修改人员：Robi
