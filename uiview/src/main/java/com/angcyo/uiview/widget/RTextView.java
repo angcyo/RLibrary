@@ -59,6 +59,10 @@ public class RTextView extends AppCompatTextView {
      * 由于系统的drawableLeft, 并不会显示在居中文本的左边, 所以自定义此属性
      */
     Drawable textLeftDrawable;
+    /**
+     * 将textLeftDrawable和TextView的文本居中都居中显示. (默认情况 文本会居中显示, 然后leftDrawable在文本的左边绘制)
+     */
+    boolean centerLeftDrawable = false;
     private Drawable mBackgroundDrawable;
     private CharSequence mRawText;
     private int mPaddingLeft;
@@ -94,6 +98,7 @@ public class RTextView extends AppCompatTextView {
         leftColor = typedArray.getColor(R.styleable.RTextView_r_left_color, isInEditMode() ? Color.GREEN : SkinHelper.getSkin().getThemeColor());
         leftWidth = typedArray.getDimensionPixelOffset(R.styleable.RTextView_r_left_width, 0);
         hasUnderline = typedArray.getBoolean(R.styleable.RTextView_r_has_underline, false);
+        centerLeftDrawable = typedArray.getBoolean(R.styleable.RTextView_r_center_left_drawable, centerLeftDrawable);
         mBackgroundDrawable = typedArray.getDrawable(R.styleable.RTextView_r_background);
 
         //绘制左边的提示文本
@@ -122,6 +127,14 @@ public class RTextView extends AppCompatTextView {
         typedArray.recycle();
 
         initView();
+    }
+
+    public void setTextLeftDrawable(@DrawableRes int id) {
+        Drawable drawable = ContextCompat.getDrawable(getContext(), id);
+        if (drawable != null) {
+            drawable.setBounds(0, 0, drawable.getIntrinsicWidth(), drawable.getIntrinsicHeight());
+            textLeftDrawable = drawable;
+        }
     }
 
     public void setLeftString(String leftString) {
@@ -169,6 +182,12 @@ public class RTextView extends AppCompatTextView {
         if (hasUnderline) {
             getPaint().setFlags(Paint.UNDERLINE_TEXT_FLAG);
             getPaint().setAntiAlias(true);
+        }
+
+        int centerSaveCount = -1;
+        if (centerLeftDrawable && textLeftDrawable != null) {
+            centerSaveCount = canvas.save();
+            canvas.translate((textLeftDrawable.getIntrinsicWidth() + getCompoundDrawablePadding()) / 2, 0);
         }
         super.onDraw(canvas);
         if (leftWidth > 0) {
@@ -249,6 +268,10 @@ public class RTextView extends AppCompatTextView {
             textPaint.setColor(Color.RED);
             //默认位置在右上角
             canvas.drawCircle(getMeasuredWidth() - noReadPaddingRight - noReadRadius, noReadPaddingTop + noReadRadius, noReadRadius, textPaint);
+        }
+
+        if (centerSaveCount != -1) {
+            canvas.restoreToCount(centerSaveCount);
         }
     }
 

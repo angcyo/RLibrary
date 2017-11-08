@@ -4,168 +4,169 @@
     <!--View Group-->
 
     <!--不影响原来背景的背景-->
-    <attr name="r_background" format="reference" />
+    <attr name="r_background" format="reference"/>
     <!--不影响原来measure的padding属性-->
-    <attr name="r_paddingLeft" format="dimension" />
-    <attr name="r_paddingRight" format="dimension" />
-    <attr name="r_paddingBottom" format="dimension" />
-    <attr name="r_paddingTop" format="dimension" />
+    <attr name="r_paddingLeft" format="dimension"/>
+    <attr name="r_paddingRight" format="dimension"/>
+    <attr name="r_paddingBottom" format="dimension"/>
+    <attr name="r_paddingTop" format="dimension"/>
 
     <!--View-->
-    <attr name="r_show_text" format="string" />
-    <attr name="r_show_text_size" format="dimension" />
-    <attr name="r_show_text_color" format="color" />
-    <attr name="r_text_offset" format="dimension" />
-    <attr name="r_max_height" format="dimension" />
-    <attr name="r_min_height" format="dimension" />
-    <attr name="r_show_content_menu" format="boolean" />
+    <attr name="r_show_text" format="string"/>
+    <attr name="r_show_text_size" format="dimension"/>
+    <attr name="r_show_text_color" format="color"/>
+    <attr name="r_text_offset" format="dimension"/>
+    <attr name="r_max_height" format="dimension"/>
+    <attr name="r_min_height" format="dimension"/>
+    <attr name="r_show_content_menu" format="boolean"/>
 
     <!--progress bar-->
     <!--进度颜色-->
-    <attr name="r_progress_color" format="color" />
-    <attr name="r_second_progress_color" format="color" />
-    <attr name="r_progress_bg_color" format="color" />
+    <attr name="r_progress_color" format="color"/>
+    <attr name="r_second_progress_color" format="color"/>
+    <attr name="r_progress_bg_color" format="color"/>
 
-    <attr name="r_max_progress" format="integer" />
-    <attr name="r_cur_progress" format="integer" />
-    <attr name="r_second_progress" format="integer" />
+    <attr name="r_max_progress" format="integer"/>
+    <attr name="r_cur_progress" format="integer"/>
+    <attr name="r_second_progress" format="integer"/>
 
     <!--进度背景颜色-->
-    <attr name="r_back_color" format="color" />
+    <attr name="r_back_color" format="color"/>
     <!--进度宽度-->
-    <attr name="r_progress_width" format="dimension" />
+    <attr name="r_progress_width" format="dimension"/>
 
     <!--高度等于宽度-->
-    <attr name="r_equ_width" format="boolean" />
+    <attr name="r_equ_width" format="boolean"/>
 
     <declare-styleable name="RLinearLayout">
-        <attr name="r_background" />
-        <attr name="r_max_height" />
+        <attr name="r_background"/>
+        <attr name="r_max_height"/>
     </declare-styleable>
 
     <declare-styleable name="RRelativeLayout">
-        <attr name="r_background" />
-        <attr name="r_max_height" />
+        <attr name="r_background"/>
+        <attr name="r_max_height"/>
     </declare-styleable>
 
     <declare-styleable name="RRecyclerView">
         <!--是否激活自动滚动-->
-        <attr name="r_enable_auto_scroll" format="boolean" />
-        <attr name="r_enable_scroll" format="boolean" />
+        <attr name="r_enable_auto_scroll" format="boolean"/>
+        <attr name="r_enable_scroll" format="boolean"/>
     </declare-styleable>
 
     <declare-styleable name="RefreshLayout">
-        <attr name="r_notify_listener" format="boolean" />
+        <attr name="r_notify_listener" format="boolean"/>
     </declare-styleable>
 
     <!--View-->
-    <attr name="r_left_text" format="string" />
-    <attr name="r_hint_text" format="string" />
-    <attr name="r_left_text_color" format="color" />
-    <attr name="r_left_text_offset" format="dimension" />
-    <attr name="r_top_text_offset" format="dimension" />
-    <attr name="r_bottom_text_offset" format="dimension" />
+    <attr name="r_left_text" format="string"/>
+    <attr name="r_hint_text" format="string"/>
+    <attr name="r_left_text_color" format="color"/>
+    <attr name="r_left_text_offset" format="dimension"/>
+    <attr name="r_top_text_offset" format="dimension"/>
+    <attr name="r_bottom_text_offset" format="dimension"/>
 
     <declare-styleable name="RTextView">
         <!--左边竖线的颜色-->
-        <attr name="r_left_color" format="color" />
+        <attr name="r_left_color" format="color"/>
         <!--左边竖线的宽度-->
-        <attr name="r_left_width" format="dimension" />
+        <attr name="r_left_width" format="dimension"/>
         <!--距离view左边的距离-->
-        <attr name="r_left_margin" format="dimension" />
-        <attr name="r_top_margin" format="dimension" />
-        <attr name="r_bottom_margin" format="dimension" />
+        <attr name="r_left_margin" format="dimension"/>
+        <attr name="r_top_margin" format="dimension"/>
+        <attr name="r_bottom_margin" format="dimension"/>
         <!--是否有下划线-->
-        <attr name="r_has_underline" format="boolean" />
+        <attr name="r_has_underline" format="boolean"/>
 
-        <attr name="r_background" />
+        <attr name="r_background"/>
 
-        <attr name="r_left_text" />
-        <attr name="r_left_drawable" format="reference" />
-        <attr name="r_left_text_color" />
-        <attr name="r_left_text_offset" />
-        <attr name="r_left_text_size" format="dimension" />
-        <attr name="r_top_text_offset" />
-        <attr name="r_bottom_text_offset" />
-        <attr name="r_show_content_menu" />
+        <attr name="r_left_text"/>
+        <attr name="r_left_drawable" format="reference"/>
+        <attr name="r_left_text_color"/>
+        <attr name="r_left_text_offset"/>
+        <attr name="r_left_text_size" format="dimension"/>
+        <attr name="r_top_text_offset"/>
+        <attr name="r_bottom_text_offset"/>
+        <attr name="r_show_content_menu"/>
 
-        <attr name="r_noread_radius" format="dimension" />
-        <attr name="r_noread_padding_top" format="dimension" />
-        <attr name="r_noread_padding_right" format="dimension" />
+        <attr name="r_noread_radius" format="dimension"/>
+        <attr name="r_noread_padding_top" format="dimension"/>
+        <attr name="r_noread_padding_right" format="dimension"/>
+        <attr name="r_center_left_drawable" format="boolean"/>
 
     </declare-styleable>
 
     <declare-styleable name="ExEditText">
-        <attr name="r_left_text" />
-        <attr name="r_hint_text" />
-        <attr name="r_left_text_color" />
-        <attr name="r_left_text_offset" />
+        <attr name="r_left_text"/>
+        <attr name="r_hint_text"/>
+        <attr name="r_left_text_color"/>
+        <attr name="r_left_text_offset"/>
 
         <!--允许输入最大的数字-->
-        <attr name="r_max_number" format="float" />
+        <attr name="r_max_number" format="float"/>
         <!--允许小数点后几位-->
-        <attr name="r_decimal_count" format="integer" />
+        <attr name="r_decimal_count" format="integer"/>
 
-        <attr name="r_show_content_menu" />
+        <attr name="r_show_content_menu"/>
     </declare-styleable>
 
     <declare-styleable name="JumpAdProgressBar">
-        <attr name="r_progress_color" />
-        <attr name="r_back_color" />
-        <attr name="r_text_color" format="color" />
-        <attr name="r_progress_width" />
-        <attr name="r_show_text" />
-        <attr name="r_jump_time" format="integer" />
+        <attr name="r_progress_color"/>
+        <attr name="r_back_color"/>
+        <attr name="r_text_color" format="color"/>
+        <attr name="r_progress_width"/>
+        <attr name="r_show_text"/>
+        <attr name="r_jump_time" format="integer"/>
     </declare-styleable>
 
     <declare-styleable name="SimpleProgressBar">
-        <attr name="r_progress_bg_color" />
-        <attr name="r_progress_text_color" format="color" />
-        <attr name="r_progress_text_size" format="dimension" />
-        <attr name="r_progress_width" />
+        <attr name="r_progress_bg_color"/>
+        <attr name="r_progress_text_color" format="color"/>
+        <attr name="r_progress_text_size" format="dimension"/>
+        <attr name="r_progress_width"/>
         <attr name="r_progress_style" format="enum">
-            <enum name="RECT" value="1" />
-            <enum name="CIRCLE" value="2" />
+            <enum name="RECT" value="1"/>
+            <enum name="CIRCLE" value="2"/>
         </attr>
     </declare-styleable>
 
     <declare-styleable name="RNineImageLayout">
-        <attr name="r_paddingLeft" />
-        <attr name="r_paddingRight" />
-        <attr name="r_paddingBottom" />
-        <attr name="r_paddingTop" />
+        <attr name="r_paddingLeft"/>
+        <attr name="r_paddingRight"/>
+        <attr name="r_paddingBottom"/>
+        <attr name="r_paddingTop"/>
     </declare-styleable>
 
     <declare-styleable name="ContentLayout">
-        <attr name="r_max_height" />
-        <attr name="r_min_height" />
+        <attr name="r_max_height"/>
+        <attr name="r_min_height"/>
     </declare-styleable>
 
     <declare-styleable name="TitleBarLayout">
-        <attr name="r_max_height" />
-        <attr name="r_fit_action_bar_height" format="boolean" />
-        <attr name="r_fit_status_bar_height" format="boolean" />
+        <attr name="r_max_height"/>
+        <attr name="r_fit_action_bar_height" format="boolean"/>
+        <attr name="r_fit_status_bar_height" format="boolean"/>
         <!--是否是屏幕高度, 如果是, 那么在测量child的时候, 会减去topHeight-->
-        <attr name="r_is_screen_height" format="boolean" />
+        <attr name="r_is_screen_height" format="boolean"/>
     </declare-styleable>
 
     <declare-styleable name="Button">
         <attr name="r_button_style" format="enum">
-            <enum name="DEFAULT" value="1" />
+            <enum name="DEFAULT" value="1"/>
             <!--圆角填充-->
-            <enum name="ROUND" value="2" />
+            <enum name="ROUND" value="2"/>
             <!--圆角边框-->
-            <enum name="ROUND_BORDER" value="3" />
-            <enum name="ROUND_BORDER_FILL" value="4" />
+            <enum name="ROUND_BORDER" value="3"/>
+            <enum name="ROUND_BORDER_FILL" value="4"/>
         </attr>
-        <attr name="r_button_left_drawable" format="reference" />
+        <attr name="r_button_left_drawable" format="reference"/>
     </declare-styleable>
 
     <declare-styleable name="RRangeBar">
-        <attr name="r_max_value" format="integer" />
-        <attr name="r_min_value" format="integer" />
-        <attr name="r_current_min_value" format="integer" />
-        <attr name="r_current_max_value" format="integer" />
-        <attr name="r_min_range" format="integer" />
+        <attr name="r_max_value" format="integer"/>
+        <attr name="r_min_value" format="integer"/>
+        <attr name="r_current_min_value" format="integer"/>
+        <attr name="r_current_max_value" format="integer"/>
+        <attr name="r_min_range" format="integer"/>
     </declare-styleable>
 </resources>

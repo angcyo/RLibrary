@@ -308,6 +308,7 @@ public abstract class UIIViewImpl implements IView {
     @Override
     public void onViewReShow(Bundle bundle) {
         L.d(this.getClass().getSimpleName(), "onViewReShow: " + mIViewStatus);
+        mIViewStatus = IViewShowState.STATE_VIEW_SHOW;
 
         if (!isChildILayoutEmpty()) {
             mChildILayout.onLastViewReShow(bundle);

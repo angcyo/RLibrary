@@ -47,7 +47,7 @@ public class RSeekBar extends View {
      * 轨道的颜色
      */
     int mTrackColor;
-    int mTrackHeight;
+    int mTrackHeight;// 当浮子是 圆形的时候, 请使用这个变量控制 半径的大小
     /**
      * 轨道的圆角
      */
@@ -263,6 +263,10 @@ public class RSeekBar extends View {
 
     @Override
     public boolean onTouchEvent(MotionEvent event) {
+        if (!isEnabled()) {
+            return super.onTouchEvent(event);
+        }
+
         int action = MotionEventCompat.getActionMasked(event);
         float eventX = event.getX();
         //L.e("call: onTouchEvent([event])-> " + action + " x:" + eventX);
