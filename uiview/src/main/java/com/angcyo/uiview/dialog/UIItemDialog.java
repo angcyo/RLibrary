@@ -68,6 +68,10 @@ public class UIItemDialog extends UIIDialogImpl {
 
     public UIItemDialog addItem(ItemInfo itemInfo) {
         mItemInfos.add(itemInfo);
+        if (getIViewShowState() == IViewShowState.STATE_VIEW_LOAD) {
+            int size = mItemInfos.size();
+            addItemInner(size, size - 1, itemInfo);
+        }
         return this;
     }
 
@@ -163,37 +167,41 @@ public class UIItemDialog extends UIIDialogImpl {
         int size = mItemInfos.size();
         for (int i = 0; i < size; i++) {
             ItemInfo info = mItemInfos.get(i);
-            View itemView = createItem(info);
+            addItemInner(size, i, info);
+        }
+    }
 
-            if (itemView instanceof TextView) {
-                TextView textView = (TextView) itemView;
-                if (useFullItem) {
-                    textView.setBackgroundResource(R.drawable.base_bg_selector);
-                    textView.setTextColor(getColor(R.color.base_text_color));
+    private void addItemInner(int size, int i, ItemInfo info) {
+        View itemView = createItem(info);
+
+        if (itemView instanceof TextView) {
+            TextView textView = (TextView) itemView;
+            if (useFullItem) {
+                textView.setBackgroundResource(R.drawable.base_bg_selector);
+                textView.setTextColor(getColor(R.color.base_text_color));
+            } else {
+                if (size == 1) {
+                    textView.setBackgroundResource(R.drawable.base_round_bg_selector);
                 } else {
-                    if (size == 1) {
-                        textView.setBackgroundResource(R.drawable.base_round_bg_selector);
+                    if (i == 0) {
+                        textView.setBackgroundResource(R.drawable.base_top_round_bg_selector);
+                    } else if (i == size - 1) {
+                        textView.setBackgroundResource(R.drawable.base_bottom_round_bg_selector);
                     } else {
-                        if (i == 0) {
-                            textView.setBackgroundResource(R.drawable.base_top_round_bg_selector);
-                        } else if (i == size - 1) {
-                            textView.setBackgroundResource(R.drawable.base_bottom_round_bg_selector);
-                        } else {
-                            textView.setBackgroundResource(R.drawable.base_bg_selector);
-                        }
-                    }
-                    textView.setTextColor(SkinHelper.getSkin().getThemeSubColor());
-
-                    if (mItemConfig != null) {
-                        mItemConfig.onCreateItem(textView);
+                        textView.setBackgroundResource(R.drawable.base_bg_selector);
                     }
                 }
-            }
+                textView.setTextColor(SkinHelper.getSkin().getThemeSubColor());
 
-            mItemContentLayout.addView(itemView,
-                    new ViewGroup.LayoutParams(-1,
-                            mActivity.getResources().getDimensionPixelSize(R.dimen.base_item_size)));
+                if (mItemConfig != null) {
+                    mItemConfig.onCreateItem(textView);
+                }
+            }
         }
+
+        mItemContentLayout.addView(itemView,
+                new ViewGroup.LayoutParams(-1,
+                        mActivity.getResources().getDimensionPixelSize(R.dimen.base_item_size)));
     }
 
     protected View createItem(final ItemInfo info) {

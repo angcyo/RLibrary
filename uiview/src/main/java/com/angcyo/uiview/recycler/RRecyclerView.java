@@ -60,7 +60,7 @@ public class RRecyclerView extends RecyclerView {
      */
     protected int curScrollPosition = 0;
     /**
-     * 激活滚动
+     * 是否激活滚动
      */
     protected boolean enableScroll = false;
     OnTouchListener mInterceptTouchListener;
@@ -89,9 +89,9 @@ public class RRecyclerView extends RecyclerView {
     private int mLastScrollOffset;
     private boolean isFling;
     /**
-     * 是否自动滚动
+     * 是否自动开始滚动
      */
-    private boolean isEnableAutoScroll = false;
+    private boolean isEnableAutoStartScroll = false;
     private Runnable autoScrollRunnable = new Runnable() {
         @Override
         public void run() {
@@ -102,7 +102,12 @@ public class RRecyclerView extends RecyclerView {
                     curScrollPosition = 0;
                     scrollTo(0, false);
                 } else {
-                    scrollTo(curScrollPosition, true);
+                    int firstVisibleItemPosition = curScrollPosition;
+                    LayoutManager layoutManager = getLayoutManager();
+                    if (layoutManager instanceof LinearLayoutManager) {
+                        firstVisibleItemPosition = ((LinearLayoutManager) layoutManager).findFirstVisibleItemPosition();
+                    }
+                    scrollTo(curScrollPosition, Math.abs(firstVisibleItemPosition - curScrollPosition) < 5);
                 }
             }
 
@@ -124,7 +129,7 @@ public class RRecyclerView extends RecyclerView {
         super(context, attrs, defStyle);
 
         TypedArray typedArray = context.obtainStyledAttributes(attrs, R.styleable.RRecyclerView);
-        isEnableAutoScroll = typedArray.getBoolean(R.styleable.RRecyclerView_r_enable_auto_scroll, isEnableAutoScroll);
+        isEnableAutoStartScroll = typedArray.getBoolean(R.styleable.RRecyclerView_r_enable_auto_start_scroll, isEnableAutoStartScroll);
         enableScroll = typedArray.getBoolean(R.styleable.RRecyclerView_r_enable_scroll, enableScroll);
         typedArray.recycle();
 
@@ -419,7 +424,7 @@ public class RRecyclerView extends RecyclerView {
     @Override
     protected void onAttachedToWindow() {
         super.onAttachedToWindow();
-        if (isEnableAutoScroll) {
+        if (isEnableAutoStartScroll) {
             startAutoScroll();
         }
     }
@@ -448,9 +453,9 @@ public class RRecyclerView extends RecyclerView {
         postDelayed(autoScrollRunnable, AUTO_SCROLL_TIME);
     }
 
-    public void setEnableAutoScroll(boolean enableAutoScroll) {
-        isEnableAutoScroll = enableAutoScroll;
-        if (enableAutoScroll) {
+    public void setEnableAutoStartScroll(boolean enableAutoStartScroll) {
+        isEnableAutoStartScroll = enableAutoStartScroll;
+        if (enableAutoStartScroll) {
             startAutoScroll();
         } else {
             stopAutoScroll();

@@ -50,7 +50,7 @@
 
     <declare-styleable name="RRecyclerView">
         <!--是否激活自动滚动-->
-        <attr name="r_enable_auto_scroll" format="boolean"/>
+        <attr name="r_enable_auto_start_scroll" format="boolean"/>
         <attr name="r_enable_scroll" format="boolean"/>
     </declare-styleable>
 

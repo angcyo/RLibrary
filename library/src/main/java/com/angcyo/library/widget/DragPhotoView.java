@@ -11,6 +11,7 @@ import android.graphics.RectF;
 import android.graphics.drawable.Drawable;
 import android.os.Build;
 import android.util.AttributeSet;
+import android.view.GestureDetector;
 import android.view.MotionEvent;
 import android.view.ViewConfiguration;
 
@@ -59,6 +60,23 @@ public class DragPhotoView extends PhotoView {
         }
     };
     private boolean isLargeBitmap;
+
+    private GestureDetector mGestureDetector = new GestureDetector(getContext(), new GestureDetector.SimpleOnGestureListener() {
+        @Override
+        public void onLongPress(MotionEvent e) {
+            super.onLongPress(e);
+            if (mOnLongClickListener != null) {
+                mOnLongClickListener.onLongClick(DragPhotoView.this);
+            }
+        }
+    });
+
+    OnLongClickListener mOnLongClickListener;
+
+    @Override
+    public void setOnLongClickListener(OnLongClickListener onLongClickListener) {
+        mOnLongClickListener = onLongClickListener;
+    }
 
     public DragPhotoView(Context context) {
         this(context, null);
@@ -222,6 +240,8 @@ public class DragPhotoView extends PhotoView {
     @Override
     public boolean dispatchTouchEvent(MotionEvent event) {
         //only scale == 1 can drag
+        mGestureDetector.onTouchEvent(event);
+
         if (enableMoveExit && !isAnimate && getScale() == 1) {
 
             switch (event.getAction()) {

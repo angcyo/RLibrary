@@ -46,6 +46,11 @@ public class RAddPhotoAdapter<T> extends RBaseAdapter<T> {
      */
     private boolean mDeleteModel = false;
 
+    /**
+     * 是否显示添加按钮
+     */
+    private boolean mShowAddButton = true;
+
     private ConfigCallback mConfigCallback;
 
     /**
@@ -68,10 +73,10 @@ public class RAddPhotoAdapter<T> extends RBaseAdapter<T> {
 
     @Override
     public int getItemType(int position) {
-        if (mAllDatas == null || mAllDatas.size() == 0) {
+        if (mShowAddButton && (mAllDatas == null || mAllDatas.size() == 0)) {
             return TYPE_ADD;
         }
-        if (position == mAllDatas.size() && mAllDatas.size() < mMaxPhotoCount) {
+        if (mShowAddButton && position == mAllDatas.size() && mAllDatas.size() < mMaxPhotoCount) {
             return TYPE_ADD;//最后一个添加item
         }
         return TYPE_NORMAL;
@@ -84,11 +89,15 @@ public class RAddPhotoAdapter<T> extends RBaseAdapter<T> {
 
     @Override
     public int getItemCount() {
+        int otherCount = 0;
+        if (mShowAddButton) {
+            otherCount = 1;
+        }
         if (mAllDatas == null || mAllDatas.isEmpty()) {
-            return 1;
+            return otherCount;
         }
         if (mAllDatas.size() < mMaxPhotoCount) {
-            return mAllDatas.size() + 1;
+            return mAllDatas.size() + otherCount;
         }
         return mAllDatas.size();
     }
@@ -171,6 +180,23 @@ public class RAddPhotoAdapter<T> extends RBaseAdapter<T> {
         return this;
     }
 
+    public RAddPhotoAdapter setShowAddButton(boolean showAddButton) {
+        boolean oldShow = mShowAddButton;
+        mShowAddButton = showAddButton;
+
+        if (oldShow != showAddButton) {
+            if (showAddButton) {
+                notifyItemInserted(getAllDataCount());
+            } else {
+                notifyItemRemoved(getAllDataCount());
+            }
+        }
+        return this;
+    }
+
+    /**
+     * 排除多少宽度, 不参与计算item的size
+     */
     public RAddPhotoAdapter setExcludeWidth(int excludeWidth) {
         this.excludeWidth = excludeWidth;
         return this;
