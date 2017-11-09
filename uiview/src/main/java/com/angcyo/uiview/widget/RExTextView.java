@@ -69,6 +69,11 @@ public class RExTextView extends RTextView {
      */
     public final static Pattern patternPhone = Pattern.compile("\\d{3}-\\d{8}|\\d{3}-\\d{7}|\\d{4}-\\d{8}|\\d{4}-\\d{7}|1+[34578]+\\d{9}|\\d{8}|\\d{7}");
 
+    /**
+     * 座机号码正则
+     */
+    public final static Pattern patternTel = Pattern.compile("/^([0-9]{3,4}-)?[0-9]{7,8}$/");
+
     protected ImageTextSpan.OnImageSpanClick mOnImageSpanClick;
 
     private int maxShowLine = -1;//最大显示多少行, 当超过时, 会显示...全部
@@ -115,11 +120,24 @@ public class RExTextView extends RTextView {
         return patternNumber.matcher(str).matches();
     }
 
+    /**
+     * 是否是手机号码
+     */
     public static boolean isPhone(String str) {
         if (TextUtils.isEmpty(str)) {
             return false;
         }
         return patternPhone.matcher(str).matches();
+    }
+
+    /**
+     * 是否是座机号码
+     */
+    public static boolean isTel(String str) {
+        if (TextUtils.isEmpty(str)) {
+            return false;
+        }
+        return patternTel.matcher(str).matches();
     }
 
     public void setImageSpanTextColor(int imageSpanTextColor) {
