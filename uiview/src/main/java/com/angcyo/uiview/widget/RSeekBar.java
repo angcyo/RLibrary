@@ -223,7 +223,7 @@ public class RSeekBar extends View {
             canvas.save();
             canvas.getClipBounds(clipBounds);
             clipBounds.inset(0, -mThumbRoundSize / 2);
-            canvas.clipRect(clipBounds, Region.Op.UNION);
+            canvas.clipRect(clipBounds, Region.Op.REPLACE);
             mPaint.setColor(secondProgressColor);
             canvas.drawCircle(mProgressRectF.centerX(), mProgressRectF.centerY(),
                     mThumbRoundSize + mThumbRoundSize / 2, mPaint);

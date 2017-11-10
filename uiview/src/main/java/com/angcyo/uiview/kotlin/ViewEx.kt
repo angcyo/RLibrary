@@ -45,6 +45,18 @@ public fun View.getDrawCenterCy(): Float {
     return (paddingTop + rawHeight / 2).toFloat()
 }
 
+public fun View.getDrawCenterCx(): Float {
+    val rawWidth = measuredWidth - paddingLeft - paddingRight
+    return (paddingLeft + rawWidth / 2).toFloat()
+}
+
+/**最小圆的半径*/
+public fun View.getDrawCenterR(): Float {
+    val rawHeight = measuredHeight - paddingTop - paddingBottom
+    val rawWidth = measuredWidth - paddingLeft - paddingRight
+    return (Math.min(rawWidth, rawHeight) / 2).toFloat()
+}
+
 public fun TextView.getDrawCenterTextCy(): Float {
     val rawHeight = measuredHeight - paddingTop - paddingBottom
     return paddingTop + rawHeight / 2 + (paint.descent() - paint.ascent()) / 2 - paint.descent()
