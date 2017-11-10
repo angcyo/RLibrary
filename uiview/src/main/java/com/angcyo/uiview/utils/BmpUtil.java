@@ -213,7 +213,7 @@ public class BmpUtil {
 
         int left = Math.max(0, (bitmapWidth - bitmapHeight) / 2);
         int top = Math.max(0, (bitmapHeight - bitmapWidth) / 2);
-        final Rect dstRect = new Rect(left, top, left + size, top + size);
+        final Rect dstRect = new Rect(0, 0, bitmapWidth, bitmapHeight); //new Rect(left, top, left + size, top + size);
         canvas.drawBitmap(bitmap, null, dstRect, paint);
         return output;
     }

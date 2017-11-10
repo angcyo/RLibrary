@@ -94,7 +94,7 @@ public class RGroupData<T> {
         }
 
         if (oldSize == newSize) {
-            groupAdapter.notifyItemRangeChanged(groupAdapter.getPositionFromGroup(this), oldSize);
+            groupAdapter.notifyItemRangeChanged(groupAdapter.getPositionFromGroup(this), getCount());
         } else {
             groupAdapter.notifyDataSetChanged();
         }
