@@ -1,6 +1,7 @@
 package com.angcyo.uiview.recycler;
 
 import android.content.Context;
+import android.content.res.TypedArray;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
@@ -9,6 +10,7 @@ import android.support.v4.view.ViewPager;
 import android.util.AttributeSet;
 import android.view.View;
 
+import com.angcyo.uiview.R;
 import com.angcyo.uiview.widget.viewpager.RViewPager;
 
 /**
@@ -43,6 +45,14 @@ public class RecyclerViewPagerIndicator extends View {
         mPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
         mPaint.setStyle(Paint.Style.FILL);
 
+        TypedArray typedArray = context.obtainStyledAttributes(attrs, R.styleable.RecyclerViewPagerIndicator);
+        focusColor = typedArray.getColor(R.styleable.RecyclerViewPagerIndicator_r_focus_color, focusColor);
+        defaultColor = typedArray.getColor(R.styleable.RecyclerViewPagerIndicator_r_default_color, defaultColor);
+
+        mCircleSize = typedArray.getDimensionPixelOffset(R.styleable.RecyclerViewPagerIndicator_r_circle_size, (int) mCircleSize);
+        mCircleSpace = typedArray.getDimensionPixelOffset(R.styleable.RecyclerViewPagerIndicator_r_circle_space, (int) mCircleSpace);
+
+        typedArray.recycle();
         if (isInEditMode()) {
             initPagerCount(4);
             mCurrentPager = 1;
@@ -59,12 +69,22 @@ public class RecyclerViewPagerIndicator extends View {
         initPagerCount(recyclerViewPager.getPagerCount());
     }
 
+    public void setupRLoopRecyclerView(RLoopRecyclerView recyclerView) {
+        recyclerView.setOnPageListener(new RLoopRecyclerView.OnPageListener() {
+            @Override
+            public void onPageSelector(int position) {
+                setCurrentPager(position);
+            }
+        });
+        initPagerCount(recyclerView.getAdapter().getItemRawCount());
+    }
+
     public void setCurrentPager(int index) {
         mCurrentPager = index;
         postInvalidate();
     }
 
-    public void setUpUIViewPager(RViewPager pager,int pagerCount) {
+    public void setUpUIViewPager(RViewPager pager, int pagerCount) {
         pager.addOnPageChangeListener(new ViewPager.OnPageChangeListener() {
             @Override
             public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
@@ -89,6 +109,32 @@ public class RecyclerViewPagerIndicator extends View {
         requestLayout();
     }
 
+    public void setFocusColor(int focusColor) {
+        this.focusColor = focusColor;
+        postInvalidate();
+    }
+
+    public void setDefaultColor(int defaultColor) {
+        this.defaultColor = defaultColor;
+        postInvalidate();
+    }
+
+    /**
+     * 圆圈的直径
+     */
+    public void setCircleSize(float circleSize) {
+        mCircleSize = circleSize;
+        postInvalidate();
+    }
+
+    /**
+     * 圈与圈之间的间隙
+     */
+    public void setCircleSpace(float circleSpace) {
+        mCircleSpace = circleSpace;
+        postInvalidate();
+    }
+
     @Override
     protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
         int width, height;
@@ -101,7 +147,7 @@ public class RecyclerViewPagerIndicator extends View {
     @Override
     protected void onDraw(Canvas canvas) {
         final float radius = mCircleSize / 2;
-        for (int i = 0; i < mPagerCount; i++) {
+        for (int i = 0; i < mPagerCount && mPagerCount > 1; i++) {
             if (i == mCurrentPager) {
                 mPaint.setColor(focusColor);
             } else {

@@ -13,6 +13,7 @@ import static com.angcyo.github.utilcode.utils.ConstUtils.REGEX_IP;
 import static com.angcyo.github.utilcode.utils.ConstUtils.REGEX_MOBILE_EXACT;
 import static com.angcyo.github.utilcode.utils.ConstUtils.REGEX_MOBILE_SIMPLE;
 import static com.angcyo.github.utilcode.utils.ConstUtils.REGEX_TEL;
+import static com.angcyo.github.utilcode.utils.ConstUtils.REGEX_TEL_2;
 import static com.angcyo.github.utilcode.utils.ConstUtils.REGEX_URL;
 import static com.angcyo.github.utilcode.utils.ConstUtils.REGEX_USERNAME;
 import static com.angcyo.github.utilcode.utils.ConstUtils.REGEX_ZH;
@@ -64,6 +65,10 @@ public class RegexUtils {
      */
     public static boolean isTel(CharSequence input) {
         return isMatch(REGEX_TEL, input);
+    }
+
+    public static boolean isTelExact(CharSequence input) {
+        return isMatch(REGEX_TEL_2, input);
     }
 
     /**

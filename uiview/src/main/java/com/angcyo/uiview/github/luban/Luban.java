@@ -827,6 +827,9 @@ public class Luban {
 
         @Override
         public boolean equals(Object obj) {
+            if (!TextUtils.isEmpty(url) && !TextUtils.isEmpty(((ImageItem) obj).url)) {
+                return TextUtils.equals(url, ((ImageItem) obj).url);
+            }
             return TextUtils.equals(path, ((ImageItem) obj).path)
                     && TextUtils.equals(thumbPath, ((ImageItem) obj).thumbPath);
         }

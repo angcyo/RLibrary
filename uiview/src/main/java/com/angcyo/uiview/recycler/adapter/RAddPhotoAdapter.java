@@ -165,11 +165,17 @@ public class RAddPhotoAdapter<T> extends RBaseAdapter<T> {
         });
     }
 
+    /**
+     * 最大图片数量
+     */
     public RAddPhotoAdapter setMaxPhotoCount(int maxPhotoCount) {
         mMaxPhotoCount = maxPhotoCount;
         return this;
     }
 
+    /**
+     * 每一行显示多少个Item
+     */
     public RAddPhotoAdapter setItemCountLine(int itemCountLine) {
         mItemCountLine = itemCountLine;
         return this;

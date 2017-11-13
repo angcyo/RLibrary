@@ -51,6 +51,9 @@ public class RLoopRecyclerView extends RRecyclerView {
 
     @Override
     public LoopAdapter getAdapter() {
+        if (isInEditMode()) {
+            return null;
+        }
         return (LoopAdapter) super.getAdapter();
     }
 

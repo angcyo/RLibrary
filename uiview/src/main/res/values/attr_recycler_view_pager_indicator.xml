@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <declare-styleable name="RecyclerViewPagerIndicator">
+        <attr name="r_focus_color" format="color"/>
+        <attr name="r_default_color" format="color"/>
+        <!--直径-->
+        <attr name="r_circle_size" format="dimension"/>
+        <attr name="r_circle_space" format="dimension"/>
+    </declare-styleable>
+</resources>
