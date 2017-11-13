@@ -32,9 +32,11 @@ class RPlayer {
     private var playUrl = ""
 
     /**当前播放的状态*/
-    private var playState: AtomicInteger = AtomicInteger(STATE_NORMAL)
+    private var playState: AtomicInteger = AtomicInteger(STATE_INIT)
 
     companion object {
+        //初始化状态
+        const val STATE_INIT = 0
         /**正常情况*/
         const val STATE_NORMAL = 1
         /**播放中*/
@@ -58,15 +60,21 @@ class RPlayer {
         }
     }
 
+    //开始播放
+    private fun startPlayInner(mediaPlay: MediaPlayer) {
+        setPlayState(STATE_PLAYING)
+        startProgress()
+        mediaPlay.start()
+    }
+
     /**@param url 可是有效的网络, 和有效的本地地址*/
     fun startPlay(url: String) {
         if (playUrl == url) {
-            if (playState.get() == STATE_PLAYING) {
+            if (isPlayCall()) {
 
             } else {
                 mediaPlay?.let {
-                    setPlayState(STATE_PLAYING)
-                    it.start()
+                    startPlayInner(it)
                 }
             }
             return
@@ -98,9 +106,7 @@ class RPlayer {
                 //L.e("call: startPlay -> onPrepared ${it.duration}")
                 onPlayListener?.onPreparedCompletion(it.duration)
                 if (playState.get() == STATE_NORMAL) {
-                    setPlayState(STATE_PLAYING)
-                    startProgress()
-                    it.start()
+                    startPlayInner(it)
                 }
             }
             it.setDataSource(url)
@@ -154,8 +160,13 @@ class RPlayer {
         }
     }
 
-    private fun isPlaying() = playState.get() == STATE_PLAYING
-    private fun isPause() = playState.get() == STATE_PAUSE
+    /**正在播放中, 解析也完成了*/
+    fun isPlaying() = playState.get() == STATE_PLAYING
+
+    /**是否调用了播放, 但是有可能还在解析数据中*/
+    fun isPlayCall() = (playState.get() == STATE_PLAYING || playState.get() == STATE_NORMAL)
+
+    fun isPause() = playState.get() == STATE_PAUSE
 
     private fun setPlayState(state: Int) {
         val oldState = playState.get()
@@ -170,6 +181,9 @@ class RPlayer {
         }
     }
 
+    /**播放中的进度, 毫秒*/
+    var currentPosition = 0
+
     /*开始进度读取*/
     private fun startProgress() {
         Thread(Runnable {
@@ -177,8 +191,9 @@ class RPlayer {
                     mediaPlay != null &&
                     onPlayListener != null) {
                 ThreadExecutor.instance().onMain {
-                    if (isPlaying() && mediaPlay != null && onPlayListener != null) {
-                        onPlayListener?.onPlayProgress(mediaPlay!!.currentPosition, mediaPlay!!.duration)
+                    if (isPlaying() && mediaPlay != null) {
+                        currentPosition = mediaPlay!!.currentPosition
+                        onPlayListener?.onPlayProgress(currentPosition, mediaPlay!!.duration)
                     }
                 }
                 try {
@@ -207,5 +222,22 @@ class RPlayer {
         /**播放状态回调*/
         fun onPlayStateChange(playUrl: String, from: Int, to: Int)
 
+    }
+}
+
+abstract class SimplePlayerListener : RPlayer.OnPlayerListener {
+    override fun onPreparedCompletion(duration: Int) {
+    }
+
+    override fun onPlayProgress(progress: Int, duration: Int) {
+    }
+
+    override fun onPlayCompletion(duration: Int) {
+    }
+
+    override fun onPlayError(what: Int, extra: Int) {
+    }
+
+    override fun onPlayStateChange(playUrl: String, from: Int, to: Int) {
     }
 }

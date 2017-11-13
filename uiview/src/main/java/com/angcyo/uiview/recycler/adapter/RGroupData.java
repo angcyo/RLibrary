@@ -120,6 +120,11 @@ public class RGroupData<T> {
         groupAdapter.notifyItemRangeChanged(startPosition, groupAdapter.getItemCount());
     }
 
+    public void notifyItemUpdate(RGroupAdapter groupAdapter) {
+        int startPosition = groupAdapter.getPositionFromGroup(this);
+        groupAdapter.notifyItemRangeChanged(startPosition, getCount());
+    }
+
 
     /**
      * @param indexInGroup 当有多个分组时, index表示从0开始的索引
