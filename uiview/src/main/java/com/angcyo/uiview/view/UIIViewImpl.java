@@ -1026,6 +1026,16 @@ public abstract class UIIViewImpl implements IView {
     }
 
     /**
+     * 获取屏幕方向
+     *
+     * @see android.content.res.Configuration#ORIENTATION_LANDSCAPE
+     * @see android.content.res.Configuration#ORIENTATION_PORTRAIT
+     */
+    public int getScreenOrientation() {
+        return getResources().getConfiguration().orientation;
+    }
+
+    /**
      * 初始化下拉返回layout
      */
     protected void initTouchBackLayout(TouchBackLayout layout) {
