@@ -174,12 +174,6 @@ open class UIFileSelectorDialog : UIIDialogImpl {
 
                     //文件/文件夹 提示信息
                     when {
-                        item.imageType != Ok.ImageType.UNKNOWN -> {
-                            holder.glideImgV(R.id.base_image_view).apply {
-                                reset()
-                                url = bean.absolutePath
-                            }
-                        }
                         bean.isDirectory -> {
                             holder.glideImgV(R.id.base_image_view).apply {
                                 reset()
@@ -190,7 +184,11 @@ open class UIFileSelectorDialog : UIIDialogImpl {
                         bean.isFile -> {
                             holder.glideImgV(R.id.base_image_view).apply {
                                 reset()
-                                setImageResource(R.drawable.base_file_32)
+                                if (item.imageType != Ok.ImageType.UNKNOWN) {
+                                    setImageResource(R.drawable.base_file_32)
+                                } else {
+                                    url = bean.absolutePath
+                                }
                             }
                             holder.tv(R.id.base_tip_view).text = formatFileSize(bean.length())
                         }
