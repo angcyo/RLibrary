@@ -285,7 +285,7 @@ public class RTextView extends AppCompatTextView {
     protected void onLayout(boolean changed, int left, int top, int right, int bottom) {
         super.onLayout(changed, left, top, right, bottom);
         if (autoFixTextSize &&
-                (!ExKt.have(getInputType(), EditorInfo.TYPE_TEXT_FLAG_MULTI_LINE)) || getMaxLines() == 1) {
+                (!ExKt.have(getInputType(), EditorInfo.TYPE_TEXT_FLAG_MULTI_LINE) || getMaxLines() == 1)) {
             while (getPaint().getTextSize() > 9 &&
                     ViewExKt.textWidth(this, getText().toString()) > ViewExKt.getViewDrawWith(this)) {
                 setTextSize(TypedValue.COMPLEX_UNIT_PX, getTextSize() - 1 * density());

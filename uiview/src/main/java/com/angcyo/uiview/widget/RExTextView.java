@@ -117,7 +117,8 @@ public class RExTextView extends RTextView {
             return false;
         }
         if (checkHttp) {
-            if (!url.startsWith("http") || !url.startsWith("HTTP")) {
+            if (url.startsWith("http") || url.startsWith("HTTP")) {
+            } else {
                 return false;
             }
         }

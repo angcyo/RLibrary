@@ -2170,7 +2170,9 @@ public class UILayoutImpl extends SwipeBackLayout implements ILayout<UIParam>, U
      * 重新设置View的显示状态
      */
     private void resetChildState() {
-        for (int i = 0; i < getChildCount(); i++) {
+        int childCount = getChildCount();
+
+        for (int i = 0; i < childCount; i++) {
             boolean[] childState = checkChildState(i);
 
             if (childState == null) {
@@ -2189,6 +2191,22 @@ public class UILayoutImpl extends SwipeBackLayout implements ILayout<UIParam>, U
                     childAt.setVisibility(View.INVISIBLE);
                 } else {
                     childAt.setVisibility(View.GONE);
+                }
+            }
+
+            //2017-11-14
+            if (i == childCount - 1) {
+                ViewPattern topViewPattern = findViewPatternByView(childAt);
+                if (topViewPattern != null) {
+                    if (topViewPattern.mView.getMeasuredWidth() == 0 || topViewPattern.mView.getMeasuredHeight() == 0) {
+                        L.e("请注意:界面出现异常." + topViewPattern.mIView.getClass().getSimpleName());
+                        saveToSDCard("请注意:界面出现异常." + topViewPattern.mIView.getClass().getSimpleName());
+                        topViewPattern.mView.measure(exactlyMeasure(getMeasuredWidth()), exactlyMeasure(getMeasuredHeight()));
+                        topViewPattern.mView.layout(0, 0, getMeasuredWidth(), getMeasuredHeight());
+
+                        topViewPattern.mIView.onViewLoad();
+                        topViewPattern.mIView.onViewShow(null);
+                    }
                 }
             }
         }
