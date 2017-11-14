@@ -9,6 +9,7 @@ import android.view.View
 import android.widget.FrameLayout
 import android.widget.HorizontalScrollView
 import com.angcyo.github.utilcode.utils.FileUtils
+import com.angcyo.library.okhttp.Ok
 import com.angcyo.library.utils.L
 import com.angcyo.uiview.R
 import com.angcyo.uiview.Root
@@ -22,8 +23,6 @@ import com.angcyo.uiview.recycler.adapter.RBaseAdapter
 import com.angcyo.uiview.recycler.widget.IShowState
 import com.angcyo.uiview.skin.SkinHelper
 import com.angcyo.uiview.utils.RUtils
-import com.angcyo.uiview.utils.ScreenUtil
-import com.angcyo.uiview.utils.file.FileUtil
 import com.angcyo.uiview.viewgroup.RLinearLayout
 import java.io.File
 import java.text.SimpleDateFormat
@@ -84,7 +83,7 @@ open class UIFileSelectorDialog : UIIDialogImpl {
     }
 
     override fun getOffsetScrollTop(): Int {
-        return ScreenUtil.screenHeight / 2
+        return (resources.displayMetrics.heightPixels) / 2
     }
 
     override fun enableTouchBack(): Boolean {
@@ -95,9 +94,9 @@ open class UIFileSelectorDialog : UIIDialogImpl {
 
     private fun formatFileSize(size: Long): String = Formatter.formatFileSize(mActivity, size)
 
-    private fun getFileList(path: String, onFileList: (List<File>) -> Unit) {
-        Rx.base(object : RFunc<List<File>>() {
-            override fun onFuncCall(): List<File> {
+    private fun getFileList(path: String, onFileList: (List<FileItem>) -> Unit) {
+        Rx.base(object : RFunc<List<FileItem>>() {
+            override fun onFuncCall(): List<FileItem> {
                 val file = File(path)
                 return if (file.exists() && file.isDirectory && file.canRead()) {
                     val list = file.listFiles().asList()
@@ -110,20 +109,25 @@ open class UIFileSelectorDialog : UIIDialogImpl {
                         }
                     }
 
+                    val items = mutableListOf<FileItem>()
+                    val fileList: List<File>
+
                     if (showHideFile) {
-                        list
+                        fileList = list
                     } else {
-                        list.filter {
+                        fileList = list.filter {
                             !it.isHidden
                         }
                     }
+                    fileList.mapTo(items) { FileItem(it, Ok.ImageType.of(Ok.ImageTypeUtil.getImageType(it))) }
+                    items
                 } else {
                     emptyList()
                 }
             }
 
-        }, object : RSubscriber<List<File>>() {
-            override fun onSucceed(bean: List<File>) {
+        }, object : RSubscriber<List<FileItem>>() {
+            override fun onSucceed(bean: List<FileItem>) {
                 super.onSucceed(bean)
                 onFileList.invoke(bean)
             }
@@ -157,10 +161,11 @@ open class UIFileSelectorDialog : UIIDialogImpl {
         }
 
         mViewHolder.reV(R.id.base_recycler_view).apply {
-            adapter = object : RBaseAdapter<File>(mActivity) {
+            adapter = object : RBaseAdapter<FileItem>(mActivity) {
                 override fun getItemLayoutId(viewType: Int): Int = R.layout.base_dialog_file_selector_item
 
-                override fun onBindView(holder: RBaseViewHolder, position: Int, bean: File) {
+                override fun onBindView(holder: RBaseViewHolder, position: Int, item: FileItem) {
+                    val bean = item.file
                     holder.tv(R.id.base_name_view).text = bean.name
                     holder.tv(R.id.base_time_view).text = formatTime(bean.lastModified())
 
@@ -169,6 +174,12 @@ open class UIFileSelectorDialog : UIIDialogImpl {
 
                     //文件/文件夹 提示信息
                     when {
+                        item.imageType != Ok.ImageType.UNKNOWN -> {
+                            holder.glideImgV(R.id.base_image_view).apply {
+                                reset()
+                                url = bean.absolutePath
+                            }
+                        }
                         bean.isDirectory -> {
                             holder.glideImgV(R.id.base_image_view).apply {
                                 reset()
@@ -272,3 +283,5 @@ open class UIFileSelectorDialog : UIIDialogImpl {
 
     }
 }
+
+data class FileItem(val file: File, val imageType: Ok.ImageType)

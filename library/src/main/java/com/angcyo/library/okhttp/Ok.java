@@ -174,7 +174,7 @@ public class Ok {
     public static class ImageTypeUtil {
 
         public static String getImageType(File file) {
-            if (file == null) return null;
+            if (file == null || !file.isFile() || !file.canRead()) return null;
             InputStream is = null;
             try {
                 is = new FileInputStream(file);

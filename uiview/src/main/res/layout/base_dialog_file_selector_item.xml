@@ -15,7 +15,8 @@
     <com.angcyo.uiview.widget.GlideImageView
         android:id="@+id/base_image_view"
         android:layout_width="30dp"
-        android:layout_height="30dp"/>
+        android:layout_height="30dp"
+        android:scaleType="centerCrop"/>
 
     <LinearLayout
         android:layout_width="match_parent"
