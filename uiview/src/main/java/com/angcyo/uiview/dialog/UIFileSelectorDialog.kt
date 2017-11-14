@@ -184,7 +184,7 @@ open class UIFileSelectorDialog : UIIDialogImpl {
                         bean.isFile -> {
                             holder.glideImgV(R.id.base_image_view).apply {
                                 reset()
-                                if (item.imageType != Ok.ImageType.UNKNOWN) {
+                                if (item.imageType == Ok.ImageType.UNKNOWN) {
                                     setImageResource(R.drawable.base_file_32)
                                 } else {
                                     url = bean.absolutePath
