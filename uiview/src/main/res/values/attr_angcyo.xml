@@ -93,6 +93,8 @@
         <attr name="r_noread_padding_top" format="dimension"/>
         <attr name="r_noread_padding_right" format="dimension"/>
         <attr name="r_center_left_drawable" format="boolean"/>
+        <!--需要singleLine=true 或 maxLines=1的支持-->
+        <attr name="r_auto_fix_text_size" format="boolean"/>
 
     </declare-styleable>
 

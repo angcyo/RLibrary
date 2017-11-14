@@ -21,7 +21,9 @@ import android.text.TextPaint;
 import android.text.TextUtils;
 import android.text.style.ForegroundColorSpan;
 import android.util.AttributeSet;
+import android.util.TypedValue;
 import android.view.Gravity;
+import android.view.inputmethod.EditorInfo;
 
 import com.angcyo.uiview.R;
 import com.angcyo.uiview.kotlin.ExKt;
@@ -81,6 +83,8 @@ public class RTextView extends AppCompatTextView {
     private float noReadPaddingTop = 2 * density();
     private float noReadPaddingRight = 2 * density();
 
+    private boolean autoFixTextSize = false;
+
     public RTextView(Context context) {
         this(context, null);
     }
@@ -123,6 +127,8 @@ public class RTextView extends AppCompatTextView {
         noReadRadius = typedArray.getDimensionPixelOffset(R.styleable.RTextView_r_noread_radius, (int) noReadRadius);
         noReadPaddingRight = typedArray.getDimensionPixelOffset(R.styleable.RTextView_r_noread_padding_right, (int) noReadPaddingRight);
         noReadPaddingTop = typedArray.getDimensionPixelOffset(R.styleable.RTextView_r_noread_padding_top, (int) noReadPaddingTop);
+
+        autoFixTextSize = typedArray.getBoolean(R.styleable.RTextView_r_auto_fix_text_size, autoFixTextSize);
 
         typedArray.recycle();
 
@@ -272,6 +278,18 @@ public class RTextView extends AppCompatTextView {
 
         if (centerSaveCount != -1) {
             canvas.restoreToCount(centerSaveCount);
+        }
+    }
+
+    @Override
+    protected void onLayout(boolean changed, int left, int top, int right, int bottom) {
+        super.onLayout(changed, left, top, right, bottom);
+        if (autoFixTextSize &&
+                (!ExKt.have(getInputType(), EditorInfo.TYPE_TEXT_FLAG_MULTI_LINE)) || getMaxLines() == 1) {
+            while (getPaint().getTextSize() > 9 &&
+                    ViewExKt.textWidth(this, getText().toString()) > ViewExKt.getViewDrawWith(this)) {
+                setTextSize(TypedValue.COMPLEX_UNIT_PX, getTextSize() - 1 * density());
+            }
         }
     }
 
@@ -601,5 +619,9 @@ public class RTextView extends AppCompatTextView {
 
     public void setNoReadPaddingRight(float noReadPaddingRight) {
         this.noReadPaddingRight = noReadPaddingRight;
+    }
+
+    public void setAutoFixTextSize(boolean autoFixTextSize) {
+        this.autoFixTextSize = autoFixTextSize;
     }
 }
