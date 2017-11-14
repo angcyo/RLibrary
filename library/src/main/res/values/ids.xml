@@ -4,4 +4,6 @@
     <item name="tag" type="id"/>
     <item name="tag_url" type="id"/>
     <item name="tag_need_layout" type="id"/>
+    <!--StickLayout2-->
+    <item name="tag_not_handle_nested_scroll" type="id"/>
 </resources>

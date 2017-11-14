@@ -13,6 +13,7 @@ import android.view.ViewConfiguration;
 import android.widget.OverScroller;
 import android.widget.RelativeLayout;
 
+import com.angcyo.uiview.R;
 import com.angcyo.uiview.recycler.RRecyclerView;
 import com.angcyo.uiview.utils.Reflect;
 
@@ -26,6 +27,7 @@ import com.angcyo.uiview.utils.Reflect;
  */
 
 public class StickLayout2 extends RelativeLayout {
+
 
     View mFloatView;
     int floatTopOffset = 0;
@@ -67,6 +69,10 @@ public class StickLayout2 extends RelativeLayout {
     public StickLayout2(Context context, AttributeSet attrs, int defStyleAttr) {
         super(context, attrs, defStyleAttr);
         initLayout();
+    }
+
+    public static void setNotHandleNestedScroll(View targetView) {
+        targetView.setTag(R.id.tag_not_handle_nested_scroll, "true");
     }
 
     public void setEdgeScroll(boolean edgeScroll) {
@@ -491,9 +497,12 @@ public class StickLayout2 extends RelativeLayout {
     public void onNestedPreScroll(View target, int dx, int dy, int[] consumed) {
         super.onNestedPreScroll(target, dx, dy, consumed);
         //L.e("call: onNestedPreScroll([target, dx, dy, consumed])-> scroll..." + dy);
-        offsetTo(dy);
-        if (dy > 0) {
-            consumed[1] = Math.min(dy, ensureOffset(lastOffsetY));
+//        if (target.getTag(R.id.tag_not_handle_nested_scroll) == null) {
+        if (Math.abs(dy) > Math.abs(dx)) {
+            offsetTo(dy);
+            if (dy > 0) {
+                consumed[1] = Math.min(dy, ensureOffset(lastOffsetY));
+            }
         }
         //L.e("call: onNestedPreScroll([target, dx, dy, consumed])-> scroll..." + dy + " " + consumed[1] + "   " + lastOffsetY);
     }

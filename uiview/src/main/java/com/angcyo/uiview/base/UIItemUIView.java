@@ -16,11 +16,15 @@ import com.angcyo.uiview.recycler.RBaseViewHolder;
 import com.angcyo.uiview.recycler.RExItemDecoration;
 import com.angcyo.uiview.recycler.RRecyclerView;
 import com.angcyo.uiview.recycler.adapter.RExBaseAdapter;
+import com.angcyo.uiview.recycler.adapter.RItemAdapter;
 import com.angcyo.uiview.rsen.PlaceholderView;
 import com.angcyo.uiview.rsen.RefreshLayout;
 import com.angcyo.uiview.view.RClickListener;
 import com.angcyo.uiview.widget.ItemInfoLayout;
 import com.angcyo.uiview.widget.RSoftInputLayout;
+
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -96,31 +100,15 @@ public abstract class UIItemUIView<T extends Item> extends UIRecyclerUIView<Stri
     @Override
     protected RExBaseAdapter<String, T, String> createAdapter() {
         refreshLayout();
-        return new RExBaseAdapter<String, T, String>(mActivity, mItems) {
+        return new RItemAdapter<T>(mActivity, mItems) {
             @Override
-            protected void onBindDataView(RBaseViewHolder holder, int posInData, T dataBean) {
-                dataBean.onBindView(holder, posInData, dataBean);
+            public int getItemLayoutIdNeed(int posInData) {
+                return UIItemUIView.this.getItemLayoutId(posInData);
             }
 
+            @Nullable
             @Override
-            protected int getDataItemType(int posInData) {
-                return posInData;
-            }
-
-            @Override
-            protected int getItemLayoutId(int viewType) {
-                T t = mItems.get(viewType);
-                int itemLayoutId = t.getItemLayoutId();
-
-                if (itemLayoutId == -1) {
-                    return UIItemUIView.this.getItemLayoutId(viewType);
-                } else {
-                    return itemLayoutId;
-                }
-            }
-
-            @Override
-            protected View createItemView(ViewGroup parent, int viewType) {
+            protected View createItemView(@NotNull ViewGroup parent, int viewType) {
                 return UIItemUIView.this.createItemView(parent, viewType);
             }
         };

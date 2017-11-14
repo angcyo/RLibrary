@@ -23,6 +23,7 @@ import android.text.style.CharacterStyle;
 import android.text.style.ClickableSpan;
 import android.text.style.ImageSpan;
 import android.util.AttributeSet;
+import android.util.Patterns;
 import android.view.MotionEvent;
 import android.view.View;
 import android.widget.TextView;
@@ -54,6 +55,7 @@ public class RExTextView extends RTextView {
      * 网址url正则
      */
     //public final static Pattern patternUrl = Pattern.compile("(http|ftp|https):\\/\\/[\\w\\-_]+(\\.[\\w\\-_]+)+([\\w\\-\\.:+#]*[\\w\\-+#])?");//Patterns.WEB_URL;//
+    public final static Pattern patternUrlSys = Patterns.WEB_URL;
     public final static Pattern patternUrl = Pattern.compile("^(http|ftp|https)://(\\\\w+(-\\\\w+)*)(\\\\.(\\\\w+(-\\\\w+)*))*(\\\\?\\\\S*)?$");//Patterns.WEB_URL;//
     /**
      * @成员,正则
@@ -108,6 +110,18 @@ public class RExTextView extends RTextView {
             return false;
         }
         return patternUrl.matcher(url).matches();
+    }
+
+    public static boolean isWebUrlSys(String url, boolean checkHttp) {
+        if (TextUtils.isEmpty(url)) {
+            return false;
+        }
+        if (checkHttp) {
+            if (!url.startsWith("http") || !url.startsWith("HTTP")) {
+                return false;
+            }
+        }
+        return patternUrlSys.matcher(url).matches();
     }
 
     /**
@@ -383,7 +397,7 @@ public class RExTextView extends RTextView {
      * 匹配Url链接
      */
     protected void patternUrl(SpannableStringBuilder builder, CharSequence input) {
-        Matcher matcher = patternUrl.matcher(input);
+        Matcher matcher = patternUrlSys.matcher(input);
 
         while (matcher.find()) {
             int start = matcher.start();
