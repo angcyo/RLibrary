@@ -107,6 +107,7 @@ public class RRecyclerView extends RecyclerView {
                     if (layoutManager instanceof LinearLayoutManager) {
                         firstVisibleItemPosition = ((LinearLayoutManager) layoutManager).findFirstVisibleItemPosition();
                     }
+                    //L.e("call: run([])-> " + curScrollPosition + " " + firstVisibleItemPosition);
                     scrollTo(curScrollPosition, Math.abs(firstVisibleItemPosition - curScrollPosition) < 2);
                 }
             }

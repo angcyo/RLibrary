@@ -8,6 +8,7 @@ import android.widget.Toast;
 import com.lzy.imagepicker.bean.ImageItem;
 import com.lzy.imagepicker.ui.ImageGridActivity;
 import com.lzy.imagepicker.ui.ImagePreviewActivity;
+import com.lzy.imagepicker.view.CropImageView;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -33,11 +34,11 @@ public class ImagePickerHelper {
     }
 
     public static void startImagePicker(Activity activity, boolean multiMode, int selectLimit, @ImageDataSource.LoaderType int loadType) {
-        startImagePicker(activity, true, true, false, multiMode, selectLimit, loadType);
+        startImagePicker(activity, true, true, false, multiMode, selectLimit, loadType, CropImageView.Style.RECTANGLE);
     }
 
     public static void startImagePicker(Activity activity, boolean showCamera, boolean multiMode, int selectLimit, @ImageDataSource.LoaderType int loadType) {
-        startImagePicker(activity, showCamera, true, false, multiMode, selectLimit, loadType);
+        startImagePicker(activity, showCamera, true, false, multiMode, selectLimit, loadType, CropImageView.Style.RECTANGLE);
     }
 
     public static void startImagePicker(Activity activity, boolean crop, boolean multiMode, int selectLimit) {
@@ -49,14 +50,22 @@ public class ImagePickerHelper {
     }
 
     public static void startImagePicker(Activity activity, boolean showCamera,
-                                        boolean clear, boolean crop,
+                                        boolean clear, boolean crop /*裁剪需要关闭多选*/,
                                         boolean multiMode, int selectLimit) {
-        startImagePicker(activity, showCamera, clear, crop, multiMode, selectLimit, ImageDataSource.IMAGE);
+        startImagePicker(activity, showCamera, clear, crop, multiMode, selectLimit, CropImageView.Style.RECTANGLE);
+    }
+
+    public static void startImagePicker(Activity activity, boolean showCamera,
+                                        boolean clear, boolean crop /*裁剪需要关闭多选*/,
+                                        boolean multiMode, int selectLimit, CropImageView.Style style) {
+        startImagePicker(activity, showCamera, clear, crop, multiMode, selectLimit, ImageDataSource.IMAGE, style);
     }
 
     public static void startImagePicker(Activity activity, boolean showCamera,
                                         boolean clear, boolean crop,
-                                        boolean multiMode, int selectLimit, @ImageDataSource.LoaderType int loadType) {
+                                        boolean multiMode, int selectLimit,
+                                        @ImageDataSource.LoaderType int loadType,
+                                        CropImageView.Style style /*图片剪切框的形状*/) {
         ImagePicker imagePicker = ImagePicker.getInstance();
         imagePicker.setImageLoader(new GlideImageLoader());
         imagePicker.setCrop(crop);
@@ -68,6 +77,7 @@ public class ImagePickerHelper {
         imagePicker.setFocusWidth(600);
         imagePicker.setFocusHeight(600);
         imagePicker.setLoadType(loadType);
+        imagePicker.setStyle(style);
         Intent intent = new Intent(activity, ImageGridActivity.class);
         intent.putExtra(ImageGridActivity.CLEAR_SELECTOR, clear);
         activity.startActivityForResult(intent, REQUEST_CODE);
