@@ -106,10 +106,11 @@ public class RExTextView extends RTextView {
 //        return matcher.find();
 //    }
     public static boolean isWebUrl(String url) {
-        if (TextUtils.isEmpty(url)) {
-            return false;
-        }
-        return patternUrl.matcher(url).matches();
+//        if (TextUtils.isEmpty(url)) {
+//            return false;
+//        }
+//        return patternUrl.matcher(url).matches();
+        return isWebUrlSys(url, true);
     }
 
     public static boolean isWebUrlSys(String url, boolean checkHttp) {
