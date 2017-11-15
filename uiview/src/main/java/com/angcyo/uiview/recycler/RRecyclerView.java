@@ -622,6 +622,31 @@ public class RRecyclerView extends RecyclerView {
         this.curScrollPosition = curScrollPosition;
     }
 
+    public void setLastItemInGridLayoutManager(final GridLayoutManager.SpanSizeLookup spanSizeLookup /*可以为null*/) {
+        LayoutManager layoutManager = getLayoutManager();
+        if (layoutManager instanceof GridLayoutManager) {
+            final GridLayoutManager gridLayoutManager = (GridLayoutManager) layoutManager;
+
+            Adapter adapter = getAdapter();
+            if (adapter instanceof RBaseAdapter) {
+                final RBaseAdapter baseAdapter = (RBaseAdapter) adapter;
+
+                gridLayoutManager.setSpanSizeLookup(new GridLayoutManager.SpanSizeLookup() {
+                    @Override
+                    public int getSpanSize(int position) {
+                        if (baseAdapter.isLast(position) && baseAdapter.isEnableLoadMore()) {
+                            return gridLayoutManager.getSpanCount();
+                        }
+                        if (spanSizeLookup != null && spanSizeLookup.getSpanSize(position) > 0) {
+                            return spanSizeLookup.getSpanSize(position);
+                        }
+                        return 1;
+                    }
+                });
+            }
+        }
+    }
+
     /**
      * RecyclerView滚动结束后的回调
      */
