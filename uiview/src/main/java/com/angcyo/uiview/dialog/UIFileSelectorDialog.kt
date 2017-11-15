@@ -10,7 +10,6 @@ import android.widget.FrameLayout
 import android.widget.HorizontalScrollView
 import com.angcyo.github.utilcode.utils.FileUtils
 import com.angcyo.library.okhttp.Ok
-import com.angcyo.library.utils.L
 import com.angcyo.uiview.R
 import com.angcyo.uiview.Root
 import com.angcyo.uiview.base.UIIDialogImpl
@@ -47,6 +46,12 @@ open class UIFileSelectorDialog : UIIDialogImpl {
 
     /**是否显示隐藏文件*/
     var showHideFile = false
+
+    /**是否显示文件MD5值*/
+    var showFileMd5 = false
+
+    /**是否长按显示文件菜单*/
+    var showFileMenu = false
 
     private val storageDirectory = Root.externalStorageDirectory()
 
@@ -123,7 +128,7 @@ open class UIFileSelectorDialog : UIIDialogImpl {
                     fileList.mapTo(items) {
                         FileItem(it,
                                 Ok.ImageType.of(Ok.ImageTypeUtil.getImageType(it)),
-                                if (L.LOG_DEBUG) MD5.getStreamMD5(it.absolutePath) else "")
+                                if (showFileMd5) MD5.getStreamMD5(it.absolutePath) else "")
                     }
                     items
                 } else {
@@ -200,7 +205,7 @@ open class UIFileSelectorDialog : UIIDialogImpl {
                             holder.tv(R.id.base_tip_view).text = formatFileSize(bean.length())
 
                             //MD5值
-                            if (L.LOG_DEBUG) {
+                            if (showFileMd5) {
                                 holder.tv(R.id.base_md5_view).visibility = View.VISIBLE
                                 holder.tv(R.id.base_md5_view).text = item.fileMd5
                             }
@@ -240,7 +245,7 @@ open class UIFileSelectorDialog : UIIDialogImpl {
                         }
                     }
 
-                    if (L.LOG_DEBUG) {
+                    if (showFileMenu) {
                         if (bean.isFile) {
                             itemView.setOnLongClickListener {
                                 val file = File(bean.absolutePath)

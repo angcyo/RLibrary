@@ -2,7 +2,6 @@ package com.angcyo.uiview.base;
 
 import android.content.Context;
 import android.graphics.Color;
-import android.graphics.drawable.ColorDrawable;
 import android.support.annotation.LayoutRes;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -27,19 +26,20 @@ public class RPopupWindow extends PopupWindow {
     Context mContext;
     FrameLayout mRootLayout;
     RBaseViewHolder mViewHolder;
+    OnInitLayout mOnInitLayout;
 
     public RPopupWindow(Context context) {
         super(context);
         mContext = context;
 
-        setWidth(-1);
-        setHeight(-1);
+        setWidth(-2);
+        setHeight(-2);
 
         mRootLayout = new FrameLayout(context);
         mViewHolder = new RBaseViewHolder(mRootLayout);
 
-        mRootLayout.setBackgroundColor(Color.GREEN);
-        setBackgroundDrawable(new ColorDrawable(Color.RED));
+        mRootLayout.setBackgroundColor(Color.WHITE);
+//        setBackgroundDrawable(new ColorDrawable(Color.WHITE));
 
         setTouchable(true);
         setOutsideTouchable(true);//点击窗口外, 消失
@@ -52,8 +52,9 @@ public class RPopupWindow extends PopupWindow {
 
     public RPopupWindow layout(@LayoutRes int layoutId, OnInitLayout initLayout) {
         LayoutInflater.from(mContext).inflate(layoutId, mRootLayout);
+        mOnInitLayout = initLayout;
         if (initLayout != null) {
-            initLayout.onInitLayout(mViewHolder);
+            initLayout.onInitLayout(mViewHolder, this);
         }
         return this;
     }
@@ -64,7 +65,17 @@ public class RPopupWindow extends PopupWindow {
         super.showAsDropDown(anchor, xoff, yoff, gravity);
     }
 
+    @Override
+    public void dismiss() {
+        super.dismiss();
+        if (mOnInitLayout != null) {
+            mOnInitLayout.onDismiss();
+        }
+    }
+
     public interface OnInitLayout {
-        void onInitLayout(RBaseViewHolder viewHolder);
+        void onInitLayout(RBaseViewHolder viewHolder, PopupWindow window);
+
+        void onDismiss();
     }
 }
