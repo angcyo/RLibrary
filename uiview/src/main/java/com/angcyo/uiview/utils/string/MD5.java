@@ -1,6 +1,9 @@
 package com.angcyo.uiview.utils.string;
 
+import android.text.TextUtils;
+
 import java.io.BufferedInputStream;
+import java.io.File;
 import java.io.FileInputStream;
 import java.io.UnsupportedEncodingException;
 import java.security.MessageDigest;
@@ -28,6 +31,15 @@ public class MD5 {
     }
 
     public static String getStreamMD5(String filePath) {
+        if (TextUtils.isEmpty(filePath)) {
+            return "";
+        }
+
+        File file = new File(filePath);
+        if (!file.exists() || !file.isFile() || !file.canRead()) {
+            return "";
+        }
+
         String hash = null;
         byte[] buffer = new byte[4096];
         BufferedInputStream in = null;

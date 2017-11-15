@@ -23,6 +23,7 @@ import com.angcyo.uiview.recycler.adapter.RBaseAdapter
 import com.angcyo.uiview.recycler.widget.IShowState
 import com.angcyo.uiview.skin.SkinHelper
 import com.angcyo.uiview.utils.RUtils
+import com.angcyo.uiview.utils.string.MD5
 import com.angcyo.uiview.viewgroup.RLinearLayout
 import java.io.File
 import java.text.SimpleDateFormat
@@ -112,14 +113,18 @@ open class UIFileSelectorDialog : UIIDialogImpl {
                     val items = mutableListOf<FileItem>()
                     val fileList: List<File>
 
-                    if (showHideFile) {
-                        fileList = list
+                    fileList = if (showHideFile) {
+                        list
                     } else {
-                        fileList = list.filter {
+                        list.filter {
                             !it.isHidden
                         }
                     }
-                    fileList.mapTo(items) { FileItem(it, Ok.ImageType.of(Ok.ImageTypeUtil.getImageType(it))) }
+                    fileList.mapTo(items) {
+                        FileItem(it,
+                                Ok.ImageType.of(Ok.ImageTypeUtil.getImageType(it)),
+                                if (L.LOG_DEBUG) MD5.getStreamMD5(it.absolutePath) else "")
+                    }
                     items
                 } else {
                     emptyList()
@@ -172,6 +177,8 @@ open class UIFileSelectorDialog : UIIDialogImpl {
                     //权限信息
                     holder.tv(R.id.base_auth_view).text = "${if (bean.isDirectory) "d" else "-"}${if (bean.canExecute()) "e" else "-"}${if (bean.canRead()) "r" else "-"}${if (bean.canWrite()) "w" else "-"}"
 
+                    holder.tv(R.id.base_md5_view).visibility = View.GONE
+
                     //文件/文件夹 提示信息
                     when {
                         bean.isDirectory -> {
@@ -191,6 +198,12 @@ open class UIFileSelectorDialog : UIIDialogImpl {
                                 }
                             }
                             holder.tv(R.id.base_tip_view).text = formatFileSize(bean.length())
+
+                            //MD5值
+                            if (L.LOG_DEBUG) {
+                                holder.tv(R.id.base_md5_view).visibility = View.VISIBLE
+                                holder.tv(R.id.base_md5_view).text = item.fileMd5
+                            }
                         }
                         else -> {
                             holder.glideImgV(R.id.base_image_view).apply {
@@ -250,7 +263,7 @@ open class UIFileSelectorDialog : UIIDialogImpl {
                     }
                 }
             }
-            resetPath(targetPath)
+            loadPath(targetPath)
         }
     }
 
@@ -261,6 +274,15 @@ open class UIFileSelectorDialog : UIIDialogImpl {
 
     private fun resetPath(path: String) {
         //L.e("call: resetPath -> $path")
+        targetPath = path
+        if (mViewHolder.tv(R.id.current_file_path_view).text.toString() == targetPath) {
+            return
+        }
+
+        loadPath(path)
+    }
+
+    private fun loadPath(path: String) {
         targetPath = path
         //mViewHolder.view(R.id.base_selector_button).isEnabled = false
         mViewHolder.tv(R.id.current_file_path_view).text = targetPath
@@ -278,8 +300,7 @@ open class UIFileSelectorDialog : UIIDialogImpl {
                 mViewHolder.reV(R.id.base_recycler_view).adapterRaw.setShowState(IShowState.EMPTY)
             }
         }
-
     }
 }
 
-data class FileItem(val file: File, val imageType: Ok.ImageType)
+data class FileItem(val file: File, val imageType: Ok.ImageType, val fileMd5: String = "")

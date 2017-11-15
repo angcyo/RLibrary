@@ -63,6 +63,17 @@
                 tools:text="2017/10/25"/>
 
         </FrameLayout>
+
+        <com.angcyo.uiview.widget.RTextView
+            android:id="@+id/base_md5_view"
+            style="@style/BaseDarkTextStyle"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:tag="MD5:%1$s"
+            android:textSize="12dp"
+            android:visibility="gone"
+            tools:text="1923847938751235"/>
+
     </LinearLayout>
 
 </com.angcyo.uiview.viewgroup.RLinearLayout>
