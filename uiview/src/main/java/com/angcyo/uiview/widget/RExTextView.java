@@ -118,12 +118,27 @@ public class RExTextView extends RTextView {
             return false;
         }
         if (checkHttp) {
-            if (url.startsWith("http") || url.startsWith("HTTP")) {
+            if (isStartWidthUrl(url)) {
+
             } else {
                 return false;
             }
         }
         return patternUrlSys.matcher(url).matches();
+    }
+
+    /**
+     * url 是否包含了 http请求协议
+     */
+    public static boolean isStartWidthUrl(String url) {
+        if (TextUtils.isEmpty(url)) {
+            return false;
+        }
+        if (url.startsWith("http") || url.startsWith("HTTP")) {
+            return true;
+        } else {
+            return false;
+        }
     }
 
     /**
@@ -404,13 +419,17 @@ public class RExTextView extends RTextView {
         while (matcher.find()) {
             int start = matcher.start();
             int end = matcher.end();
-            CharSequence text = matcher.group();//input.subSequence(start, end);
+            String text = matcher.group();//input.subSequence(start, end);
+
+            if (!isStartWidthUrl(text)) {
+                continue;
+            }
 
             builder.setSpan(new ImageTextSpan(getContext(),
                             ImageTextSpan.initDrawable(getContext(),
                                     R.drawable.base_link_ico, getTextSize()),
                             getContext().getString(R.string.url_link_tip),
-                            text.toString())
+                            text)
                             .setOnImageSpanClick(mOnImageSpanClick)
                             .setTextColor(mImageSpanTextColor),
                     start, end, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
