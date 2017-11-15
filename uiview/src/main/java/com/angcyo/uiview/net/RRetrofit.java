@@ -257,6 +257,17 @@ public class RRetrofit {
                 L.d(data);
             }
 
+//            if ("GET" == request.method() || "POST" == request.method()) {
+//                L.e("开始拦截:" + request.url().url().toString());
+//                Response.Builder builder = new Response.Builder();
+//                builder.body(ResponseBody.create(MediaType.parse("application/json"), "测试拦截数据"));
+//                builder.code(200);
+//                builder.message("测试的Message字段");
+//                builder.request(request);
+//                builder.protocol(Protocol.HTTP_1_1);
+//                return builder.build();
+//            }
+
             try {
                 saveToSDCard(data);
 
