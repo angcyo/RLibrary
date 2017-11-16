@@ -1,6 +1,7 @@
 package com.angcyo.uiview.github.pickerview;
 
 import android.text.TextUtils;
+import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.FrameLayout;
@@ -89,6 +90,7 @@ public class DateDialog extends UIIDialogImpl {
         });
 
         wheelTime.setLabels(null, null, null, null, null, null);
+        wheelTime.setLabelGravity(Gravity.LEFT);
 
         //禁止循环滚动
         setCyclic(false);

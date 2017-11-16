@@ -494,6 +494,15 @@ public class WheelTime {
 
     }
 
+    public void setLabelGravity(int labelGravity) {
+        wv_year.setLabelGravity(labelGravity);
+        wv_month.setLabelGravity(labelGravity);
+        wv_day.setLabelGravity(labelGravity);
+        wv_hours.setLabelGravity(labelGravity);
+        wv_mins.setLabelGravity(labelGravity);
+        wv_seconds.setLabelGravity(labelGravity);
+    }
+
 
     /**
      * 设置是否循环滚动

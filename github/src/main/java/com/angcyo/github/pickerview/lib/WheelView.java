@@ -85,9 +85,11 @@ public class WheelView extends View {
     private DividerType dividerType;//分隔线类型
     private GestureDetector gestureDetector;
     private boolean isOptions = false;
-    private boolean isCenterLabel = true;
+    private boolean isCenterLabel = true;//是否只有中的Item, 才显示lable, 否则全部都会显示
     private ScheduledFuture<?> mFuture;
     private String label;//附加单位
+    private int labelGravity = Gravity.RIGHT;//附加单位的绘制重心, Gravity.RIGHT or Gravity.LEFT (isCenterLabel=true时才有效)
+    private int labelOffset = 0;//额外的偏移量 (isCenterLabel=true时才有效)
     //选中的Item是第几个
     private int selectedItem;
     private int mOffset = 0;
@@ -192,6 +194,9 @@ public class WheelView extends View {
     }
 
     private void remeasure() {//重新测量
+        maxDrawOutContentStart = 0;
+        maxDrawTextWidth = 0;
+
         if (adapter == null) {
             return;
         }
@@ -323,6 +328,9 @@ public class WheelView extends View {
         }
     }
 
+    int maxDrawOutContentStart = 0;
+    int maxDrawTextWidth = 0;
+
     @Override
     protected void onDraw(Canvas canvas) {
         if (adapter == null) {
@@ -400,12 +408,18 @@ public class WheelView extends View {
             canvas.drawLine(0.0F, secondLineY, measuredWidth, secondLineY, paintIndicator);
         }
 
-        //只显示选中项Label文字的模式，并且Label文字不为空，则进行绘制
-        if (!TextUtils.isEmpty(label) && isCenterLabel) {
-            //绘制文字，靠右并留出空隙
-            int drawRightContentStart = measuredWidth - getTextWidth(paintCenterText, label);
-            canvas.drawText(label, drawRightContentStart - CENTERCONTENTOFFSET, centerY, paintCenterText);
-        }
+//        //只显示选中项Label文字的模式，并且Label文字不为空，则进行绘制
+//        if (!TextUtils.isEmpty(label) && isCenterLabel) {
+//            //绘制文字，靠右并留出空隙
+//            float labelX;
+//            if (labelGravity == Gravity.LEFT) {
+//                labelX = drawOutContentStart + maxTextWidth + CENTERCONTENTOFFSET;
+//            } else {
+//                int drawRightContentStart = measuredWidth - getTextWidth(paintCenterText, label);
+//                labelX = drawRightContentStart - CENTERCONTENTOFFSET;
+//            }
+//            canvas.drawText(label, labelX, centerY, paintCenterText);
+//        }
 
         counter = 0;
         while (counter < itemsVisible) {
@@ -484,9 +498,27 @@ public class WheelView extends View {
                 }
                 canvas.restore();
                 paintCenterText.setTextSize(textSize);
+
+                maxDrawOutContentStart = Math.max(drawOutContentStart, maxDrawOutContentStart);
+                maxDrawTextWidth = Math.max(maxTextWidth, maxDrawTextWidth);
             }
             counter++;
         }
+
+        //只显示选中项Label文字的模式，并且Label文字不为空，则进行绘制
+        if (!TextUtils.isEmpty(label) && isCenterLabel) {
+            float labelX;
+            if (labelGravity == Gravity.LEFT) {
+                //L.e("onDraw " + maxDrawOutContentStart + ":" + drawOutContentStart + " " + maxDrawTextWidth + ":" + maxTextWidth + "  " + CENTERCONTENTOFFSET);
+                labelX = maxDrawOutContentStart + maxDrawTextWidth + CENTERCONTENTOFFSET + labelOffset;
+            } else {
+                //绘制文字，靠右并留出空隙
+                int drawRightContentStart = measuredWidth - getTextWidth(paintCenterText, label);
+                labelX = drawRightContentStart - CENTERCONTENTOFFSET - labelOffset;
+            }
+            canvas.drawText(label, labelX, centerY, paintCenterText);
+        }
+
     }
 
     /**
@@ -756,6 +788,14 @@ public class WheelView extends View {
             judgeLineSpae();
 
         }
+    }
+
+    public void setLabelGravity(int labelGravity) {
+        this.labelGravity = labelGravity;
+    }
+
+    public void setLabelOffset(int labelOffset) {
+        this.labelOffset = labelOffset;
     }
 
     public enum ACTION { // 点击，滑翔(滑到尽头)，拖拽事件
