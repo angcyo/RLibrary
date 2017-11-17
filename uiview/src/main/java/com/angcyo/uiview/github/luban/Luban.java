@@ -806,6 +806,14 @@ public class Luban {
             return list;
         }
 
+        public static ArrayList<String> getThumbImages(List<ImageItem> images) {
+            ArrayList<String> list = new ArrayList<>();
+            for (ImageItem item : images) {
+                list.add(item.thumbPath);
+            }
+            return list;
+        }
+
         public static ImageItem get(String string) {
             ImageItem imageItem = new ImageItem();
             if (TextUtils.isEmpty(string)) {

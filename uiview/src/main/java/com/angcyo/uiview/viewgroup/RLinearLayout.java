@@ -33,6 +33,11 @@ public class RLinearLayout extends LinearLayout {
      */
     private int maxHeight = -1;
 
+    /**
+     * 当有2个TextView时, 横向排列, 如果第二个TextView不够排列时, 换行排列
+     */
+    private boolean autoFixNewLine = false;
+
     public RLinearLayout(Context context) {
         this(context, null);
     }
@@ -47,6 +52,7 @@ public class RLinearLayout extends LinearLayout {
         TypedArray typedArray = context.obtainStyledAttributes(attrs, R.styleable.RLinearLayout);
         mBackgroundDrawable = typedArray.getDrawable(R.styleable.RLinearLayout_r_background);
         maxHeight = typedArray.getDimensionPixelOffset(R.styleable.RLinearLayout_r_max_height, -1);
+        autoFixNewLine = typedArray.getBoolean(R.styleable.RLinearLayout_r_auto_fix_new_line, autoFixNewLine);
         typedArray.recycle();
         resetMaxHeight();
         initLayout();
@@ -73,6 +79,7 @@ public class RLinearLayout extends LinearLayout {
     protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
         int heightMode = MeasureSpec.getMode(heightMeasureSpec);
         int heightSize = MeasureSpec.getSize(heightMeasureSpec);
+        int widthSize = MeasureSpec.getSize(widthMeasureSpec);
         int statusBarHeight = getResources().getDimensionPixelSize(R.dimen.status_bar_height);
 
         if (maxHeight > 0) {
@@ -84,6 +91,28 @@ public class RLinearLayout extends LinearLayout {
         } else {
             super.onMeasure(widthMeasureSpec, heightMeasureSpec);
         }
+
+        if (needNewLine()) {
+            getChildAt(1).measure(MeasureSpec.makeMeasureSpec(getMeasuredWidth(), MeasureSpec.AT_MOST),
+                    MeasureSpec.makeMeasureSpec(getMeasuredHeight(), MeasureSpec.AT_MOST));
+            setMeasuredDimension(getMeasuredWidth(), getMeasuredHeight() + getChildAt(1).getMeasuredHeight());
+        }
+    }
+
+    @Override
+    protected void onLayout(boolean changed, int l, int t, int r, int b) {
+        super.onLayout(changed, l, t, r, b);
+        if (needNewLine()) {
+            getChildAt(1).layout(getPaddingLeft(),
+                    getChildAt(0).getBottom(), getPaddingLeft() + getChildAt(1).getMeasuredWidth(),
+                    getChildAt(0).getBottom() + getChildAt(1).getMeasuredHeight());
+        }
+    }
+
+    private boolean needNewLine() {
+        return autoFixNewLine &&
+                getChildCount() == 2 &&
+                (getChildAt(0).getMeasuredWidth() + getChildAt(1).getMeasuredWidth()) >= (getMeasuredWidth() - getPaddingLeft() - getPaddingRight());
     }
 
     @Override

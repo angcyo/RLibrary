@@ -83,6 +83,14 @@ public class ImagePickerHelper {
         activity.startActivityForResult(intent, REQUEST_CODE);
     }
 
+    public static void setOutPutSize(int outPutX, int outPutY, int focusWidth, int focusHeight) {
+        ImagePicker imagePicker = ImagePicker.getInstance();
+        imagePicker.setOutPutX(outPutX);
+        imagePicker.setOutPutY(outPutY);
+        imagePicker.setFocusWidth(focusWidth);
+        imagePicker.setFocusHeight(focusHeight);
+    }
+
     /**
      * 拿到原始的图片磁盘路径
      */

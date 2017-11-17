@@ -76,9 +76,12 @@ public class Rx<Rx> extends Observable<Rx> {
      * 是否需要重试, token过期或者无效
      */
     public static boolean needRetryOnError(RException throwable) {
+        //1018	无效的token
+        //1019	token未获取或已过期
+        //3003	无效的参数
         return throwable.getCode() == 1018 ||
-                throwable.getCode() == 1019 ||
-                throwable.getCode() == 3003;
+                throwable.getCode() == 1019 /*||
+                throwable.getCode() == 3003*/;
     }
 
     public static boolean needRetryOnError(Throwable throwable) {

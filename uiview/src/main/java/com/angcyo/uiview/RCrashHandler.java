@@ -487,8 +487,16 @@ public class RCrashHandler implements Thread.UncaughtExceptionHandler {
 
     //-----------------------------------------------end------------------------------------------//
 
+    public static boolean isLastCrash(boolean clearState) {
+        Boolean b = Hawk.get(RCrashHandler.KEY_IS_CRASH, false);
+        if (b && clearState) {
+            Hawk.put(RCrashHandler.KEY_IS_CRASH, false);
+        }
+        return b;
+    }
+
     public static void checkCrash(final ILayout iLayout) {
-        if (Hawk.get(RCrashHandler.KEY_IS_CRASH, false)) {
+        if (isLastCrash(true)) {
             ClipboardUtils.copyText(FileUtils.readFile2String(Hawk.get(RCrashHandler.KEY_CRASH_FILE, "-"), "utf8"));
 
             //异常退出了
@@ -536,8 +544,6 @@ public class RCrashHandler implements Thread.UncaughtExceptionHandler {
                     })
                     .showDialog(iLayout);
         }
-
-        Hawk.put(RCrashHandler.KEY_IS_CRASH, false);
     }
 
 

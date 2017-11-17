@@ -29,10 +29,34 @@ public class Debug {
         L.e(log + " --start:" + time);
     }
 
+    public static void logTimeStartI(String log) {
+        long time = System.currentTimeMillis();
+        sStartTime.push(time);
+        L.i(log + " --start:" + time);
+    }
+
+    public static void logTimeStartD(String log) {
+        long time = System.currentTimeMillis();
+        sStartTime.push(time);
+        L.d(log + " --start:" + time);
+    }
+
     public static void logTimeEnd(String log) {
         final long endTime = System.currentTimeMillis();
         Long pop = sStartTime.pop();
         L.e(log + " ----end:" + (endTime - pop) / 1000 + "秒" + (endTime - pop) % 1000);
+    }
+
+    public static void logTimeEndI(String log) {
+        final long endTime = System.currentTimeMillis();
+        Long pop = sStartTime.pop();
+        L.i(log + " ----end:" + (endTime - pop) / 1000 + "秒" + (endTime - pop) % 1000);
+    }
+
+    public static void logTimeEndD(String log) {
+        final long endTime = System.currentTimeMillis();
+        Long pop = sStartTime.pop();
+        L.d(log + " ----end:" + (endTime - pop) / 1000 + "秒" + (endTime - pop) % 1000);
     }
 
     public static void log(String tag, String log) {

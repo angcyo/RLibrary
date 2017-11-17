@@ -41,6 +41,7 @@
     <declare-styleable name="RLinearLayout">
         <attr name="r_background"/>
         <attr name="r_max_height"/>
+        <attr name="r_auto_fix_new_line" format="boolean"/>
     </declare-styleable>
 
     <declare-styleable name="RRelativeLayout">

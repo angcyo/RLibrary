@@ -2,6 +2,7 @@ package com.angcyo.uiview.utils;
 
 import android.annotation.SuppressLint;
 import android.app.Activity;
+import android.app.ActivityManager;
 import android.app.DownloadManager;
 import android.content.ActivityNotFoundException;
 import android.content.ComponentName;
@@ -32,6 +33,7 @@ import android.net.Uri;
 import android.os.Build;
 import android.os.Environment;
 import android.os.Looper;
+import android.os.Process;
 import android.provider.Settings;
 import android.support.v4.content.FileProvider;
 import android.support.v7.widget.RecyclerView;
@@ -1527,6 +1529,60 @@ public class RUtils {
             e.printStackTrace();
         }
         return size;
+    }
+
+    public static void logProcessInfo(Context context) {
+        PackageManager pm = context.getPackageManager();
+        ActivityManager am = (ActivityManager) context.getSystemService(Context.ACTIVITY_SERVICE);
+        /**只能拿到自己程序的进程列表*/
+        List<ActivityManager.RunningAppProcessInfo> runningAppProcesses = am.getRunningAppProcesses();
+        for (ActivityManager.RunningAppProcessInfo info : runningAppProcesses) {
+            L.e("logProcessInfo([context])-> " + info.processName + " " + info.pid);
+//            TaskInfo taskInfo = new TaskInfo();
+//            //进程名称
+//            String packageName = info.processName;
+//            taskInfo.setPackageName(packageName);
+//            try {
+//                ApplicationInfo applicationInfo = pm.getApplicationInfo(packageName, 0);
+//                //图标
+//                Drawable task_icon = applicationInfo.loadIcon(pm);
+//                if (task_icon == null) {
+//                    taskInfo.setTask_icon(context.getResources().getDrawable(R.drawable.ic_launcher));
+//                } else {
+//                    taskInfo.setTask_icon(task_icon);
+//                }
+//                //名称
+//                String task_name = applicationInfo.loadLabel(pm).toString();
+//                taskInfo.setTask_name(task_name);
+//            } catch (PackageManager.NameNotFoundException e) {
+//                // TODO Auto-generated catch block
+//                e.printStackTrace();
+//            }
+//
+//            //进程id
+//            int pid = info.pid;
+//            taskInfo.setPid(pid);
+//            //获取进程占用的内存
+//            android.os.Debug.MemoryInfo[] processMemoryInfo = am.getProcessMemoryInfo(new int[]{pid});
+//            android.os.Debug.MemoryInfo memoryInfo = processMemoryInfo[0];
+//            long totalPrivateDirty = memoryInfo.getTotalPrivateDirty(); //KB
+//            taskInfo.setTask_memory(totalPrivateDirty);
+//            taskInfos.add(taskInfo);
+        }
+    }
+
+    public static void killMyAllProcess(Context context) {
+        //PackageManager pm = context.getPackageManager();
+        ActivityManager am = (ActivityManager) context.getSystemService(Context.ACTIVITY_SERVICE);
+        /**只能拿到自己程序的进程列表*/
+        List<ActivityManager.RunningAppProcessInfo> runningAppProcesses = am.getRunningAppProcesses();
+        for (ActivityManager.RunningAppProcessInfo info : runningAppProcesses) {
+            //L.e("logProcessInfo([context])-> " + info.processName + " " + info.pid);
+            if (!TextUtils.equals(info.processName, context.getPackageName()) && info.processName.contains(context.getPackageName())) {
+                Process.killProcess(info.pid);
+            }
+        }
+        Process.killProcess(Process.myPid());
     }
 
     public enum ImageType {

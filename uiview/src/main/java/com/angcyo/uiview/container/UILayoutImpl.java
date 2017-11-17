@@ -36,6 +36,7 @@ import com.angcyo.uiview.model.ViewPattern;
 import com.angcyo.uiview.resources.AnimUtil;
 import com.angcyo.uiview.rsen.RGestureDetector;
 import com.angcyo.uiview.skin.ISkin;
+import com.angcyo.uiview.utils.Debug;
 import com.angcyo.uiview.view.ILifecycle;
 import com.angcyo.uiview.view.IView;
 import com.angcyo.uiview.view.UIIViewImpl;
@@ -1908,6 +1909,8 @@ public class UILayoutImpl extends SwipeBackLayout implements ILayout<UIParam>, U
         return getMeasuredHeight() - 4 * vSpace;
     }
 
+    StringBuilder measureLogBuilder = new StringBuilder();
+
     @Override
     protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
         //of java
@@ -1938,7 +1941,9 @@ public class UILayoutImpl extends SwipeBackLayout implements ILayout<UIParam>, U
                 childAt.measure(exactlyMeasure(wSize), exactlyMeasure(hSize));
             }
         } else {
-            //Debug.logTimeStart("开始测量, 共:" + getAttachViewSize());
+            Debug.logTimeStartD("\n开始测量, 共:" + getAttachViewSize());
+            measureLogBuilder.delete(0, measureLogBuilder.length());
+
             for (int i = 0; i < count; i++) {
                 View childAt = getChildAt(i);
 
@@ -1962,7 +1967,15 @@ public class UILayoutImpl extends SwipeBackLayout implements ILayout<UIParam>, U
                         childAt.setVisibility(INVISIBLE);
                     }
                     childAt.measure(exactlyMeasure(widthSize), exactlyMeasure(heightSize));
-                    L.d("测量 needVisible " + needVisible + ": " + viewPatternByView.mIView.getClass().getSimpleName());
+                    //L.d("测量 needVisible " + needVisible + ": " + viewPatternByView.mIView.getClass().getSimpleName());
+                    measureLogBuilder.append("\n测量 needVisible ");
+                    measureLogBuilder.append(needVisible);
+                    measureLogBuilder.append(": ");
+                    measureLogBuilder.append(viewPatternByView.mIView.getClass().getSimpleName());
+                    measureLogBuilder.append(" W:");
+                    measureLogBuilder.append(childAt.getMeasuredWidth());
+                    measureLogBuilder.append(" H:");
+                    measureLogBuilder.append(childAt.getMeasuredHeight());
                 } else {
                     if (i == count - 2) {
                         View lastView = getChildAt(i + 1);
@@ -1985,7 +1998,8 @@ public class UILayoutImpl extends SwipeBackLayout implements ILayout<UIParam>, U
                     }
                 }
             }
-            //Debug.logTimeEnd("测量结束");
+            L.d(measureLogBuilder.toString());
+            Debug.logTimeEndD("\n测量结束");
         }
 
         setMeasuredDimension(widthSize, heightSize);
@@ -2204,8 +2218,13 @@ public class UILayoutImpl extends SwipeBackLayout implements ILayout<UIParam>, U
                         topViewPattern.mView.measure(exactlyMeasure(getMeasuredWidth()), exactlyMeasure(getMeasuredHeight()));
                         topViewPattern.mView.layout(0, 0, getMeasuredWidth(), getMeasuredHeight());
 
+//                        topViewPattern.mIView.onViewCreate(topViewPattern.mView);
+//                        topViewPattern.mIView.loadContentView(topViewPattern.mView);
                         topViewPattern.mIView.onViewLoad();
                         topViewPattern.mIView.onViewShow(null);
+
+                        setIViewNeedLayout(topViewPattern.mView, true);
+                        requestLayout();
                     }
                 }
             }
