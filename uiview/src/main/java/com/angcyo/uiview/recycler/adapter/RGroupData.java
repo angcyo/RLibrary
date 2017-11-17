@@ -1,6 +1,7 @@
 package com.angcyo.uiview.recycler.adapter;
 
 import com.angcyo.uiview.recycler.RBaseViewHolder;
+import com.angcyo.uiview.recycler.RRecyclerView;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -124,6 +125,27 @@ public class RGroupData<T> {
     public void notifyItemUpdate(RGroupAdapter groupAdapter) {
         int startPosition = groupAdapter.getPositionFromGroup(this);
         groupAdapter.notifyItemRangeChanged(startPosition, getCount());
+    }
+
+    public void localRefresh(RRecyclerView recyclerView, final RGroupAdapter groupAdapter) {
+        RBaseAdapter.localRefresh(recyclerView, new RBaseAdapter.OnLocalRefresh() {
+            @Override
+            public void onLocalRefresh(RBaseViewHolder viewHolder, int position) {
+                RGroupData groupData = groupAdapter.getGroupDataFromPosition(position);
+                if (groupData != null) {
+                    int groupIndex = groupAdapter.getGroupIndex(position);
+                    if (groupIndex >= 0) {
+                        //有分组
+                        groupData.onBindGroupView(viewHolder, position, groupIndex);
+                    }
+
+                    int dataIndex = groupAdapter.getDataIndex(position);
+                    if (dataIndex >= 0) {
+                        groupData.onBindDataView(viewHolder, position, dataIndex);
+                    }
+                }
+            }
+        });
     }
 
 

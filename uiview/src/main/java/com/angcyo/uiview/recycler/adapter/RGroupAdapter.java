@@ -94,7 +94,7 @@ public class RGroupAdapter<H, G extends RGroupData, F> extends RExBaseAdapter<H,
     /**
      * 通过adapter中的位置, 返回在Group头部中的索引
      */
-    private int getGroupIndex(int posInData) {
+    public int getGroupIndex(int posInData) {
         if (mAllDatas == null) {
             return -1;
         }
@@ -118,7 +118,7 @@ public class RGroupAdapter<H, G extends RGroupData, F> extends RExBaseAdapter<H,
     /**
      * 通过adapter中的位置, 返回在Group数据部分中的索引
      */
-    protected int getDataIndex(int posInData) {
+    public int getDataIndex(int posInData) {
         if (mAllDatas == null) {
             return -1;
         }

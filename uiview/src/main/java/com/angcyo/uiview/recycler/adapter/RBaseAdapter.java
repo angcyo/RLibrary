@@ -543,7 +543,7 @@ public abstract class RBaseAdapter<T> extends RecyclerView.Adapter<RBaseViewHold
     /**
      * 使用布局局部刷新
      */
-    public void localRefresh(RecyclerView recyclerView, OnLocalRefresh localRefresh) {
+    public static void localRefresh(RecyclerView recyclerView, OnLocalRefresh localRefresh) {
         if (recyclerView == null || localRefresh == null) {
             return;
         }
