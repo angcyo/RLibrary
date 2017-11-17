@@ -70,6 +70,7 @@ public class TitleBarPattern {
      * 标题
      */
     public String mTitleString;
+    public int mTitleStringLength = -1;
     public float mTitleSize = -1;
     /**
      * 左边的按钮
@@ -163,6 +164,11 @@ public class TitleBarPattern {
         if (mTitleSize != -1) {
             textView.setTextSize(mTitleSize);
         }
+        return this;
+    }
+
+    public TitleBarPattern setTitleStringLength(int titleStringLength) {
+        mTitleStringLength = titleStringLength;
         return this;
     }
 

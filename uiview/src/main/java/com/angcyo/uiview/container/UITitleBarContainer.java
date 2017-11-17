@@ -9,7 +9,6 @@ import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
 import android.graphics.drawable.Drawable;
 import android.support.annotation.ColorInt;
-import android.support.v4.content.ContextCompat;
 import android.support.v4.view.ViewCompat;
 import android.text.TextUtils;
 import android.util.AttributeSet;
@@ -225,6 +224,10 @@ public class UITitleBarContainer extends FrameLayout {
         mTitleView.setText(mTitleBarPattern.mTitleString);
         mTitleView.setTextSize(TypedValue.COMPLEX_UNIT_PX, SkinHelper.getSkin().getMainTextSize());
         mTitleBarPattern.setTextViewSize(mTitleView);
+        if (mTitleBarPattern.mTitleStringLength > 0) {
+            mTitleView.setMaxLength(mTitleBarPattern.mTitleStringLength);
+        }
+
         if (mTitleBarPattern.titleHide) {
             mTitleView.setVisibility(GONE);
         }
