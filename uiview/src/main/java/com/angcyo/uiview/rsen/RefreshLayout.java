@@ -31,8 +31,10 @@ import android.widget.OverScroller;
 import android.widget.TextView;
 
 import com.angcyo.uiview.R;
+import com.angcyo.uiview.kotlin.ViewGroupExKt;
 import com.angcyo.uiview.skin.SkinHelper;
 import com.angcyo.uiview.utils.T_;
+import com.angcyo.uiview.utils.UI;
 import com.angcyo.uiview.widget.RTextView;
 
 import java.lang.annotation.Retention;
@@ -311,11 +313,11 @@ public class RefreshLayout extends ViewGroup {
             return;
         }
         if (mTopView == null) {
-            mTopView = new BaseRefreshTopView(getContext());
+            mTopView = new BasePointRefreshView(getContext());
             mTopView.setTag(TOP_VIEW);
         }
         if (mBottomView == null) {
-            mBottomView = new BaseRefreshBottomView(getContext());
+            mBottomView = new BasePointRefreshView(getContext());
             mBottomView.setTag(TOP_VIEW);
         }
         if (mTipView == null) {
@@ -417,13 +419,13 @@ public class RefreshLayout extends ViewGroup {
                     return super.onInterceptTouchEvent(event);
                 } else {
                     if (dy > 0 && canScrollDown() &&
-                            !innerCanChildScrollVertically(mTargetView, -1, event.getRawX(), event.getRawY())) {
+                            !innerCanChildScrollVertically(mTargetView, -1, event.getRawX(), event.getRawY(), event.getX(), event.getY())) {
                         order = TOP;
                         //L.e("call: onInterceptTouchEvent([event])-> 3");
                         return super.onInterceptTouchEvent(event) || touchIntercept;
 
                     } else if (dy < 0 && canScrollUp() &&
-                            !innerCanChildScrollVertically(mTargetView, 1, event.getRawX(), event.getRawY())) {
+                            !innerCanChildScrollVertically(mTargetView, 1, event.getRawX(), event.getRawY(), event.getX(), event.getY())) {
                         order = BOTTOM;
                         //L.e("call: onInterceptTouchEvent([event])-> 4");
                         //return true;//this 星期六 2017-9-30
@@ -940,7 +942,7 @@ public class RefreshLayout extends ViewGroup {
      *
      * @param direction 如果是大于0, 表示视图底部没有数据了, 即不能向上滚动了, 反之...
      */
-    protected boolean innerCanChildScrollVertically(View view, int direction, float rawX, float rawY) {
+    protected boolean innerCanChildScrollVertically(View view, int direction, float rawX, float rawY, float x, float y) {
         if (checkInnerChildScroll) {
             //项目特殊处理,可以注释掉
             if (view instanceof RecyclerView) {
@@ -957,26 +959,15 @@ public class RefreshLayout extends ViewGroup {
             }
         }
         //---------------ebd-----------------
-
-        if (view instanceof ViewGroup) {
-            final ViewGroup vGroup = (ViewGroup) view;
-            View child;
-            boolean result;
-            for (int i = 0; i < vGroup.getChildCount(); i++) {
-                child = vGroup.getChildAt(i);
-                if (child instanceof View) {
-                    result = ViewCompat.canScrollVertically(child, direction);
-                } else {
-                    result = innerCanChildScrollVertically(child, direction, rawX, rawY);
-                }
-
-                if (result) {
-                    return true;
-                }
+        if (mTargetView != null &&
+                !(mTargetView instanceof RecyclerView)) {
+            RecyclerView touchOnRecyclerView = ViewGroupExKt.getTouchOnRecyclerView(this, x, y);
+            if (touchOnRecyclerView != null) {
+                view = touchOnRecyclerView;
             }
         }
 
-        return ViewCompat.canScrollVertically(view, direction);
+        return UI.canChildScroll(view, direction);
     }
 
     public void setNotifyListener(boolean notifyListener) {

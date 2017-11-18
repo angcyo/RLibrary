@@ -2,6 +2,7 @@ package com.angcyo.uiview.kotlin
 
 import android.app.Activity
 import android.graphics.Rect
+import android.support.v7.widget.RecyclerView
 import android.view.View
 import android.view.ViewGroup
 import android.view.WindowManager
@@ -32,10 +33,8 @@ public fun ViewGroup.getLocationInParent(child: View, location: Rect) {
     location.set(x, y, x + child.measuredWidth, y + child.measuredHeight)
 }
 
-/**
- * 根据touch坐标, 返回touch的View
- */
-public fun ViewGroup.findView(touchRawX: Float, touchRawY: Float): View? {
+/**返回当软键盘弹出时, 布局向上偏移了多少距离*/
+public fun View.getLayoutOffsetTopWidthSoftInput(): Int {
     val rect = Rect()
     var offsetTop = 0
 
@@ -58,11 +57,23 @@ public fun ViewGroup.findView(touchRawX: Float, touchRawY: Float): View? {
 
     } catch (e: Exception) {
     }
-
-    return findView(this, touchRawX, touchRawY, offsetTop)
+    return offsetTop
 }
 
-public fun ViewGroup.findView(targetView: View, touchRawX: Float, touchRawY: Float, offsetTop: Int = 0): View? {
+
+/**获取touch坐标对应的RecyclerView, 如果没有则null*/
+public fun ViewGroup.getTouchOnRecyclerView(touchRawX: Float, touchRawY: Float): RecyclerView? {
+    return findRecyclerView(this, touchRawX, touchRawY, getLayoutOffsetTopWidthSoftInput())
+}
+
+/**
+ * 根据touch坐标, 返回touch的View
+ */
+public fun ViewGroup.findView(touchRawX: Float, touchRawY: Float): View? {
+    return findView(this, touchRawX, touchRawY, getLayoutOffsetTopWidthSoftInput())
+}
+
+public fun ViewGroup.findView(targetView: View /*判断需要结果的View*/, touchRawX: Float, touchRawY: Float, offsetTop: Int = 0): View? {
     /**键盘的高度*/
     var touchView: View? = targetView
     val rect = Rect()
@@ -82,7 +93,8 @@ public fun ViewGroup.findView(targetView: View, touchRawX: Float, touchRawY: Flo
         rect.offset(0, -offsetTop)
 
         fun check(view: View): View? {
-            if (view.measuredHeight != 0 &&
+            if (view.visibility == View.VISIBLE &&
+                    view.measuredHeight != 0 &&
                     view.measuredWidth != 0 &&
                     (view.left != view.right) &&
                     (view.top != view.bottom) &&
@@ -108,6 +120,49 @@ public fun ViewGroup.findView(targetView: View, touchRawX: Float, touchRawY: Flo
             val check = check(childAt)
             if (check != null) {
                 touchView = childAt
+                break
+            }
+        }
+    }
+    return touchView
+}
+
+public fun ViewGroup.findRecyclerView(targetView: View /*判断需要结果的View*/, touchRawX: Float, touchRawY: Float, offsetTop: Int = 0): RecyclerView? {
+    /**键盘的高度*/
+    var touchView: RecyclerView? = null
+    val rect = Rect()
+
+    for (i in childCount - 1 downTo 0) {
+        val childAt = getChildAt(i)
+
+        if (childAt.visibility != View.VISIBLE) {
+            continue
+        }
+        childAt.getGlobalVisibleRect(rect)
+        rect.offset(0, -offsetTop)
+
+        fun check(view: View): View? {
+            if (view.visibility == View.VISIBLE &&
+                    view.measuredHeight != 0 &&
+                    view.measuredWidth != 0 &&
+                    (view.left != view.right) &&
+                    (view.top != view.bottom) &&
+                    rect.contains(touchRawX.toInt(), touchRawY.toInt())) {
+                return view
+            }
+            return null
+        }
+
+        if (childAt is RecyclerView) {
+            val check = check(childAt)
+            if (check != null) {
+                touchView = childAt
+                break
+            }
+        } else if (childAt is ViewGroup && childAt.childCount > 0) {
+            val resultView = childAt.findRecyclerView(targetView, touchRawX, touchRawY, offsetTop)
+            if (resultView != null) {
+                touchView = resultView
                 break
             }
         }

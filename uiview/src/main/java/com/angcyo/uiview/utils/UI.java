@@ -93,13 +93,15 @@ public class UI {
         return canChildScroll(view, 1);
     }
 
-    private static boolean canChildScroll(View view, int direction) {
+    public static boolean canChildScroll(View view, int direction) {
 
         if (view == null) {
             return false;
         }
 
-        if (view instanceof ViewGroup) {
+        if (view instanceof RecyclerView) {
+
+        } else if (view instanceof ViewGroup) {
             final ViewGroup vGroup = (ViewGroup) view;
             View child;
             boolean result;
