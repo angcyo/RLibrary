@@ -61,11 +61,14 @@ public class UITitleBarContainer extends FrameLayout {
     private int mStatusBarHeight;
     private boolean mLayoutFullscreen;
     private OnClickListener mOnBackListener;
+    private Drawable mBackgroundDrawable;
 
     public UITitleBarContainer(Context context) {
         super(context);
         initTitleBar(context);
     }
+
+    //----------------------------公共方法-----------------------------
 
     public UITitleBarContainer(Context context, AttributeSet attrs) {
         super(context, attrs);
@@ -86,8 +89,6 @@ public class UITitleBarContainer extends FrameLayout {
         initTitleBar(context);
     }
 
-    //----------------------------公共方法-----------------------------
-
     private static <T> T find(View view, int id) {
         return (T) view.findViewById(id);
     }
@@ -107,17 +108,19 @@ public class UITitleBarContainer extends FrameLayout {
         return this;
     }
 
+    //----------------------------保护方法-----------------------------
+
     public UITitleBarContainer showLoadView() {
         mLoadView.setVisibility(VISIBLE);
         return this;
     }
 
-    //----------------------------保护方法-----------------------------
-
     public UITitleBarContainer hideLoadView() {
         mLoadView.setVisibility(GONE);
         return this;
     }
+
+    //----------------------------私有方法-----------------------------
 
     @Override
     protected void onAttachedToWindow() {
@@ -130,8 +133,6 @@ public class UITitleBarContainer extends FrameLayout {
 //            }
 //        });
     }
-
-    //----------------------------私有方法-----------------------------
 
     @Override
     protected void onDetachedFromWindow() {
@@ -220,13 +221,15 @@ public class UITitleBarContainer extends FrameLayout {
         } else {
             mBackImageView.setVisibility(GONE);
         }
-        /*标题*/
-        mTitleView.setText(mTitleBarPattern.mTitleString);
+        /*标题字体大小限制*/
         mTitleView.setTextSize(TypedValue.COMPLEX_UNIT_PX, SkinHelper.getSkin().getMainTextSize());
         mTitleBarPattern.setTextViewSize(mTitleView);
+        /*标题长度显示*/
         if (mTitleBarPattern.mTitleStringLength > 0) {
             mTitleView.setMaxLength(mTitleBarPattern.mTitleStringLength);
         }
+        /*标题*/
+        mTitleView.setText(mTitleBarPattern.mTitleString);
 
         if (mTitleBarPattern.titleHide) {
             mTitleView.setVisibility(GONE);
@@ -514,8 +517,6 @@ public class UITitleBarContainer extends FrameLayout {
             }
         }
     }
-
-    private Drawable mBackgroundDrawable;
 
     public void setRBackgroundDrawable(Drawable mBackgroundDrawable) {
         this.mBackgroundDrawable = mBackgroundDrawable;
