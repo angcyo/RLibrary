@@ -64,7 +64,7 @@ public class ClipHelper {
     }
 
     //勾股定理
-    private static float c(float a, float b) {
+    public static float c(float a, float b) {
         return (float) Math.sqrt(a * a + b * b);
     }
 
