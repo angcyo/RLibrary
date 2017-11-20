@@ -73,7 +73,6 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Random;
-import java.util.regex.Matcher;
 
 import static com.angcyo.uiview.utils.RUtils.ImageType.BMP;
 import static com.angcyo.uiview.utils.RUtils.ImageType.GIF;
@@ -750,8 +749,9 @@ public class RUtils {
 //        return RegexUtils.isMatch(
 //                "(http|ftp|https):\\/\\/[\\w\\-_]+(\\.[\\w\\-_]+)+([\\w\\-\\.,@?^=%&amp;:/~\\+#]*[\\w\\-\\@?^=%&amp;/~\\+#])?",
 //                url);
-        Matcher matcher = RExTextView.patternUrl.matcher(url);
-        return matcher.find();
+//        Matcher matcher = RExTextView.patternUrl.matcher(url);
+//        return matcher.find();
+        return RExTextView.isWebUrlSys(url, true);
     }
 
     public static boolean isLast(List data, int position) {
