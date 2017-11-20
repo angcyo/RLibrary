@@ -399,9 +399,13 @@ public class RTextView extends AppCompatTextView {
      * 需要预留3个'...'字符的数量, <em></>已自动处理</em>
      */
     public void setMaxLength(int length) {
+        setMaxLength(length, false);
+    }
+
+    public void setMaxLength(int length, boolean addMoreStringLength) {
         InputFilter[] filters = getFilters();
         boolean have = false;
-        InputFilter.LengthFilter lengthFilter = new InputFilter.LengthFilter(length + getMoreString().length());
+        InputFilter.LengthFilter lengthFilter = new InputFilter.LengthFilter(length + (addMoreStringLength ? getMoreString().length() : 0));
         for (int i = 0; i < filters.length; i++) {
             InputFilter filter = filters[i];
             if (filter instanceof InputFilter.LengthFilter) {
