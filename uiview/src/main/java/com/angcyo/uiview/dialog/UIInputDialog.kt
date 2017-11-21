@@ -55,7 +55,7 @@ open class UIInputDialog : UIIDialogImpl {
             editText?.hint = "请输入..."
             okButton.text = "确定"
 
-            dialogConfig?.onInitInputDialog(this, titleBarLayout, textInputLayout, editText, okButton)
+            dialogConfig?.onInitInputDialog(this, titleBarLayout, textInputLayout, editText!!, okButton)
 
             //add view
             textInputLayout.addView(editText, LinearLayout.LayoutParams(-1, -2))
@@ -92,10 +92,10 @@ open class UIInputDialog : UIIDialogImpl {
         open fun autoShowSoftInput(): Boolean = true
 
         open fun onInitInputDialog(inputDialog: UIInputDialog,
-                                   titleBarLayout: TitleBarLayout?,
-                                   textInputLayout: TextInputLayout?,
-                                   editText: ExEditText?,
-                                   okButton: Button?) {
+                                   titleBarLayout: TitleBarLayout,
+                                   textInputLayout: TextInputLayout,
+                                   editText: ExEditText,
+                                   okButton: Button) {
 
         }
 
