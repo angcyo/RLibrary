@@ -32,6 +32,22 @@ public class StringUtil {
         return buff.toString();
     }
 
+    public static String removeLimeBreaks(String content) {
+        if (TextUtils.isEmpty(content)) {
+            return content;
+        }
+
+        StringBuilder buff = new StringBuilder();
+        buff.append(content.trim());
+        for (int i = buff.length() - 1; i >= 0; i--) {
+            if (('\n' == buff.charAt(i)) || ('\t' == buff.charAt(i))
+                    || ('\r' == buff.charAt(i))) {
+                buff.deleteCharAt(i);
+            }
+        }
+        return buff.toString();
+    }
+
     /**
      * 获取32位uuid
      *

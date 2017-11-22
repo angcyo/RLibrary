@@ -1,5 +1,6 @@
 package com.angcyo.uiview.widget
 
+import android.annotation.SuppressLint
 import android.app.Activity
 import android.content.Context
 import android.graphics.Bitmap
@@ -9,6 +10,7 @@ import android.graphics.Paint
 import android.graphics.drawable.BitmapDrawable
 import android.graphics.drawable.Drawable
 import android.support.v4.content.ContextCompat
+import android.text.TextUtils
 import android.util.AttributeSet
 import com.angcyo.github.utilcode.utils.ImageUtils
 import com.angcyo.library.okhttp.Ok
@@ -20,11 +22,15 @@ import com.angcyo.uiview.kotlin.textWidth
 import com.bumptech.glide.Glide
 import com.bumptech.glide.Priority
 import com.bumptech.glide.RequestBuilder
+import com.bumptech.glide.load.DataSource
 import com.bumptech.glide.load.Transformation
 import com.bumptech.glide.load.engine.DiskCacheStrategy
+import com.bumptech.glide.load.engine.GlideException
 import com.bumptech.glide.load.resource.gif.GifDrawable
+import com.bumptech.glide.request.RequestListener
 import com.bumptech.glide.request.RequestOptions
 import com.bumptech.glide.request.target.SimpleTarget
+import com.bumptech.glide.request.target.Target
 import com.bumptech.glide.request.transition.Transition
 import pl.droidsonroids.gif.GifDrawableBuilder
 import java.io.File
@@ -43,6 +49,7 @@ import java.io.File
 open class GlideImageView(context: Context, attributeSet: AttributeSet? = null) : RImageView(context, attributeSet) {
 
     private var defaultPlaceholderDrawable: Drawable? = null
+    private val defaultPlaceholderDrawableRes = R.drawable.base_image_placeholder_shape
 
     companion object {
         var DEBUG_SHOW = false
@@ -55,13 +62,13 @@ open class GlideImageView(context: Context, attributeSet: AttributeSet? = null) 
     var showAsGifImage = false
 
     /**占位资源*/
-    var placeholderRes: Int = R.drawable.base_image_placeholder_shape
+    var placeholderRes: Int = defaultPlaceholderDrawableRes
         set(value) {
             field = value
-            if (value == -1) {
-                placeholderDrawable = null
+            placeholderDrawable = if (value == -1) {
+                null
             } else {
-                placeholderDrawable = ContextCompat.getDrawable(context, value)
+                ContextCompat.getDrawable(context, value)
             }
         }
 
@@ -94,18 +101,10 @@ open class GlideImageView(context: Context, attributeSet: AttributeSet? = null) 
             startLoadUrl()
         }
 
-    /**重置所有属性, 方便在RecyclerView中使用*/
-    fun reset() {
-        checkGif = false
-        showAsGifImage = false
-        mShowGifTip = false
-        override = true
-        skipMemoryCache = true
-        placeholderRes = R.drawable.base_image_placeholder_shape
-        animType = AnimType.DEFAULT
-        bitmapTransform = null
+    /**重置,并清理界面数据*/
+    fun clear() {
+        reset()
         setImageDrawable(null)
-
         if (defaultPlaceholderDrawable != null) {
             placeholderDrawable = defaultPlaceholderDrawable
             setImageDrawable(defaultPlaceholderDrawable)
@@ -113,12 +112,24 @@ open class GlideImageView(context: Context, attributeSet: AttributeSet? = null) 
         url = ""
     }
 
+    /**重置所有属性, 方便在RecyclerView中使用*/
+    fun reset() {
+        checkGif = false
+        showAsGifImage = false
+        mShowGifTip = false
+        override = true
+        skipMemoryCache = true
+        placeholderRes = defaultPlaceholderDrawableRes
+        animType = AnimType.DEFAULT
+        bitmapTransform = null
+    }
+
     override fun onSizeChanged(w: Int, h: Int, oldw: Int, oldh: Int) {
         super.onSizeChanged(w, h, oldw, oldh)
         startLoadUrl()
     }
 
-    override fun setImageDrawable(drawable: Drawable?) {
+    final override fun setImageDrawable(drawable: Drawable?) {
         drawable?.let {
             //L.e("call: setImageDrawable -> ${it.javaClass.simpleName} $checkGif $measuredWidth $measuredHeight")
         }
@@ -148,9 +159,14 @@ open class GlideImageView(context: Context, attributeSet: AttributeSet? = null) 
             //setImageResource(placeholderRes)
         } else {
             setTagUrl(url!!)
-            if (measuredHeight == 0 || measuredWidth == 0) {
+            if (loadSuccessUrl.isNotEmpty() && TextUtils.equals(url, loadSuccessUrl)) {
+                L.i("startLoadUrl 重复加载url -> $url")
+            } else if (measuredHeight == 0 ||
+                    measuredWidth == 0) {
 
             } else {
+                L.d("startLoadUrl 加载url -> $url")
+
                 val file = File(url)
                 if (file.exists()) {
                     loadWithFile(file)
@@ -161,6 +177,7 @@ open class GlideImageView(context: Context, attributeSet: AttributeSet? = null) 
         }
     }
 
+    @SuppressLint("CheckResult")
     private fun defaultConfig(isGif: Boolean): RequestOptions {
         val requestOptions = RequestOptions
                 .placeholderOf(placeholderRes)
@@ -206,7 +223,10 @@ open class GlideImageView(context: Context, attributeSet: AttributeSet? = null) 
         }
     }
 
+    @SuppressLint("CheckResult")
     private fun intoConfigFile(request: RequestBuilder<File>, requestOptions: RequestOptions) {
+        initListener(request)
+
         intoConfig {
             requestOptions.override(measuredWidth, measuredHeight)
             request.apply(requestOptions)
@@ -224,7 +244,10 @@ open class GlideImageView(context: Context, attributeSet: AttributeSet? = null) 
         }
     }
 
+    @SuppressLint("CheckResult")
     private fun intoConfigGifDrawable(request: RequestBuilder<GifDrawable>, requestOptions: RequestOptions) {
+        initListener(request)
+
         intoConfig {
             requestOptions.override(measuredWidth, measuredHeight)
             request.apply(requestOptions)
@@ -243,7 +266,10 @@ open class GlideImageView(context: Context, attributeSet: AttributeSet? = null) 
         }
     }
 
+    @SuppressLint("CheckResult")
     private fun intoConfigDrawable(request: RequestBuilder<Drawable>, requestOptions: RequestOptions) {
+        initListener(request)
+
         intoConfig {
             requestOptions.override(measuredWidth, measuredHeight)
             request.apply(requestOptions)
@@ -261,7 +287,10 @@ open class GlideImageView(context: Context, attributeSet: AttributeSet? = null) 
         }
     }
 
+    @SuppressLint("CheckResult")
     private fun intoConfigBitmap(request: RequestBuilder<Bitmap>, requestOptions: RequestOptions) {
+        initListener(request)
+
         intoConfig {
             requestOptions.override(measuredWidth, measuredHeight)
             request.apply(requestOptions)
@@ -278,6 +307,36 @@ open class GlideImageView(context: Context, attributeSet: AttributeSet? = null) 
             }
         }
     }
+
+    @SuppressLint("CheckResult")
+    private fun <T> initListener(request: RequestBuilder<T>) {
+        request.listener(object : RequestListener<T> {
+            override fun onResourceReady(resource: T?, model: Any?, target: Target<T>?, dataSource: DataSource?, isFirstResource: Boolean): Boolean {
+                loadSuccessUrl = url!!
+                return false
+            }
+
+            override fun onLoadFailed(e: GlideException?, model: Any?, target: Target<T>?, isFirstResource: Boolean): Boolean {
+                loadSuccessUrl = ""
+                return false
+            }
+        })
+    }
+
+    /**当前View加载x成功的url, 下次再次加载相同url, 不刷新界面*/
+    private var loadSuccessUrl: String = ""
+        set(value) {
+            field = value
+            setTag(R.id.tag_success_url, field)
+        }
+        get() {
+            val tag = getTag(R.id.tag_success_url)
+            return if (tag == null) {
+                ""
+            } else {
+                tag as String
+            }
+        }
 
     fun setTagUrl(url: String?) {
         if (url == null) {
@@ -327,10 +386,13 @@ open class GlideImageView(context: Context, attributeSet: AttributeSet? = null) 
         }
     }
 
+    @SuppressLint("CheckResult")
     private fun showGifFile(file: File) {
         val request = Glide.with(context)
                 .downloadOnly()
                 .load(file)
+
+        initListener(request)
 
         intoConfig {
             request.apply(defaultConfig(true))
@@ -428,6 +490,7 @@ open class GlideImageView(context: Context, attributeSet: AttributeSet? = null) 
         intoConfigBitmap(request, defaultConfig(false))
     }
 
+    @SuppressLint("CheckResult")
     private fun loadGifUrl(url: String) {
         if (!canLoad(url)) {
             return
@@ -436,6 +499,8 @@ open class GlideImageView(context: Context, attributeSet: AttributeSet? = null) 
         val request = Glide.with(context)
                 .downloadOnly()
                 .load(url)
+
+        initListener(request)
 
         intoConfig {
             request.apply(defaultConfig(true))

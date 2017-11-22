@@ -169,3 +169,20 @@ public fun ViewGroup.findRecyclerView(targetView: View /*判断需要结果的Vi
     }
     return touchView
 }
+
+/**将子View的数量, 重置到指定的数量*/
+public fun ViewGroup.resetChildCount(newSize: Int, onAddView: () -> View) {
+    val oldSize = childCount
+    val count = newSize - oldSize
+    if (count > 0) {
+        //需要补充子View
+        for (i in 0 until count) {
+            addView(onAddView.invoke())
+        }
+    } else if (count < 0) {
+        //需要移除子View
+        for (i in 0 until count.abs()) {
+            removeViewAt(oldSize - 1 - i)
+        }
+    }
+}

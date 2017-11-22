@@ -5,17 +5,23 @@ import android.graphics.Color;
 import android.support.annotation.ColorRes;
 import android.support.annotation.DimenRes;
 import android.support.v4.content.ContextCompat;
+import android.support.v7.widget.LinearLayoutCompat;
 import android.util.AttributeSet;
+import android.util.TypedValue;
 import android.view.Gravity;
 import android.view.View;
 import android.widget.LinearLayout;
+import android.widget.TextView;
 
 import com.angcyo.uiview.R;
+import com.angcyo.uiview.kotlin.ViewGroupExKt;
 import com.angcyo.uiview.resources.ResUtil;
 import com.angcyo.uiview.skin.SkinHelper;
 
 import java.util.ArrayList;
 import java.util.List;
+
+import kotlin.jvm.functions.Function0;
 
 /**
  * Created by angcyo on 15-10-22-022.
@@ -215,5 +221,38 @@ public class RFlowLayout extends LinearLayout {
 
         addView(textView);
         return textView;
+    }
+
+    public void addTextView(List<String> texts, final OnAddViewListener onAddViewListener) {
+        ViewGroupExKt.resetChildCount(this, texts.size(), new Function0<View>() {
+            @Override
+            public View invoke() {
+                RTextView textView = new RTextView(getContext());
+                textView.setTextColor(getColor(R.color.base_text_color));
+                textView.setTextSize(TypedValue.COMPLEX_UNIT_PX, getDimensionPixelOffset(R.dimen.default_text_size9));
+                textView.setGravity(Gravity.CENTER);
+
+                int offset = getDimensionPixelOffset(R.dimen.base_ldpi);
+                textView.setPadding(offset, offset / 2, offset, offset / 2);
+
+                LinearLayoutCompat.LayoutParams layoutParams = new LinearLayoutCompat.LayoutParams(-2, -2);
+                layoutParams.setMarginEnd(offset * 2);
+                textView.setLayoutParams(layoutParams);
+
+                if (onAddViewListener != null) {
+                    onAddViewListener.onInitView(textView);
+                }
+                return textView;
+            }
+        });
+
+        for (int i = 0; i < texts.size(); i++) {
+            TextView childAt = (TextView) getChildAt(i);
+            childAt.setText(texts.get(i));
+        }
+    }
+
+    public interface OnAddViewListener {
+        void onInitView(View view);
     }
 }

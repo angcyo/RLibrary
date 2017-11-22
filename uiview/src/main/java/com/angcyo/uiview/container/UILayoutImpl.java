@@ -2224,7 +2224,12 @@ public class UILayoutImpl extends SwipeBackLayout implements ILayout<UIParam>, U
                         topViewPattern.mIView.onViewShow(null);
 
                         setIViewNeedLayout(topViewPattern.mView, true);
-                        requestLayout();
+                        postDelayed(new Runnable() {
+                            @Override
+                            public void run() {
+                                requestLayout();
+                            }
+                        }, 100);
                     }
                 }
             }
@@ -2425,7 +2430,7 @@ public class UILayoutImpl extends SwipeBackLayout implements ILayout<UIParam>, U
                         }
                         builder.append(view);
                     }
-                    L.w(builder.toString());
+                    L.d(builder.toString());
                 }
 
                 if (mLastShowViewPattern.mIView.hideSoftInputOnTouchDown()) {
