@@ -95,7 +95,7 @@ open class GlideImageView(context: Context, attributeSet: AttributeSet? = null) 
     }
 
     /**需要加载的图片地址, 优先判断是否是本地File*/
-    open var url: String? = ""
+    open var url: String? = null
         set(value) {
             field = value
             startLoadUrl()
@@ -153,7 +153,9 @@ open class GlideImageView(context: Context, attributeSet: AttributeSet? = null) 
     //启动加载流程
     private fun startLoadUrl() {
         setShowGifTip(false)
-        if (url.isNullOrEmpty()) {
+        if (url == null) {
+            setTagUrl("")
+        } else if (url.isNullOrEmpty()) {
             setTagUrl("")
             cancelRequest()
             //setImageResource(placeholderRes)

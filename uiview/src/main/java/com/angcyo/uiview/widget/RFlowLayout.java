@@ -5,7 +5,6 @@ import android.graphics.Color;
 import android.support.annotation.ColorRes;
 import android.support.annotation.DimenRes;
 import android.support.v4.content.ContextCompat;
-import android.support.v7.widget.LinearLayoutCompat;
 import android.util.AttributeSet;
 import android.util.TypedValue;
 import android.view.Gravity;
@@ -224,6 +223,8 @@ public class RFlowLayout extends LinearLayout {
     }
 
     public void addTextView(List<String> texts, final OnAddViewListener onAddViewListener) {
+        final int offset = getDimensionPixelOffset(R.dimen.base_ldpi);
+
         ViewGroupExKt.resetChildCount(this, texts.size(), new Function0<View>() {
             @Override
             public View invoke() {
@@ -232,10 +233,9 @@ public class RFlowLayout extends LinearLayout {
                 textView.setTextSize(TypedValue.COMPLEX_UNIT_PX, getDimensionPixelOffset(R.dimen.default_text_size9));
                 textView.setGravity(Gravity.CENTER);
 
-                int offset = getDimensionPixelOffset(R.dimen.base_ldpi);
                 textView.setPadding(offset, offset / 2, offset, offset / 2);
 
-                LinearLayoutCompat.LayoutParams layoutParams = new LinearLayoutCompat.LayoutParams(-2, -2);
+                LinearLayout.LayoutParams layoutParams = new LinearLayout.LayoutParams(-2, -2);
                 layoutParams.setMarginEnd(offset * 2);
                 textView.setLayoutParams(layoutParams);
 
@@ -247,7 +247,11 @@ public class RFlowLayout extends LinearLayout {
         });
 
         for (int i = 0; i < texts.size(); i++) {
+            LinearLayout.LayoutParams layoutParams = new LinearLayout.LayoutParams(-2, -2);
+            layoutParams.setMarginEnd(offset * 2);
+
             TextView childAt = (TextView) getChildAt(i);
+            childAt.setLayoutParams(layoutParams);
             childAt.setText(texts.get(i));
         }
     }

@@ -11,6 +11,7 @@ import com.angcyo.uiview.recycler.RBaseViewHolder;
 import com.angcyo.uiview.resources.ResUtil;
 import com.angcyo.uiview.utils.ScreenUtil;
 import com.angcyo.uiview.utils.UI;
+import com.angcyo.uiview.widget.GlideImageView;
 
 import java.util.List;
 
@@ -108,7 +109,7 @@ public class RAddPhotoAdapter<T> extends RBaseAdapter<T> {
         UI.setViewHeight(holder.itemView, itemSize);
         holder.itemView.setPadding(itemPadding, itemPadding, itemPadding, itemPadding);
 
-        final ImageView imageView = holder.v(R.id.base_image_view);
+        final GlideImageView imageView = holder.v(R.id.base_image_view);
         final ImageView deleteView = holder.v(R.id.base_delete_view);
 
         if (holder.getItemViewType() == TYPE_ADD) {
@@ -262,15 +263,15 @@ public class RAddPhotoAdapter<T> extends RBaseAdapter<T> {
     }
 
     public static abstract class ConfigCallback {
-        public void onDisplayImage(ImageView imageView, int position) {
+        public void onDisplayImage(GlideImageView imageView, int position) {
 
         }
 
-        public void onImageClick(ImageView imageView, int position) {
+        public void onImageClick(GlideImageView imageView, int position) {
 
         }
 
-        public boolean onImageLongClick(ImageView imageView, int position) {
+        public boolean onImageLongClick(GlideImageView imageView, int position) {
             return false;
         }
 
