@@ -21,6 +21,7 @@ import android.graphics.Typeface;
 import android.support.v7.widget.RecyclerView;
 import android.text.TextUtils;
 import android.util.AttributeSet;
+import android.util.TypedValue;
 import android.view.Gravity;
 import android.view.View;
 import android.widget.ImageView;
@@ -116,7 +117,7 @@ public class SwipeMenuView extends LinearLayout {
         textView.setGravity(Gravity.CENTER);
         int textSize = item.getTextSize();
         if (textSize > 0)
-            textView.setTextSize(textSize);
+            textView.setTextSize(TypedValue.COMPLEX_UNIT_PX, textSize);
         ColorStateList textColor = item.getTitleColor();
         if (textColor != null)
             textView.setTextColor(textColor);

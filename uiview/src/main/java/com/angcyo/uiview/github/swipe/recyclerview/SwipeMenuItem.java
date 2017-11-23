@@ -32,7 +32,7 @@ public class SwipeMenuItem {
     private Drawable icon;
     private String title;
     private ColorStateList titleColor = ColorStateList.valueOf(Color.WHITE);
-    private int titleSize;
+    private int titleSize;//px
     private Typeface textTypeface;
     private int textAppearance;
     private int width = -2;

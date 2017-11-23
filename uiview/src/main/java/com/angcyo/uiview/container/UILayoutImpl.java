@@ -83,6 +83,7 @@ public class UILayoutImpl extends SwipeBackLayout implements ILayout<UIParam>, U
     int viewMaxHeight = 0;
     boolean isInDebugLayout = false;
     Paint debugPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
+    StringBuilder measureLogBuilder = new StringBuilder();
     /**
      * 是否正在退出界面
      */
@@ -1909,8 +1910,6 @@ public class UILayoutImpl extends SwipeBackLayout implements ILayout<UIParam>, U
         return getMeasuredHeight() - 4 * vSpace;
     }
 
-    StringBuilder measureLogBuilder = new StringBuilder();
-
     @Override
     protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
         //of java
@@ -2149,24 +2148,30 @@ public class UILayoutImpl extends SwipeBackLayout implements ILayout<UIParam>, U
 //                //需要强制测量
 //                needMeasure = true;
 //            } else {
+            boolean isLastAllDialog = false;//界面上面全是对话框
             IView iView = viewPatternByView.mIView;
             for (int j = mAttachViews.size() - 1; j >= 0; j--) {
                 ViewPattern viewPattern = mAttachViews.get(j);
                 if (viewPattern.mIView.isDialog() ||
                         viewPattern.mIView.showOnDialog() ||
-                        viewPattern.isAnimToEnd) {
+                        viewPattern.isAnimToEnd ||
+                        viewPattern.mIView.needTransitionExitAnim() ||
+                        viewPattern.mIView.needTransitionStartAnim()) {
                     //界面上面全是对话框
                     //needMeasure = true;
-                    needVisible = true;
+                    isLastAllDialog = true;
                     if (viewPattern.mIView == iView) {
                         break;
                     }
                 } else if (viewPattern.mIView == iView) {
                     break;
                 } else {
-                    needMeasure = false;
+                    isLastAllDialog = false;
                     break;
                 }
+            }
+            if (isLastAllDialog) {
+                needVisible = true;
             }
 //            }
         }
