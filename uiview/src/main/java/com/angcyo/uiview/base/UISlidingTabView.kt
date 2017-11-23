@@ -1,6 +1,7 @@
 package com.angcyo.uiview.base
 
 import android.os.Bundle
+import android.support.v4.content.ContextCompat
 import android.view.LayoutInflater
 import com.angcyo.uiview.R
 import com.angcyo.uiview.container.ContentLayout
@@ -22,6 +23,25 @@ import com.angcyo.uiview.widget.viewpager.UIViewPager
  * Version: 1.0.0
  */
 abstract class UISlidingTabView : UIContentView(), UIBaseView.OnViewLoadListener {
+
+    companion object {
+        fun baseInitTabLayout(tabLayout: SlidingTabLayout) {
+            val density = tabLayout.context.resources.displayMetrics.density
+            tabLayout.setIndicatorWidthEqualTitle(true)
+            tabLayout.textSelectColor = SkinHelper.getSkin().themeSubColor
+            tabLayout.textUnselectColor = ContextCompat.getColor(tabLayout.context, R.color.base_text_color)
+            tabLayout.indicatorHeight = 1 * density
+            tabLayout.indicatorColor = SkinHelper.getSkin().themeSubColor
+            tabLayout.indicatorStyle = SlidingTabLayout.STYLE_NORMAL
+            tabLayout.indicatorCornerRadius = 3 * density //指示器的圆角
+            tabLayout.indicatorMarginLeft = 0f //指示器左偏移的距离
+            tabLayout.tabPadding = 5 * density
+            tabLayout.setTextSizePx(SkinHelper.getSkin().mainTextSize)
+            tabLayout.isTabSpaceEqual = false //tab 是否平分 TabLayout的宽度
+            tabLayout.setItemNoBackground(false) //item 是否禁用点击效果
+        }
+    }
+
     override fun onShowLoadView() {
         showLoadView()
     }
@@ -72,17 +92,7 @@ abstract class UISlidingTabView : UIContentView(), UIBaseView.OnViewLoadListener
     }
 
     open fun initTabLayout(tabLayout: SlidingTabLayout) {
-        tabLayout.setIndicatorWidthEqualTitle(true)
-        tabLayout.textSelectColor = SkinHelper.getSkin().themeSubColor
-        tabLayout.textUnselectColor = getColor(R.color.base_text_color)
-        tabLayout.indicatorHeight = 1 * density()
-        tabLayout.indicatorColor = SkinHelper.getSkin().themeSubColor
-        tabLayout.indicatorStyle = SlidingTabLayout.STYLE_NORMAL
-        tabLayout.indicatorCornerRadius = 3 * density() //指示器的圆角
-        tabLayout.indicatorMarginLeft = 0f //指示器左偏移的距离
-        tabLayout.tabPadding = 5 * density()
-        tabLayout.setTextSizePx(SkinHelper.getSkin().mainTextSize)
-        tabLayout.isTabSpaceEqual = false //tab 是否平分 TabLayout的宽度
+        baseInitTabLayout(tabLayout)
     }
 
     open fun initViewPager(viewPager: UIViewPager) {
