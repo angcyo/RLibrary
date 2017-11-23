@@ -30,8 +30,8 @@ public class RBaseItemDecoration extends RecyclerView.ItemDecoration {
     /**
      * 是否绘制最后一个item的分割线
      */
-    boolean drawLastVLine = false;
-    boolean drawLastHLine = false;
+    boolean drawLastVLine = false;//LinearLayoutManager.VERTICAL 时使用
+    boolean drawLastHLine = false;//LinearLayoutManager.HORIZONTAL 时使用
 
     public RBaseItemDecoration() {
         this(1);
@@ -106,7 +106,7 @@ public class RBaseItemDecoration extends RecyclerView.ItemDecoration {
 
                 if (itemCount == 1 || adapterPosition == itemCount - 1) {
                     //第一个, 或者最后一个
-                    if (!drawLastHLine || !drawLastVLine) {
+                    if (!drawLastHLine && !drawLastVLine) {
                         continue;
                     }
                 }

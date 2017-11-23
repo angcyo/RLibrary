@@ -25,11 +25,18 @@ class SearchEditText(context: Context, attributeSet: AttributeSet? = null) : ExE
     private var rawPaddingLeft = 0
     var searchDrawable: Drawable? = null
 
-    var searchTipText = "搜索一下"
+    var searchTipText = ""
     var searchTipTextSize = 14 * density
     var searchTipTextColor = getColor(R.color.base_text_color_dark2)
     /**文本偏移searchDrawable的距离*/
     var searchTipTextLeftOffset = 0f
+
+    init {
+        val typedArray = context.obtainStyledAttributes(attributeSet, R.styleable.SearchEditText)
+        val string = typedArray.getString(R.styleable.SearchEditText_r_search_tip_text)
+        searchTipText = string ?: "搜索一下"
+        typedArray.recycle()
+    }
 
     override fun initView(context: Context, attrs: AttributeSet?) {
         super.initView(context, attrs)
@@ -44,6 +51,7 @@ class SearchEditText(context: Context, attributeSet: AttributeSet? = null) : ExE
         val drawable = typedArray.getDrawable(R.styleable.SearchEditText_r_search_drawable)
         if (drawable == null) {
             if (isInEditMode) {
+                searchDrawable = getDrawable(R.drawable.base_search)
             } else {
                 searchDrawable = getDrawable(R.drawable.base_search)
             }
@@ -59,10 +67,6 @@ class SearchEditText(context: Context, attributeSet: AttributeSet? = null) : ExE
         searchTipTextSize = typedArray.getDimensionPixelOffset(R.styleable.SearchEditText_r_search_tip_text_size, searchTipTextSize.toInt()).toFloat()
         searchTipTextLeftOffset = typedArray.getDimensionPixelOffset(R.styleable.SearchEditText_r_search_tip_text_left_offset, searchTipTextLeftOffset.toInt()).toFloat()
         searchTipTextColor = typedArray.getColor(R.styleable.SearchEditText_r_search_tip_text_color, searchTipTextColor)
-        val string = typedArray.getString(R.styleable.SearchEditText_r_search_tip_text)
-        if (string != null) {
-            searchTipText = string
-        }
 
         typedArray.recycle()
 
@@ -97,13 +101,15 @@ class SearchEditText(context: Context, attributeSet: AttributeSet? = null) : ExE
         //canvas.drawColor(Color.BLUE)
 
         var left = 0
+        val top = paddingTop.toFloat() + (viewDrawHeight - drawHeight) / 2
+
         searchDrawable?.let {
             canvas.save()
             if (isFocused || !isEmpty) {
-                canvas.translate(rawPaddingLeft.toFloat() + scrollX, paddingTop.toFloat() + (viewDrawHeight - drawHeight) / 2)
+                canvas.translate(rawPaddingLeft.toFloat() + scrollX, top)
                 it.draw(canvas)
             } else {
-                canvas.translate(rawPaddingLeft + (viewDrawWith - drawWidth) / 2, paddingTop.toFloat() + (viewDrawHeight - drawHeight) / 2)
+                canvas.translate(rawPaddingLeft + (viewDrawWith - drawWidth) / 2, top)
                 it.draw(canvas)
             }
             left = it.intrinsicWidth
@@ -112,7 +118,7 @@ class SearchEditText(context: Context, attributeSet: AttributeSet? = null) : ExE
 
         if (!TextUtils.isEmpty(searchTipText) && isEmpty && !isFocused) {
             canvas.save()
-            canvas.translate(rawPaddingLeft + (viewDrawWith - drawWidth) / 2, paddingTop.toFloat() + (viewDrawHeight - drawHeight) / 2)
+            canvas.translate(rawPaddingLeft + (viewDrawWith - drawWidth) / 2, top)
 
             paint.color = searchTipTextColor
             paint.textSize = searchTipTextSize
