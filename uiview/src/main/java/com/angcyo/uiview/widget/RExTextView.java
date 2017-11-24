@@ -1,6 +1,7 @@
 package com.angcyo.uiview.widget;
 
 import android.content.Context;
+import android.content.res.TypedArray;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
@@ -78,7 +79,8 @@ public class RExTextView extends RTextView {
 
     private int maxShowLine = -1;//最大显示多少行, 当超过时, 会显示...全部
 
-    private String foldString;
+    private String more = "...";
+    private String foldString = "";
 
     private int mImageSpanTextColor = ImageTextSpan.getDefaultColor();
 
@@ -92,6 +94,19 @@ public class RExTextView extends RTextView {
 
     public RExTextView(Context context, AttributeSet attrs, int defStyleAttr) {
         super(context, attrs, defStyleAttr);
+
+        //foldString = getResources().getString(R.string.see_all);
+        TypedArray typedArray = getContext().obtainStyledAttributes(attrs, R.styleable.RExTextView);
+        maxShowLine = typedArray.getInt(R.styleable.RExTextView_r_max_show_line, maxShowLine);
+        foldString = typedArray.getString(R.styleable.RExTextView_r_show_fold_text);
+        more = typedArray.getString(R.styleable.RExTextView_r_show_more_text);
+        if (more == null) {
+            more = "...";
+        }
+        if (foldString == null) {
+            foldString = "";
+        }
+        typedArray.recycle();
     }
 
     /**
@@ -171,12 +186,6 @@ public class RExTextView extends RTextView {
 
     public void setImageSpanTextColor(int imageSpanTextColor) {
         mImageSpanTextColor = imageSpanTextColor;
-    }
-
-    @Override
-    protected void initView() {
-        super.initView();
-        foldString = getResources().getString(R.string.see_all);
     }
 
     @Override
@@ -278,7 +287,6 @@ public class RExTextView extends RTextView {
                         Spannable spannable = (Spannable) sequence;
                         int textLength = spannable.length();
 
-                        String more = "...";
                         String foldString = getFoldString();
 
                         if (textLength <= more.length() + foldString.length()) {
@@ -394,6 +402,9 @@ public class RExTextView extends RTextView {
     }
 
     private String getFoldString() {
+        if (TextUtils.isEmpty(foldString)) {
+            return "";
+        }
         return foldString;
     }
 

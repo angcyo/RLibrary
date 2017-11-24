@@ -99,6 +99,15 @@
 
     </declare-styleable>
 
+    <declare-styleable name="RExTextView">
+        <!--最多显示多少行-->
+        <attr name="r_max_show_line" format="integer"/>
+        <!--当折叠时, 默认显示三个点...-->
+        <attr name="r_show_more_text" format="string"/>
+        <!--可以通过此属性, 设置额外的其他文本, 如果:查看全部 全文等-->
+        <attr name="r_show_fold_text" format="string"/>
+    </declare-styleable>
+
     <declare-styleable name="ExEditText">
         <attr name="r_left_text"/>
         <attr name="r_hint_text"/>
