@@ -43,10 +43,12 @@ import com.angcyo.uiview.recycler.RBaseViewHolder;
 import com.angcyo.uiview.recycler.RRecyclerView;
 import com.angcyo.uiview.resources.AnimUtil;
 import com.angcyo.uiview.skin.ISkin;
+import com.angcyo.uiview.skin.SkinHelper;
 import com.angcyo.uiview.utils.RUtils;
 import com.angcyo.uiview.utils.ThreadExecutor;
 import com.angcyo.uiview.viewgroup.TouchBackLayout;
 import com.angcyo.uiview.viewgroup.TouchLayout;
+import com.angcyo.uiview.widget.EmptyView;
 import com.angcyo.uiview.widget.RSoftInputLayout;
 import com.angcyo.uiview.widget.viewpager.UIViewPager;
 
@@ -176,7 +178,16 @@ public abstract class UIIViewImpl implements IView {
     public View inflateContentView(UILayoutActivity activity, ILayout iLayout, FrameLayout container, LayoutInflater inflater) {
         L.d(this.getClass().getSimpleName(), "inflateContentView: ");
         mActivity = activity;
-        View baseView = inflateBaseView(container, inflater);
+        View baseView;
+        try {
+            baseView = inflateBaseView(container, inflater);
+        } catch (Exception e) {
+            e.printStackTrace();
+            UILayoutImpl.saveToSDCard(e.toString());
+
+            baseView = new EmptyView(activity);
+            ((EmptyView) baseView).setDefaultColor(SkinHelper.getSkin().getThemeSubColor());
+        }
         if (enableTouchBack() && baseView instanceof TouchBackLayout) {
             initTouchBackLayout((TouchBackLayout) baseView);
         }
