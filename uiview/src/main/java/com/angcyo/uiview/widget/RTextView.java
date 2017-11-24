@@ -11,6 +11,7 @@ import android.graphics.drawable.Drawable;
 import android.support.annotation.ColorInt;
 import android.support.annotation.DrawableRes;
 import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.widget.AppCompatTextView;
 import android.text.InputFilter;
@@ -19,6 +20,7 @@ import android.text.SpannableStringBuilder;
 import android.text.Spanned;
 import android.text.TextPaint;
 import android.text.TextUtils;
+import android.text.style.CharacterStyle;
 import android.text.style.ForegroundColorSpan;
 import android.util.AttributeSet;
 import android.util.TypedValue;
@@ -32,6 +34,8 @@ import com.angcyo.uiview.skin.SkinHelper;
 import com.angcyo.uiview.utils.RTextPaint;
 import com.angcyo.uiview.utils.Reflect;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Locale;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -533,6 +537,38 @@ public class RTextView extends AppCompatTextView {
 
     public void setRBackgroundColor(int color) {
         mBackgroundDrawable = new ColorDrawable(color);
+    }
+
+
+    /**
+     * 判断 需要检测的开始位置,结束位置, 是否已经在其他span中
+     */
+    protected boolean isInOtherSpan(SpannableStringBuilder builder, int length, int startPosition, int endPosition) {
+        return isInOtherSpan(builder, CharacterStyle.class, length, startPosition, endPosition);
+    }
+
+    protected <T> boolean isInOtherSpan(SpannableStringBuilder builder, @Nullable Class<T> kind, int length, int startPosition, int endPosition) {
+        T[] spans = builder.getSpans(0, length, kind);
+        List<int[]> spanRange = new ArrayList<>();
+        for (T span : spans) {
+            int spanStart = builder.getSpanStart(span);
+            int spanEnd = builder.getSpanEnd(span);
+
+            spanRange.add(new int[]{spanStart, spanEnd});
+        }
+
+        boolean result = false;
+        for (int[] range : spanRange) {
+            if (startPosition >= range[0] && startPosition <= range[1]) {
+                result = true;
+                break;
+            }
+            if (endPosition >= range[0] && endPosition <= range[1]) {
+                result = true;
+                break;
+            }
+        }
+        return result;
     }
 
     /**

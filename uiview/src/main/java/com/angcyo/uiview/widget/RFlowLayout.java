@@ -238,10 +238,6 @@ public class RFlowLayout extends LinearLayout {
                 LinearLayout.LayoutParams layoutParams = new LinearLayout.LayoutParams(-2, -2);
                 layoutParams.setMarginEnd(offset * 2);
                 textView.setLayoutParams(layoutParams);
-
-                if (onAddViewListener != null) {
-                    onAddViewListener.onInitView(textView);
-                }
                 return textView;
             }
         });
@@ -250,9 +246,13 @@ public class RFlowLayout extends LinearLayout {
             LinearLayout.LayoutParams layoutParams = new LinearLayout.LayoutParams(-2, -2);
             layoutParams.setMarginEnd(offset * 2);
 
-            TextView childAt = (TextView) getChildAt(i);
-            childAt.setLayoutParams(layoutParams);
-            childAt.setText(texts.get(i));
+            TextView textView = (TextView) getChildAt(i);
+            textView.setLayoutParams(layoutParams);
+            textView.setText(texts.get(i));
+
+            if (onAddViewListener != null) {
+                onAddViewListener.onInitView(textView);
+            }
         }
     }
 

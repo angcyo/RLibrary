@@ -34,8 +34,6 @@ import com.angcyo.uiview.kotlin.ExKt;
 import com.angcyo.uiview.skin.SkinHelper;
 import com.angcyo.uiview.utils.RTextPaint;
 
-import java.util.ArrayList;
-import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -481,28 +479,9 @@ public class RExTextView extends RTextView {
     /**
      * 判断 需要检测的开始位置,结束位置, 是否已经在其他span中
      */
-    private boolean isInOtherSpan(SpannableStringBuilder builder, int length, int startPosition, int endPosition) {
-        ImageTextSpan[] imageTextSpans = builder.getSpans(0, length, ImageTextSpan.class);
-        List<int[]> spanRange = new ArrayList<>();
-        for (ImageTextSpan span : imageTextSpans) {
-            int spanStart = builder.getSpanStart(span);
-            int spanEnd = builder.getSpanEnd(span);
-
-            spanRange.add(new int[]{spanStart, spanEnd});
-        }
-
-        boolean result = false;
-        for (int[] range : spanRange) {
-            if (startPosition >= range[0] && startPosition <= range[1]) {
-                result = true;
-                break;
-            }
-            if (endPosition >= range[0] && endPosition <= range[1]) {
-                result = true;
-                break;
-            }
-        }
-        return result;
+    @Override
+    protected boolean isInOtherSpan(SpannableStringBuilder builder, int length, int startPosition, int endPosition) {
+        return isInOtherSpan(builder, ImageTextSpan.class, length, startPosition, endPosition);
     }
 
     /**
