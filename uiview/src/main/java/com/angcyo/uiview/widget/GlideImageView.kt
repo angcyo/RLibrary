@@ -583,7 +583,7 @@ open class GlideImageView(context: Context, attributeSet: AttributeSet? = null) 
             if (drawable is BitmapDrawable) {
                 //(drawable as BitmapDrawable).bitmap.recycle()
             } else if (drawable is pl.droidsonroids.gif.GifDrawable) {
-                (drawable as pl.droidsonroids.gif.GifDrawable).recycle()
+                //(drawable as pl.droidsonroids.gif.GifDrawable).recycle()//2017-11-24 列表复用, 回收会崩溃
             }
         } catch (e: Exception) {
             e.printStackTrace()
