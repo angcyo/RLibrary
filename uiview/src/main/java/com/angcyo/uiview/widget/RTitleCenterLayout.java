@@ -55,7 +55,7 @@ public class RTitleCenterLayout extends RelativeLayout {
             }
         }
 
-        setMeasuredDimension(maxWidth, MeasureSpec.getSize(heightMeasureSpec));
+        setMeasuredDimension(maxWidth, getMeasuredHeight() /* MeasureSpec.getSize(heightMeasureSpec)*/);
     }
 
     @Override
@@ -136,8 +136,12 @@ public class RTitleCenterLayout extends RelativeLayout {
             }
         }
 
+        if (mLoadingView == null) {
+            mLoadingView = findViewWithTag("loading_view");
+        }
+
         if (mTitleView == null) {
-            mTitleView = findViewWithTag("title");
+            mTitleView = findViewWithTag("title_view");
         }
     }
 

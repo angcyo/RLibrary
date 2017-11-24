@@ -2,6 +2,7 @@ package com.angcyo.uiview.utils
 
 import android.media.AudioManager
 import android.media.MediaPlayer
+import com.angcyo.library.utils.L
 import java.util.concurrent.atomic.AtomicInteger
 
 /**
@@ -176,6 +177,8 @@ class RPlayer {
             STATE_STOP, STATE_RELEASE, STATE_ERROR, STATE_COMPLETION -> playUrl = ""
         }
 
+        L.d("RPlayer: onPlayStateChange -> $oldState->$state")
+
         if (oldState != state) {
             onPlayListener?.onPlayStateChange(playUrl, oldState, state)
         }
@@ -187,12 +190,13 @@ class RPlayer {
     /*开始进度读取*/
     private fun startProgress() {
         Thread(Runnable {
-            while ((isPlaying() || isPause()) &&
+            while ((isPlayCall() || isPause()) &&
                     mediaPlay != null &&
                     onPlayListener != null) {
                 ThreadExecutor.instance().onMain {
                     if (isPlaying() && mediaPlay != null) {
                         currentPosition = mediaPlay!!.currentPosition
+                        L.d("RPlayer: startProgress -> $currentPosition:$mediaPlay!!.duration")
                         onPlayListener?.onPlayProgress(currentPosition, mediaPlay!!.duration)
                     }
                 }

@@ -51,6 +51,7 @@
             android:layout_width="@dimen/base_load_view_size"
             android:layout_height="@dimen/base_load_view_size"
             android:visibility="gone"
+            android:tag="loading_view"
             tools:visibility="visible"/>
 
         <com.angcyo.uiview.widget.RTextView
@@ -63,7 +64,7 @@
             android:maxLength="@integer/title_text_count"
             android:maxLines="1"
             android:singleLine="true"
-            android:tag="title"
+            android:tag="title_view"
             android:textColor="@color/default_base_white"
             android:textSize="@dimen/base_title_size"
             tools:text="标题"/>
