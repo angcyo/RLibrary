@@ -90,23 +90,12 @@ public class RExTextView extends RTextView {
 
     public RExTextView(Context context, AttributeSet attrs) {
         super(context, attrs);
+        initExTextView(context, attrs);
     }
 
     public RExTextView(Context context, AttributeSet attrs, int defStyleAttr) {
         super(context, attrs, defStyleAttr);
-
-        //foldString = getResources().getString(R.string.see_all);
-        TypedArray typedArray = getContext().obtainStyledAttributes(attrs, R.styleable.RExTextView);
-        maxShowLine = typedArray.getInt(R.styleable.RExTextView_r_max_show_line, maxShowLine);
-        foldString = typedArray.getString(R.styleable.RExTextView_r_show_fold_text);
-        more = typedArray.getString(R.styleable.RExTextView_r_show_more_text);
-        if (more == null) {
-            more = "...";
-        }
-        if (foldString == null) {
-            foldString = "";
-        }
-        typedArray.recycle();
+        initExTextView(context, attrs);
     }
 
     /**
@@ -182,6 +171,24 @@ public class RExTextView extends RTextView {
             return false;
         }
         return patternTel.matcher(str).matches();
+    }
+
+    private void initExTextView(Context context, AttributeSet attrs) {
+        //foldString = getResources().getString(R.string.see_all);
+        TypedArray typedArray = context.obtainStyledAttributes(attrs, R.styleable.RExTextView);
+        maxShowLine = typedArray.getInt(R.styleable.RExTextView_r_max_show_line, maxShowLine);
+        foldString = typedArray.getString(R.styleable.RExTextView_r_show_fold_text);
+        more = typedArray.getString(R.styleable.RExTextView_r_show_more_text);
+        if (more == null) {
+            more = "...";
+        }
+        if (foldString == null) {
+            foldString = "";
+        }
+        if (maxShowLine > 0) {
+            setMaxShowLine(maxShowLine);
+        }
+        typedArray.recycle();
     }
 
     public void setImageSpanTextColor(int imageSpanTextColor) {
