@@ -132,6 +132,18 @@ public abstract class UIBaseView extends UIIViewImpl {
         return animation;
     }
 
+    public static Animation createOtherEnterNoAnim() {
+        AlphaAnimation animation = new AlphaAnimation(0.9f, 1f);
+        setDefaultConfig(animation, false);
+        return animation;
+    }
+
+    public static Animation createOtherExitNoAnim() {
+        AlphaAnimation animation = new AlphaAnimation(1f, 0.9f);
+        setDefaultConfig(animation, true);
+        return animation;
+    }
+
     @Override
     protected View inflateBaseView(FrameLayout container, LayoutInflater inflater) {
         //包含标题栏的根布局

@@ -53,8 +53,16 @@ open class UIFileSelectorDialog : UIIDialogImpl {
     /**是否长按显示文件菜单*/
     var showFileMenu = false
 
-    private val storageDirectory = Root.externalStorageDirectory()
+    /**最根的目录*/
+    var storageDirectory = Root.externalStorageDirectory()
+        set(value) {
+            if (File(value).exists()) {
+                field = value
+                targetPath = value
+            }
+        }
 
+    /**目标路径*/
     private var targetPath: String = storageDirectory
         set(value) {
 
@@ -191,7 +199,9 @@ open class UIFileSelectorDialog : UIIDialogImpl {
                                 reset()
                                 setImageResource(R.drawable.base_floder_32)
                             }
-                            holder.tv(R.id.base_tip_view).text = "${bean.listFiles().size} 项"
+                            if (bean.canRead()) {
+                                holder.tv(R.id.base_tip_view).text = "${bean.listFiles().size} 项"
+                            }
                         }
                         bean.isFile -> {
                             holder.glideImgV(R.id.base_image_view).apply {
@@ -202,7 +212,9 @@ open class UIFileSelectorDialog : UIIDialogImpl {
                                     url = bean.absolutePath
                                 }
                             }
-                            holder.tv(R.id.base_tip_view).text = formatFileSize(bean.length())
+                            if (bean.canRead()) {
+                                holder.tv(R.id.base_tip_view).text = formatFileSize(bean.length())
+                            }
 
                             //MD5值
                             if (showFileMd5) {
@@ -214,7 +226,9 @@ open class UIFileSelectorDialog : UIIDialogImpl {
                             holder.glideImgV(R.id.base_image_view).apply {
                                 reset()
                             }
-                            holder.tv(R.id.base_tip_view).text = "unknown"
+                            if (bean.canRead()) {
+                                holder.tv(R.id.base_tip_view).text = "unknown"
+                            }
                         }
                     }
 
@@ -229,20 +243,27 @@ open class UIFileSelectorDialog : UIIDialogImpl {
                     val itemView: RLinearLayout = holder.itemView as RLinearLayout
                     selectorItemView(itemView, TextUtils.equals(selectorFilePath, bean.absolutePath))
 
-                    //item 点击事件
-                    holder.clickItem {
-                        if (bean.isDirectory) {
-                            resetPath(bean.absolutePath)
-                        } else if (bean.isFile) {
-                            setSelectorFilePath(bean.absolutePath)
+                    if (bean.canRead()) {
+                        //item 点击事件
+                        holder.clickItem {
+                            if (bean.isDirectory) {
+                                resetPath(bean.absolutePath)
+                            } else if (bean.isFile) {
+                                setSelectorFilePath(bean.absolutePath)
 
-                            selectorItemView?.let {
-                                selectorItemView(it, false)
+                                selectorItemView?.let {
+                                    selectorItemView(it, false)
+                                }
+
+                                selectorItemView = itemView
+                                selectorItemView(itemView, true)
                             }
-
-                            selectorItemView = itemView
-                            selectorItemView(itemView, true)
                         }
+                    } else {
+                        //没权限
+                        holder.itemView.setOnClickListener(null)
+
+                        holder.tv(R.id.base_tip_view).text = "无权限操作"
                     }
 
                     if (showFileMenu) {

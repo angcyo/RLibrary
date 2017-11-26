@@ -326,7 +326,7 @@ open class GlideImageView(context: Context, attributeSet: AttributeSet? = null) 
     }
 
     /**当前View加载x成功的url, 下次再次加载相同url, 不刷新界面*/
-    private var loadSuccessUrl: String = ""
+    var loadSuccessUrl: String = ""
         set(value) {
             field = value
             setTag(R.id.tag_success_url, field)
