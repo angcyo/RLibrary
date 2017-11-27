@@ -132,7 +132,7 @@ public class RGroupData<T> {
             @Override
             public void onLocalRefresh(RBaseViewHolder viewHolder, int position) {
                 RGroupData groupData = groupAdapter.getGroupDataFromPosition(position);
-                if (groupData != null) {
+                if (groupData != null && RGroupData.this == groupData) {
                     int groupIndex = groupAdapter.getGroupIndex(position);
                     if (groupIndex >= 0) {
                         //有分组

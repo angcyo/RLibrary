@@ -278,11 +278,16 @@ public class RExTextView extends RTextView {
     @Override
     protected void onLayout(boolean changed, int left, int top, int right, int bottom) {
         super.onLayout(changed, left, top, right, bottom);
+        checkMaxShowLine();
     }
 
     @Override
     protected void onSizeChanged(int w, int h, int oldw, int oldh) {
         super.onSizeChanged(w, h, oldw, oldh);
+        checkMaxShowLine();
+    }
+
+    private void checkMaxShowLine() {
         Layout layout = getLayout();
         if (maxShowLine > 0 && layout != null) {
             int lines = layout.getLineCount();
