@@ -234,7 +234,7 @@ open class UIFileSelectorDialog : UIIDialogImpl {
 
                     fun selectorItemView(itemView: RLinearLayout, selector: Boolean) {
                         if (selector) {
-                            itemView.setRBackgroundDrawable(SkinHelper.getSkin().getThemeTranColor(0x80))
+                            itemView.setRBackgroundDrawable(SkinHelper.getSkin().getThemeTranColor(0x60))
                         } else {
                             itemView.setRBackgroundDrawable(Color.TRANSPARENT)
                         }

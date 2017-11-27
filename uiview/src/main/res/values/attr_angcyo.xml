@@ -19,6 +19,8 @@
     <attr name="r_max_height" format="dimension"/>
     <attr name="r_min_height" format="dimension"/>
     <attr name="r_show_content_menu" format="boolean"/>
+    <!--宽高是否相等-->
+    <attr name="r_is_aeq_width" format="boolean"/>
 
     <!--progress bar-->
     <!--进度颜色-->
@@ -53,6 +55,7 @@
         <!--是否激活自动滚动-->
         <attr name="r_enable_auto_start_scroll" format="boolean"/>
         <attr name="r_enable_scroll" format="boolean"/>
+        <attr name="r_auto_scroll_to_last_position" format="boolean"/>
     </declare-styleable>
 
     <declare-styleable name="RefreshLayout">
@@ -96,6 +99,9 @@
         <attr name="r_center_left_drawable" format="boolean"/>
         <!--需要singleLine=true 或 maxLines=1的支持-->
         <attr name="r_auto_fix_text_size" format="boolean"/>
+
+        <!--宽高是否相等-->
+        <attr name="r_is_aeq_width"/>
 
     </declare-styleable>
 

@@ -117,6 +117,12 @@ public class RRecyclerView extends RecyclerView {
             }
         }
     };
+    /**
+     * 当onAttachedToWindow时, 是否自动滚动到onDetachedFromWindow时的位置
+     */
+    private boolean autoScrollToLastPosition = false;
+    private int lastVisiblePosition = -1;
+    private int lastVisibleItemOffset = -1;
 
     public RRecyclerView(Context context) {
         this(context, null);
@@ -132,6 +138,7 @@ public class RRecyclerView extends RecyclerView {
         TypedArray typedArray = context.obtainStyledAttributes(attrs, R.styleable.RRecyclerView);
         isEnableAutoStartScroll = typedArray.getBoolean(R.styleable.RRecyclerView_r_enable_auto_start_scroll, isEnableAutoStartScroll);
         enableScroll = typedArray.getBoolean(R.styleable.RRecyclerView_r_enable_scroll, enableScroll);
+        autoScrollToLastPosition = typedArray.getBoolean(R.styleable.RRecyclerView_r_auto_scroll_to_last_position, autoScrollToLastPosition);
         typedArray.recycle();
 
         initView(context);
@@ -181,6 +188,8 @@ public class RRecyclerView extends RecyclerView {
             ((Paint) mPaint).setColor(color);
         }
     }
+
+    //-----------获取 默认的adapter, 获取 RBaseAdapter, 获取 AnimationAdapter----------//
 
     protected void initView(Context context) {
         String tag = (String) this.getTag();
@@ -246,13 +255,18 @@ public class RRecyclerView extends RecyclerView {
         }
     }
 
-    //-----------获取 默认的adapter, 获取 RBaseAdapter, 获取 AnimationAdapter----------//
+    //----------------end--------------------//
 
     @Override
     public void setTag(Object tag) {
         super.setTag(tag);
         initView(getContext());
     }
+
+//    @Override
+//    public RBaseAdapter getAdapter() {
+//        return (RBaseAdapter) super.getAdapter();
+//    }
 
     @Override
     public void startLayoutAnimation() {
@@ -274,8 +288,6 @@ public class RRecyclerView extends RecyclerView {
         }
     }
 
-    //----------------end--------------------//
-
     /**
      * 请在{@link RRecyclerView#setAdapter(Adapter)}方法之前调用
      */
@@ -287,11 +299,6 @@ public class RRecyclerView extends RecyclerView {
             this.setItemAnimator(new DefaultItemAnimator());
         }
     }
-
-//    @Override
-//    public RBaseAdapter getAdapter() {
-//        return (RBaseAdapter) super.getAdapter();
-//    }
 
     @Override
     public void setAdapter(Adapter adapter) {
@@ -418,22 +425,61 @@ public class RRecyclerView extends RecyclerView {
 
     @Override
     protected void onDetachedFromWindow() {
+        if (autoScrollToLastPosition) {
+            saveLastPosition();
+        }
+        //L.e("call: onDetachedFromWindow([]) 1-> " + computeHorizontalScrollRange() + ":" + computeHorizontalScrollExtent() + ":" + computeHorizontalScrollOffset());
         super.onDetachedFromWindow();
         stopAutoScroll();
+        //L.e("call: onDetachedFromWindow([]) 2-> " + computeHorizontalScrollRange() + ":" + computeHorizontalScrollExtent() + ":" + computeHorizontalScrollOffset());
     }
 
     @Override
     protected void onAttachedToWindow() {
         super.onAttachedToWindow();
+
         if (isEnableAutoStartScroll) {
             startAutoScroll();
         }
+
+        resetToLastPosition();
     }
 
     @Override
     public void onScrolled(int dx, int dy) {
         super.onScrolled(dx, dy);
         //L.e("call: onScrolled([dx, dy])-> " + getLastVelocity());
+    }
+
+    /**
+     * 恢复滚动信息
+     */
+    public void resetToLastPosition() {
+        if (autoScrollToLastPosition &&
+                lastVisiblePosition >= 0) {
+            LayoutManager layoutManager = getLayoutManager();
+            if (layoutManager instanceof LinearLayoutManager) {
+                ((LinearLayoutManager) layoutManager).scrollToPositionWithOffset(lastVisiblePosition, lastVisibleItemOffset);
+            }
+        }
+    }
+
+    /**
+     * 保存滚动的位置信息
+     */
+    public void saveLastPosition() {
+        LayoutManager layoutManager = getLayoutManager();
+        if (layoutManager instanceof LinearLayoutManager) {
+            lastVisiblePosition = ((LinearLayoutManager) layoutManager).findFirstVisibleItemPosition();
+
+            if (layoutManager.getChildCount() > 0) {
+                if (((LinearLayoutManager) layoutManager).getOrientation() == LinearLayoutManager.HORIZONTAL) {
+                    lastVisibleItemOffset = getChildAt(0).getLeft();
+                } else {
+                    lastVisibleItemOffset = getChildAt(0).getTop();
+                }
+            }
+        }
     }
 
 
@@ -616,6 +662,18 @@ public class RRecyclerView extends RecyclerView {
 //            e.printStackTrace();
 //        }
 //        canvas.restore();
+    }
+
+    public void setAutoScrollToLastPosition(boolean autoScrollToLastPosition) {
+        this.autoScrollToLastPosition = autoScrollToLastPosition;
+    }
+
+    public int getLastVisiblePosition() {
+        return lastVisiblePosition;
+    }
+
+    public int getLastVisibleItemOffset() {
+        return lastVisibleItemOffset;
     }
 
     public void setCurScrollPosition(int curScrollPosition) {

@@ -89,6 +89,11 @@ public class RTextView extends AppCompatTextView {
 
     private boolean autoFixTextSize = false;
 
+    /**
+     * 宽高是否相等, 取其中最大值计算
+     */
+    private boolean aeqWidth = false;
+
     public RTextView(Context context) {
         this(context, null);
     }
@@ -133,6 +138,8 @@ public class RTextView extends AppCompatTextView {
         noReadPaddingTop = typedArray.getDimensionPixelOffset(R.styleable.RTextView_r_noread_padding_top, (int) noReadPaddingTop);
 
         autoFixTextSize = typedArray.getBoolean(R.styleable.RTextView_r_auto_fix_text_size, autoFixTextSize);
+
+        aeqWidth = typedArray.getBoolean(R.styleable.RTextView_r_is_aeq_width, aeqWidth);
 
         typedArray.recycle();
 
@@ -282,6 +289,15 @@ public class RTextView extends AppCompatTextView {
 
         if (centerSaveCount != -1) {
             canvas.restoreToCount(centerSaveCount);
+        }
+    }
+
+    @Override
+    protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
+        super.onMeasure(widthMeasureSpec, heightMeasureSpec);
+        if (aeqWidth) {
+            int size = Math.max(getMeasuredWidth(), getMeasuredHeight());
+            setMeasuredDimension(size, size);
         }
     }
 
