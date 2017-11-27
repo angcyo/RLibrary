@@ -300,6 +300,14 @@ public class RRecyclerView extends RecyclerView {
         }
     }
 
+    /**
+     * 取消默认动画
+     */
+    public void setItemNoAnim() {
+        setItemAnim(false);
+        this.setItemAnimator(null);
+    }
+
     @Override
     public void setAdapter(Adapter adapter) {
         if (adapter instanceof RBaseAdapter) {
