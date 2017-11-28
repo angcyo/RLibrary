@@ -1997,7 +1997,7 @@ public class UILayoutImpl extends SwipeBackLayout implements ILayout<UIParam>, U
                     }
                 }
             }
-            L.d(measureLogBuilder.toString());
+            L.i(measureLogBuilder.toString());
             Debug.logTimeEndD("\n测量结束");
         }
 

@@ -77,6 +77,26 @@ public abstract class RBaseAdapter<T> extends RecyclerView.Adapter<RBaseViewHold
         return list.size();
     }
 
+    /**
+     * 使用布局局部刷新
+     */
+    public static void localRefresh(RecyclerView recyclerView, OnLocalRefresh localRefresh) {
+        if (recyclerView == null || localRefresh == null) {
+            return;
+        }
+        RecyclerView.LayoutManager layoutManager = recyclerView.getLayoutManager();
+        if (layoutManager instanceof LinearLayoutManager) {
+            int firstVisibleItemPosition = ((LinearLayoutManager) layoutManager).findFirstVisibleItemPosition();
+            for (int i = 0; i < layoutManager.getChildCount(); i++) {
+                int position = firstVisibleItemPosition + i;
+                RBaseViewHolder vh = (RBaseViewHolder) recyclerView.findViewHolderForAdapterPosition(position);
+                if (vh != null) {
+                    localRefresh.onLocalRefresh(vh, position);
+                }
+            }
+        }
+    }
+
     public RBaseAdapter setOnLoadMoreListener(OnAdapterLoadMoreListener loadMoreListener) {
         mLoadMoreListener = loadMoreListener;
         return this;
@@ -94,14 +114,14 @@ public abstract class RBaseAdapter<T> extends RecyclerView.Adapter<RBaseViewHold
 //        L.w("onViewDetachedFromWindow");
     }
 
+    //--------------标准的方法-------------//
+
     /**
      * 返回是否激活加载更多
      */
     public boolean isEnableLoadMore() {
         return mEnableLoadMore;
     }
-
-    //--------------标准的方法-------------//
 
     /**
      * 启用加载更多功能
@@ -126,16 +146,16 @@ public abstract class RBaseAdapter<T> extends RecyclerView.Adapter<RBaseViewHold
         return mEnableShowState && mShowState != IShowState.NORMAL;
     }
 
-    @NonNull
-    protected RBaseViewHolder createBaseViewHolder(int viewType, View itemView) {
-        return new RBaseViewHolder(itemView, viewType);
-    }
-
 //    /**用来实现...*/
 //    @NonNull
 //    protected RBaseViewHolder createItemViewHolder(ViewGroup parent, int viewType) {
 //        return null;
 //    }
+
+    @NonNull
+    protected RBaseViewHolder createBaseViewHolder(int viewType, View itemView) {
+        return new RBaseViewHolder(itemView, viewType);
+    }
 
     @Override
     final public void onBindViewHolder(RBaseViewHolder holder, int position, List<Object> payloads) {
@@ -191,7 +211,6 @@ public abstract class RBaseAdapter<T> extends RecyclerView.Adapter<RBaseViewHold
         }
         return viewHolder;
     }
-
 
     @Override
     public void onBindViewHolder(RBaseViewHolder holder, int position) {
@@ -313,14 +332,14 @@ public abstract class RBaseAdapter<T> extends RecyclerView.Adapter<RBaseViewHold
         return false;
     }
 
+    //--------------需要实现的方法------------//
+
     /**
      * 根据position返回Item的类型.
      */
     public int getItemType(int position) {
         return 0;
     }
-
-    //--------------需要实现的方法------------//
 
     /**
      * 获取数据的数量
@@ -349,16 +368,16 @@ public abstract class RBaseAdapter<T> extends RecyclerView.Adapter<RBaseViewHold
         return null;
     }
 
-    protected abstract int getItemLayoutId(int viewType);
-
     //---------------滚动事件的处理--------------------//
+
+    protected abstract int getItemLayoutId(int viewType);
 
     protected abstract void onBindView(RBaseViewHolder holder, int position, T bean);
 
+    //----------------Item 数据的操作-----------------//
+
     public void onScrollStateChanged(RecyclerView recyclerView, int newState) {
     }
-
-    //----------------Item 数据的操作-----------------//
 
     public void onScrolled(RecyclerView recyclerView, int dx, int dy) {
     }
@@ -465,7 +484,7 @@ public abstract class RBaseAdapter<T> extends RecyclerView.Adapter<RBaseViewHold
         } else {
             this.mAllDatas = datas;
         }
-        if (oldSize == newSize) {
+        if (oldSize == newSize && newSize > 0) {
             if (isEnableLoadMore()) {
                 oldSize += 1;
             }
@@ -494,7 +513,6 @@ public abstract class RBaseAdapter<T> extends RecyclerView.Adapter<RBaseViewHold
     public List<T> getAllDatas() {
         return mAllDatas;
     }
-
 
     public void setEnableShowState(boolean enableShowState) {
         mEnableShowState = enableShowState;
@@ -537,26 +555,6 @@ public abstract class RBaseAdapter<T> extends RecyclerView.Adapter<RBaseViewHold
             }
         } else {
             mIShowState.setShowState(showState);
-        }
-    }
-
-    /**
-     * 使用布局局部刷新
-     */
-    public static void localRefresh(RecyclerView recyclerView, OnLocalRefresh localRefresh) {
-        if (recyclerView == null || localRefresh == null) {
-            return;
-        }
-        RecyclerView.LayoutManager layoutManager = recyclerView.getLayoutManager();
-        if (layoutManager instanceof LinearLayoutManager) {
-            int firstVisibleItemPosition = ((LinearLayoutManager) layoutManager).findFirstVisibleItemPosition();
-            for (int i = 0; i < layoutManager.getChildCount(); i++) {
-                int position = firstVisibleItemPosition + i;
-                RBaseViewHolder vh = (RBaseViewHolder) recyclerView.findViewHolderForAdapterPosition(position);
-                if (vh != null) {
-                    localRefresh.onLocalRefresh(vh, position);
-                }
-            }
         }
     }
 

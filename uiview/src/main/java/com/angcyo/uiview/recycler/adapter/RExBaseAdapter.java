@@ -477,7 +477,7 @@ public abstract class RExBaseAdapter<H, T, F> extends RModelAdapter<T> {
         } else {
             this.mAllDatas = datas;
         }
-        if (oldSize == newSize) {
+        if (oldSize == newSize && newSize > 0) {
             notifyItemRangeChanged(getHeaderCount(), oldSize);
         } else {
             notifyDataSetChanged();
