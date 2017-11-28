@@ -39,6 +39,8 @@
 
     <!--高度等于宽度-->
     <attr name="r_equ_width" format="boolean"/>
+    <!--固定比例如(1.5w 表示 高度是宽度的1.5倍, 0.5h 表示宽度是高度的0.5倍)-->
+    <attr name="r_width_height_ratio" format="string"/>
 
     <declare-styleable name="RLinearLayout">
         <attr name="r_background"/>

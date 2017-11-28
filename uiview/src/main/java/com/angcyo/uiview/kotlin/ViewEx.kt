@@ -3,6 +3,7 @@ package com.angcyo.uiview.kotlin
 import android.graphics.Paint
 import android.graphics.drawable.Drawable
 import android.support.v4.content.ContextCompat
+import android.text.TextUtils
 import android.view.View
 import android.widget.TextView
 import com.angcyo.uiview.view.RClickListener
@@ -99,5 +100,23 @@ public fun View.setOnRClickListener(listener: View.OnClickListener?) {
             })
         }
     }
+}
 
+/**计算宽高比例*/
+public fun View.calcWidthHeightRatio(widthHeightRatio: String?): IntArray? {
+    if (!TextUtils.isEmpty(widthHeightRatio)) {
+        /*固定比例如(1.5w 表示 高度是宽度的1.5倍, 0.5h 表示宽度是高度的0.5倍)*/
+        if (widthHeightRatio!!.contains("w", true)) {
+            val ratio = widthHeightRatio.replace("w", "", true).toFloatOrNull()
+            ratio?.let {
+                return intArrayOf(measuredWidth, (it * measuredWidth).toInt())
+            }
+        } else if (widthHeightRatio.contains("h", true)) {
+            val ratio = widthHeightRatio.replace("h", "", true).toFloatOrNull()
+            ratio?.let {
+                return intArrayOf((it * measuredHeight).toInt(), measuredHeight)
+            }
+        }
+    }
+    return null
 }

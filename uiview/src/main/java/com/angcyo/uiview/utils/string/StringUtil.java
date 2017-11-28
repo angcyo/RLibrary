@@ -32,7 +32,7 @@ public class StringUtil {
         return buff.toString();
     }
 
-    public static String removeLimeBreaks(String content) {
+    public static String removeLineBreaks(String content) {
         if (TextUtils.isEmpty(content)) {
             return content;
         }

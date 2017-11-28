@@ -8,6 +8,7 @@ import android.support.v7.widget.AppCompatImageView
 import android.text.TextUtils
 import android.util.AttributeSet
 import com.angcyo.uiview.R
+import com.angcyo.uiview.kotlin.calcWidthHeightRatio
 import com.angcyo.uiview.kotlin.density
 
 /**
@@ -51,6 +52,8 @@ open class CircleImageView(context: Context, attributeSet: AttributeSet? = null)
     /**高度等于宽度*/
     protected var equWidth: Boolean = false
 
+    var widthHeightRatio: String? = null
+
     init {
         val typedArray = context.obtainStyledAttributes(attributeSet, R.styleable.CircleImageView)
         showType = typedArray.getInt(R.styleable.CircleImageView_r_show_type, showType)
@@ -58,6 +61,7 @@ open class CircleImageView(context: Context, attributeSet: AttributeSet? = null)
         roundRadius = typedArray.getDimensionPixelOffset(R.styleable.CircleImageView_r_round_radius, (10 * density).toInt()).toFloat()
         lineWidth = typedArray.getDimensionPixelOffset(R.styleable.CircleImageView_r_line_width, (1 * density).toInt()).toFloat()
         equWidth = typedArray.getBoolean(R.styleable.CircleImageView_r_equ_width, equWidth)
+        widthHeightRatio = typedArray.getString(R.styleable.CircleImageView_r_width_height_ratio)
         typedArray.recycle()
     }
 
@@ -77,6 +81,10 @@ open class CircleImageView(context: Context, attributeSet: AttributeSet? = null)
         super.onMeasure(widthMeasureSpec, heightMeasureSpec)
         if (equWidth) {
             setMeasuredDimension(measuredWidth, measuredWidth)
+        } else {
+            calcWidthHeightRatio(widthHeightRatio)?.let {
+                setMeasuredDimension(it[0], it[1])
+            }
         }
     }
 
