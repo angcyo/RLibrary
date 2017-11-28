@@ -48,6 +48,13 @@
         <attr name="r_auto_fix_new_line" format="boolean"/>
     </declare-styleable>
 
+    <declare-styleable name="RFrameLayout">
+        <attr name="r_background"/>
+        <attr name="r_max_height"/>
+        <attr name="r_width_height_ratio"/>
+        <attr name="r_is_aeq_width"/>
+    </declare-styleable>
+
     <declare-styleable name="RRelativeLayout">
         <attr name="r_background"/>
         <attr name="r_max_height"/>
@@ -58,6 +65,8 @@
         <attr name="r_enable_auto_start_scroll" format="boolean"/>
         <attr name="r_enable_scroll" format="boolean"/>
         <attr name="r_auto_scroll_to_last_position" format="boolean"/>
+        <attr name="r_width_height_ratio"/>
+        <attr name="r_is_aeq_width"/>
     </declare-styleable>
 
     <declare-styleable name="RefreshLayout">

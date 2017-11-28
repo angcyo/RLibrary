@@ -24,6 +24,7 @@ import android.widget.OverScroller;
 
 import com.angcyo.library.utils.L;
 import com.angcyo.uiview.R;
+import com.angcyo.uiview.kotlin.ViewExKt;
 import com.angcyo.uiview.recycler.adapter.RBaseAdapter;
 import com.angcyo.uiview.recycler.recyclerview.adapters.AnimationAdapter;
 import com.angcyo.uiview.recycler.recyclerview.adapters.ScaleInAnimationAdapter;
@@ -123,6 +124,8 @@ public class RRecyclerView extends RecyclerView {
     private boolean autoScrollToLastPosition = false;
     private int lastVisiblePosition = -1;
     private int lastVisibleItemOffset = -1;
+    private String widthHeightRatio;
+    private boolean equWidth = false;
 
     public RRecyclerView(Context context) {
         this(context, null);
@@ -139,6 +142,9 @@ public class RRecyclerView extends RecyclerView {
         isEnableAutoStartScroll = typedArray.getBoolean(R.styleable.RRecyclerView_r_enable_auto_start_scroll, isEnableAutoStartScroll);
         enableScroll = typedArray.getBoolean(R.styleable.RRecyclerView_r_enable_scroll, enableScroll);
         autoScrollToLastPosition = typedArray.getBoolean(R.styleable.RRecyclerView_r_auto_scroll_to_last_position, autoScrollToLastPosition);
+        widthHeightRatio = typedArray.getString(R.styleable.RRecyclerView_r_width_height_ratio);
+        equWidth = typedArray.getBoolean(R.styleable.RRecyclerView_r_is_aeq_width, equWidth);
+
         typedArray.recycle();
 
         initView(context);
@@ -241,9 +247,14 @@ public class RRecyclerView extends RecyclerView {
     @Override
     protected void onMeasure(int widthSpec, int heightSpec) {
         super.onMeasure(widthSpec, heightSpec);
-        if (TextUtils.equals("aequilate", getContentDescription())) {
+        if (TextUtils.equals("aequilate", getContentDescription()) || equWidth) {
             /**自动设置等宽的RecyclerView*/
             setMeasuredDimension(getMeasuredWidth(), Math.min(getMeasuredWidth(), getMeasuredHeight()));
+        } else {
+            int[] ints = ViewExKt.calcWidthHeightRatio(this, widthHeightRatio);
+            if (ints != null) {
+                setMeasuredDimension(ints[0], ints[1]);
+            }
         }
     }
 

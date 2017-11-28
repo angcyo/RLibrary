@@ -109,6 +109,9 @@ public class RNineImageLayout extends RelativeLayout implements View.OnClickList
                     if (widthHeight[1] > 0) {
                         mImageViews.get(0).measure(getSize(width), getSize(widthHeight[1]));
                         setMeasuredDimension(width, widthHeight[1]);
+                    } else if (widthHeight[1] == -1) {
+                        mImageViews.get(0).measure(getSize(measureWidth), getSize(measureHeight));
+                        setMeasuredDimension(measureWidth, measureHeight);
                     } else {
                         mImageViews.get(0).measure(getSize(width), getSize(width));
                         setMeasuredDimension(width, width);
