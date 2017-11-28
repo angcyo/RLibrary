@@ -1913,9 +1913,9 @@ public class UILayoutImpl extends SwipeBackLayout implements ILayout<UIParam>, U
     @Override
     protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
         //of java
-        int widthSize = MeasureSpec.getSize(widthMeasureSpec);
+        int widthSize = MeasureSpec.getSize(widthMeasureSpec) - getPaddingLeft() - getPaddingRight();
 //        int widthMode = MeasureSpec.getMode(widthMeasureSpec);
-        int heightSize = MeasureSpec.getSize(heightMeasureSpec);
+        int heightSize = MeasureSpec.getSize(heightMeasureSpec) - getPaddingTop() - getPaddingBottom();
 //        int heightMode = MeasureSpec.getMode(heightMeasureSpec);
 
         //of kotlin
@@ -2013,11 +2013,11 @@ public class UILayoutImpl extends SwipeBackLayout implements ILayout<UIParam>, U
 //            int l = hSpace;
 //            int t = vSpace;
 
-            int l = 0;
-            int t = -vSpace;
+            int l = getPaddingLeft();
+            int t = -vSpace + getPaddingTop();
 
-            int wSize = getMeasuredWidth();//getDebugWidthSize();
-            int hSize = getMeasuredHeight();//getDebugHeightSize();
+            int wSize = getMeasuredWidth() - getPaddingLeft() - getPaddingRight();//getDebugWidthSize();
+            int hSize = getMeasuredHeight() - getPaddingTop() - getPaddingBottom();//getDebugHeightSize();
 
             for (int i = 0; i < count; i++) {
                 View childAt = getChildAt(i);
@@ -2043,7 +2043,7 @@ public class UILayoutImpl extends SwipeBackLayout implements ILayout<UIParam>, U
         for (int i = 0; i < count; i++) {
             View childAt = getChildAt(i);
             if (childAt.getVisibility() == VISIBLE) {
-                childAt.layout(0, 0, getMeasuredWidth(), getMeasuredHeight());
+                childAt.layout(getPaddingLeft(), getPaddingTop(), getMeasuredWidth() - getPaddingRight(), getMeasuredHeight() - getPaddingBottom());
             }
 
 //            if (i == count - 1 || i == count - 2) {
