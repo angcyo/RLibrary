@@ -389,7 +389,11 @@ public class RRecyclerView extends RecyclerView {
         if (!isEnabled()) {
             return false;
         }
-        return super.onTouchEvent(e);
+        boolean onTouchEvent = super.onTouchEvent(e);
+        if (getAdapter() == null || getLayoutManager() == null) {
+            return false;
+        }
+        return onTouchEvent;
     }
 
     @Override
