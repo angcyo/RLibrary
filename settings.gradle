@@ -1,0 +1,19 @@
+include ':RLibrary:uiview'
+include ':RLibrary:library'
+include ':RLibrary:rcode'
+include ':RLibrary:github'
+
+//可选
+include ':RLibrary:imagepicker'
+include ':RLibrary:filedownloader'
+
+allprojects {
+    repositories {
+        jcenter()
+        google()
+
+        maven { url "https://jitpack.io" }
+
+        maven { url "https://maven.google.com" }
+    }
+}
