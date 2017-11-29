@@ -2,8 +2,6 @@ package com.angcyo.uiview.recycler.adapter;
 
 import android.content.Context;
 
-import com.angcyo.uiview.recycler.adapter.RBaseAdapter;
-
 import java.util.List;
 
 /**
@@ -11,7 +9,7 @@ import java.util.List;
  */
 public abstract class RMaxAdapter<T> extends RBaseAdapter<T> {
 
-    private int max_count = 1;
+    private int max_count = -1;
 
     public RMaxAdapter(Context context) {
         super(context);
@@ -37,6 +35,9 @@ public abstract class RMaxAdapter<T> extends RBaseAdapter<T> {
 
     @Override
     public int getItemCount() {
+        if (max_count < 0) {
+            return super.getItemCount();
+        }
         return Math.min(max_count, super.getItemCount());
     }
 
