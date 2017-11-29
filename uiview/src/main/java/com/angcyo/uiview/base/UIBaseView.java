@@ -16,6 +16,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.view.animation.AlphaAnimation;
 import android.view.animation.Animation;
+import android.view.animation.AnimationSet;
 import android.view.animation.CycleInterpolator;
 import android.view.animation.DecelerateInterpolator;
 import android.view.animation.LinearInterpolator;
@@ -142,6 +143,35 @@ public abstract class UIBaseView extends UIIViewImpl {
         AlphaAnimation animation = new AlphaAnimation(1f, 0.9f);
         setDefaultConfig(animation, true);
         return animation;
+    }
+
+    public static Animation createTranYStartAnimation() {
+        TranslateAnimation translateAnimation = new TranslateAnimation(Animation.RELATIVE_TO_SELF, 0f, Animation.RELATIVE_TO_SELF, 0,
+                Animation.RELATIVE_TO_SELF, 1f, Animation.RELATIVE_TO_SELF, 0f);
+        AlphaAnimation alphaAnimation = new AlphaAnimation(0, 1);
+        setDefaultConfig(translateAnimation, false);
+        setDefaultConfig(alphaAnimation, false);
+
+        AnimationSet animationSet = new AnimationSet(false);
+        animationSet.addAnimation(alphaAnimation);
+        animationSet.addAnimation(translateAnimation);
+        return animationSet;
+    }
+
+    public static Animation createTranYFinishAnimation() {
+        TranslateAnimation translateAnimation = new TranslateAnimation(Animation.RELATIVE_TO_SELF, 0, Animation.RELATIVE_TO_SELF, 0f,
+                Animation.RELATIVE_TO_SELF, 0f, Animation.RELATIVE_TO_SELF, 1f);
+        AlphaAnimation alphaAnimation = new AlphaAnimation(1, 0);
+        setDefaultConfig(translateAnimation, true);
+        setDefaultConfig(alphaAnimation, true);
+
+        translateAnimation.setDuration(DEFAULT_DIALOG_FINISH_ANIM_TIME);
+        alphaAnimation.setDuration(DEFAULT_DIALOG_FINISH_ANIM_TIME);
+
+        AnimationSet animationSet = new AnimationSet(false);
+        animationSet.addAnimation(alphaAnimation);
+        animationSet.addAnimation(translateAnimation);
+        return animationSet;
     }
 
     @Override

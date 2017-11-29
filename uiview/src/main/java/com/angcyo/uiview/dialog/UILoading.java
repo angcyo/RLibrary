@@ -98,7 +98,9 @@ public class UILoading extends UIIDialogImpl {
      * 设置提示语
      */
     public UILoading setLoadingTipText(String loadingTipText) {
-        mLoadingTipText = loadingTipText;
+        if (mLoadingTipText != null) {
+            mLoadingTipText = loadingTipText;
+        }
         return this;
     }
 
@@ -117,7 +119,9 @@ public class UILoading extends UIIDialogImpl {
     }
 
     protected void initLoadingUI() {
-        mBaseLoadingTipView.setText(mLoadingTipText);
+        if (mBaseLoadingTipView != null) {
+            mBaseLoadingTipView.setText(mLoadingTipText);
+        }
     }
 
     @Override
