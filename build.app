@@ -1,23 +1,17 @@
 apply plugin: 'com.android.application'
 apply plugin: 'kotlin-android'
+//apply plugin: 'com.getkeepsafe.dexcount'
+apply from: 'build_time.gradle'
+apply from: 'android.gradle'
 
-def getBuildTime() {
-    return new Date().format("yyyy-MM-dd HH:mm:ss.sss")
+def apkTime() {
+    return new Date().format("yyyy-MM-dd", TimeZone.getTimeZone("UTC"))
 }
 
-def osName() {
-    return System.getProperty("os.name") + "@" + System.getProperty("os.version")
-}
+def apk_time = apkTime()
 
 android {
-    signingConfigs {
-        angcyo {
-            keyAlias 'angcyo'
-            keyPassword 'angcyo'
-            storeFile file('../RLibrary/angcyo.jks')
-            storePassword 'angcyo'
-        }
-    }
+
     compileSdkVersion Integer.parseInt(rootProject.C_SDK)
     buildToolsVersion rootProject.B_TOOLS
     defaultConfig {
@@ -28,9 +22,11 @@ android {
         versionName "1.0"
         multiDexEnabled true
 
-        resValue "string", "build_time", getBuildTime()
-        resValue "string", "os_name", osName()
-        resValue "bool", "SHOW_DEBUG", "true"
+//        ndk {
+//            // 设置支持的SO库架构
+//            abiFilters 'armeabi', 'armeabi-v7a', 'x86', 'x86_64'//, 'arm64-v8a'
+//            //, 'x86', 'armeabi-v7a', 'x86_64', 'arm64-v8a'
+//        }
     }
 //    sourceSets {
 //        main {
@@ -39,19 +35,23 @@ android {
 //            ]
 //        }
 //    }
+    flavorDimensions "type"
     productFlavors {
         //develop
         _dev {
+            dimension "type"
             minSdkVersion 21
             buildConfigField "boolean", "SHOW_DEBUG", "true"
         }
         //preview
         pre {
+            dimension "type"
             minSdkVersion Integer.parseInt(rootProject.M_SDK)
             buildConfigField "boolean", "SHOW_DEBUG", "true"
         }
         //apk
         apk {
+            dimension "type"
             minSdkVersion Integer.parseInt(rootProject.M_SDK)
             buildConfigField "boolean", "SHOW_DEBUG", "false"
         }
@@ -68,52 +68,47 @@ android {
             signingConfig signingConfigs.angcyo
         }
     }
-    getApplicationVariants().all { variant ->
-        variant.outputs.each { output ->
-            def appName = "UIViewDemo-${variant.buildType.name}-${variant.versionName}"
-            def time = ""
-            if (variant.buildType.name.equalsIgnoreCase("release")) {
-                time = "_${new Date().format("yyyy-MM-dd_HH-mm")}"
-            }
-            output.outputFile = new File(output.outputFile.parent, "${appName}${time}.apk")
-        }
-    }
-    packagingOptions {
-        exclude 'META-INF/DEPENDENCIES'
-        exclude 'META-INF/NOTICE'
-        exclude 'META-INF/LICENSE'
-        exclude 'META-INF/LICENSE.txt'
-        exclude 'META-INF/NOTICE.txt'
-    }
 
-    lintOptions {
-        checkReleaseBuilds false
-        abortOnError false
-    }
-    dexOptions {
-        incremental true
-        preDexLibraries false
-        jumboMode true
-        javaMaxHeapSize "4g"
+    /*Gradle3.0 以下的方法*/
+//    getApplicationVariants().all { variant ->
+//        variant.outputs.each { output ->
+//            def appName = "UIViewDemo-${variant.buildType.name}-${variant.versionName}"
+//            def time = ""
+//            if (variant.buildType.name.equalsIgnoreCase("release")) {
+//                time = "_${new Date().format("yyyy-MM-dd_HH-mm")}"
+//            }
+//            output.outputFile = new File(output.outputFile.parent, "${appName}${time}.apk")
+//        }
+//    }
+
+    /*Gradle3.0 以上的方法*/
+    applicationVariants.all { variant ->
+        if (variant.buildType.name != "debug") {
+            variant.getPackageApplication().outputDirectory = new File(project.rootDir.absolutePath + "/apk")
+        }
+
+        variant.getPackageApplication().outputScope.apkDatas.forEach { apkData ->
+            apkData.outputFileName = "UIViewDemo-" +
+                    variant.versionName + "_" +
+                    apk_time + "_" +
+                    variant.flavorName + "_" +
+                    variant.buildType.name + "_" +
+                    variant.signingConfig.name +
+                    ".apk"
+        }
     }
 }
 
 dependencies {
-    compile fileTree(include: ['*.jar'], dir: 'libs')
-    compile project(':RLibrary:uiview')
-    compile project(':RLibrary:imagepicker')
-
-    compile 'com.android.support.constraint:constraint-layout:1.0.2'
+    implementation fileTree(include: ['*.jar'], dir: 'libs')
+    implementation project(':RLibrary:uiview')
+    //implementation project(':RLibrary:imagepicker')
+    //implementation 'com.android.support.constraint:constraint-layout:1.0.2'
     //annotationProcessor 'com.jakewharton:butterknife-compiler:8.4.0'
-    compile "org.jetbrains.kotlin:kotlin-stdlib-jre7:$kotlin_version"
-
+    implementation "org.jetbrains.kotlin:kotlin-stdlib-jre7:$kotlin_version"
     //FPS显示库 https://github.com/wasabeef/Takt
-    compile 'jp.wasabeef:takt:1.0.4'
-
+    //implementation 'jp.wasabeef:takt:1.0.4'
     //性能检测库 https://github.com/markzhai/AndroidPerformanceMonitor
-    _devCompile 'com.github.markzhai:blockcanary-android:1.5.0'
-    preCompile 'com.github.markzhai:blockcanary-android:1.5.0'
-}
-repositories {
-    mavenCentral()
+    //_devCompile 'com.github.markzhai:blockcanary-android:1.5.0'
+    //preCompile 'com.github.markzhai:blockcanary-android:1.5.0'
 }
