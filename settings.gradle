@@ -17,3 +17,23 @@ allprojects {
         maven { url "https://maven.google.com" }
     }
 }
+
+//<activity
+//android:name=".activity.HnUIMainActivity"
+//android:allowTaskReparenting="true"
+//android:configChanges="orientation|keyboardHidden|screenSize|fontScale|smallestScreenSize|density|screenLayout"
+//android:launchMode="singleTop"
+//android:screenOrientation="portrait"
+//android:theme="@style/SplashTheme"
+//android:windowSoftInputMode="adjustResize">
+//<intent-filter>
+//<action android:name="android.intent.action.MAIN"/>
+//
+//<category android:name="android.intent.category.LAUNCHER"/>
+//</intent-filter>
+//            <intent-filter>
+//                <action android:name="com.angcyo.crash"/>
+//
+//<category android:name="android.intent.category.DEFAULT"/>
+//</intent-filter>
+//        </activity>
