@@ -54,6 +54,8 @@ class RPlayer {
         const val STATE_ERROR = -1
     }
 
+    private var seekToPosition = -1
+
     @Synchronized
     fun init() {
         if (mediaPlay == null) {
@@ -108,6 +110,7 @@ class RPlayer {
                 onPlayListener?.onPreparedCompletion(it.duration)
                 if (playState.get() == STATE_NORMAL) {
                     startPlayInner(it)
+                    playSeekTo(seekToPosition)
                 }
             }
             it.setDataSource(url)
@@ -226,6 +229,16 @@ class RPlayer {
         /**播放状态回调*/
         fun onPlayStateChange(playUrl: String, from: Int, to: Int)
 
+    }
+
+    fun playSeekTo(msec: Int /*毫秒*/) {
+        seekToPosition = msec
+        if (msec >= 0 && playState.get() == STATE_PLAYING) {
+            mediaPlay?.let {
+                it.seekTo(msec)
+                seekToPosition = -1
+            }
+        }
     }
 }
 
