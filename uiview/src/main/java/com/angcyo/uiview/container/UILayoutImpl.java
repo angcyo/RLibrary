@@ -1967,10 +1967,10 @@ public class UILayoutImpl extends SwipeBackLayout implements ILayout<UIParam>, U
                     }
                     childAt.measure(exactlyMeasure(widthSize), exactlyMeasure(heightSize));
                     //L.d("测量 needVisible " + needVisible + ": " + viewPatternByView.mIView.getClass().getSimpleName());
-                    measureLogBuilder.append("\n测量 needVisible ");
-                    measureLogBuilder.append(needVisible);
-                    measureLogBuilder.append(": ");
+                    measureLogBuilder.append("\n测量->");
                     measureLogBuilder.append(viewPatternByView.mIView.getClass().getSimpleName());
+                    measureLogBuilder.append(" needVisible:");
+                    measureLogBuilder.append(needVisible);
                     measureLogBuilder.append(" W:");
                     measureLogBuilder.append(childAt.getMeasuredWidth());
                     measureLogBuilder.append(" H:");
@@ -2140,6 +2140,9 @@ public class UILayoutImpl extends SwipeBackLayout implements ILayout<UIParam>, U
         } else if (indexFromIViews >= 0 && (indexFromIViews == iViewSize - 1 /*|| indexFromIViews == iViewSize - 2*/)) {
             //倒数第一个, 第二个iview
             //needMeasure = true;
+            needVisible = true;
+        } else if ((childIndex == childCount - 2 || indexFromIViews == iViewSize - 2) &&
+                viewPatternByView.mIView.needForceVisible()) {
             needVisible = true;
         } else {
 //            if (viewPatternByView.mIView.needForceMeasure() ||

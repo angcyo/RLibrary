@@ -261,6 +261,11 @@ public interface IView {
      */
     int getOffsetScrollTop(); //星期二 2017-10-24
 
+    /**
+     * 当检测到界面不满足测量条件时, 可以通过此方法强制显示, 此方法会包含needForceMeasure. (只会在倒数2个IView时生效)
+     */
+    boolean needForceVisible();//是否强制可见 2017-11-29
+
     enum IViewShowState {
         STATE_NORMAL,
         STATE_VIEW_CREATE,
