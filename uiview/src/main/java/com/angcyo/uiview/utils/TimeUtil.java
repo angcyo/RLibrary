@@ -133,7 +133,7 @@ public class TimeUtil {
         return showDataString;
     }
 
-    public static String getTimeShowString(long milliseconds, boolean abbreviate) {
+    public static String getTimeShowString(long milliseconds, boolean showToday, boolean abbreviate) {
         String dataString;
         String timeStringBy24;
 
@@ -149,7 +149,11 @@ public class TimeUtil {
         Date preyesterday = new Date(yesterdaybegin.getTime() - 3600 * 24 * 1000);
 
         if (!currentTime.before(todaybegin)) {
-            dataString = "今天";
+            if (showToday) {
+                dataString = "今天";
+            } else {
+                dataString = "";
+            }
         } else if (!currentTime.before(yesterdaybegin)) {
             dataString = "昨天";
         } else if (!currentTime.before(preyesterday)) {
@@ -171,8 +175,12 @@ public class TimeUtil {
                 return dataString;
             }
         } else {
-            return dataString + " " + timeStringBy24;
+            return dataString + " " + timeStringBy24 + " ";
         }
+    }
+
+    public static String getTimeShowString(long milliseconds, boolean abbreviate) {
+        return getTimeShowString(milliseconds,true,abbreviate);
     }
 
     public static String getTimeShowRentString(long milliseconds) {
