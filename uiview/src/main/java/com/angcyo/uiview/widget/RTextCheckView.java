@@ -27,6 +27,11 @@ public class RTextCheckView extends AppCompatTextView implements View.OnClickLis
     OnClickListener mOnClickListener;
     OnCheckedChangeListener mOnCheckedChangeListener;
 
+    /**
+     * 是否激活check功能
+     */
+    boolean enableCheck = true;
+
     public RTextCheckView(Context context) {
         this(context, null);
     }
@@ -73,7 +78,6 @@ public class RTextCheckView extends AppCompatTextView implements View.OnClickLis
     @Override
     protected void onAttachedToWindow() {
         super.onAttachedToWindow();
-
     }
 
     @Override
@@ -83,6 +87,10 @@ public class RTextCheckView extends AppCompatTextView implements View.OnClickLis
 
     @Override
     public void setChecked(boolean checked) {
+        setChecked(checked, true);
+    }
+
+    public void setChecked(boolean checked, boolean notifyChanged) {
         if (mChecked == checked) {
             return;
         }
@@ -91,7 +99,7 @@ public class RTextCheckView extends AppCompatTextView implements View.OnClickLis
 
         refreshDrawableState();
 
-        if (mOnCheckedChangeListener != null) {
+        if (mOnCheckedChangeListener != null && notifyChanged) {
             mOnCheckedChangeListener.onCheckedChanged(this, mChecked);
         }
     }
@@ -124,10 +132,16 @@ public class RTextCheckView extends AppCompatTextView implements View.OnClickLis
 
     @Override
     public void onClick(View v) {
-        setChecked(!isChecked());
+        if (enableCheck) {
+            setChecked(!isChecked());
+        }
         if (mOnClickListener != null) {
             mOnClickListener.onClick(v);
         }
+    }
+
+    public void setEnableCheck(boolean enableCheck) {
+        this.enableCheck = enableCheck;
     }
 
     public interface OnCheckedChangeListener {

@@ -275,7 +275,7 @@ open class RProgressBar(context: Context, attributeSet: AttributeSet? = null) : 
         mColorAnimator?.start()
     }
 
-    fun addStepPoint(vararg point: Int) {
+    fun addStepPoint(vararg point: Int /*可变参数*/) {
         for (p in point) {
             if (stepPointList.contains(p)) {
             } else {

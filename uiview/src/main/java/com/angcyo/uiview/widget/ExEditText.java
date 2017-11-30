@@ -1281,6 +1281,14 @@ public class ExEditText extends AppCompatEditText {
         }
     }
 
+    public void showSoftInput() {
+        requestFocus();
+        InputMethodManager manager = (InputMethodManager) getContext().getSystemService(Context.INPUT_METHOD_SERVICE);
+        if (manager != null) {
+            manager.showSoftInput(this, 0);
+        }
+    }
+
     private void checkDebugCmd(CharSequence text) {
         if ("_cmd:open_debug".equalsIgnoreCase(String.valueOf(text))) {
             L.LOG_DEBUG = true;

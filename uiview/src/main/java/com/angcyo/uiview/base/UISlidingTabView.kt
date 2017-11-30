@@ -28,6 +28,7 @@ abstract class UISlidingTabView : UIContentView(), UIBaseView.OnViewLoadListener
         fun baseInitTabLayout(tabLayout: SlidingTabLayout) {
             val density = tabLayout.context.resources.displayMetrics.density
             tabLayout.setIndicatorWidthEqualTitle(true)
+            //tabLayout.indicatorWidth = 100 * density
             tabLayout.textSelectColor = SkinHelper.getSkin().themeSubColor
             tabLayout.textUnselectColor = ContextCompat.getColor(tabLayout.context, R.color.base_text_color)
             tabLayout.indicatorHeight = 1 * density
