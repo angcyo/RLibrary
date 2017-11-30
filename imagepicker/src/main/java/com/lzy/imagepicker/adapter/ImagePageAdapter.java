@@ -193,7 +193,7 @@ public class ImagePageAdapter extends PagerAdapter {
             });
         } else {
             if (!TextUtils.isEmpty(imageItem.path) && new File(imageItem.path).exists()) {
-                //加载本地图片
+                ///加载本地图片
                 displayImage(mActivity, imageItem.path, "no",
                         imageItem.url, photoView, screenWidth, screenHeight);
                 thumbImageView.setVisibility(View.GONE);
@@ -332,6 +332,9 @@ public class ImagePageAdapter extends PagerAdapter {
                         });
                     }
                 } else {
+                    photoView.setScaleType(ImageView.ScaleType.CENTER);
+                    photoView.setImageResource(R.drawable.default_jiazaishibai_pic);
+                    //imageView.setImageResource(R.drawable.default_jiazaishibai_pic);
                     imageView.setVisibility(View.GONE);
                     progressView.setVisibility(View.GONE);
                     progressView.stop();

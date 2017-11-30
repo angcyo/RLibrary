@@ -27,6 +27,11 @@ public class DragPhotoView extends PhotoView {
     private final static int CANCEL_TRANSLATE_Y = 100;
     private final static long DURATION = 300;
     boolean isMove = false;
+    OnLongClickListener mOnLongClickListener;
+    /**
+     * 多少个手机按下去了
+     */
+    int downPointCount = 0;
     private Paint mPaint;
     // downX
     private float mDownX;
@@ -60,8 +65,7 @@ public class DragPhotoView extends PhotoView {
         }
     };
     private boolean isLargeBitmap;
-
-    private GestureDetector mGestureDetector = new GestureDetector(getContext(), new GestureDetector.SimpleOnGestureListener() {
+    private GestureDetector mLongGestureDetector = new GestureDetector(getContext(), new GestureDetector.SimpleOnGestureListener() {
         @Override
         public void onLongPress(MotionEvent e) {
             super.onLongPress(e);
@@ -70,13 +74,6 @@ public class DragPhotoView extends PhotoView {
             }
         }
     });
-
-    OnLongClickListener mOnLongClickListener;
-
-    @Override
-    public void setOnLongClickListener(OnLongClickListener onLongClickListener) {
-        mOnLongClickListener = onLongClickListener;
-    }
 
     public DragPhotoView(Context context) {
         this(context, null);
@@ -90,6 +87,15 @@ public class DragPhotoView extends PhotoView {
         super(context, attr, defStyle);
         mPaint = new Paint();
         mPaint.setColor(Color.BLACK);
+
+        if (!isClickable()) {
+            setClickable(true);
+        }
+    }
+
+    @Override
+    public void setOnLongClickListener(OnLongClickListener onLongClickListener) {
+        mOnLongClickListener = onLongClickListener;
     }
 
     @Override
@@ -190,7 +196,6 @@ public class DragPhotoView extends PhotoView {
         return viewWidth;
     }
 
-
     /**
      * 放大之后的图片高度
      */
@@ -239,8 +244,17 @@ public class DragPhotoView extends PhotoView {
 
     @Override
     public boolean dispatchTouchEvent(MotionEvent event) {
-        //only scale == 1 can drag
-        mGestureDetector.onTouchEvent(event);
+        //only scale == 1 can drag]
+        int actionMasked = event.getActionMasked();
+        if (actionMasked == MotionEvent.ACTION_DOWN) {
+            downPointCount = 1;
+        } else if (actionMasked == MotionEvent.ACTION_POINTER_DOWN) {
+            downPointCount++;
+        } else if (actionMasked == MotionEvent.ACTION_POINTER_UP) {
+            downPointCount--;
+        } else if (actionMasked == MotionEvent.ACTION_CANCEL || actionMasked == MotionEvent.ACTION_UP) {
+            downPointCount = 0;
+        }
 
         if (enableMoveExit && !isAnimate && getScale() == 1) {
 
@@ -315,6 +329,14 @@ public class DragPhotoView extends PhotoView {
                     isMove = false;
                     break;
             }
+        }
+
+        if (!isMove && downPointCount == 1) {
+            mLongGestureDetector.onTouchEvent(event);
+        } else {
+            MotionEvent motionEvent = MotionEvent.obtain(event);
+            motionEvent.setAction(MotionEvent.ACTION_CANCEL);
+            mLongGestureDetector.onTouchEvent(motionEvent);
         }
 
         return super.dispatchTouchEvent(event);

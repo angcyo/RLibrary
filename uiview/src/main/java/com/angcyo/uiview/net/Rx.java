@@ -47,18 +47,23 @@ public class Rx<Rx> extends Observable<Rx> {
         }
     };
 
-    static Runnable onErrorRetryRunnable;
+    static ErrorRunnable onErrorRetryRunnable;
 
-    public static void setOnErrorRetryRunnable(Runnable onErrorRetryRunnable) {
-        onErrorRetryRunnable = onErrorRetryRunnable;
+    protected Rx(OnSubscribe<Rx> f) {
+        super(f);
     }
 
-    public static void runErrorRetry() {
+    public static void setOnErrorRetryRunnable(ErrorRunnable errorRetryRunnable) {
+        onErrorRetryRunnable = errorRetryRunnable;
+    }
+
+    public static void runErrorRetry(final int code) {
         if (onErrorRetryRunnable != null) {
             ThreadExecutor.instance().onThread(new Runnable() {
                 @Override
                 public void run() {
                     try {
+                        onErrorRetryRunnable.setCode(code);
                         onErrorRetryRunnable.run();
                     } catch (Exception e) {
                         e.printStackTrace();
@@ -66,10 +71,6 @@ public class Rx<Rx> extends Observable<Rx> {
                 }
             });
         }
-    }
-
-    protected Rx(OnSubscribe<Rx> f) {
-        super(f);
     }
 
     /**
@@ -80,7 +81,8 @@ public class Rx<Rx> extends Observable<Rx> {
         //1019	token未获取或已过期
         //3003	无效的参数
         return throwable.getCode() == 1018 ||
-                throwable.getCode() == 1019 /*||
+                throwable.getCode() == 1019 ||
+                throwable.getCode() == 1066 /*||
                 throwable.getCode() == 3003*/;
     }
 
@@ -219,7 +221,7 @@ public class Rx<Rx> extends Observable<Rx> {
                                 if (throwable instanceof RException) {
                                     if (needRetryOnError((RException) throwable)) {
 //                                        if (integer < RETRY_ERROR_COUNT) {
-                                        runErrorRetry();
+                                        runErrorRetry(((RException) throwable).getCode());
 //                                            return true;
 //                                        }
                                     }
@@ -276,7 +278,7 @@ public class Rx<Rx> extends Observable<Rx> {
                                 if (throwable instanceof RException) {
                                     if (needRetryOnError((RException) throwable)) {
 //                                        if (integer < RETRY_ERROR_COUNT) {
-                                        runErrorRetry();
+                                        runErrorRetry(((RException) throwable).getCode());
 //                                            return true;
 //                                        }
                                     }
@@ -371,7 +373,7 @@ public class Rx<Rx> extends Observable<Rx> {
                                 if (throwable instanceof RException) {
                                     if (needRetryOnError((RException) throwable)) {
 //                                        if (integer < RETRY_ERROR_COUNT) {
-                                        runErrorRetry();
+                                        runErrorRetry(((RException) throwable).getCode());
 //                                            return true;
 //                                        }
                                     }
@@ -456,7 +458,7 @@ public class Rx<Rx> extends Observable<Rx> {
                                 if (throwable instanceof RException) {
                                     if (needRetryOnError((RException) throwable)) {
 //                                        if (integer < RETRY_ERROR_COUNT) {
-                                        runErrorRetry();
+                                        runErrorRetry(((RException) throwable).getCode());
 //                                            return true;
 //                                        }
                                     }
@@ -544,7 +546,7 @@ public class Rx<Rx> extends Observable<Rx> {
                                 if (throwable instanceof RException) {
                                     if (needRetryOnError((RException) throwable)) {
 //                                        if (integer < RETRY_ERROR_COUNT) {
-                                        runErrorRetry();
+                                        runErrorRetry(((RException) throwable).getCode());
 //                                            return true;
 //                                        }
                                     }
@@ -632,7 +634,7 @@ public class Rx<Rx> extends Observable<Rx> {
                                 if (throwable instanceof RException) {
                                     if (needRetryOnError((RException) throwable)) {
                                         if (integer < RETRY_ERROR_COUNT) {
-                                            runErrorRetry();
+                                            runErrorRetry(((RException) throwable).getCode());
 //                                            return true;
                                         }
                                     }
