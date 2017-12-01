@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
-<FrameLayout
+<com.angcyo.uiview.viewgroup.RFrameLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/base_toast_root_layout"
     android:layout_width="wrap_content"
@@ -8,6 +9,8 @@
     android:background="@drawable/base_round_tran80"
     android:minHeight="100dp"
     android:minWidth="100dp"
+    android:padding="@dimen/base_xhdpi"
+    app:r_width_height_ratio="wh"
     tools:background="@color/transparent_dark80"
     tools:layout_gravity="center">
 
@@ -25,7 +28,7 @@
             android:padding="@dimen/base_xhdpi"
             tools:src="@drawable/base_info"/>
 
-        <TextView
+        <com.angcyo.uiview.widget.RTextView
             android:id="@+id/base_toast_text_view"
             style="@style/BaseMainTextStyle"
             android:layout_width="wrap_content"
@@ -36,4 +39,4 @@
             tools:text="测试内容"/>
     </LinearLayout>
 
-</FrameLayout>
+</com.angcyo.uiview.viewgroup.RFrameLayout>

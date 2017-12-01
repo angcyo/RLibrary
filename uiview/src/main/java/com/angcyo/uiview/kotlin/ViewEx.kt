@@ -106,7 +106,11 @@ public fun View.setOnRClickListener(listener: View.OnClickListener?) {
 public fun View.calcWidthHeightRatio(widthHeightRatio: String?): IntArray? {
     if (!TextUtils.isEmpty(widthHeightRatio)) {
         /*固定比例如(1.5w 表示 高度是宽度的1.5倍, 0.5h 表示宽度是高度的0.5倍)*/
-        if (widthHeightRatio!!.contains("w", true)) {
+        if (widthHeightRatio!!.contains("wh", true)) {
+            //特殊情况, size取宽高中最大的值
+            val size = measuredWidth.minValue(measuredHeight)
+            return intArrayOf(size, size)
+        } else if (widthHeightRatio.contains("w", true)) {
             val ratio = widthHeightRatio.replace("w", "", true).toFloatOrNull()
             ratio?.let {
                 return intArrayOf(measuredWidth, (it * measuredWidth).toInt())
