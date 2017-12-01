@@ -25,6 +25,7 @@ import android.text.style.ForegroundColorSpan;
 import android.util.AttributeSet;
 import android.util.TypedValue;
 import android.view.Gravity;
+import android.view.View;
 import android.view.inputmethod.EditorInfo;
 
 import com.angcyo.uiview.R;
@@ -93,6 +94,7 @@ public class RTextView extends AppCompatTextView {
      * 宽高是否相等, 取其中最大值计算
      */
     private boolean aeqWidth = false;
+    private boolean hideWithEmptyText = false;
 
     public RTextView(Context context) {
         this(context, null);
@@ -140,6 +142,7 @@ public class RTextView extends AppCompatTextView {
         autoFixTextSize = typedArray.getBoolean(R.styleable.RTextView_r_auto_fix_text_size, autoFixTextSize);
 
         aeqWidth = typedArray.getBoolean(R.styleable.RTextView_r_is_aeq_width, aeqWidth);
+        hideWithEmptyText = typedArray.getBoolean(R.styleable.RTextView_r_hide_with_empty_text, hideWithEmptyText);
 
         typedArray.recycle();
 
@@ -330,6 +333,10 @@ public class RTextView extends AppCompatTextView {
 
     @Override
     public void setText(CharSequence text, BufferType type) {
+        if (hideWithEmptyText) {
+            setVisibility(TextUtils.isEmpty(text) ? View.GONE : View.VISIBLE);
+        }
+
         if (getTag() != null &&
                 getTag().toString().contains("%") &&
                 !"title".equalsIgnoreCase(getTag().toString()) /**当出现在TitleBar中, 会有这个标志*/ &&

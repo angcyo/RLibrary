@@ -55,6 +55,7 @@ public class RRecyclerView extends RecyclerView {
     protected RBaseAdapter mAdapterRaw;
     protected AnimationAdapter mAnimationAdapter;
     protected boolean mItemAnim = false;
+    protected boolean supportsChangeAnimations = false;
     protected boolean isFirstAnim = true;//布局动画只执行一次
     protected boolean layoutAnim = false;//是否使用布局动画
     /**
@@ -145,6 +146,7 @@ public class RRecyclerView extends RecyclerView {
         autoScrollToLastPosition = typedArray.getBoolean(R.styleable.RRecyclerView_r_auto_scroll_to_last_position, autoScrollToLastPosition);
         widthHeightRatio = typedArray.getString(R.styleable.RRecyclerView_r_width_height_ratio);
         equWidth = typedArray.getBoolean(R.styleable.RRecyclerView_r_is_aeq_width, equWidth);
+        supportsChangeAnimations = typedArray.getBoolean(R.styleable.RRecyclerView_r_supports_change_animations, supportsChangeAnimations);
 
         typedArray.recycle();
 
@@ -309,6 +311,7 @@ public class RRecyclerView extends RecyclerView {
             this.setItemAnimator(new FadeInDownAnimator());
         } else {
             this.setItemAnimator(new DefaultItemAnimator());
+            setSupportsChangeAnimations(supportsChangeAnimations);
         }
     }
 
@@ -324,6 +327,7 @@ public class RRecyclerView extends RecyclerView {
      * @see SimpleItemAnimator#setSupportsChangeAnimations(boolean)
      */
     public void setSupportsChangeAnimations(boolean supportsChangeAnimations) {
+        this.supportsChangeAnimations = supportsChangeAnimations;
         ItemAnimator itemAnimator = getItemAnimator();
         if (itemAnimator instanceof DefaultItemAnimator) {
             ((DefaultItemAnimator) itemAnimator).setSupportsChangeAnimations(supportsChangeAnimations);

@@ -67,6 +67,8 @@
         <attr name="r_auto_scroll_to_last_position" format="boolean"/>
         <attr name="r_width_height_ratio"/>
         <attr name="r_is_aeq_width"/>
+
+        <attr name="r_supports_change_animations" format="boolean"/>
     </declare-styleable>
 
     <declare-styleable name="RefreshLayout">
@@ -113,6 +115,8 @@
 
         <!--宽高是否相等-->
         <attr name="r_is_aeq_width"/>
+        <!--当设置文本为空时, 是否自动隐藏-->
+        <attr name="r_hide_with_empty_text" format="boolean"/>
 
     </declare-styleable>
 
