@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/base_toast_root_layout"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:background="@drawable/base_round_tran80"
+    android:minHeight="100dp"
+    android:minWidth="100dp"
+    tools:background="@color/transparent_dark80"
+    tools:layout_gravity="center">
+
+    <LinearLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:gravity="center"
+        android:orientation="vertical">
+
+        <ImageView
+            android:id="@+id/base_toast_image_view"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:padding="@dimen/base_xhdpi"
+            tools:src="@drawable/base_info"/>
+
+        <TextView
+            android:id="@+id/base_toast_text_view"
+            style="@style/BaseMainTextStyle"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/base_ldpi"
+            android:textColor="@color/base_white"
+            android:textSize="@dimen/default_text_size"
+            tools:text="测试内容"/>
+    </LinearLayout>
+
+</FrameLayout>
