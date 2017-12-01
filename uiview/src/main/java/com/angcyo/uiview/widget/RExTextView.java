@@ -83,6 +83,30 @@ public class RExTextView extends RTextView {
     private String foldString = "";
 
     private int mImageSpanTextColor = ImageTextSpan.getDefaultColor();
+    /**
+     * 是否匹配网址
+     */
+    private boolean needPatternUrl = true;
+    /**
+     * 匹配Url时, 是否检查是Http开头
+     */
+    private boolean needPatternUrlCheckHttp = true;
+    /**
+     * 匹配到URL, 是否显示Link Ico图标
+     */
+    private boolean showPatternUrlIco = true;
+    /**
+     * 是否显示url的原始文本, 否则会被 '网页链接' 替换
+     */
+    private boolean showUrlRawText = false;
+    /**
+     * 是否匹配@的人
+     */
+    private boolean needPatternMention = true;
+    /**
+     * 是否匹配数字
+     */
+    private boolean needPatternPhone = true;
 
     public RExTextView(Context context) {
         super(context);
@@ -256,9 +280,15 @@ public class RExTextView extends RTextView {
             super.setText(text, type);
         } else {
             SpannableStringBuilder spanBuilder = new SpannableStringBuilder(text);
-            patternUrl(spanBuilder, text);//优先匹配
-            patternMention(spanBuilder, text);
-            patternPhone(spanBuilder, text);
+            if (needPatternUrl) {
+                patternUrl(spanBuilder, text);//优先匹配
+            }
+            if (needPatternMention) {
+                patternMention(spanBuilder, text);
+            }
+            if (needPatternPhone) {
+                patternPhone(spanBuilder, text);
+            }
             afterPattern(spanBuilder, text);
             super.setText(spanBuilder, type);
         }
@@ -442,18 +472,37 @@ public class RExTextView extends RTextView {
             int end = matcher.end();
             String text = matcher.group();//input.subSequence(start, end);
 
-            if (!isStartWidthUrl(text)) {
+            if (needPatternUrlCheckHttp && !isStartWidthUrl(text)) {
                 continue;
             }
 
-            builder.setSpan(new ImageTextSpan(getContext(),
-                            ImageTextSpan.initDrawable(getContext(),
-                                    R.drawable.base_link_ico, getTextSize()),
-                            getContext().getString(R.string.url_link_tip),
-                            text)
-                            .setOnImageSpanClick(mOnImageSpanClick)
-                            .setTextColor(mImageSpanTextColor),
-                    start, end, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
+            if (showUrlRawText) {
+                builder.setSpan(new ImageTextSpan(getContext(),
+                                ImageTextSpan.initDrawable(getTextSize()),
+                                text,
+                                text)
+                                .setOnImageSpanClick(mOnImageSpanClick)
+                                .setTextColor(mImageSpanTextColor),
+                        start, end, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
+            } else if (showPatternUrlIco) {
+                builder.setSpan(new ImageTextSpan(getContext(),
+                                ImageTextSpan.initDrawable(getContext(),
+                                        R.drawable.base_link_ico, getTextSize()),
+                                getContext().getString(R.string.url_link_tip),
+                                text)
+                                .setOnImageSpanClick(mOnImageSpanClick)
+                                .setTextColor(mImageSpanTextColor),
+                        start, end, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
+            } else {
+                builder.setSpan(new ImageTextSpan(getContext(),
+                                ImageTextSpan.initDrawable(getTextSize()),
+                                getContext().getString(R.string.url_link_tip),
+                                text)
+                                .setOnImageSpanClick(mOnImageSpanClick)
+                                .setTextColor(mImageSpanTextColor),
+                        start, end, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
+            }
+
         }
     }
 
@@ -505,6 +554,36 @@ public class RExTextView extends RTextView {
     @Override
     protected boolean isInOtherSpan(SpannableStringBuilder builder, int length, int startPosition, int endPosition) {
         return isInOtherSpan(builder, ImageTextSpan.class, length, startPosition, endPosition);
+    }
+
+    public RExTextView setNeedPatternUrl(boolean needPatternUrl) {
+        this.needPatternUrl = needPatternUrl;
+        return this;
+    }
+
+    public RExTextView setNeedPatternUrlCheckHttp(boolean needPatternUrlCheckHttp) {
+        this.needPatternUrlCheckHttp = needPatternUrlCheckHttp;
+        return this;
+    }
+
+    public RExTextView setShowPatternUrlIco(boolean showPatternUrlIco) {
+        this.showPatternUrlIco = showPatternUrlIco;
+        return this;
+    }
+
+    public RExTextView setShowUrlRawText(boolean showUrlRawText) {
+        this.showUrlRawText = showUrlRawText;
+        return this;
+    }
+
+    public RExTextView setNeedPatternMention(boolean needPatternMention) {
+        this.needPatternMention = needPatternMention;
+        return this;
+    }
+
+    public RExTextView setNeedPatternPhone(boolean needPatternPhone) {
+        this.needPatternPhone = needPatternPhone;
+        return this;
     }
 
     /**
