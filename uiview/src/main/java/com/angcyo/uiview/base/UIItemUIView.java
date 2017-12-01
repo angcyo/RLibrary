@@ -190,6 +190,13 @@ public abstract class UIItemUIView<T extends Item> extends UIRecyclerUIView<Stri
     }
 
     @Override
+    protected void initRecyclerView(RRecyclerView recyclerView, ContentLayout baseContentLayout) {
+        recyclerView.setItemAnim(false);
+        recyclerView.setSupportsChangeAnimations(false);
+        super.initRecyclerView(recyclerView, baseContentLayout);
+    }
+
+    @Override
     protected void afterInflateView(ContentLayout baseContentLayout) {
         mRefreshLayout.setRefreshDirection(RefreshLayout.BOTH);
         mRefreshLayout.setTopView(new PlaceholderView(mActivity));
@@ -198,7 +205,6 @@ public abstract class UIItemUIView<T extends Item> extends UIRecyclerUIView<Stri
 
         mExBaseAdapter.setEnableLoadMore(false);
 
-        mRecyclerView.setItemAnimator(null);
         mRecyclerView.setHasFixedSize(true);
         mRecyclerView.setOverScrollMode(View.OVER_SCROLL_NEVER);
         mRecyclerView.addItemDecoration(

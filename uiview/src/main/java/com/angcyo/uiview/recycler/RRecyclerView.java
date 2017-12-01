@@ -14,6 +14,7 @@ import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.support.v7.widget.SimpleItemAnimator;
 import android.support.v7.widget.StaggeredGridLayoutManager;
 import android.text.TextUtils;
 import android.util.AttributeSet;
@@ -317,6 +318,16 @@ public class RRecyclerView extends RecyclerView {
     public void setItemNoAnim() {
         setItemAnim(false);
         this.setItemAnimator(null);
+    }
+
+    /**
+     * @see SimpleItemAnimator#setSupportsChangeAnimations(boolean)
+     */
+    public void setSupportsChangeAnimations(boolean supportsChangeAnimations) {
+        ItemAnimator itemAnimator = getItemAnimator();
+        if (itemAnimator instanceof DefaultItemAnimator) {
+            ((DefaultItemAnimator) itemAnimator).setSupportsChangeAnimations(supportsChangeAnimations);
+        }
     }
 
     @Override

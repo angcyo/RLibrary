@@ -200,6 +200,17 @@ public class RFlowLayout extends LinearLayout {
         return list;
     }
 
+    public List<String> getTextList() {
+        List<String> list = new ArrayList<>();
+        for (int i = 0; i < getChildCount(); i++) {
+            View childAt = getChildAt(i);
+            if (childAt instanceof RTextView) {
+                list.add(String.valueOf(((RTextView) childAt).getText()));
+            }
+        }
+        return list;
+    }
+
     public RTextCheckView addTagTextView(String text) {
         RTextCheckView textView = new RTextCheckView(getContext());
         textView.setText(text);
