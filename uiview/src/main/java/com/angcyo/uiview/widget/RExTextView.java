@@ -215,8 +215,9 @@ public class RExTextView extends RTextView {
         typedArray.recycle();
     }
 
-    public void setImageSpanTextColor(int imageSpanTextColor) {
+    public RExTextView setImageSpanTextColor(int imageSpanTextColor) {
         mImageSpanTextColor = imageSpanTextColor;
+        return this;
     }
 
     @Override
@@ -232,8 +233,8 @@ public class RExTextView extends RTextView {
 
     @Override
     public boolean onTouchEvent(MotionEvent event) {
-        super.onTouchEvent(event);
-        return ImageClickMethod.isTouchInSpan;
+        boolean touchEvent = super.onTouchEvent(event);
+        return touchEvent || ImageClickMethod.isTouchInSpan;
     }
 
     /**
@@ -556,6 +557,20 @@ public class RExTextView extends RTextView {
         return isInOtherSpan(builder, ImageTextSpan.class, length, startPosition, endPosition);
     }
 
+    /**
+     * 恢复到默认匹配状态
+     */
+    public void resetPatternState() {
+        needPatternMention = true;
+        needPatternPhone = true;
+
+        needPatternUrl = true;
+        needPatternUrlCheckHttp = true;
+        showPatternUrlIco = true;
+        showUrlRawText = false;
+    }
+
+
     public RExTextView setNeedPatternUrl(boolean needPatternUrl) {
         this.needPatternUrl = needPatternUrl;
         return this;
@@ -583,6 +598,14 @@ public class RExTextView extends RTextView {
 
     public RExTextView setNeedPatternPhone(boolean needPatternPhone) {
         this.needPatternPhone = needPatternPhone;
+        return this;
+    }
+
+    /**
+     * 设置是否当点击span时, 显示背景颜色
+     */
+    public RExTextView setShowSelectionSpanBgColor(boolean showSelectionSpanBgColor) {
+        ImageClickMethod.getInstance().showSelectionSpanBgColor = showSelectionSpanBgColor;
         return this;
     }
 
@@ -850,19 +873,24 @@ public class RExTextView extends RTextView {
             isTouchDown = false;
             downX = -1;
             downY = -1;
-            view.postInvalidate();//解决在RecyclerView中, 会出现点击背景不消失的BUG
+            if (enableTouchEffect) {
+                view.postInvalidate();//解决在RecyclerView中, 会出现点击背景不消失的BUG
+            }
         }
 
         public void onTouchDown(final TextView view, float x, float y) {
             isTouchDown = true;
             downX = x;
             downY = y;
-            view.postDelayed(new Runnable() {
-                @Override
-                public void run() {
-                    onTouchUp(view);
-                }
-            }, 300);//300毫秒后,自动取消
+            if (enableTouchEffect) {
+                view.postInvalidate();
+            }
+//            view.postDelayed(new Runnable() {
+//                @Override
+//                public void run() {
+//                    onTouchUp(view);
+//                }
+//            }, 300);//300毫秒后,自动取消
         }
 
         public void onTouchCancel(TextView view, float x, float y) {
@@ -915,6 +943,11 @@ public class RExTextView extends RTextView {
         public static boolean isTouchInSpan = false;
         private static ImageClickMethod sInstance;
 
+        /**
+         * 设置是否当点击span时, 显示背景颜色
+         */
+        private boolean showSelectionSpanBgColor = false;
+
         public static ImageClickMethod getInstance() {
             if (sInstance == null)
                 sInstance = new ImageClickMethod();
@@ -964,22 +997,24 @@ public class RExTextView extends RTextView {
                         } else if (action == MotionEvent.ACTION_DOWN) {
                             isTouchInSpan = true;
                             imageTextSpan.onTouchDown(widget, event.getX(), event.getY());
-                            Selection.setSelection(buffer,
-                                    spanStart,
-                                    spanEnd);
+                            if (showSelectionSpanBgColor) {
+                                Selection.setSelection(buffer,
+                                        spanStart,
+                                        spanEnd);
+                            }
                         } else if (action == MotionEvent.ACTION_MOVE) {
                             //link[0].onTouchMove(widget, event.getX(), event.getY());
-                            return super.onTouchEvent(widget, buffer, event);
-                        } else if (action == MotionEvent.ACTION_CANCEL) {
+                            //return super.onTouchEvent(widget, buffer, event);
+                        } else {
                             isTouchInSpan = false;
                             imageTextSpan.onTouchCancel(widget, event.getX(), event.getY());
-                            return super.onTouchEvent(widget, buffer, event);
+                            //return super.onTouchEvent(widget, buffer, event);
                         }
 
-                        return true;
                     } else {
                         Selection.removeSelection(buffer);
                     }
+                    return true;
                 } else {
                     Selection.removeSelection(buffer);
                 }
