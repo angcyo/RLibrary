@@ -41,7 +41,7 @@ public class RLoopRecyclerView extends RRecyclerView {
     @Override
     protected void onAttachedToWindow() {
         super.onAttachedToWindow();
-        initView();
+        //initView();
     }
 
     @Override
@@ -115,7 +115,10 @@ public class RLoopRecyclerView extends RRecyclerView {
 //        super.scrollTo(getDefaultPosition() + position, anim);
 //    }
 
-    private void initView() {
+
+    @Override
+    protected void initView(Context context) {
+        super.initView(context);
         if (mPagerSnapHelper == null) {
             mPagerSnapHelper = new RPagerSnapHelper();
             mPagerSnapHelper.setOnPageListener(new RPagerSnapHelper.OnPageListener() {
@@ -126,8 +129,9 @@ public class RLoopRecyclerView extends RRecyclerView {
                         mOnPageListener.onPageSelector(index);
                     }
                 }
-            }).attachToRecyclerView(this);
+            });
         }
+        mPagerSnapHelper.attachToRecyclerView(this);
     }
 
     public void setOnPageListener(OnPageListener onPageListener) {

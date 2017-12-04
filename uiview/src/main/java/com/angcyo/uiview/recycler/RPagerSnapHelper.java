@@ -28,6 +28,18 @@ public class RPagerSnapHelper extends PagerSnapHelper {
      * 默认是横向Pager
      */
     int mOrientation = LinearLayoutManager.HORIZONTAL;
+    private RecyclerView.OnScrollListener mScrollListener = new RecyclerView.OnScrollListener() {
+        @Override
+        public void onScrollStateChanged(RecyclerView recyclerView, int newState) {
+            if (newState == RecyclerView.SCROLL_STATE_DRAGGING) {
+                //开始滚动
+            } else if (newState == RecyclerView.SCROLL_STATE_IDLE) {
+                //结束滚动
+            } else if (newState == RecyclerView.SCROLL_STATE_SETTLING) {
+                //滑行中
+            }
+        }
+    };
 
     public RPagerSnapHelper() {
     }
@@ -61,18 +73,8 @@ public class RPagerSnapHelper extends PagerSnapHelper {
     public void attachToRecyclerView(@Nullable RecyclerView recyclerView) throws IllegalStateException {
         super.attachToRecyclerView(recyclerView);
         if (recyclerView != null) {
-            recyclerView.addOnScrollListener(new RecyclerView.OnScrollListener() {
-                @Override
-                public void onScrollStateChanged(RecyclerView recyclerView, int newState) {
-                    if (newState == RecyclerView.SCROLL_STATE_DRAGGING) {
-                        //开始滚动
-                    } else if (newState == RecyclerView.SCROLL_STATE_IDLE) {
-                        //结束滚动
-                    } else if (newState == RecyclerView.SCROLL_STATE_SETTLING) {
-                        //滑行中
-                    }
-                }
-            });
+            recyclerView.removeOnScrollListener(mScrollListener);
+            recyclerView.addOnScrollListener(mScrollListener);
 
             RecyclerView.LayoutManager layoutManager = recyclerView.getLayoutManager();
             if (layoutManager instanceof LinearLayoutManager) {
