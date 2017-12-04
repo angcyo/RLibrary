@@ -41,6 +41,63 @@ public class RGroupData<T> {
         mAllDatas = allDatas;
     }
 
+    public boolean isExpand() {
+        return isExpand;
+    }
+
+    /**
+     * 展开/关闭 分组数据的显示
+     */
+    public void setExpand(RGroupAdapter groupAdapter, boolean expand) {
+        if (isExpand == expand) {
+            return;
+        }
+        boolean oldExpand = isExpand;
+        if (oldExpand) {
+            //已经展开了, 那么就是关闭分组数据显示
+            if (getDataCount() > 0) {
+                int startPosition = groupAdapter.getPositionFromGroup(this) + getGroupCount();
+                groupAdapter.notifyItemRangeRemoved(startPosition, getDataCount());
+                groupAdapter.notifyItemRangeChanged(startPosition, groupAdapter.getItemCount());
+            }
+            isExpand = expand;
+        } else {
+            isExpand = expand;
+            //已经关闭了, 需要展开
+            int startPosition = groupAdapter.getPositionFromGroup(this) + getGroupCount();
+            groupAdapter.notifyItemRangeInserted(startPosition, getDataCount());
+            groupAdapter.notifyItemRangeChanged(startPosition, groupAdapter.getItemCount());
+        }
+    }
+
+    /**
+     * 展开/关闭 分组数据的显示
+     */
+    public void setExpand(RGroupAdapter groupAdapter, boolean expand, boolean closeOther /*关闭之前打开的分组*/) {
+        if (isExpand == expand) {
+            return;
+        }
+        if (closeOther) {
+            groupAdapter.expandAll(false);
+        }
+        boolean oldExpand = isExpand;
+        if (oldExpand) {
+            //已经展开了, 那么就是关闭分组数据显示
+            if (getDataCount() > 0) {
+                int startPosition = groupAdapter.getPositionFromGroup(this) + getGroupCount();
+                groupAdapter.notifyItemRangeRemoved(startPosition, getDataCount());
+                groupAdapter.notifyItemRangeChanged(startPosition, groupAdapter.getItemCount());
+            }
+            isExpand = expand;
+        } else {
+            isExpand = expand;
+            //已经关闭了, 需要展开
+            int startPosition = groupAdapter.getPositionFromGroup(this) + getGroupCount();
+            groupAdapter.notifyItemRangeInserted(startPosition, getDataCount());
+            groupAdapter.notifyItemRangeChanged(startPosition, groupAdapter.getItemCount());
+        }
+    }
+
     /**
      * 头部+数据的总数量
      */

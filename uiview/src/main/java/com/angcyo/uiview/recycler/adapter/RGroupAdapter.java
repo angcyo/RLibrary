@@ -186,6 +186,15 @@ public class RGroupAdapter<H, G extends RGroupData, F> extends RExBaseAdapter<H,
         return position;
     }
 
+    /**
+     * 展开/关闭所有分组
+     */
+    public void expandAll(boolean expand) {
+        for (G group : getAllDatas()) {
+            group.setExpand(this, expand);
+        }
+    }
+
     @Override
     protected int getItemLayoutId(int viewType) {
 
