@@ -30,6 +30,10 @@ public class Tip {
         show(RApplication.getApp(), tipText, tipImageResId);
     }
 
+    public static void tip(CharSequence tipText) {
+        show(tipText, R.drawable.base_tip_ico);
+    }
+
     private static void show(Context context, CharSequence tipText, int tipImageResId) {
         View layout;
         if (toast == null) {
