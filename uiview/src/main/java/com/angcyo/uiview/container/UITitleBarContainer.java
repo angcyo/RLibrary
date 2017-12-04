@@ -230,6 +230,7 @@ public class UITitleBarContainer extends FrameLayout {
         }
         /*标题*/
         mTitleView.setText(mTitleBarPattern.mTitleString);
+        mTitleView.setTextColor(mTitleBarPattern.mTitleTextColor);
 
         if (mTitleBarPattern.titleHide) {
             mTitleView.setVisibility(GONE);

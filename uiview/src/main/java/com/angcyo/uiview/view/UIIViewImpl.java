@@ -740,6 +740,25 @@ public abstract class UIIViewImpl implements IView {
     }
 
     /**
+     * 是否是白色的标题栏, 如果是, 那么系统的状态栏字体会是灰色
+     */
+    public void lightStatusBar(boolean light) {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+            if (light) {
+                mActivity.getWindow()
+                        .getDecorView()
+                        .setSystemUiVisibility(
+                                mActivity.getWindow().getDecorView().getSystemUiVisibility() | View.SYSTEM_UI_FLAG_LIGHT_STATUS_BAR);
+            } else {
+                mActivity.getWindow()
+                        .getDecorView()
+                        .setSystemUiVisibility(
+                                mActivity.getWindow().getDecorView().getSystemUiVisibility() & ~View.SYSTEM_UI_FLAG_LIGHT_STATUS_BAR);
+            }
+        }
+    }
+
+    /**
      * @param checkSdk true 表示只在高版本的SDK上使用.
      */
     public void fullscreen(final boolean enable, boolean checkSdk) {

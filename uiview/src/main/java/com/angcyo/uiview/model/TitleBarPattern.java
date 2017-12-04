@@ -28,6 +28,10 @@ public class TitleBarPattern {
      */
     public int mTitleBarBGColor = Color.TRANSPARENT;
     /**
+     * 标题颜色
+     */
+    public int mTitleTextColor = Color.WHITE;
+    /**
      * 是否显示返回按钮
      */
     public boolean isShowBackImageView;
@@ -164,6 +168,11 @@ public class TitleBarPattern {
         if (mTitleSize != -1) {
             textView.setTextSize(mTitleSize);
         }
+        return this;
+    }
+
+    public TitleBarPattern setTitleTextColor(int titleTextColor) {
+        mTitleTextColor = titleTextColor;
         return this;
     }
 
