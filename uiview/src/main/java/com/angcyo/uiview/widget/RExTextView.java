@@ -109,12 +109,11 @@ public class RExTextView extends RTextView {
     private boolean needPatternPhone = true;
 
     public RExTextView(Context context) {
-        super(context);
+        this(context, null);
     }
 
     public RExTextView(Context context, AttributeSet attrs) {
-        super(context, attrs);
-        initExTextView(context, attrs);
+        this(context, attrs, 0);
     }
 
     public RExTextView(Context context, AttributeSet attrs, int defStyleAttr) {
@@ -213,6 +212,8 @@ public class RExTextView extends RTextView {
             setMaxShowLine(maxShowLine);
         }
         typedArray.recycle();
+
+        setMovementMethod(getDefaultMovementMethod());
     }
 
     public RExTextView setImageSpanTextColor(int imageSpanTextColor) {
@@ -228,7 +229,10 @@ public class RExTextView extends RTextView {
 
     @Override
     protected MovementMethod getDefaultMovementMethod() {
-        return ImageClickMethod.getInstance();
+        if (isNeedPattern()) {
+            return ImageClickMethod.getInstance();
+        }
+        return super.getDefaultMovementMethod();
     }
 
     @Override
@@ -570,6 +574,20 @@ public class RExTextView extends RTextView {
         showUrlRawText = false;
     }
 
+    public boolean isNeedPattern() {
+        return needPatternPhone || needPatternMention || needPatternUrl;
+    }
+
+    /**
+     * 是否激活匹配功能
+     */
+    public RExTextView setNeedPattern(boolean needPattern) {
+        this.needPatternUrl = needPattern;
+        this.needPatternMention = needPattern;
+        this.needPatternPhone = needPattern;
+        return this;
+
+    }
 
     public RExTextView setNeedPatternUrl(boolean needPatternUrl) {
         this.needPatternUrl = needPatternUrl;
@@ -1014,7 +1032,7 @@ public class RExTextView extends RTextView {
                     } else {
                         Selection.removeSelection(buffer);
                     }
-                    return true;
+                    return isTouchInSpan;
                 } else {
                     Selection.removeSelection(buffer);
                 }
