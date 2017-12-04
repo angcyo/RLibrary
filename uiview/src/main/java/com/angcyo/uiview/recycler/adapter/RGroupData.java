@@ -49,25 +49,7 @@ public class RGroupData<T> {
      * 展开/关闭 分组数据的显示
      */
     public void setExpand(RGroupAdapter groupAdapter, boolean expand) {
-        if (isExpand == expand) {
-            return;
-        }
-        boolean oldExpand = isExpand;
-        if (oldExpand) {
-            //已经展开了, 那么就是关闭分组数据显示
-            if (getDataCount() > 0) {
-                int startPosition = groupAdapter.getPositionFromGroup(this) + getGroupCount();
-                groupAdapter.notifyItemRangeRemoved(startPosition, getDataCount());
-                groupAdapter.notifyItemRangeChanged(startPosition, groupAdapter.getItemCount());
-            }
-            isExpand = expand;
-        } else {
-            isExpand = expand;
-            //已经关闭了, 需要展开
-            int startPosition = groupAdapter.getPositionFromGroup(this) + getGroupCount();
-            groupAdapter.notifyItemRangeInserted(startPosition, getDataCount());
-            groupAdapter.notifyItemRangeChanged(startPosition, groupAdapter.getItemCount());
-        }
+        setExpand(groupAdapter, expand, false);
     }
 
     /**
