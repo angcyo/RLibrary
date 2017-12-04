@@ -289,7 +289,7 @@ public class RBaseItemDecoration extends RecyclerView.ItemDecoration {
         return result;
     }
 
-    private void drawGrid(Canvas c, RecyclerView.LayoutManager manager) {
+    protected void drawGrid(Canvas c, RecyclerView.LayoutManager manager) {
         final GridLayoutManager layoutManager = (GridLayoutManager) manager;
         final int spanCount = layoutManager.getSpanCount();
         int itemCount = layoutManager.getItemCount();

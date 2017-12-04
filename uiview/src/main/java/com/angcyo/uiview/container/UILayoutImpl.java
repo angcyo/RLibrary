@@ -85,6 +85,10 @@ public class UILayoutImpl extends SwipeBackLayout implements ILayout<UIParam>, U
     Paint debugPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
     StringBuilder measureLogBuilder = new StringBuilder();
     /**
+     * 启动界面时的过渡背景颜色
+     */
+    int transitionColor = Color.WHITE;
+    /**
      * 是否正在退出界面
      */
     private boolean isFinishing = false;
@@ -1956,7 +1960,7 @@ public class UILayoutImpl extends SwipeBackLayout implements ILayout<UIParam>, U
                 boolean needMeasure = childState[0];//是否需要测量
                 boolean needVisible = childState[1];//是否需要显示
 
-                boolean isTransition = isSwipeDrag || isStarting || isFinishing;
+                boolean isTransition = isTransition();
 
                 //needMeasure = true;
                 if (needMeasure) {
@@ -2002,6 +2006,10 @@ public class UILayoutImpl extends SwipeBackLayout implements ILayout<UIParam>, U
         }
 
         setMeasuredDimension(widthSize, heightSize);
+    }
+
+    private boolean isTransition() {
+        return isSwipeDrag || isStarting || isFinishing;
     }
 
     @Override
@@ -2870,6 +2878,10 @@ public class UILayoutImpl extends SwipeBackLayout implements ILayout<UIParam>, U
 
     @Override
     public void draw(Canvas canvas) {
+//        if (isTransition()) {
+//            canvas.drawColor(transitionColor);
+//        }
+
         super.draw(canvas);
         if (isInDebugLayout) {
             initDebugPaint();
