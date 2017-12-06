@@ -38,6 +38,7 @@ import com.angcyo.uiview.base.UILayoutActivity;
 import com.angcyo.uiview.container.ILayout;
 import com.angcyo.uiview.container.UILayoutImpl;
 import com.angcyo.uiview.container.UIParam;
+import com.angcyo.uiview.kotlin.ExKt;
 import com.angcyo.uiview.model.TitleBarPattern;
 import com.angcyo.uiview.recycler.RBaseViewHolder;
 import com.angcyo.uiview.recycler.RRecyclerView;
@@ -744,16 +745,23 @@ public abstract class UIIViewImpl implements IView {
      */
     public void lightStatusBar(boolean light) {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+            int systemUiVisibility = mActivity.getWindow().getDecorView().getSystemUiVisibility();
             if (light) {
+                if (ExKt.have(systemUiVisibility, View.SYSTEM_UI_FLAG_LIGHT_STATUS_BAR)) {
+                    return;
+                }
                 mActivity.getWindow()
                         .getDecorView()
                         .setSystemUiVisibility(
-                                mActivity.getWindow().getDecorView().getSystemUiVisibility() | View.SYSTEM_UI_FLAG_LIGHT_STATUS_BAR);
+                                systemUiVisibility | View.SYSTEM_UI_FLAG_LIGHT_STATUS_BAR);
             } else {
+                if (!ExKt.have(systemUiVisibility, View.SYSTEM_UI_FLAG_LIGHT_STATUS_BAR)) {
+                    return;
+                }
                 mActivity.getWindow()
                         .getDecorView()
                         .setSystemUiVisibility(
-                                mActivity.getWindow().getDecorView().getSystemUiVisibility() & ~View.SYSTEM_UI_FLAG_LIGHT_STATUS_BAR);
+                                systemUiVisibility & ~View.SYSTEM_UI_FLAG_LIGHT_STATUS_BAR);
             }
         }
     }

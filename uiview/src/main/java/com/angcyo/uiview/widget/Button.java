@@ -81,7 +81,7 @@ public class Button extends RTextView {
                             ResUtil.createDrawable(themeDarkColor, 300),
                             ResUtil.createDrawable(disableColor, 300)
                     )));
-            setTextColor(ColorStateList.valueOf(Color.WHITE));
+            setTextColor(ColorStateList.valueOf(getCurrentTextColor()));
         } else if (mButtonStyle == ROUND_BORDER) {
             setBackground(ResUtil.ripple(themeSubColor,
                     ResUtil.selector(
@@ -101,9 +101,9 @@ public class Button extends RTextView {
                             ResUtil.createDrawable(disableColor,
                                     ViewExKt.getDimensionPixelOffset(this, R.dimen.base_round_little_radius))
                     )));
-            setTextColor(ResUtil.generateTextColor(Color.WHITE, ViewExKt.getColor(this, R.color.base_text_color)));
+            setTextColor(ResUtil.generateTextColor(getCurrentTextColor(), ViewExKt.getColor(this, R.color.base_text_color)));
         } else {
-            setTextColor(ColorStateList.valueOf(Color.WHITE));
+            setTextColor(ColorStateList.valueOf(getCurrentTextColor()));
             if (isInEditMode()) {
                 setBackground(ResUtil.generateRippleRoundMaskDrawable(getResources().getDimensionPixelOffset(R.dimen.base_round_little_radius),
                         Color.WHITE, Color.BLUE, disableColor, Color.BLUE));

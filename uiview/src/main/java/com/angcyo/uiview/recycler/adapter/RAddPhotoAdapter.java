@@ -125,6 +125,8 @@ public class RAddPhotoAdapter<T> extends RBaseAdapter<T> {
                     }
                 }
             });
+
+            onBindAddView(imageView);
         } else {
             deleteView.setImageResource(getDeleteViewImageResource(position));
 
@@ -150,6 +152,8 @@ public class RAddPhotoAdapter<T> extends RBaseAdapter<T> {
                     return false;
                 }
             });
+
+            onBindImageView(imageView, position);
         }
 
         deleteView.setOnClickListener(new View.OnClickListener() {
@@ -164,6 +168,14 @@ public class RAddPhotoAdapter<T> extends RBaseAdapter<T> {
                 }
             }
         });
+    }
+
+    protected void onBindImageView(GlideImageView imageView, int position) {
+
+    }
+
+    protected void onBindAddView(GlideImageView imageView) {
+
     }
 
     /**
