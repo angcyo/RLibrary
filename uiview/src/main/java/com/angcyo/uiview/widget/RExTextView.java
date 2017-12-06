@@ -238,7 +238,15 @@ public class RExTextView extends RTextView {
     @Override
     public boolean onTouchEvent(MotionEvent event) {
         boolean touchEvent = super.onTouchEvent(event);
-        return touchEvent || ImageClickMethod.isTouchInSpan;
+        if (isNeedPattern()) {
+            if (hasOnClickListeners()) {
+                return touchEvent || ImageClickMethod.isTouchInSpan;
+            } else {
+                return ImageClickMethod.isTouchInSpan;
+            }
+        } else {
+            return touchEvent;
+        }
     }
 
     /**
