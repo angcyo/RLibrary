@@ -231,7 +231,7 @@ public class RExTextView extends RTextView {
     protected MovementMethod getDefaultMovementMethod() {
         if (isNeedPattern()) {
             return ImageClickMethod.getInstance();
-        }
+        }l
         return super.getDefaultMovementMethod();
     }
 
