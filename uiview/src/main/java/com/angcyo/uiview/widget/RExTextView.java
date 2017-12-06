@@ -593,8 +593,8 @@ public class RExTextView extends RTextView {
         this.needPatternUrl = needPattern;
         this.needPatternMention = needPattern;
         this.needPatternPhone = needPattern;
+        setMovementMethod(getDefaultMovementMethod());
         return this;
-
     }
 
     public RExTextView setNeedPatternUrl(boolean needPatternUrl) {
