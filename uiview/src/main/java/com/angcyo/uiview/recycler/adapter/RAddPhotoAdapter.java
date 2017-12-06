@@ -13,6 +13,7 @@ import com.angcyo.uiview.utils.ScreenUtil;
 import com.angcyo.uiview.utils.UI;
 import com.angcyo.uiview.widget.GlideImageView;
 
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -113,7 +114,6 @@ public class RAddPhotoAdapter<T> extends RBaseAdapter<T> {
         final ImageView deleteView = holder.v(R.id.base_delete_view);
 
         if (holder.getItemViewType() == TYPE_ADD) {
-
             deleteView.setVisibility(View.GONE);
             imageView.setImageResource(getAddViewImageResource(position));
             imageView.setScaleType(ImageView.ScaleType.FIT_XY);
@@ -129,7 +129,6 @@ public class RAddPhotoAdapter<T> extends RBaseAdapter<T> {
             onBindAddView(imageView);
         } else {
             deleteView.setImageResource(getDeleteViewImageResource(position));
-
             imageView.setScaleType(ImageView.ScaleType.CENTER_CROP);
             deleteView.setVisibility(mDeleteModel ? View.VISIBLE : View.GONE);
             if (mConfigCallback != null) {
@@ -211,6 +210,19 @@ public class RAddPhotoAdapter<T> extends RBaseAdapter<T> {
             }
         }
         return this;
+    }
+
+    @Override
+    public void appendData(List<T> datas) {
+        if (datas == null || datas.size() == 0) {
+            return;
+        }
+        if (this.mAllDatas == null) {
+            this.mAllDatas = new ArrayList<>();
+        }
+//        int startPosition = this.mAllDatas.size();
+        this.mAllDatas.addAll(datas);
+        notifyDataSetChanged();
     }
 
     /**

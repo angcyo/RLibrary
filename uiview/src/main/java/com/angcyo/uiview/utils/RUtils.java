@@ -290,13 +290,14 @@ public class RUtils {
     /**
      * qq咨询
      */
-    public static void chatQQ(Context context, String qq) {
+    public static boolean chatQQ(Context context, String qq) {
         try {
             if (CmdUtil.checkApkExist(context, "com.tencent.mobileqq")) {
                 String url = "mqqwpa://im/chat?chat_type=wpa&uin=" + qq;
                 Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse(url));
                 intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
                 context.startActivity(intent);
+                return true;
             } else {
                 T_.error("您没有安装腾讯QQ");
             }
@@ -304,6 +305,7 @@ public class RUtils {
             e.printStackTrace();
             T_.error("您没有安装腾讯QQ");
         }
+        return false;
     }
 
     /**
