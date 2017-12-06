@@ -34,6 +34,10 @@ public class Tip {
         show(tipText, R.drawable.base_tip_ico);
     }
 
+    public static void ok(CharSequence tipText) {
+        show(tipText, R.drawable.base_tip_ok);
+    }
+
     private static void show(Context context, CharSequence tipText, int tipImageResId) {
         View layout;
         if (toast == null) {

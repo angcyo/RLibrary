@@ -6,6 +6,8 @@ import android.app.ActivityManager;
 import android.app.DownloadManager;
 import android.content.ActivityNotFoundException;
 import android.content.ComponentName;
+import android.content.ContentResolver;
+import android.content.ContentValues;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.ActivityInfo;
@@ -34,6 +36,7 @@ import android.os.Build;
 import android.os.Environment;
 import android.os.Looper;
 import android.os.Process;
+import android.provider.MediaStore;
 import android.provider.Settings;
 import android.support.v4.content.FileProvider;
 import android.support.v7.widget.RecyclerView;
@@ -1162,6 +1165,16 @@ public class RUtils {
         activity.startActivity(Intent.createChooser(share, "发送给..."));
     }
 
+    public static void shareVideo(Activity activity, String videoFilePath, String content) {
+        Intent share = new Intent(Intent.ACTION_SEND);
+        share.putExtra(Intent.EXTRA_TEXT, content);
+        share.putExtra(Intent.EXTRA_STREAM,
+                Uri.fromFile(new File(videoFilePath)));
+        share.setType("video/*");
+        share.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+        activity.startActivity(Intent.createChooser(share, "发送给..."));
+    }
+
     public static void shareText(Activity activity, final String title, final String text) {
         Intent intent = new Intent(Intent.ACTION_SEND);
         intent.setType("text/plain");
@@ -1541,8 +1554,100 @@ public class RUtils {
 //            intent.setData(uri);
 //            context.sendBroadcast(intent);
 
-            MediaScannerConnection.scanFile(context, new String[]{filePath}, null, null);
+            MediaScannerConnection.scanFile(context, new String[]{filePath}, null,
+                    new MediaScannerConnection.MediaScannerConnectionClient() {
+                        @Override
+                        public void onMediaScannerConnected() {
+                            L.e("call: onMediaScannerConnected([])-> ");
+                        }
+
+                        @Override
+                        public void onScanCompleted(String path, Uri uri) {
+                            L.e("call: onScanCompleted([path, uri])-> " + path + " ->" + uri);
+                        }
+                    });
         }
+    }
+
+    public static void scanVideo(Context context, String videoPath) {
+        File file = new File(videoPath);
+        if (file.exists() && context != null) {
+            MediaScannerConnection.scanFile(context, new String[]{videoPath}, new String[]{"video/mp4"},
+                    new MediaScannerConnection.MediaScannerConnectionClient() {
+                        @Override
+                        public void onMediaScannerConnected() {
+                            L.e("call: onMediaScannerConnected([])-> ");
+                        }
+
+                        @Override
+                        public void onScanCompleted(String path, Uri uri) {
+                            L.e("call: onScanCompleted([path, uri])-> " + path + " ->" + uri);
+                        }
+                    });
+        }
+    }
+
+    /**
+     * 将视频插入图库
+     *
+     * @param videoPath 视频路径地址
+     */
+    public static void updateVideo(Context context, String videoPath, long videoDuration /*毫秒*/) {
+        File file = new File(videoPath);
+        if (!file.exists()) {
+            return;
+        }
+        //获取ContentResolve对象，来操作插入视频
+        ContentResolver localContentResolver = context.getContentResolver();
+        //ContentValues：用于储存一些基本类型的键值对
+        ContentValues localContentValues = getVideoContentValues(context, file, System.currentTimeMillis(), videoDuration);
+        //insert语句负责插入一条新的纪录，如果插入成功则会返回这条记录的id，如果插入失败会返回-1。
+        Uri localUri = localContentResolver.insert(MediaStore.Video.Media.EXTERNAL_CONTENT_URI, localContentValues);
+        L.e("call: updateVideo([context, videoPath])-> " + localUri);
+    }
+
+    //再往数据库中插入数据的时候将，将要插入的值都放到一个ContentValues的实例当中
+    public static ContentValues getVideoContentValues(Context paramContext, File paramFile, long addTime, long videoDuration) {
+        ContentValues localContentValues = new ContentValues();
+        localContentValues.put(MediaStore.Video.Media.TITLE, paramFile.getName());
+        localContentValues.put(MediaStore.Video.Media.DISPLAY_NAME, paramFile.getName());
+        localContentValues.put(MediaStore.Video.Media.MIME_TYPE, "video/mp4");
+        localContentValues.put(MediaStore.Video.Media.DURATION, videoDuration);
+        localContentValues.put(MediaStore.Video.Media.DATE_TAKEN, Long.valueOf(addTime));
+        localContentValues.put(MediaStore.Video.Media.DATE_MODIFIED, Long.valueOf(addTime));
+        localContentValues.put(MediaStore.Video.Media.DATE_ADDED, Long.valueOf(addTime));
+        localContentValues.put(MediaStore.Video.Media.DATA, paramFile.getAbsolutePath());
+        localContentValues.put(MediaStore.Video.Media.SIZE, Long.valueOf(paramFile.length()));
+        return localContentValues;
+    }
+
+    //android把图片文件添加到相册
+    public static void udpateMedia(Context context, String url) {
+        //图片路径
+        File file = new File(url);
+        ContentResolver localContentResolver = context.getContentResolver();
+        ContentValues localContentValues = getImageContentValues(context, file, System.currentTimeMillis());
+        localContentResolver.insert(MediaStore.Images.Media.EXTERNAL_CONTENT_URI, localContentValues);
+        Intent localIntent = new Intent("android.intent.action.MEDIA_SCANNER_SCAN_FILE");
+        final Uri localUri = Uri.fromFile(file);
+        localIntent.setData(localUri);
+        //发送广播即时更新图库
+        context.sendBroadcast(localIntent);
+    }
+
+    //再往数据库中插入数据的时候将，将要插入的值都放到一个ContentValues的实例当中
+    public static ContentValues getImageContentValues(Context paramContext, File paramFile, long paramLong) {
+        ContentValues localContentValues = new ContentValues();
+        localContentValues.put("title", paramFile.getName());
+        localContentValues.put("_display_name", paramFile.getName());
+        localContentValues.put("mime_type", "image/jpeg");
+        localContentValues.put("datetaken", Long.valueOf(paramLong));
+        localContentValues.put("date_modified", Long.valueOf(paramLong));
+        localContentValues.put("date_added", Long.valueOf(paramLong));
+        localContentValues.put("orientation", Integer.valueOf(0));
+        localContentValues.put("_data", paramFile.getAbsolutePath());
+        localContentValues.put("_size", Long.valueOf(paramFile.length()));
+        return localContentValues;
     }
 
     /**

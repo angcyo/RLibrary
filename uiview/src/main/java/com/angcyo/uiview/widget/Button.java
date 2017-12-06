@@ -10,6 +10,7 @@ import android.util.AttributeSet;
 import android.view.Gravity;
 
 import com.angcyo.uiview.R;
+import com.angcyo.uiview.RApplication;
 import com.angcyo.uiview.kotlin.ViewExKt;
 import com.angcyo.uiview.resources.ResUtil;
 import com.angcyo.uiview.skin.SkinHelper;
@@ -46,6 +47,10 @@ public class Button extends RTextView {
 
     int mButtonStyle = DEFAULT;
 
+    int themeSubColor;
+    int themeDarkColor;
+    int disableColor;
+
 
     public Button(Context context) {
         this(context, null);
@@ -55,63 +60,66 @@ public class Button extends RTextView {
         super(context, attrs);
         TypedArray typedArray = context.obtainStyledAttributes(attrs, R.styleable.Button);
         mButtonStyle = typedArray.getInt(R.styleable.Button_r_button_style, DEFAULT);
+        if (isInEditMode()) {
+            themeSubColor = Color.BLUE;
+            themeDarkColor = Color.BLUE;
+            disableColor = Color.GRAY;
+        } else {
+            themeSubColor = typedArray.getInt(R.styleable.Button_r_button_theme_color, SkinHelper.getSkin().getThemeSubColor());
+            themeDarkColor = typedArray.getInt(R.styleable.Button_r_button_theme_dark_color, SkinHelper.getSkin().getThemeDarkColor());
+            disableColor = ContextCompat.getColor(getContext(), R.color.base_color_disable);
+        }
         typedArray.recycle();
 
         initButton();
     }
 
     private void initButton() {
-        int themeSubColor;
-        int themeDarkColor;
-        int disableColor;
-
-        if (isInEditMode()) {
-            themeSubColor = Color.BLUE;
-            themeDarkColor = Color.BLUE;
-            disableColor = Color.GRAY;
-        } else {
-            themeSubColor = SkinHelper.getSkin().getThemeSubColor();
-            themeDarkColor = SkinHelper.getSkin().getThemeDarkColor();
-            disableColor = ContextCompat.getColor(getContext(), R.color.base_color_disable);
-        }
-        if (mButtonStyle == ROUND) {
-            setBackground(ResUtil.ripple(themeSubColor,
-                    ResUtil.selector(
-                            ResUtil.createDrawable(themeSubColor, 300),
-                            ResUtil.createDrawable(themeDarkColor, 300),
-                            ResUtil.createDrawable(disableColor, 300)
-                    )));
-            setTextColor(ColorStateList.valueOf(getCurrentTextColor()));
-        } else if (mButtonStyle == ROUND_BORDER) {
-            setBackground(ResUtil.ripple(themeSubColor,
-                    ResUtil.selector(
-                            ResUtil.createDrawable(themeSubColor, Color.TRANSPARENT, (int) (1 * density()), 300),
-                            ResUtil.createDrawable(themeDarkColor, Color.TRANSPARENT, (int) (1 * density()), 300),
-                            ResUtil.createDrawable(disableColor, Color.TRANSPARENT, (int) (1 * density()), 300)
-                    )));
-            setTextColor(ColorStateList.valueOf(themeSubColor));
-        } else if (mButtonStyle == ROUND_BORDER_FILL) {
-            setBackground(ResUtil.ripple(themeSubColor,
-                    ResUtil.selector(
-                            ResUtil.createDrawable(ViewExKt.getColor(this, R.color.default_base_line),
-                                    Color.TRANSPARENT, ViewExKt.getDimensionPixelOffset(this, R.dimen.base_line),
-                                    ViewExKt.getDimensionPixelOffset(this, R.dimen.base_round_little_radius)),
-                            ResUtil.createDrawable(themeSubColor,
-                                    ViewExKt.getDimensionPixelOffset(this, R.dimen.base_round_little_radius)),
-                            ResUtil.createDrawable(disableColor,
-                                    ViewExKt.getDimensionPixelOffset(this, R.dimen.base_round_little_radius))
-                    )));
-            setTextColor(ResUtil.generateTextColor(getCurrentTextColor(), ViewExKt.getColor(this, R.color.base_text_color)));
-        } else {
-            setTextColor(ColorStateList.valueOf(getCurrentTextColor()));
-            if (isInEditMode()) {
-                setBackground(ResUtil.generateRippleRoundMaskDrawable(getResources().getDimensionPixelOffset(R.dimen.base_round_little_radius),
-                        Color.WHITE, Color.BLUE, disableColor, Color.BLUE));
+        if (getBackground() == null) {
+            if (mButtonStyle == ROUND) {
+                setBackground(ResUtil.ripple(themeSubColor,
+                        ResUtil.selector(
+                                ResUtil.createDrawable(themeSubColor, 300),
+                                ResUtil.createDrawable(themeDarkColor, 300),
+                                ResUtil.createDrawable(disableColor, 300)
+                        )));
+                setTextColor(getTextColors());
+            } else if (mButtonStyle == ROUND_BORDER) {
+                setBackground(ResUtil.ripple(themeSubColor,
+                        ResUtil.selector(
+                                ResUtil.createDrawable(themeSubColor, Color.TRANSPARENT, (int) (1 * density()), 300),
+                                ResUtil.createDrawable(themeDarkColor, Color.TRANSPARENT, (int) (1 * density()), 300),
+                                ResUtil.createDrawable(disableColor, Color.TRANSPARENT, (int) (1 * density()), 300)
+                        )));
+                setTextColor(ColorStateList.valueOf(themeSubColor));
+            } else if (mButtonStyle == ROUND_BORDER_FILL) {
+                setBackground(ResUtil.ripple(themeSubColor,
+                        ResUtil.selector(
+                                ResUtil.createDrawable(ViewExKt.getColor(this, R.color.default_base_line),
+                                        Color.TRANSPARENT, ViewExKt.getDimensionPixelOffset(this, R.dimen.base_line),
+                                        ViewExKt.getDimensionPixelOffset(this, R.dimen.base_round_little_radius)),
+                                ResUtil.createDrawable(themeSubColor,
+                                        ViewExKt.getDimensionPixelOffset(this, R.dimen.base_round_little_radius)),
+                                ResUtil.createDrawable(disableColor,
+                                        ViewExKt.getDimensionPixelOffset(this, R.dimen.base_round_little_radius))
+                        )));
+                setTextColor(ResUtil.generateTextColor(getCurrentTextColor(), ViewExKt.getColor(this, R.color.base_text_color)));
             } else {
-                setBackground(SkinHelper.getSkin().getThemeMaskBackgroundRoundSelector());
+                setTextColor(getTextColors());
+                if (isInEditMode()) {
+                    setBackground(ResUtil.generateRippleRoundMaskDrawable(getResources().getDimensionPixelOffset(R.dimen.base_round_little_radius),
+                            Color.WHITE, Color.BLUE, disableColor, Color.BLUE));
+                } else {
+                    //setBackground(SkinHelper.getSkin().getThemeMaskBackgroundRoundSelector());
+                    setBackground(
+                            ResUtil.generateRippleRoundMaskDrawable(RApplication.getApp().getResources().getDimensionPixelOffset(R.dimen.base_round_little_radius),
+                                    Color.WHITE, themeDarkColor,
+                                    ContextCompat.getColor(RApplication.getApp(), R.color.base_color_disable),
+                                    themeSubColor
+                            ));
+                }
             }
         }
-
     }
 
     @Override
