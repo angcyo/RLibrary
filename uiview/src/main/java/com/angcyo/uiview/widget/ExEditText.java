@@ -491,8 +491,9 @@ public class ExEditText extends AppCompatEditText {
     protected void onSizeChanged(int w, int h, int oldw, int oldh) {
         super.onSizeChanged(w, h, oldw, oldh);
         if (showClear) {
-            clearRect.set(w - getPaddingRight() - getClearDrawable().getIntrinsicWidth(),
-                    getPaddingTop(), w - getPaddingRight(), Math.min(w, h) - getPaddingBottom());
+            int offset = (int) (2 * getResources().getDisplayMetrics().density);
+            clearRect.set(w - getPaddingRight() - getClearDrawable().getIntrinsicWidth() - offset,
+                    getPaddingTop(), w - getPaddingRight() + offset, Math.min(w, h) - getPaddingBottom());
         }
     }
 
