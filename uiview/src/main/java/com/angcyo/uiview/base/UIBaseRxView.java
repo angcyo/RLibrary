@@ -60,6 +60,10 @@ public abstract class UIBaseRxView extends UIBaseDataView {
     }
 
     public void add(Subscription subscription) {
+        add(subscription, false);
+    }
+
+    public void add(Subscription subscription, boolean checkToken) {
         if (mSubscriptions != null) {
             mSubscriptions.add(subscription);
         }
