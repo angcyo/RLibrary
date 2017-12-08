@@ -23,17 +23,16 @@ import com.angcyo.uiview.resources.AnimUtil
  * 修改备注：
  * Version: 1.0.0
  */
-open class UIVideoView : UIContentView() {
+open class UIVideoView(var videoPath: String? = null /*需要播放的视频地址*/) : UIContentView() {
 
     lateinit var videoView: VideoView
     lateinit var videoPlayView: ImageView
     lateinit var videoRootLayout: ViewGroup
 
-    /**需要播放的视频地址*/
-    var videoPath: String? = null
-
     /**界面显示, 是否自动播放*/
     var autoPlay = false
+    /**是否循环播放*/
+    var loopPlay = false
 
     var listener: OnVideoPlayListener? = null
 
@@ -59,7 +58,11 @@ open class UIVideoView : UIContentView() {
         videoRootLayout = mViewHolder.v(R.id.base_video_root_layout)
 
         videoView.setOnCompletionListener {
-            pauseVideo()
+            if (loopPlay) {
+                videoView.start()
+            } else {
+                pauseVideo()
+            }
         }
 
         videoView.setOnErrorListener { _, _, _ ->
@@ -127,8 +130,6 @@ open class UIVideoView : UIContentView() {
         super.onViewShowFirst(bundle)
 
         videoPath?.let {
-            videoView.setVideoPath(it)
-
             videoView.setOnPreparedListener {
                 videoView.start()
 
@@ -141,6 +142,8 @@ open class UIVideoView : UIContentView() {
                     }
                 }
             }
+
+            videoView.setVideoPath(it)
         }
     }
 

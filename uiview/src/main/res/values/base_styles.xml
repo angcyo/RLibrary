@@ -269,6 +269,10 @@
         <item name="android:textColor">@color/base_text_color</item>
     </style>
 
+    <style name="BaseWhiteMainTextStyle" parent="BaseMainTextStyle">
+        <item name="android:textColor">@color/base_white</item>
+    </style>
+
     <!--用户名称样式-->
     <style name="BaseNameTextStyle" parent="BaseMainTextStyle">
         <item name="android:singleLine">true</item>
