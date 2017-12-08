@@ -1,5 +1,6 @@
 package com.angcyo.uiview.base;
 
+import android.content.pm.ActivityInfo;
 import android.support.annotation.LayoutRes;
 import android.view.Gravity;
 import android.view.LayoutInflater;
@@ -307,6 +308,11 @@ public abstract class UIIDialogImpl extends UIIViewImpl {
         for (OnDismissListener listener : mOnDismissListeners) {
             listener.onDismiss();
         }
+    }
+
+    @Override
+    public int getDefaultRequestedOrientation() {
+        return ActivityInfo.SCREEN_ORIENTATION_UNSPECIFIED;
     }
 
     /**

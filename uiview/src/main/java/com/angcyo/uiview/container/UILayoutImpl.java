@@ -4,6 +4,7 @@ import android.app.Activity;
 import android.app.Application;
 import android.content.Context;
 import android.content.Intent;
+import android.content.res.Configuration;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
@@ -293,6 +294,16 @@ public class UILayoutImpl extends SwipeBackLayout implements ILayout<UIParam>, U
     }
 
     /**
+     * 获取屏幕方向
+     *
+     * @see android.content.res.Configuration#ORIENTATION_LANDSCAPE
+     * @see android.content.res.Configuration#ORIENTATION_PORTRAIT
+     */
+    public int getScreenOrientation() {
+        return getResources().getConfiguration().orientation;
+    }
+
+    /**
      * 滑动返回处理
      */
     @Override
@@ -311,6 +322,11 @@ public class UILayoutImpl extends SwipeBackLayout implements ILayout<UIParam>, U
 //            if (mLastShowViewPattern != null) {
 //                checkInterruptAndRemove(mLastShowViewPattern.mIView);
 //            }
+            return false;
+        }
+
+        if (getScreenOrientation() != Configuration.ORIENTATION_PORTRAIT) {
+            //非竖屏, 禁用滑动返回
             return false;
         }
 

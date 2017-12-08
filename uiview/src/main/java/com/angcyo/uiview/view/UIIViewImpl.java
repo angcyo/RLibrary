@@ -3,6 +3,7 @@ package com.angcyo.uiview.view;
 import android.app.ActivityManager;
 import android.content.Context;
 import android.content.Intent;
+import android.content.pm.ActivityInfo;
 import android.content.res.ColorStateList;
 import android.content.res.Resources;
 import android.graphics.Color;
@@ -250,6 +251,8 @@ public abstract class UIIViewImpl implements IView {
     public void onViewCreate(View rootView, UIParam param) {
         L.d(this.getClass().getSimpleName(), "onViewCreate 2: " + mIViewStatus);
         mBaseSoftInputMode = mActivity.getWindow().getAttributes().softInputMode;
+
+        requestedDefaultOrientation();
     }
 
     @CallSuper
@@ -278,6 +281,8 @@ public abstract class UIIViewImpl implements IView {
         long lastShowTime = mLastShowTime;
         viewShowCount++;
         mLastShowTime = System.currentTimeMillis();
+
+        requestedDefaultOrientation();
 
         notifyLifeViewShow();
 
@@ -1076,6 +1081,36 @@ public abstract class UIIViewImpl implements IView {
      */
     public int getScreenOrientation() {
         return getResources().getConfiguration().orientation;
+    }
+
+    /**
+     * {@link android.app.Activity#setRequestedOrientation(int)}
+     */
+    public void requestedOrientation(int orientation) {
+        mActivity.setRequestedOrientation(orientation);
+    }
+
+    public void requestedDefaultOrientation() {
+        requestedOrientation(getDefaultRequestedOrientation());
+    }
+
+    /**
+     * 请求横屏
+     */
+    public void requestedLanscape() {
+        requestedOrientation(ActivityInfo.SCREEN_ORIENTATION_USER_LANDSCAPE);
+    }
+
+    /**
+     * 请竖屏
+     */
+    public void requestedPortrait() {
+        requestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
+    }
+
+    @Override
+    public int getDefaultRequestedOrientation() {
+        return ActivityInfo.SCREEN_ORIENTATION_PORTRAIT;
     }
 
     /**

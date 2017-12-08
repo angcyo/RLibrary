@@ -266,6 +266,11 @@ public interface IView {
      */
     boolean needForceVisible();//是否强制可见 2017-11-29
 
+    /**
+     * 获取需要请求的屏幕方向
+     */
+    int getDefaultRequestedOrientation();//2017-12-8
+
     enum IViewShowState {
         STATE_NORMAL,
         STATE_VIEW_CREATE,
