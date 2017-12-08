@@ -1087,7 +1087,9 @@ public abstract class UIIViewImpl implements IView {
      * {@link android.app.Activity#setRequestedOrientation(int)}
      */
     public void requestedOrientation(int orientation) {
-        mActivity.setRequestedOrientation(orientation);
+        if (orientation != -1) {
+            mActivity.setRequestedOrientation(orientation);
+        }
     }
 
     public void requestedDefaultOrientation() {
