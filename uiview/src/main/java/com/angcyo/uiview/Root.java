@@ -117,7 +117,7 @@ public class Root {
                     properties.store(writer, new Date().toString());
                 } catch (IOException e) {
                     e.printStackTrace();
-                }finally {
+                } finally {
                     if (writer != null) {
                         try {
                             writer.close();
@@ -189,10 +189,17 @@ public class Root {
     }
 
     public static String createExternalFilePath() {
-        return getAppExternalFolder("") + File.separator + createFileName();
+        return createExternalFilePath("");
     }
 
-    public static String createInternalFilePath(String folder) {
-        return getAppExternalFolder(folder) + File.separator + createFileName();
+    public static String createExternalFilePath(String folder) {
+        return createExternalFilePath(folder, createFileName());
+    }
+
+    /**
+     * 在SD卡的程序指定根目录下, 创建文件路径
+     */
+    public static String createExternalFilePath(String folder, String fileName) {
+        return getAppExternalFolder(folder) + File.separator + fileName;
     }
 }
