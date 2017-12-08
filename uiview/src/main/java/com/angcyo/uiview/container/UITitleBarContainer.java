@@ -338,6 +338,9 @@ public class UITitleBarContainer extends FrameLayout {
             if (item.icoDrawable == null) {
                 //不是图片, 就创建文本按钮
                 view = createTextItem(item.text, item.textColor);
+                if (item.textSize != -1) {
+                    ((TextView) view).setTextSize(TypedValue.COMPLEX_UNIT_PX, item.textSize);
+                }
             } else {
                 //创建图片按钮
                 view = createImageItem(item.icoDrawable);

@@ -8,6 +8,7 @@ import android.support.annotation.DrawableRes;
 import android.support.annotation.StringRes;
 import android.support.v4.content.ContextCompat;
 import android.text.TextUtils;
+import android.util.TypedValue;
 import android.view.View;
 import android.widget.TextView;
 
@@ -75,7 +76,7 @@ public class TitleBarPattern {
      */
     public String mTitleString;
     public int mTitleStringLength = -1;
-    public float mTitleSize = -1;
+    public float mTitleSize = -1;//px
     /**
      * 左边的按钮
      */
@@ -159,14 +160,14 @@ public class TitleBarPattern {
         return this;
     }
 
-    public TitleBarPattern setTitleSize(float size) {
+    public TitleBarPattern setTitleSize(float size /*px*/) {
         this.mTitleSize = size;
         return this;
     }
 
     public TitleBarPattern setTextViewSize(TextView textView) {
         if (mTitleSize != -1) {
-            textView.setTextSize(mTitleSize);
+            textView.setTextSize(TypedValue.COMPLEX_UNIT_PX, mTitleSize);
         }
         return this;
     }
@@ -270,11 +271,12 @@ public class TitleBarPattern {
         public String text;
         @DrawableRes
         public int res = -1;
-        public Drawable icoDrawable;
+        public Drawable icoDrawable;//为null 表示文本按钮, 否则 ImageView
         public View.OnClickListener listener;
         public int visibility = View.VISIBLE;
         @ColorInt
         public int textColor = -1;
+        public float textSize = -1;//px
 
         public int leftMargin = 0;
         public int topMargin = 0;
@@ -349,6 +351,11 @@ public class TitleBarPattern {
 
         public TitleBarItem setTextColor(@ColorInt int textColor) {
             this.textColor = textColor;
+            return this;
+        }
+
+        public TitleBarItem setTextSize(float textSize) {
+            this.textSize = textSize;
             return this;
         }
 
