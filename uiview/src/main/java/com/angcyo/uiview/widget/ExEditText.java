@@ -150,7 +150,7 @@ public class ExEditText extends AppCompatEditText {
         int lastMentionIndex = -1;
 
         for (String mention : allMention) {
-            Matcher matcher = Pattern.compile("@" + mention).matcher(content);
+            Matcher matcher = Pattern.compile("\\Q@" + mention + "\\E").matcher(content);
 
             while (matcher.find()) {
                 String mentionText = matcher.group();
@@ -993,7 +993,7 @@ public class ExEditText extends AppCompatEditText {
         //筛选一下, 防止被删除了, 缺还在List中
         List<String> mentions = new ArrayList<>();
         for (String mention : mAllMention) {
-            Matcher matcher = Pattern.compile("@" + mention).matcher(text);
+            Matcher matcher = Pattern.compile("\\Q@" + mention + "\\E").matcher(text);
 
             boolean isFind = false;
             while (matcher.find()) {
