@@ -29,13 +29,15 @@ public abstract class StyleActivity extends AppCompatActivity {
         loadActivityStyle();
         initWindow();
         initUIActivity();
+
+        onCreateView();
     }
 
     @Override
     protected void onPostCreate(@Nullable Bundle savedInstanceState) {
         super.onPostCreate(savedInstanceState);
 //        onLoadView();//在权限通过后调用
-        onCreateView();
+//        onCreateView();//2017-12-11  移到onCreate中调用
     }
 
     protected abstract void onCreateView();
