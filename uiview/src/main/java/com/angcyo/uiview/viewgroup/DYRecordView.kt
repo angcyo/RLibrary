@@ -34,20 +34,67 @@ import com.angcyo.uiview.skin.SkinHelper
 class DYRecordView(context: Context, attributeSet: AttributeSet? = null) : View(context, attributeSet) {
     companion object {
         /**内圈呼吸的半径范围*/
-        val INNER_CIRCLE_MIN_R = 0.8f
-        val INNER_CIRCLE_MAX_R = 0.95f
+        var INNER_CIRCLE_MIN_R = 0.8f
+        var INNER_CIRCLE_MAX_R = 0.95f
+
+        /**录制模式, 长按录制*/
+        val RECORD_TYPE_LONG = 1
+        /**录制模式, 点击录制*/
+        val RECORD_TYPE_CLICK = 2
     }
 
     var showText = "按住拍"
     var showTextSize = 20 * density
     var showTextColor = Color.WHITE
 
-    /**圈圈的颜色*/
+    /**圈圈的颜色(保留值属性)*/
     var circleColor = Color.RED
+    /**圈圈的颜色(绘制专用)*/
+    var circleDrawColor = circleColor
+        get() {
+            return if (toLongAnimator != null && toLongAnimator!!.isStarted) {
+                SkinHelper.getTranColor(circleColor, 0x80)
+            } else {
+                field
+            }
+        }
     /**默认时, 圈的半径*/
     var circleDefaultRadius = 40 * density
     /**开始录时, 圈允许放大到的倍数*/
     var circleMaxScale = 1.5f
+
+    /**切换录制触发的方式*/
+    var recordType = RECORD_TYPE_LONG
+        set(value) {
+            if (field == value) {
+                return
+            } else {
+                endRecord()
+            }
+            field = value
+            if (field == RECORD_TYPE_LONG) {
+                circleInnerDrawScale = 0f
+                circleDrawColor = circleColor
+                circleMaxScale = 1.5f
+                animToRecordTypeLong()
+            } else {
+                circleMaxScale = 1.2f
+                circleInnerDrawScale = 0.85f
+                circleClickInnerDrawScale = circleInnerDrawScale - 0.08f
+                circleDrawClickInnerDrawScale = circleClickInnerDrawScale
+                circleDrawColor = SkinHelper.getTranColor(circleColor, 0x80)
+                animToRecordTypeClick()
+            }
+        }
+
+    /**切换录制模式*/
+    fun switchRecordType() {
+        recordType = if (recordType == RECORD_TYPE_LONG) {
+            RECORD_TYPE_CLICK
+        } else {
+            RECORD_TYPE_LONG
+        }
+    }
 
     /**推荐使用 Match_parent*/
     override fun onMeasure(widthMeasureSpec: Int, heightMeasureSpec: Int) {
@@ -71,6 +118,7 @@ class DYRecordView(context: Context, attributeSet: AttributeSet? = null) : View(
             circleColor = SkinHelper.getSkin().themeSubColor
         }
         circleColor = typedArray.getColor(R.styleable.DYRecordView_r_circle_color, circleColor)
+        circleDrawColor = circleColor
         circleDefaultRadius = typedArray.getDimensionPixelOffset(R.styleable.DYRecordView_r_circle_default_radius, circleDefaultRadius.toInt()).toFloat()
         circleMaxScale = typedArray.getFloat(R.styleable.DYRecordView_r_circle_max_scale, circleMaxScale)
         defaultCircleOffsetBottom = typedArray.getDimensionPixelOffset(R.styleable.DYRecordView_r_default_circle_offset_bottom, defaultCircleOffsetBottom.toInt()).toFloat()
@@ -117,6 +165,11 @@ class DYRecordView(context: Context, attributeSet: AttributeSet? = null) : View(
         RectF()
     }
 
+    /*点击录制时, 暂停显示的矩形坐标*/
+    private val clickRecordRect by lazy {
+        RectF()
+    }
+
     override fun onLayout(changed: Boolean, left: Int, top: Int, right: Int, bottom: Int) {
         super.onLayout(changed, left, top, right, bottom)
         drawCX = cx
@@ -125,6 +178,8 @@ class DYRecordView(context: Context, attributeSet: AttributeSet? = null) : View(
         showTextSizeDraw = showTextSize
 
         circleRect.set(cx - circleDefaultRadius, cy - circleDefaultRadius, cx + circleDefaultRadius, cy + circleDefaultRadius)
+        clickRecordRect.set(cx - circleDefaultRadius / 2, cy - circleDefaultRadius / 2,
+                cx + circleDefaultRadius / 2, cy + circleDefaultRadius / 2)
 
         circleBitmap?.recycle()
         if (measuredWidth != 0 && measuredHeight != 0) {
@@ -136,17 +191,57 @@ class DYRecordView(context: Context, attributeSet: AttributeSet? = null) : View(
     private var circleCanvas: Canvas? = null
     private var circleBitmap: Bitmap? = null
     private var circleInnerDrawScale = 0f
+    private var circleClickInnerDrawScale = 0f
+    private var circleDrawClickInnerDrawScale = 0f
     private var showTextSizeDraw = 0f
 
     override fun onDraw(canvas: Canvas) {
         super.onDraw(canvas)
+        if (recordType == RECORD_TYPE_LONG && toLongAnimator != null && toLongAnimator!!.isStarted) {
+            drawTypeClick(canvas)
+        } else if (recordType == RECORD_TYPE_LONG) {
+            drawTypeLong(canvas)
+        } else if (recordType == RECORD_TYPE_CLICK) {
+            drawTypeClick(canvas)
+        }
+        recordingListener()
+    }
+
+    private fun drawTypeClick(canvas: Canvas) {
+        //绘制外圈透明圆
+        circleCanvas?.let {
+            paint.xfermode = PorterDuffXfermode(PorterDuff.Mode.CLEAR)
+            it.drawPaint(paint)
+
+            paint.xfermode = null
+            paint.color = circleDrawColor
+            circleCanvas?.drawCircle(drawCX, drawCY, circleDrawRadius, paint)
+
+            paint.xfermode = PorterDuffXfermode(PorterDuff.Mode.SRC_OUT)
+            paint.color = Color.TRANSPARENT
+            circleCanvas?.drawCircle(drawCX, drawCY, circleDrawRadius * circleInnerDrawScale, paint)
+            paint.xfermode = null
+
+            canvas.drawBitmap(circleBitmap, 0f, 0f, null)
+        }
+
+        //绘制内部
+        paint.color = circleColor
+        if (isRecording) {
+            canvas.drawRoundRect(clickRecordRect, 6 * density, 6 * density, paint)
+        } else {
+            canvas.drawCircle(drawCX, drawCY, circleDefaultRadius * circleDrawClickInnerDrawScale, paint)
+        }
+    }
+
+    private fun drawTypeLong(canvas: Canvas) {
         //绘制圆
         circleCanvas?.let {
             paint.xfermode = PorterDuffXfermode(PorterDuff.Mode.CLEAR)
             it.drawPaint(paint)
 
             paint.xfermode = null
-            paint.color = circleColor
+            paint.color = circleDrawColor
             circleCanvas?.drawCircle(drawCX, drawCY, circleDrawRadius, paint)
 
             paint.xfermode = PorterDuffXfermode(PorterDuff.Mode.SRC_OUT)
@@ -162,8 +257,6 @@ class DYRecordView(context: Context, attributeSet: AttributeSet? = null) : View(
         textPaint.textSize = showTextSizeDraw
         canvas.drawText(showText, getDrawCenterTextCx(textPaint, showText), cy + textHeight(textPaint) / 2 - textPaint.descent(), textPaint)
         canvas.restore()
-
-        recordingListener()
     }
 
     private var isTouchDown = true
@@ -184,11 +277,16 @@ class DYRecordView(context: Context, attributeSet: AttributeSet? = null) : View(
         if (isTouchDown) {
             when (event.actionMasked) {
                 MotionEvent.ACTION_CANCEL, MotionEvent.ACTION_UP -> {
-                    endRecord()
+                    if (recordType == RECORD_TYPE_LONG) {
+                        endRecord()
+                    }
                 }
             }
             return gestureCompat.onTouchEvent(event)
         } else {
+            if (isEnabled && recordType == RECORD_TYPE_CLICK) {
+                return gestureCompat.onTouchEvent(event)
+            }
         }
         return true
     }
@@ -198,7 +296,11 @@ class DYRecordView(context: Context, attributeSet: AttributeSet? = null) : View(
         drawEndCX = drawCX
         drawEndCY = drawCY
         circleDrawEndRadius = circleDrawRadius
-        circleInnerDrawEndScale = circleInnerDrawScale
+        if (recordType == RECORD_TYPE_CLICK) {
+            circleInnerDrawEndScale = 0.85f
+        } else {
+            circleInnerDrawEndScale = 0f
+        }
         showTextSizeDrawEnd = showTextSizeDraw
 
         touchInAnimator?.cancel()
@@ -223,7 +325,11 @@ class DYRecordView(context: Context, attributeSet: AttributeSet? = null) : View(
                     drawCX = cx + (drawEndCX - cx) * animatedValue
                     drawCY = cy + (drawEndCY - cy) * animatedValue
                     circleDrawRadius = circleDefaultRadius + (circleDrawEndRadius - circleDefaultRadius) * animatedValue
-                    circleInnerDrawScale = (animatedValue).maxValue(circleInnerDrawEndScale)
+                    if (recordType == RECORD_TYPE_CLICK) {
+                        circleInnerDrawScale = 0.85f
+                    } else {
+                        circleInnerDrawScale = (animatedValue).maxValue(circleInnerDrawEndScale)
+                    }
                     showTextSizeDraw = showTextSizeDrawEnd + (showTextSize - showTextSizeDrawEnd) * (1 - animatedValue)
 
                     postInvalidate()
@@ -248,6 +354,9 @@ class DYRecordView(context: Context, attributeSet: AttributeSet? = null) : View(
             }
 
             override fun onScroll(e1: MotionEvent?, e2: MotionEvent?, distanceX: Float, distanceY: Float): Boolean {
+                if (recordType == RECORD_TYPE_CLICK) {
+                    return false
+                }
                 drawCX -= distanceX
                 drawCY -= distanceY
                 postInvalidate()
@@ -270,6 +379,12 @@ class DYRecordView(context: Context, attributeSet: AttributeSet? = null) : View(
     private var touchInAnimator: ValueAnimator? = null
 
     private fun onTouchInCircle() {
+        if (recordType == RECORD_TYPE_CLICK) {
+            if (isRecording) {
+                endRecord()
+                return
+            }
+        }
         if (touchInAnimator == null) {
             touchInAnimator = ValueAnimator.ofFloat(0f, 1f).apply {
                 interpolator = AccelerateInterpolator()
@@ -362,6 +477,52 @@ class DYRecordView(context: Context, attributeSet: AttributeSet? = null) : View(
     private fun getRecordProgress(): IntArray {
         val currentTimeMillis = System.currentTimeMillis()
         return intArrayOf(((currentTimeMillis - startRecordTime) / 1000).toInt(), ((currentTimeMillis - startRecordTime).toInt()))
+    }
+
+    private var toClickAnimator: ValueAnimator? = null
+    private fun animToRecordTypeClick() {
+        if (toClickAnimator == null) {
+            toClickAnimator = ValueAnimator.ofFloat(1f, circleClickInnerDrawScale).apply {
+                interpolator = LinearInterpolator()
+                duration = 200
+                addUpdateListener { animation ->
+                    val animatedValue: Float = animation.animatedValue as Float
+                    circleDrawClickInnerDrawScale = animatedValue
+                    postInvalidate()
+                }
+                addListener(object : RAnimListener() {
+
+                    override fun onAnimationFinish(animation: Animator?, cancel: Boolean) {
+                        super.onAnimationFinish(animation, cancel)
+                        toClickAnimator = null
+                    }
+                })
+                start()
+            }
+        }
+    }
+
+    private var toLongAnimator: ValueAnimator? = null
+    private fun animToRecordTypeLong() {
+        if (toLongAnimator == null) {
+            toLongAnimator = ValueAnimator.ofFloat(circleClickInnerDrawScale, 1f).apply {
+                interpolator = LinearInterpolator()
+                duration = 200
+                addUpdateListener { animation ->
+                    val animatedValue: Float = animation.animatedValue as Float
+                    circleDrawClickInnerDrawScale = animatedValue
+                    postInvalidate()
+                }
+                addListener(object : RAnimListener() {
+
+                    override fun onAnimationFinish(animation: Animator?, cancel: Boolean) {
+                        super.onAnimationFinish(animation, cancel)
+                        toLongAnimator = null
+                    }
+                })
+                start()
+            }
+        }
     }
 
     var onRecordListener: OnRecordListener? = null
