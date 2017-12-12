@@ -119,6 +119,8 @@ public class ExEditText extends AppCompatEditText {
 
     private boolean showContentMenu = true;
 
+    private OnTextEmptyListener mOnTextEmptyListener;
+
     public ExEditText(Context context) {
         super(context);
     }
@@ -642,6 +644,10 @@ public class ExEditText extends AppCompatEditText {
                     }
                 }
             }
+        }
+
+        if (mOnTextEmptyListener != null) {
+            mOnTextEmptyListener.onTextEmpty(TextUtils.isEmpty(text));
         }
     }
 
@@ -1297,6 +1303,13 @@ public class ExEditText extends AppCompatEditText {
         }
     }
 
+    public void setOnTextEmptyListener(OnTextEmptyListener onTextEmptyListener) {
+        mOnTextEmptyListener = onTextEmptyListener;
+        if (mOnTextEmptyListener != null) {
+            mOnTextEmptyListener.onTextEmpty(isEmpty());
+        }
+    }
+
     public interface getIdFromUserName {
         String userId(String userName);
     }
@@ -1314,6 +1327,13 @@ public class ExEditText extends AppCompatEditText {
          * 所有@的成员
          */
         void onMentionTextChanged(List<String> allMention);
+    }
+
+    public interface OnTextEmptyListener {
+        /**
+         * 文本是否为空的回调
+         */
+        void onTextEmpty(boolean isEmpty);
     }
 
     /**
@@ -1340,6 +1360,12 @@ public class ExEditText extends AppCompatEditText {
             //ds.setColor(getResources().getColor(R.color.theme_color_accent));
         }
     }
+
+//    @Override
+//    protected void onCreateContextMenu(ContextMenu menu) {
+//        L.e("call: onCreateContextMenu([menu])-> ");
+//        super.onCreateContextMenu(menu);
+//    }
 
     /**
      * 用来监听@字符输入
@@ -1374,9 +1400,34 @@ public class ExEditText extends AppCompatEditText {
     }
 
 //    @Override
-//    protected void onCreateContextMenu(ContextMenu menu) {
-//        L.e("call: onCreateContextMenu([menu])-> ");
-//        super.onCreateContextMenu(menu);
+//    public boolean showContextMenu(float x, float y) {
+//        L.e("call: showContextMenu([x, y])-> ");
+//        return super.showContextMenu(x, y);
+//    }
+//
+//    @Override
+//    public boolean onTextContextMenuItem(int id) {
+//        L.e("call: onTextContextMenuItem([id])-> ");
+//        return super.onTextContextMenuItem(id);
+//    }
+//
+//    @Override
+//    public void setOnCreateContextMenuListener(OnCreateContextMenuListener l) {
+//        L.e("call: setOnCreateContextMenuListener([l])-> ");
+//        super.setOnCreateContextMenuListener(l);
+//    }
+//
+//    @Override
+//    public void createContextMenu(ContextMenu menu) {
+//        L.e("call: createContextMenu([menu])-> ");
+//        super.createContextMenu(menu);
+//    }
+//
+//
+//    @Override
+//    protected ContextMenu.ContextMenuInfo getContextMenuInfo() {
+//        L.e("call: getContextMenuInfo([])-> ");
+//        return super.getContextMenuInfo();
 //    }
 
     /**
@@ -1431,37 +1482,6 @@ public class ExEditText extends AppCompatEditText {
             return super.deleteSurroundingText(beforeLength, afterLength);
         }
     }
-
-//    @Override
-//    public boolean showContextMenu(float x, float y) {
-//        L.e("call: showContextMenu([x, y])-> ");
-//        return super.showContextMenu(x, y);
-//    }
-//
-//    @Override
-//    public boolean onTextContextMenuItem(int id) {
-//        L.e("call: onTextContextMenuItem([id])-> ");
-//        return super.onTextContextMenuItem(id);
-//    }
-//
-//    @Override
-//    public void setOnCreateContextMenuListener(OnCreateContextMenuListener l) {
-//        L.e("call: setOnCreateContextMenuListener([l])-> ");
-//        super.setOnCreateContextMenuListener(l);
-//    }
-//
-//    @Override
-//    public void createContextMenu(ContextMenu menu) {
-//        L.e("call: createContextMenu([menu])-> ");
-//        super.createContextMenu(menu);
-//    }
-//
-//
-//    @Override
-//    protected ContextMenu.ContextMenuInfo getContextMenuInfo() {
-//        L.e("call: getContextMenuInfo([])-> ");
-//        return super.getContextMenuInfo();
-//    }
 
     /**
      * {@code @}文本的开始位置和结束位置

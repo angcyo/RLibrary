@@ -35,4 +35,11 @@ public class RWebSocketListener {
     public void onTextMessage(WebSocket websocket, String data) {
 
     }
+
+    /**
+     * 重连时, 可以通过此方法使用新的Url, 返回空表示不使用
+     */
+    public String getReconnectUrl() {
+        return "";
+    }
 }

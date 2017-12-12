@@ -2894,9 +2894,9 @@ public class UILayoutImpl extends SwipeBackLayout implements ILayout<UIParam>, U
 
     @Override
     public void draw(Canvas canvas) {
-//        if (isTransition()) {
-//            canvas.drawColor(transitionColor);
-//        }
+        if (isTransition()) {
+            canvas.drawColor(transitionColor);
+        }
 
         super.draw(canvas);
         if (isInDebugLayout) {

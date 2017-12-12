@@ -1,6 +1,7 @@
 package com.angcyo.uiview.recycler.adapter;
 
 import android.content.Context;
+import android.util.SparseIntArray;
 
 import com.angcyo.uiview.recycler.RBaseViewHolder;
 
@@ -18,12 +19,22 @@ import java.util.List;
  * Version: 1.0.0
  */
 public class RDataAdapter extends RExBaseAdapter<String, RBaseDataItem, String> {
+
+    private SparseIntArray itemLayoutMap = new SparseIntArray();
+
     public RDataAdapter(Context context) {
         super(context);
     }
 
     public RDataAdapter(Context context, List<RBaseDataItem> datas) {
         super(context, datas);
+    }
+
+    /**
+     * 保存itemType,对应的LayoutId
+     */
+    public void registerItemLayout(int itemType, int itemLayoutId) {
+        itemLayoutMap.append(itemType, itemLayoutId);
     }
 
     @Override
@@ -54,12 +65,18 @@ public class RDataAdapter extends RExBaseAdapter<String, RBaseDataItem, String> 
      */
     @Override
     protected int getItemLayoutId(int viewType) {
-        for (RBaseDataItem item : getAllDatas()) {
-            if (item.getDataItemType() == viewType) {
-                return item.getItemLayoutId();
+        int layoutId = itemLayoutMap.get(viewType, -1);
+
+        if (layoutId == -1) {
+            for (RBaseDataItem item : getAllDatas()) {
+                if (item.getDataItemType() == viewType) {
+                    return item.getItemLayoutId();
+                }
             }
+            return super.getItemLayoutId(viewType);
+        } else {
+            return layoutId;
         }
-        return super.getItemLayoutId(viewType);
     }
 
 

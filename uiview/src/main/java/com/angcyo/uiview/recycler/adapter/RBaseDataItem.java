@@ -35,7 +35,9 @@ public abstract class RBaseDataItem<T> {
      * 返回LayoutId
      */
     @LayoutRes
-    public abstract int getItemLayoutId();
+    public int getItemLayoutId() {
+        return -1;
+    }
 
     /**
      * 绑定视图数据

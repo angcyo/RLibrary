@@ -45,9 +45,17 @@ public class RWebSocket extends WebSocketAdapter {
      * webSocket连接成功
      */
     public final static int WEB_SOCKET_OPEN = 0x12;
+    /**
+     * 连接超时设置
+     */
+    public static int TIMEOUT = 10_000;
+    public static boolean DEBUG = false;
+    /**
+     * 每隔多久检查一次状态
+     */
+    public static int CHECK_STATE_TIME = 3_000;
     final String TAG = "RWebSocket";
-    final int TIMEOUT = 10_000;
-    String mWebSocketUrl;
+    private String mWebSocketUrl;
     /**
      * 连接状态标识
      */
@@ -56,9 +64,7 @@ public class RWebSocket extends WebSocketAdapter {
      * 定时监测websocket状态  实现重连
      */
     private Subscription observable;
-
     private WebSocket mWebSocket;
-
     private RWebSocketListener listener;
 
     private RWebSocket() {
@@ -77,8 +83,8 @@ public class RWebSocket extends WebSocketAdapter {
         if (TextUtils.isEmpty(wsUrl)) {
             return;
         }
-        //连接相同的Url (会自动重连, 不需要手动重连) 
-        if (TextUtils.equals(wsUrl, mWebSocketUrl)) {
+        //连接相同的Url (会自动重连, 不需要手动重连)
+        if (TextUtils.equals(wsUrl, mWebSocketUrl) && isConnect()) {
             return;
         }
         //释放之前的资源
@@ -88,19 +94,20 @@ public class RWebSocket extends WebSocketAdapter {
 
         this.mWebSocketUrl = wsUrl;
 
+        webSocketState = WEB_SOCKET_CONNECTING;
         //注意  websocket的连接需要在异步线程
         Observable.just(mWebSocketUrl)
                 .map(new Func1<String, Boolean>() {
                     @Override
                     public Boolean call(String s) {
                         try {
-                            webSocketState = WEB_SOCKET_CONNECTING;
+                            i("开始连接WebSocket:" + mWebSocketUrl);
                             WebSocketFactory mWebSocketFactory = new WebSocketFactory();
                             WebSocket webSocket = mWebSocketFactory.createSocket(mWebSocketUrl, TIMEOUT);
                             webSocket.addListener(RWebSocket.this);
                             webSocket.connect();
                         } catch (Exception e) {
-                            Log.e(TAG, "连接出错:" + e.getMessage());
+                            e("开始连接出错:" + e.getMessage());
                             webSocketState = WEB_SOCKET_CLOSE;
 
                             throw new IllegalStateException(e);
@@ -118,7 +125,7 @@ public class RWebSocket extends WebSocketAdapter {
 
                     @Override
                     public void onError(Throwable e) {
-
+                        webSocketState = WEB_SOCKET_CLOSE;
                     }
 
                     @Override
@@ -132,31 +139,29 @@ public class RWebSocket extends WebSocketAdapter {
      * webSocket的连接状态检查
      */
     private void checkWebSocketState() {
-        Log.i(TAG, "开始检测webSocket的状态");
+        i("开始检测webSocket的状态");
         if (observable == null || observable.isUnsubscribed()) {
-            observable = Observable.interval(10 * 1000, 10 * 1000, TimeUnit.MILLISECONDS)
+            observable = Observable.interval(CHECK_STATE_TIME, CHECK_STATE_TIME, TimeUnit.MILLISECONDS)
                     .subscribeOn(Schedulers.io())
                     .observeOn(AndroidSchedulers.mainThread())
                     .subscribe(new Subscriber<Long>() {
                         @Override
                         public void onCompleted() {
-                            if (mWebSocket != null) {
-                                Log.i(TAG, "wenSocket连接是否成功:" + mWebSocket.isOpen());
-                            }
-                            if (!TextUtils.isEmpty(mWebSocketUrl) && webSocketState == WEB_SOCKET_CLOSE) {
-                                Log.i(TAG, "检测到webSocket已断开,重连中...");
-                                reconnecntWebsocket();
-                            }
                         }
 
                         @Override
                         public void onError(Throwable e) {
-
                         }
 
                         @Override
                         public void onNext(Long aLong) {
-
+                            if (mWebSocket != null) {
+                                i("WebSocket连接是否成功:" + mWebSocket.isOpen());
+                            }
+                            if (!TextUtils.isEmpty(mWebSocketUrl) && webSocketState == WEB_SOCKET_CLOSE) {
+                                i("检测到webSocket已断开,重连中...");
+                                reconnectWebsocket();
+                            }
                         }
                     });
         }
@@ -174,30 +179,66 @@ public class RWebSocket extends WebSocketAdapter {
             mWebSocket.disconnect();
         }
         webSocketState = WEB_SOCKET_CLOSE;
-        Log.i(TAG, "释放wensocket资源");
+        i("释放WebSocket资源");
     }
-
 
     /**
      * 重新连接
      */
-    public void reconnecntWebsocket() {
+    public void reconnectWebsocket() {
+        if (webSocketState == WEB_SOCKET_CONNECTING) {
+            i("已经在重连WebSocket");
+            return;
+        }
+
+        i("准备重连WebSocket");
+
         if (mWebSocket != null) {
             try {
                 webSocketState = WEB_SOCKET_CONNECTING;
                 mWebSocket = mWebSocket.recreate();
                 mWebSocket.connect();
             } catch (Exception e) {
-                Log.e(TAG, "重连失败:" + e.getMessage());
+                e("重连失败:" + e.getMessage());
                 webSocketState = WEB_SOCKET_CLOSE;
                 mWebSocket.disconnect();
                 mWebSocket = null;
             }
         } else {
-            connect(mWebSocketUrl);
+            if (listener != null) {
+                String reconnectUrl = listener.getReconnectUrl();
+                if (TextUtils.isEmpty(reconnectUrl)) {
+                    connect(mWebSocketUrl);
+                } else {
+                    connect(reconnectUrl);
+                }
+            } else {
+                connect(mWebSocketUrl);
+            }
         }
     }
 
+    /**
+     * WebSocket 是否连接上
+     */
+    public boolean isConnect() {
+        if (mWebSocket != null) {
+            return mWebSocket.isOpen();
+        }
+        return webSocketState == WEB_SOCKET_OPEN;
+    }
+
+    private void i(String msg) {
+        if (DEBUG) {
+            Log.i(TAG, Thread.currentThread().getName() + "#" + msg);
+        }
+    }
+
+    private void e(String msg) {
+        if (DEBUG) {
+            Log.e(TAG, Thread.currentThread().getName() + "#" + msg);
+        }
+    }
 
     //*****************************WebSocketAdapter  start***********************************************************************/
 
@@ -209,12 +250,19 @@ public class RWebSocket extends WebSocketAdapter {
      * @throws Exception
      */
     @Override
-    public void onError(WebSocket websocket, WebSocketException cause) throws Exception {
+    public void onError(WebSocket websocket, final WebSocketException cause) throws Exception {
         super.onError(websocket, cause);
-        Log.e(TAG, "webSocket连接失败onError：" + cause.getMessage());
+        e("webSocket连接失败onError：" + cause.getMessage());
         webSocketState = WEB_SOCKET_CLOSE;
         if (listener != null) {
-            listener.disConnectWebsocket(2, cause.getMessage());
+            onMain(new Runnable() {
+                @Override
+                public void run() {
+                    if (listener != null) {
+                        listener.disConnectWebsocket(2, cause.getMessage());
+                    }
+                }
+            });
         }
     }
 
@@ -226,12 +274,19 @@ public class RWebSocket extends WebSocketAdapter {
      * @throws Exception
      */
     @Override
-    public void onConnectError(WebSocket websocket, WebSocketException exception) throws Exception {
+    public void onConnectError(WebSocket websocket, final WebSocketException exception) throws Exception {
         super.onConnectError(websocket, exception);
-        Log.e(TAG, "webSocket连接失败onConnectError：" + exception.getMessage());
+        e("webSocket连接失败onConnectError：" + exception.getMessage());
         webSocketState = WEB_SOCKET_CLOSE;
         if (listener != null) {
-            listener.disConnectWebsocket(3, exception.getMessage());
+            onMain(new Runnable() {
+                @Override
+                public void run() {
+                    if (listener != null) {
+                        listener.disConnectWebsocket(3, exception.getMessage());
+                    }
+                }
+            });
         }
     }
 
@@ -245,12 +300,22 @@ public class RWebSocket extends WebSocketAdapter {
      * @throws Exception
      */
     @Override
-    public void onDisconnected(WebSocket websocket, WebSocketFrame serverCloseFrame, WebSocketFrame clientCloseFrame, boolean closedByServer) throws Exception {
+    public void onDisconnected(WebSocket websocket, final WebSocketFrame serverCloseFrame, WebSocketFrame clientCloseFrame, boolean closedByServer) throws Exception {
         super.onDisconnected(websocket, serverCloseFrame, clientCloseFrame, closedByServer);
-        Log.e(TAG, "webSocket断开" + mWebSocket);
+        e("webSocket断开" + mWebSocket);
         webSocketState = WEB_SOCKET_CLOSE;
         if (listener != null) {
-            listener.disConnectWebsocket(serverCloseFrame.getCloseCode(), serverCloseFrame.getCloseReason());
+            final int closeCode = serverCloseFrame.getCloseCode();
+            final String closeReason = serverCloseFrame.getCloseReason();
+
+            onMain(new Runnable() {
+                @Override
+                public void run() {
+                    if (listener != null) {
+                        listener.disConnectWebsocket(closeCode, closeReason);
+                    }
+                }
+            });
         }
     }
 
@@ -264,14 +329,20 @@ public class RWebSocket extends WebSocketAdapter {
     @Override
     public void onConnected(WebSocket websocket, Map<String, List<String>> headers) throws Exception {
         super.onConnected(websocket, headers);
-        Log.i(TAG, "webSocket连接成功");
+        i("webSocket连接成功");
         if (websocket != null) {
             this.mWebSocket = websocket;
             webSocketState = WEB_SOCKET_OPEN;
             if (listener != null) {
-                listener.connectSuccessWebsocket(websocket);
+                onMain(new Runnable() {
+                    @Override
+                    public void run() {
+                        if (listener != null) {
+                            listener.connectSuccessWebsocket(mWebSocket);
+                        }
+                    }
+                });
             }
-
         }
     }
 
@@ -297,13 +368,22 @@ public class RWebSocket extends WebSocketAdapter {
     @Override
     public void onTextMessage(final WebSocket websocket, final String text) throws Exception {
         super.onTextMessage(websocket, text);
+        onMain(new Runnable() {
+            @Override
+            public void run() {
+                dealData(websocket, text);
+            }
+        });
+    }
+
+    private void onMain(final Runnable onMain) {
         Observable.just("1")
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(new Subscriber<String>() {
                     @Override
                     public void onCompleted() {
-                        dealData(websocket, text);
+                        onMain.run();
                     }
 
                     @Override
