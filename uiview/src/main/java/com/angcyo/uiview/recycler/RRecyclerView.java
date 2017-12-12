@@ -18,6 +18,7 @@ import android.support.v7.widget.SimpleItemAnimator;
 import android.support.v7.widget.StaggeredGridLayoutManager;
 import android.text.TextUtils;
 import android.util.AttributeSet;
+import android.view.GestureDetector;
 import android.view.MotionEvent;
 import android.view.View;
 import android.widget.LinearLayout;
@@ -75,7 +76,7 @@ public class RRecyclerView extends RecyclerView {
             super.onScrollStateChanged(recyclerView, newState);
             Adapter adapter = getAdapterRaw();
             if (adapter != null && adapter instanceof RBaseAdapter) {
-                ((RBaseAdapter) adapter).onScrollStateChanged(recyclerView, newState);
+                ((RBaseAdapter) adapter).onScrollStateChanged(RRecyclerView.this, newState);
             }
         }
 
@@ -84,7 +85,7 @@ public class RRecyclerView extends RecyclerView {
             super.onScrolled(recyclerView, dx, dy);
             Adapter adapter = getAdapterRaw();
             if (adapter != null && adapter instanceof RBaseAdapter) {
-                ((RBaseAdapter) adapter).onScrolled(recyclerView, dx, dy);
+                ((RBaseAdapter) adapter).onScrolled(RRecyclerView.this, dx, dy);
             }
         }
     };
@@ -128,6 +129,17 @@ public class RRecyclerView extends RecyclerView {
     private int lastVisibleItemOffset = -1;
     private String widthHeightRatio;
     private boolean equWidth = false;
+
+    private GestureDetector mGestureDetector = new GestureDetector(getContext(), new GestureDetector.SimpleOnGestureListener() {
+        @Override
+        public boolean onScroll(MotionEvent e1, MotionEvent e2, float distanceX, float distanceY) {
+            Adapter adapter = getAdapterRaw();
+            if (adapter != null && adapter instanceof RBaseAdapter) {
+                ((RBaseAdapter) adapter).onScrolledInTouch(RRecyclerView.this, e1, e2, distanceX, distanceY);
+            }
+            return super.onScroll(e1, e2, distanceX, distanceY);
+        }
+    });
 
     public RRecyclerView(Context context) {
         this(context, null);
@@ -405,6 +417,7 @@ public class RRecyclerView extends RecyclerView {
             return false;
         }
         boolean onTouchEvent = super.onTouchEvent(e);
+        mGestureDetector.onTouchEvent(e);
         if (getAdapter() == null || getLayoutManager() == null) {
             return false;
         }
@@ -741,6 +754,20 @@ public class RRecyclerView extends RecyclerView {
                 });
             }
         }
+    }
+
+    /**
+     * 是否已经到了顶部
+     */
+    public boolean isTopEnd() {
+        return !UI.canChildScrollUp(this);
+    }
+
+    /**
+     * 是否已经到了底部
+     */
+    public boolean isBottomEnd() {
+        return !UI.canChildScrollDown(this);
     }
 
     /**

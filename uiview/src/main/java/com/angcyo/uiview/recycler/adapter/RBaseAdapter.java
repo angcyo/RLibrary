@@ -5,12 +5,14 @@ import android.support.annotation.NonNull;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 
 import com.angcyo.library.utils.L;
 import com.angcyo.uiview.R;
 import com.angcyo.uiview.recycler.RBaseViewHolder;
+import com.angcyo.uiview.recycler.RRecyclerView;
 import com.angcyo.uiview.recycler.widget.ILoadMore;
 import com.angcyo.uiview.recycler.widget.IShowState;
 import com.angcyo.uiview.recycler.widget.ItemShowStateLayout;
@@ -376,10 +378,13 @@ public abstract class RBaseAdapter<T> extends RecyclerView.Adapter<RBaseViewHold
 
     //----------------Item 数据的操作-----------------//
 
-    public void onScrollStateChanged(RecyclerView recyclerView, int newState) {
+    public void onScrollStateChanged(RRecyclerView recyclerView, int newState) {
     }
 
-    public void onScrolled(RecyclerView recyclerView, int dx, int dy) {
+    public void onScrolled(RRecyclerView recyclerView, int dx, int dy) {
+    }
+
+    public void onScrolledInTouch(RRecyclerView recyclerView, MotionEvent e1, MotionEvent e2, float distanceX, float distanceY) {
     }
 
     /**
