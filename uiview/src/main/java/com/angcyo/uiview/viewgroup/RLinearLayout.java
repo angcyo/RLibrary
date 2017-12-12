@@ -8,6 +8,7 @@ import android.graphics.drawable.Drawable;
 import android.support.annotation.ColorInt;
 import android.support.annotation.Nullable;
 import android.util.AttributeSet;
+import android.view.Gravity;
 import android.view.View;
 import android.widget.LinearLayout;
 
@@ -44,6 +45,11 @@ public class RLinearLayout extends LinearLayout {
      */
     private boolean reverseLayout = false;
 
+    /**
+     * 是否在聊天布局中, 会自动控制child(LinearLayout) 的 gravity
+     */
+    private boolean isInChatLayout = false;
+
     public RLinearLayout(Context context) {
         this(context, null);
     }
@@ -60,6 +66,7 @@ public class RLinearLayout extends LinearLayout {
         maxHeight = typedArray.getDimensionPixelOffset(R.styleable.RLinearLayout_r_max_height, -1);
         autoFixNewLine = typedArray.getBoolean(R.styleable.RLinearLayout_r_auto_fix_new_line, autoFixNewLine);
         reverseLayout = typedArray.getBoolean(R.styleable.RLinearLayout_r_reverse_layout, reverseLayout);
+        isInChatLayout = typedArray.getBoolean(R.styleable.RLinearLayout_r_is_in_chat_layout, isInChatLayout);
         typedArray.recycle();
         resetMaxHeight();
         initLayout();
@@ -108,20 +115,33 @@ public class RLinearLayout extends LinearLayout {
 
     @Override
     protected void onLayout(boolean changed, int l, int t, int r, int b) {
-        if (reverseLayout && getOrientation() == HORIZONTAL) {
-            //目前只支持横向 反向布局
-            int rightOffset = getPaddingRight();
-            int topOffset = getPaddingTop();
-            for (int i = 0; i < getChildCount(); i++) {
-                View childAt = getChildAt(i);
-                final LinearLayout.LayoutParams lp = (LinearLayout.LayoutParams) childAt.getLayoutParams();
-                int top = topOffset + lp.topMargin;
-                int right = getMeasuredWidth() - rightOffset;
-                int viewWidth = childAt.getMeasuredWidth();
-                int viewHeight = childAt.getMeasuredHeight();
-                int left = right - viewWidth;
-                childAt.layout(left, top, right, top + viewHeight);
-                rightOffset += viewWidth + lp.leftMargin;
+        if (isInChatLayout) {
+            if (reverseLayout && getOrientation() == HORIZONTAL) {
+                //目前只支持横向 反向布局
+                int rightOffset = getPaddingRight();
+                int topOffset = getPaddingTop();
+                for (int i = 0; i < getChildCount(); i++) {
+                    View childAt = getChildAt(i);
+                    if (childAt instanceof LinearLayout) {
+                        ((LinearLayout) childAt).setGravity(Gravity.END);
+                    }
+                    final LinearLayout.LayoutParams lp = (LinearLayout.LayoutParams) childAt.getLayoutParams();
+                    int top = topOffset + lp.topMargin;
+                    int right = getMeasuredWidth() - rightOffset;
+                    int viewWidth = childAt.getMeasuredWidth();
+                    int viewHeight = childAt.getMeasuredHeight();
+                    int left = right - viewWidth;
+                    childAt.layout(left, top, right, top + viewHeight);
+                    rightOffset += viewWidth + lp.leftMargin;
+                }
+            } else {
+                for (int i = 0; i < getChildCount(); i++) {
+                    View childAt = getChildAt(i);
+                    if (childAt instanceof LinearLayout) {
+                        ((LinearLayout) childAt).setGravity(Gravity.START);
+                    }
+                }
+                super.onLayout(changed, l, t, r, b);
             }
         } else {
             super.onLayout(changed, l, t, r, b);
@@ -165,6 +185,18 @@ public class RLinearLayout extends LinearLayout {
         boolean old = this.reverseLayout;
         this.reverseLayout = reverseLayout;
         if (old != reverseLayout) {
+            requestLayout();
+        }
+    }
+
+    public boolean isInChatLayout() {
+        return isInChatLayout;
+    }
+
+    public void setInChatLayout(boolean inChatLayout) {
+        boolean old = this.isInChatLayout;
+        isInChatLayout = inChatLayout;
+        if (old != isInChatLayout) {
             requestLayout();
         }
     }

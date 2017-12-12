@@ -47,6 +47,7 @@
         <attr name="r_max_height"/>
         <attr name="r_auto_fix_new_line" format="boolean"/>
         <attr name="r_reverse_layout" format="boolean"/>
+        <attr name="r_is_in_chat_layout" format="boolean"/>
     </declare-styleable>
 
     <declare-styleable name="RFrameLayout">
