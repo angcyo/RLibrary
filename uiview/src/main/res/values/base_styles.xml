@@ -202,6 +202,13 @@
         <item name="android:textColor">@color/default_base_white</item>
     </style>
 
+    <style name="BaseWhiteButtonStyle" parent="BaseWhiteColorTextStyle">
+        <item name="android:paddingStart">@dimen/base_hdpi</item>
+        <item name="android:paddingEnd">@dimen/base_hdpi</item>
+        <item name="android:paddingTop">@dimen/base_ldpi</item>
+        <item name="android:paddingBottom">@dimen/base_ldpi</item>
+    </style>
+
     <!--主色调文本按钮-->
     <style name="BaseMainColorTextButtonStyle" parent="BaseMainColorTextStyle">
         <item name="android:clickable">true</item>

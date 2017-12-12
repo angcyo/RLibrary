@@ -8,6 +8,7 @@ import android.graphics.drawable.Drawable;
 import android.support.annotation.ColorInt;
 import android.support.annotation.Nullable;
 import android.util.AttributeSet;
+import android.view.View;
 import android.widget.LinearLayout;
 
 import com.angcyo.uiview.R;
@@ -38,6 +39,11 @@ public class RLinearLayout extends LinearLayout {
      */
     private boolean autoFixNewLine = false;
 
+    /**
+     * 反向布局(目前只支持横向)
+     */
+    private boolean reverseLayout = false;
+
     public RLinearLayout(Context context) {
         this(context, null);
     }
@@ -53,6 +59,7 @@ public class RLinearLayout extends LinearLayout {
         mBackgroundDrawable = typedArray.getDrawable(R.styleable.RLinearLayout_r_background);
         maxHeight = typedArray.getDimensionPixelOffset(R.styleable.RLinearLayout_r_max_height, -1);
         autoFixNewLine = typedArray.getBoolean(R.styleable.RLinearLayout_r_auto_fix_new_line, autoFixNewLine);
+        reverseLayout = typedArray.getBoolean(R.styleable.RLinearLayout_r_reverse_layout, reverseLayout);
         typedArray.recycle();
         resetMaxHeight();
         initLayout();
@@ -101,11 +108,28 @@ public class RLinearLayout extends LinearLayout {
 
     @Override
     protected void onLayout(boolean changed, int l, int t, int r, int b) {
-        super.onLayout(changed, l, t, r, b);
-        if (needNewLine()) {
-            getChildAt(1).layout(getPaddingLeft(),
-                    getChildAt(0).getBottom(), getPaddingLeft() + getChildAt(1).getMeasuredWidth(),
-                    getChildAt(0).getBottom() + getChildAt(1).getMeasuredHeight());
+        if (reverseLayout && getOrientation() == HORIZONTAL) {
+            //目前只支持横向 反向布局
+            int rightOffset = getPaddingRight();
+            int topOffset = getPaddingTop();
+            for (int i = 0; i < getChildCount(); i++) {
+                View childAt = getChildAt(i);
+                final LinearLayout.LayoutParams lp = (LinearLayout.LayoutParams) childAt.getLayoutParams();
+                int top = topOffset + lp.topMargin;
+                int right = getMeasuredWidth() - rightOffset;
+                int viewWidth = childAt.getMeasuredWidth();
+                int viewHeight = childAt.getMeasuredHeight();
+                int left = right - viewWidth;
+                childAt.layout(left, top, right, top + viewHeight);
+                rightOffset += viewWidth + lp.leftMargin;
+            }
+        } else {
+            super.onLayout(changed, l, t, r, b);
+            if (needNewLine()) {
+                getChildAt(1).layout(getPaddingLeft(),
+                        getChildAt(0).getBottom(), getPaddingLeft() + getChildAt(1).getMeasuredWidth(),
+                        getChildAt(0).getBottom() + getChildAt(1).getMeasuredHeight());
+            }
         }
     }
 
@@ -131,5 +155,17 @@ public class RLinearLayout extends LinearLayout {
     public void setRBackgroundDrawable(Drawable drawable) {
         mBackgroundDrawable = drawable;
         postInvalidate();
+    }
+
+    public boolean isReverseLayout() {
+        return reverseLayout;
+    }
+
+    public void setReverseLayout(boolean reverseLayout) {
+        boolean old = this.reverseLayout;
+        this.reverseLayout = reverseLayout;
+        if (old != reverseLayout) {
+            requestLayout();
+        }
     }
 }

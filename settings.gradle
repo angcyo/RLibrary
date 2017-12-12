@@ -6,6 +6,7 @@ include ':RLibrary:github'
 //可选
 include ':RLibrary:imagepicker'
 include ':RLibrary:filedownloader'
+include ':RLibrary:websocket'
 
 allprojects {
     repositories {

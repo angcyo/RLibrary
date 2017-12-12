@@ -272,15 +272,9 @@ public class RefreshLayout extends ViewGroup {
         mTouchSlop = 0;//ViewConfiguration.get(getContext()).getScaledTouchSlop();
 
         if (!isInEditMode()) {
-            if (mTopView.getParent() == null) {
-                addView(mTopView);
-            }
-            if (mBottomView.getParent() == null) {
-                addView(mBottomView);
-            }
-            if (mTipView.getParent() == null) {
-                addView(mTipView);
-            }
+            addViewSafe(mTopView);
+            addViewSafe(mBottomView);
+            addViewSafe(mTipView);
         }
     }
 
@@ -343,13 +337,31 @@ public class RefreshLayout extends ViewGroup {
     }
 
     public void setTopView(View topView) {
+        resetView(mTopView);
         mTopView = topView;
         mTopView.setTag(TOP_VIEW);
+        addViewSafe(mTopView);
     }
 
     public void setBottomView(View bottomView) {
+        resetView(mBottomView);
         mBottomView = bottomView;
         mBottomView.setTag(TOP_VIEW);
+        addViewSafe(mBottomView);
+    }
+
+    private void resetView(View view) {
+        if (view != null && view.getParent() != null) {
+            if (view.getParent() instanceof ViewGroup) {
+                ((ViewGroup) view.getParent()).removeView(view);
+            }
+        }
+    }
+
+    private void addViewSafe(View view) {
+        if (view != null && view.getParent() == null) {
+            addView(view);
+        }
     }
 
     @Override
