@@ -2,9 +2,11 @@ package com.angcyo.uiview.widget
 
 import android.content.Context
 import android.graphics.Canvas
+import android.graphics.PointF
 import android.graphics.Rect
 import android.graphics.drawable.Drawable
 import android.util.AttributeSet
+import android.util.SparseArray
 import android.view.GestureDetector
 import android.view.MotionEvent
 import android.view.View
@@ -25,24 +27,13 @@ class RainAnimView(context: Context, attributeSet: AttributeSet? = null) : View(
 
     var listener: OnTapUpListener? = null
 
+    /*多点控制*/
+    private val pointList = SparseArray<PointF>()
+
     private val gestureDetector: GestureDetector by lazy {
         GestureDetector(context, object : GestureDetector.SimpleOnGestureListener() {
             override fun onSingleTapUp(e: MotionEvent): Boolean {
-                if (listener != null) {
-                    rainList?.let {
-                        for (i in it.size - 1 downTo 0) {
-                            val rainBean = it[i]
-                            if (rainBean.isIn(e.x.toInt(), e.y.toInt())) {
-                                listener?.onTaoUp(rainBean)
-                                return@let
-                            }
-                        }
-                    }
-                }
-                return true
-            }
-
-            override fun onDown(e: MotionEvent?): Boolean {
+                checkListener(e.x.toInt(), e.y.toInt())
                 return true
             }
         })
@@ -57,11 +48,50 @@ class RainAnimView(context: Context, attributeSet: AttributeSet? = null) : View(
         }
     }
 
+    private val deviation = 10
+
     override fun onTouchEvent(event: MotionEvent): Boolean {
         if (rainList?.isEmpty() == false) {
-            return gestureDetector.onTouchEvent(event)
+            //gestureDetector.onTouchEvent(event)
+            val actionIndex = event.actionIndex
+            val id = event.getPointerId(actionIndex)
+
+            val eventX = event.getX(actionIndex)
+            val eventY = event.getY(actionIndex)
+
+            when (event.actionMasked) {
+                MotionEvent.ACTION_DOWN, MotionEvent.ACTION_POINTER_DOWN -> {
+                    pointList.put(id, PointF(eventX, eventY))
+                }
+                MotionEvent.ACTION_UP, MotionEvent.ACTION_POINTER_UP -> {
+                    val p = pointList.get(id)
+                    if (Math.abs(p.x - eventX) < deviation &&
+                            Math.abs(p.y - eventY) < deviation) {
+                        checkListener(p.x.toInt(), p.y.toInt())
+                        //L.i("check", "${p.eventX} ${p.y} -> true")
+                    }
+                    pointList.remove(id)
+                }
+            }
+
+            return true
         }
         return super.onTouchEvent(event)
+    }
+
+    private fun checkListener(x: Int, y: Int) {
+        if (listener != null) {
+            rainList?.let {
+                for (i in it.size - 1 downTo 0) {
+                    val rainBean = it[i]
+                    //L.w("check", "${rainBean.getRect()} $x $y ${rainBean.isIn(x, y)}")
+                    if (rainBean.isIn(x, y)) {
+                        listener?.onTaoUp(rainBean)
+                        return@let
+                    }
+                }
+            }
+        }
     }
 
     interface OnTapUpListener {
@@ -75,8 +105,8 @@ class RainBean {
     /**资源*/
     var rainDrawable: Drawable? = null
 
-    /**Y轴每次移动的步长 dp单位*/
-    var stepY = 2 //dp
+    /**Y轴每次移动的步长 dp单位 可以单独控制某一个的下降速度*/
+    var stepY = 2 //px
 
     fun setRect(x: Int, y: Int, w: Int, h: Int) {
         rect.set(x, y, x + w, y + h)
@@ -91,6 +121,8 @@ class RainBean {
     }
 
     fun isIn(x: Int, y: Int) = rect.contains(x, y)
+
+    fun getRect() = rect
 
     fun draw(canvas: Canvas) {
         rainDrawable?.let {

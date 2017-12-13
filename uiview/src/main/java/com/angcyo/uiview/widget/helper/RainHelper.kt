@@ -5,7 +5,6 @@ import android.animation.ValueAnimator
 import android.support.v4.content.ContextCompat
 import android.view.animation.LinearInterpolator
 import com.angcyo.library.utils.L
-import com.angcyo.uiview.utils.ScreenUtil
 import com.angcyo.uiview.widget.RainAnimView
 import com.angcyo.uiview.widget.RainBean
 import java.util.*
@@ -75,7 +74,7 @@ class RainHelper(val rainAnimView: RainAnimView) {
     private fun updateRainList() {
         val removeList = mutableListOf<RainBean>()
         for (bean in rainList) {
-            bean.offset(0, (bean.stepY * ScreenUtil.density).toInt())
+            bean.offset(0, (bean.stepY /*ScreenUtil.density*/).toInt())
             if (bean.getTop() > rainAnimView.measuredHeight) {
                 //移动到屏幕外了,需要移除
                 removeList.add(bean)
@@ -135,10 +134,11 @@ class RainHelper(val rainAnimView: RainAnimView) {
 
     //添加Rain
     private fun addNewRainInner(num: Int) {
-        L.e(TAG, "call: addNewRainInner -> $num")
+        //L.e(TAG, "call: addNewRainInner -> $num")
         for (i in 0 until num) {
             rainList.add(RainBean().apply {
                 if (rainResId != -1) {
+                    stepY = 1 + random.nextInt(5)
                     rainDrawable = ContextCompat.getDrawable(rainAnimView.context, rainResId)
                     val intrinsicWidth = rainDrawable!!.intrinsicWidth
                     val intrinsicHeight = rainDrawable!!.intrinsicHeight
