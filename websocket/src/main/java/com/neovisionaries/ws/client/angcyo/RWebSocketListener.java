@@ -15,10 +15,18 @@ import com.neovisionaries.ws.client.WebSocket;
  */
 public class RWebSocketListener {
 
+
+    /**
+     * 当遇到错误, 导致断开时, 回调
+     */
+    public void disConnectWebsocket(int code, String message) {
+
+    }
+
     /**
      * WebSocket 断开后回调
      */
-    public void disConnectWebsocket(int code, String message) {
+    public void disConnectWebsocket() {
 
     }
 

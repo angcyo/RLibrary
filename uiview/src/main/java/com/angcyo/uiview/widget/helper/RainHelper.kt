@@ -44,9 +44,14 @@ class RainHelper(val rainAnimView: RainAnimView) {
 
     private var isStart = false
 
+    /**点中了多少个Rain*/
+    var touchUpNum = 0
+
     init {
         rainAnimView.listener = object : RainAnimView.OnTapUpListener {
             override fun onTaoUp(bean: RainBean) {
+                touchUpNum++
+                listener?.onTouchInRain(touchUpNum)
                 rainList.remove(bean)
                 rainAnimView.postInvalidate()
             }
@@ -75,6 +80,11 @@ class RainHelper(val rainAnimView: RainAnimView) {
     }
 
     private fun updateRainList() {
+        if (!rainAnimView.isOnAttachedToWindow) {
+            endRain()
+            return
+        }
+
         val removeList = mutableListOf<RainBean>()
         for (bean in rainList) {
             bean.offset(0, (bean.stepY /*ScreenUtil.density*/).toInt())
@@ -110,14 +120,22 @@ class RainHelper(val rainAnimView: RainAnimView) {
         rainAnimView.postDelayed(postDelayedRunnable, interval)
     }
 
+    var listener: OnRainListener? = null
+
     fun endRain() {
-        L.e(TAG, "call: endRain -> ")
+        val showNum = rainList.size
+        val addNum = rainAddNum
+        val maxNum = maxNum
+        L.e(TAG, "call: endRain -> showNum:$showNum addNum:$addNum maxNum:$maxNum touchUpNum:$touchUpNum")
+
         rainList.clear()
         rainAnimView.removeCallbacks(postDelayedRunnable)
         animator.cancel()
         rainAddNum = 0
         isStart = false
         rainAnimView.postInvalidate()
+
+        listener?.onRainEnd(addNum, showNum, maxNum, touchUpNum)
     }
 
     private fun addNewRain() {
@@ -161,4 +179,9 @@ class RainHelper(val rainAnimView: RainAnimView) {
     private fun randomX(w: Int): Int {
         return (random.nextFloat() * (rainAnimView.measuredWidth - w)).toInt()
     }
+}
+
+interface OnRainListener {
+    fun onRainEnd(addNum: Int /*已经添加Rain的数量*/, showNum: Int /*还在显示Rain的数量*/, maxNum: Int /*总共Rain的数量*/, touchUpNum: Int /*点中Rain的数量*/)
+    fun onTouchInRain(touchUpNum: Int /*点中Rain的数量*/)
 }

@@ -133,6 +133,14 @@ public abstract class UIBaseView extends UIIViewImpl {
         return animation;
     }
 
+    public static Animation createAlphaEnterAnim(float fromAlpha) {
+        return createClipEnterAnim(fromAlpha);
+    }
+
+    public static Animation createAlphaExitAnim(float toAlpha) {
+        return createClipExitAnim(toAlpha);
+    }
+
     public static Animation createOtherEnterNoAnim() {
         AlphaAnimation animation = new AlphaAnimation(0.9f, 1f);
         setDefaultConfig(animation, false);

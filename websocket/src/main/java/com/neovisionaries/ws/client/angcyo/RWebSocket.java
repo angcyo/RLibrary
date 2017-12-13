@@ -9,6 +9,7 @@ import com.neovisionaries.ws.client.WebSocketException;
 import com.neovisionaries.ws.client.WebSocketFactory;
 import com.neovisionaries.ws.client.WebSocketFrame;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
@@ -32,6 +33,15 @@ import rx.schedulers.Schedulers;
  * Version: 1.0.0
  */
 public class RWebSocket extends WebSocketAdapter {
+
+    /**
+     * 连接中途出现错误
+     */
+    public final static int CODE_ERROR = -400;
+    /**
+     * 连接时错误
+     */
+    public final static int CODE_CONNECT_ERROR = -401;
 
     /**
      * webSocket关闭
@@ -65,7 +75,7 @@ public class RWebSocket extends WebSocketAdapter {
      */
     private Subscription observable;
     private WebSocket mWebSocket;
-    private RWebSocketListener listener;
+    private List<RWebSocketListener> mListeners = new ArrayList();
 
     private RWebSocket() {
     }
@@ -74,8 +84,13 @@ public class RWebSocket extends WebSocketAdapter {
         return new RWebSocket();
     }
 
-    public RWebSocket setListener(RWebSocketListener listener) {
-        this.listener = listener;
+    public RWebSocket addListener(RWebSocketListener listener) {
+        mListeners.add(listener);
+        return this;
+    }
+
+    public RWebSocket removeListener(RWebSocketListener listener) {
+        mListeners.remove(listener);
         return this;
     }
 
@@ -156,7 +171,7 @@ public class RWebSocket extends WebSocketAdapter {
                         @Override
                         public void onNext(Long aLong) {
                             if (mWebSocket != null) {
-                                i("WebSocket连接是否成功:" + mWebSocket.isOpen());
+                                d("WebSocket连接是否成功:" + mWebSocket.isOpen());
                             }
                             if (!TextUtils.isEmpty(mWebSocketUrl) && webSocketState == WEB_SOCKET_CLOSE) {
                                 i("检测到webSocket已断开,重连中...");
@@ -205,15 +220,17 @@ public class RWebSocket extends WebSocketAdapter {
                 mWebSocket = null;
             }
         } else {
-            if (listener != null) {
-                String reconnectUrl = listener.getReconnectUrl();
-                if (TextUtils.isEmpty(reconnectUrl)) {
-                    connect(mWebSocketUrl);
-                } else {
-                    connect(reconnectUrl);
+            String reconnectUrl = "";
+            for (RWebSocketListener listener : mListeners) {
+                reconnectUrl = listener.getReconnectUrl();
+                if (!TextUtils.isEmpty(reconnectUrl)) {
+                    break;
                 }
-            } else {
+            }
+            if (TextUtils.isEmpty(reconnectUrl)) {
                 connect(mWebSocketUrl);
+            } else {
+                connect(reconnectUrl);
             }
         }
     }
@@ -231,6 +248,12 @@ public class RWebSocket extends WebSocketAdapter {
     private void i(String msg) {
         if (DEBUG) {
             Log.i(TAG, Thread.currentThread().getName() + "#" + msg);
+        }
+    }
+
+    private void d(String msg) {
+        if (DEBUG) {
+            Log.d(TAG, Thread.currentThread().getName() + "#" + msg);
         }
     }
 
@@ -254,16 +277,15 @@ public class RWebSocket extends WebSocketAdapter {
         super.onError(websocket, cause);
         e("webSocket连接失败onError：" + cause.getMessage());
         webSocketState = WEB_SOCKET_CLOSE;
-        if (listener != null) {
-            onMain(new Runnable() {
-                @Override
-                public void run() {
-                    if (listener != null) {
-                        listener.disConnectWebsocket(2, cause.getMessage());
-                    }
+        onMain(new Runnable() {
+            @Override
+            public void run() {
+                for (int i = 0; i < mListeners.size(); i++) {
+                    RWebSocketListener listener = mListeners.get(i);
+                    listener.disConnectWebsocket(CODE_ERROR, cause.getMessage());
                 }
-            });
-        }
+            }
+        });
     }
 
     /**
@@ -278,16 +300,15 @@ public class RWebSocket extends WebSocketAdapter {
         super.onConnectError(websocket, exception);
         e("webSocket连接失败onConnectError：" + exception.getMessage());
         webSocketState = WEB_SOCKET_CLOSE;
-        if (listener != null) {
-            onMain(new Runnable() {
-                @Override
-                public void run() {
-                    if (listener != null) {
-                        listener.disConnectWebsocket(3, exception.getMessage());
-                    }
+        onMain(new Runnable() {
+            @Override
+            public void run() {
+                for (int i = 0; i < mListeners.size(); i++) {
+                    RWebSocketListener listener = mListeners.get(i);
+                    listener.disConnectWebsocket(CODE_CONNECT_ERROR, exception.getMessage());
                 }
-            });
-        }
+            }
+        });
     }
 
     /**
@@ -304,19 +325,18 @@ public class RWebSocket extends WebSocketAdapter {
         super.onDisconnected(websocket, serverCloseFrame, clientCloseFrame, closedByServer);
         e("webSocket断开" + mWebSocket);
         webSocketState = WEB_SOCKET_CLOSE;
-        if (listener != null) {
-            final int closeCode = serverCloseFrame.getCloseCode();
-            final String closeReason = serverCloseFrame.getCloseReason();
+        //final int closeCode = serverCloseFrame.getCloseCode();
+        //final String closeReason = serverCloseFrame.getCloseReason();
 
-            onMain(new Runnable() {
-                @Override
-                public void run() {
-                    if (listener != null) {
-                        listener.disConnectWebsocket(closeCode, closeReason);
-                    }
+        onMain(new Runnable() {
+            @Override
+            public void run() {
+                for (int i = 0; i < mListeners.size(); i++) {
+                    RWebSocketListener listener = mListeners.get(i);
+                    listener.disConnectWebsocket();
                 }
-            });
-        }
+            }
+        });
     }
 
     /**
@@ -333,16 +353,15 @@ public class RWebSocket extends WebSocketAdapter {
         if (websocket != null) {
             this.mWebSocket = websocket;
             webSocketState = WEB_SOCKET_OPEN;
-            if (listener != null) {
-                onMain(new Runnable() {
-                    @Override
-                    public void run() {
-                        if (listener != null) {
-                            listener.connectSuccessWebsocket(mWebSocket);
-                        }
+            onMain(new Runnable() {
+                @Override
+                public void run() {
+                    for (int i = 0; i < mListeners.size(); i++) {
+                        RWebSocketListener listener = mListeners.get(i);
+                        listener.connectSuccessWebsocket(mWebSocket);
                     }
-                });
-            }
+                }
+            });
         }
     }
 
@@ -405,11 +424,11 @@ public class RWebSocket extends WebSocketAdapter {
      * @param data
      */
     private void dealData(WebSocket websocket, String data) {
-        if (listener != null) {
+        for (int i = 0; i < mListeners.size(); i++) {
+            RWebSocketListener listener = mListeners.get(i);
             listener.onTextMessage(websocket, data);
         }
     }
-
 
     //*****************************WebSocketAdapter  end***********************************************************************/
 }

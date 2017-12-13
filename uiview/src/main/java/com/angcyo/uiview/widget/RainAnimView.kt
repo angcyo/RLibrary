@@ -94,6 +94,18 @@ class RainAnimView(context: Context, attributeSet: AttributeSet? = null) : View(
         }
     }
 
+    var isOnAttachedToWindow = false
+
+    override fun onAttachedToWindow() {
+        super.onAttachedToWindow()
+        isOnAttachedToWindow = true
+    }
+
+    override fun onDetachedFromWindow() {
+        super.onDetachedFromWindow()
+        isOnAttachedToWindow = false
+    }
+
     interface OnTapUpListener {
         fun onTaoUp(bean: RainBean)
     }
