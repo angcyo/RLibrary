@@ -54,6 +54,7 @@ class RainHelper(val rainAnimView: RainAnimView) {
     }
 
 
+    var count = 0
     private val animator: ValueAnimator by lazy {
         ObjectAnimator.ofInt(0, 60).apply {
             repeatMode = ValueAnimator.RESTART
@@ -63,7 +64,9 @@ class RainHelper(val rainAnimView: RainAnimView) {
 
             addUpdateListener { animation ->
                 val value: Int = animation.animatedValue as Int
-                L.e(TAG, "->sum:$rainAddNum show:${rainList.size} index:$value time:${animation.animatedFraction}")
+                //60帧运行速度
+                //count++
+                //L.e(TAG, "->sum:$rainAddNum show:${rainList.size} index:$value time:${animation.animatedFraction} $count")
 
                 updateRainList()
                 rainAnimView.postInvalidateOnAnimation()
