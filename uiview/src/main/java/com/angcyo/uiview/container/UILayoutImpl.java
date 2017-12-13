@@ -205,6 +205,10 @@ public class UILayoutImpl extends SwipeBackLayout implements ILayout<UIParam>, U
      * 管理子的ILayout, 用于在滑动的过程中控制显示和隐藏最后一个IView
      */
     private ILayout mChildILayout;
+    /**
+     * 三指首次按下的时间
+     */
+    private long firstDownTime = 0;
 
     public UILayoutImpl(Context context) {
         super(context);
@@ -2520,16 +2524,26 @@ public class UILayoutImpl extends SwipeBackLayout implements ILayout<UIParam>, U
      */
     protected boolean handleDebugLayout(MotionEvent ev) {
         int actionMasked = ev.getActionMasked();
+        long downTime = ev.getDownTime();
+        if (actionMasked == MotionEvent.ACTION_DOWN) {
+            firstDownTime = downTime;
+        }
+
         if (L.LOG_DEBUG &&
                 actionMasked == MotionEvent.ACTION_POINTER_DOWN &&
                 ev.getPointerCount() == 3) {
-            //debug模式下, 三指按下
-            if (isInDebugLayout) {
-                closeDebugLayout();
-            } else {
-                startDebugLayout();
+
+            if (ev.getEventTime() - firstDownTime < 500) {
+                //快速三指按下才受理操作
+
+                //debug模式下, 三指按下
+                if (isInDebugLayout) {
+                    closeDebugLayout();
+                } else {
+                    startDebugLayout();
+                }
+                return true;
             }
-            return true;
         }
         return false;
     }
