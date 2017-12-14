@@ -18,19 +18,21 @@ class BezierPointHelper(private val startPoint: PointF /*曲线起点*/, private
 
     fun evaluate(time: Float /*取值范围 [0, 1]*/): PointF {
 
-        val timeLeft = 1.0f - time
+        val t = Math.max(Math.min(time, 1f), 0f)
+
+        val timeLeft = 1.0f - t
         val point = PointF()//结果
 
         /*当计算x时, 与y的值没有关系. 所以x 和 y, 都是贝塞尔曲线上的点*/
         point.x = (timeLeft * timeLeft * timeLeft * startPoint.x
-                + 3f * timeLeft * timeLeft * time * controlPoint1.x
-                + 3f * timeLeft * time * time * controlPoint2.x
-                + time * time * time * endPoint.x)
+                + 3f * timeLeft * timeLeft * t * controlPoint1.x
+                + 3f * timeLeft * t * t * controlPoint2.x
+                + t * t * t * endPoint.x)
 
         point.y = (timeLeft * timeLeft * timeLeft * startPoint.y
-                + 3f * timeLeft * timeLeft * time * controlPoint1.y
-                + 3f * timeLeft * time * time * controlPoint2.y
-                + time * time * time * endPoint.y)
+                + 3f * timeLeft * timeLeft * t * controlPoint1.y
+                + 3f * timeLeft * t * t * controlPoint2.y
+                + t * t * t * endPoint.y)
 
         return point
     }
@@ -41,14 +43,16 @@ class BezierHelper(private val startPoint: Float /*曲线起点的坐标*/, priv
 
     fun evaluate(time: Float /*取值范围 [0, 1]*/): Float {
 
-        val timeLeft = 1.0f - time
+        val t = Math.max(Math.min(time, 1f), 0f)
+
+        val timeLeft = 1.0f - t
         val point: Float//结果
 
         /*当计算x时, 与y的值没有关系. 所以x 和 y, 都是贝塞尔曲线上的点*/
         point = (timeLeft * timeLeft * timeLeft * startPoint
-                + 3f * timeLeft * timeLeft * time * controlPoint1
-                + 3f * timeLeft * time * time * controlPoint2
-                + time * time * time * endPoint)
+                + 3f * timeLeft * timeLeft * t * controlPoint1
+                + 3f * timeLeft * t * t * controlPoint2
+                + t * t * t * endPoint)
 
         return point
     }

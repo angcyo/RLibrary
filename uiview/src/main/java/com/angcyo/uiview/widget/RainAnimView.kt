@@ -10,6 +10,7 @@ import android.util.SparseArray
 import android.view.GestureDetector
 import android.view.MotionEvent
 import android.view.View
+import com.angcyo.uiview.helper.BezierHelper
 
 /**
  * Copyright (C) 2016,深圳市红鸟网络科技股份有限公司 All rights reserved.
@@ -119,6 +120,8 @@ class RainBean {
 
     /**Y轴每次移动的步长 dp单位 可以单独控制某一个的下降速度*/
     var stepY = 2 //px
+
+    var bezierHelpter: BezierHelper? = null
 
     fun setRect(x: Int, y: Int, w: Int, h: Int) {
         rect.set(x, y, x + w, y + h)

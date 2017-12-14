@@ -5,6 +5,7 @@ import android.animation.ValueAnimator
 import android.support.v4.content.ContextCompat
 import android.view.animation.LinearInterpolator
 import com.angcyo.library.utils.L
+import com.angcyo.uiview.helper.BezierHelper
 import com.angcyo.uiview.widget.RainAnimView
 import com.angcyo.uiview.widget.RainBean
 import java.util.*
@@ -47,6 +48,14 @@ class RainHelper(val rainAnimView: RainAnimView) {
     /**点中了多少个Rain*/
     var touchUpNum = 0
 
+    /**使用贝塞尔曲线*/
+    var useBezier = true
+
+    var rainStepY = 2 //px
+
+    /**每个Rain下降的Step是否随机*/
+    var randomStep = false
+
     init {
         rainAnimView.listener = object : RainAnimView.OnTapUpListener {
             override fun onTaoUp(bean: RainBean) {
@@ -88,6 +97,17 @@ class RainHelper(val rainAnimView: RainAnimView) {
         val removeList = mutableListOf<RainBean>()
         for (bean in rainList) {
             bean.offset(0, (bean.stepY /*ScreenUtil.density*/).toInt())
+
+            if (useBezier) {
+                val maxY = rainAnimView.measuredHeight / 5 /*分成5份, 循环5次曲线*/
+                val fl = Math.abs(bean.getRect().top % maxY / maxY.toFloat())
+
+                val dx = (bean.bezierHelpter!!.evaluate(fl) - bean.getRect().left).toInt()
+                bean.offset(dx, 0)
+
+                //L.e("call: updateRainList -> fl:$fl dx:$dx")
+            }
+
             if (bean.getTop() > rainAnimView.measuredHeight) {
                 //移动到屏幕外了,需要移除
                 removeList.add(bean)
@@ -147,7 +167,7 @@ class RainHelper(val rainAnimView: RainAnimView) {
             }
         } else if (rainAddNum + addNum > maxNum) {
             //达到最大
-            addNewRainInner(rainAddNum + addNum - maxNum)
+            addNewRainInner(maxNum - rainAddNum)
         } else {
             addNewRainInner(addNum)
         }
@@ -159,11 +179,31 @@ class RainHelper(val rainAnimView: RainAnimView) {
         for (i in 0 until num) {
             rainList.add(RainBean().apply {
                 if (rainResId != -1) {
-                    stepY = 1 + random.nextInt(5)
+                    val randomStepY = rainStepY + random.nextInt(5)
+                    if (randomStep) {
+                        stepY = randomStepY
+                    } else {
+                        stepY = rainStepY
+                    }
+
                     rainDrawable = ContextCompat.getDrawable(rainAnimView.context, rainResId)
                     val intrinsicWidth = rainDrawable!!.intrinsicWidth
                     val intrinsicHeight = rainDrawable!!.intrinsicHeight
-                    setRect(randomX(intrinsicWidth), -intrinsicHeight, intrinsicWidth, intrinsicHeight)
+
+                    val w2 = rainAnimView.measuredWidth / 2
+                    val w4 = w2 / 2
+
+                    val randomX = if (useBezier) randomX(w4) else randomX(intrinsicWidth)
+                    val randomY = randomY(-intrinsicHeight)
+                    setRect(randomX, randomY, intrinsicWidth, intrinsicHeight)
+
+                    val x = (randomX + intrinsicWidth).toFloat()
+                    val left = randomStepY % 2 == 0
+
+                    val cp1: Float = if (left) (x + w4) else (x - w4)
+                    val cp2: Float = if (left) (x - w4) else (x + w4)
+
+                    bezierHelpter = BezierHelper(x, x, cp1, cp2)
                 }
             })
             rainAddNum++
@@ -179,9 +219,14 @@ class RainHelper(val rainAnimView: RainAnimView) {
     private fun randomX(w: Int): Int {
         return (random.nextFloat() * (rainAnimView.measuredWidth - w)).toInt()
     }
-}
 
-interface OnRainListener {
-    fun onRainEnd(addNum: Int /*已经添加Rain的数量*/, showNum: Int /*还在显示Rain的数量*/, maxNum: Int /*总共Rain的数量*/, touchUpNum: Int /*点中Rain的数量*/)
-    fun onTouchInRain(touchUpNum: Int /*点中Rain的数量*/)
+    /*随机产生y轴*/
+    private fun randomY(h: Int): Int {
+        return (random.nextFloat() * h).toInt()
+    }
+
+    interface OnRainListener {
+        fun onRainEnd(addNum: Int /*已经添加Rain的数量*/, showNum: Int /*还在显示Rain的数量*/, maxNum: Int /*总共Rain的数量*/, touchUpNum: Int /*点中Rain的数量*/)
+        fun onTouchInRain(touchUpNum: Int /*点中Rain的数量*/)
+    }
 }
