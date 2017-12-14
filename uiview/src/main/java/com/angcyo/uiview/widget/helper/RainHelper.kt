@@ -29,7 +29,7 @@ class RainHelper(val rainAnimView: RainAnimView) {
         var addNum = 5
 
         /**每次新增 时间间隔*/
-        var interval = 300L
+        var interval = 700L
 
         /**最大数量*/
         var maxNum = 100
@@ -40,7 +40,7 @@ class RainHelper(val rainAnimView: RainAnimView) {
     /*已经添加了多少个*/
     private var rainAddNum = 0
 
-    /*资源id*/
+    /**资源id*/
     var rainResId = -1
 
     private var isStart = false
@@ -54,7 +54,7 @@ class RainHelper(val rainAnimView: RainAnimView) {
     var rainStepY = 2 //px
 
     /**每个Rain下降的Step是否随机*/
-    var randomStep = false
+    var randomStep = true
 
     init {
         rainAnimView.listener = object : RainAnimView.OnTapUpListener {
