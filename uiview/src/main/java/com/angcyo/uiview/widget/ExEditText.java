@@ -1011,11 +1011,16 @@ public class ExEditText extends AppCompatEditText {
                 } else {
                     start = text.indexOf(mentionText);
                 }
-                int end = start + mentionText.length();
-                spannableText.setSpan(new MentionSpan(text.substring(start, end)), start, end, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
-                lastMentionIndex = end;
-                //recordRunnable all show-string's position
-                mRangeArrayList.add(new Range(start, end));
+                try {
+                    int end = start + mentionText.length();
+                    spannableText.setSpan(new MentionSpan(text.substring(start, end)), start, end, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
+                    lastMentionIndex = end;
+                    //recordRunnable all show-string's position
+                    mRangeArrayList.add(new Range(start, end));
+                }catch (StringIndexOutOfBoundsException e) {
+                    e.printStackTrace();
+                }
+
             }
             if (!isFind) {
                 //有特殊字符比如:()会匹配不到
@@ -1023,8 +1028,13 @@ public class ExEditText extends AppCompatEditText {
                 if (text.contains(temp)) {
                     int start = text.indexOf(temp);
                     int end = start + temp.length();
-                    spannableText.setSpan(new MentionSpan(text.substring(start, end)), start, end, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
-                    mRangeArrayList.add(new Range(start, end));
+                    try {
+                        spannableText.setSpan(new MentionSpan(text.substring(start, end)), start, end, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
+                        mRangeArrayList.add(new Range(start, end));
+                    }catch (StringIndexOutOfBoundsException e) {
+                        e.printStackTrace();
+                    }
+
                     isFind = true;
                 }
             }

@@ -25,13 +25,13 @@ class RainHelper(val rainAnimView: RainAnimView) {
         val TAG = "rainAnim"
 
         /**每次新增数量*/
-        val addNum = 5
+        var addNum = 5
 
         /**每次新增 时间间隔*/
-        val interval = 300L
+        var interval = 300L
 
         /**最大数量*/
-        val maxNum = 100
+        var maxNum = 100
     }
 
     private val rainList = mutableListOf<RainBean>()
