@@ -195,11 +195,11 @@ class RainHelper(val rainAnimView: RainAnimView) {
                     val w2 = rainAnimView.measuredWidth / 2
                     val w4 = w2 / 2
 
-                    val randomX = if (useBezier) randomX(w4) else randomX(intrinsicWidth)
+                    val randomX = if (useBezier) randomX(w4 - intrinsicWidth) else randomX(intrinsicWidth)
                     val randomY = randomY(-intrinsicHeight)
                     setRect(randomX, randomY, intrinsicWidth, intrinsicHeight)
 
-                    val x = (randomX /*+ intrinsicWidth*/).toFloat()
+                    val x = (randomX + intrinsicWidth).toFloat()
                     val left = randomStepY % 2 == 0
 
                     val cp1: Float = if (left) (x + w4) else (x - w4)
