@@ -2531,7 +2531,7 @@ public class UILayoutImpl extends SwipeBackLayout implements ILayout<UIParam>, U
 
         if (L.LOG_DEBUG &&
                 actionMasked == MotionEvent.ACTION_POINTER_DOWN &&
-                ev.getPointerCount() == 3) {
+                ev.getPointerCount() == 5) {
 
             if (ev.getEventTime() - firstDownTime < 500) {
                 //快速三指按下才受理操作
