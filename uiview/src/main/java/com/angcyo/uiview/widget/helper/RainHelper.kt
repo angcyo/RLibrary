@@ -224,9 +224,9 @@ class RainHelper(val rainAnimView: RainAnimView) {
     private fun randomY(h: Int): Int {
         return (random.nextFloat() * h).toInt()
     }
+}
 
-    interface OnRainListener {
-        fun onRainEnd(addNum: Int /*已经添加Rain的数量*/, showNum: Int /*还在显示Rain的数量*/, maxNum: Int /*总共Rain的数量*/, touchUpNum: Int /*点中Rain的数量*/)
-        fun onTouchInRain(touchUpNum: Int /*点中Rain的数量*/)
-    }
+interface OnRainListener {
+    fun onRainEnd(addNum: Int /*已经添加Rain的数量*/, showNum: Int /*还在显示Rain的数量*/, maxNum: Int /*总共Rain的数量*/, touchUpNum: Int /*点中Rain的数量*/)
+    fun onTouchInRain(touchUpNum: Int /*点中Rain的数量*/)
 }
