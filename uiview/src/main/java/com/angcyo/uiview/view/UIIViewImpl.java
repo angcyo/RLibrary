@@ -860,6 +860,9 @@ public abstract class UIIViewImpl implements IView {
         notifySkinChanged(mRootView, skin);
     }
 
+    /**
+     * 界面状态 (加载, 显示, 隐藏, 卸载)
+     */
     @Override
     public IViewShowState getIViewShowState() {
         return mIViewStatus;

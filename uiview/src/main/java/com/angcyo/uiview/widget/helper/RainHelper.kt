@@ -100,10 +100,12 @@ class RainHelper(val rainAnimView: RainAnimView) {
 
             if (useBezier) {
                 val maxY = rainAnimView.measuredHeight / 5 /*分成5份, 循环5次曲线*/
-                val fl = Math.abs(bean.getRect().top % maxY / maxY.toFloat())
+                if (maxY > 0) {
+                    val fl = Math.abs(bean.getRect().top % maxY / maxY.toFloat())
 
-                val dx = (bean.bezierHelpter!!.evaluate(fl) - bean.getRect().left).toInt()
-                bean.offset(dx, 0)
+                    val dx = (bean.bezierHelpter!!.evaluate(fl) - bean.getRect().left).toInt()
+                    bean.offset(dx, 0)
+                }
 
                 //L.e("call: updateRainList -> fl:$fl dx:$dx")
             }
@@ -197,7 +199,7 @@ class RainHelper(val rainAnimView: RainAnimView) {
                     val randomY = randomY(-intrinsicHeight)
                     setRect(randomX, randomY, intrinsicWidth, intrinsicHeight)
 
-                    val x = (randomX + intrinsicWidth).toFloat()
+                    val x = (randomX /*+ intrinsicWidth*/).toFloat()
                     val left = randomStepY % 2 == 0
 
                     val cp1: Float = if (left) (x + w4) else (x - w4)
