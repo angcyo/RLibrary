@@ -19,7 +19,7 @@ import com.angcyo.uiview.kotlin.getBoundsWith
  */
 open class BaseFrameLayer : BaseLayer() {
 
-    private val frameList = mutableListOf<FrameBean>()
+    private val frameList = mutableListOf<BaseLayerBean>()
 
     init {
         //drawIntervalTime = 100
@@ -31,7 +31,7 @@ open class BaseFrameLayer : BaseLayer() {
 
     override fun draw(canvas: Canvas, gameStartTime: Long, lastRenderTime: Long, nowRenderTime: Long) {
         super.draw(canvas, gameStartTime, lastRenderTime, nowRenderTime)
-        val deleteList = mutableListOf<FrameBean>()
+        val deleteList = mutableListOf<BaseLayerBean>()
         for (frame in frameList) {
             frame.parentRect.set(layerRect)
             frame.draw(canvas, gameStartTime, lastRenderTime, nowRenderTime) {
@@ -48,23 +48,52 @@ open class BaseFrameLayer : BaseLayer() {
         }
     }
 
-    fun addFrameBean(frameBean: FrameBean) {
+    fun addFrameBean(frameBean: BaseLayerBean) {
         frameList.add(frameBean)
     }
 }
 
-/**数据bean*/
-open class FrameBean(val drawableArray: Array<Drawable> /*需要播放的帧动画*/, val centerPoint: Point /*需要在什么位置播放(中心点)*/) {
+open class BaseLayerBean {
+
+    /**每一帧绘制间隔时间*/
+    var frameDrawIntervalTime = 0L
+    protected var lastFrameDrawTime = 0L
 
     /**Layer的显示区域范围*/
     var parentRect = Rect()
 
+    open fun draw(canvas: Canvas, gameStartTime: Long, lastRenderTime: Long, nowRenderTime: Long, onDrawEnd: () -> Unit) {
+    }
+
+    open fun onDraw(canvas: Canvas, gameStartTime: Long, lastRenderTime: Long, nowRenderTime: Long) {
+        if (nowRenderTime - lastFrameDrawTime > frameDrawIntervalTime) {
+            lastFrameDrawTime = nowRenderTime
+            onFrameDrawInterval(canvas, gameStartTime, lastRenderTime, nowRenderTime)
+        }
+    }
+
+    open fun onFrameDrawInterval(canvas: Canvas, gameStartTime: Long, lastRenderTime: Long, nowRenderTime: Long) {
+
+    }
+}
+
+open class FrameBgBean(val bgDrawable: Drawable) : BaseLayerBean() {
+    override fun draw(canvas: Canvas, gameStartTime: Long, lastRenderTime: Long, nowRenderTime: Long, onDrawEnd: () -> Unit) {
+        super.draw(canvas, gameStartTime, lastRenderTime, nowRenderTime, onDrawEnd)
+        bgDrawable.let {
+            it.bounds = parentRect
+            it.draw(canvas)
+        }
+    }
+}
+
+/**数据bean*/
+open class FrameBean(val drawableArray: Array<Drawable> /*需要播放的帧动画*/, val centerPoint: Point /*需要在什么位置播放(中心点)*/) : BaseLayerBean() {
     /**是否循环播放*/
     var loop = true
 
-    /**每一帧绘制间隔时间*/
-    var frameDrawIntervalTime = 160
-    protected var lastFrameDrawTime = 0L
+    /**X轴的旋转角度*/
+    var rotateDegrees = 0f
 
     protected var drawPoint = Point(centerPoint)
 
@@ -73,13 +102,17 @@ open class FrameBean(val drawableArray: Array<Drawable> /*需要播放的帧动�
     /*当前播放到多少帧*/
     private var frameIndex = 0
 
+    init {
+        frameDrawIntervalTime = 160L
+    }
+
     /*正在绘制的帧*/
     protected val drawDrawable: Drawable
         get() {
             return drawableArray[frameIndex]
         }
 
-    open fun draw(canvas: Canvas, gameStartTime: Long, lastRenderTime: Long, nowRenderTime: Long, onDrawEnd: () -> Unit) {
+    override fun draw(canvas: Canvas, gameStartTime: Long, lastRenderTime: Long, nowRenderTime: Long, onDrawEnd: () -> Unit) {
         if (frameIndex >= frameSize) {
             //播放结束
             if (loop) {
@@ -89,17 +122,23 @@ open class FrameBean(val drawableArray: Array<Drawable> /*需要播放的帧动�
             }
         }
         if (frameIndex < frameSize) {
+            canvas.save()
+            canvas.translate(drawPoint.x.toFloat(), drawPoint.y.toFloat())
+            canvas.rotate(rotateDegrees)
             drawDrawable.let {
-                it.bounds = it.getBoundsWith(drawPoint, parentRect)
+                it.bounds = getDrawDrawableBounds(it)
                 it.draw(canvas)
             }
+            canvas.restore()
         }
     }
 
-    open fun onDraw(canvas: Canvas, gameStartTime: Long, lastRenderTime: Long, nowRenderTime: Long) {
-        if (nowRenderTime - lastFrameDrawTime > frameDrawIntervalTime) {
-            frameIndex++
-            lastFrameDrawTime = nowRenderTime
-        }
+    open fun getDrawDrawableBounds(drawable: Drawable): Rect {
+        return drawable.getBoundsWith(drawPoint, parentRect)
+    }
+
+    override fun onFrameDrawInterval(canvas: Canvas, gameStartTime: Long, lastRenderTime: Long, nowRenderTime: Long) {
+        super.onFrameDrawInterval(canvas, gameStartTime, lastRenderTime, nowRenderTime)
+        frameIndex++
     }
 }

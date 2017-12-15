@@ -14,7 +14,7 @@ import android.graphics.drawable.Drawable
  * 修改备注：
  * Version: 1.0.0
  */
-class BaseBgLayer(val bgDrawable: Drawable) : BaseLayer() {
+open class BaseBgLayer(val bgDrawable: Drawable) : BaseLayer() {
 
     override fun onSizeChanged(w: Int, h: Int, oldw: Int, oldh: Int) {
         super.onSizeChanged(w, h, oldw, oldh)
