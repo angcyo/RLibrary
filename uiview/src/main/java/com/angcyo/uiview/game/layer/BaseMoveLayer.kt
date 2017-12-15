@@ -4,7 +4,6 @@ import android.graphics.Canvas
 import android.graphics.Point
 import android.graphics.Rect
 import android.graphics.drawable.Drawable
-import com.angcyo.library.utils.L
 import com.angcyo.uiview.kotlin.getBoundsWith
 
 /**
@@ -68,7 +67,7 @@ open class MoveBean(val drawables: Array<Drawable>,
 
             //L.i("call: draw -> ${maxMoveTime} $time $drawPoint $startPoint $endPoint ${aX()} ${aY()}")
             super.draw(canvas, gameStartTime, lastRenderTime, nowRenderTime, onDrawEnd)
-            L.w("${drawDrawable.bounds}")
+            //L.w("${drawDrawable.bounds}")
         }
     }
 
