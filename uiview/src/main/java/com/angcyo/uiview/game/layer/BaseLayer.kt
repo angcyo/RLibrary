@@ -22,6 +22,12 @@ open class BaseLayer {
     /**层, 在游戏View中的坐标区域*/
     var layerRect = Rect()
 
+    /**最后一次有效个绘制时间,用来控制绘制速度*/
+    var lastValidDrawTime = 0L
+
+    /**绘制帧之间的间隔小时, 默认是60帧的速率绘制, 也就是16毫秒*/
+    var drawIntervalTime = 0L
+
     /**是否需要处理Touch事件, 最上层的Layout会优先回调此方法*/
     open fun onTouchEvent(event: MotionEvent, point: PointF): Boolean {
         return false
@@ -29,6 +35,14 @@ open class BaseLayer {
 
     /**此方法会以60帧的速率调用*/
     open fun draw(canvas: Canvas, gameStartTime: Long /*最开始渲染的时间*/, lastRenderTime: Long /*上一次渲染的时间*/, nowRenderTime: Long /*现在渲染的时间*/) {
+        if (nowRenderTime - lastValidDrawTime > drawIntervalTime) {
+            onDraw(canvas, gameStartTime, lastRenderTime, nowRenderTime)
+            lastValidDrawTime = nowRenderTime
+        }
+    }
+
+    /**可以设置的速率回调*/
+    open fun onDraw(canvas: Canvas, gameStartTime: Long, lastRenderTime: Long, nowRenderTime: Long) {
 
     }
 

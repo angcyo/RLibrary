@@ -21,13 +21,16 @@ open class BaseFrameLayer : BaseLayer() {
 
     private val frameList = mutableListOf<FrameBean>()
 
+    init {
+        drawIntervalTime = 100
+    }
+
     override fun onSizeChanged(w: Int, h: Int, oldw: Int, oldh: Int) {
         super.onSizeChanged(w, h, oldw, oldh)
     }
 
     override fun draw(canvas: Canvas, gameStartTime: Long, lastRenderTime: Long, nowRenderTime: Long) {
         super.draw(canvas, gameStartTime, lastRenderTime, nowRenderTime)
-
         val deleteList = mutableListOf<FrameBean>()
         for (frame in frameList) {
             frame.parentRect.set(layerRect)
@@ -38,13 +41,20 @@ open class BaseFrameLayer : BaseLayer() {
         frameList.removeAll(deleteList)
     }
 
+    override fun onDraw(canvas: Canvas, gameStartTime: Long, lastRenderTime: Long, nowRenderTime: Long) {
+        super.onDraw(canvas, gameStartTime, lastRenderTime, nowRenderTime)
+        for (frame in frameList) {
+            frame.onDraw(canvas)
+        }
+    }
+
     fun addFrameBean(frameBean: FrameBean) {
         frameList.add(frameBean)
     }
 }
 
 /**数据bean*/
-class FrameBean(val drawableArray: Array<Drawable> /*需要播放的帧动画*/, val centerPoint: Point /*需要在什么位置播放(中心点)*/) {
+open class FrameBean(val drawableArray: Array<Drawable> /*需要播放的帧动画*/, val centerPoint: Point /*需要在什么位置播放(中心点)*/) {
 
     /**Layer的显示区域范围*/
     var parentRect = Rect()
@@ -57,7 +67,7 @@ class FrameBean(val drawableArray: Array<Drawable> /*需要播放的帧动画*/,
     /*当前播放到多少帧*/
     private var frameIndex = 0
 
-    fun draw(canvas: Canvas, onDrawEnd: () -> Unit) {
+    open fun draw(canvas: Canvas, onDrawEnd: () -> Unit) {
         if (frameIndex >= frameSize) {
             //播放结束
             if (loop) {
@@ -71,7 +81,10 @@ class FrameBean(val drawableArray: Array<Drawable> /*需要播放的帧动画*/,
                 it.bounds = it.getBoundsWith(centerPoint, parentRect)
                 it.draw(canvas)
             }
-            frameIndex++
         }
+    }
+
+    open fun onDraw(canvas: Canvas) {
+        frameIndex++
     }
 }
