@@ -74,7 +74,7 @@ open class MoveBean(val drawables: Array<Drawable>,
 
     open fun onLoopMove() {
         startDrawTime = 0L
-        drawPoint = startPoint
+        drawPoint.set(startPoint.x, startPoint.y)
     }
 
     private fun aX(): Float = (endPoint.x - startPoint.x).toFloat() / (maxMoveTime * maxMoveTime)
