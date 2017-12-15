@@ -87,7 +87,7 @@ class RainAnimView(context: Context, attributeSet: AttributeSet? = null) : View(
                     val rainBean = it[i]
                     //L.w("check", "${rainBean.getRect()} $x $y ${rainBean.isIn(x, y)}")
                     if (rainBean.isIn(x, y)) {
-                        listener?.onTaoUp(rainBean)
+                        listener?.onTapUp(rainBean)
                         return@let
                     }
                 }
@@ -108,7 +108,7 @@ class RainAnimView(context: Context, attributeSet: AttributeSet? = null) : View(
     }
 
     interface OnTapUpListener {
-        fun onTaoUp(bean: RainBean)
+        fun onTapUp(bean: RainBean)
     }
 }
 

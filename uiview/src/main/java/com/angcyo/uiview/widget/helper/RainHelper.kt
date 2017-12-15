@@ -58,7 +58,7 @@ class RainHelper(val rainAnimView: RainAnimView) {
 
     init {
         rainAnimView.listener = object : RainAnimView.OnTapUpListener {
-            override fun onTaoUp(bean: RainBean) {
+            override fun onTapUp(bean: RainBean) {
                 touchUpNum++
                 listener?.onTouchInRain(touchUpNum)
                 rainList.remove(bean)
