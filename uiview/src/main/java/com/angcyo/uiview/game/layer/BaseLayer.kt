@@ -25,7 +25,7 @@ open class BaseLayer {
     /**最后一次有效个绘制时间,用来控制绘制速度*/
     var lastValidDrawTime = 0L
 
-    /**绘制帧之间的间隔小时, 默认是60帧的速率绘制, 也就是16毫秒*/
+    /**绘制帧之间的间隔小时, 默认是60帧的速率绘制, 也就是16毫秒 (控制的是所有在上面绘制元素的速率)*/
     var drawIntervalTime = 0L
 
     /**是否需要处理Touch事件, 最上层的Layout会优先回调此方法*/

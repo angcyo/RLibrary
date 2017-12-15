@@ -22,7 +22,7 @@ open class BaseFrameLayer : BaseLayer() {
     private val frameList = mutableListOf<FrameBean>()
 
     init {
-        drawIntervalTime = 100
+        //drawIntervalTime = 100
     }
 
     override fun onSizeChanged(w: Int, h: Int, oldw: Int, oldh: Int) {
@@ -34,7 +34,7 @@ open class BaseFrameLayer : BaseLayer() {
         val deleteList = mutableListOf<FrameBean>()
         for (frame in frameList) {
             frame.parentRect.set(layerRect)
-            frame.draw(canvas) {
+            frame.draw(canvas, gameStartTime, lastRenderTime, nowRenderTime) {
                 deleteList.add(frame)
             }
         }
@@ -44,7 +44,7 @@ open class BaseFrameLayer : BaseLayer() {
     override fun onDraw(canvas: Canvas, gameStartTime: Long, lastRenderTime: Long, nowRenderTime: Long) {
         super.onDraw(canvas, gameStartTime, lastRenderTime, nowRenderTime)
         for (frame in frameList) {
-            frame.onDraw(canvas)
+            frame.onDraw(canvas, gameStartTime, lastRenderTime, nowRenderTime)
         }
     }
 
@@ -62,12 +62,24 @@ open class FrameBean(val drawableArray: Array<Drawable> /*需要播放的帧动�
     /**是否循环播放*/
     var loop = true
 
+    /**每一帧绘制间隔时间*/
+    var frameDrawIntervalTime = 160
+    protected var lastFrameDrawTime = 0L
+
+    protected var drawPoint = Point(centerPoint)
+
     /*总共多少帧*/
     private val frameSize = drawableArray.size
     /*当前播放到多少帧*/
     private var frameIndex = 0
 
-    open fun draw(canvas: Canvas, onDrawEnd: () -> Unit) {
+    /*正在绘制的帧*/
+    protected val drawDrawable: Drawable
+        get() {
+            return drawableArray[frameIndex]
+        }
+
+    open fun draw(canvas: Canvas, gameStartTime: Long, lastRenderTime: Long, nowRenderTime: Long, onDrawEnd: () -> Unit) {
         if (frameIndex >= frameSize) {
             //播放结束
             if (loop) {
@@ -77,14 +89,17 @@ open class FrameBean(val drawableArray: Array<Drawable> /*需要播放的帧动�
             }
         }
         if (frameIndex < frameSize) {
-            drawableArray[frameIndex].let {
-                it.bounds = it.getBoundsWith(centerPoint, parentRect)
+            drawDrawable.let {
+                it.bounds = it.getBoundsWith(drawPoint, parentRect)
                 it.draw(canvas)
             }
         }
     }
 
-    open fun onDraw(canvas: Canvas) {
-        frameIndex++
+    open fun onDraw(canvas: Canvas, gameStartTime: Long, lastRenderTime: Long, nowRenderTime: Long) {
+        if (nowRenderTime - lastFrameDrawTime > frameDrawIntervalTime) {
+            frameIndex++
+            lastFrameDrawTime = nowRenderTime
+        }
     }
 }

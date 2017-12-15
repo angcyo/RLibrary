@@ -17,55 +17,44 @@ import com.angcyo.uiview.kotlin.getBoundsWith
  * 修改备注：
  * Version: 1.0.0
  */
-class BaseMoveLayer : BaseFrameLayer() {
+open class BaseMoveLayer : BaseFrameLayer() {
 
 }
 
-class MoveBean(val drawable: Drawable,
+class MoveBean(drawables: Array<Drawable>,
                val startPoint: Point /*开始的点*/,
-               val endPoint: Point /*结束的点*/) : FrameBean(arrayOf(drawable), startPoint) {
+               endPoint: Point /*结束的点*/) : FrameBean(drawables, startPoint) {
 
     val drawRect = Rect()
 
-    private var drawPoint = Point(startPoint)
-
     private var startDrawTime = 0L
+
+    /**起点移动到终点所需要的时间*/
+    var maxMoveTime: Int = 1000
 
     init {
         loop = true
-        drawable.let {
+        drawDrawable.let {
             drawRect.set(it.getBoundsWith(centerPoint, parentRect))
         }
     }
 
-    override fun draw(canvas: Canvas, onDrawEnd: () -> Unit) {
-        //super.draw(canvas, onDrawEnd)
+    override fun draw(canvas: Canvas, gameStartTime: Long, lastRenderTime: Long, nowRenderTime: Long, onDrawEnd: () -> Unit) {
         val nowTime = System.currentTimeMillis()
 
-        if (startDrawTime == 0L) {
-            startDrawTime = nowTime
-
-            drawable.let {
-                drawRect.set(it.getBoundsWith(drawPoint, parentRect))
-                it.bounds = drawRect
-                it.draw(canvas)
-            }
-        } else if (nowTime - startDrawTime > maxMoveTime) {
+        if (startDrawTime > 0L && nowTime - startDrawTime > maxMoveTime) {
             onDrawEnd.invoke()
         } else {
+            if (startDrawTime == 0L) {
+                startDrawTime = nowTime
+            }
+
             val time = nowTime - startDrawTime
             drawPoint.set(x(time.toInt()).toInt(), y(time.toInt()).toInt())
 
-            drawable.let {
-                drawRect.set(it.getBoundsWith(drawPoint, parentRect))
-                it.bounds = drawRect
-                it.draw(canvas)
-            }
+            super.draw(canvas, gameStartTime, lastRenderTime, nowRenderTime, onDrawEnd)
         }
     }
-
-    /*起点移动到终点所需要的时间*/
-    private val maxMoveTime: Int = 1000
 
     private val aX: Float = (endPoint.x - startPoint.x).toFloat() / (maxMoveTime * maxMoveTime)
     private val aY: Float = (endPoint.y - startPoint.y).toFloat() / (maxMoveTime * maxMoveTime)

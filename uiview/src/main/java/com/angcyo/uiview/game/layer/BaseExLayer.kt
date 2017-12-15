@@ -11,10 +11,6 @@ package com.angcyo.uiview.game.layer
  * 修改备注：
  * Version: 1.0.0
  */
-class BaseExLayer : BaseLayer() {
-
-}
-
-class FrameMoveBean {
+class BaseExLayer : BaseMoveLayer() {
 
 }
