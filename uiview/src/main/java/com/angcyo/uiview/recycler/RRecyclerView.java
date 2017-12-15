@@ -68,8 +68,11 @@ public class RRecyclerView extends RecyclerView {
      */
     protected boolean enableScroll = false;
     OnTouchListener mInterceptTouchListener;
+    OnFastTouchListener mOnFastTouchListener;
     OnFlingEndListener mOnFlingEndListener;
     boolean isAutoStart = false;
+    float fastDownX, fastDownY;
+    long fastDownTime = 0L;
     private OnScrollListener mScrollListener = new OnScrollListener() {
         @Override
         public void onScrollStateChanged(RecyclerView recyclerView, int newState) {
@@ -129,7 +132,6 @@ public class RRecyclerView extends RecyclerView {
     private int lastVisibleItemOffset = -1;
     private String widthHeightRatio;
     private boolean equWidth = false;
-
     private GestureDetector mGestureDetector = new GestureDetector(getContext(), new GestureDetector.SimpleOnGestureListener() {
         @Override
         public boolean onScroll(MotionEvent e1, MotionEvent e2, float distanceX, float distanceY) {
@@ -196,6 +198,8 @@ public class RRecyclerView extends RecyclerView {
         setEdgetEffect(mGlow, color);
     }
 
+    //-----------获取 默认的adapter, 获取 RBaseAdapter, 获取 AnimationAdapter----------//
+
     public static void setEdgetEffect(Object edgeEffectCompat, @ColorInt int color) {
         Object mEdgeEffect = Reflect.getMember(edgeEffectCompat, "mEdgeEffect");
         Object mPaint;
@@ -209,8 +213,6 @@ public class RRecyclerView extends RecyclerView {
             ((Paint) mPaint).setColor(color);
         }
     }
-
-    //-----------获取 默认的adapter, 获取 RBaseAdapter, 获取 AnimationAdapter----------//
 
     protected void initView(Context context) {
         String tag = (String) this.getTag();
@@ -273,6 +275,8 @@ public class RRecyclerView extends RecyclerView {
         }
     }
 
+    //----------------end--------------------//
+
     @Override
     protected void onSizeChanged(int w, int h, int oldw, int oldh) {
         super.onSizeChanged(w, h, oldw, oldh);
@@ -281,18 +285,16 @@ public class RRecyclerView extends RecyclerView {
         }
     }
 
-    //----------------end--------------------//
+//    @Override
+//    public RBaseAdapter getAdapter() {
+//        return (RBaseAdapter) super.getAdapter();
+//    }
 
     @Override
     public void setTag(Object tag) {
         super.setTag(tag);
         initView(getContext());
     }
-
-//    @Override
-//    public RBaseAdapter getAdapter() {
-//        return (RBaseAdapter) super.getAdapter();
-//    }
 
     @Override
     public void startLayoutAnimation() {
@@ -438,11 +440,30 @@ public class RRecyclerView extends RecyclerView {
         if (actionMasked == MotionEvent.ACTION_DOWN) {
             isFling = false;
 
+            fastDownX = ev.getX();
+            fastDownY = ev.getY();
+            fastDownTime = ev.getDownTime();
+
             if (enableScroll) {
                 stopAutoScroll();
             }
         } else if (actionMasked == MotionEvent.ACTION_UP ||
                 actionMasked == MotionEvent.ACTION_CANCEL) {
+
+            if (actionMasked == MotionEvent.ACTION_UP &&
+                    mOnFastTouchListener != null) {
+
+                long eventTime = ev.getEventTime();
+                int dv = 10;
+                if (eventTime - fastDownTime <= OnFastTouchListener.FAST_TIME) {
+                    float x = ev.getX();
+                    float y = ev.getY();
+                    if (Math.abs(x - fastDownX) <= dv && Math.abs(y - fastDownY) <= dv) {
+                        mOnFastTouchListener.onFastClick();
+                    }
+                }
+            }
+
             if (enableScroll) {
                 startAutoScroll();
             }
@@ -770,6 +791,11 @@ public class RRecyclerView extends RecyclerView {
         return !UI.canChildScrollDown(this);
     }
 
+
+    public void setOnFastTouchListener(OnFastTouchListener onFastTouchListener) {
+        mOnFastTouchListener = onFastTouchListener;
+    }
+
     /**
      * RecyclerView滚动结束后的回调
      */
@@ -778,5 +804,16 @@ public class RRecyclerView extends RecyclerView {
          * 突然滚动到顶部, 还剩余的滚动速率
          */
         void onScrollTopEnd(float currVelocity);
+    }
+
+
+    public interface OnFastTouchListener {
+
+        int FAST_TIME = 100;
+
+        /**
+         * 快速单击事件监听 (100毫秒内的DOWN UP)
+         */
+        void onFastClick();
     }
 }
