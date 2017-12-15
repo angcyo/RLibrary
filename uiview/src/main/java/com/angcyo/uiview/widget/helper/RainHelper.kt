@@ -103,7 +103,7 @@ class RainHelper(val rainAnimView: RainAnimView) {
                 if (maxY > 0) {
                     val fl = Math.abs(bean.getRect().top % maxY / maxY.toFloat())
 
-                    val dx = (bean.bezierHelpter!!.evaluate(fl) - bean.getRect().left).toInt()
+                    val dx = (bean.bezierHelper!!.evaluate(fl) - bean.getRect().left).toInt()
                     bean.offset(dx, 0)
                 }
 
@@ -205,7 +205,7 @@ class RainHelper(val rainAnimView: RainAnimView) {
                     val cp1: Float = if (left) (x + w4) else (x - w4)
                     val cp2: Float = if (left) (x - w4) else (x + w4)
 
-                    bezierHelpter = BezierHelper(x, x, cp1, cp2)
+                    bezierHelper = BezierHelper(x, x, cp1, cp2)
                 }
             })
             rainAddNum++
