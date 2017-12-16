@@ -95,6 +95,16 @@ open class FrameBean(val drawableArray: Array<Drawable> /*需要播放的帧动�
     /**X轴的旋转角度*/
     var rotateDegrees = 0f
 
+    /**缩放比率*/
+    var scaleX = 1f
+    var scaleY = 1f
+
+    /**首次渲染延时的时间*/
+    var delayDrawTime = 0L
+
+    /*用来控制延迟draw的变量*/
+    private var firstDrawTime = 0L
+
     protected var drawPoint = Point(centerPoint)
 
     /*总共多少帧*/
@@ -113,6 +123,15 @@ open class FrameBean(val drawableArray: Array<Drawable> /*需要播放的帧动�
         }
 
     override fun draw(canvas: Canvas, gameStartTime: Long, lastRenderTime: Long, nowRenderTime: Long, onDrawEnd: () -> Unit) {
+        if (delayDrawTime > 0) {
+            if (firstDrawTime == 0L) {
+                firstDrawTime = nowRenderTime
+                return
+            } else if ((nowRenderTime - firstDrawTime) < delayDrawTime) {
+                return
+            }
+        }
+
         if (frameIndex >= frameSize) {
             //播放结束
             if (loop) {
@@ -122,11 +141,13 @@ open class FrameBean(val drawableArray: Array<Drawable> /*需要播放的帧动�
             }
         }
         if (frameIndex < frameSize) {
+
             canvas.save()
             canvas.translate(drawPoint.x.toFloat(), drawPoint.y.toFloat())
             canvas.rotate(rotateDegrees)
+            canvas.scale(scaleX, scaleY)
             drawDrawable.let {
-                it.bounds = getDrawDrawableBounds(it)
+                it.setBounds(-it.intrinsicWidth / 2, -it.intrinsicHeight / 2, it.intrinsicWidth / 2, it.intrinsicHeight / 2)
                 it.draw(canvas)
             }
             canvas.restore()
