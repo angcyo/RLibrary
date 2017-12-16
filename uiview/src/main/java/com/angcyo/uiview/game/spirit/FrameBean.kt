@@ -60,6 +60,7 @@ open class FrameBean(val drawableArray: Array<Drawable> /*需要播放的帧动�
     open fun getDrawPointFun(): Point = drawPoint
 
     override fun draw(canvas: Canvas, gameStartTime: Long, lastRenderTime: Long, nowRenderTime: Long, onDrawEnd: (() -> Unit)?) {
+        super.draw(canvas, gameStartTime, lastRenderTime, nowRenderTime, onDrawEnd)
         if (delayDrawTime > 0) {
             if (firstDrawTime == 0L) {
                 firstDrawTime = nowRenderTime
@@ -98,8 +99,8 @@ open class FrameBean(val drawableArray: Array<Drawable> /*需要播放的帧动�
     }
 
     /**帧的间隔绘制方法*/
-    override fun onFrameDrawInterval(canvas: Canvas, gameStartTime: Long, lastRenderTime: Long, nowRenderTime: Long) {
-        super.onFrameDrawInterval(canvas, gameStartTime, lastRenderTime, nowRenderTime)
+    override fun onFrameOnDrawInterval(canvas: Canvas, gameStartTime: Long, lastRenderTime: Long, nowRenderTime: Long) {
+        super.onFrameOnDrawInterval(canvas, gameStartTime, lastRenderTime, nowRenderTime)
         frameIndex++
     }
 

@@ -17,8 +17,13 @@ import java.util.*
  */
 open class BaseLayerBean {
 
-    /**每一帧绘制间隔时间*/
+    /**
+     *  每一帧绘制间隔时间
+     *  注意: 此间隔 是在 BaseLayer drawIntervalTime = 0 作用下的
+     *  */
     var frameDrawIntervalTime = 0L
+
+    protected var lastFrameOnDrawTime = 0L
     protected var lastFrameDrawTime = 0L
 
     /**Layer的显示区域范围*/
@@ -28,14 +33,24 @@ open class BaseLayerBean {
         Random(System.nanoTime())
     }
 
+    /**此回调一定是60帧速率*/
     open fun draw(canvas: Canvas, gameStartTime: Long, lastRenderTime: Long, nowRenderTime: Long, onDrawEnd: (() -> Unit)? = null) {
-    }
-
-    open fun onDraw(canvas: Canvas, gameStartTime: Long, lastRenderTime: Long, nowRenderTime: Long) {
         if (nowRenderTime - lastFrameDrawTime > frameDrawIntervalTime) {
             lastFrameDrawTime = nowRenderTime
             onFrameDrawInterval(canvas, gameStartTime, lastRenderTime, nowRenderTime)
         }
+    }
+
+    /**此回调会收到BaseLayer drawIntervalTime 的影响*/
+    open fun onDraw(canvas: Canvas, gameStartTime: Long, lastRenderTime: Long, nowRenderTime: Long) {
+        if (nowRenderTime - lastFrameOnDrawTime > frameDrawIntervalTime) {
+            lastFrameOnDrawTime = nowRenderTime
+            onFrameOnDrawInterval(canvas, gameStartTime, lastRenderTime, nowRenderTime)
+        }
+    }
+
+    open fun onFrameOnDrawInterval(canvas: Canvas, gameStartTime: Long, lastRenderTime: Long, nowRenderTime: Long) {
+
     }
 
     open fun onFrameDrawInterval(canvas: Canvas, gameStartTime: Long, lastRenderTime: Long, nowRenderTime: Long) {

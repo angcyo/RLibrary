@@ -233,12 +233,12 @@ abstract class BaseTouchLayer : BaseExLayer() {
     }
 
     /*随机产生x轴*/
-    private fun randomX(sw: Int, w: Int): Int {
+    open protected fun randomX(sw: Int, w: Int): Int {
         return (random.nextFloat() * (sw - w)).toInt()
     }
 
     /*随机产生y轴*/
-    private fun randomY(h: Int): Int {
+    open protected fun randomY(h: Int): Int {
         return (random.nextFloat() * h).toInt()
     }
 
@@ -282,11 +282,26 @@ open class TouchSpiritBean(drawableArray: Array<Drawable>) : FrameBean(drawableA
 
     fun getRect() = rect
 
+    init {
+        loopDrawFrame = true
+        frameDrawIntervalTime = 100
+    }
+
     override fun getDrawDrawableBounds(drawable: Drawable): Rect {
         return rect
     }
 
     override fun getDrawPointFun(): Point {
         return Point(rect.centerX(), rect.centerY())
+    }
+
+    /**之前的帧率, 是在BaseLayer的帧率下, 计算的帧率. 现在废弃, 直接在*/
+    override fun onFrameOnDrawInterval(canvas: Canvas, gameStartTime: Long, lastRenderTime: Long, nowRenderTime: Long) {
+        //super.onFrameDrawInterval(canvas, gameStartTime, lastRenderTime, nowRenderTime)
+    }
+
+    override fun onFrameDrawInterval(canvas: Canvas, gameStartTime: Long, lastRenderTime: Long, nowRenderTime: Long) {
+        super.onFrameDrawInterval(canvas, gameStartTime, lastRenderTime, nowRenderTime)
+        frameIndex++
     }
 }

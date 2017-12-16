@@ -28,9 +28,9 @@ class ScaleRandomPointBean(val scaleArray: Array<Float> /*缩放比例数组*/,
         delayDrawTime = (random.nextInt(10) * 100).toLong()
     }
 
-    override fun onFrameDrawInterval(canvas: Canvas, gameStartTime: Long, lastRenderTime: Long, nowRenderTime: Long) {
+    override fun onFrameOnDrawInterval(canvas: Canvas, gameStartTime: Long, lastRenderTime: Long, nowRenderTime: Long) {
         scaleX = scaleArray[frameIndex.maxValue(frameSize - 1)]
         scaleY = scaleArray[frameIndex.maxValue(frameSize - 1)]
-        super.onFrameDrawInterval(canvas, gameStartTime, lastRenderTime, nowRenderTime)
+        super.onFrameOnDrawInterval(canvas, gameStartTime, lastRenderTime, nowRenderTime)
     }
 }
