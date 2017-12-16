@@ -56,6 +56,7 @@ open class FrameBean(val drawableArray: Array<Drawable> /*需要播放的帧动�
             return drawableArray[frameIndex]
         }
 
+    /**当前绘制的中心点坐标*/
     open fun getDrawPointFun(): Point = drawPoint
 
     override fun draw(canvas: Canvas, gameStartTime: Long, lastRenderTime: Long, nowRenderTime: Long, onDrawEnd: (() -> Unit)?) {
@@ -91,6 +92,7 @@ open class FrameBean(val drawableArray: Array<Drawable> /*需要播放的帧动�
     }
 
     /**每一帧的bounds*/
+    @Deprecated("请用 getDrawPointFun 代替")
     open fun getDrawDrawableBounds(drawable: Drawable): Rect {
         return drawable.getBoundsWith(drawPoint, parentRect)
     }

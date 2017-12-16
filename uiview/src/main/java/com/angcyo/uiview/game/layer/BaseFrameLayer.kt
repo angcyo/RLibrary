@@ -21,7 +21,7 @@ import java.util.*
  */
 open class BaseFrameLayer : BaseLayer() {
 
-    private val frameList = mutableListOf<BaseLayerBean>()
+    protected val frameList = mutableListOf<BaseLayerBean>()
 
     init {
         //drawIntervalTime = 100
@@ -50,7 +50,7 @@ open class BaseFrameLayer : BaseLayer() {
         }
     }
 
-    fun addFrameBean(frameBean: BaseLayerBean) {
+    open fun addFrameBean(frameBean: BaseLayerBean) {
         frameList.add(frameBean)
     }
 }

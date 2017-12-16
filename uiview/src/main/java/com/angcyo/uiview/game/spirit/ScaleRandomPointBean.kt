@@ -24,7 +24,7 @@ class ScaleRandomPointBean(val scaleArray: Array<Float> /*缩放比例数组*/,
 
     init {
         frameSize = scaleArray.size
-        frameDrawIntervalTime = 60L /*30帧速率切换*/
+        frameDrawIntervalTime = 100L /*30帧速率切换*/
         delayDrawTime = (random.nextInt(10) * 100).toLong()
     }
 

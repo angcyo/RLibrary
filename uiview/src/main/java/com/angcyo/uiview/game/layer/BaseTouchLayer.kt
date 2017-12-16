@@ -8,11 +8,12 @@ import android.graphics.drawable.Drawable
 import android.support.v4.content.ContextCompat
 import android.view.MotionEvent
 import com.angcyo.library.utils.L
+import com.angcyo.uiview.RApplication
 import com.angcyo.uiview.game.GameRenderView
+import com.angcyo.uiview.game.spirit.BaseLayerBean
 import com.angcyo.uiview.game.spirit.FrameBean
 import com.angcyo.uiview.helper.BezierHelper
-import com.angcyo.uiview.widget.RainBean
-import com.angcyo.uiview.widget.helper.RainHelper
+import com.angcyo.uiview.utils.ScreenUtil
 
 /**
  * Copyright (C) 2016,深圳市红鸟网络科技股份有限公司 All rights reserved.
@@ -32,6 +33,9 @@ abstract class BaseTouchLayer : BaseExLayer() {
     /**每次新增精灵的数量*/
     var addSpiritNum = 5
 
+    /**需要绘制多少个贝塞尔曲线周期*/
+    var bezierPart = 0.3F
+
     /**每次新增 时间间隔*/
     var spiritAddInterval = 700L
         set(value) {
@@ -43,7 +47,7 @@ abstract class BaseTouchLayer : BaseExLayer() {
     var maxSpiritNum = 100
 
     /*精灵列表*/
-    private val spiritList = mutableListOf<TouchSpiritBean>()
+    private val spiritList = frameList
 
     /**精灵点击事件*/
     var onClickSpiritListener: OnClickSpiritListener? = null
@@ -55,7 +59,10 @@ abstract class BaseTouchLayer : BaseExLayer() {
     var touchUpSpiritNum = 0
 
     /**是否结束添加*/
-    private var isSpiritAddEnd = false
+    protected var isSpiritAddEnd = false
+
+    /**是否需要检查Touch事件*/
+    protected var checkTouchEvent = true
 
     init {
         drawIntervalTime = spiritAddInterval
@@ -87,11 +94,6 @@ abstract class BaseTouchLayer : BaseExLayer() {
         super.draw(canvas, gameStartTime, lastRenderTime, nowRenderTime)
 
         updateSpiritList()
-        spiritList?.let {
-            for (bean in it) {
-                bean.draw(canvas, gameStartTime, lastRenderTime, nowRenderTime)
-            }
-        }
     }
 
     override fun onDraw(canvas: Canvas, gameStartTime: Long, lastRenderTime: Long, nowRenderTime: Long) {
@@ -99,7 +101,7 @@ abstract class BaseTouchLayer : BaseExLayer() {
         checkAddNewSpirit()
     }
 
-    lateinit var gameRenderView: GameRenderView
+    var gameRenderView: GameRenderView? = null
     override fun onRenderStart(gameRenderView: GameRenderView) {
         super.onRenderStart(gameRenderView)
         this.gameRenderView = gameRenderView
@@ -111,10 +113,13 @@ abstract class BaseTouchLayer : BaseExLayer() {
     }
 
     override fun onTouchEvent(event: MotionEvent, point: PointF): Boolean {
+        if (!checkTouchEvent) {
+            return super.onTouchEvent(event, point)
+        }
         if (isSpiritAddEnd) {
             return super.onTouchEvent(event, point)
         }
-        if (!spiritList?.isEmpty()) {
+        if (!spiritList.isEmpty()) {
             return checkTouchListener(point.x.toInt(), point.y.toInt())
         }
         return super.onTouchEvent(event, point)
@@ -123,7 +128,7 @@ abstract class BaseTouchLayer : BaseExLayer() {
     protected fun checkTouchListener(x: Int, y: Int): Boolean {
         var isIn = false
         for (i in spiritList.size - 1 downTo 0) {
-            val rainBean = spiritList[i]
+            val rainBean: TouchSpiritBean = spiritList[i] as TouchSpiritBean
             //L.w("check", "${rainBean.getRect()} $x $y ${rainBean.isIn(x, y)}")
             if (rainBean.isIn(x, y)) {
                 touchUpSpiritNum++
@@ -155,11 +160,12 @@ abstract class BaseTouchLayer : BaseExLayer() {
     /**更新精灵配置*/
     protected fun updateSpiritList() {
         val removeList = mutableListOf<TouchSpiritBean>()
-        for (bean in spiritList) {
+        for (b in spiritList) {
+            val bean: TouchSpiritBean = b as TouchSpiritBean
             bean.offset(0, (bean.stepY /*ScreenUtil.density*/).toInt())
 
             if (bean.useBezier) {
-                val maxY = gameRenderView.measuredHeight / 5 /*分成5份, 循环5次曲线*/
+                val maxY = gameRenderView!!.measuredHeight / bezierPart /*分成5份, 循环5次曲线*/
                 if (maxY > 0) {
                     val fl = Math.abs(bean.getRect().top % maxY / maxY.toFloat())
 
@@ -170,7 +176,7 @@ abstract class BaseTouchLayer : BaseExLayer() {
                 //L.e("call: updateRainList -> fl:$fl dx:$dx")
             }
 
-            if (bean.getTop() > gameRenderView.measuredHeight) {
+            if (bean.getTop() > gameRenderView!!.measuredHeight) {
                 //移动到屏幕外了,需要移除
                 removeList.add(bean)
             }
@@ -182,47 +188,70 @@ abstract class BaseTouchLayer : BaseExLayer() {
     protected fun addNewRainInner(num: Int) {
         //L.e(TAG, "call: addNewRainInner -> $num")
         for (i in 0 until num) {
-            spiritList.add(onAddNewSpirit() /*TouchSpiritBean().apply {
-                if (rainResId != -1) {
-                    val randomStepY = rainStepY + random.nextInt(5)
-                    if (randomStep) {
-                        stepY = randomStepY
-                    } else {
-                        stepY = rainStepY
-                    }
-
-                    rainDrawable = ContextCompat.getDrawable(gameRenderView.context, rainResId)
-                    val intrinsicWidth = rainDrawable!!.intrinsicWidth
-                    val intrinsicHeight = rainDrawable!!.intrinsicHeight
-
-                    val w2 = gameRenderView.measuredWidth / 2
-                    val w4 = w2 / 2
-
-                    val randomX = if (useBezier) randomX(gameRenderView, w4 - intrinsicWidth) else randomX(gameRenderView, intrinsicWidth)
-                    val randomY = randomY(-intrinsicHeight)
-                    setRect(randomX, randomY, intrinsicWidth, intrinsicHeight)
-
-                    val x = (randomX + intrinsicWidth).toFloat()
-                    val left = randomStepY % 2 == 0
-
-                    val cp1: Float = if (left) (x + w4) else (x - w4)
-                    val cp2: Float = if (left) (x - w4) else (x + w4)
-
-                    bezierHelper = BezierHelper(x, x, cp1, cp2)
-                }
-            }*/)
+            spiritList.add(onAddNewSpirit())
             spiritAddNumEd++
         }
     }
 
+    fun getDrawable(id: Int): Drawable {
+        return if (gameRenderView == null) {
+            ContextCompat.getDrawable(RApplication.getApp(), id)
+        } else {
+            ContextCompat.getDrawable(gameRenderView!!.context, id)
+        }
+    }
+
     abstract fun onAddNewSpirit(): TouchSpiritBean
+
+    /**基础配置*/
+    protected fun initSpirit(spiritBean: TouchSpiritBean) {
+        val randomStepY = spiritBean.stepY + random.nextInt(5)
+        if (spiritBean.randomStep) {
+            spiritBean.stepY = randomStepY
+        }
+
+        val sw = if (gameRenderView!!.measuredWidth == 0) ScreenUtil.screenWidth else gameRenderView!!.measuredWidth
+
+        val drawable = spiritBean.drawableArray[0]
+        val intrinsicWidth = drawable.intrinsicWidth
+        val intrinsicHeight = drawable.intrinsicHeight
+
+        val w2 = sw / 2
+        val w4 = w2 / 2
+
+        val randomX = if (spiritBean.useBezier) randomX(sw, w4 - intrinsicWidth) else randomX(sw, intrinsicWidth)
+        val randomY = randomY(-intrinsicHeight)
+        spiritBean.setRect(randomX, randomY, intrinsicWidth, intrinsicHeight)
+
+        val x = (randomX + intrinsicWidth).toFloat()
+        val left = randomStepY % 2 == 0
+
+        val cp1: Float = if (left) (x + w4) else (x - w4)
+        val cp2: Float = if (left) (x - w4) else (x + w4)
+
+        spiritBean.bezierHelper = BezierHelper(x, x, cp1, cp2)
+    }
+
+    /*随机产生x轴*/
+    private fun randomX(sw: Int, w: Int): Int {
+        return (random.nextFloat() * (sw - w)).toInt()
+    }
+
+    /*随机产生y轴*/
+    private fun randomY(h: Int): Int {
+        return (random.nextFloat() * h).toInt()
+    }
+
+    override fun addFrameBean(frameBean: BaseLayerBean) {
+        //super.addFrameBean(frameBean)
+    }
 }
 
 interface OnClickSpiritListener {
     fun onClickSpirit(baseTouchLayer: BaseTouchLayer, spiritBean: TouchSpiritBean)
 }
 
-class TouchSpiritBean(drawableArray: Array<Drawable>) : FrameBean(drawableArray, Point()) {
+open class TouchSpiritBean(drawableArray: Array<Drawable>) : FrameBean(drawableArray, Point()) {
     /**坐标位置*/
     private val rect = Rect()
 
@@ -234,10 +263,7 @@ class TouchSpiritBean(drawableArray: Array<Drawable>) : FrameBean(drawableArray,
     /**使用贝塞尔曲线*/
     var useBezier = true
 
-    /**默认下降Step*/
-    var rainStepY = 2 //px
-
-    /**每个Spirit下降的Step是否随机*/
+    /**随机step*/
     var randomStep = true
 
     fun setRect(x: Int, y: Int, w: Int, h: Int) {
@@ -258,5 +284,9 @@ class TouchSpiritBean(drawableArray: Array<Drawable>) : FrameBean(drawableArray,
 
     override fun getDrawDrawableBounds(drawable: Drawable): Rect {
         return rect
+    }
+
+    override fun getDrawPointFun(): Point {
+        return Point(rect.centerX(), rect.centerY())
     }
 }
