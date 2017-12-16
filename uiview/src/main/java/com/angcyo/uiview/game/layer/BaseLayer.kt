@@ -5,6 +5,7 @@ import android.graphics.PointF
 import android.graphics.Rect
 import android.view.MotionEvent
 import com.angcyo.uiview.game.GameRenderView
+import java.util.*
 
 /**
  * Copyright (C) 2016,深圳市红鸟网络科技股份有限公司 All rights reserved.
@@ -18,6 +19,10 @@ import com.angcyo.uiview.game.GameRenderView
  * Version: 1.0.0
  */
 open class BaseLayer {
+
+    protected val random: Random by lazy {
+        Random(System.nanoTime())
+    }
 
     /**层, 在游戏View中的坐标区域*/
     var layerRect = Rect()

@@ -11,6 +11,6 @@ package com.angcyo.uiview.game.layer
  * 修改备注：
  * Version: 1.0.0
  */
-class BaseExLayer : BaseMoveLayer() {
+open class BaseExLayer : BaseMoveLayer() {
 
 }
