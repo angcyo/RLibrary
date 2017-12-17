@@ -46,6 +46,9 @@ open class FrameBean(val drawableArray: Array<Drawable> /*需要播放的帧动�
     /*循环的次数*/
     protected var loopCount = 0L
 
+    /**绘制结束的回调*/
+    var onDrawEndFun: ((Point) -> Unit)? = null
+
     init {
         frameDrawIntervalTime = 160L
     }
@@ -70,18 +73,18 @@ open class FrameBean(val drawableArray: Array<Drawable> /*需要播放的帧动�
             }
         }
 
+        val dp = getDrawPointFun()
         if (frameIndex >= frameSize) {
             //播放结束
             if (loopDrawFrame) {
                 onLoopFrame()
             } else {
-                onFrameEnd(onDrawEnd)
+                onFrameEnd(dp, onDrawEnd)
             }
         }
         if (frameIndex < frameSize) {
-
             canvas.save()
-            canvas.translate(getDrawPointFun().x.toFloat(), getDrawPointFun().y.toFloat())
+            canvas.translate(dp.x.toFloat(), dp.y.toFloat())
             canvas.rotate(rotateDegrees)
             canvas.scale(scaleX, scaleY)
             drawDrawable.let {
@@ -111,7 +114,8 @@ open class FrameBean(val drawableArray: Array<Drawable> /*需要播放的帧动�
     }
 
     /**所有帧播放结束*/
-    open fun onFrameEnd(onDrawEnd: (() -> Unit)? = null) {
+    open fun onFrameEnd(drawPoint: Point, onDrawEnd: (() -> Unit)? = null) {
+        onDrawEndFun?.invoke(drawPoint)
         onDrawEnd?.invoke()
     }
 }

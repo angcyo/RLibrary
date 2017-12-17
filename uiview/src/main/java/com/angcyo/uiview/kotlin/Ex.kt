@@ -1,6 +1,7 @@
 package com.angcyo.uiview.kotlin
 
 import android.graphics.Paint
+import android.graphics.Rect
 import android.text.TextUtils
 import android.view.View
 import com.angcyo.uiview.view.UIIViewImpl
@@ -51,3 +52,14 @@ public fun Float.maxValue(value: Float) = Math.min(value, this)
 public fun Int.maxValue(value: Int) = Math.min(value, this)
 
 public fun String.int() = if ((TextUtils.isEmpty(this) || "null".equals(this, true))) 0 else this.toInt()
+
+public fun Rect.scale(scaleX: Float, scaleY: Float) {
+    if (scaleX != 1.0f) {
+        left = (left * scaleX + 0.5f).toInt()
+        right = (right * scaleX + 0.5f).toInt()
+    }
+    if (scaleY != 1.0f) {
+        top = (top * scaleY + 0.5f).toInt()
+        bottom = (bottom * scaleY + 0.5f).toInt()
+    }
+}
