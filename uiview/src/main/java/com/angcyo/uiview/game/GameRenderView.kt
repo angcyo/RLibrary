@@ -15,6 +15,8 @@ import android.view.animation.LinearInterpolator
 import com.angcyo.uiview.game.layer.BaseLayer
 import com.angcyo.uiview.kotlin.density
 import com.angcyo.uiview.resources.RAnimListener
+import java.lang.Thread.NORM_PRIORITY
+import java.util.concurrent.CopyOnWriteArrayList
 
 /**
  * Copyright (C) 2016,深圳市红鸟网络科技股份有限公司 All rights reserved.
@@ -28,7 +30,7 @@ import com.angcyo.uiview.resources.RAnimListener
  * Version: 1.0.0
  */
 class GameRenderView(context: Context, attributeSet: AttributeSet? = null) : View(context, attributeSet) {
-    val layerList = mutableListOf<BaseLayer>()
+    val layerList = CopyOnWriteArrayList<BaseLayer>()
 
     /**onDetachedFromWindow*/
     var isGameViewDetached = true
@@ -112,6 +114,7 @@ class GameRenderView(context: Context, attributeSet: AttributeSet? = null) : Vie
     private fun time(): Long = System.currentTimeMillis()
 
     private var lastRenderTime = 0L
+    private var lastRenderTimeThread = 0L
     override fun onDraw(canvas: Canvas) {
         super.onDraw(canvas)
         val nowTime = time()
@@ -183,6 +186,8 @@ class GameRenderView(context: Context, attributeSet: AttributeSet? = null) : Vie
         for (i in 0 until layerList.size) {
             layerList[i].onRenderStart(this)
         }
+
+        renderThread.start()
     }
 
     /**结束渲染*/
@@ -196,5 +201,24 @@ class GameRenderView(context: Context, attributeSet: AttributeSet? = null) : Vie
                 layerList[i].onRenderEnd(this)
             }
         }
+    }
+
+    /**子线程用来计算游戏数据*/
+    private val renderThread: Thread = Thread {
+        while (isGameRenderStart) {
+            try {
+                val nowTime = time()
+                for (i in 0 until layerList.size) {
+                    layerList[i].drawThread(gameRenderStartTime, lastRenderTimeThread, nowTime)
+                }
+                Thread.sleep(16) //60帧回调一次
+
+                lastRenderTimeThread = nowTime
+            } catch (e: Exception) {
+            }
+        }
+    }.apply {
+        name = "GameRenderThread"
+        priority = NORM_PRIORITY
     }
 }

@@ -24,7 +24,9 @@ open class BaseLayerBean {
     var frameDrawIntervalTime = 0L
 
     protected var lastFrameOnDrawTime = 0L
+    protected var lastFrameOnDrawTimeThread = 0L
     protected var lastFrameDrawTime = 0L
+    protected var lastFrameDrawTimeThread = 0L
 
     /**Layer的显示区域范围*/
     var parentRect = Rect()
@@ -54,6 +56,32 @@ open class BaseLayerBean {
     }
 
     open fun onFrameDrawInterval(canvas: Canvas, gameStartTime: Long, lastRenderTime: Long, nowRenderTime: Long) {
+
+    }
+
+    /**子线程执行*/
+    open fun drawThread(gameStartTime: Long, lastRenderTimeThread: Long, nowRenderTime: Long) {
+        if (nowRenderTime - lastFrameDrawTimeThread > frameDrawIntervalTime) {
+            lastFrameDrawTimeThread = nowRenderTime
+            onFrameDrawIntervalThread(gameStartTime, lastRenderTimeThread, nowRenderTime)
+        }
+    }
+
+    /**子线程执行*/
+    open fun onDrawThread(gameStartTime: Long, lastRenderTimeThread: Long, nowRenderTime: Long) {
+        if (nowRenderTime - lastFrameOnDrawTimeThread > frameDrawIntervalTime) {
+            lastFrameOnDrawTimeThread = nowRenderTime
+            onFrameOnDrawIntervalThread(gameStartTime, lastRenderTimeThread, nowRenderTime)
+        }
+    }
+
+    /**子线程执行*/
+    open fun onFrameOnDrawIntervalThread(gameStartTime: Long, lastRenderTimeThread: Long, nowRenderTime: Long) {
+
+    }
+
+    /**子线程执行*/
+    open fun onFrameDrawIntervalThread(gameStartTime: Long, lastRenderTimeThread: Long, nowRenderTime: Long) {
 
     }
 }

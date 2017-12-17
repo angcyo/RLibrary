@@ -15,6 +15,7 @@ import com.angcyo.uiview.game.spirit.FrameBean
 import com.angcyo.uiview.helper.BezierHelper
 import com.angcyo.uiview.kotlin.scale
 import com.angcyo.uiview.utils.ScreenUtil
+import com.angcyo.uiview.utils.ThreadExecutor
 
 /**
  * Copyright (C) 2016,深圳市红鸟网络科技股份有限公司 All rights reserved.
@@ -94,14 +95,25 @@ abstract class BaseTouchLayer : BaseExLayer() {
         if (isSpiritAddEnd) {
             return
         }
-
         super.draw(canvas, gameStartTime, lastRenderTime, nowRenderTime)
+        //updateSpiritList()
+    }
 
+    override fun drawThread(gameStartTime: Long, lastRenderTimeThread: Long, nowRenderTime: Long) {
+        if (isSpiritAddEnd) {
+            return
+        }
+        super.drawThread(gameStartTime, lastRenderTimeThread, nowRenderTime)
         updateSpiritList()
     }
 
     override fun onDraw(canvas: Canvas, gameStartTime: Long, lastRenderTime: Long, nowRenderTime: Long) {
         super.onDraw(canvas, gameStartTime, lastRenderTime, nowRenderTime)
+        //checkAddNewSpirit()
+    }
+
+    override fun onDrawThread(gameStartTime: Long, lastRenderTimeThread: Long, nowRenderTime: Long) {
+        super.onDrawThread(gameStartTime, lastRenderTimeThread, nowRenderTime)
         checkAddNewSpirit()
     }
 
@@ -113,7 +125,9 @@ abstract class BaseTouchLayer : BaseExLayer() {
 
     /**移除Spirit*/
     fun removeSpirit(bean: TouchSpiritBean) {
-        spiritList.remove(bean)
+        synchronized(lock) {
+            spiritList.remove(bean)
+        }
     }
 
     override fun onTouchEvent(event: MotionEvent, point: PointF): Boolean {
@@ -154,7 +168,9 @@ abstract class BaseTouchLayer : BaseExLayer() {
             //所有Rain 添加完毕
             if (spiritList.isEmpty()) {
                 //所有Rain, 移除了屏幕
-                endSpirit()
+                ThreadExecutor.instance().onMain {
+                    endSpirit()
+                }
             }
         } else if (spiritAddNumEd + addSpiritNum > maxSpiritNum) {
             //达到最大
@@ -191,20 +207,26 @@ abstract class BaseTouchLayer : BaseExLayer() {
 
             val top = bean.getTop()
             //L.w("call: updateSpiritList2 -> index:${bean.updateIndex} startY:${bean.startY} top:$top")
-            if (top > gameRenderView!!.measuredHeight) {
-                //移动到屏幕外了,需要移除
-                removeList.add(bean)
+            synchronized(lock) {
+                if (top > gameRenderView!!.measuredHeight) {
+                    //移动到屏幕外了,需要移除
+                    removeList.add(bean)
+                }
             }
         }
-        spiritList.removeAll(removeList)
+        synchronized(lock) {
+            spiritList.removeAll(removeList)
+        }
     }
 
     //添加精灵
     protected fun addNewRainInner(num: Int) {
         //L.e(TAG, "call: addNewRainInner -> $num")
-        for (i in 0 until num) {
-            spiritList.add(onAddNewSpirit())
-            spiritAddNumEd++
+        synchronized(lock) {
+            for (i in 0 until num) {
+                spiritList.add(onAddNewSpirit())
+                spiritAddNumEd++
+            }
         }
     }
 

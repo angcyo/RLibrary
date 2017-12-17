@@ -29,6 +29,7 @@ open class BaseLayer {
 
     /**最后一次有效个绘制时间,用来控制绘制速度*/
     var lastValidDrawTime = 0L
+    var lastValidDrawTimeThread = 0L
 
     /**绘制帧之间的间隔小时, 默认是60帧的速率绘制, 也就是16毫秒 (控制的是所有在上面绘制元素的速率)*/
     var drawIntervalTime = 0L
@@ -62,6 +63,19 @@ open class BaseLayer {
 
     /**开始渲染的回调*/
     open fun onRenderStart(gameRenderView: GameRenderView) {
+
+    }
+
+    /**子线程执行*/
+    open fun drawThread(gameStartTime: Long /*最开始渲染的时间*/, lastRenderTimeThread: Long /*上一次渲染的时间*/, nowRenderTime: Long /*现在渲染的时间*/) {
+        if (nowRenderTime - lastValidDrawTimeThread > drawIntervalTime) {
+            onDrawThread(gameStartTime, lastRenderTimeThread, nowRenderTime)
+            lastValidDrawTimeThread = nowRenderTime
+        }
+    }
+
+    /**子线程执行*/
+    open fun onDrawThread(gameStartTime: Long, lastRenderTimeThread: Long, nowRenderTime: Long) {
 
     }
 }

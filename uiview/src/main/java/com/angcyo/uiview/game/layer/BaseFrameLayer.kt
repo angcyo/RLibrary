@@ -1,12 +1,8 @@
 package com.angcyo.uiview.game.layer
 
 import android.graphics.Canvas
-import android.graphics.Point
-import android.graphics.Rect
-import android.graphics.drawable.Drawable
 import com.angcyo.uiview.game.spirit.BaseLayerBean
-import com.angcyo.uiview.kotlin.getBoundsWith
-import java.util.*
+import java.util.concurrent.CopyOnWriteArrayList
 
 /**
  * Copyright (C) 2016,深圳市红鸟网络科技股份有限公司 All rights reserved.
@@ -21,7 +17,8 @@ import java.util.*
  */
 open class BaseFrameLayer : BaseLayer() {
 
-    protected val frameList = mutableListOf<BaseLayerBean>()
+    protected val frameList = CopyOnWriteArrayList<BaseLayerBean>()
+    protected val lock = Object()
 
     init {
         //drawIntervalTime = 100
@@ -34,24 +31,48 @@ open class BaseFrameLayer : BaseLayer() {
     override fun draw(canvas: Canvas, gameStartTime: Long, lastRenderTime: Long, nowRenderTime: Long) {
         super.draw(canvas, gameStartTime, lastRenderTime, nowRenderTime)
         val deleteList = mutableListOf<BaseLayerBean>()
-        for (frame in frameList) {
-            frame.parentRect.set(layerRect)
-            frame.draw(canvas, gameStartTime, lastRenderTime, nowRenderTime) {
-                deleteList.add(frame)
+        synchronized(lock) {
+            for (frame in frameList) {
+                frame.parentRect.set(layerRect)
+                frame.draw(canvas, gameStartTime, lastRenderTime, nowRenderTime) {
+                    deleteList.add(frame)
+                }
             }
+            frameList.removeAll(deleteList)
         }
-        frameList.removeAll(deleteList)
     }
 
     override fun onDraw(canvas: Canvas, gameStartTime: Long, lastRenderTime: Long, nowRenderTime: Long) {
         super.onDraw(canvas, gameStartTime, lastRenderTime, nowRenderTime)
-        for (frame in frameList) {
-            frame.onDraw(canvas, gameStartTime, lastRenderTime, nowRenderTime)
+        synchronized(lock) {
+            for (frame in frameList) {
+                frame.onDraw(canvas, gameStartTime, lastRenderTime, nowRenderTime)
+            }
         }
     }
 
     open fun addFrameBean(frameBean: BaseLayerBean) {
-        frameList.add(frameBean)
+        synchronized(lock) {
+            frameList.add(frameBean)
+        }
+    }
+
+    override fun drawThread(gameStartTime: Long, lastRenderTimeThread: Long, nowRenderTime: Long) {
+        super.drawThread(gameStartTime, lastRenderTimeThread, nowRenderTime)
+        synchronized(lock) {
+            for (frame in frameList) {
+                frame.drawThread(gameStartTime, lastRenderTimeThread, nowRenderTime)
+            }
+        }
+    }
+
+    override fun onDrawThread(gameStartTime: Long, lastRenderTimeThread: Long, nowRenderTime: Long) {
+        super.onDrawThread(gameStartTime, lastRenderTimeThread, nowRenderTime)
+        synchronized(lock) {
+            for (frame in frameList) {
+                frame.onDrawThread(gameStartTime, lastRenderTimeThread, nowRenderTime)
+            }
+        }
     }
 }
 
