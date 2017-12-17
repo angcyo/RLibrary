@@ -34,7 +34,7 @@ abstract class BaseTouchLayer : BaseExLayer() {
     var addSpiritNum = 5
 
     /**需要绘制多少个贝塞尔曲线周期*/
-    var bezierPart = 0.3F
+    var bezierPart = 0.25F
 
     /**每次新增 时间间隔*/
     var spiritAddInterval = 700L
@@ -143,7 +143,7 @@ abstract class BaseTouchLayer : BaseExLayer() {
 
     /**检查是否需要添加新的精灵*/
     protected fun checkAddNewSpirit() {
-        if (addSpiritNum >= maxSpiritNum) {
+        if (spiritAddNumEd >= maxSpiritNum) {
             //所有Rain 添加完毕
             if (spiritList.isEmpty()) {
                 //所有Rain, 移除了屏幕
@@ -165,15 +165,17 @@ abstract class BaseTouchLayer : BaseExLayer() {
             bean.offset(0, (bean.stepY /*ScreenUtil.density*/).toInt())
 
             if (bean.useBezier) {
-                val maxY = gameRenderView!!.measuredHeight / bezierPart /*分成5份, 循环5次曲线*/
+                val maxY = (gameRenderView!!.measuredHeight - bean.startY) / bezierPart /*分成5份, 循环5次曲线*/
                 if (maxY > 0) {
-                    val fl = Math.abs(bean.getRect().top % maxY / maxY.toFloat())
+                    val fl = Math.abs((bean.getRect().top - bean.startY) % (maxY + 1) / maxY.toFloat())
 
                     val dx = (bean.bezierHelper!!.evaluate(fl) - bean.getRect().left).toInt()
-                    bean.offset(dx, 0)
+                    if (dx < bean.getRect().width()) {
+                        //控制位移的幅度, 防止漂移现象
+                        bean.offset(dx, 0)
+                    }
+                    //L.e("call: updateRainList -> fl:$fl dx:$dx ${bean.getRect()} $maxY")
                 }
-
-                //L.e("call: updateRainList -> fl:$fl dx:$dx")
             }
 
             if (bean.getTop() > gameRenderView!!.measuredHeight) {
@@ -219,22 +221,41 @@ abstract class BaseTouchLayer : BaseExLayer() {
         val w2 = sw / 2
         val w4 = w2 / 2
 
-        val randomX = if (spiritBean.useBezier) randomX(sw, w4 - intrinsicWidth) else randomX(sw, intrinsicWidth)
+        val excludeW = getExcludeWidth(spiritBean, intrinsicWidth)
+        val randomX = if (spiritBean.useBezier) randomX(sw, excludeW) else randomX(sw, excludeW) + excludeW / 2
         val randomY = randomY(-intrinsicHeight)
-        spiritBean.setRect(randomX, randomY, intrinsicWidth, intrinsicHeight)
 
-        val x = (randomX + intrinsicWidth).toFloat()
-        val left = randomStepY % 2 == 0
+        spiritBean.startX = randomX
+        spiritBean.startY = randomY
 
-        val cp1: Float = if (left) (x + w4) else (x - w4)
-        val cp2: Float = if (left) (x - w4) else (x + w4)
+        spiritBean.bezierHelper = createBezierHelper(randomX, randomY, intrinsicWidth, intrinsicHeight)
 
-        spiritBean.bezierHelper = BezierHelper(x, x, cp1, cp2)
+        var sx = randomX
+        var sy = randomY
+        if (spiritBean.useBezier) {
+            sx = spiritBean.bezierHelper!!.evaluate(0f).toInt()
+            //L.w("updateRainList randomX:$randomX $sx ${spiritBean.bezierHelper!!.evaluate(1f).toInt()}")
+        }
+        spiritBean.setRect(sx, sy, intrinsicWidth, intrinsicHeight)
+    }
+
+    open protected fun getExcludeWidth(spiritBean: TouchSpiritBean, intrinsicWidth: Int) = if (spiritBean.useBezier) 2 * intrinsicWidth else 2 * intrinsicWidth
+
+    open protected fun createBezierHelper(randomX: Int, randomY: Int, intrinsicWidth: Int, intrinsicHeight: Int): BezierHelper {
+        val randomStepY = random.nextInt(7)
+
+        val x: Float = randomX.toFloat()
+        val left = randomStepY % 2 == 0 //优先向左飘
+
+        val cp1: Float = if (left) (x - intrinsicWidth) else (x + intrinsicWidth)
+        val cp2: Float = if (left) (x + intrinsicWidth) else (x - intrinsicWidth)
+
+        return BezierHelper(x, x, cp1, cp2)
     }
 
     /*随机产生x轴*/
-    open protected fun randomX(sw: Int, w: Int): Int {
-        return (random.nextFloat() * (sw - w)).toInt()
+    open protected fun randomX(sw: Int, exclude: Int): Int {
+        return (random.nextFloat() * (sw - exclude)).toInt()
     }
 
     /*随机产生y轴*/
@@ -265,6 +286,10 @@ open class TouchSpiritBean(drawableArray: Array<Drawable>) : FrameBean(drawableA
 
     /**随机step*/
     var randomStep = true
+
+    /*开始的坐标, 计算出来的值, 无需手动赋值*/
+    var startX = 0
+    var startY = 0
 
     fun setRect(x: Int, y: Int, w: Int, h: Int) {
         rect.set(x, y, x + w, y + h)
