@@ -11,6 +11,7 @@ package com.angcyo.uiview.game.layer
  * 修改备注：
  * Version: 1.0.0
  */
+@Deprecated("多余的")
 open class BaseExLayer : BaseMoveLayer() {
 
 }

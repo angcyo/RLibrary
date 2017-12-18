@@ -91,6 +91,11 @@ abstract class BaseTouchLayer : BaseExLayer() {
         //listener?.onRainEnd(addNum, showNum, maxNum, touchUpNum)
     }
 
+    /**当屏幕上的Spirit滚动出屏之后, 再结束*/
+    fun delayEndSpirit() {
+        spiritAddNumEd = maxSpiritNum
+    }
+
     override fun draw(canvas: Canvas, gameStartTime: Long /*最开始渲染的时间*/, lastRenderTime: Long, nowRenderTime: Long /*现在渲染的时候*/) {
         if (isSpiritAddEnd) {
             return

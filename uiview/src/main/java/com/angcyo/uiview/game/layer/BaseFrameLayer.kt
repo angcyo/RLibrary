@@ -20,6 +20,13 @@ open class BaseFrameLayer : BaseLayer() {
     protected val frameList = CopyOnWriteArrayList<BaseLayerBean>()
     protected val lock = Object()
 
+    /**暂停绘制*/
+    @Volatile
+    var pauseDrawFrame = false
+
+    @Volatile
+    var pauseDrawFrameThread = false
+
     init {
         //drawIntervalTime = 100
     }
@@ -29,16 +36,18 @@ open class BaseFrameLayer : BaseLayer() {
     }
 
     override fun draw(canvas: Canvas, gameStartTime: Long, lastRenderTime: Long, nowRenderTime: Long) {
-        super.draw(canvas, gameStartTime, lastRenderTime, nowRenderTime)
-        val deleteList = mutableListOf<BaseLayerBean>()
-        synchronized(lock) {
-            for (frame in frameList) {
-                frame.parentRect.set(layerRect)
-                frame.draw(canvas, gameStartTime, lastRenderTime, nowRenderTime) {
-                    deleteList.add(frame)
+        if (!pauseDrawFrame) {
+            super.draw(canvas, gameStartTime, lastRenderTime, nowRenderTime)
+            val deleteList = mutableListOf<BaseLayerBean>()
+            synchronized(lock) {
+                for (frame in frameList) {
+                    frame.parentRect.set(layerRect)
+                    frame.draw(canvas, gameStartTime, lastRenderTime, nowRenderTime) {
+                        deleteList.add(frame)
+                    }
                 }
+                frameList.removeAll(deleteList)
             }
-            frameList.removeAll(deleteList)
         }
     }
 
@@ -58,10 +67,12 @@ open class BaseFrameLayer : BaseLayer() {
     }
 
     override fun drawThread(gameStartTime: Long, lastRenderTimeThread: Long, nowRenderTime: Long) {
-        super.drawThread(gameStartTime, lastRenderTimeThread, nowRenderTime)
-        synchronized(lock) {
-            for (frame in frameList) {
-                frame.drawThread(gameStartTime, lastRenderTimeThread, nowRenderTime)
+        if (!pauseDrawFrameThread) {
+            super.drawThread(gameStartTime, lastRenderTimeThread, nowRenderTime)
+            synchronized(lock) {
+                for (frame in frameList) {
+                    frame.drawThread(gameStartTime, lastRenderTimeThread, nowRenderTime)
+                }
             }
         }
     }

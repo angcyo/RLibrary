@@ -1,11 +1,5 @@
 package com.angcyo.uiview.game.layer
 
-import android.graphics.Canvas
-import android.graphics.Point
-import android.graphics.Rect
-import android.graphics.drawable.Drawable
-import com.angcyo.uiview.kotlin.getBoundsWith
-
 /**
  * Copyright (C) 2016,深圳市红鸟网络科技股份有限公司 All rights reserved.
  * 项目名称：
@@ -17,6 +11,7 @@ import com.angcyo.uiview.kotlin.getBoundsWith
  * 修改备注：
  * Version: 1.0.0
  */
+@Deprecated("多余的")
 open class BaseMoveLayer : BaseFrameLayer() {
 
 }
