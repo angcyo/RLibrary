@@ -7,10 +7,8 @@
     android:layout_height="wrap_content"
     android:layout_centerHorizontal="true"
     android:layout_gravity="center"
-    android:background="@drawable/base_tran_round_shape"
     android:gravity="center"
     android:orientation="vertical"
-    android:padding="@dimen/base_xxhdpi"
     android:visibility="visible"
     tools:visibility="visible">
 
