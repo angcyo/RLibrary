@@ -192,7 +192,7 @@ public abstract class UIBaseView extends UIIViewImpl {
         mBaseRootLayout.setId(mBaseRootId);
 
         //mBaseRootLayout.setBackgroundColor(getDefaultBackgroundColor());
-        mBaseRootLayout.setBackground(getDefaultDrawable());
+        mBaseRootLayout.setBackground(getDefaultBackgroundDrawable());
 
         TitleBarPattern titleBarPattern = getTitleBar();
         if (titleBarPattern != null && isHaveTitleBar()) {
@@ -212,6 +212,13 @@ public abstract class UIBaseView extends UIIViewImpl {
 //                    mILayout.requestBackPressed();
                 }
             });
+            mUITitleBarContainer.setShowBottomLine(titleBarPattern.showTitleBarBottomLine);
+            if (titleBarPattern.bottomTitleBarLineHeight > 0) {
+                mUITitleBarContainer.setBottomLineHeight(titleBarPattern.bottomTitleBarLineHeight);
+            }
+            if (titleBarPattern.bottomTitleBarLineColor > 0) {
+                mUITitleBarContainer.setBottomLineColor(titleBarPattern.bottomTitleBarLineColor);
+            }
 
             //内容根布局, 包含空布局,加载布局等
             mBaseContentRootLayout = new FrameLayout(mActivity);
@@ -787,7 +794,7 @@ public abstract class UIBaseView extends UIIViewImpl {
         return Color.TRANSPARENT;
     }
 
-    public Drawable getDefaultDrawable() {
+    public Drawable getDefaultBackgroundDrawable() {
         return new ColorDrawable(getDefaultBackgroundColor());
     }
 

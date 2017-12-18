@@ -71,6 +71,7 @@ abstract class BaseTouchLayer : BaseExLayer() {
 
     init {
         drawIntervalTime = spiritAddInterval
+        pauseDrawFrame = true //暂停绘制
     }
 
     /**重置精灵状态参数*/
@@ -79,6 +80,7 @@ abstract class BaseTouchLayer : BaseExLayer() {
         spiritAddNumEd = 0
         touchUpSpiritNum = 0
         isSpiritAddEnd = false
+        pauseDrawFrame = true //暂停绘制
     }
 
     /**结束绘制*/

@@ -9,9 +9,9 @@ import com.neovisionaries.ws.client.WebSocketException;
 import com.neovisionaries.ws.client.WebSocketFactory;
 import com.neovisionaries.ws.client.WebSocketFrame;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.concurrent.TimeUnit;
 
 import rx.Observable;
@@ -75,7 +75,7 @@ public class RWebSocket extends WebSocketAdapter {
      */
     private Subscription observable;
     private WebSocket mWebSocket;
-    private List<RWebSocketListener> mListeners = new ArrayList();
+    private List<RWebSocketListener> mListeners = new CopyOnWriteArrayList<>();
 
     private RWebSocket() {
     }

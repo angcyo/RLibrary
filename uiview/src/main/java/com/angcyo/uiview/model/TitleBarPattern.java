@@ -88,6 +88,21 @@ public class TitleBarPattern {
 
     public OnInitTitleLayout mOnInitTitleLayout;
 
+    /**
+     * 显示底部的横线
+     */
+    public boolean showTitleBarBottomLine = false;
+
+    /**
+     * 底部横线的高度, 1px
+     */
+    public int bottomTitleBarLineHeight = 0;
+
+    /**
+     * 底部横线的颜色
+     */
+    public int bottomTitleBarLineColor = 0;
+
     private TitleBarPattern(String titleString) {
         mTitleString = titleString;
     }
@@ -239,6 +254,21 @@ public class TitleBarPattern {
 
     public TitleBarPattern setOnInitTitleLayout(OnInitTitleLayout onInitTitleLayout) {
         mOnInitTitleLayout = onInitTitleLayout;
+        return this;
+    }
+
+    public TitleBarPattern setShowTitleBarBottomLine(boolean showTitleBarBottomLine) {
+        this.showTitleBarBottomLine = showTitleBarBottomLine;
+        return this;
+    }
+
+    public TitleBarPattern setBottomTitleBarLineHeight(int bottomTitleBarLineHeight) {
+        this.bottomTitleBarLineHeight = bottomTitleBarLineHeight;
+        return this;
+    }
+
+    public TitleBarPattern setBottomTitleBarLineColor(int bottomTitleBarLineColor) {
+        this.bottomTitleBarLineColor = bottomTitleBarLineColor;
         return this;
     }
 

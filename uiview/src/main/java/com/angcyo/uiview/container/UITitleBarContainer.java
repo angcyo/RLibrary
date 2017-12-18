@@ -6,9 +6,11 @@ import android.content.Context;
 import android.content.res.TypedArray;
 import android.graphics.Canvas;
 import android.graphics.Color;
+import android.graphics.Paint;
 import android.graphics.drawable.ColorDrawable;
 import android.graphics.drawable.Drawable;
 import android.support.annotation.ColorInt;
+import android.support.v4.content.ContextCompat;
 import android.support.v4.view.ViewCompat;
 import android.text.TextUtils;
 import android.util.AttributeSet;
@@ -62,6 +64,23 @@ public class UITitleBarContainer extends FrameLayout {
     private boolean mLayoutFullscreen;
     private OnClickListener mOnBackListener;
     private Drawable mBackgroundDrawable;
+
+    /**
+     * 显示底部的横线
+     */
+    private boolean showBottomLine = false;
+
+    /**
+     * 底部横线的高度, 1px
+     */
+    private int bottomLineHeight = getContext().getResources().getDimensionPixelOffset(R.dimen.base_line);
+
+    /**
+     * 底部横线的颜色
+     */
+    private int bottomLineColor = ContextCompat.getColor(getContext(), R.color.default_base_line);
+
+    private Paint mPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
 
     public UITitleBarContainer(Context context) {
         super(context);
@@ -176,6 +195,8 @@ public class UITitleBarContainer extends FrameLayout {
                 setPadding(0, mStatusBarHeight, 0, 0);
             }
         }
+
+        setWillNotDraw(false);
     }
 
     /**
@@ -534,6 +555,23 @@ public class UITitleBarContainer extends FrameLayout {
             mBackgroundDrawable.setBounds(canvas.getClipBounds());
             mBackgroundDrawable.draw(canvas);
         }
+        if (showBottomLine) {
+            mPaint.setStrokeWidth(bottomLineHeight);
+            mPaint.setColor(bottomLineColor);
+            canvas.drawLine(0, getMeasuredHeight(), getMeasuredWidth(), getMeasuredHeight(), mPaint);
+        }
         super.draw(canvas);
+    }
+
+    public void setShowBottomLine(boolean showBottomLine) {
+        this.showBottomLine = showBottomLine;
+    }
+
+    public void setBottomLineHeight(int bottomLineHeight) {
+        this.bottomLineHeight = bottomLineHeight;
+    }
+
+    public void setBottomLineColor(int bottomLineColor) {
+        this.bottomLineColor = bottomLineColor;
     }
 }

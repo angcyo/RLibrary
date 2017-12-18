@@ -4,7 +4,6 @@ import android.animation.Animator
 import android.animation.ValueAnimator
 import android.content.Context
 import android.graphics.Canvas
-import android.graphics.Color
 import android.graphics.Paint
 import android.graphics.PointF
 import android.util.AttributeSet
@@ -15,6 +14,7 @@ import android.view.animation.LinearInterpolator
 import com.angcyo.uiview.game.layer.BaseLayer
 import com.angcyo.uiview.kotlin.density
 import com.angcyo.uiview.resources.RAnimListener
+import com.angcyo.uiview.skin.SkinHelper
 import java.lang.Thread.NORM_PRIORITY
 import java.util.concurrent.CopyOnWriteArrayList
 
@@ -105,7 +105,7 @@ class GameRenderView(context: Context, attributeSet: AttributeSet? = null) : Vie
     private val fpsPaint: Paint by lazy {
         Paint(Paint.ANTI_ALIAS_FLAG).apply {
             textSize = 14 * density
-            color = Color.RED
+            color = SkinHelper.getSkin().themeSubColor
             strokeWidth = 1 * density
             style = Paint.Style.FILL_AND_STROKE
         }
