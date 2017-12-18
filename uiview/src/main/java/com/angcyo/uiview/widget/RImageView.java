@@ -2,6 +2,7 @@ package com.angcyo.uiview.widget;
 
 import android.content.Context;
 import android.content.res.Resources;
+import android.content.res.TypedArray;
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
 import android.graphics.Color;
@@ -39,6 +40,11 @@ import com.angcyo.uiview.RApplication;
  */
 public class RImageView extends CircleImageView {
 
+    public static final int MASK_GRAVITY_LT = 1;//左上
+    public static final int MASK_GRAVITY_RT = 2;//右上
+    public static final int MASK_GRAVITY_RB = 3;//右下
+    public static final int MASK_GRAVITY_LB = 4;//左下
+
     protected boolean mShowGifTip;
     /**
      * 播放按钮图片
@@ -51,16 +57,20 @@ public class RImageView extends CircleImageView {
      */
     private boolean showDrawableAnim = true;
     private Drawable mGifTipDrawable;
+
+    /**
+     * 用来显示Mask提示的图片
+     */
+    private Drawable mMaskDrawable;
+
+    private int maskGravity = MASK_GRAVITY_LT;
+
     private float mDensity;
 
     /**
      * 是否显示单击时的遮罩蒙层
      */
     private boolean mShowClickMask = true;
-
-    public void setShowClickMask(boolean mShowClickMask) {
-        this.mShowClickMask = mShowClickMask;
-    }
 
     public RImageView(Context context) {
         this(context, null);
@@ -69,6 +79,11 @@ public class RImageView extends CircleImageView {
     public RImageView(Context context, AttributeSet attrs) {
         super(context, attrs);
         initView();
+
+        TypedArray typedArray = context.obtainStyledAttributes(attrs, R.styleable.RImageView);
+        mMaskDrawable = typedArray.getDrawable(R.styleable.RImageView_r_mask_drawable);
+        maskGravity = typedArray.getInt(R.styleable.RImageView_r_mask_gravity, maskGravity);
+        typedArray.recycle();
     }
 
     /**
@@ -171,6 +186,10 @@ public class RImageView extends CircleImageView {
         return result;
     }
 
+    public void setShowClickMask(boolean mShowClickMask) {
+        this.mShowClickMask = mShowClickMask;
+    }
+
     private void initView() {
         mDensity = getResources().getDisplayMetrics().density;
     }
@@ -271,9 +290,12 @@ public class RImageView extends CircleImageView {
     @Override
     protected void onDraw(Canvas canvas) {
         super.onDraw(canvas);
+        int vw = getMeasuredWidth();
+        int vh = getMeasuredHeight();
+
         if (mPlayDrawable != null) {
-            int height = getMeasuredHeight() / 2;
-            int width = getMeasuredWidth() / 2;
+            int height = vh / 2;
+            int width = vw / 2;
             int w = mPlayDrawable.getIntrinsicWidth() / 2;
             int h = mPlayDrawable.getIntrinsicHeight() / 2;
             mPlayDrawable.setBounds(width - w, height - h, width + w, height + h);
@@ -283,9 +305,33 @@ public class RImageView extends CircleImageView {
             ensureGifTipDrawable();
             canvas.save();
             int offset = (int) (2 * mDensity);
-            canvas.translate(getMeasuredWidth() - mGifTipDrawable.getIntrinsicWidth() - offset,
-                    getMeasuredHeight() - mGifTipDrawable.getIntrinsicHeight() - offset);
+            canvas.translate(vw - mGifTipDrawable.getIntrinsicWidth() - offset,
+                    vh - mGifTipDrawable.getIntrinsicHeight() - offset);
             mGifTipDrawable.draw(canvas);
+            canvas.restore();
+        }
+        if (mMaskDrawable != null) {
+            int dw = mMaskDrawable.getIntrinsicWidth();
+            int dh = mMaskDrawable.getIntrinsicHeight();
+
+            switch (maskGravity) {
+                case MASK_GRAVITY_LT:
+                    mMaskDrawable.setBounds(0, 0, dw, dh);
+                    break;
+                case MASK_GRAVITY_RT:
+                    mMaskDrawable.setBounds(vw - dw, 0, vw, dh);
+                    break;
+                case MASK_GRAVITY_RB:
+                    mMaskDrawable.setBounds(vw - dw, vh - dh, vw, vh);
+                    break;
+                case MASK_GRAVITY_LB:
+                    mMaskDrawable.setBounds(0, vh - dh, dw, vh);
+                    break;
+            }
+            canvas.save();
+            //canvas.clipRect(0, 0, getMeasuredWidth(), getMeasuredHeight(), Region.Op.INTERSECT);
+            mMaskDrawable.draw(canvas);
+            canvas.drawColor(Color.RED);
             canvas.restore();
         }
         if (mShowClickMask && mShowMask) {
@@ -404,5 +450,13 @@ public class RImageView extends CircleImageView {
     @Override
     public void setImageDrawable(@Nullable Drawable drawable) {
         super.setImageDrawable(drawable);
+    }
+
+    public void setMaskDrawable(Drawable maskDrawable) {
+        mMaskDrawable = maskDrawable;
+    }
+
+    public void setMaskGravity(int maskGravity) {
+        this.maskGravity = maskGravity;
     }
 }

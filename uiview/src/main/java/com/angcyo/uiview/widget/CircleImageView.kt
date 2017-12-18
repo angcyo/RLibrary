@@ -114,7 +114,7 @@ open class CircleImageView(context: Context, attributeSet: AttributeSet? = null)
                     clipPath.addRoundRect(roundRectF, radius, Path.Direction.CW)
                 }
 
-                canvas.clipPath(clipPath, Region.Op.INTERSECT)//交集显示
+                //val savePath = canvas.saveLayer(null, null, Canvas.ALL_SAVE_FLAG)
                 var save: Int
 //                if (TextUtils.equals(Build.MODEL, "VTR-AL00") /*华为P10处理圆角, 偶尔会失败.*/) {
                 if (TextUtils.equals(Build.MANUFACTURER, "HUAWEI") && Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP /*华为手机处理圆角, 偶尔会失败.*/) {
@@ -122,11 +122,13 @@ open class CircleImageView(context: Context, attributeSet: AttributeSet? = null)
                 } else {
                     save = canvas.save()
                 }
+                canvas.clipPath(clipPath, Region.Op.INTERSECT)//交集显示
                 super.onDraw(canvas)
                 if (drawBorder) {
                     canvas.drawPath(clipPath, paint)
                 }
                 canvas.restoreToCount(save)
+                //canvas.restoreToCount(savePath)
 
                 //canvas.drawRoundRect(roundRectF, roundRadius, roundRadius, paint)
                 //canvas.drawCircle(cx, cy, cr, paint)

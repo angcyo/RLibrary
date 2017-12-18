@@ -1,5 +1,17 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+
+    <declare-styleable name="RImageView">
+        <attr name="r_mask_gravity" format="enum">
+            <enum name="MASK_GRAVITY_LT" value="1"/>
+            <enum name="MASK_GRAVITY_RT" value="2"/>
+            <enum name="MASK_GRAVITY_RB" value="3"/>
+            <enum name="MASK_GRAVITY_LB" value="4"/>
+        </attr>
+
+        <attr name="r_mask_drawable" format="reference"/>
+    </declare-styleable>
+
     <declare-styleable name="CircleImageView">
         <attr name="r_show_type" format="enum">
             <!--正常-->
