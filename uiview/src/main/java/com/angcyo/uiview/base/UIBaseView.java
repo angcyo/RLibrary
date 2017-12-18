@@ -213,12 +213,10 @@ public abstract class UIBaseView extends UIIViewImpl {
                 }
             });
             mUITitleBarContainer.setShowBottomLine(titleBarPattern.showTitleBarBottomLine);
-            if (titleBarPattern.bottomTitleBarLineHeight > 0) {
+            if (titleBarPattern.bottomTitleBarLineHeight >= 0) {
                 mUITitleBarContainer.setBottomLineHeight(titleBarPattern.bottomTitleBarLineHeight);
             }
-            if (titleBarPattern.bottomTitleBarLineColor > 0) {
-                mUITitleBarContainer.setBottomLineColor(titleBarPattern.bottomTitleBarLineColor);
-            }
+            mUITitleBarContainer.setBottomLineColor(titleBarPattern.bottomTitleBarLineColor);
 
             //内容根布局, 包含空布局,加载布局等
             mBaseContentRootLayout = new FrameLayout(mActivity);

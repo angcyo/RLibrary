@@ -555,12 +555,12 @@ public class UITitleBarContainer extends FrameLayout {
             mBackgroundDrawable.setBounds(canvas.getClipBounds());
             mBackgroundDrawable.draw(canvas);
         }
+        super.draw(canvas);
         if (showBottomLine) {
             mPaint.setStrokeWidth(bottomLineHeight);
             mPaint.setColor(bottomLineColor);
             canvas.drawLine(0, getMeasuredHeight(), getMeasuredWidth(), getMeasuredHeight(), mPaint);
         }
-        super.draw(canvas);
     }
 
     public void setShowBottomLine(boolean showBottomLine) {
