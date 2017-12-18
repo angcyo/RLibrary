@@ -64,6 +64,10 @@ public class RImageView extends CircleImageView {
     private Drawable mMaskDrawable;
 
     private int maskGravity = MASK_GRAVITY_LT;
+    private float maskScaleX = 1f;
+    private float maskScaleY = 1f;
+
+    private Rect maskRect = new Rect();
 
     private float mDensity;
 
@@ -83,6 +87,8 @@ public class RImageView extends CircleImageView {
         TypedArray typedArray = context.obtainStyledAttributes(attrs, R.styleable.RImageView);
         mMaskDrawable = typedArray.getDrawable(R.styleable.RImageView_r_mask_drawable);
         maskGravity = typedArray.getInt(R.styleable.RImageView_r_mask_gravity, maskGravity);
+        maskScaleX = typedArray.getFloat(R.styleable.RImageView_r_mask_scale_x, maskScaleX);
+        maskScaleY = typedArray.getFloat(R.styleable.RImageView_r_mask_scale_y, maskScaleY);
         typedArray.recycle();
     }
 
@@ -311,27 +317,28 @@ public class RImageView extends CircleImageView {
             canvas.restore();
         }
         if (mMaskDrawable != null) {
-            int dw = mMaskDrawable.getIntrinsicWidth();
-            int dh = mMaskDrawable.getIntrinsicHeight();
+            int dw = (int) (mMaskDrawable.getIntrinsicWidth() * maskScaleX);
+            int dh = (int) (mMaskDrawable.getIntrinsicHeight() * maskScaleX);
 
             switch (maskGravity) {
                 case MASK_GRAVITY_LT:
-                    mMaskDrawable.setBounds(0, 0, dw, dh);
+                    maskRect.set(0, 0, dw, dh);
                     break;
                 case MASK_GRAVITY_RT:
-                    mMaskDrawable.setBounds(vw - dw, 0, vw, dh);
+                    maskRect.set(vw - dw, 0, vw, dh);
                     break;
                 case MASK_GRAVITY_RB:
-                    mMaskDrawable.setBounds(vw - dw, vh - dh, vw, vh);
+                    maskRect.set(vw - dw, vh - dh, vw, vh);
                     break;
                 case MASK_GRAVITY_LB:
-                    mMaskDrawable.setBounds(0, vh - dh, dw, vh);
+                    maskRect.set(0, vh - dh, dw, vh);
                     break;
             }
             canvas.save();
             //canvas.clipRect(0, 0, getMeasuredWidth(), getMeasuredHeight(), Region.Op.INTERSECT);
+            mMaskDrawable.setBounds(maskRect);
             mMaskDrawable.draw(canvas);
-            canvas.drawColor(Color.RED);
+//            canvas.drawColor(Color.RED);
             canvas.restore();
         }
         if (mShowClickMask && mShowMask) {

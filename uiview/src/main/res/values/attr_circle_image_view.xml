@@ -10,6 +10,8 @@
         </attr>
 
         <attr name="r_mask_drawable" format="reference"/>
+        <attr name="r_mask_scale_x" format="float"/>
+        <attr name="r_mask_scale_y" format="float"/>
     </declare-styleable>
 
     <declare-styleable name="CircleImageView">
