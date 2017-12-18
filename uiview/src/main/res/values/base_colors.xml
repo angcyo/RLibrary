@@ -65,4 +65,7 @@
     <color name="base_mention_color">#507daf</color>
 
     <color name="base_image_placeholder_color">#EFEFEF</color>
+
+    <!--金色-->
+    <color name="base_gold_color">#FDCA4A</color>
 </resources>
