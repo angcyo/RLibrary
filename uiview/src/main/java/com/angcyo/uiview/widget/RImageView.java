@@ -342,8 +342,6 @@ public class RImageView extends CircleImageView {
         if (mShowClickMask && mShowMask) {
             canvas.drawColor(Color.parseColor("#80000000"));
         }
-
-        canvas.drawColor(Color.YELLOW);
     }
 
     private void ensureGifTipDrawable() {

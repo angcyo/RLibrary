@@ -27,7 +27,12 @@ public class ClipboardUtils {
      */
     public static void copyText(CharSequence text) {
         ClipboardManager clipboard = (ClipboardManager) Utils.getContext().getSystemService(Context.CLIPBOARD_SERVICE);
-        clipboard.setPrimaryClip(ClipData.newPlainText("text", text));
+        try {
+            clipboard.setPrimaryClip(ClipData.newPlainText("text", text));
+        } catch (Exception e) {
+            e.printStackTrace();
+            clipboard.setPrimaryClip(ClipData.newPlainText("text", text.subSequence(0, 100) + "...more"));
+        }
     }
 
     public static final void clipboardCopyText(Context context, CharSequence text) {
