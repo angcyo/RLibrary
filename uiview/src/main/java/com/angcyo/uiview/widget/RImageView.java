@@ -68,7 +68,6 @@ public class RImageView extends CircleImageView {
     private float maskScaleY = 1f;
 
     private Rect maskRect = new Rect();
-
     private float mDensity;
 
     /**
@@ -338,12 +337,13 @@ public class RImageView extends CircleImageView {
             //canvas.clipRect(0, 0, getMeasuredWidth(), getMeasuredHeight(), Region.Op.INTERSECT);
             mMaskDrawable.setBounds(maskRect);
             mMaskDrawable.draw(canvas);
-//            canvas.drawColor(Color.RED);
             canvas.restore();
         }
         if (mShowClickMask && mShowMask) {
             canvas.drawColor(Color.parseColor("#80000000"));
         }
+
+        canvas.drawColor(Color.YELLOW);
     }
 
     private void ensureGifTipDrawable() {
