@@ -39,6 +39,10 @@ public class ScreenUtil {
         init(RApplication.getApp());
     }
 
+    public static float density() {
+        return density;
+    }
+
     public static int dip2px(float dipValue) {
         return (int) (dipValue * density + 0.5f);
     }

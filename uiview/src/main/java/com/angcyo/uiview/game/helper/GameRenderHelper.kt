@@ -15,7 +15,7 @@ import com.angcyo.uiview.game.layer.BaseLayer
  * Version: 1.0.0
  */
 
-class GameRenderHelper(private val gameRenderView: GameRenderView) {
+class GameRenderHelper(val gameRenderView: GameRenderView) {
     /**会按顺序绘制*/
     fun addLayer(layer: BaseLayer) {
         gameRenderView.layerList.add(layer)
