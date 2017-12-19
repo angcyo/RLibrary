@@ -2,6 +2,7 @@ package com.angcyo.uiview.view
 
 import android.view.LayoutInflater
 import com.angcyo.uiview.container.ContentLayout
+import com.angcyo.uiview.container.UITitleBarContainer
 import com.angcyo.uiview.model.TitleBarPattern
 import com.angcyo.uiview.recycler.RBaseViewHolder
 
@@ -39,6 +40,11 @@ abstract class OnUIViewListener {
 
     /**当开始显示TitleBar时, 会回调此方法*/
     open fun onCreateTitleBar(titleBarPattern: TitleBarPattern) {
+
+    }
+
+    /**当TitleBar创建结束后时, 会回调此方法*/
+    open fun onCreateTitleBarEnd(titleBarPattern: TitleBarPattern, uiTitleBarContainer: UITitleBarContainer) {
 
     }
 

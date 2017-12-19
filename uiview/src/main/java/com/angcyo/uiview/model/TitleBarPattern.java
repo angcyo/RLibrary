@@ -9,6 +9,7 @@ import android.support.annotation.StringRes;
 import android.support.v4.content.ContextCompat;
 import android.text.TextUtils;
 import android.util.TypedValue;
+import android.view.Gravity;
 import android.view.View;
 import android.widget.TextView;
 
@@ -48,9 +49,14 @@ public class TitleBarPattern {
     public boolean titleAnim = false;
 
     /**
-     * 隐藏标题
+     * 隐藏标题, 不是隐藏标题Bar哦
      */
     public boolean titleHide = false;
+
+    /**
+     * 标题显示在左边, 还是中间. 目前只支持这2个位置
+     */
+    public int titleGravity = Gravity.CENTER;//Gravity.LEFT;
 
     /**
      * 标题是否显示在内容的上面, 否则内容就会显示在标题的下面
@@ -244,6 +250,11 @@ public class TitleBarPattern {
 
     public TitleBarPattern addRightItem(TitleBarItem rightItem) {
         mRightItems.add(rightItem);
+        return this;
+    }
+
+    public TitleBarPattern setTitleGravity(int titleGravity) {
+        this.titleGravity = titleGravity;
         return this;
     }
 

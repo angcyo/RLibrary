@@ -84,7 +84,6 @@ public class UITitleBarContainer extends FrameLayout {
 
     public UITitleBarContainer(Context context) {
         super(context);
-        initTitleBar(context);
     }
 
     //----------------------------公共方法-----------------------------
@@ -104,8 +103,6 @@ public class UITitleBarContainer extends FrameLayout {
             mTitleBarPattern.setTitleSize(typedArray.getFloat(R.styleable.UITitleBarContainer_title_text_size, -1));
         }
         typedArray.recycle();
-
-        initTitleBar(context);
     }
 
     private static <T> T find(View view, int id) {
@@ -161,7 +158,7 @@ public class UITitleBarContainer extends FrameLayout {
 //        mOnBackListener = null;
     }
 
-    private void initTitleBar(Context context) {
+    private void initTitleBar(Context context, TitleBarPattern titleBarPattern) {
 //        if (context instanceof Activity) {
 //            if (ResUtil.isLayoutFullscreen((Activity) context)) {
 //                setPadding(getPaddingLeft(),
@@ -169,8 +166,13 @@ public class UITitleBarContainer extends FrameLayout {
 //                        getPaddingRight(), getPaddingBottom());
 //            }
 //        }
+        final View root;
+        if (titleBarPattern.titleGravity == Gravity.LEFT) {
+            root = LayoutInflater.from(context).inflate(R.layout.base_title_layout_left, this);
+        } else {
+            root = LayoutInflater.from(context).inflate(R.layout.base_title_layout, this);
+        }
 
-        final View root = LayoutInflater.from(context).inflate(R.layout.base_title_layout, this);
         mBaseViewHolder = new RBaseViewHolder(root);
         mTitleBarLayout = find(root, R.id.base_title_bar_layout);
         mLeftControlLayout = find(root, R.id.base_left_control_layout);
@@ -213,6 +215,10 @@ public class UITitleBarContainer extends FrameLayout {
 //            mCenterControlLayout.removeAllViews();
             setVisibility(GONE);
             return;
+        }
+
+        if (getChildCount() == 0) {
+            initTitleBar(getContext(), mTitleBarPattern);
         }
 
         setVisibility(VISIBLE);

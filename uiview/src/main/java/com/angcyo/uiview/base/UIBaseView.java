@@ -97,6 +97,7 @@ public abstract class UIBaseView extends UIIViewImpl {
     protected OnViewLoadListener mOnViewLoadListener;
 
     protected boolean haveTitleBar = true;
+    protected TitleBarPattern titleBarPattern;
     private Animation mLoadingAnimation;
     private ClipMode mClipMode;
     private boolean mEnableClip = false;
@@ -194,7 +195,7 @@ public abstract class UIBaseView extends UIIViewImpl {
         //mBaseRootLayout.setBackgroundColor(getDefaultBackgroundColor());
         mBaseRootLayout.setBackground(getDefaultBackgroundDrawable());
 
-        TitleBarPattern titleBarPattern = getTitleBar();
+        titleBarPattern = getTitleBar();
         if (titleBarPattern != null && isHaveTitleBar()) {
             if (mOnUIViewListener != null) {
                 mOnUIViewListener.onCreateTitleBar(titleBarPattern);
@@ -255,6 +256,9 @@ public abstract class UIBaseView extends UIIViewImpl {
             } else {
             }
 
+            if (mOnUIViewListener != null) {
+                mOnUIViewListener.onCreateTitleBarEnd(titleBarPattern, mUITitleBarContainer);
+            }
         } else {
             //没有标题的情况, 减少布局层级 星期二 2017-7-11
             mBaseContentRootLayout = mBaseRootLayout;

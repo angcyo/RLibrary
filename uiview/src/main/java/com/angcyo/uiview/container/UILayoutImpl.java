@@ -56,6 +56,7 @@ import java.util.List;
 import java.util.Set;
 import java.util.Stack;
 
+import static com.angcyo.uiview.utils.ScreenUtil.density;
 import static com.angcyo.uiview.view.UIIViewImpl.DEFAULT_ANIM_TIME;
 import static com.angcyo.uiview.view.UIIViewImpl.DEFAULT_DELAY_ANIM_TIME;
 
@@ -1669,7 +1670,7 @@ public class UILayoutImpl extends SwipeBackLayout implements ILayout<UIParam>, U
                     L.i("双击在对话框外-> " + dialogPattern.mIView.getClass().getSimpleName());
 
                     //if (dialogPattern.mIView.canCanceledOnOutside()) {//2017-12-19
-                        finishIView(dialogPattern.mView);
+                    finishIView(dialogPattern.mView);
                     //}
                 }
             });
@@ -2933,6 +2934,9 @@ public class UILayoutImpl extends SwipeBackLayout implements ILayout<UIParam>, U
                 }
 
                 float textHeight = ViewExKt.textHeight(this, debugPaint);
+
+                float dp2 = 2 * density();
+                debugPaint.setShadowLayer(dp2, dp2, dp2, Color.BLACK);
 
                 canvas.drawText(viewPatternByView.mIView.getClass().getSimpleName(),
                         hSpace, t + textHeight, debugPaint);

@@ -6,7 +6,6 @@
     android:id="@+id/base_title_bar_layout"
     android:layout_width="match_parent"
     android:layout_height="@dimen/action_bar_height"
-    android:orientation="horizontal"
     tool:background="@android:color/holo_blue_dark">
 
     <!--左边控制区-->
