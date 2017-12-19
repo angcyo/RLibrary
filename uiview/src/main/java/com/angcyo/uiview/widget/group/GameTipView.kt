@@ -26,21 +26,7 @@ import com.angcyo.uiview.widget.RTextView
 class GameTipView(context: Context, attributeSet: AttributeSet? = null) : FrameLayout(context, attributeSet) {
 
     var tipTextView: RTextView
-    var timeTextView: RTextView
-
-    /**是否一直显示小时(否则只在值>0时显示)*/
-    var showHour = false
-
-    /**是否一直显示分钟(否则只在值>0时显示)*/
-    var showMin = false
-
-    /**秒数, 是否显示2位, 自动补齐0*/
-    var twoSecBit = false
-
-    private var fromTime = 0
-
-    /**到时间了*/
-    var onTimeEnd: (() -> Unit)? = null
+    var timeTextView: GameCountDownView
 
     init {
         View.inflate(context, R.layout.base_game_tip_layout, this)
@@ -61,10 +47,36 @@ class GameTipView(context: Context, attributeSet: AttributeSet? = null) : FrameL
 
     /**开始倒计时*/
     fun startCountDown(fromTime: Int /*从多少秒开始倒计时*/, onEnd: (() -> Unit)? = null) {
-        //tipTextView.text = text
+        timeTextView.startCountDown(fromTime, onEnd)
+    }
+
+    /**停止倒计时*/
+    fun stopCountDown() {
+        timeTextView.stopCountDown()
+    }
+}
+
+class GameCountDownView(context: Context, attributeSet: AttributeSet? = null) : RTextView(context, attributeSet) {
+
+    /**是否一直显示小时(否则只在值>0时显示)*/
+    var showHour = false
+
+    /**是否一直显示分钟(否则只在值>0时显示)*/
+    var showMin = false
+
+    /**秒数, 是否显示2位, 自动补齐0*/
+    var twoSecBit = false
+
+    private var fromTime = 0
+
+    /**到时间了*/
+    var onTimeEnd: (() -> Unit)? = null
+
+    /**开始倒计时*/
+    fun startCountDown(fromTime: Int /*从多少秒开始倒计时*/, onEnd: (() -> Unit)? = null) {
         this.onTimeEnd = onEnd
         this.fromTime = fromTime
-        setTimeText(formatTime(fromTime * 1000L))
+        text = formatTime(fromTime * 1000L)
         startAnim()
     }
 
@@ -100,7 +112,7 @@ class GameTipView(context: Context, attributeSet: AttributeSet? = null) : FrameL
             duration = fromTime * 1000L
             interpolator = LinearInterpolator()
             addUpdateListener {
-                setTimeText(formatTime((animatedValue as Int) * 1000L))
+                text = formatTime((animatedValue as Int) * 1000L)
             }
             addListener(object : RAnimListener() {
                 override fun onAnimationFinish(animation: Animator?, cancel: Boolean) {

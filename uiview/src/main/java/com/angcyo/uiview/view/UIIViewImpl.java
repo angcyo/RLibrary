@@ -890,6 +890,13 @@ public abstract class UIIViewImpl implements IView {
         return mViewHolder.v(id);
     }
 
+    public ViewGroup vg(@IdRes int id) {
+        if (mViewHolder == null) {
+            return null;
+        }
+        return mViewHolder.vg(id);
+    }
+
     public void click(@IdRes int id, final View.OnClickListener listener) {
         click(v(id), listener);
     }

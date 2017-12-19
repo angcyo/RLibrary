@@ -23,7 +23,7 @@
         android:textStyle="bold"
         tools:text="红包雨开始倒计时"/>
 
-    <com.angcyo.uiview.widget.RTextView
+    <com.angcyo.uiview.widget.group.GameCountDownView
         android:id="@+id/time_text_view"
         style="@style/BaseDarkTextStyle"
         android:layout_width="wrap_content"

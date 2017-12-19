@@ -5,7 +5,9 @@ import android.util.SparseIntArray;
 
 import com.angcyo.uiview.recycler.RBaseViewHolder;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 /**
  * Copyright (C) 2016,深圳市红鸟网络科技股份有限公司 All rights reserved.
@@ -21,6 +23,7 @@ import java.util.List;
 public class RDataAdapter extends RExBaseAdapter<String, RBaseDataItem, String> {
 
     private SparseIntArray itemLayoutMap = new SparseIntArray();
+    private Map<Class, Integer> itemClassMap = new HashMap<>();
 
     public RDataAdapter(Context context) {
         super(context);
@@ -35,6 +38,11 @@ public class RDataAdapter extends RExBaseAdapter<String, RBaseDataItem, String> 
      */
     public void registerItemLayout(int itemType, int itemLayoutId) {
         itemLayoutMap.append(itemType, itemLayoutId);
+    }
+
+    public void registerItemLayout(int itemType, int itemLayoutId, Class clz) {
+        itemLayoutMap.append(itemType, itemLayoutId);
+        itemClassMap.put(clz, itemType);
     }
 
     @Override
@@ -52,6 +60,11 @@ public class RDataAdapter extends RExBaseAdapter<String, RBaseDataItem, String> 
      */
     @Override
     protected int getDataItemType(int posInData) {
+        Class<? extends RBaseDataItem> aClass = getAllDatas().get(posInData).getClass();
+        Integer integer = itemClassMap.get(aClass);
+        if (integer != null) {
+            return integer;
+        }
         return getAllDatas().get(posInData).getDataItemType();
     }
 

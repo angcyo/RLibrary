@@ -241,6 +241,10 @@ public class RBaseViewHolder extends RecyclerView.ViewHolder {
         return groupV(resId);
     }
 
+    public ViewGroup vg(@IdRes int resId) {
+        return groupV(resId);
+    }
+
     public RecyclerView r(@IdRes int resId) {
         return (RecyclerView) v(resId);
     }
