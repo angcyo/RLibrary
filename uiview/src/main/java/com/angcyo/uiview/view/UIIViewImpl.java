@@ -31,6 +31,7 @@ import android.view.animation.Animation;
 import android.view.animation.DecelerateInterpolator;
 import android.view.animation.TranslateAnimation;
 import android.widget.FrameLayout;
+import android.widget.TextView;
 
 import com.angcyo.library.utils.L;
 import com.angcyo.uiview.R;
@@ -873,6 +874,13 @@ public abstract class UIIViewImpl implements IView {
             return null;
         }
         return mViewHolder.v(id);
+    }
+
+    public TextView tv(@IdRes int id) {
+        if (mViewHolder == null) {
+            return null;
+        }
+        return mViewHolder.tv(id);
     }
 
     public View view(@IdRes int id) {
