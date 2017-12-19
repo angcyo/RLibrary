@@ -3,6 +3,10 @@ package com.angcyo.uiview.github.tablayout.listener;
 import android.support.annotation.DrawableRes;
 
 public interface CustomTabEntity {
+    int marginLeft();
+
+    int marginRight();
+
     String getTabTitle();
 
     @DrawableRes

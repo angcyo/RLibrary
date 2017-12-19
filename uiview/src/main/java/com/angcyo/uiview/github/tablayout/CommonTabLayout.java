@@ -339,6 +339,13 @@ public class CommonTabLayout extends FrameLayout implements ValueAnimator.Animat
         if (mTabWidth > 0) {
             lp_tab = new LinearLayout.LayoutParams((int) mTabWidth, LayoutParams.MATCH_PARENT);
         }
+        if (tabEntity.marginLeft() > 0) {
+            lp_tab.leftMargin = tabEntity.marginLeft();
+        }
+
+        if (tabEntity.marginRight() > 0) {
+            lp_tab.rightMargin = tabEntity.marginRight();
+        }
 
         mTabsContainer.addView(tabView, position, lp_tab);
     }

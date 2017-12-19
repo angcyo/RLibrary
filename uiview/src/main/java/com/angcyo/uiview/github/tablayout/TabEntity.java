@@ -14,12 +14,11 @@ public class TabEntity implements CustomTabEntity {
      * 显示下拉弹窗箭头
      */
     public boolean showArrow = false;
-
     public boolean isHomeNavigation = false;
-
     public boolean isShowBackground = true;
-
     public int visibility = View.VISIBLE;
+    public int marginLeft = 0;
+    public int marginRight = 0;
 
     public TabEntity(String title) {
         this.title = title;
@@ -53,6 +52,16 @@ public class TabEntity implements CustomTabEntity {
         this.showArrow = showArrow;
         this.isHomeNavigation = isHomeNavigation;
         this.isShowBackground = isShowBackground;
+    }
+
+    @Override
+    public int marginLeft() {
+        return marginLeft;
+    }
+
+    @Override
+    public int marginRight() {
+        return marginRight;
     }
 
     @Override

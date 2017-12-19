@@ -627,7 +627,21 @@ public class RefreshLayout extends ViewGroup {
     }
 
     /**
-     * 设置当前刷新的状态
+     * 开始刷新
+     */
+    public void startRefresh() {
+        setRefreshState(TOP);
+    }
+
+    /**
+     * 开始加载更多
+     */
+    public void startLoadMore() {
+        setRefreshState(BOTTOM);
+    }
+
+    /**
+     * 触发刷新状态
      */
     public void setRefreshState(@State int state) {
         if (mCurState == MOVE) {
