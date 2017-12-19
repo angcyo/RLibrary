@@ -1668,9 +1668,9 @@ public class UILayoutImpl extends SwipeBackLayout implements ILayout<UIParam>, U
                 public void onDoubleTap() {
                     L.i("双击在对话框外-> " + dialogPattern.mIView.getClass().getSimpleName());
 
-                    if (dialogPattern.mIView.canCanceledOnOutside()) {
+                    //if (dialogPattern.mIView.canCanceledOnOutside()) {//2017-12-19
                         finishIView(dialogPattern.mView);
-                    }
+                    //}
                 }
             });
         }

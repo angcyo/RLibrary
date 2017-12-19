@@ -61,6 +61,7 @@ open class CircleImageView(context: Context, attributeSet: AttributeSet? = null)
         roundRadius = typedArray.getDimensionPixelOffset(R.styleable.CircleImageView_r_round_radius, (10 * density).toInt()).toFloat()
         lineWidth = typedArray.getDimensionPixelOffset(R.styleable.CircleImageView_r_line_width, (1 * density).toInt()).toFloat()
         equWidth = typedArray.getBoolean(R.styleable.CircleImageView_r_equ_width, equWidth)
+        drawBorder = typedArray.getBoolean(R.styleable.CircleImageView_r_draw_border, drawBorder)
         widthHeightRatio = typedArray.getString(R.styleable.CircleImageView_r_width_height_ratio)
         typedArray.recycle()
     }
@@ -114,20 +115,30 @@ open class CircleImageView(context: Context, attributeSet: AttributeSet? = null)
                     clipPath.addRoundRect(roundRectF, radius, Path.Direction.CW)
                 }
 
-                //val savePath = canvas.saveLayer(null, null, Canvas.ALL_SAVE_FLAG)
-                var save: Int
-//                if (TextUtils.equals(Build.MODEL, "VTR-AL00") /*华为P10处理圆角, 偶尔会失败.*/) {
-                if (TextUtils.equals(Build.MANUFACTURER, "HUAWEI") && Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP /*华为手机处理圆角, 偶尔会失败.*/) {
-                    save = canvas.saveLayer(0f, 0f, measuredWidth.toFloat(), measuredHeight.toFloat(), paint, Canvas.ALL_SAVE_FLAG)
+                fun save(canvas: Canvas) = if (TextUtils.equals(Build.MANUFACTURER, "HUAWEI") &&
+                        Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP /*华为手机处理圆角, 偶尔会失败.*/) {
+                    canvas.saveLayer(0f, 0f, measuredWidth.toFloat(), measuredHeight.toFloat(), paint, Canvas.ALL_SAVE_FLAG)
                 } else {
-                    save = canvas.save()
+                    canvas.save()
                 }
+
+                var save1 = save(canvas)
                 canvas.clipPath(clipPath, Region.Op.INTERSECT)//交集显示
+
+                //val savePath = canvas.saveLayer(null, null, Canvas.ALL_SAVE_FLAG)
+                var save2 = save(canvas)
+//                if (TextUtils.equals(Build.MODEL, "VTR-AL00") /*华为P10处理圆角, 偶尔会失败.*/) {
+//                if (TextUtils.equals(Build.MANUFACTURER, "HUAWEI") && Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP /*华为手机处理圆角, 偶尔会失败.*/) {
+//                    save2 = canvas.saveLayer(0f, 0f, measuredWidth.toFloat(), measuredHeight.toFloat(), paint, Canvas.ALL_SAVE_FLAG)
+//                } else {
+//                    save2 = canvas.save()
+//                }
                 super.onDraw(canvas)
                 if (drawBorder) {
                     canvas.drawPath(clipPath, paint)
                 }
-                canvas.restoreToCount(save)
+                canvas.restoreToCount(save2)
+                canvas.restoreToCount(save1)
                 //canvas.restoreToCount(savePath)
 
                 //canvas.drawRoundRect(roundRectF, roundRadius, roundRadius, paint)

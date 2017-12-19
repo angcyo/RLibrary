@@ -52,7 +52,10 @@ class GameTipView(context: Context, attributeSet: AttributeSet? = null) : FrameL
         tipTextView.text = text
     }
 
-    fun setTimeText(text: String) {
+    fun setTimeText(text: String, stopCountDown: Boolean = false) {
+        if (stopCountDown) {
+            stopCountDown()
+        }
         timeTextView.text = text
     }
 
@@ -63,6 +66,10 @@ class GameTipView(context: Context, attributeSet: AttributeSet? = null) : FrameL
         this.fromTime = fromTime
         setTimeText(formatTime(fromTime * 1000L))
         startAnim()
+    }
+
+    fun stopCountDown() {
+        stopAnim()
     }
 
     private fun formatTime(millisecond: Long /*毫秒*/): String {
