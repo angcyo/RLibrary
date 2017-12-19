@@ -1428,6 +1428,14 @@ public class RUtils {
     }
 
     /**
+     * 钱
+     * 将分转换成元
+     */
+    public static String yuan(int value) {
+        return decimal(value * 1f / 100f, 2, false) + "元";
+    }
+
+    /**
      * 保留小数点后几位
      */
     public static String decimal(float value, int bitNum, boolean halfUp) {
