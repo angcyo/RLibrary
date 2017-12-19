@@ -57,6 +57,9 @@ abstract class BaseTouchLayer : BaseExLayer() {
     /**精灵点击事件*/
     var onClickSpiritListener: OnClickSpiritListener? = null
 
+    /**游戏开始渲染后的绘制回调*/
+    var onLayerDrawListener: OnLayerDrawListener? = null
+
     /*已经添加了多少个*/
     private var spiritAddNumEd = 0
 
@@ -68,6 +71,20 @@ abstract class BaseTouchLayer : BaseExLayer() {
 
     /**是否需要检查Touch事件*/
     protected var checkTouchEvent = true
+
+    /*开始绘制的时间, 游戏开始的时间*/
+    private var startDrawTime = 0L
+
+    override var pauseDrawFrame: Boolean = true
+        set(value) {
+            field = value
+            if (!field) {
+                //开始绘制
+                startDrawTime = System.currentTimeMillis()
+            } else {
+                startDrawTime = 0L
+            }
+        }
 
     init {
         drawIntervalTime = spiritAddInterval
@@ -99,6 +116,10 @@ abstract class BaseTouchLayer : BaseExLayer() {
     }
 
     override fun draw(canvas: Canvas, gameStartTime: Long /*最开始渲染的时间*/, lastRenderTime: Long, nowRenderTime: Long /*现在渲染的时候*/) {
+        if (!pauseDrawFrame) {
+            onLayerDrawListener?.onLayerDraw(startDrawTime, nowRenderTime)
+        }
+
         if (isSpiritAddEnd) {
             return
         }
@@ -309,6 +330,10 @@ abstract class BaseTouchLayer : BaseExLayer() {
 
 interface OnClickSpiritListener {
     fun onClickSpirit(baseTouchLayer: BaseTouchLayer, spiritBean: TouchSpiritBean, x: Int, y: Int)
+}
+
+interface OnLayerDrawListener {
+    fun onLayerDraw(startDrawTime: Long, nowDrawTime: Long)
 }
 
 open class TouchSpiritBean(drawableArray: Array<Drawable>) : FrameBean(drawableArray, Point()) {

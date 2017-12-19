@@ -45,9 +45,14 @@ class GameTipView(context: Context, attributeSet: AttributeSet? = null) : FrameL
         timeTextView.text = text
     }
 
-    /**开始倒计时*/
+    /**开始倒计时, 如果已经有倒计时, 那么直接返回*/
     fun startCountDown(fromTime: Int /*从多少秒开始倒计时*/, onEnd: (() -> Unit)? = null) {
         timeTextView.startCountDown(fromTime, onEnd)
+    }
+
+    /**重新开始倒计时*/
+    fun restartCountDown(fromTime: Int /*从多少秒开始倒计时*/, onEnd: (() -> Unit)? = null) {
+        timeTextView.restartCountDown(fromTime, onEnd)
     }
 
     /**停止倒计时*/
@@ -72,8 +77,20 @@ class GameCountDownView(context: Context, attributeSet: AttributeSet? = null) : 
     /**到时间了*/
     var onTimeEnd: (() -> Unit)? = null
 
-    /**开始倒计时*/
+    /**开始倒计时, 如果已经有倒计时, 那么直接返回*/
     fun startCountDown(fromTime: Int /*从多少秒开始倒计时*/, onEnd: (() -> Unit)? = null) {
+        if (timeAnim != null && timeAnim!!.isStarted) {
+            return
+        }
+
+        this.onTimeEnd = onEnd
+        this.fromTime = fromTime
+        text = formatTime(fromTime * 1000L)
+        startAnim()
+    }
+
+    /**重新开始倒计时*/
+    fun restartCountDown(fromTime: Int /*从多少秒开始倒计时*/, onEnd: (() -> Unit)? = null) {
         this.onTimeEnd = onEnd
         this.fromTime = fromTime
         text = formatTime(fromTime * 1000L)

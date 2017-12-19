@@ -22,7 +22,7 @@ open class BaseFrameLayer : BaseLayer() {
 
     /**暂停绘制*/
     @Volatile
-    var pauseDrawFrame = false
+    open var pauseDrawFrame = false
 
     @Volatile
     var pauseDrawFrameThread = false
