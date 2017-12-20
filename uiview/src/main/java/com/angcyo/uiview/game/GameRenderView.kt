@@ -15,7 +15,6 @@ import com.angcyo.uiview.game.layer.BaseLayer
 import com.angcyo.uiview.kotlin.density
 import com.angcyo.uiview.resources.RAnimListener
 import com.angcyo.uiview.skin.SkinHelper
-import java.lang.Thread.NORM_PRIORITY
 import java.util.concurrent.CopyOnWriteArrayList
 
 /**
@@ -36,6 +35,7 @@ class GameRenderView(context: Context, attributeSet: AttributeSet? = null) : Vie
     var isGameViewDetached = true
 
     /**是否在渲染中*/
+    @Volatile
     var isGameRenderStart = false
 
     override fun onAttachedToWindow() {
@@ -187,7 +187,10 @@ class GameRenderView(context: Context, attributeSet: AttributeSet? = null) : Vie
             layerList[i].onRenderStart(this)
         }
 
-        renderThread.start()
+        //开始渲染子线程
+        RenderThread().apply {
+            start()
+        }
     }
 
     /**结束渲染*/
@@ -204,21 +207,29 @@ class GameRenderView(context: Context, attributeSet: AttributeSet? = null) : Vie
     }
 
     /**子线程用来计算游戏数据*/
-    private val renderThread: Thread = Thread {
-        while (isGameRenderStart) {
-            try {
-                val nowTime = time()
-                for (i in 0 until layerList.size) {
-                    layerList[i].drawThread(gameRenderStartTime, lastRenderTimeThread, nowTime)
-                }
-                Thread.sleep(16) //60帧回调一次
+    inner class RenderThread : Thread() {
+        init {
+            name = "GameRenderThread"
+            priority = NORM_PRIORITY
+        }
 
-                lastRenderTimeThread = nowTime
-            } catch (e: Exception) {
+        override fun run() {
+            super.run()
+            while (isGameRenderStart) {
+                try {
+                    val nowTime = time()
+                    for (i in 0 until layerList.size) {
+                        layerList[i].drawThread(gameRenderStartTime, lastRenderTimeThread, nowTime)
+                    }
+                    Thread.sleep(16) //60帧回调一次
+
+                    lastRenderTimeThread = nowTime
+
+                    //L.e("call: renderThread -> $id $name")
+                } catch (e: Exception) {
+                    e.printStackTrace()
+                }
             }
         }
-    }.apply {
-        name = "GameRenderThread"
-        priority = NORM_PRIORITY
     }
 }

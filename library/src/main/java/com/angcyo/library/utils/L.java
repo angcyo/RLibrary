@@ -280,12 +280,22 @@ public class L {
             lineNumber = 0;
         }
 
-        StackTraceElement next = stackTrace[level + 1];
-        String nextFileName = next.getFileName();
-        String nextMethodName = next.getMethodName();
-        int nextLineNumber = next.getLineNumber();
-        if (nextLineNumber < 0) {
-            nextLineNumber = 0;
+        String nextFileName;
+        String nextMethodName;
+        int nextLineNumber;
+        if (level + 1 == stackTrace.length) {
+            //到顶了
+            nextFileName = "Top";
+            nextMethodName = "Top";
+            nextLineNumber = -1;
+        } else {
+            StackTraceElement next = stackTrace[level + 1];
+            nextFileName = next.getFileName();
+            nextMethodName = next.getMethodName();
+            nextLineNumber = next.getLineNumber();
+            if (nextLineNumber < 0) {
+                nextLineNumber = 0;
+            }
         }
 
         String methodNameShort = methodName.substring(0, 1).toUpperCase() + methodName.substring(1);
