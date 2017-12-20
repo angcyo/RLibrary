@@ -102,6 +102,7 @@ abstract class BaseTouchLayer : BaseExLayer() {
 
     /**结束绘制*/
     fun endSpirit() {
+        spiritList.clear()
         isSpiritAddEnd = true
         val showNum = spiritList.size
         val addNum = spiritAddNumEd
