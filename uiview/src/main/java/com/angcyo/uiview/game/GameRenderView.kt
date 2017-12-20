@@ -230,6 +230,8 @@ class GameRenderView(context: Context, attributeSet: AttributeSet? = null) : Vie
                     e.printStackTrace()
                 }
             }
+            interrupt()
+            yield()
         }
     }
 }
