@@ -71,6 +71,10 @@ public class UILayoutImpl extends SwipeBackLayout implements ILayout<UIParam>, U
     private static final String TAG = "UILayoutImpl";
     public static String LAYOUT_INFO = "";
     /**
+     * 多指是否显示debug layout
+     */
+    public static boolean showDebugLayout = true;
+    /**
      * 已经追加到内容层的View
      */
     protected Stack<ViewPattern> mAttachViews = new Stack<>();
@@ -2531,6 +2535,7 @@ public class UILayoutImpl extends SwipeBackLayout implements ILayout<UIParam>, U
         }
 
         if (L.LOG_DEBUG &&
+                showDebugLayout &&
                 actionMasked == MotionEvent.ACTION_POINTER_DOWN &&
                 ev.getPointerCount() == 6) {
 
