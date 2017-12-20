@@ -42,6 +42,13 @@
     <!--固定比例如(1.5w 表示 高度是宽度的1.5倍, 0.5h 表示宽度是高度的0.5倍)-->
     <attr name="r_width_height_ratio" format="string"/>
 
+    <attr name="r_tip_text" format="string"/>
+    <attr name="r_tip_text_size" format="dimension"/>
+    <attr name="r_tip_text_color" format="color"/>
+    <attr name="r_tip_text_bg" format="boolean"/>
+    <attr name="r_tip_text_left_offset" format="dimension"/>
+    <attr name="r_tip_text_top_offset" format="dimension"/>
+
     <declare-styleable name="RLinearLayout">
         <attr name="r_background"/>
         <attr name="r_max_height"/>
@@ -119,6 +126,13 @@
         <attr name="r_is_aeq_width"/>
         <!--当设置文本为空时, 是否自动隐藏-->
         <attr name="r_hide_with_empty_text" format="boolean"/>
+        <attr name="r_is_show_tip_text" format="boolean"/>
+        <attr name="r_tip_text"/>
+        <attr name="r_tip_text_size"/>
+        <attr name="r_tip_text_color"/>
+        <attr name="r_tip_text_bg"/>
+        <attr name="r_tip_text_left_offset"/>
+        <attr name="r_tip_text_top_offset"/>
 
     </declare-styleable>
 

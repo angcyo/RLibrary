@@ -6,6 +6,7 @@ import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.Rect;
+import android.graphics.RectF;
 import android.graphics.drawable.ColorDrawable;
 import android.graphics.drawable.Drawable;
 import android.support.annotation.ColorInt;
@@ -96,10 +97,22 @@ public class RTextView extends AppCompatTextView {
     private boolean aeqWidth = false;
     private boolean hideWithEmptyText = false;
 
+    /**
+     * 是否显示tip文本 (目前只支持右上角显示)
+     */
+    private boolean isShowTipText = false;
+    private String tipText = "";
+    private int tipTextColor = Color.WHITE;
+    private int tipTextBgColor = Color.parseColor("#FF3333");
+    private int tipTextSize = (int) (9 * density());
+    //会根据Gravity, Left会有Right的作用
+    private int tipTextTopOffset = 0;
+    private int tipTextLeftOffset = 0;
+    private RectF tipTextRectF = new RectF();
+
     public RTextView(Context context) {
         this(context, null);
     }
-
 
     public RTextView(Context context, AttributeSet attrs) {
         this(context, attrs, 0);
@@ -143,6 +156,14 @@ public class RTextView extends AppCompatTextView {
 
         aeqWidth = typedArray.getBoolean(R.styleable.RTextView_r_is_aeq_width, aeqWidth);
         hideWithEmptyText = typedArray.getBoolean(R.styleable.RTextView_r_hide_with_empty_text, hideWithEmptyText);
+
+        isShowTipText = typedArray.getBoolean(R.styleable.RTextView_r_is_show_tip_text, isShowTipText);
+        tipText = typedArray.getString(R.styleable.RTextView_r_tip_text);
+        tipTextBgColor = typedArray.getColor(R.styleable.RTextView_r_tip_text_bg, tipTextBgColor);
+        tipTextColor = typedArray.getColor(R.styleable.RTextView_r_tip_text_color, tipTextColor);
+        tipTextSize = typedArray.getDimensionPixelOffset(R.styleable.RTextView_r_tip_text_size, tipTextSize);
+        tipTextTopOffset = typedArray.getDimensionPixelOffset(R.styleable.RTextView_r_tip_text_top_offset, tipTextTopOffset);
+        tipTextLeftOffset = typedArray.getDimensionPixelOffset(R.styleable.RTextView_r_tip_text_left_offset, tipTextLeftOffset);
 
         typedArray.recycle();
 
@@ -292,6 +313,36 @@ public class RTextView extends AppCompatTextView {
 
         if (centerSaveCount != -1) {
             canvas.restoreToCount(centerSaveCount);
+        }
+
+        if (isShowTipText || isInEditMode()) {
+            TextPaint textPaint = mTextPaint.getTextPaint();
+            textPaint.setStyle(Paint.Style.FILL);
+
+            float textW = ViewExKt.textWidth(this, String.valueOf(getText()));
+            float textH = ViewExKt.textHeight(this);
+
+            textPaint.setTextSize(tipTextSize);
+            float tipW = ViewExKt.textWidth(this, textPaint, tipText);
+            float tipH = ViewExKt.textHeight(this, textPaint);
+
+            tipTextRectF.set(getMeasuredWidth() - tipW,
+                    getMeasuredHeight() - getPaddingBottom() - textH - tipH,
+                    getMeasuredWidth(),
+                    getMeasuredHeight() - getPaddingBottom() - textH);
+
+            float round = 6 * density();
+            tipTextRectF.inset(-round / 2, 0);//让背景和文本有点距离
+            tipTextRectF.offset(-round, round);//尽量和原有的文本相贴合
+
+            tipTextRectF.offset(-tipTextLeftOffset, -tipTextTopOffset);
+
+            textPaint.setColor(tipTextBgColor);
+            canvas.drawRoundRect(tipTextRectF, round, round, textPaint);
+
+            textPaint.setColor(tipTextColor);
+            //默认位置在右上角
+            canvas.drawText(tipText, tipTextRectF.centerX() - tipW / 2, tipTextRectF.bottom - textPaint.descent(), textPaint);
         }
     }
 

@@ -6,14 +6,14 @@
         <attr name="r_text_normal"/>
         <attr name="r_text_selected"/>
         <attr name="r_show_text_size"/>
-        <attr name="r_tip_text_size" format="dimension"/>
-        <attr name="r_tip_text_color" format="color"/>
-        <attr name="r_tip_text_bg" format="boolean"/>
+        <attr name="r_tip_text_size"/>
+        <attr name="r_tip_text_color"/>
+        <attr name="r_tip_text_bg"/>
 
-        <attr name="r_tip_text" format="string"/>
+        <attr name="r_tip_text"/>
         <!--提示文本距离图标中心的偏移-->
-        <attr name="r_tip_text_left_offset" format="dimension"/>
-        <attr name="r_tip_text_top_offset" format="dimension"/>
+        <attr name="r_tip_text_left_offset"/>
+        <attr name="r_tip_text_top_offset"/>
         <attr name="r_no_read_num" format="integer"/>
         <attr name="r_is_tip_mode" format="boolean"/>
         <attr name="r_drawable_height_measure_mode" format="enum">
