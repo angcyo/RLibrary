@@ -32,6 +32,7 @@ import com.angcyo.uiview.model.TitleBarPattern;
 import com.angcyo.uiview.recycler.RBaseViewHolder;
 import com.angcyo.uiview.resources.ResUtil;
 import com.angcyo.uiview.skin.SkinHelper;
+import com.angcyo.uiview.widget.LoadingImageView;
 import com.angcyo.uiview.widget.RTextView;
 import com.angcyo.uiview.widget.RTitleCenterLayout;
 
@@ -181,6 +182,12 @@ public class UITitleBarContainer extends FrameLayout {
         mBackImageView = find(root, R.id.base_back_image_view);
         mTitleView = find(root, R.id.base_title_view);
         mLoadView = mBaseViewHolder.v(R.id.base_load_view);
+
+        if (titleBarPattern.isShowBackImageView) {
+            if (mLoadView instanceof LoadingImageView) {
+                ((LoadingImageView) mLoadView).setImageResource(R.drawable.loading_dark);
+            }
+        }
 
         if (context instanceof Activity) {
             mLayoutFullscreen = ResUtil.isLayoutFullscreen((Activity) context);

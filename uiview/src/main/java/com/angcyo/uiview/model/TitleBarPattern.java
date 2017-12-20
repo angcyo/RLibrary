@@ -109,6 +109,12 @@ public class TitleBarPattern {
      */
     public int bottomTitleBarLineColor = 0;
 
+    /**
+     * 默认的加载进度是白色的, 可以使用dark颜色
+     */
+    public boolean showDarkLoading = false;
+
+
     private TitleBarPattern(String titleString) {
         mTitleString = titleString;
     }
@@ -287,6 +293,11 @@ public class TitleBarPattern {
         mLeftItems.clear();
         mRightItems.clear();
         mOnInitTitleLayout = null;
+    }
+
+    public TitleBarPattern setShowDarkLoading(boolean showDarkLoading) {
+        this.showDarkLoading = showDarkLoading;
+        return this;
     }
 
     public interface OnInitTitleLayout {
