@@ -4,6 +4,7 @@ import android.graphics.Paint
 import android.graphics.drawable.Drawable
 import android.support.v4.content.ContextCompat
 import android.text.TextUtils
+import android.view.MotionEvent
 import android.view.View
 import android.widget.TextView
 import com.angcyo.uiview.view.RClickListener
@@ -124,3 +125,6 @@ public fun View.calcWidthHeightRatio(widthHeightRatio: String?): IntArray? {
     }
     return null
 }
+
+/**手势是否结束*/
+public fun View.isTouchFinish(event: MotionEvent) = event.actionMasked == MotionEvent.ACTION_UP || event.actionMasked == MotionEvent.ACTION_CANCEL
