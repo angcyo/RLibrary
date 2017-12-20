@@ -738,4 +738,32 @@ public class RTextView extends AppCompatTextView {
     public void setAutoFixTextSize(boolean autoFixTextSize) {
         this.autoFixTextSize = autoFixTextSize;
     }
+
+    public void setShowTipText(boolean showTipText) {
+        isShowTipText = showTipText;
+    }
+
+    public void setTipText(String tipText) {
+        this.tipText = tipText;
+    }
+
+    public void setTipTextColor(int tipTextColor) {
+        this.tipTextColor = tipTextColor;
+    }
+
+    public void setTipTextBgColor(int tipTextBgColor) {
+        this.tipTextBgColor = tipTextBgColor;
+    }
+
+    public void setTipTextSize(int tipTextSize) {
+        this.tipTextSize = tipTextSize;
+    }
+
+    public void setTipTextTopOffset(int tipTextTopOffset) {
+        this.tipTextTopOffset = tipTextTopOffset;
+    }
+
+    public void setTipTextLeftOffset(int tipTextLeftOffset) {
+        this.tipTextLeftOffset = tipTextLeftOffset;
+    }
 }
