@@ -215,38 +215,36 @@ abstract class BaseTouchLayer : BaseExLayer() {
     /**更新精灵配置*/
     protected fun updateSpiritList() {
         val removeList = mutableListOf<TouchSpiritBean>()
-        for (index in 0 until spiritList.size) {
-            val bean: TouchSpiritBean = spiritList[index] as TouchSpiritBean
+        synchronized(lock) {
+            for (index in 0 until spiritList.size) {
+                val bean: TouchSpiritBean = spiritList[index] as TouchSpiritBean
 
-            //L.i("call: updateSpiritList1 -> index:${bean.updateIndex} startY:${bean.startY} top:${bean.getTop()}")
-            bean.offset(0, (bean.stepY /*ScreenUtil.density*/).toInt())
+                //L.i("call: updateSpiritList1 -> index:${bean.updateIndex} startY:${bean.startY} top:${bean.getTop()}")
+                bean.offset(0, (bean.stepY /*ScreenUtil.density*/).toInt())
 
-            if (bean.useBezier) {
-                val maxY = (gameRenderView!!.measuredHeight - bean.startY) / bezierPart /*分成5份, 循环5次曲线*/
-                if (maxY > 0) {
-                    val fl = Math.abs((bean.getRect().top - bean.startY) % (maxY + 1) / maxY.toFloat())
+                if (bean.useBezier) {
+                    val maxY = (gameRenderView!!.measuredHeight - bean.startY) / bezierPart /*分成5份, 循环5次曲线*/
+                    if (maxY > 0) {
+                        val fl = Math.abs((bean.getRect().top - bean.startY) % (maxY + 1) / maxY.toFloat())
 
-                    val dx = (bean.bezierHelper!!.evaluate(fl) - bean.getRect().left).toInt()
-                    if (dx < bean.getRect().width()) {
-                        //控制位移的幅度, 防止漂移现象
-                        bean.offset(dx, 0)
+                        val dx = (bean.bezierHelper!!.evaluate(fl) - bean.getRect().left).toInt()
+                        if (dx < bean.getRect().width()) {
+                            //控制位移的幅度, 防止漂移现象
+                            bean.offset(dx, 0)
+                        }
+                        //L.e("call: updateRainList -> fl:$fl dx:$dx ${bean.getRect()} $maxY")
                     }
-                    //L.e("call: updateRainList -> fl:$fl dx:$dx ${bean.getRect()} $maxY")
                 }
-            }
 
-            bean.updateIndex++
+                bean.updateIndex++
 
-            val top = bean.getTop()
-            //L.w("call: updateSpiritList2 -> index:${bean.updateIndex} startY:${bean.startY} top:$top")
-            synchronized(lock) {
+                val top = bean.getTop()
+                //L.w("call: updateSpiritList2 -> index:${bean.updateIndex} startY:${bean.startY} top:$top")
                 if (top > gameRenderView!!.measuredHeight) {
                     //移动到屏幕外了,需要移除
                     removeList.add(bean)
                 }
             }
-        }
-        synchronized(lock) {
             spiritList.removeAll(removeList)
         }
     }
