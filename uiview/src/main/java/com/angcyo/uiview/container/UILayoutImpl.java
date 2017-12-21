@@ -1969,7 +1969,9 @@ public class UILayoutImpl extends SwipeBackLayout implements ILayout<UIParam>, U
                 childAt.measure(exactlyMeasure(wSize), exactlyMeasure(hSize));
             }
         } else {
-            Debug.logTimeStartD("\n开始测量, 共:" + getAttachViewSize());
+            if (showDebugLayout) {
+                Debug.logTimeStartD("\n开始测量, 共:" + getAttachViewSize());
+            }
             measureLogBuilder.delete(0, measureLogBuilder.length());
 
             for (int i = 0; i < count; i++) {
@@ -2026,8 +2028,10 @@ public class UILayoutImpl extends SwipeBackLayout implements ILayout<UIParam>, U
                     }
                 }
             }
-            L.i(measureLogBuilder.toString());
-            Debug.logTimeEndD("\n测量结束");
+            if (showDebugLayout) {
+                L.i(measureLogBuilder.toString());
+                Debug.logTimeEndD("\n测量结束");
+            }
         }
 
         setMeasuredDimension(widthSize, heightSize);
