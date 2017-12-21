@@ -33,8 +33,18 @@ public class RWebSocketListener {
     /**
      * WebSocket 连接成功
      */
+    @Deprecated
     public void connectSuccessWebsocket(WebSocket webSocket) {
 
+    }
+
+    /**
+     * WebSocket 连接成功
+     *
+     * @param isReconnect 是否是重连
+     */
+    public void connectSuccessWebsocket(WebSocket webSocket, Boolean isReconnect) {
+        connectSuccessWebsocket(webSocket);
     }
 
     /**

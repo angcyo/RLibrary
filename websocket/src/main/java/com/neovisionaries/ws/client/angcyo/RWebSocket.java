@@ -70,6 +70,12 @@ public class RWebSocket extends WebSocketAdapter {
      * 连接状态标识
      */
     private int webSocketState = WEB_SOCKET_CLOSE;
+
+    /**
+     * 是否重连中...当连接成功后, 网络断开, 程序自动连接时, 会标识的变量
+     */
+    private boolean isReconnect = false;
+
     /**
      * 定时监测websocket状态  实现重连
      */
@@ -94,7 +100,18 @@ public class RWebSocket extends WebSocketAdapter {
         return this;
     }
 
+    /**
+     * 外部调用
+     */
     public void connect(String wsUrl) {
+        isReconnect = false;
+        connect(wsUrl, isReconnect);
+    }
+
+    /**
+     * 内部调用
+     */
+    private void connect(String wsUrl, boolean isReconnect) {
         if (TextUtils.isEmpty(wsUrl)) {
             return;
         }
@@ -206,6 +223,7 @@ public class RWebSocket extends WebSocketAdapter {
             return;
         }
 
+        isReconnect = true;
         i("准备重连WebSocket");
 
         if (mWebSocket != null) {
@@ -228,9 +246,9 @@ public class RWebSocket extends WebSocketAdapter {
                 }
             }
             if (TextUtils.isEmpty(reconnectUrl)) {
-                connect(mWebSocketUrl);
+                connect(mWebSocketUrl, isReconnect);
             } else {
-                connect(reconnectUrl);
+                connect(reconnectUrl, isReconnect);
             }
         }
     }
@@ -358,7 +376,8 @@ public class RWebSocket extends WebSocketAdapter {
                 public void run() {
                     for (int i = 0; i < mListeners.size(); i++) {
                         RWebSocketListener listener = mListeners.get(i);
-                        listener.connectSuccessWebsocket(mWebSocket);
+                        //listener.connectSuccessWebsocket(mWebSocket);
+                        listener.connectSuccessWebsocket(mWebSocket, isReconnect);
                     }
                 }
             });
