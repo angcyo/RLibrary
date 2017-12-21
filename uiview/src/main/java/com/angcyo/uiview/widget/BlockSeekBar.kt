@@ -54,6 +54,7 @@ class BlockSeekBar(context: Context, attributeSet: AttributeSet? = null) : View(
                 value > blockMaxProgress -> blockMaxProgress
                 else -> value
             }
+            postInvalidate()
         }
 
     /**最大刻度, 百分比计算的分母*/
@@ -238,6 +239,11 @@ class BlockSeekBar(context: Context, attributeSet: AttributeSet? = null) : View(
 //        if (old != curProgress) {
 //            notifyListenerProgress(true)
 //        }
+    }
+
+    fun setBlockProgressAndNotify(progress: Int) {
+        blockProgress = progress
+        blockSeekListener?.onSeekChange(this, blockProgress, blockProgress + blockMinWidth)
     }
 
     /**事件监听*/

@@ -744,11 +744,11 @@ public class RUtils {
     /**
      * 使用,分割string, 并返回一个列表
      */
-    public static List<String> split(String string) {
+    public static ArrayList<String> split(String string) {
         return split(string, ",");
     }
 
-    public static List<String> split(String string, String regex) {
+    public static ArrayList<String> split(String string, String regex) {
         final ArrayList<String> list = new ArrayList<>();
         if (!"null".equalsIgnoreCase(string) && !TextUtils.isEmpty(string)) {
             final String[] split = string.split(regex);

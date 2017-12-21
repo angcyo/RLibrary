@@ -297,6 +297,8 @@ open class RProgressBar(context: Context, attributeSet: AttributeSet? = null) : 
         return stepPointList.last()
     }
 
+    fun getPointList() = stepPointList
+
     fun removeLastStepPoint(): Boolean {
         if (!stepPointList.isEmpty()) {
             stepPointList.removeAt(stepPointList.size - 1)
