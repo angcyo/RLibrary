@@ -129,7 +129,7 @@ abstract class BaseTouchLayer : BaseExLayer() {
     }
 
     override fun drawThread(gameStartTime: Long, lastRenderTimeThread: Long, nowRenderTime: Long) {
-        if (isSpiritAddEnd) {
+        if (isSpiritAddEnd || pauseDrawFrame) {
             return
         }
         super.drawThread(gameStartTime, lastRenderTimeThread, nowRenderTime)
@@ -142,6 +142,9 @@ abstract class BaseTouchLayer : BaseExLayer() {
     }
 
     override fun onDrawThread(gameStartTime: Long, lastRenderTimeThread: Long, nowRenderTime: Long) {
+        if (isSpiritAddEnd || pauseDrawFrame) {
+            return
+        }
         super.onDrawThread(gameStartTime, lastRenderTimeThread, nowRenderTime)
         checkAddNewSpirit()
     }

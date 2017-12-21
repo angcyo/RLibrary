@@ -158,6 +158,10 @@ public abstract class RExBaseAdapter<H, T, F> extends RModelAdapter<T> {
         return getHeaderCount() + getDataCount() + getFooterCount();
     }
 
+    public int getAllDataCount() {
+        return getRawItemCount();
+    }
+
     @Override
     protected void onBindCommonView(RBaseViewHolder holder, int position, T bean) {
         //L.e("call: onBindCommonView............ 111111111111: -> " + position);

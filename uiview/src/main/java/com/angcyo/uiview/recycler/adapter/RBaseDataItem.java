@@ -24,6 +24,14 @@ public abstract class RBaseDataItem<T> {
         mBaseData = baseData;
     }
 
+    public T getBaseData() {
+        return mBaseData;
+    }
+
+    public void setBaseData(T baseData) {
+        mBaseData = baseData;
+    }
+
     /**
      * 返回ItemType
      */

@@ -20,7 +20,7 @@ import java.util.Map;
  * 修改备注：
  * Version: 1.0.0
  */
-public class RDataAdapter extends RExBaseAdapter<String, RBaseDataItem, String> {
+public class RDataAdapter<T extends RBaseDataItem> extends RExBaseAdapter<String, T, String> {
 
     private SparseIntArray itemLayoutMap = new SparseIntArray();
     private Map<Class, Integer> itemClassMap = new HashMap<>();
@@ -29,7 +29,7 @@ public class RDataAdapter extends RExBaseAdapter<String, RBaseDataItem, String> 
         super(context);
     }
 
-    public RDataAdapter(Context context, List<RBaseDataItem> datas) {
+    public RDataAdapter(Context context, List<T> datas) {
         super(context, datas);
     }
 
@@ -97,7 +97,7 @@ public class RDataAdapter extends RExBaseAdapter<String, RBaseDataItem, String> 
      * 绑定视图数据
      */
     @Override
-    protected void onBindDataView(RBaseViewHolder holder, int posInData, RBaseDataItem dataBean) {
+    protected void onBindDataView(RBaseViewHolder holder, int posInData, T dataBean) {
         super.onBindDataView(holder, posInData, dataBean);
         dataBean.onBindDataView(this, holder, posInData);
     }
