@@ -11,6 +11,7 @@ import android.util.SparseArray
 import android.view.MotionEvent
 import android.view.View
 import android.view.animation.LinearInterpolator
+import com.angcyo.library.utils.L
 import com.angcyo.uiview.game.layer.BaseLayer
 import com.angcyo.uiview.kotlin.density
 import com.angcyo.uiview.resources.RAnimListener
@@ -101,7 +102,7 @@ class GameRenderView(context: Context, attributeSet: AttributeSet? = null) : Vie
         return true /*super.onTouchEvent(event)*/
     }
 
-    private var showFps = true
+    private var showFps = L.LOG_DEBUG
     private val fpsPaint: Paint by lazy {
         Paint(Paint.ANTI_ALIAS_FLAG).apply {
             textSize = 14 * density
