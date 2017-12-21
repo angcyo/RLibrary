@@ -11,7 +11,9 @@ import android.support.v4.view.ViewCompat;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.ViewTreeObserver;
+import android.view.animation.AlphaAnimation;
 import android.view.animation.Animation;
+import android.view.animation.AnimationSet;
 import android.view.animation.BounceInterpolator;
 import android.view.animation.DecelerateInterpolator;
 import android.view.animation.LayoutAnimationController;
@@ -23,6 +25,9 @@ import com.angcyo.uiview.RApplication;
 import com.angcyo.uiview.utils.ScreenUtil;
 import com.angcyo.uiview.view.UIIViewImpl;
 import com.angcyo.uiview.viewgroup.ClipLayout;
+
+import static com.angcyo.uiview.view.UIIViewImpl.DEFAULT_DIALOG_FINISH_ANIM_TIME;
+import static com.angcyo.uiview.view.UIIViewImpl.setDefaultConfig;
 
 /**
  * Created by angcyo on 2016-10-02 20:54.
@@ -471,6 +476,9 @@ public class AnimUtil {
         }
     }
 
+    /**
+     * 抖动 放大缩小
+     */
     public static void scaleBounceView(View view) {
         ViewCompat.setScaleX(view, 0.5f);
         ViewCompat.setScaleY(view, 0.5f);
@@ -482,6 +490,9 @@ public class AnimUtil {
                 .start();
     }
 
+    /**
+     * 可以指定方法的倍数
+     */
     public static void scaleBounceView(View view, float x, float y) {
         ViewCompat.setScaleX(view, 0.5f);
         ViewCompat.setScaleY(view, 0.5f);
@@ -491,6 +502,101 @@ public class AnimUtil {
                 .setInterpolator(new BounceInterpolator())
                 .setDuration(300)
                 .start();
+    }
+
+    /**
+     * 启动时的动画  从底部平移到顶部
+     */
+    public static Animation translateAlphaStartAnimation() {
+        TranslateAnimation translateAnimation = new TranslateAnimation(Animation.RELATIVE_TO_SELF, 0f, Animation.RELATIVE_TO_SELF, 0,
+                Animation.RELATIVE_TO_SELF, 1f, Animation.RELATIVE_TO_SELF, 0f);
+        AlphaAnimation alphaAnimation = new AlphaAnimation(0, 1);
+        setDefaultConfig(translateAnimation, false);
+        setDefaultConfig(alphaAnimation, false);
+
+        AnimationSet animationSet = new AnimationSet(false);
+        animationSet.addAnimation(alphaAnimation);
+        animationSet.addAnimation(translateAnimation);
+        return animationSet;
+    }
+
+    /**
+     * 结束时的动画 平移到底部
+     */
+    public static Animation translateAlphaFinishAnimation() {
+        TranslateAnimation translateAnimation = new TranslateAnimation(Animation.RELATIVE_TO_SELF, 0, Animation.RELATIVE_TO_SELF, 0f,
+                Animation.RELATIVE_TO_SELF, 0f, Animation.RELATIVE_TO_SELF, 1f);
+        AlphaAnimation alphaAnimation = new AlphaAnimation(1, 0);
+        setDefaultConfig(translateAnimation, true);
+        setDefaultConfig(alphaAnimation, true);
+
+        translateAnimation.setDuration(DEFAULT_DIALOG_FINISH_ANIM_TIME);
+        alphaAnimation.setDuration(DEFAULT_DIALOG_FINISH_ANIM_TIME);
+
+        AnimationSet animationSet = new AnimationSet(false);
+        animationSet.addAnimation(alphaAnimation);
+        animationSet.addAnimation(translateAnimation);
+        return animationSet;
+    }
+
+    /**
+     * 启动时的动画  从底部平移到顶部
+     */
+    public static Animation translateStartAnimation() {
+        TranslateAnimation translateAnimation = new TranslateAnimation(Animation.RELATIVE_TO_SELF, 0f, Animation.RELATIVE_TO_SELF, 0,
+                Animation.RELATIVE_TO_SELF, 1f, Animation.RELATIVE_TO_SELF, 0f);
+        setDefaultConfig(translateAnimation, false);
+
+        AnimationSet animationSet = new AnimationSet(false);
+        animationSet.addAnimation(translateAnimation);
+        return animationSet;
+    }
+
+    /**
+     * 结束时的动画 平移到底部
+     */
+    public static Animation translateFinishAnimation() {
+        TranslateAnimation translateAnimation = new TranslateAnimation(Animation.RELATIVE_TO_SELF, 0, Animation.RELATIVE_TO_SELF, 0f,
+                Animation.RELATIVE_TO_SELF, 0f, Animation.RELATIVE_TO_SELF, 1f);
+        setDefaultConfig(translateAnimation, true);
+
+        translateAnimation.setDuration(DEFAULT_DIALOG_FINISH_ANIM_TIME);
+
+        AnimationSet animationSet = new AnimationSet(false);
+        animationSet.addAnimation(translateAnimation);
+        return animationSet;
+    }
+
+    public static Animation createClipEnterAnim(float fromAlpha) {
+        AlphaAnimation animation = new AlphaAnimation(fromAlpha, 1f);
+        setDefaultConfig(animation, false);
+        return animation;
+    }
+
+    public static Animation createClipExitAnim(float toAlpha) {
+        AlphaAnimation animation = new AlphaAnimation(1f, toAlpha);
+        setDefaultConfig(animation, true);
+        return animation;
+    }
+
+    public static Animation createAlphaEnterAnim(float fromAlpha) {
+        return createClipEnterAnim(fromAlpha);
+    }
+
+    public static Animation createAlphaExitAnim(float toAlpha) {
+        return createClipExitAnim(toAlpha);
+    }
+
+    public static Animation createOtherEnterNoAnim() {
+        AlphaAnimation animation = new AlphaAnimation(0.9f, 1f);
+        setDefaultConfig(animation, false);
+        return animation;
+    }
+
+    public static Animation createOtherExitNoAnim() {
+        AlphaAnimation animation = new AlphaAnimation(1f, 0.9f);
+        setDefaultConfig(animation, true);
+        return animation;
     }
 
 }

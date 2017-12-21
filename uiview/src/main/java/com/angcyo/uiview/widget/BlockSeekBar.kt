@@ -58,6 +58,10 @@ class BlockSeekBar(context: Context, attributeSet: AttributeSet? = null) : View(
 
     /**最大刻度, 百分比计算的分母*/
     var blockMaxProgress: Int = 100
+        set(value) {
+            field = value
+            postInvalidate()
+        }
 
     /**滑块的最小宽度, 非百分比*/
     var blockMinWidth: Int = 20
@@ -67,6 +71,7 @@ class BlockSeekBar(context: Context, attributeSet: AttributeSet? = null) : View(
                 value > blockMaxProgress -> blockMaxProgress - 10
                 else -> value
             }
+            postInvalidate()
         }
 
     init {
@@ -80,7 +85,12 @@ class BlockSeekBar(context: Context, attributeSet: AttributeSet? = null) : View(
         blockMinWidth = typedArray.getInt(R.styleable.BlockSeekBar_r_block_min_width, blockMinWidth)
         blockProgressColor = typedArray.getColor(R.styleable.BlockSeekBar_r_block_progress_color, blockProgressColor)
         blockProgressBgColor = typedArray.getColor(R.styleable.BlockSeekBar_r_block_progress_bg_color, blockProgressBgColor)
-
+        val drawable = typedArray.getDrawable(R.styleable.BlockSeekBar_r_slider_drawable)
+        if (drawable != null) {
+            sliderDrawable = drawable.apply {
+                setBounds(0, 0, intrinsicWidth, intrinsicHeight)
+            }
+        }
         typedArray.recycle()
     }
 

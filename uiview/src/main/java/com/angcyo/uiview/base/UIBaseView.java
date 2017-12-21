@@ -14,9 +14,7 @@ import android.support.v4.view.ViewCompat;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.animation.AlphaAnimation;
 import android.view.animation.Animation;
-import android.view.animation.AnimationSet;
 import android.view.animation.CycleInterpolator;
 import android.view.animation.DecelerateInterpolator;
 import android.view.animation.LinearInterpolator;
@@ -44,6 +42,8 @@ import com.angcyo.uiview.widget.SoftRelativeLayout;
 
 import static android.view.View.GONE;
 import static android.view.View.VISIBLE;
+import static com.angcyo.uiview.resources.AnimUtil.createClipEnterAnim;
+import static com.angcyo.uiview.resources.AnimUtil.createClipExitAnim;
 
 /**
  * 实现了 空布局, 无网络布局, 数据加载布局, 内容布局之间的切换
@@ -122,66 +122,6 @@ public abstract class UIBaseView extends UIIViewImpl {
         }
     }
 
-    public static Animation createClipEnterAnim(float fromAlpha) {
-        AlphaAnimation animation = new AlphaAnimation(fromAlpha, 1f);
-        setDefaultConfig(animation, false);
-        return animation;
-    }
-
-    public static Animation createClipExitAnim(float toAlpha) {
-        AlphaAnimation animation = new AlphaAnimation(1f, toAlpha);
-        setDefaultConfig(animation, true);
-        return animation;
-    }
-
-    public static Animation createAlphaEnterAnim(float fromAlpha) {
-        return createClipEnterAnim(fromAlpha);
-    }
-
-    public static Animation createAlphaExitAnim(float toAlpha) {
-        return createClipExitAnim(toAlpha);
-    }
-
-    public static Animation createOtherEnterNoAnim() {
-        AlphaAnimation animation = new AlphaAnimation(0.9f, 1f);
-        setDefaultConfig(animation, false);
-        return animation;
-    }
-
-    public static Animation createOtherExitNoAnim() {
-        AlphaAnimation animation = new AlphaAnimation(1f, 0.9f);
-        setDefaultConfig(animation, true);
-        return animation;
-    }
-
-    public static Animation createTranYStartAnimation() {
-        TranslateAnimation translateAnimation = new TranslateAnimation(Animation.RELATIVE_TO_SELF, 0f, Animation.RELATIVE_TO_SELF, 0,
-                Animation.RELATIVE_TO_SELF, 1f, Animation.RELATIVE_TO_SELF, 0f);
-        AlphaAnimation alphaAnimation = new AlphaAnimation(0, 1);
-        setDefaultConfig(translateAnimation, false);
-        setDefaultConfig(alphaAnimation, false);
-
-        AnimationSet animationSet = new AnimationSet(false);
-        animationSet.addAnimation(alphaAnimation);
-        animationSet.addAnimation(translateAnimation);
-        return animationSet;
-    }
-
-    public static Animation createTranYFinishAnimation() {
-        TranslateAnimation translateAnimation = new TranslateAnimation(Animation.RELATIVE_TO_SELF, 0, Animation.RELATIVE_TO_SELF, 0f,
-                Animation.RELATIVE_TO_SELF, 0f, Animation.RELATIVE_TO_SELF, 1f);
-        AlphaAnimation alphaAnimation = new AlphaAnimation(1, 0);
-        setDefaultConfig(translateAnimation, true);
-        setDefaultConfig(alphaAnimation, true);
-
-        translateAnimation.setDuration(DEFAULT_DIALOG_FINISH_ANIM_TIME);
-        alphaAnimation.setDuration(DEFAULT_DIALOG_FINISH_ANIM_TIME);
-
-        AnimationSet animationSet = new AnimationSet(false);
-        animationSet.addAnimation(alphaAnimation);
-        animationSet.addAnimation(translateAnimation);
-        return animationSet;
-    }
 
     @Override
     protected View inflateBaseView(FrameLayout container, LayoutInflater inflater) {

@@ -312,6 +312,13 @@ class DYRecordView(context: Context, attributeSet: AttributeSet? = null) : View(
         }
     }
 
+    /**点击录制模式下的, 手动开始录制按钮*/
+    fun startRecordWidthClick() {
+        if (recordType == RECORD_TYPE_CLICK && !isRecording) {
+            startBreath()
+        }
+    }
+
     /*手势松开, 恢复动画*/
     private var resetAnimator: ValueAnimator? = null
 
