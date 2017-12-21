@@ -1,6 +1,7 @@
 package com.angcyo.library;
 
 import android.content.Context;
+import android.os.Environment;
 import android.text.TextUtils;
 import android.text.format.Formatter;
 
@@ -33,77 +34,6 @@ public class CacheManager {
 
     public static CacheManager instance() {
         return Holder.instance;
-    }
-
-    private static class Holder {
-        static CacheManager instance = new CacheManager();
-    }
-
-    /**
-     * 获取整个Cache文件夹大小
-     */
-    public String getAllCacheFolderSize(Context context) {
-        try {
-            long size = 0;
-
-            for (String path : cachePaths) {
-                size += getFolderSize(new File(path));
-            }
-
-            return Formatter.formatFileSize(context, size);
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-        return "0";
-    }
-
-    /**
-     * 打印log
-     */
-    public void log(Context context) {
-        for (String path : cachePaths) {
-            L.e(path + " -> " + Formatter.formatFileSize(context, getFolderSize(new File(path))));
-        }
-    }
-
-    /**
-     * 添加缓存目录, 需要用来统计大小的目录
-     */
-    public void addCachePath(String... paths) {
-        for (String path : paths) {
-            if (cachePaths.contains(path)) {
-                continue;
-            }
-            cachePaths.add(path);
-        }
-    }
-
-
-    /**
-     * 清理整个cache文件夹的文件
-     */
-    public Observable<Boolean> clearCacheFolder() {
-        return Observable
-                .create(new SyncOnSubscribe<Integer, Boolean>() {
-                    @Override
-                    protected Integer generateState() {
-                        return 1;
-                    }
-
-                    @Override
-                    protected Integer next(Integer state, Observer<? super Boolean> observer) {
-                        if (state > 0) {
-                            for (String path : cachePaths) {
-                                deleteFolderFile(path, false);
-                            }
-                            observer.onNext(true);
-                            observer.onCompleted();
-                        }
-                        return -1;
-                    }
-                })
-                .subscribeOn(Schedulers.io())
-                .observeOn(AndroidSchedulers.mainThread());
     }
 
     public static Observable<Boolean> clearCacheFolder(final String... paths) {
@@ -189,5 +119,84 @@ public class CacheManager {
             e.printStackTrace();
         }
         return false;
+    }
+
+    /**
+     * 获取整个Cache文件夹大小
+     */
+    public String getAllCacheFolderSize(Context context) {
+        try {
+            long size = 0;
+
+            for (String path : cachePaths) {
+                size += getFolderSize(new File(path));
+            }
+
+            return Formatter.formatFileSize(context, size);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return "0";
+    }
+
+    /**
+     * 打印log
+     */
+    public void log(Context context) {
+        for (String path : cachePaths) {
+            L.e(path + " -> " + Formatter.formatFileSize(context, getFolderSize(new File(path))));
+        }
+    }
+
+    /**
+     * 添加缓存目录, 需要用来统计大小的目录
+     */
+    public void addCachePath(String... paths) {
+        for (String path : paths) {
+            if (cachePaths.contains(path)) {
+                continue;
+            }
+            cachePaths.add(path);
+        }
+    }
+
+    /**
+     * 添加SD根目录下的缓存目录
+     */
+    public void addSDCachePath(String... paths) {
+        for (String path : paths) {
+            addCachePath(Environment.getExternalStorageDirectory().getAbsoluteFile().getAbsolutePath() + File.separator + path);
+        }
+    }
+
+    /**
+     * 清理整个cache文件夹的文件
+     */
+    public Observable<Boolean> clearCacheFolder() {
+        return Observable
+                .create(new SyncOnSubscribe<Integer, Boolean>() {
+                    @Override
+                    protected Integer generateState() {
+                        return 1;
+                    }
+
+                    @Override
+                    protected Integer next(Integer state, Observer<? super Boolean> observer) {
+                        if (state > 0) {
+                            for (String path : cachePaths) {
+                                deleteFolderFile(path, false);
+                            }
+                            observer.onNext(true);
+                            observer.onCompleted();
+                        }
+                        return -1;
+                    }
+                })
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread());
+    }
+
+    private static class Holder {
+        static CacheManager instance = new CacheManager();
     }
 }
