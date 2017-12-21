@@ -36,6 +36,9 @@ public class RSA {
 
     public static String E_SALT = "";
 
+    public static String PUBLIC_KEY_KLG_VIDEO = "MIGfMA0GCSqGSIb3DQEBAQUAA4GNADCBiQKBgQDTIeJ8eQ0UzfYcwwez/U5569tvqL9KxqQZg2s1ppEwGSxhq6VK9dRq+U84zGvW8bsnDDNDOqkvfsMt+mGzsvZNOblMU1f/7QvhLubUNR6Sa0scaKq8hc8lpKMhsZy+JKFWjSb93G2cJ6xzl9JwQRCwvjqqkcD7vtlMC4+gLmgHDQIDAQAB";
+
+
     /**
      * 加密
      */
@@ -118,4 +121,14 @@ public class RSA {
 
     }
 
+    public static String encodeKlgVideo(String data) {
+        String encode = "";
+        byte[] encodedData;
+        try {
+            encodedData = RSAUtils.encryptByPublicKey(data.getBytes(), PUBLIC_KEY_KLG_VIDEO);
+            encode = Base64Utils.encode(encodedData);
+        } catch (Exception e) {
+        }
+        return encode.replaceAll("\\n", "");
+    }
 }
