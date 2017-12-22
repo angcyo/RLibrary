@@ -2599,6 +2599,7 @@ public class UILayoutImpl extends SwipeBackLayout implements ILayout<UIParam>, U
         }
 
         for (ViewPattern pattern : needFinishPattern) {
+            pattern.interrupt = true;
             if (pattern == getLastViewPattern() && lastFinishParam != null) {
                 //最后一个页面关闭时, 正常执行
                 //finishIViewInner(pattern, lastFinishParam);
@@ -2612,15 +2613,16 @@ public class UILayoutImpl extends SwipeBackLayout implements ILayout<UIParam>, U
 
     @Override
     public void finishAll(boolean keepLast) {
-        while (!mAttachViews.empty()) {
-            ViewPattern pattern = mAttachViews.pop();
-            if (keepLast && pattern == getLastViewPattern()) {
-                return;
-            } else {
-                pattern.interrupt = true;
-                finishIViewInner(pattern, new UIParam(false, false, true));
-            }
-        }
+//        while (!mAttachViews.empty()) {
+//            ViewPattern pattern = mAttachViews.pop();
+//            if (keepLast && pattern == getLastViewPattern()) {
+//                return;
+//            } else {
+//                pattern.interrupt = true;
+//                finishIViewInner(pattern, new UIParam(false, false, true));
+//            }
+//        }
+        finishAllWithKeep(new ArrayList<Class<? extends IView>>(), true, null);
     }
 
     @Override
