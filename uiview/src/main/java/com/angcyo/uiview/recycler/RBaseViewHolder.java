@@ -226,6 +226,10 @@ public class RBaseViewHolder extends RecyclerView.ViewHolder {
         return (GlideImageView) v(resId);
     }
 
+    public GlideImageView gv(@IdRes int resId) {
+        return (GlideImageView) v(resId);
+    }
+
     public ImageView imageView(@IdRes int resId) {
         return imgV(resId);
     }

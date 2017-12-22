@@ -156,6 +156,10 @@ public class CacheManager {
             if (cachePaths.contains(path)) {
                 continue;
             }
+            File cache = new File(path);
+            if (!cache.exists()) {
+                cache.mkdirs();
+            }
             cachePaths.add(path);
         }
     }
