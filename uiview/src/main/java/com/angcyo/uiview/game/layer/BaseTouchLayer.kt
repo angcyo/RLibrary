@@ -177,17 +177,19 @@ abstract class BaseTouchLayer : BaseExLayer() {
 
     protected fun checkTouchListener(x: Int, y: Int): Boolean {
         var isIn = false
-        for (i in spiritList.size - 1 downTo 0) {
-            val spiritBean: TouchSpiritBean = spiritList[i] as TouchSpiritBean
-            //L.w("check", "${spiritBean.getRect()} $x $y ${spiritBean.isIn(x, y)}")
-            if (spiritBean.isIn(x, y)) {
-                touchUpSpiritNum++
-                onClickSpiritListener?.onClickSpirit(this, spiritBean, x, y)
-                isIn = true
-                if (removeOnTouch) {
-                    removeSpirit(spiritBean)
+        synchronized(lock) {
+            for (i in spiritList.size - 1 downTo 0) {
+                val spiritBean: TouchSpiritBean = spiritList[i] as TouchSpiritBean
+                //L.w("check", "${spiritBean.getRect()} $x $y ${spiritBean.isIn(x, y)}")
+                if (spiritBean.isIn(x, y)) {
+                    touchUpSpiritNum++
+                    onClickSpiritListener?.onClickSpirit(this, spiritBean, x, y)
+                    isIn = true
+                    if (removeOnTouch) {
+                        removeSpirit(spiritBean)
+                    }
+                    break
                 }
-                break
             }
         }
         return isIn
