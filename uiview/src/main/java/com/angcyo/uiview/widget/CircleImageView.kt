@@ -67,6 +67,7 @@ open class CircleImageView(context: Context, attributeSet: AttributeSet? = null)
     }
 
     private val clipPath: Path by lazy { Path() }
+    private val borderPath: Path by lazy { Path() }
 
     val paint: Paint by lazy {
         val p = Paint(Paint.ANTI_ALIAS_FLAG)
@@ -101,10 +102,12 @@ open class CircleImageView(context: Context, attributeSet: AttributeSet? = null)
                 val cy = (paddingTop + size / 2).toFloat()
                 val cr = (size / 2).toFloat()
                 clipPath.reset()
+                borderPath.reset()
                 paint.color = lineColor
 
                 if (showType == CIRCLE) {
                     clipPath.addCircle(cx, cy, cr, Path.Direction.CW)
+                    borderPath.addCircle(cx, cy, cr - lineWidth / 2, Path.Direction.CW)
                 } else {
                     if (showType == ROUND_RECT) {
                         roundRectF.set(paddingLeft.toFloat(), paddingTop.toFloat(),
@@ -113,6 +116,8 @@ open class CircleImageView(context: Context, attributeSet: AttributeSet? = null)
                         roundRectF.set(cx - cr, cy - cr, cx + cr, cy + cr)
                     }
                     clipPath.addRoundRect(roundRectF, radius, Path.Direction.CW)
+                    roundRectF.inset(lineWidth / 2, lineWidth / 2)
+                    borderPath.addRoundRect(roundRectF, radius, Path.Direction.CW)
                 }
 
                 fun save(canvas: Canvas) = if (TextUtils.equals(Build.MANUFACTURER, "HUAWEI") &&
@@ -134,11 +139,13 @@ open class CircleImageView(context: Context, attributeSet: AttributeSet? = null)
 //                    save2 = canvas.save()
 //                }
                 super.onDraw(canvas)
-                if (drawBorder) {
-                    canvas.drawPath(clipPath, paint)
-                }
                 canvas.restoreToCount(save2)
                 canvas.restoreToCount(save1)
+
+                if (drawBorder) {
+                    canvas.drawPath(borderPath, paint)
+                }
+
                 //canvas.restoreToCount(savePath)
 
                 //canvas.drawRoundRect(roundRectF, roundRadius, roundRadius, paint)
