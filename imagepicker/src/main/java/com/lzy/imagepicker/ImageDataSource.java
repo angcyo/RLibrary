@@ -117,6 +117,58 @@ public class ImageDataSource implements LoaderManager.LoaderCallbacks<Cursor> {
         return str;
     }
 
+    /**
+     * 查询5个小时之内的图片信息, 用来实现, 类似QQ的你有新照片提醒 (主线程执行, 速度很快)
+     */
+    public static ArrayList<ImageItem> queryRecentlyPhoto(ContentResolver contentResolver) {
+        final String[] IMAGE_PROJECTION = {
+                MediaStore.Images.Media.DISPLAY_NAME,
+                MediaStore.Images.Media.DATA,
+                MediaStore.Images.Media.SIZE,
+                MediaStore.Images.Media.WIDTH,
+                MediaStore.Images.Media.HEIGHT,
+                MediaStore.Images.Media.MIME_TYPE,
+                MediaStore.Images.Media.DATE_ADDED};
+
+        Cursor query = contentResolver.query(MediaStore.Images.Media.EXTERNAL_CONTENT_URI,
+                IMAGE_PROJECTION, IMAGE_PROJECTION[6] + ">" + (System.currentTimeMillis() / 1000L - 5 * 60 * 60),
+                null, IMAGE_PROJECTION[6] + " DESC" /*按照时间降序*/);
+        ArrayList<ImageItem> allImages = new ArrayList<>();
+        if (query != null) {
+            while (query.moveToNext()) {
+                //查询数据
+                String imageName = query.getString(query.getColumnIndexOrThrow(IMAGE_PROJECTION[0]));
+                String imagePath = query.getString(query.getColumnIndexOrThrow(IMAGE_PROJECTION[1]));
+                long imageSize = query.getLong(query.getColumnIndexOrThrow(IMAGE_PROJECTION[2]));
+                int imageWidth = query.getInt(query.getColumnIndexOrThrow(IMAGE_PROJECTION[3]));
+                int imageHeight = query.getInt(query.getColumnIndexOrThrow(IMAGE_PROJECTION[4]));
+                String imageMimeType = query.getString(query.getColumnIndexOrThrow(IMAGE_PROJECTION[5]));
+                long imageAddTime = query.getLong(query.getColumnIndexOrThrow(IMAGE_PROJECTION[6]));
+
+                File imageFile = new File(imagePath);
+                if (!imageFile.exists() || !imageFile.isFile()) {
+                    continue;
+                }
+
+                //封装实体
+                ImageItem imageItem = new ImageItem(IMAGE);
+                imageItem.name = imageName;
+                imageItem.path = imagePath;
+                imageItem.size = imageSize;
+                imageItem.width = imageWidth;
+                imageItem.height = imageHeight;
+                imageItem.mimeType = imageMimeType;
+                imageItem.addTime = imageAddTime;
+                //imageItem.placeholderDrawable = ContextCompat.getDrawable(activity, R.drawable.image_placeholder_shape);
+
+                allImages.add(imageItem);
+            }
+            query.close();
+        }
+        //L.e("call: initOnShowContentLayout -> ${allImages.size}");
+        return allImages;
+    }
+
     @Override
     public Loader<Cursor> onCreateLoader(int id, Bundle args) {
         CursorLoader cursorLoader = null;

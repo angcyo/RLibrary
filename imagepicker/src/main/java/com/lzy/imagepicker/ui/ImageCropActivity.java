@@ -43,7 +43,7 @@ public class ImageCropActivity extends ImageBaseActivity implements View.OnClick
     private ImagePicker imagePicker;
 
     /**
-     * Gets exif orientation.
+     * Gets exif orientation. 获取图片旋转方向
      *
      * @param fileName the file name
      * @return the exif orientation

@@ -33,6 +33,10 @@ public class Root {
         return Environment.getExternalStorageDirectory().getAbsolutePath();
     }
 
+    public static String sd() {
+        return externalStorageDirectory();
+    }
+
     public static String getAppExternalFolder(String folder) {
         if (folder == null) {
             folder = "";

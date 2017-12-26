@@ -27,7 +27,7 @@ public class ImageItem implements Parcelable {
     public int width;         //宽度
     public int height;        //高度
     public String mimeType;   //类型
-    public long addTime = -1;      //创建时间
+    public long addTime = -1;      //创建时间 秒
 
     //星期二 2017-6-13 支持扫描视频文件
     public long videoDuration = -1;//视频时长

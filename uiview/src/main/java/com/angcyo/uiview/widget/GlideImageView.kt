@@ -390,6 +390,12 @@ open class GlideImageView(context: Context, attributeSet: AttributeSet? = null) 
 
     @SuppressLint("CheckResult")
     private fun showGifFile(file: File) {
+        if (context is Activity) {
+            if ((context as Activity).isDestroyed) {
+                return
+            }
+        }
+
         val request = Glide.with(context)
                 .downloadOnly()
                 .load(file)
@@ -416,6 +422,12 @@ open class GlideImageView(context: Context, attributeSet: AttributeSet? = null) 
     }
 
     private fun showJpegFile(file: File) {
+        if (context is Activity) {
+            if ((context as Activity).isDestroyed) {
+                return
+            }
+        }
+
         val request = Glide.with(context)
                 .asBitmap()
                 .load(file)
@@ -424,6 +436,12 @@ open class GlideImageView(context: Context, attributeSet: AttributeSet? = null) 
     }
 
     private fun showFile(file: File) {
+        if (context is Activity) {
+            if ((context as Activity).isDestroyed) {
+                return
+            }
+        }
+
         val request = Glide.with(context)
                 .load(file)
 
@@ -474,6 +492,12 @@ open class GlideImageView(context: Context, attributeSet: AttributeSet? = null) 
             return
         }
 
+        if (context is Activity) {
+            if ((context as Activity).isDestroyed) {
+                return
+            }
+        }
+
         val request = Glide.with(context)
                 .load(url)
 
@@ -483,6 +507,12 @@ open class GlideImageView(context: Context, attributeSet: AttributeSet? = null) 
     private fun loadJpegUrl(url: String) {
         if (!canLoad(url)) {
             return
+        }
+
+        if (context is Activity) {
+            if ((context as Activity).isDestroyed) {
+                return
+            }
         }
 
         val request = Glide.with(context)
@@ -496,6 +526,12 @@ open class GlideImageView(context: Context, attributeSet: AttributeSet? = null) 
     private fun loadGifUrl(url: String) {
         if (!canLoad(url)) {
             return
+        }
+
+        if (context is Activity) {
+            if ((context as Activity).isDestroyed) {
+                return
+            }
         }
 
         val request = Glide.with(context)
