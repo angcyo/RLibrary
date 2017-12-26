@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <declare-styleable name="GuideFrameLayout">
+        <!--注意, 原有FrameLayout的xml属性依旧有效-->
+
+        <!--需要和那个Anchor关联, -1不关联Anchor-->
+        <attr name="r_guide_show_in_anchor" format="integer"/>
+        <!--相当于Anchor的位置-->
+        <attr name="r_guide_gravity" format="enum">
+            <enum name="LEFT" value="1"/>
+            <enum name="RIGHT" value="3"/>
+            <enum name="TOP" value="2"/>
+            <enum name="BOTTOM" value="4"/>
+            <enum name="CENTER" value="5"/>
+        </attr>
+
+        <!--会受到gravity的影响-->
+        <attr name="r_guide_offset_x" format="dimension"/>
+        <attr name="r_guide_offset_y" format="dimension"/>
+    </declare-styleable>
+</resources>
