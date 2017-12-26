@@ -596,6 +596,10 @@ public abstract class RBaseAdapter<T> extends RecyclerView.Adapter<RBaseViewHold
         return this;
     }
 
+    public void onScrollStateEnd(RRecyclerView rRecyclerView, boolean firstItemVisible, boolean lastItemVisible, boolean topCanScroll, boolean bottomCanScroll) {
+
+    }
+
     public interface OnAdapterLoadMoreListener {
         void onAdapterLodeMore(RBaseAdapter baseAdapter);
     }

@@ -80,6 +80,12 @@ public class RRecyclerView extends RecyclerView {
             Adapter adapter = getAdapterRaw();
             if (adapter != null && adapter instanceof RBaseAdapter) {
                 ((RBaseAdapter) adapter).onScrollStateChanged(RRecyclerView.this, newState);
+                if (newState == RecyclerView.SCROLL_STATE_IDLE) {
+                    //滚动状态结束
+                    ((RBaseAdapter) adapter).onScrollStateEnd(RRecyclerView.this,
+                            isFirstItemVisible(), isLastItemVisible(),
+                            UI.canChildScrollUp(recyclerView), UI.canChildScrollDown(recyclerView));
+                }
             }
         }
 
@@ -89,6 +95,12 @@ public class RRecyclerView extends RecyclerView {
             Adapter adapter = getAdapterRaw();
             if (adapter != null && adapter instanceof RBaseAdapter) {
                 ((RBaseAdapter) adapter).onScrolled(RRecyclerView.this, dx, dy);
+                if (recyclerView.getScrollState() == RecyclerView.SCROLL_STATE_IDLE) {
+                    //滚动结束
+                    ((RBaseAdapter) adapter).onScrollStateEnd(RRecyclerView.this,
+                            isFirstItemVisible(), isLastItemVisible(),
+                            UI.canChildScrollUp(recyclerView), UI.canChildScrollDown(recyclerView));
+                }
             }
         }
     };
@@ -794,6 +806,40 @@ public class RRecyclerView extends RecyclerView {
 
     public void setOnFastTouchListener(OnFastTouchListener onFastTouchListener) {
         mOnFastTouchListener = onFastTouchListener;
+    }
+
+    /**
+     * 第一个Item是否可见
+     */
+    public boolean isFirstItemVisible() {
+        boolean visible = false;
+
+        Adapter adapter = getAdapter();
+        if (adapter != null && adapter.getItemCount() > 0) {
+            LayoutManager layoutManager = getLayoutManager();
+            if (layoutManager instanceof LinearLayoutManager) {
+                int firstVisibleItemPosition = ((LinearLayoutManager) layoutManager).findFirstVisibleItemPosition();
+                visible = firstVisibleItemPosition == 0;
+            }
+        }
+        return visible;
+    }
+
+    /**
+     * 最后一个Item是否可见
+     */
+    public boolean isLastItemVisible() {
+        boolean visible = false;
+
+        Adapter adapter = getAdapter();
+        if (adapter != null && adapter.getItemCount() > 0) {
+            LayoutManager layoutManager = getLayoutManager();
+            if (layoutManager instanceof LinearLayoutManager) {
+                int firstVisibleItemPosition = ((LinearLayoutManager) layoutManager).findLastVisibleItemPosition();
+                visible = firstVisibleItemPosition == adapter.getItemCount() - 1;
+            }
+        }
+        return visible;
     }
 
     /**

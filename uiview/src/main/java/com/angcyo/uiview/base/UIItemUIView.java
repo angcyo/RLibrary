@@ -6,6 +6,7 @@ import android.support.annotation.DrawableRes;
 import android.support.annotation.NonNull;
 import android.text.TextPaint;
 import android.view.LayoutInflater;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 
@@ -111,8 +112,45 @@ public abstract class UIItemUIView<T extends Item> extends UIRecyclerUIView<Stri
             protected View createItemView(@NotNull ViewGroup parent, int viewType) {
                 return UIItemUIView.this.createItemView(parent, viewType);
             }
+
+            @Override
+            public void onScrollStateChanged(RRecyclerView recyclerView, int newState) {
+                super.onScrollStateChanged(recyclerView, newState);
+                UIItemUIView.this.onScrollStateChanged(recyclerView, newState);
+            }
+
+            @Override
+            public void onScrolled(RRecyclerView recyclerView, int dx, int dy) {
+                super.onScrolled(recyclerView, dx, dy);
+                UIItemUIView.this.onScrolled(recyclerView, dx, dy);
+            }
+
+            @Override
+            public void onScrolledInTouch(RRecyclerView recyclerView, MotionEvent e1, MotionEvent e2, float distanceX, float distanceY) {
+                super.onScrolledInTouch(recyclerView, e1, e2, distanceX, distanceY);
+                UIItemUIView.this.onScrolledInTouch(recyclerView, e1, e2, distanceX, distanceY);
+            }
+
+            @Override
+            public void onScrollStateEnd(RRecyclerView rRecyclerView, boolean firstItemVisible, boolean lastItemVisible, boolean topCanScroll, boolean bottomCanScroll) {
+                super.onScrollStateEnd(rRecyclerView, firstItemVisible, lastItemVisible, topCanScroll, bottomCanScroll);
+                UIItemUIView.this.onScrollStateEnd(rRecyclerView, firstItemVisible, lastItemVisible, topCanScroll, bottomCanScroll);
+            }
         };
     }
+
+    public void onScrollStateChanged(RRecyclerView recyclerView, int newState) {
+    }
+
+    public void onScrolled(RRecyclerView recyclerView, int dx, int dy) {
+    }
+
+    public void onScrolledInTouch(RRecyclerView recyclerView, MotionEvent e1, MotionEvent e2, float distanceX, float distanceY) {
+    }
+
+    public void onScrollStateEnd(RRecyclerView rRecyclerView, boolean firstItemVisible, boolean lastItemVisible, boolean topCanScroll, boolean bottomCanScroll) {
+    }
+
 
     /**
      * 更新布局, 重新创建了items, 如果item的数量有变化, 建议使用这个方法
