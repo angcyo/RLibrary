@@ -63,3 +63,5 @@ public fun Rect.scale(scaleX: Float, scaleY: Float) {
         bottom = (bottom * scaleY + 0.5f).toInt()
     }
 }
+
+public inline fun <T> T.nowTime() = System.currentTimeMillis()

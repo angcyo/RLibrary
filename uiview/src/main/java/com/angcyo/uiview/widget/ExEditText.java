@@ -40,6 +40,7 @@ import com.angcyo.library.utils.Anim;
 import com.angcyo.library.utils.L;
 import com.angcyo.uiview.R;
 import com.angcyo.uiview.RApplication;
+import com.angcyo.uiview.container.UILayoutImpl;
 import com.angcyo.uiview.kotlin.ExKt;
 import com.angcyo.uiview.resources.RAnimListener;
 import com.angcyo.uiview.skin.SkinHelper;
@@ -1017,7 +1018,7 @@ public class ExEditText extends AppCompatEditText {
                     lastMentionIndex = end;
                     //recordRunnable all show-string's position
                     mRangeArrayList.add(new Range(start, end));
-                }catch (StringIndexOutOfBoundsException e) {
+                } catch (StringIndexOutOfBoundsException e) {
                     e.printStackTrace();
                 }
 
@@ -1031,7 +1032,7 @@ public class ExEditText extends AppCompatEditText {
                     try {
                         spannableText.setSpan(new MentionSpan(text.substring(start, end)), start, end, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
                         mRangeArrayList.add(new Range(start, end));
-                    }catch (StringIndexOutOfBoundsException e) {
+                    } catch (StringIndexOutOfBoundsException e) {
                         e.printStackTrace();
                     }
 
@@ -1309,6 +1310,7 @@ public class ExEditText extends AppCompatEditText {
     private void checkDebugCmd(CharSequence text) {
         if ("_cmd:open_debug".equalsIgnoreCase(String.valueOf(text))) {
             L.LOG_DEBUG = true;
+            UILayoutImpl.showDebugLayout = true;
             GlideImageView.Companion.setDEBUG_SHOW(true);
         }
     }
