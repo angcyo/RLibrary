@@ -215,7 +215,7 @@ open class ClipLayout(context: Context, attributeSet: AttributeSet? = null) : Fr
      * 从指定的宽高到本身的宽高
      *
      * */
-    fun toMaxFrom(width: Int, height: Int) {
+    fun toMaxFrom(width: Int, height: Int, onAnimEnd: (() -> Unit)? = null) {
         if (animator == null) {
             animator = ObjectAnimator.ofFloat(0f, 1f).apply {
                 duration = clipAnimTime.toLong()
@@ -245,7 +245,7 @@ open class ClipLayout(context: Context, attributeSet: AttributeSet? = null) : Fr
      * 从本身的宽高到指定的宽高
      *
      * */
-    fun fromMaxTo(width: Int, height: Int) {
+    fun fromMaxTo(width: Int, height: Int, onAnimEnd: (() -> Unit)? = null) {
         if (animator == null) {
             animator = ObjectAnimator.ofFloat(0f, 1f).apply {
                 duration = clipAnimTime.toLong()

@@ -869,6 +869,13 @@ public abstract class UIIViewImpl implements IView {
         return mIViewStatus;
     }
 
+    /**
+     * 界面是否处于显示状态
+     */
+    public boolean isIViewShow() {
+        return getIViewShowState() == IViewShowState.STATE_VIEW_SHOW;
+    }
+
     public <T extends View> T v(@IdRes int id) {
         if (mViewHolder == null) {
             return null;
