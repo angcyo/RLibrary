@@ -1,5 +1,7 @@
 package com.angcyo.uiview.viewgroup
 
+import android.animation.ObjectAnimator
+import android.animation.ValueAnimator
 import android.content.Context
 import android.graphics.Canvas
 import android.graphics.drawable.Drawable
@@ -9,6 +11,7 @@ import android.view.GestureDetector
 import android.view.MotionEvent
 import android.view.View
 import android.view.ViewGroup
+import android.view.animation.LinearInterpolator
 import android.widget.FrameLayout
 import com.angcyo.uiview.R
 import com.angcyo.uiview.kotlin.calcWidthHeightRatio
@@ -112,6 +115,7 @@ open class RFrameLayout(context: Context, attributeSet: AttributeSet? = null) : 
                         val param: LayoutParams = touchView.layoutParams as LayoutParams
                         //L.e("call: onDown -> ${param.isFloatView} ${param.isFloatFixRect} ${param.isFloatAutoAdsorb}")
                         if (param.isFloatView) {
+                            floatAnim.cancel()
                             touchFloatView = touchView
                         }
                     }
@@ -130,10 +134,18 @@ open class RFrameLayout(context: Context, attributeSet: AttributeSet? = null) : 
                         val param: LayoutParams = it as LayoutParams
                         if (param.isFloatFixRect) {
                             when {
-                                touchFloatView!!.left < 0 -> ViewCompat.offsetLeftAndRight(touchFloatView, -touchFloatView!!.left)
-                                touchFloatView!!.right > measuredWidth -> ViewCompat.offsetLeftAndRight(touchFloatView, -(touchFloatView!!.right - measuredWidth))
-                                touchFloatView!!.top < 0 -> ViewCompat.offsetTopAndBottom(touchFloatView, -touchFloatView!!.top)
-                                touchFloatView!!.bottom > measuredHeight -> ViewCompat.offsetTopAndBottom(touchFloatView, -(touchFloatView!!.bottom - measuredHeight))
+                                touchFloatView!!.left < 0 -> {
+                                    ViewCompat.offsetLeftAndRight(touchFloatView, -touchFloatView!!.left)
+                                }
+                                touchFloatView!!.right > measuredWidth -> {
+                                    ViewCompat.offsetLeftAndRight(touchFloatView, -(touchFloatView!!.right - measuredWidth))
+                                }
+                                touchFloatView!!.top < 0 -> {
+                                    ViewCompat.offsetTopAndBottom(touchFloatView, -touchFloatView!!.top)
+                                }
+                                touchFloatView!!.bottom > measuredHeight -> {
+                                    ViewCompat.offsetTopAndBottom(touchFloatView, -(touchFloatView!!.bottom - measuredHeight))
+                                }
                             }
                         }
                     }
@@ -182,13 +194,53 @@ open class RFrameLayout(context: Context, attributeSet: AttributeSet? = null) : 
                 if (touchFloatView!!.centerX() > measuredWidth / 2) {
                     //自动到右边
                     if (touchFloatView!!.right < measuredWidth || param.isFloatFixRect) {
-                        ViewCompat.offsetLeftAndRight(touchFloatView, measuredWidth - touchFloatView!!.right)
+                        //ViewCompat.offsetLeftAndRight(touchFloatView, measuredWidth - touchFloatView!!.right)
+                        animStartX = touchFloatView!!.left
+                        animEndX = measuredWidth - touchFloatView!!.measuredWidth
+                        floatAnim.start()
                     }
                 } else {
                     //自动到左边
                     if (touchFloatView!!.left > 0 || param.isFloatFixRect) {
+                        //ViewCompat.offsetLeftAndRight(touchFloatView, -touchFloatView!!.left)
+                        animStartX = touchFloatView!!.left
+                        animEndX = 0
+                        floatAnim.start()
+                    }
+                }
+            }
+            if (param.isFloatFixRect) {
+                when {
+                    touchFloatView!!.left < 0 -> {
                         ViewCompat.offsetLeftAndRight(touchFloatView, -touchFloatView!!.left)
                     }
+                    touchFloatView!!.right > measuredWidth -> {
+                        ViewCompat.offsetLeftAndRight(touchFloatView, -(touchFloatView!!.right - measuredWidth))
+                    }
+                    touchFloatView!!.top < 0 -> {
+                        ViewCompat.offsetTopAndBottom(touchFloatView, -touchFloatView!!.top)
+                    }
+                    touchFloatView!!.bottom > measuredHeight -> {
+                        ViewCompat.offsetTopAndBottom(touchFloatView, -(touchFloatView!!.bottom - measuredHeight))
+                    }
+                }
+            }
+        }
+    }
+
+    private var animStartX = 0
+    private var animEndX = 0
+    private var animStartY = 0
+    private var animEndY = 0
+    private val floatAnim: ValueAnimator by lazy {
+        ObjectAnimator.ofFloat(0f, 1f).apply {
+            duration = 300
+            interpolator = LinearInterpolator()
+            addUpdateListener { anim ->
+                val f: Float = anim.animatedValue as Float
+                touchFloatView?.let {
+                    it.x = animStartX + f * (animEndX - animStartX)
+                    it.y = animStartY + f * (animEndY - animStartY)
                 }
             }
         }
