@@ -43,11 +43,11 @@ public fun View.getDrawCenterTextCx(paint: Paint, text: String): Float {
 }
 
 public fun View.centerX(): Int {
-    return this.left + this.measuredWidth / 2
+    return (this.x + this.measuredWidth / 2).toInt()
 }
 
 public fun View.centerY(): Int {
-    return this.top + this.measuredHeight / 2
+    return (this.y + this.measuredHeight / 2).toInt()
 }
 
 public fun View.getDrawCenterCy(): Float {

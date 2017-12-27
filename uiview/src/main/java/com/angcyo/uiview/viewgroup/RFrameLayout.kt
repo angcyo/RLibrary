@@ -1,7 +1,5 @@
 package com.angcyo.uiview.viewgroup
 
-import android.animation.ObjectAnimator
-import android.animation.ValueAnimator
 import android.content.Context
 import android.graphics.Canvas
 import android.graphics.drawable.Drawable
@@ -11,7 +9,6 @@ import android.view.GestureDetector
 import android.view.MotionEvent
 import android.view.View
 import android.view.ViewGroup
-import android.view.animation.LinearInterpolator
 import android.widget.FrameLayout
 import com.angcyo.uiview.R
 import com.angcyo.uiview.kotlin.calcWidthHeightRatio
@@ -104,6 +101,11 @@ open class RFrameLayout(context: Context, attributeSet: AttributeSet? = null) : 
 
     /*正在触摸的浮动View*/
     private var touchFloatView: View? = null
+    private val touchViewLeft: Int get() = touchFloatView!!.x.toInt()
+    private val touchViewRight: Int get() = (touchFloatView!!.x + touchFloatView!!.measuredWidth).toInt()
+    private val touchViewTop: Int get() = touchFloatView!!.y.toInt()
+    private val touchViewBottom: Int get() = (touchFloatView!!.y + touchFloatView!!.measuredHeight).toInt()
+
     /*用来处理浮动View的手势*/
     private val gestureDetector: GestureDetector by lazy {
         GestureDetector(context, object : GestureDetector.SimpleOnGestureListener() {
@@ -115,7 +117,7 @@ open class RFrameLayout(context: Context, attributeSet: AttributeSet? = null) : 
                         val param: LayoutParams = touchView.layoutParams as LayoutParams
                         //L.e("call: onDown -> ${param.isFloatView} ${param.isFloatFixRect} ${param.isFloatAutoAdsorb}")
                         if (param.isFloatView) {
-                            floatAnim.cancel()
+                            //floatAnim.cancel()
                             touchFloatView = touchView
                         }
                     }
@@ -134,17 +136,17 @@ open class RFrameLayout(context: Context, attributeSet: AttributeSet? = null) : 
                         val param: LayoutParams = it as LayoutParams
                         if (param.isFloatFixRect) {
                             when {
-                                touchFloatView!!.left < 0 -> {
-                                    ViewCompat.offsetLeftAndRight(touchFloatView, -touchFloatView!!.left)
+                                touchViewLeft < 0 -> {
+                                    ViewCompat.offsetLeftAndRight(touchFloatView, -touchViewLeft)
                                 }
-                                touchFloatView!!.right > measuredWidth -> {
-                                    ViewCompat.offsetLeftAndRight(touchFloatView, -(touchFloatView!!.right - measuredWidth))
+                                touchViewRight > measuredWidth -> {
+                                    ViewCompat.offsetLeftAndRight(touchFloatView, -(touchViewRight - measuredWidth))
                                 }
-                                touchFloatView!!.top < 0 -> {
-                                    ViewCompat.offsetTopAndBottom(touchFloatView, -touchFloatView!!.top)
+                                touchViewTop < 0 -> {
+                                    ViewCompat.offsetTopAndBottom(touchFloatView, -touchViewTop)
                                 }
-                                touchFloatView!!.bottom > measuredHeight -> {
-                                    ViewCompat.offsetTopAndBottom(touchFloatView, -(touchFloatView!!.bottom - measuredHeight))
+                                touchViewBottom > measuredHeight -> {
+                                    ViewCompat.offsetTopAndBottom(touchFloatView, -(touchViewBottom - measuredHeight))
                                 }
                             }
                         }
@@ -193,36 +195,43 @@ open class RFrameLayout(context: Context, attributeSet: AttributeSet? = null) : 
                 //自动吸附
                 if (touchFloatView!!.centerX() > measuredWidth / 2) {
                     //自动到右边
-                    if (touchFloatView!!.right < measuredWidth || param.isFloatFixRect) {
+                    if (touchViewRight < measuredWidth || param.isFloatFixRect) {
                         //ViewCompat.offsetLeftAndRight(touchFloatView, measuredWidth - touchFloatView!!.right)
-                        animStartX = touchFloatView!!.left
+                        animStartX = touchViewLeft
                         animEndX = measuredWidth - touchFloatView!!.measuredWidth
-                        floatAnim.start()
+
+                        animStartY = touchViewTop
+                        animEndY = touchViewTop
+                        //floatAnim.start()
+                        touchFloatView!!.animate().x(animEndX.toFloat()).setDuration(300).start()
                     }
                 } else {
                     //自动到左边
-                    if (touchFloatView!!.left > 0 || param.isFloatFixRect) {
+                    if (touchViewLeft > 0 || param.isFloatFixRect) {
                         //ViewCompat.offsetLeftAndRight(touchFloatView, -touchFloatView!!.left)
-                        animStartX = touchFloatView!!.left
+                        animStartX = touchViewLeft
                         animEndX = 0
-                        floatAnim.start()
+
+                        animStartY = touchViewTop
+                        animEndY = touchViewTop
+                        //floatAnim.start()
+
+                        touchFloatView!!.animate().x(animEndX.toFloat()).setDuration(300).start()
                     }
                 }
             }
             if (param.isFloatFixRect) {
-                when {
-                    touchFloatView!!.left < 0 -> {
-                        ViewCompat.offsetLeftAndRight(touchFloatView, -touchFloatView!!.left)
-                    }
-                    touchFloatView!!.right > measuredWidth -> {
-                        ViewCompat.offsetLeftAndRight(touchFloatView, -(touchFloatView!!.right - measuredWidth))
-                    }
-                    touchFloatView!!.top < 0 -> {
-                        ViewCompat.offsetTopAndBottom(touchFloatView, -touchFloatView!!.top)
-                    }
-                    touchFloatView!!.bottom > measuredHeight -> {
-                        ViewCompat.offsetTopAndBottom(touchFloatView, -(touchFloatView!!.bottom - measuredHeight))
-                    }
+                if (touchViewLeft < 0) {
+                    ViewCompat.offsetLeftAndRight(touchFloatView, -touchViewLeft)
+                }
+                if (touchViewRight > measuredWidth) {
+                    ViewCompat.offsetLeftAndRight(touchFloatView, -(touchViewRight - measuredWidth))
+                }
+                if (touchViewTop < 0) {
+                    ViewCompat.offsetTopAndBottom(touchFloatView, -touchViewTop)
+                }
+                if (touchViewBottom > measuredHeight) {
+                    ViewCompat.offsetTopAndBottom(touchFloatView, -(touchViewBottom - measuredHeight))
                 }
             }
         }
@@ -232,19 +241,6 @@ open class RFrameLayout(context: Context, attributeSet: AttributeSet? = null) : 
     private var animEndX = 0
     private var animStartY = 0
     private var animEndY = 0
-    private val floatAnim: ValueAnimator by lazy {
-        ObjectAnimator.ofFloat(0f, 1f).apply {
-            duration = 300
-            interpolator = LinearInterpolator()
-            addUpdateListener { anim ->
-                val f: Float = anim.animatedValue as Float
-                touchFloatView?.let {
-                    it.x = animStartX + f * (animEndX - animStartX)
-                    it.y = animStartY + f * (animEndY - animStartY)
-                }
-            }
-        }
-    }
 
     class LayoutParams : FrameLayout.LayoutParams {
         /**是否可以浮动*/
