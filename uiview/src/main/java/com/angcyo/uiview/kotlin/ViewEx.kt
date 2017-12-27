@@ -42,6 +42,14 @@ public fun View.getDrawCenterTextCx(paint: Paint, text: String): Float {
     return paddingLeft + rawWidth / 2 - paint.measureText(text) / 2
 }
 
+public fun View.centerX(): Int {
+    return this.left + this.measuredWidth / 2
+}
+
+public fun View.centerY(): Int {
+    return this.top + this.measuredHeight / 2
+}
+
 public fun View.getDrawCenterCy(): Float {
     val rawHeight = measuredHeight - paddingTop - paddingBottom
     return (paddingTop + rawHeight / 2).toFloat()

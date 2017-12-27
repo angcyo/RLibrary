@@ -3,10 +3,7 @@ package com.angcyo.uiview.kotlin
 import android.app.Activity
 import android.graphics.Rect
 import android.support.v7.widget.RecyclerView
-import android.view.LayoutInflater
-import android.view.View
-import android.view.ViewGroup
-import android.view.WindowManager
+import android.view.*
 import android.widget.EditText
 import com.angcyo.uiview.widget.RSoftInputLayout
 
@@ -70,6 +67,10 @@ public fun ViewGroup.getTouchOnRecyclerView(touchRawX: Float, touchRawY: Float):
 /**
  * 根据touch坐标, 返回touch的View
  */
+public fun ViewGroup.findView(event: MotionEvent): View? {
+    return findView(this, event.rawX, event.rawY, getLayoutOffsetTopWidthSoftInput())
+}
+
 public fun ViewGroup.findView(touchRawX: Float, touchRawY: Float): View? {
     return findView(this, touchRawX, touchRawY, getLayoutOffsetTopWidthSoftInput())
 }
@@ -187,7 +188,6 @@ public fun ViewGroup.resetChildCount(newSize: Int, onAddView: () -> View) {
         }
     }
 }
-
 
 /**动态添加View, 并初始化 (做了性能优化)*/
 public fun <T> ViewGroup.addView(datas: List<T>, onAddViewCallback: OnAddViewCallback<T>) {

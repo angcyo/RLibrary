@@ -3,11 +3,17 @@ package com.angcyo.uiview.viewgroup
 import android.content.Context
 import android.graphics.Canvas
 import android.graphics.drawable.Drawable
+import android.support.v4.view.ViewCompat
 import android.util.AttributeSet
+import android.view.GestureDetector
+import android.view.MotionEvent
 import android.view.View
+import android.view.ViewGroup
 import android.widget.FrameLayout
 import com.angcyo.uiview.R
 import com.angcyo.uiview.kotlin.calcWidthHeightRatio
+import com.angcyo.uiview.kotlin.centerX
+import com.angcyo.uiview.kotlin.findView
 import com.angcyo.uiview.utils.ScreenUtil
 
 /**
@@ -93,4 +99,120 @@ open class RFrameLayout(context: Context, attributeSet: AttributeSet? = null) : 
     }
 
 
+    /*正在触摸的浮动View*/
+    private var touchFloatView: View? = null
+    /*用来处理浮动View的手势*/
+    private val gestureDetector: GestureDetector by lazy {
+        GestureDetector(context, object : GestureDetector.SimpleOnGestureListener() {
+            override fun onDown(e: MotionEvent): Boolean {
+                val touchView = findView(e.rawX, e.rawY)
+                touchView?.layoutParams?.let {
+                    //L.e("call: onDown -> $touchView")
+                    if (touchView.layoutParams is LayoutParams) {
+                        val param: LayoutParams = touchView.layoutParams as LayoutParams
+                        //L.e("call: onDown -> ${param.isFloatView} ${param.isFloatFixRect} ${param.isFloatAutoAdsorb}")
+                        if (param.isFloatView) {
+                            touchFloatView = touchView
+                        }
+                    }
+                }
+                return super.onDown(e)
+            }
+
+            override fun onScroll(e1: MotionEvent?, e2: MotionEvent?, distanceX: Float, distanceY: Float): Boolean {
+                //L.e("call: onScroll -> $distanceX $distanceY")
+                if (touchFloatView != null) {
+
+                    ViewCompat.offsetLeftAndRight(touchFloatView, -distanceX.toInt())
+                    ViewCompat.offsetTopAndBottom(touchFloatView, -distanceY.toInt())
+
+                    touchFloatView?.layoutParams?.let {
+                        val param: LayoutParams = it as LayoutParams
+                        if (param.isFloatFixRect) {
+                            when {
+                                touchFloatView!!.left < 0 -> ViewCompat.offsetLeftAndRight(touchFloatView, -touchFloatView!!.left)
+                                touchFloatView!!.right > measuredWidth -> ViewCompat.offsetLeftAndRight(touchFloatView, -(touchFloatView!!.right - measuredWidth))
+                                touchFloatView!!.top < 0 -> ViewCompat.offsetTopAndBottom(touchFloatView, -touchFloatView!!.top)
+                                touchFloatView!!.bottom > measuredHeight -> ViewCompat.offsetTopAndBottom(touchFloatView, -(touchFloatView!!.bottom - measuredHeight))
+                            }
+                        }
+                    }
+
+                    return true
+                }
+                return super.onScroll(e1, e2, distanceX, distanceY)
+            }
+        }).apply {
+            setIsLongpressEnabled(false)
+        }
+    }
+
+    override fun onTouchEvent(event: MotionEvent): Boolean {
+        gestureDetector.onTouchEvent(event)
+        var handleTouch = false
+
+        if (touchFloatView != null) {
+            handleTouch = true
+            if (event.actionMasked == MotionEvent.ACTION_UP || event.actionMasked == MotionEvent.ACTION_CANCEL) {
+                handleFloatViewOnTouchUp()
+                touchFloatView = null
+            }
+        }
+
+        return if (handleTouch) {
+            true
+        } else {
+            super.onTouchEvent(event)
+        }
+    }
+
+    override fun onInterceptTouchEvent(ev: MotionEvent?): Boolean {
+        return gestureDetector.onTouchEvent(ev) || super.onInterceptTouchEvent(ev)
+    }
+
+    override fun generateLayoutParams(attrs: AttributeSet?): LayoutParams {
+        return LayoutParams(context, attrs)
+    }
+
+    private fun handleFloatViewOnTouchUp() {
+        touchFloatView?.layoutParams?.let {
+            val param: LayoutParams = it as LayoutParams
+            if (param.isFloatAutoAdsorb) {
+                //自动吸附
+                if (touchFloatView!!.centerX() > measuredWidth / 2) {
+                    //自动到右边
+                    if (touchFloatView!!.right < measuredWidth || param.isFloatFixRect) {
+                        ViewCompat.offsetLeftAndRight(touchFloatView, measuredWidth - touchFloatView!!.right)
+                    }
+                } else {
+                    //自动到左边
+                    if (touchFloatView!!.left > 0 || param.isFloatFixRect) {
+                        ViewCompat.offsetLeftAndRight(touchFloatView, -touchFloatView!!.left)
+                    }
+                }
+            }
+        }
+    }
+
+    class LayoutParams : FrameLayout.LayoutParams {
+        /**是否可以浮动*/
+        var isFloatView = false
+        /**自动吸附到边缘(左右边缘)*/
+        var isFloatAutoAdsorb = false
+        var isFloatFixRect = false
+
+        constructor(c: Context, attrs: AttributeSet?) : super(c, attrs) {
+            val a = c.obtainStyledAttributes(attrs, R.styleable.RFrameLayout)
+            isFloatView = a.getBoolean(R.styleable.RFrameLayout_r_is_float_view, isFloatView)
+            isFloatAutoAdsorb = a.getBoolean(R.styleable.RFrameLayout_r_float_auto_adsorb, isFloatAutoAdsorb)
+            isFloatFixRect = a.getBoolean(R.styleable.RFrameLayout_r_float_fix_rect, isFloatFixRect)
+            a.recycle()
+        }
+
+        constructor(width: Int, height: Int) : super(width, height)
+        constructor(width: Int, height: Int, gravity: Int) : super(width, height, gravity)
+        constructor(source: ViewGroup.LayoutParams?) : super(source)
+        constructor(source: MarginLayoutParams?) : super(source)
+        constructor(source: FrameLayout.LayoutParams?) : super(source)
+    }
 }

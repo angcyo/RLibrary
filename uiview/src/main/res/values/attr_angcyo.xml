@@ -62,6 +62,12 @@
         <attr name="r_max_height"/>
         <attr name="r_width_height_ratio"/>
         <attr name="r_is_aeq_width"/>
+        <!--是否开启浮动-->
+        <attr name="r_is_float_view" format="boolean"/>
+        <!--是否自动吸附-->
+        <attr name="r_float_auto_adsorb" format="boolean"/>
+        <!--是否限制浮动rect-->
+        <attr name="r_float_fix_rect" format="boolean"/>
     </declare-styleable>
 
     <declare-styleable name="RRelativeLayout">
