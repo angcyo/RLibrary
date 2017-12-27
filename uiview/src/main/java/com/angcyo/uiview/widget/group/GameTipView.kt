@@ -101,7 +101,7 @@ class GameCountDownView(context: Context, attributeSet: AttributeSet? = null) : 
         stopAnim()
     }
 
-    private fun formatTime(millisecond: Long /*毫秒*/): String {
+    fun formatTime(millisecond: Long /*毫秒*/): String {
         val mill = millisecond / 1000
 
         val min = mill / 60
@@ -119,6 +119,27 @@ class GameCountDownView(context: Context, attributeSet: AttributeSet? = null) : 
         }
         builder.append(if (second >= 10 || !twoSecBit) second else "0" + second)
 
+        return builder.toString()
+    }
+
+    fun formatTime2(millisecond: Long /*毫秒*/): String {
+        val mill = millisecond / 1000
+
+        val min = mill / 60
+        val hour = min / 60
+        val second = mill % 60
+
+        val builder = StringBuilder()
+        if (hour > 0 || showHour) {
+            builder.append(hour)
+            builder.append("小时")
+        }
+        if (min > 0 || showMin) {
+            builder.append(min)
+            builder.append("分")
+        }
+        builder.append(if (second >= 10 || !twoSecBit) second else second)
+        builder.append("秒")
         return builder.toString()
     }
 
