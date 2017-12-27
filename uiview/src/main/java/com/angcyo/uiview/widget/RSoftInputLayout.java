@@ -16,6 +16,7 @@ import android.view.inputmethod.InputMethodManager;
 import android.widget.FrameLayout;
 
 import com.angcyo.library.utils.L;
+import com.angcyo.uiview.utils.ScreenUtil;
 import com.angcyo.uiview.view.ILifecycle;
 import com.angcyo.uiview.view.UIIViewImpl;
 
@@ -433,7 +434,7 @@ public class RSoftInputLayout extends FrameLayout implements ILifecycle {
     public boolean isSoftKeyboardShow() {
         int screenHeight = getScreenHeightPixels();
         int keyboardHeight = getSoftKeyboardHeight();
-        return screenHeight != keyboardHeight && keyboardHeight > 100;
+        return screenHeight != keyboardHeight && keyboardHeight > 50 * ScreenUtil.density;
     }
 
     /**
