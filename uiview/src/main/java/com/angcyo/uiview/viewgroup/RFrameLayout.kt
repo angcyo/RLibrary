@@ -132,32 +132,36 @@ open class RFrameLayout(context: Context, attributeSet: AttributeSet? = null) : 
                     ViewCompat.offsetLeftAndRight(touchFloatView, -distanceX.toInt())
                     ViewCompat.offsetTopAndBottom(touchFloatView, -distanceY.toInt())
 
-                    touchFloatView?.layoutParams?.let {
-                        val param: LayoutParams = it as LayoutParams
-                        if (param.isFloatFixRect) {
-                            when {
-                                touchViewLeft < 0 -> {
-                                    ViewCompat.offsetLeftAndRight(touchFloatView, -touchViewLeft)
-                                }
-                                touchViewRight > measuredWidth -> {
-                                    ViewCompat.offsetLeftAndRight(touchFloatView, -(touchViewRight - measuredWidth))
-                                }
-                                touchViewTop < 0 -> {
-                                    ViewCompat.offsetTopAndBottom(touchFloatView, -touchViewTop)
-                                }
-                                touchViewBottom > measuredHeight -> {
-                                    ViewCompat.offsetTopAndBottom(touchFloatView, -(touchViewBottom - measuredHeight))
-                                }
-                            }
-                        }
-                    }
-
+                    checkEdge()
                     return true
                 }
                 return super.onScroll(e1, e2, distanceX, distanceY)
             }
         }).apply {
             setIsLongpressEnabled(false)
+        }
+    }
+
+    /*边界检查*/
+    private fun checkEdge() {
+        touchFloatView?.layoutParams?.let {
+            val param: LayoutParams = it as LayoutParams
+            if (param.isFloatFixRect) {
+                when {
+                    touchViewLeft < 0 -> {
+                        ViewCompat.offsetLeftAndRight(touchFloatView, -touchViewLeft)
+                    }
+                    touchViewRight > measuredWidth -> {
+                        ViewCompat.offsetLeftAndRight(touchFloatView, -(touchViewRight - measuredWidth))
+                    }
+                    touchViewTop < 0 -> {
+                        ViewCompat.offsetTopAndBottom(touchFloatView, -touchViewTop)
+                    }
+                    touchViewBottom > measuredHeight -> {
+                        ViewCompat.offsetTopAndBottom(touchFloatView, -(touchViewBottom - measuredHeight))
+                    }
+                }
+            }
         }
     }
 
@@ -203,7 +207,10 @@ open class RFrameLayout(context: Context, attributeSet: AttributeSet? = null) : 
                         animStartY = touchViewTop
                         animEndY = touchViewTop
                         //floatAnim.start()
-                        touchFloatView!!.animate().x(animEndX.toFloat()).setDuration(300).start()
+                        touchFloatView!!.animate()
+                                .translationXBy((animEndX - animStartX).toFloat())
+                                .setDuration(300)
+                                .start()
                     }
                 } else {
                     //自动到左边
@@ -216,24 +223,15 @@ open class RFrameLayout(context: Context, attributeSet: AttributeSet? = null) : 
                         animEndY = touchViewTop
                         //floatAnim.start()
 
-                        touchFloatView!!.animate().x(animEndX.toFloat()).setDuration(300).start()
+                        touchFloatView!!.animate()
+                                .translationXBy((animEndX - animStartX).toFloat())
+                                .setDuration(300)
+                                .start()
                     }
                 }
+
             }
-            if (param.isFloatFixRect) {
-                if (touchViewLeft < 0) {
-                    ViewCompat.offsetLeftAndRight(touchFloatView, -touchViewLeft)
-                }
-                if (touchViewRight > measuredWidth) {
-                    ViewCompat.offsetLeftAndRight(touchFloatView, -(touchViewRight - measuredWidth))
-                }
-                if (touchViewTop < 0) {
-                    ViewCompat.offsetTopAndBottom(touchFloatView, -touchViewTop)
-                }
-                if (touchViewBottom > measuredHeight) {
-                    ViewCompat.offsetTopAndBottom(touchFloatView, -(touchViewBottom - measuredHeight))
-                }
-            }
+            checkEdge()
         }
     }
 
