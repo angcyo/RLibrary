@@ -3,6 +3,7 @@ package com.angcyo.uiview.kotlin
 import android.app.Activity
 import android.graphics.Rect
 import android.support.v7.widget.RecyclerView
+import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.view.WindowManager
@@ -184,5 +185,30 @@ public fun ViewGroup.resetChildCount(newSize: Int, onAddView: () -> View) {
         for (i in 0 until count.abs()) {
             removeViewAt(oldSize - 1 - i)
         }
+    }
+}
+
+
+/**动态添加View, 并初始化 (做了性能优化)*/
+public fun <T> ViewGroup.addView(datas: List<T>, onAddViewCallback: OnAddViewCallback<T>) {
+    this.resetChildCount(datas.size, {
+        val layoutId = onAddViewCallback.getLayoutId()
+        if (layoutId > 0) {
+            LayoutInflater.from(context).inflate(layoutId, this, false)
+        } else onAddViewCallback.getView()!!
+    })
+
+    for (i in datas.indices) {
+        onAddViewCallback.onInitView(getChildAt(i), datas[i], i)
+    }
+}
+
+abstract class OnAddViewCallback<T> {
+    open fun getLayoutId(): Int = -1
+
+    open fun getView(): View? = null
+
+    open fun onInitView(view: View, data: T, index: Int) {
+
     }
 }

@@ -73,11 +73,19 @@ public class RRetrofit {
         return create(cls, CacheType.NO_CACHE);
     }
 
+    public static <T> T create(final Class<T> cls, String baseUrl) {
+        return create(cls, CacheType.NO_CACHE, baseUrl);
+    }
+
     public static <T> T create(final Class<T> cls, CacheType cacheType) {
+        return create(cls, cacheType, BASE_URL);
+    }
+
+    public static <T> T create(final Class<T> cls, CacheType cacheType, String baseUrl) {
         Converter.Factory factory = getFactory();
 
         Retrofit.Builder builder = new Retrofit.Builder()
-                .baseUrl(BASE_URL)
+                .baseUrl(baseUrl)
                 .client(defaultClient(cacheType))
                 .addCallAdapterFactory(RxJavaCallAdapterFactory.create());
 

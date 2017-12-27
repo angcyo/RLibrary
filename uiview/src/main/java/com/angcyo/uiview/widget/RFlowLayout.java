@@ -8,7 +8,6 @@ import android.support.v4.content.ContextCompat;
 import android.util.AttributeSet;
 import android.util.TypedValue;
 import android.view.Gravity;
-import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.LinearLayout;
 import android.widget.TextView;
@@ -271,38 +270,7 @@ public class RFlowLayout extends LinearLayout {
         }
     }
 
-    public <T> void addView(List<T> datas, final OnAddViewCallback<T> onAddViewCallback) {
-        ViewGroupExKt.resetChildCount(this, datas.size(), new Function0<View>() {
-            @Override
-            public View invoke() {
-                int layoutId = onAddViewCallback.getLayoutId();
-                if (layoutId > 0) {
-                    return LayoutInflater.from(getContext()).inflate(layoutId, RFlowLayout.this, false);
-                }
-                return onAddViewCallback.getView();
-            }
-        });
-
-        for (int i = 0; i < datas.size(); i++) {
-            onAddViewCallback.onInitView(getChildAt(i), datas.get(i), i);
-        }
-    }
-
     public interface OnAddViewListener {
         void onInitView(View view);
-    }
-
-    public static abstract class OnAddViewCallback<T> {
-        public int getLayoutId() {
-            return -1;
-        }
-
-        public View getView() {
-            return null;
-        }
-
-        public void onInitView(View view, T data, int index) {
-
-        }
     }
 }
