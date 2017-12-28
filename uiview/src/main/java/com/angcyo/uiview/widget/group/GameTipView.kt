@@ -79,15 +79,22 @@ class GameCountDownView(context: Context, attributeSet: AttributeSet? = null) : 
 
     /**开始倒计时, 如果已经有倒计时, 那么直接返回*/
     fun startCountDown(fromTime: Int /*从多少秒开始倒计时*/, onEnd: (() -> Unit)? = null) {
+        startCountDown(fromTime, "", onEnd)
+    }
+
+    /**开始倒计时, 如果已经有倒计时, 那么直接返回*/
+    fun startCountDown(fromTime: Int /*从多少秒开始倒计时*/, tag: String, onEnd: (() -> Unit)? = null) {
         if (timeAnim != null && timeAnim!!.isStarted) {
             return
         }
 
         this.onTimeEnd = onEnd
         this.fromTime = fromTime
+        setTag(tag)
         text = formatTime(fromTime * 1000L)
         startAnim()
     }
+
 
     /**重新开始倒计时*/
     fun restartCountDown(fromTime: Int /*从多少秒开始倒计时*/, onEnd: (() -> Unit)? = null) {
