@@ -88,17 +88,21 @@ open class FrameBean(val drawableArray: Array<Drawable> /*需要播放的帧动�
             canvas.rotate(rotateDegrees)
             canvas.scale(scaleX, scaleY)
             drawDrawable.let {
-                it.setBounds(-it.intrinsicWidth / 2, -it.intrinsicHeight / 2, it.intrinsicWidth / 2, it.intrinsicHeight / 2)
+                val bounds = getDrawDrawableBounds(it)
+                val width = bounds.width()
+                val height = bounds.height()
+                it.setBounds(-width / 2, -height / 2, width / 2, height / 2)
                 it.draw(canvas)
             }
             canvas.restore()
         }
     }
 
-    /**每一帧的bounds*/
-    @Deprecated("请用 getDrawPointFun 代替")
+    /**
+     * 每一帧的bounds, 仅控制宽度和高度, x和y 请使用 {@link FrameBean#getDrawPointFun()}
+     * */
     open fun getDrawDrawableBounds(drawable: Drawable): Rect {
-        return drawable.getBoundsWith(drawPoint, parentRect)
+        return drawable.getBoundsWith(getDrawPointFun(), parentRect)
     }
 
     /**帧的间隔绘制方法*/

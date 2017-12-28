@@ -7,6 +7,8 @@
     <item name="zxt_tag_vh" type="id"/>
     <item name="zxt_tag_vdb" type="id"/>
 
+    <!--RFrameLayout-->
     <item name="base_r_layout_left" type="id"/>
     <item name="base_r_layout_top" type="id"/>
+    <item name="base_r_layout_is_move" type="id"/>
 </resources>

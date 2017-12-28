@@ -2,6 +2,7 @@ package com.angcyo.uiview.viewgroup
 
 import android.content.Context
 import android.graphics.Canvas
+import android.graphics.Rect
 import android.graphics.drawable.Drawable
 import android.support.v4.view.ViewCompat
 import android.util.AttributeSet
@@ -129,6 +130,7 @@ open class RFrameLayout(context: Context, attributeSet: AttributeSet? = null) : 
                 //L.e("call: onScroll -> $distanceX $distanceY")
                 if (touchFloatView != null) {
 
+                    touchFloatView!!.setTag(R.id.base_r_layout_is_move, true)
                     ViewCompat.offsetLeftAndRight(touchFloatView, -distanceX.toInt())
                     ViewCompat.offsetTopAndBottom(touchFloatView, -distanceY.toInt())
 
@@ -192,14 +194,39 @@ open class RFrameLayout(context: Context, attributeSet: AttributeSet? = null) : 
         return LayoutParams(context, attrs)
     }
 
+    val tempRect: Rect by lazy {
+        Rect()
+    }
+
     override fun onLayout(changed: Boolean, left: Int, top: Int, right: Int, bottom: Int) {
+
+        /*是否移动过*/
+        fun isFloatViewMove(childView: View): Boolean {
+            val tag = childView.getTag(R.id.base_r_layout_is_move)
+            return (tag != null && tag as Boolean)
+        }
+
         for (i in 0 until childCount) {
             val childAt = getChildAt(i)
             val layoutParams = childAt.layoutParams
             if (layoutParams is LayoutParams) {
                 if (layoutParams.isFloatView) {
-                    childAt.setTag(R.id.base_r_layout_top, childAt.y)
-                    childAt.setTag(R.id.base_r_layout_left, childAt.x)
+                    if (isFloatViewMove(childAt)) {
+                        childAt.getLocalVisibleRect(tempRect)
+
+                        if (tempRect.width() != 0) {
+                            childAt.setTag(R.id.base_r_layout_left, childAt.x)
+                            childAt.translationX = 0f
+                        } else {
+                            childAt.setTag(R.id.base_r_layout_left, null)
+                        }
+                        if (tempRect.height() != 0) {
+                            childAt.setTag(R.id.base_r_layout_top, childAt.y)
+                            childAt.translationY = 0f
+                        } else {
+                            childAt.setTag(R.id.base_r_layout_top, null)
+                        }
+                    }
                 }
             }
         }
@@ -209,9 +236,20 @@ open class RFrameLayout(context: Context, attributeSet: AttributeSet? = null) : 
             val layoutParams = childAt.layoutParams
             if (layoutParams is LayoutParams) {
                 if (layoutParams.isFloatView) {
-                    val left: Int = childAt.getTag(R.id.base_r_layout_left) as Int
-                    val top: Int = childAt.getTag(R.id.base_r_layout_top) as Int
-                    childAt.layout(left, top, left + childAt.measuredWidth, top + childAt.measuredHeight)
+                    val tagLeft = childAt.getTag(R.id.base_r_layout_left)
+                    val tagTop = childAt.getTag(R.id.base_r_layout_top)
+
+                    val childLeft: Int = if (tagLeft != null) {
+                        (tagLeft as Float).toInt()
+                    } else {
+                        childAt.left
+                    }
+                    val childTop: Int = if (tagTop != null) {
+                        (tagTop as Float).toInt()
+                    } else {
+                        childAt.top
+                    }
+                    childAt.layout(childLeft, childTop, childLeft + childAt.measuredWidth, childTop + childAt.measuredHeight)
                 }
             }
         }

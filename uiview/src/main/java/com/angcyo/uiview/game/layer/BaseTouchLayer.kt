@@ -300,7 +300,12 @@ abstract class BaseTouchLayer : BaseExLayer() {
             //L.w("updateRainList getSpiritStartX:$getSpiritStartX $sx ${spiritBean.bezierHelper!!.evaluate(1f).toInt()}")
         }
         //L.e("call: initSpirit -> startX:$sx startY:$sy step:${spiritBean.stepY}")
-        spiritBean.setRect(sx, sy, intrinsicWidth, intrinsicHeight)
+        //spiritBean.setRect(sx, sy, intrinsicWidth, intrinsicHeight)
+        initSpiritRect(spiritBean, sx, sy, intrinsicWidth, intrinsicHeight)
+    }
+
+    open protected fun initSpiritRect(spiritBean: TouchSpiritBean, sx: Int, sy: Int, width: Int, height: Int) {
+        spiritBean.setRect(sx, sy, width, height)
     }
 
     open protected fun createBezierHelper(randomX: Int, randomY: Int, intrinsicWidth: Int, intrinsicHeight: Int): BezierHelper {
