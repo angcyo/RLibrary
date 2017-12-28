@@ -197,9 +197,9 @@ public class RSeekBar extends View {
             canvas.save();
             mPaint.setColor(secondProgressColor);
             if (thumbType == THUMB_DEFAULT) {
-                mTrackRectF.set(trackLeft, trackTop, trackLeft + secondProgress / getMaxProgress() * getMaxLength() + mThumbWidth / 2, trackBottom);
+                mTrackRectF.set(trackLeft, trackTop, trackLeft + secondProgress / getMaxProgress() * getMaxProgressLength(), trackBottom);
             } else if (thumbType == THUMB_CIRCLE) {
-                mTrackRectF.set(trackLeft, trackTop, trackLeft + secondProgress / getMaxProgress() * getMaxLength() + mThumbRadius / 2, trackBottom);
+                mTrackRectF.set(trackLeft, trackTop, trackLeft + secondProgress / getMaxProgress() * getMaxProgressLength(), trackBottom);
             }
             canvas.drawRoundRect(mTrackRectF, mTrackRadius, mTrackRadius, mPaint);
             canvas.restore();
@@ -245,6 +245,10 @@ public class RSeekBar extends View {
      */
     private int getMaxLength() {
         return getMeasuredWidth() - getPaddingLeft() - getPaddingRight() - mThumbWidth;
+    }
+
+    private int getMaxProgressLength() {
+        return getMeasuredWidth() - getPaddingLeft() - getPaddingRight();
     }
 
     private void updateProgress() {
