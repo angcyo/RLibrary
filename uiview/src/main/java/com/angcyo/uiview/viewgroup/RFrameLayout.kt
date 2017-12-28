@@ -192,6 +192,35 @@ open class RFrameLayout(context: Context, attributeSet: AttributeSet? = null) : 
         return LayoutParams(context, attrs)
     }
 
+    override fun onLayout(changed: Boolean, left: Int, top: Int, right: Int, bottom: Int) {
+        for (i in 0 until childCount) {
+            val childAt = getChildAt(i)
+            val layoutParams = childAt.layoutParams
+            if (layoutParams is LayoutParams) {
+                if (layoutParams.isFloatView) {
+                    childAt.setTag(R.id.base_r_layout_top, childAt.y)
+                    childAt.setTag(R.id.base_r_layout_left, childAt.x)
+                }
+            }
+        }
+        super.onLayout(changed, left, top, right, bottom)
+        for (i in 0 until childCount) {
+            val childAt = getChildAt(i)
+            val layoutParams = childAt.layoutParams
+            if (layoutParams is LayoutParams) {
+                if (layoutParams.isFloatView) {
+                    val left: Int = childAt.getTag(R.id.base_r_layout_left) as Int
+                    val top: Int = childAt.getTag(R.id.base_r_layout_top) as Int
+                    childAt.layout(left, top, left + childAt.measuredWidth, top + childAt.measuredHeight)
+                }
+            }
+        }
+    }
+
+    override fun onSizeChanged(w: Int, h: Int, oldw: Int, oldh: Int) {
+        super.onSizeChanged(w, h, oldw, oldh)
+    }
+
     private fun handleFloatViewOnTouchUp() {
         touchFloatView?.layoutParams?.let {
             val param: LayoutParams = it as LayoutParams

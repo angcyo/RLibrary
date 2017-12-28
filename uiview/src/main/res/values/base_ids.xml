@@ -6,4 +6,7 @@
 
     <item name="zxt_tag_vh" type="id"/>
     <item name="zxt_tag_vdb" type="id"/>
+
+    <item name="base_r_layout_left" type="id"/>
+    <item name="base_r_layout_top" type="id"/>
 </resources>

@@ -107,6 +107,8 @@ abstract class BaseTouchLayer : BaseExLayer() {
         isSpiritAddEnd = true
         val addNum = spiritAddNumEd
         val maxNum = maxSpiritNum
+
+        pauseDrawFrame = true //暂停绘制
         L.e(TAG, "call: endSpirit -> showNum:$showNum addNum:$addNum maxNum:$maxNum touchUpNum:$touchUpSpiritNum")
         //listener?.onRainEnd(addNum, showNum, maxNum, touchUpNum)
     }
