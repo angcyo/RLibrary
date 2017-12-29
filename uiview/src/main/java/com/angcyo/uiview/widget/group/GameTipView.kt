@@ -76,6 +76,12 @@ class GameCountDownView(context: Context, attributeSet: AttributeSet? = null) : 
 
     /**已用时*/
     var useTime = 0 /*秒*/
+        get() = if (field <= 0) {
+            1
+        } else {
+            field
+        }
+
 
     /**到时间了*/
     var onTimeEnd: (() -> Unit)? = null
