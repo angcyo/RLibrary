@@ -72,7 +72,10 @@ class GameCountDownView(context: Context, attributeSet: AttributeSet? = null) : 
     /**秒数, 是否显示2位, 自动补齐0*/
     var twoSecBit = false
 
-    private var fromTime = 0
+    private var fromTime = 0/*秒*/
+
+    /**已用时*/
+    var useTime = 0 /*秒*/
 
     /**到时间了*/
     var onTimeEnd: (() -> Unit)? = null
@@ -91,10 +94,15 @@ class GameCountDownView(context: Context, attributeSet: AttributeSet? = null) : 
         this.onTimeEnd = onEnd
         this.fromTime = fromTime
         setTag(tag)
-        text = formatTime(fromTime * 1000L)
-        startAnim()
-    }
 
+        useTime = 0
+        if (fromTime > 0) {
+            text = formatTime(fromTime * 1000L)
+            startAnim()
+        } else {
+            text = ""
+        }
+    }
 
     /**重新开始倒计时*/
     fun restartCountDown(fromTime: Int /*从多少秒开始倒计时*/, onEnd: (() -> Unit)? = null) {
@@ -157,13 +165,17 @@ class GameCountDownView(context: Context, attributeSet: AttributeSet? = null) : 
             duration = fromTime * 1000L
             interpolator = LinearInterpolator()
             addUpdateListener {
-                text = formatTime((animatedValue as Int) * 1000L)
+                val value = animatedValue as Int
+                useTime = fromTime - value
+                text = formatTime(value * 1000L)
             }
             addListener(object : RAnimListener() {
                 override fun onAnimationFinish(animation: Animator?, cancel: Boolean) {
                     super.onAnimationFinish(animation, cancel)
                     if (!cancel) {
-                        onTimeEnd?.invoke()
+                        post {
+                            onTimeEnd?.invoke()
+                        }
                     }
                 }
             })

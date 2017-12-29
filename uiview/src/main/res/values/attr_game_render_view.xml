@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <declare-styleable name="GameRenderView">
+        <attr name="r_max_touch_point" format="integer"/>
+    </declare-styleable>
+</resources>

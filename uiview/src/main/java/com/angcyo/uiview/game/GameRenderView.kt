@@ -12,6 +12,7 @@ import android.view.MotionEvent
 import android.view.View
 import android.view.animation.LinearInterpolator
 import com.angcyo.library.utils.L
+import com.angcyo.uiview.R
 import com.angcyo.uiview.game.layer.BaseLayer
 import com.angcyo.uiview.kotlin.density
 import com.angcyo.uiview.resources.RAnimListener
@@ -32,12 +33,21 @@ import java.util.concurrent.CopyOnWriteArrayList
 class GameRenderView(context: Context, attributeSet: AttributeSet? = null) : View(context, attributeSet) {
     val layerList = CopyOnWriteArrayList<BaseLayer>()
 
+    /**允许的触击点个数, -1不限制*/
+    var maxTouchPoint = -1
+
     /**onDetachedFromWindow*/
     var isGameViewDetached = true
 
     /**是否在渲染中*/
     @Volatile
     var isGameRenderStart = false
+
+    init {
+        val array = context.obtainStyledAttributes(attributeSet, R.styleable.GameRenderView)
+        maxTouchPoint = array.getInt(R.styleable.GameRenderView_r_max_touch_point, maxTouchPoint)
+        array.recycle()
+    }
 
     override fun onAttachedToWindow() {
         super.onAttachedToWindow()
@@ -82,7 +92,13 @@ class GameRenderView(context: Context, attributeSet: AttributeSet? = null) : Vie
 
         when (event.actionMasked) {
             MotionEvent.ACTION_DOWN, MotionEvent.ACTION_POINTER_DOWN -> {
-                pointList.put(id, PointF(eventX, eventY))
+                if (maxTouchPoint > 0) {
+                    if (pointList.size() < maxTouchPoint) {
+                        pointList.put(id, PointF(eventX, eventY))
+                    }
+                } else {
+                    pointList.put(id, PointF(eventX, eventY))
+                }
             }
             MotionEvent.ACTION_UP, MotionEvent.ACTION_POINTER_UP -> {
                 val p = pointList.get(id)

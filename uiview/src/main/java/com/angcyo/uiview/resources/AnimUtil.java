@@ -18,6 +18,7 @@ import android.view.animation.BounceInterpolator;
 import android.view.animation.DecelerateInterpolator;
 import android.view.animation.LayoutAnimationController;
 import android.view.animation.LinearInterpolator;
+import android.view.animation.OvershootInterpolator;
 import android.view.animation.TranslateAnimation;
 
 import com.angcyo.uiview.R;
@@ -491,7 +492,8 @@ public class AnimUtil {
     }
 
     /**
-     * 可以指定方法的倍数
+     * 从0.5回弹放大效果
+     * 可以指定放大的倍数
      */
     public static void scaleBounceView(View view, float x, float y) {
         ViewCompat.setScaleX(view, 0.5f);
@@ -500,6 +502,20 @@ public class AnimUtil {
                 .scaleX(x)
                 .scaleY(y)
                 .setInterpolator(new BounceInterpolator())
+                .setDuration(300)
+                .start();
+    }
+
+    /**
+     * 从0.5放大...
+     */
+    public static void scaleOvershootView(View view) {
+        ViewCompat.setScaleX(view, 0.5f);
+        ViewCompat.setScaleY(view, 0.5f);
+        view.animate()
+                .scaleX(1)
+                .scaleY(1)
+                .setInterpolator(new OvershootInterpolator(2))
                 .setDuration(300)
                 .start();
     }
