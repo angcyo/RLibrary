@@ -102,16 +102,18 @@ class GameRenderView(context: Context, attributeSet: AttributeSet? = null) : Vie
             }
             MotionEvent.ACTION_UP, MotionEvent.ACTION_POINTER_UP -> {
                 val p = pointList.get(id)
-                if (Math.abs(p.x - eventX) < deviation &&
-                        Math.abs(p.y - eventY) < deviation) {
-                    for (i in layerList.size - 1 downTo 0) {
-                        val touchEvent = layerList[i].onTouchEvent(event, p)
-                        if (touchEvent) {
-                            break
+                p?.let {
+                    if (Math.abs(it.x - eventX) < deviation &&
+                            Math.abs(it.y - eventY) < deviation) {
+                        for (i in layerList.size - 1 downTo 0) {
+                            val touchEvent = layerList[i].onTouchEvent(event, it)
+                            if (touchEvent) {
+                                break
+                            }
                         }
                     }
+                    pointList.remove(id)
                 }
-                pointList.remove(id)
             }
         }
 

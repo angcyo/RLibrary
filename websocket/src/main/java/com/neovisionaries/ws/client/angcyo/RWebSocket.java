@@ -9,6 +9,7 @@ import com.neovisionaries.ws.client.WebSocketException;
 import com.neovisionaries.ws.client.WebSocketFactory;
 import com.neovisionaries.ws.client.WebSocketFrame;
 
+import java.nio.charset.Charset;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.CopyOnWriteArrayList;
@@ -392,8 +393,14 @@ public class RWebSocket extends WebSocketAdapter {
      * @throws Exception
      */
     @Override
-    public void onBinaryMessage(WebSocket websocket, byte[] binary) throws Exception {
+    public void onBinaryMessage(final WebSocket websocket, final byte[] binary) throws Exception {
         super.onBinaryMessage(websocket, binary);
+        onMain(new Runnable() {
+            @Override
+            public void run() {
+                dealData(websocket, new String(binary, Charset.forName("utf8")));
+            }
+        });
     }
 
     /**
