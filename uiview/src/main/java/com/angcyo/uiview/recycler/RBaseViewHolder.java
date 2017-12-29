@@ -294,6 +294,19 @@ public class RBaseViewHolder extends RecyclerView.ViewHolder {
         click(id, listener);
     }
 
+    /**
+     * 单击某个View
+     */
+    public void clickView(View view) {
+        if (view != null) {
+            view.performClick();
+        }
+    }
+
+    public void clickView(@IdRes int id) {
+        clickView(view(id));
+    }
+
     public void text(@IdRes int id, String text, View.OnClickListener listener) {
         View view = v(id);
         if (view != null) {
