@@ -1479,7 +1479,8 @@ public class RUtils {
                 parrern.append(".");
                 parrern.append(bitNum);
                 parrern.append("f");
-                return String.format(Locale.CHINA, parrern.toString(), ((int) (Math.pow(10, bitNum) * value)) / Math.pow(10, bitNum));
+                int pow = (int) Math.pow(10, bitNum);
+                return String.format(Locale.CHINA, parrern.toString(), ((int) (pow * value)) / (pow * 1f));
 //                return String.valueOf(((int) (Math.pow(10, bitNum) * value)) / Math.pow(10, bitNum));
             } else {
                 return String.format(Locale.CHINA, "%s", value);

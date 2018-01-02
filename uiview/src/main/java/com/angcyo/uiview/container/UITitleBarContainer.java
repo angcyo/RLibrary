@@ -184,7 +184,7 @@ public class UITitleBarContainer extends FrameLayout {
         mLoadView = mBaseViewHolder.v(R.id.base_load_view);
 
         if (titleBarPattern.isShowBackImageView) {
-            if (mLoadView instanceof LoadingImageView) {
+            if (mLoadView instanceof LoadingImageView && titleBarPattern.showDarkLoading) {
                 ((LoadingImageView) mLoadView).setImageResource(R.drawable.loading_dark);
             }
         }
