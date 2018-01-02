@@ -53,6 +53,8 @@ open class GlideImageView(context: Context, attributeSet: AttributeSet? = null) 
 
     companion object {
         var DEBUG_SHOW = false
+        /**文件名需要包含扩展名*/
+        fun gifDrawable(context: Context, assertName: String) = GifDrawableBuilder().from(context.assets.open(assertName)).build()
     }
 
     /**是否要检查Url的图片类型为Gif, 可以用来显示Gif指示图*/
