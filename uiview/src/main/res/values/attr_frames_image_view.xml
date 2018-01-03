@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <declare-styleable name="BaseFramesImageView">
+        <attr name="r_frame_switch_interval" format="integer"/>
+    </declare-styleable>
+</resources>

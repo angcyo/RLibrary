@@ -48,8 +48,8 @@ import java.io.File
  */
 open class GlideImageView(context: Context, attributeSet: AttributeSet? = null) : RImageView(context, attributeSet) {
 
-    private var defaultPlaceholderDrawable: Drawable? = null
-    private val defaultPlaceholderDrawableRes = R.drawable.base_image_placeholder_shape
+    protected var defaultPlaceholderDrawable: Drawable? = null
+    protected var defaultPlaceholderDrawableRes = R.drawable.base_image_placeholder_shape
 
     companion object {
         var DEBUG_SHOW = false
