@@ -80,6 +80,7 @@
         <attr name="r_enable_auto_start_scroll" format="boolean"/>
         <attr name="r_enable_scroll" format="boolean"/>
         <attr name="r_auto_scroll_to_last_position" format="boolean"/>
+        <attr name="r_auto_scroll_time_interval" format="integer"/>
         <attr name="r_width_height_ratio"/>
         <attr name="r_is_aeq_width"/>
 

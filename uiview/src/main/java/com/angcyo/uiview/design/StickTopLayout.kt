@@ -92,9 +92,10 @@ class StickTopLayout(context: Context, attributeSet: AttributeSet? = null) : Fra
     override fun scrollTo(x: Int, y: Int) {
         super.scrollTo(x, Math.min(topViewHeight(), Math.max(y, 0)))
         //L.e("call: scrollTo -> $y")
+        val old = isTopStick
         isTopStick = scrollY != topViewHeight()
 
-        onTopScrollListener?.onTopScroll(isTopStick, y, topViewHeight())
+        onTopScrollListener?.onTopScroll(old != isTopStick, isTopStick, y, topViewHeight())
     }
 
     override fun computeScroll() {
@@ -110,7 +111,7 @@ class StickTopLayout(context: Context, attributeSet: AttributeSet? = null) : Fra
     private var topView: View? = null
     private var contentView: View? = null
 
-    private fun topViewHeight(): Int {
+    fun topViewHeight(): Int {
         return if (topView == null) {
             0
         } else {
@@ -203,6 +204,9 @@ class StickTopLayout(context: Context, attributeSet: AttributeSet? = null) : Fra
     }
 
     interface OnTopScrollListener {
-        fun onTopScroll(isStickTop: Boolean, y: Int, max: Int)
+        fun onTopScroll(isChange: Boolean /*状态是否发生改变*/,
+                        isStickTop: Boolean /*顶部是否打开*/,
+                        y: Int /*滚动的距离*/,
+                        max: Int /*最大滚动距离*/)
     }
 }

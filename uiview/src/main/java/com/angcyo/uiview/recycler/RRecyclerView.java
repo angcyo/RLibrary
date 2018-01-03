@@ -64,7 +64,7 @@ public class RRecyclerView extends RecyclerView {
      */
     protected int curScrollPosition = 0;
     /**
-     * 是否激活滚动
+     * 是否激活滚动, 激活滚动是自动滚动的前提
      */
     protected boolean enableScroll = false;
     OnTouchListener mInterceptTouchListener;
@@ -108,9 +108,18 @@ public class RRecyclerView extends RecyclerView {
     private int mLastScrollOffset;
     private boolean isFling;
     /**
+     * 当onAttachedToWindow时, 是否自动滚动到onDetachedFromWindow时的位置
+     */
+    private boolean autoScrollToLastPosition = false;
+    /**
      * 是否自动开始滚动
      */
     private boolean isEnableAutoStartScroll = false;
+
+    /**
+     * 滚动时间间隔(毫秒)
+     */
+    private long autoScrollTimeInterval = AUTO_SCROLL_TIME;
     private Runnable autoScrollRunnable = new Runnable() {
         @Override
         public void run() {
@@ -132,14 +141,10 @@ public class RRecyclerView extends RecyclerView {
             }
 
             if (enableScroll) {
-                postDelayed(autoScrollRunnable, AUTO_SCROLL_TIME);
+                postDelayed(autoScrollRunnable, autoScrollTimeInterval);
             }
         }
     };
-    /**
-     * 当onAttachedToWindow时, 是否自动滚动到onDetachedFromWindow时的位置
-     */
-    private boolean autoScrollToLastPosition = false;
     private int lastVisiblePosition = -1;
     private int lastVisibleItemOffset = -1;
     private String widthHeightRatio;
@@ -170,6 +175,7 @@ public class RRecyclerView extends RecyclerView {
         isEnableAutoStartScroll = typedArray.getBoolean(R.styleable.RRecyclerView_r_enable_auto_start_scroll, isEnableAutoStartScroll);
         enableScroll = typedArray.getBoolean(R.styleable.RRecyclerView_r_enable_scroll, enableScroll);
         autoScrollToLastPosition = typedArray.getBoolean(R.styleable.RRecyclerView_r_auto_scroll_to_last_position, autoScrollToLastPosition);
+        autoScrollTimeInterval = typedArray.getInt(R.styleable.RRecyclerView_r_auto_scroll_time_interval, (int) autoScrollTimeInterval);
         widthHeightRatio = typedArray.getString(R.styleable.RRecyclerView_r_width_height_ratio);
         equWidth = typedArray.getBoolean(R.styleable.RRecyclerView_r_is_aeq_width, equWidth);
         supportsChangeAnimations = typedArray.getBoolean(R.styleable.RRecyclerView_r_supports_change_animations, supportsChangeAnimations);
@@ -581,7 +587,7 @@ public class RRecyclerView extends RecyclerView {
             return;
         }
         isAutoStart = true;
-        postDelayed(autoScrollRunnable, AUTO_SCROLL_TIME);
+        postDelayed(autoScrollRunnable, autoScrollTimeInterval);
     }
 
     public void setEnableAutoStartScroll(boolean enableAutoStartScroll) {
