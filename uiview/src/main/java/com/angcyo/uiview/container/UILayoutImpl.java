@@ -74,6 +74,7 @@ public class UILayoutImpl extends SwipeBackLayout implements ILayout<UIParam>, U
      * 多指是否显示debug layout
      */
     public static boolean showDebugLayout = true;
+    public static boolean showDebugInfo = false;
     /**
      * 已经追加到内容层的View
      */
@@ -1969,7 +1970,7 @@ public class UILayoutImpl extends SwipeBackLayout implements ILayout<UIParam>, U
                 childAt.measure(exactlyMeasure(wSize), exactlyMeasure(hSize));
             }
         } else {
-            if (showDebugLayout) {
+            if (showDebugInfo) {
                 Debug.logTimeStartD("\n开始测量, 共:" + getAttachViewSize());
             }
             measureLogBuilder.delete(0, measureLogBuilder.length());
@@ -2028,7 +2029,7 @@ public class UILayoutImpl extends SwipeBackLayout implements ILayout<UIParam>, U
                     }
                 }
             }
-            if (showDebugLayout) {
+            if (showDebugInfo) {
                 L.i(measureLogBuilder.toString());
                 Debug.logTimeEndD("\n测量结束");
             }

@@ -13,6 +13,7 @@ import android.view.View;
 import android.widget.LinearLayout;
 
 import com.angcyo.uiview.R;
+import com.angcyo.uiview.kotlin.ViewExKt;
 import com.angcyo.uiview.utils.ScreenUtil;
 
 /**
@@ -50,6 +51,8 @@ public class RLinearLayout extends LinearLayout {
      */
     private boolean isInChatLayout = false;
 
+    private String widthHeightRatio;
+
     public RLinearLayout(Context context) {
         this(context, null);
     }
@@ -67,6 +70,7 @@ public class RLinearLayout extends LinearLayout {
         autoFixNewLine = typedArray.getBoolean(R.styleable.RLinearLayout_r_auto_fix_new_line, autoFixNewLine);
         reverseLayout = typedArray.getBoolean(R.styleable.RLinearLayout_r_reverse_layout, reverseLayout);
         isInChatLayout = typedArray.getBoolean(R.styleable.RLinearLayout_r_is_in_chat_layout, isInChatLayout);
+        widthHeightRatio = typedArray.getString(R.styleable.RLinearLayout_r_width_height_ratio);
         typedArray.recycle();
         resetMaxHeight();
         initLayout();
@@ -110,6 +114,12 @@ public class RLinearLayout extends LinearLayout {
             getChildAt(1).measure(MeasureSpec.makeMeasureSpec(getMeasuredWidth(), MeasureSpec.AT_MOST),
                     MeasureSpec.makeMeasureSpec(getMeasuredHeight(), MeasureSpec.AT_MOST));
             setMeasuredDimension(getMeasuredWidth(), getMeasuredHeight() + getChildAt(1).getMeasuredHeight());
+        }
+
+        int[] widthHeightRatio = ViewExKt.calcWidthHeightRatio(this, this.widthHeightRatio);
+        if (widthHeightRatio != null) {
+            super.onMeasure(ViewExKt.exactlyMeasure(this, widthHeightRatio[0]),
+                    ViewExKt.exactlyMeasure(this, widthHeightRatio[1]));
         }
     }
 

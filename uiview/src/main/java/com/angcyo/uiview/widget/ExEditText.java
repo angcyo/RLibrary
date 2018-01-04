@@ -1311,6 +1311,7 @@ public class ExEditText extends AppCompatEditText {
         if ("_cmd:open_debug".equalsIgnoreCase(String.valueOf(text))) {
             L.LOG_DEBUG = true;
             UILayoutImpl.showDebugLayout = true;
+            UILayoutImpl.showDebugInfo = true;
             GlideImageView.Companion.setDEBUG_SHOW(true);
         }
     }

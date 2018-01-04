@@ -12,6 +12,7 @@ import android.view.animation.DecelerateInterpolator
 import android.widget.FrameLayout
 import com.angcyo.uiview.R
 import com.angcyo.uiview.kotlin.calcLayoutWidthHeight
+import com.angcyo.uiview.kotlin.calcWidthHeightRatio
 import com.angcyo.uiview.kotlin.density
 import com.angcyo.uiview.kotlin.exactlyMeasure
 import com.angcyo.uiview.resources.RAnimListener
@@ -64,6 +65,8 @@ open class ClipLayout(context: Context, attributeSet: AttributeSet? = null) : Fr
     private var rLayoutWidthExclude = 0
     private var rLayoutHeightExclude = 0
 
+    var widthHeightRatio: String? = null
+
     private val paint by lazy {
         Paint(Paint.ANTI_ALIAS_FLAG)
     }
@@ -78,6 +81,7 @@ open class ClipLayout(context: Context, attributeSet: AttributeSet? = null) : Fr
         rLayoutHeight = typedArray.getString(R.styleable.ClipLayout_r_layout_height)
         rLayoutWidthExclude = typedArray.getDimensionPixelOffset(R.styleable.ClipLayout_r_layout_width_exclude, rLayoutWidthExclude)
         rLayoutHeightExclude = typedArray.getDimensionPixelOffset(R.styleable.ClipLayout_r_layout_height_exclude, rLayoutHeightExclude)
+        widthHeightRatio = typedArray.getString(R.styleable.ClipLayout_r_width_height_ratio)
         typedArray.recycle()
 
         setWillNotDraw(false)
@@ -302,6 +306,10 @@ open class ClipLayout(context: Context, attributeSet: AttributeSet? = null) : Fr
             } else {
                 super.onMeasure(exactlyMeasure(width), heightMeasureSpec)
             }
+        }
+
+        calcWidthHeightRatio(widthHeightRatio)?.let {
+            super.onMeasure(exactlyMeasure(it[0]), exactlyMeasure(it[1]))
         }
     }
 }

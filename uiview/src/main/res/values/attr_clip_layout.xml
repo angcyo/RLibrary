@@ -16,5 +16,6 @@
         <attr name="r_layout_height"/>
         <attr name="r_layout_width_exclude"/>
         <attr name="r_layout_height_exclude"/>
+        <attr name="r_width_height_ratio"/>
     </declare-styleable>
 </resources>
