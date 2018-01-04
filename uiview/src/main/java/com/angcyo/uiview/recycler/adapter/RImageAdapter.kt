@@ -1,7 +1,6 @@
 package com.angcyo.uiview.recycler.adapter
 
 import android.content.Context
-import com.angcyo.library.utils.L
 import com.angcyo.uiview.R
 import com.angcyo.uiview.recycler.RBaseViewHolder
 import com.angcyo.uiview.widget.GlideImageView
@@ -30,7 +29,7 @@ open class RImageAdapter<T> : RModelAdapter<T> {
 
     override fun onBindCommonView(holder: RBaseViewHolder, position: Int, bean: T?) {
         val imageView = holder.glideImgV(R.id.base_image_view)
-        L.e("call: onBindCommonView 111-> $position")
+        //L.e("call: onBindCommonView 111-> $position")
         onBindImageView(imageView, holder, position, bean)
     }
 

@@ -28,6 +28,7 @@ open class RLoopImageAdapter<T> : RLoopRecyclerView.LoopAdapter<T> {
 
     override fun onBindLoopViewHolder(holder: RBaseViewHolder, position: Int, bean: T?) {
         val imageView = holder.glideImgV(R.id.base_image_view)
+        //L.e("call: onBindCommonView 111-> $position")
         onBindImageView(imageView, holder, position, bean)
     }
 

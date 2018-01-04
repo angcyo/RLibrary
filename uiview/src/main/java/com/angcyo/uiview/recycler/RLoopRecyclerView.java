@@ -5,7 +5,6 @@ import android.support.annotation.Nullable;
 import android.support.v7.widget.LinearLayoutManager;
 import android.util.AttributeSet;
 
-import com.angcyo.library.utils.L;
 import com.angcyo.uiview.recycler.adapter.RBaseAdapter;
 
 import java.util.List;
@@ -174,7 +173,7 @@ public class RLoopRecyclerView extends RRecyclerView {
 
         @Override
         final protected void onBindView(RBaseViewHolder holder, int position, T bean) {
-            L.e("call: onBindView([holder, position, bean])-> " + position);
+            //L.e("call: onBindView([holder, position, bean])-> " + position);
             int index = position % getItemRawCount();
             onBindLoopViewHolder(holder, index, mAllDatas.size() > index ? mAllDatas.get(index) : null);
         }

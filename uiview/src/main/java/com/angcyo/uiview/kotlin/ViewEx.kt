@@ -7,6 +7,7 @@ import android.text.TextUtils
 import android.view.MotionEvent
 import android.view.View
 import android.widget.TextView
+import com.angcyo.uiview.utils.ScreenUtil
 import com.angcyo.uiview.view.RClickListener
 
 /**
@@ -132,6 +133,31 @@ public fun View.calcWidthHeightRatio(widthHeightRatio: String?): IntArray? {
         }
     }
     return null
+}
+
+/**用屏幕宽高, 计算View的宽高*/
+public fun View.calcLayoutWidthHeight(rLayoutWidth: String?, rLayoutHeight: String?, rLayoutWidthExclude: Int = 0, rLayoutHeightExclude: Int = 0): IntArray {
+    val size = intArrayOf(-1, -1)
+    if (TextUtils.isEmpty(rLayoutWidth) && TextUtils.isEmpty(rLayoutHeight)) {
+        return size
+    }
+    if (!TextUtils.isEmpty(rLayoutWidth)) {
+        if (rLayoutWidth!!.contains("sw", true)) {
+            val ratio = rLayoutWidth.replace("sw", "", true).toFloatOrNull()
+            ratio?.let {
+                size[0] = (ratio * (ScreenUtil.screenWidth - rLayoutWidthExclude)).toInt()
+            }
+        }
+    }
+    if (!TextUtils.isEmpty(rLayoutHeight)) {
+        if (rLayoutHeight!!.contains("sw", true)) {
+            val ratio = rLayoutHeight.replace("sh", "", true).toFloatOrNull()
+            ratio?.let {
+                size[1] = (ratio * (ScreenUtil.screenHeight - rLayoutHeightExclude)).toInt()
+            }
+        }
+    }
+    return size
 }
 
 /**手势是否结束*/

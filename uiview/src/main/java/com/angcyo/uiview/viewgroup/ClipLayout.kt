@@ -11,7 +11,9 @@ import android.view.animation.AccelerateInterpolator
 import android.view.animation.DecelerateInterpolator
 import android.widget.FrameLayout
 import com.angcyo.uiview.R
+import com.angcyo.uiview.kotlin.calcLayoutWidthHeight
 import com.angcyo.uiview.kotlin.density
+import com.angcyo.uiview.kotlin.exactlyMeasure
 import com.angcyo.uiview.resources.RAnimListener
 import com.angcyo.uiview.utils.ClipHelper
 import com.angcyo.uiview.view.UIIViewImpl
@@ -57,6 +59,11 @@ open class ClipLayout(context: Context, attributeSet: AttributeSet? = null) : Fr
     /**是否是等宽矩形*/
     private var aeqWidth = true
 
+    private var rLayoutWidth: String? = null
+    private var rLayoutHeight: String? = null
+    private var rLayoutWidthExclude = 0
+    private var rLayoutHeightExclude = 0
+
     private val paint by lazy {
         Paint(Paint.ANTI_ALIAS_FLAG)
     }
@@ -67,6 +74,10 @@ open class ClipLayout(context: Context, attributeSet: AttributeSet? = null) : Fr
         clipRadius = typedArray.getDimensionPixelOffset(R.styleable.ClipLayout_r_clip_radius, defaultClipRadius.toInt()).toFloat()
         rBackgroundDrawable = typedArray.getDrawable(R.styleable.ClipLayout_r_background)
         aeqWidth = typedArray.getBoolean(R.styleable.ClipLayout_r_is_aeq_width, aeqWidth)
+        rLayoutWidth = typedArray.getString(R.styleable.ClipLayout_r_layout_width)
+        rLayoutHeight = typedArray.getString(R.styleable.ClipLayout_r_layout_height)
+        rLayoutWidthExclude = typedArray.getDimensionPixelOffset(R.styleable.ClipLayout_r_layout_width_exclude, rLayoutWidthExclude)
+        rLayoutHeightExclude = typedArray.getDimensionPixelOffset(R.styleable.ClipLayout_r_layout_height_exclude, rLayoutHeightExclude)
         typedArray.recycle()
 
         setWillNotDraw(false)
@@ -275,5 +286,22 @@ open class ClipLayout(context: Context, attributeSet: AttributeSet? = null) : Fr
     override fun onDetachedFromWindow() {
         super.onDetachedFromWindow()
         guidBitmap.recycle()
+    }
+
+    override fun onMeasure(widthMeasureSpec: Int, heightMeasureSpec: Int) {
+        val layoutWidthHeight = calcLayoutWidthHeight(rLayoutWidth, rLayoutHeight, rLayoutWidthExclude, rLayoutHeightExclude)
+        val width = layoutWidthHeight[0]
+        val height = layoutWidthHeight[1]
+        if (width == -1 && height == -1) {
+            super.onMeasure(widthMeasureSpec, heightMeasureSpec)
+        } else if (width > 0 && height > 0) {
+            super.onMeasure(exactlyMeasure(width), exactlyMeasure(height))
+        } else {
+            if (width == -1) {
+                super.onMeasure(widthMeasureSpec, exactlyMeasure(height))
+            } else {
+                super.onMeasure(exactlyMeasure(width), heightMeasureSpec)
+            }
+        }
     }
 }

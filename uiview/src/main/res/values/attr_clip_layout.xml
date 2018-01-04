@@ -12,5 +12,9 @@
         <attr name="r_background"/>
         <!--宽高是否相等-->
         <attr name="r_is_aeq_width"/>
+        <attr name="r_layout_width"/>
+        <attr name="r_layout_height"/>
+        <attr name="r_layout_width_exclude"/>
+        <attr name="r_layout_height_exclude"/>
     </declare-styleable>
 </resources>

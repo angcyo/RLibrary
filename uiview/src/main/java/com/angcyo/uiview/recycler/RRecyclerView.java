@@ -462,7 +462,7 @@ public class RRecyclerView extends RecyclerView {
             fastDownY = ev.getY();
             fastDownTime = ev.getDownTime();
 
-            if (enableScroll) {
+            if (enableScroll && isEnabled()) {
                 stopAutoScroll();
             }
         } else if (actionMasked == MotionEvent.ACTION_UP ||
@@ -482,7 +482,7 @@ public class RRecyclerView extends RecyclerView {
                 }
             }
 
-            if (enableScroll) {
+            if (enableScroll && isEnabled()) {
                 startAutoScroll();
             }
         }

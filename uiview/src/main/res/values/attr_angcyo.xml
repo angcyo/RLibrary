@@ -10,6 +10,13 @@
     <attr name="r_paddingRight" format="dimension"/>
     <attr name="r_paddingBottom" format="dimension"/>
     <attr name="r_paddingTop" format="dimension"/>
+    <!--2sw 2倍的屏幕宽度, 0.5sw屏幕宽度的一半-->
+    <attr name="r_layout_width" format="string"/>
+    <!--2sh 2倍的屏幕高度, 0.5sh屏幕高度的一半-->
+    <attr name="r_layout_height" format="string"/>
+    <!--计算时, 需要排除的距离-->
+    <attr name="r_layout_width_exclude" format="dimension"/>
+    <attr name="r_layout_height_exclude" format="dimension"/>
 
     <!--View-->
     <attr name="r_show_text" format="string"/>
@@ -89,6 +96,13 @@
 
     <declare-styleable name="RefreshLayout">
         <attr name="r_notify_listener" format="boolean"/>
+        <!--刷新房方向-->
+        <attr name="r_refresh_direction" format="enum">
+            <enum name="NONE" value="-1"/>
+            <enum name="BOTH" value="3"/>
+            <enum name="BOTTOM" value="2"/>
+            <enum name="TOP" value="1"/>
+        </attr>
     </declare-styleable>
 
     <!--View-->

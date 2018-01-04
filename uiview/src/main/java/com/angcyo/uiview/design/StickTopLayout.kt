@@ -205,8 +205,6 @@ class StickTopLayout(context: Context, attributeSet: AttributeSet? = null) : Fra
 
     interface OnTopScrollListener {
         fun onTopScroll(isChange: Boolean /*状态是否发生改变*/,
-                        isStickTop: Boolean /*顶部是否打开*/,
-                        y: Int /*滚动的距离*/,
-                        max: Int /*最大滚动距离*/)
+                        isStickTop: Boolean /*顶部是否打开*/, y: Int /*滚动的距离*/, max: Int /*最大滚动距离*/)
     }
 }

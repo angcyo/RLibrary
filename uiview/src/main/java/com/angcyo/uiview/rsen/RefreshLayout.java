@@ -31,6 +31,7 @@ import android.widget.OverScroller;
 import android.widget.TextView;
 
 import com.angcyo.uiview.R;
+import com.angcyo.uiview.design.StickTopLayout;
 import com.angcyo.uiview.kotlin.ViewGroupExKt;
 import com.angcyo.uiview.skin.SkinHelper;
 import com.angcyo.uiview.utils.T_;
@@ -154,6 +155,8 @@ public class RefreshLayout extends ViewGroup {
 
         TypedArray typedArray = context.obtainStyledAttributes(attrs, R.styleable.RefreshLayout);
         setNotifyListener(typedArray.getBoolean(R.styleable.RefreshLayout_r_notify_listener, true));
+        mDirection = typedArray.getInteger(R.styleable.RefreshLayout_r_refresh_direction, mDirection);
+
         typedArray.recycle();
     }
 
@@ -990,6 +993,14 @@ public class RefreshLayout extends ViewGroup {
             RecyclerView touchOnRecyclerView = ViewGroupExKt.getTouchOnRecyclerView(this, x, y);
             if (touchOnRecyclerView != null) {
                 view = touchOnRecyclerView;
+            }
+        }
+
+        if (view instanceof StickTopLayout) {
+            if (direction == -1) {
+                return !((StickTopLayout) view).isTopStick();
+            } else {
+                return true;
             }
         }
 

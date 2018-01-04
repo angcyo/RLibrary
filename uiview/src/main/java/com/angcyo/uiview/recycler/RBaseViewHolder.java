@@ -154,6 +154,10 @@ public class RBaseViewHolder extends RecyclerView.ViewHolder {
         return (RRecyclerView) v(resId);
     }
 
+    public RLoopRecyclerView loopV(@IdRes int resId) {
+        return (RLoopRecyclerView) v(resId);
+    }
+
     public RRecyclerView reV(String idName) {
         return (RRecyclerView) viewByName(idName);
     }
