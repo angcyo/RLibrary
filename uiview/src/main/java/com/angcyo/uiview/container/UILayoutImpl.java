@@ -103,6 +103,12 @@ public class UILayoutImpl extends SwipeBackLayout implements ILayout<UIParam>, U
      * 是否正在启动新界面
      */
     private boolean isStarting = false;
+    /**
+     * 已经按下返回键
+     */
+    private boolean isBackPress = false;
+    private ArrayList<IWindowInsetsListener> mIWindowInsetsListeners;
+    private ArrayList<OnIViewChangedListener> mOnIViewChangedListeners = new ArrayList<>();
     Application.ActivityLifecycleCallbacks mCallbacks = new Application.ActivityLifecycleCallbacks() {
         @Override
         public void onActivityCreated(Activity activity, Bundle savedInstanceState) {
@@ -171,12 +177,6 @@ public class UILayoutImpl extends SwipeBackLayout implements ILayout<UIParam>, U
             }
         }
     };
-    /**
-     * 已经按下返回键
-     */
-    private boolean isBackPress = false;
-    private ArrayList<IWindowInsetsListener> mIWindowInsetsListeners;
-    private ArrayList<OnIViewChangedListener> mOnIViewChangedListeners = new ArrayList<>();
     private int[] mInsets = new int[4];
     /**
      * 锁定高度, 当键盘弹出的时候, 可以不改变size
@@ -565,7 +565,11 @@ public class UILayoutImpl extends SwipeBackLayout implements ILayout<UIParam>, U
         mAttachViews.push(newViewPattern);
 
         for (OnIViewChangedListener listener : mOnIViewChangedListeners) {
-            listener.onIViewAdd(this, newViewPattern);
+            try {
+                listener.onIViewAdd(this, newViewPattern);
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
         }
 
         return newViewPattern;
@@ -590,7 +594,11 @@ public class UILayoutImpl extends SwipeBackLayout implements ILayout<UIParam>, U
         mAttachViews.push(viewPattern);
 
         for (OnIViewChangedListener listener : mOnIViewChangedListeners) {
-            listener.onIViewAdd(this, viewPattern);
+            try {
+                listener.onIViewAdd(this, viewPattern);
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
         }
 
         return viewPattern;
@@ -637,6 +645,14 @@ public class UILayoutImpl extends SwipeBackLayout implements ILayout<UIParam>, U
         //2:
         iView.onViewCreate(rawView);
         iView.onViewCreate(rawView, uiParam);
+
+        for (OnIViewChangedListener listener : mOnIViewChangedListeners) {
+            try {
+                listener.onIViewCreate(this, iView, rawView);
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
 
         L.e("call: loadViewInternal()-> 加载页面:" + iView.getClass().getSimpleName());
 
@@ -1518,6 +1534,14 @@ public class UILayoutImpl extends SwipeBackLayout implements ILayout<UIParam>, U
 
     private void viewHide(final ViewPattern viewPattern) {
         viewHide(viewPattern, false);
+
+        for (OnIViewChangedListener listener : mOnIViewChangedListeners) {
+            try {
+                listener.onIViewHide(UILayoutImpl.this, viewPattern);
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
     }
 
     /**
@@ -1534,6 +1558,14 @@ public class UILayoutImpl extends SwipeBackLayout implements ILayout<UIParam>, U
 //        viewPattern.mView.setVisibility(VISIBLE);
 //        viewPattern.mView.bringToFront();
         viewPattern.mIView.onViewShow(bundle);
+
+        for (OnIViewChangedListener listener : mOnIViewChangedListeners) {
+            try {
+                listener.onIViewShow(UILayoutImpl.this, viewPattern);
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
     }
 
     /**
@@ -1858,7 +1890,11 @@ public class UILayoutImpl extends SwipeBackLayout implements ILayout<UIParam>, U
         });
 
         for (OnIViewChangedListener listener : mOnIViewChangedListeners) {
-            listener.onIViewRemove(this, viewPattern);
+            try {
+                listener.onIViewRemove(this, viewPattern);
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
         }
     }
 
@@ -2985,6 +3021,12 @@ public class UILayoutImpl extends SwipeBackLayout implements ILayout<UIParam>, U
      */
     public interface OnIViewChangedListener {
         void onIViewAdd(final UILayoutImpl uiLayout, final ViewPattern viewPattern);
+
+        void onIViewShow(final UILayoutImpl uiLayout, final ViewPattern viewPattern);
+
+        void onIViewHide(final UILayoutImpl uiLayout, final ViewPattern viewPattern);
+
+        void onIViewCreate(final UILayoutImpl uiLayout, final IView iView, final View rootView);
 
         void onIViewRemove(final UILayoutImpl uiLayout, final ViewPattern viewPattern);
     }
