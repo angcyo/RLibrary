@@ -20,4 +20,9 @@ public abstract class UIContentView extends UIBaseRxView {
     public int getDefaultBackgroundColor() {
         return Color.WHITE;
     }
+
+    @Override
+    protected String getTitleString() {
+        return this.getClass().getSimpleName();
+    }
 }
