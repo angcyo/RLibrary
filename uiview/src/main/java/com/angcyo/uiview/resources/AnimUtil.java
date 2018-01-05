@@ -19,6 +19,7 @@ import android.view.animation.DecelerateInterpolator;
 import android.view.animation.LayoutAnimationController;
 import android.view.animation.LinearInterpolator;
 import android.view.animation.OvershootInterpolator;
+import android.view.animation.RotateAnimation;
 import android.view.animation.TranslateAnimation;
 
 import com.angcyo.uiview.R;
@@ -615,4 +616,27 @@ public class AnimUtil {
         return animation;
     }
 
+    /**
+     * 围绕自身中心点, 360旋转, 的动画
+     */
+    public static Animation rotateAnimation() {
+        RotateAnimation animation = new RotateAnimation(0f, 360f,
+                Animation.RELATIVE_TO_SELF, 0.5f, Animation.RELATIVE_TO_SELF, 0.5f);
+        animation.setInterpolator(new LinearInterpolator());
+        animation.setDuration(300);
+        return animation;
+    }
+
+    /**
+     * 上下移动的循环动画
+     */
+    public static Animation translateYYAnimation(float toYValue) {
+        TranslateAnimation animation = new TranslateAnimation(Animation.RELATIVE_TO_SELF, 0, Animation.RELATIVE_TO_SELF, 0f,
+                Animation.RELATIVE_TO_SELF, 0f, Animation.RELATIVE_TO_SELF, toYValue);
+        animation.setInterpolator(new LinearInterpolator());
+        animation.setRepeatCount(Animation.INFINITE);
+        animation.setRepeatMode(Animation.REVERSE);
+        animation.setDuration(300);
+        return animation;
+    }
 }

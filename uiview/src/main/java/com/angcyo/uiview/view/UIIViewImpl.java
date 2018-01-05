@@ -706,6 +706,10 @@ public abstract class UIIViewImpl implements IView {
         return mParentILayout != mILayout;
     }
 
+    public ILayout getParentILayout() {
+        return mParentILayout;
+    }
+
     @Override
     public boolean haveChildILayout() {
         if (isChildILayoutEmpty()) {

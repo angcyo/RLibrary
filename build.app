@@ -59,12 +59,16 @@ android {
     buildTypes {
         release {
             //applicationIdSuffix ".release"
+            zipAlignEnabled true
+            shrinkResources false
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
             signingConfig signingConfigs.angcyo
         }
         debug {
             //applicationIdSuffix ".debug"
+            zipAlignEnabled true
+            shrinkResources false
             signingConfig signingConfigs.angcyo
         }
     }
