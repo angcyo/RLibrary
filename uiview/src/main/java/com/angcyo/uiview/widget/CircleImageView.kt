@@ -51,6 +51,7 @@ open class CircleImageView(context: Context, attributeSet: AttributeSet? = null)
 
     /**高度等于宽度*/
     protected var equWidth: Boolean = false
+    protected var equHeight: Boolean = false
 
     var widthHeightRatio: String? = null
 
@@ -61,6 +62,7 @@ open class CircleImageView(context: Context, attributeSet: AttributeSet? = null)
         roundRadius = typedArray.getDimensionPixelOffset(R.styleable.CircleImageView_r_round_radius, (10 * density).toInt()).toFloat()
         lineWidth = typedArray.getDimensionPixelOffset(R.styleable.CircleImageView_r_line_width, (1 * density).toInt()).toFloat()
         equWidth = typedArray.getBoolean(R.styleable.CircleImageView_r_equ_width, equWidth)
+        equHeight = typedArray.getBoolean(R.styleable.CircleImageView_r_equ_height, equHeight)
         drawBorder = typedArray.getBoolean(R.styleable.CircleImageView_r_draw_border, drawBorder)
         widthHeightRatio = typedArray.getString(R.styleable.CircleImageView_r_width_height_ratio)
         typedArray.recycle()
@@ -83,6 +85,8 @@ open class CircleImageView(context: Context, attributeSet: AttributeSet? = null)
         super.onMeasure(widthMeasureSpec, heightMeasureSpec)
         if (equWidth) {
             setMeasuredDimension(measuredWidth, measuredWidth)
+        }else if (equHeight) {
+            setMeasuredDimension(measuredHeight, measuredHeight)
         } else {
             calcWidthHeightRatio(widthHeightRatio)?.let {
                 setMeasuredDimension(it[0], it[1])

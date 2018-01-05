@@ -46,6 +46,8 @@
 
     <!--高度等于宽度-->
     <attr name="r_equ_width" format="boolean"/>
+    <!--宽度等于高度-->
+    <attr name="r_equ_height" format="boolean"/>
     <!--固定比例如(1.5w 表示 高度是宽度的1.5倍, 0.5h 表示宽度是高度的0.5倍)-->
     <attr name="r_width_height_ratio" format="string"/>
 
@@ -81,6 +83,10 @@
     <declare-styleable name="RRelativeLayout">
         <attr name="r_background"/>
         <attr name="r_max_height"/>
+    </declare-styleable>
+
+    <declare-styleable name="RGalleryLayout">
+        <attr name="r_animator_to_first" format="boolean"/>
     </declare-styleable>
 
     <declare-styleable name="RRecyclerView">

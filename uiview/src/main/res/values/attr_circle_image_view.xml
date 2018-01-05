@@ -32,6 +32,7 @@
         <!--补充外圈线的宽度-->
         <attr name="r_line_width" format="dimension"/>
         <attr name="r_equ_width"/>
+        <attr name="r_equ_height"/>
         <attr name="r_width_height_ratio"/>
         <!--绘制边框-->
         <attr name="r_draw_border" format="boolean"/>

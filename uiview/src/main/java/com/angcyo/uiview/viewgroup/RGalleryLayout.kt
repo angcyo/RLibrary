@@ -6,6 +6,7 @@ import android.view.View
 import android.view.animation.DecelerateInterpolator
 import android.widget.LinearLayout
 import android.widget.OverScroller
+import com.angcyo.uiview.R
 
 /**
  * Copyright (C) 2016,深圳市红鸟网络科技股份有限公司 All rights reserved.
@@ -23,10 +24,16 @@ class RGalleryLayout(context: Context, attributeSet: AttributeSet? = null) : Lin
     /**当前显示child的索引*/
     var curShowIndex = -1
 
+    /**当滚动到最后一个时, 是否增益滚动到第一个*/
+    var animatorToFirst = true
+
 //    var galleryAdapter: RGalleryAdapter? = null
 
     init {
-        orientation = LinearLayout.HORIZONTAL
+        val typedArray = context.obtainStyledAttributes(attributeSet, R.styleable.RGalleryLayout)
+        animatorToFirst = typedArray.getBoolean(R.styleable.RGalleryLayout_r_animator_to_first, animatorToFirst)
+
+        typedArray.recycle()
     }
 
     override fun onMeasure(widthMeasureSpec: Int, heightMeasureSpec: Int) {
@@ -98,7 +105,11 @@ class RGalleryLayout(context: Context, attributeSet: AttributeSet? = null) : Lin
     }
 
     fun scrollToIndex(index: Int /*滚动到第几个child 0开始的索引*/) {
-        overScroller.startScroll(scrollX, 0, (measuredWidth * index - scrollX), 0, scrollDuration)
+        if (isVertical()) {
+            overScroller.startScroll(0, scrollY, 0, (measuredHeight * index - scrollY), scrollDuration)
+        } else {
+            overScroller.startScroll(scrollX, 0, (measuredWidth * index - scrollX), 0, scrollDuration)
+        }
         postInvalidate()
     }
 
@@ -112,7 +123,12 @@ class RGalleryLayout(context: Context, attributeSet: AttributeSet? = null) : Lin
     var onGalleryChangeListener: OnGalleryChangeListener? = null
     override fun scrollTo(x: Int, y: Int) {
         super.scrollTo(x, y)
-        val i = x / measuredWidth
+
+        val i = if (isVertical()) {
+            y / measuredHeight
+        } else {
+            x / measuredWidth
+        }
         val oldIndex = curShowIndex
         if (oldIndex != i) {
             curShowIndex = i
@@ -124,9 +140,25 @@ class RGalleryLayout(context: Context, attributeSet: AttributeSet? = null) : Lin
     private val scrollRunnable = Runnable {
         if (checkCanScroll()) {
             if (isLast()) {
-                scrollTo(-measuredWidth, 0)
+                if (isVertical()) {
+                    if (animatorToFirst) {
+                        scrollTo(0, -measuredHeight)
+                    } else {
+                        scrollTo(0, 0)
+                    }
+                } else {
+                    if (animatorToFirst) {
+                        scrollTo(-measuredWidth, 0)
+                    } else {
+                        scrollTo(0, 0)
+                    }
+                }
             }
-            overScroller.startScroll(scrollX, 0, measuredWidth, 0, scrollDuration)
+            if (isVertical()) {
+                overScroller.startScroll(0, scrollY, 0, measuredHeight, scrollDuration)
+            } else {
+                overScroller.startScroll(scrollX, 0, measuredWidth, 0, scrollDuration)
+            }
             postInvalidate()
             startScrollInner(scrollIntervalDuration + scrollDuration)
         }
@@ -134,15 +166,27 @@ class RGalleryLayout(context: Context, attributeSet: AttributeSet? = null) : Lin
 
     /**修正child的滚动位置, 防止滚动到一半, 停下来了*/
     private fun resetScroll() {
-        val offset = scrollX % measuredWidth
-        if (offset.compareTo(0f) != 0) {
-            //需要修正
-            scrollBy(measuredWidth - offset, 0)
+        if (isVertical()) {
+            val offset = scrollY % measuredHeight
+            if (offset.compareTo(0f) != 0) {
+                //需要修正
+                scrollBy(0, measuredHeight - offset)
+            }
+        } else {
+            val offset = scrollX % measuredWidth
+            if (offset.compareTo(0f) != 0) {
+                //需要修正
+                scrollBy(measuredWidth - offset, 0)
+            }
         }
     }
 
     private val index: Int
-        get() = Math.ceil(scrollX.toDouble() / measuredWidth).toInt()
+        get() = if (isVertical()) {
+            Math.ceil(scrollY.toDouble() / measuredHeight).toInt()
+        } else {
+            Math.ceil(scrollX.toDouble() / measuredWidth).toInt()
+        }
 
     private fun isLast() = index == childCount - 1
 
@@ -150,11 +194,17 @@ class RGalleryLayout(context: Context, attributeSet: AttributeSet? = null) : Lin
         if (isOnAttachedToWindow &&
                 visibility == View.VISIBLE &&
                 measuredWidth > 0 &&
-                measuredHeight > 0
+                measuredHeight > 0 &&
+                childCount > 0
         /*&& galleryAdapter != null*/) {
             return true
         }
         return false
+    }
+
+    /**是否是垂直滚动*/
+    fun isVertical(): Boolean {
+        return orientation == LinearLayout.VERTICAL
     }
 }
 
