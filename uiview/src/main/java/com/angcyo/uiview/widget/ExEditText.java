@@ -219,6 +219,10 @@ public class ExEditText extends AppCompatEditText {
         return enableCallback;
     }
 
+    public void setEnableCallback(boolean enableCallback) {
+        this.enableCallback = enableCallback;
+    }
+
     public void setEnableMention(boolean enableMention) {
         this.enableMention = enableMention;
     }

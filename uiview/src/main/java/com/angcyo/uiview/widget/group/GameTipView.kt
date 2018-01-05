@@ -105,8 +105,12 @@ class GameCountDownView(context: Context, attributeSet: AttributeSet? = null) : 
         if (fromTime > 0) {
             text = formatTime(fromTime * 1000L)
             startAnim()
-        } else {
-            text = ""
+        }/* else if (fromTime == 0) {
+            text = "0"
+            onTimeEnd?.invoke()
+        }*/ else {
+            text = "0"
+            onTimeEnd?.invoke()
         }
     }
 

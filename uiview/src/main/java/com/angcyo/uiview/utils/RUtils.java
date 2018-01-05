@@ -1482,6 +1482,14 @@ public class RUtils {
                 int pow = (int) Math.pow(10, bitNum);
                 return String.format(Locale.CHINA, parrern.toString(), ((int) (pow * value)) / (pow * 1f));
 //                return String.valueOf(((int) (Math.pow(10, bitNum) * value)) / Math.pow(10, bitNum));
+            } else if (bitNum == 0) {
+                String valueString = String.valueOf(value);
+                int lastIndexOf = valueString.lastIndexOf(".");
+                if (lastIndexOf == -1) {
+                    return valueString;
+                } else {
+                    return valueString.subSequence(0, lastIndexOf).toString();
+                }
             } else {
                 return String.format(Locale.CHINA, "%s", value);
             }
