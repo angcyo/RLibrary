@@ -158,7 +158,9 @@ public class RNineImageLayout extends RelativeLayout implements View.OnClickList
         } else if (mNineImageConfig == null) {
             L.w("need set nine image config.");
             final RImageView firstView = mImageViews.get(0);
-            firstView.layout(left, top, right, bottom);
+            firstView.layout(mRPaddingLeft, mRPaddingTop,
+                    mRPaddingLeft + getMeasuredWidth(),
+                    mRPaddingTop + getMeasuredHeight());
 
 //            if (mNineImageConfig != null) {
 //                mNineImageConfig.displayImage(firstView, mImagesList.get(0), getMeasuredWidth(), getMeasuredHeight());
@@ -168,7 +170,9 @@ public class RNineImageLayout extends RelativeLayout implements View.OnClickList
             if (size == 1) {
                 //一张图片
                 final RImageView firstView = mImageViews.get(0);
-                firstView.layout(left, top, firstView.getMeasuredWidth(), firstView.getMeasuredHeight());
+                firstView.layout(mRPaddingLeft, mRPaddingTop,
+                        mRPaddingLeft + firstView.getMeasuredWidth(),
+                        mRPaddingTop + firstView.getMeasuredHeight());
 
 //                if (mNineImageConfig != null) {
 //                    mNineImageConfig.displayImage(firstView, mImagesList.get(0), getMeasuredWidth(), getMeasuredHeight());
@@ -190,8 +194,8 @@ public class RNineImageLayout extends RelativeLayout implements View.OnClickList
                         final RImageView imageView = mImageViews.get(index);
                         final int width = imageView.getMeasuredWidth();
                         final int height = imageView.getMeasuredHeight();
-                        l = left + j * width + j * space;
-                        t = top + i * height + i * space;
+                        l = mRPaddingLeft + j * width + j * space;
+                        t = mRPaddingTop + i * height + i * space;
                         imageView.layout(l, t, l + width, t + height);
 
 //                        if (mNineImageConfig != null) {
