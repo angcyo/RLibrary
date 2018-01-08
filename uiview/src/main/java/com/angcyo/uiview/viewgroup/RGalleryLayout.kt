@@ -188,7 +188,7 @@ class RGalleryLayout(context: Context, attributeSet: AttributeSet? = null) : Lin
             Math.ceil(scrollX.toDouble() / measuredWidth).toInt()
         }
 
-    private fun isLast() = index == childCount - 1
+    private fun isLast() = index >= childCount - 1
 
     private fun checkCanScroll(): Boolean {
         if (isOnAttachedToWindow &&
