@@ -50,6 +50,7 @@ public class L {
     private static final int JSON_INDENT = 4;
     public static String TAG = "angcyo";
     public static boolean LOG_DEBUG = true;
+    private static long lastLogETime = 0L;
 
     public static void init(boolean isDebug, String tag) {
         TAG = tag;
@@ -90,6 +91,21 @@ public class L {
 
     public static void e(String msg) {
         log(ERROR, null, msg);
+    }
+
+    /**
+     * @param interval 控制log输出的速度
+     */
+    public static void e(String msg, long interval /*毫秒*/) {
+        e(msg, interval, false);
+    }
+
+    public static void e(String msg, long interval /*毫秒*/, boolean ignore /*忽略本次*/) {
+        long millis = System.currentTimeMillis();
+        if (ignore || millis - lastLogETime > interval) {
+            log(ERROR, null, msg);
+            lastLogETime = millis;
+        }
     }
 
     public static void e(String tag, String msg) {

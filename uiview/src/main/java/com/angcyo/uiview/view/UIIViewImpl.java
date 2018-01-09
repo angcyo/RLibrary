@@ -88,6 +88,7 @@ public abstract class UIIViewImpl implements IView {
      * 用来管理rootView
      */
     protected RBaseViewHolder mViewHolder;
+    protected RBaseViewHolder $;
     protected IViewShowState mIViewStatus = IViewShowState.STATE_NORMAL;
     /**
      * 最后一次显示的时间
@@ -246,6 +247,7 @@ public abstract class UIIViewImpl implements IView {
         mIViewStatus = IViewShowState.STATE_VIEW_CREATE;
         mRootView = rootView;
         mViewHolder = new RBaseViewHolder(mRootView);
+        $ = mViewHolder;
     }
 
     @Override
@@ -1142,6 +1144,10 @@ public abstract class UIIViewImpl implements IView {
     @Override
     public int getDefaultRequestedOrientation() {
         return ActivityInfo.SCREEN_ORIENTATION_PORTRAIT;
+    }
+
+    public RBaseViewHolder get$() {
+        return $;
     }
 
     /**
