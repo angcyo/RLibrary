@@ -656,6 +656,9 @@ public class RRecyclerView extends RecyclerView {
         return currVelocity;
     }
 
+    /**
+     * 去掉动画, 即可吸顶
+     */
     public void scrollTo(int position, boolean anim) {
         LayoutManager manager = getLayoutManager();
         if (manager == null) {
@@ -675,6 +678,10 @@ public class RRecyclerView extends RecyclerView {
                 ((StaggeredGridLayoutManager) manager).scrollToPositionWithOffset(position, 0);
             }
         }
+    }
+
+    public void scrollToFirst(int position) {
+        scrollTo(position, false);
     }
 
     /**

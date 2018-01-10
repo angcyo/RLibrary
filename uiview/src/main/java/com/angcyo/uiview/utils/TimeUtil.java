@@ -179,8 +179,11 @@ public class TimeUtil {
         }
     }
 
+    /**
+     * 缩短时间显示  今天 昨天, 上午 09:15
+     */
     public static String getTimeShowString(long milliseconds, boolean abbreviate) {
-        return getTimeShowString(milliseconds,true,abbreviate);
+        return getTimeShowString(milliseconds, true, abbreviate);
     }
 
     public static String getTimeShowRentString(long milliseconds) {
