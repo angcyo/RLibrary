@@ -1,19 +1,15 @@
 package com.angcyo.uiview.game.layer
 
 import android.graphics.Canvas
-import android.graphics.Point
 import android.graphics.PointF
-import android.graphics.Rect
 import android.graphics.drawable.Drawable
 import android.support.v4.content.ContextCompat
 import android.view.MotionEvent
 import com.angcyo.library.utils.L
 import com.angcyo.uiview.RApplication
-import com.angcyo.uiview.game.GameRenderView
 import com.angcyo.uiview.game.spirit.BaseLayerBean
-import com.angcyo.uiview.game.spirit.FrameBean
+import com.angcyo.uiview.game.spirit.TouchSpiritBean
 import com.angcyo.uiview.helper.BezierHelper
-import com.angcyo.uiview.kotlin.scale
 import com.angcyo.uiview.utils.ScreenUtil
 import com.angcyo.uiview.utils.ThreadExecutor
 
@@ -45,7 +41,7 @@ abstract class BaseTouchLayer : BaseExLayer() {
             field = value
         }
 
-    /**最大数量*/
+    /**最大数量 -1 表示无限循环*/
     var maxSpiritNum = 100
 
     /**点到的时候, 自动移出*/
@@ -151,12 +147,6 @@ abstract class BaseTouchLayer : BaseExLayer() {
         checkAddNewSpirit()
     }
 
-    var gameRenderView: GameRenderView? = null
-    override fun onRenderStart(gameRenderView: GameRenderView) {
-        super.onRenderStart(gameRenderView)
-        this.gameRenderView = gameRenderView
-    }
-
     /**移除Spirit*/
     fun removeSpirit(bean: TouchSpiritBean) {
         synchronized(lock) {
@@ -200,19 +190,34 @@ abstract class BaseTouchLayer : BaseExLayer() {
 
     /**检查是否需要添加新的精灵*/
     protected fun checkAddNewSpirit() {
-        if (spiritAddNumEd >= maxSpiritNum) {
-            //所有Rain 添加完毕
-            if (spiritList.isEmpty()) {
-                //所有Rain, 移除了屏幕
-                ThreadExecutor.instance().onMain {
-                    endSpirit()
+        if (maxSpiritNum == -1) {
+            //无限循环
+            if (spiritAddNumEd == maxSpiritNum) {
+                //需要结束了
+                if (spiritList.isEmpty()) {
+                    //所有Rain, 移除了屏幕
+                    ThreadExecutor.instance().onMain {
+                        endSpirit()
+                    }
                 }
+            } else {
+                addNewRainInner(addSpiritNum)
             }
-        } else if (spiritAddNumEd + addSpiritNum > maxSpiritNum) {
-            //达到最大
-            addNewRainInner(maxSpiritNum - spiritAddNumEd)
         } else {
-            addNewRainInner(addSpiritNum)
+            if (spiritAddNumEd >= maxSpiritNum) {
+                //所有Rain 添加完毕
+                if (spiritList.isEmpty()) {
+                    //所有Rain, 移除了屏幕
+                    ThreadExecutor.instance().onMain {
+                        endSpirit()
+                    }
+                }
+            } else if (spiritAddNumEd + addSpiritNum > maxSpiritNum) {
+                //达到最大
+                addNewRainInner(maxSpiritNum - spiritAddNumEd)
+            } else {
+                addNewRainInner(addSpiritNum)
+            }
         }
     }
 
@@ -242,15 +247,20 @@ abstract class BaseTouchLayer : BaseExLayer() {
 
                 bean.updateIndex++
 
-                val top = bean.getTop()
-                //L.w("call: updateSpiritList2 -> index:${bean.updateIndex} startY:${bean.startY} top:$top")
-                if (top > gameRenderView!!.measuredHeight) {
+                if (isSpiritRemoveFromWindow(bean)) {
                     //移动到屏幕外了,需要移除
                     removeList.add(bean)
                 }
             }
             spiritList.removeAll(removeList)
         }
+    }
+
+    /**是否移除了屏幕*/
+    open protected fun isSpiritRemoveFromWindow(spirit: TouchSpiritBean): Boolean {
+        val top = spirit.getTop()
+        //L.w("call: updateSpiritList2 -> index:${bean.updateIndex} startY:${bean.startY} top:$top")
+        return top > gameRenderView!!.measuredHeight
     }
 
     //添加精灵
@@ -345,81 +355,4 @@ interface OnClickSpiritListener {
 
 interface OnLayerDrawListener {
     fun onLayerDraw(startDrawTime: Long, nowDrawTime: Long)
-}
-
-open class TouchSpiritBean(drawableArray: Array<Drawable>) : FrameBean(drawableArray, Point()) {
-    /**坐标位置*/
-    private val rect = Rect()
-
-    /**Y轴每次移动的步长 dp单位 可以单独控制某一个的下降速度*/
-    var stepY = 4 //px
-
-    var bezierHelper: BezierHelper? = null
-
-    /**使用贝塞尔曲线*/
-    var useBezier = true
-
-    /**随机step*/
-    var randomStep = true
-
-    /*开始的坐标, 计算出来的值, 无需手动赋值*/
-    var startX = 0
-    var startY = 0
-
-    /*数据更新的次数, 自动计算*/
-    var updateIndex = 0
-
-    fun setRect(x: Int, y: Int, w: Int, h: Int) {
-        rect.set(x, y, x + w, y + h)
-        rect.scale(scaleX, scaleY)
-    }
-
-    fun offset(dx: Int, dy: Int) {
-        rect.offset(dx, dy)
-    }
-
-    fun getTop(): Int {
-        return rect.top
-    }
-
-    fun isIn(x: Int, y: Int) = rect.contains(x, y)
-
-    fun getRect() = rect
-
-    init {
-        loopDrawFrame = true
-        frameDrawIntervalTime = 100
-    }
-
-    override fun getDrawDrawableBounds(drawable: Drawable): Rect {
-        return rect
-    }
-
-    override fun getDrawPointFun(): Point {
-        return Point(rect.centerX(), rect.centerY())
-    }
-
-    /**之前的帧率, 是在BaseLayer的帧率下, 计算的帧率. 现在废弃, 直接在*/
-    override fun onFrameOnDrawInterval(canvas: Canvas, gameStartTime: Long, lastRenderTime: Long, nowRenderTime: Long) {
-        //super.onFrameDrawInterval(canvas, gameStartTime, lastRenderTime, nowRenderTime)
-    }
-
-    override fun onFrameDrawInterval(canvas: Canvas, gameStartTime: Long, lastRenderTime: Long, nowRenderTime: Long) {
-        super.onFrameDrawInterval(canvas, gameStartTime, lastRenderTime, nowRenderTime)
-        frameIndex++
-    }
-
-    fun width() = if (drawableArray.isEmpty()) {
-        0
-    } else {
-        val drawable = drawableArray[0]
-        drawable.intrinsicWidth
-    }
-
-    fun height() = if (drawableArray.isEmpty()) {
-        0
-    } else {
-        val drawable = drawableArray[0]
-        drawable.intrinsicHeight
-    }
 }

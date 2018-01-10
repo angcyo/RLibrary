@@ -3,6 +3,7 @@ package com.angcyo.uiview.game.layer
 import android.graphics.Canvas
 import android.graphics.PointF
 import android.graphics.Rect
+import android.support.annotation.CallSuper
 import android.view.MotionEvent
 import com.angcyo.uiview.game.GameRenderView
 import java.util.*
@@ -52,18 +53,27 @@ open class BaseLayer {
 
     }
 
+    @CallSuper
     open fun onSizeChanged(w: Int, h: Int, oldw: Int, oldh: Int) {
         layerRect.set(0, 0, w, h)
     }
 
     /**结束渲染的回调*/
+    @CallSuper
     open fun onRenderEnd(gameRenderView: GameRenderView) {
-
+        isRenderStart = false
     }
 
-    /**开始渲染的回调*/
-    open fun onRenderStart(gameRenderView: GameRenderView) {
+    /**是否开始了, 渲染.这个时候 layerRect 是父View的大小 */
+    var isRenderStart = false
 
+    lateinit var gameRenderView: GameRenderView
+
+    /**开始渲染的回调*/
+    @CallSuper
+    open fun onRenderStart(gameRenderView: GameRenderView) {
+        this.gameRenderView = gameRenderView
+        isRenderStart = true
     }
 
     /**子线程执行*/

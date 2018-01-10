@@ -138,7 +138,10 @@ class GameRenderView(context: Context, attributeSet: AttributeSet? = null) : Vie
         super.onDraw(canvas)
         val nowTime = time()
         for (i in 0 until layerList.size) {
-            layerList[i].draw(canvas, gameRenderStartTime, lastRenderTime, nowTime)
+            val layer = layerList[i]
+            if (layer.isRenderStart) {
+                layer.draw(canvas, gameRenderStartTime, lastRenderTime, nowTime)
+            }
         }
         if (showFps) {
             val text = fpsText
@@ -225,6 +228,10 @@ class GameRenderView(context: Context, attributeSet: AttributeSet? = null) : Vie
         }
     }
 
+    fun addLayer(layer: BaseLayer) {
+        layerList.add(layer)
+    }
+
     /**子线程用来计算游戏数据*/
     inner class RenderThread : Thread() {
         init {
@@ -238,9 +245,12 @@ class GameRenderView(context: Context, attributeSet: AttributeSet? = null) : Vie
                 try {
                     val nowTime = time()
                     for (i in 0 until layerList.size) {
-                        layerList[i].drawThread(gameRenderStartTime, lastRenderTimeThread, nowTime)
+                        val layer = layerList[i]
+                        if (layer.isRenderStart) {
+                            layer.drawThread(gameRenderStartTime, lastRenderTimeThread, nowTime)
+                        }
                     }
-                    Thread.sleep(16) //60帧回调一次
+                    Thread.sleep(16) //60帧速率 回调
 
                     lastRenderTimeThread = nowTime
 
