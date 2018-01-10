@@ -27,6 +27,7 @@ import com.angcyo.uiview.widget.ItemInfoLayout;
 import com.angcyo.uiview.widget.ItemSubInfoLayout;
 import com.angcyo.uiview.widget.RImageView;
 import com.angcyo.uiview.widget.RTextView;
+import com.angcyo.uiview.widget.TimeTextView;
 
 import java.lang.ref.WeakReference;
 import java.lang.reflect.Field;
@@ -181,6 +182,10 @@ public class RBaseViewHolder extends RecyclerView.ViewHolder {
         return (TextView) v(resId);
     }
 
+    public TimeTextView timeV(@IdRes int resId) {
+        return (TimeTextView) v(resId);
+    }
+
     public RTextView rtv(@IdRes int resId) {
         return (RTextView) v(resId);
     }
@@ -231,6 +236,10 @@ public class RBaseViewHolder extends RecyclerView.ViewHolder {
     }
 
     public GlideImageView glideImgV(@IdRes int resId) {
+        return (GlideImageView) v(resId);
+    }
+
+    public GlideImageView gIV(@IdRes int resId) {
         return (GlideImageView) v(resId);
     }
 

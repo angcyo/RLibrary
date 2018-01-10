@@ -103,6 +103,18 @@ public abstract class RExBaseAdapter<H, T, F> extends RModelAdapter<T> {
         return position < getHeaderCount() + getDataCount();
     }
 
+    public boolean isHeaderItemType(int viewType) {
+        return viewType == TYPE_HEADER;
+    }
+
+    public boolean isFooterItemType(int viewType) {
+        return viewType == TYPE_FOOTER;
+    }
+
+    public boolean isDataItemType(int viewType) {
+        return viewType == TYPE_DATA;
+    }
+
     /**
      * position 是否是头部的第一个
      */

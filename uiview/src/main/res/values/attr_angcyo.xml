@@ -249,4 +249,10 @@
         <attr name="r_current_max_value" format="integer"/>
         <attr name="r_min_range" format="integer"/>
     </declare-styleable>
+
+    <declare-styleable name="TimeTextView">
+        <attr name="r_time_pattern" format="string"/>
+        <attr name="r_time" format="string"/>
+        <attr name="r_show_shot_time" format="boolean"/>
+    </declare-styleable>
 </resources>
