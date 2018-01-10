@@ -29,6 +29,7 @@ import android.hardware.Camera;
 import android.media.AudioFormat;
 import android.media.AudioManager;
 import android.media.AudioRecord;
+import android.media.MediaMetadataRetriever;
 import android.media.MediaRecorder;
 import android.media.MediaScannerConnection;
 import android.net.Uri;
@@ -1796,6 +1797,21 @@ public class RUtils {
             }
         }
         Process.killProcess(Process.myPid());
+    }
+
+    public static String getShotTimeString(long milliseconds) {
+        return TimeUtil.getTimeShowString(milliseconds, true);
+    }
+
+    /**
+     * 获取视频时长 毫秒
+     */
+    public static long getVideoDuration(String videoPath) {
+        MediaMetadataRetriever retriever = new MediaMetadataRetriever();
+        retriever.setDataSource(videoPath);
+        long time = Long.parseLong(retriever.extractMetadata(MediaMetadataRetriever.METADATA_KEY_DURATION));
+        retriever.release();
+        return time;
     }
 
     public enum ImageType {

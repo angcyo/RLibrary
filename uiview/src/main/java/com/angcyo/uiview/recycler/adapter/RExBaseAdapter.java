@@ -441,7 +441,7 @@ public abstract class RExBaseAdapter<H, T, F> extends RModelAdapter<T> {
     @Override
     public void deleteItem(T bean) {
         if (mAllDatas != null) {
-            int indexOf = mAllDatas.indexOf(bean) + getHeaderCount();
+            int indexOf = mAllDatas.indexOf(bean);
             if (indexOf > -1) {
                 deleteItem(indexOf);
             }
@@ -450,8 +450,18 @@ public abstract class RExBaseAdapter<H, T, F> extends RModelAdapter<T> {
 
     @Override
     public void deleteItem(int position) {
-        position += getHeaderCount();
-        super.deleteItem(position);
+        int adapterPosition = position + getHeaderCount();
+        //super.deleteItem(position);
+        if (mAllDatas != null) {
+            int size = getDataCount();
+            if (size > position) {
+                if (onDeleteItem(position)) {
+                    mAllDatas.remove(position);
+                    notifyItemRemoved(adapterPosition);
+                    notifyItemRangeChanged(adapterPosition, getItemCount() - adapterPosition);
+                }
+            }
+        }
     }
 
     @Override
