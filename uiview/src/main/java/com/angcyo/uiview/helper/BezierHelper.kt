@@ -38,8 +38,10 @@ class BezierPointHelper(private val startPoint: PointF /*曲线起点*/, private
     }
 }
 
-class BezierHelper(private val startPoint: Float /*曲线起点的坐标*/, private val endPoint: Float /*曲线终点的坐标*/,
-                   private val controlPoint1: Float /*控制曲线的幅度*/, private val controlPoint2: Float /*曲线控制点*/) {
+class BezierHelper(private val startPoint: Float /*曲线起点的坐标, 决定了曲线的起点坐标*/,
+                   private val endPoint: Float /*曲线终点的坐标,  决定了曲线的终点坐标*/,
+                   private val controlPoint1: Float /*控制曲线的幅度, 决定曲线开始偏移的方向和幅度 (幅度的大小小于 控制点-起点的差值)*/,
+                   private val controlPoint2: Float /*曲线控制点, 决定曲线接下来的偏移方向和幅度*/) {
 
     fun evaluate(time: Float /*取值范围 [0, 1]*/): Float {
 

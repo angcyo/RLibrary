@@ -6,7 +6,6 @@ import android.graphics.drawable.Drawable
 import android.support.v4.content.ContextCompat
 import android.view.MotionEvent
 import com.angcyo.library.utils.L
-import com.angcyo.uiview.RApplication
 import com.angcyo.uiview.game.spirit.BaseLayerBean
 import com.angcyo.uiview.game.spirit.TouchSpiritBean
 import com.angcyo.uiview.helper.BezierHelper
@@ -24,7 +23,7 @@ import com.angcyo.uiview.utils.ThreadExecutor
  * 修改备注：
  * Version: 1.0.0
  */
-abstract class BaseTouchLayer : BaseExLayer() {
+abstract class BaseTouchLayer : BaseFrameLayer() {
 
     val TAG = "BaseTouchLayer"
 
@@ -228,26 +227,49 @@ abstract class BaseTouchLayer : BaseExLayer() {
             for (index in 0 until spiritList.size) {
                 val bean: TouchSpiritBean = spiritList[index] as TouchSpiritBean
 
-                //L.i("call: updateSpiritList1 -> index:${bean.updateIndex} startY:${bean.startY} top:${bean.getTop()}")
-                bean.offset(0, (bean.stepY /*ScreenUtil.density*/).toInt())
+                val onUpdateSpiritList = bean.onUpdateSpiritList()
+                if (onUpdateSpiritList) {
+                } else {
+                    //L.i("call: updateSpiritList1 -> index:${bean.updateIndex} startY:${bean.startY} top:${bean.getTop()}")
+                    bean.offset(0, (bean.stepY /*ScreenUtil.density*/).toInt())
 
-                if (bean.useBezier) {
-                    val maxY = (gameRenderView!!.measuredHeight - bean.startY) / bezierPart /*分成5份, 循环5次曲线*/
-                    if (maxY > 0) {
-                        val fl = Math.abs((bean.getRect().top - bean.startY) % (maxY + 1) / maxY.toFloat())
+                    if (bean.useBezier) {
+                        if (bean.stepY < 0) {
+                            //从下往上飘
+                            val maxY = bean.startY / bezierPart /*分成5份, 循环5次曲线*/
+                            if (maxY > 0) {
 
-                        val dx = (bean.bezierHelper!!.evaluate(fl) - bean.getRect().left).toInt()
-                        if (dx < bean.getRect().width()) {
-                            //控制位移的幅度, 防止漂移现象
-                            bean.offset(dx, 0)
+                                //计算Y轴, 在贝塞尔曲线上变化的0-1f的比例, 从而计算出x的坐标
+                                val fl = Math.abs((bean.startY - bean.getSpiritDrawRect().centerY()) % (maxY + 1) / maxY.toFloat())
+
+                                val evaluate = bean.bezierHelper!!.evaluate(fl)
+                                val dx = (evaluate - bean.getSpiritDrawRect().centerX()).toInt()
+                                if (dx < bean.getSpiritDrawRect().width()) {
+                                    //控制位移的幅度, 防止漂移现象
+                                    bean.offset(dx, 0)
+                                    L.e("updateRainList ->evaluate:$evaluate fl:$fl dx:$dx $maxY")
+                                }
+                            }
+                        } else {
+                            //从上往下飘
+                            val maxY = (gameRenderView.measuredHeight - bean.startY) / bezierPart /*分成5份, 循环5次曲线*/
+                            if (maxY > 0) {
+                                val fl = Math.abs((bean.getSpiritDrawRect().centerY() - bean.startY) % (maxY + 1) / maxY.toFloat())
+
+                                val dx = (bean.bezierHelper!!.evaluate(fl) - bean.getSpiritDrawRect().centerX()).toInt()
+                                if (dx < bean.getSpiritDrawRect().width()) {
+                                    //控制位移的幅度, 防止漂移现象
+                                    bean.offset(dx, 0)
+                                }
+                                //L.e("updateRainList -> fl:$fl dx:$dx ${bean.getRect()} $maxY")
+                            }
                         }
-                        //L.e("call: updateRainList -> fl:$fl dx:$dx ${bean.getRect()} $maxY")
                     }
                 }
 
                 bean.updateIndex++
 
-                if (isSpiritRemoveFromWindow(bean)) {
+                if (isSpiritRemoveFromLayer(bean)) {
                     //移动到屏幕外了,需要移除
                     removeList.add(bean)
                 }
@@ -257,10 +279,16 @@ abstract class BaseTouchLayer : BaseExLayer() {
     }
 
     /**是否移除了屏幕*/
-    open protected fun isSpiritRemoveFromWindow(spirit: TouchSpiritBean): Boolean {
-        val top = spirit.getTop()
+    open protected fun isSpiritRemoveFromLayer(spirit: TouchSpiritBean): Boolean {
+        if (spirit.stepY < 0) {
+            //往上移动
+            val bottom = spirit.getDrawBottom()
+            return bottom <= 0
+        }
+        //往下移动
+        val top = spirit.getDrawTop()
         //L.w("call: updateSpiritList2 -> index:${bean.updateIndex} startY:${bean.startY} top:$top")
-        return top > gameRenderView!!.measuredHeight
+        return top > gameRenderView.measuredHeight
     }
 
     //添加精灵
@@ -275,11 +303,7 @@ abstract class BaseTouchLayer : BaseExLayer() {
     }
 
     fun getDrawable(id: Int): Drawable {
-        return if (gameRenderView == null) {
-            ContextCompat.getDrawable(RApplication.getApp(), id)
-        } else {
-            ContextCompat.getDrawable(gameRenderView!!.context, id)
-        }
+        return ContextCompat.getDrawable(gameRenderView.context, id)
     }
 
     abstract fun onAddNewSpirit(): TouchSpiritBean
@@ -294,8 +318,8 @@ abstract class BaseTouchLayer : BaseExLayer() {
         val sw = if (gameRenderView!!.measuredWidth == 0) ScreenUtil.screenWidth else gameRenderView!!.measuredWidth
 
         val drawable = spiritBean.drawableArray[0]
-        val intrinsicWidth = drawable.intrinsicWidth
-        val intrinsicHeight = drawable.intrinsicHeight
+        val intrinsicWidth = drawable.intrinsicWidth * ScreenUtil.density().toInt()
+        val intrinsicHeight = drawable.intrinsicHeight * ScreenUtil.density().toInt()
 
         spiritBean.startX = getSpiritStartX(spiritBean, sw)
         spiritBean.startY = getSpiritStartY(spiritBean)

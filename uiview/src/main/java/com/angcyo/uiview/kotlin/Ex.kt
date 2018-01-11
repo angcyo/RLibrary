@@ -54,14 +54,36 @@ public fun Int.maxValue(value: Int) = Math.min(value, this)
 public fun String.int() = if ((TextUtils.isEmpty(this) || "null".equals(this, true))) 0 else this.toInt()
 
 public fun Rect.scale(scaleX: Float, scaleY: Float) {
+    var dw = 0
+    var dh = 0
     if (scaleX != 1.0f) {
-        left = (left * scaleX + 0.5f).toInt()
-        right = (right * scaleX + 0.5f).toInt()
+        /*宽度变化量*/
+        val offsetW = (width() * scaleX + 0.5f).toInt() - width()
+        dw = offsetW / 2
     }
     if (scaleY != 1.0f) {
-        top = (top * scaleY + 0.5f).toInt()
-        bottom = (bottom * scaleY + 0.5f).toInt()
+        /*高度变化量*/
+        val offsetH = (height() * scaleY + 0.5f).toInt() - height()
+        dh = offsetH / 2
     }
+    inset(-dw, -dh)
+}
+
+public fun Rect.scaleTo(inRect: Rect /*用来接收最后结果的矩形*/, scaleX: Float, scaleY: Float) {
+    var dw = 0
+    var dh = 0
+    if (scaleX != 1.0f) {
+        /*宽度变化量*/
+        val offsetW = (width() * scaleX + 0.5f).toInt() - width()
+        dw = offsetW / 2
+    }
+    if (scaleY != 1.0f) {
+        /*高度变化量*/
+        val offsetH = (height() * scaleY + 0.5f).toInt() - height()
+        dh = offsetH / 2
+    }
+    inRect.set(left, top, right, bottom)
+    inRect.inset(-dw, -dh)
 }
 
 public inline fun <T> T.nowTime() = System.currentTimeMillis()

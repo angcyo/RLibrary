@@ -5,6 +5,7 @@ import android.graphics.Point
 import android.graphics.Rect
 import android.graphics.drawable.Drawable
 import com.angcyo.uiview.kotlin.getBoundsWith
+import com.angcyo.uiview.kotlin.scale
 
 /**
  * Copyright (C) 2016,深圳市红鸟网络科技股份有限公司 All rights reserved.
@@ -29,6 +30,9 @@ open class FrameBean(val drawableArray: Array<Drawable> /*需要播放的帧动�
     /**缩放比率*/
     var scaleX = 1f
     var scaleY = 1f
+
+    /**0-255的不透明度, 值越小越透明*/
+    var drawableAlpha = 255
 
     /**首次渲染延时的时间*/
     var delayDrawTime = 0L
@@ -73,21 +77,22 @@ open class FrameBean(val drawableArray: Array<Drawable> /*需要播放的帧动�
             }
         }
 
-        val dp = getDrawPointFun()
+        val drawPoint = getDrawPointFun()
         if (frameIndex >= frameSize) {
             //播放结束
             if (loopDrawFrame) {
                 onLoopFrame()
             } else {
-                onFrameEnd(dp, onDrawEnd)
+                onFrameEnd(drawPoint, onDrawEnd)
             }
         }
         if (frameIndex < frameSize) {
             canvas.save()
-            canvas.translate(dp.x.toFloat(), dp.y.toFloat())
+            canvas.translate(drawPoint.x.toFloat(), drawPoint.y.toFloat())
             canvas.rotate(rotateDegrees)
-            canvas.scale(scaleX, scaleY)
+//            canvas.scale(scaleX, scaleY)
             drawDrawable.let {
+                it.alpha = drawableAlpha
                 val bounds = getDrawDrawableBounds(it)
                 val width = bounds.width()
                 val height = bounds.height()
@@ -102,7 +107,7 @@ open class FrameBean(val drawableArray: Array<Drawable> /*需要播放的帧动�
      * 每一帧的bounds, 仅控制宽度和高度, x和y 请使用 {@link FrameBean#getDrawPointFun()}
      * */
     open fun getDrawDrawableBounds(drawable: Drawable): Rect {
-        return drawable.getBoundsWith(getDrawPointFun(), parentRect)
+        return drawable.getBoundsWith(getDrawPointFun(), parentRect).apply { scale(scaleX, scaleY) }
     }
 
     /**帧的间隔绘制方法*/

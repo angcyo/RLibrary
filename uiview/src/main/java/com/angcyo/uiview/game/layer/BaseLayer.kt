@@ -6,6 +6,7 @@ import android.graphics.Rect
 import android.support.annotation.CallSuper
 import android.view.MotionEvent
 import com.angcyo.uiview.game.GameRenderView
+import com.angcyo.uiview.utils.ScreenUtil
 import java.util.*
 
 /**
@@ -27,6 +28,8 @@ open class BaseLayer {
 
     /**层, 在游戏View中的坐标区域*/
     var layerRect = Rect()
+
+    var density = ScreenUtil.density()
 
     /**最后一次有效个绘制时间,用来控制绘制速度*/
     var lastValidDrawTime = 0L

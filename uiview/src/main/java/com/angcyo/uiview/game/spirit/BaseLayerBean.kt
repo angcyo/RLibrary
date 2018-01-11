@@ -2,6 +2,7 @@ package com.angcyo.uiview.game.spirit
 
 import android.graphics.Canvas
 import android.graphics.Rect
+import com.angcyo.uiview.utils.ScreenUtil
 import java.util.*
 
 /**
@@ -30,6 +31,8 @@ open class BaseLayerBean {
 
     /**Layer的显示区域范围*/
     var parentRect = Rect()
+
+    var density = ScreenUtil.density()
 
     protected val random: Random by lazy {
         Random(System.nanoTime())
