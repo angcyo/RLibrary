@@ -7,4 +7,7 @@
     <item name="tag_need_layout" type="id"/>
     <!--StickLayout2-->
     <item name="tag_not_handle_nested_scroll" type="id"/>
+    <!--UIGuideDialog-->
+    <item name="base_finish_view" type="id"/>
+    <item name="base_guide_layout" type="id"/>
 </resources>

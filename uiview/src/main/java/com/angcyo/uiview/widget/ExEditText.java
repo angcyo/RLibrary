@@ -1318,6 +1318,10 @@ public class ExEditText extends AppCompatEditText {
             UILayoutImpl.showDebugInfo = true;
             GlideImageView.Companion.setDEBUG_SHOW(true);
         }
+        if ("6647".equalsIgnoreCase(String.valueOf(text))) {
+            L.LOG_DEBUG = true;
+            UILayoutImpl.showDebugLayout = true;
+        }
     }
 
     public void setOnTextEmptyListener(OnTextEmptyListener onTextEmptyListener) {

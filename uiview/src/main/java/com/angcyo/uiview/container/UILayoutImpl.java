@@ -24,6 +24,7 @@ import android.view.WindowInsets;
 import android.view.animation.Animation;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
+import android.widget.TextView;
 
 import com.angcyo.library.utils.L;
 import com.angcyo.uiview.R;
@@ -96,6 +97,7 @@ public class UILayoutImpl extends SwipeBackLayout implements ILayout<UIParam>, U
      * 启动界面时的过渡背景颜色
      */
     int transitionColor = Color.WHITE;
+    Rect viewVisibleRectTemp = new Rect();
     /**
      * 是否正在退出界面
      */
@@ -2536,12 +2538,19 @@ public class UILayoutImpl extends SwipeBackLayout implements ILayout<UIParam>, U
                 View view = null;
                 if (L.LOG_DEBUG && isMainLayout()) {
                     view = ViewGroupExKt.findView((ViewGroup) mLastShowViewPattern.mView, ev.getRawX(), ev.getRawY());
-                    StringBuilder builder = new StringBuilder("touch on -> ");
+                    StringBuilder builder = new StringBuilder("touch on->");
                     if (view == null) {
                         builder.append("null");
                     } else {
+                        view.getGlobalVisibleRect(viewVisibleRectTemp);
+                        builder.append(viewVisibleRectTemp);
+                        builder.append("#");
+                        if (view instanceof TextView) {
+                            builder.append(((TextView) view).getText());
+                            builder.append("#");
+                        }
                         if (view.hasOnClickListeners()) {
-                            builder.append("hasClick ");
+                            builder.append("$");
                         }
                         builder.append(view);
                     }

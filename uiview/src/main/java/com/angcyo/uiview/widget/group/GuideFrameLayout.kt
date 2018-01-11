@@ -32,6 +32,25 @@ class GuideFrameLayout(context: Context, attributeSet: AttributeSet? = null) : F
     /*锚点坐标列表*/
     private var anchorList = mutableListOf<Rect>()
 
+    init {
+        val array = context.obtainStyledAttributes(attributeSet, R.styleable.GuideFrameLayout)
+        if (isInEditMode) {
+            val anchors = array.getString(R.styleable.GuideFrameLayout_r_guide_anchors)
+            anchors?.let {
+                val splits = it.split(":")
+                if (splits.isNotEmpty()) {
+                    anchorList.clear()
+                    for (i in 0 until splits.size) {
+                        val ss = splits[i].split(",")
+                        anchorList.add(Rect(ss[0].toInt(), ss[1].toInt(),
+                                ss[0].toInt() + ss[2].toInt(), ss[1].toInt() + ss[3].toInt()))
+                    }
+                }
+            }
+        }
+        array.recycle()
+    }
+
     override fun onMeasure(widthMeasureSpec: Int, heightMeasureSpec: Int) {
         super.onMeasure(widthMeasureSpec, heightMeasureSpec)
         //修正大小
@@ -42,15 +61,14 @@ class GuideFrameLayout(context: Context, attributeSet: AttributeSet? = null) : F
                 if (layoutParams.anchorIndex >= 0 && layoutParams.anchorIndex < anchorList.size) {
                     //需要对齐锚点
                     val anchorRect = anchorList[layoutParams.anchorIndex]
-                    val offsetX = layoutParams.offsetX
-                    val offsetY = layoutParams.offsetY
 
-                    when (layoutParams.guideGravity) {
-                        CENTER -> {
-                            val w = anchorRect.width() + 2 * offsetX
-                            val h = anchorRect.height() + 2 * offsetY
-                            childAt.measure(exactlyMeasure(w), exactlyMeasure(h))
-                        }
+                    val offsetWidth = layoutParams.offsetWidth
+                    val offsetHeight = layoutParams.offsetHeight
+
+                    if (layoutParams.isAnchor) {
+                        val w = anchorRect.width() + offsetWidth
+                        val h = anchorRect.height() + offsetHeight
+                        childAt.measure(exactlyMeasure(w), exactlyMeasure(h))
                     }
                 }
             }
@@ -70,30 +88,40 @@ class GuideFrameLayout(context: Context, attributeSet: AttributeSet? = null) : F
                     val offsetX = layoutParams.offsetX
                     val offsetY = layoutParams.offsetY
 
-                    when (layoutParams.guideGravity) {
-                        LEFT -> {
-                            val l = anchorRect.left - offsetX - childAt.measuredWidth
-                            childAt.layout(l, childAt.top + offsetY, l + childAt.measuredWidth, childAt.bottom + offsetY)
-                        }
-                        TOP -> {
-                            val t = anchorRect.top - offsetY - childAt.measuredHeight
-                            childAt.layout(childAt.left + offsetX, t, childAt.right + offsetX, t + childAt.measuredHeight)
-                        }
-                        RIGHT -> {
-                            val l = anchorRect.right + offsetX
-                            childAt.layout(l, childAt.top + offsetY, l + childAt.measuredWidth, childAt.bottom + offsetY)
-                        }
-                        BOTTOM -> {
-                            val t = anchorRect.bottom + offsetY
-                            childAt.layout(childAt.left + offsetX, t, childAt.right + offsetX, t + childAt.measuredHeight)
-                        }
-                        CENTER -> {
-                            val l = anchorRect.centerX() - childAt.measuredWidth / 2
-                            val t = anchorRect.centerY() - childAt.measuredHeight / 2
-                            childAt.layout(l - offsetX, t - offsetY, l + childAt.measuredWidth + offsetX, t + childAt.measuredHeight + offsetY)
-                        }
-                        else -> {
+                    if (layoutParams.isAnchor) {
+                        val l = anchorRect.centerX() - childAt.measuredWidth / 2
+                        val t = anchorRect.centerY() - childAt.measuredHeight / 2
+                        childAt.layout(l + offsetX, t + offsetY, l + childAt.measuredWidth + offsetX, t + childAt.measuredHeight + offsetY)
+                    } else {
+                        when (layoutParams.guideGravity) {
+                            LEFT -> {
+                                val l = anchorRect.left - offsetX - childAt.measuredWidth
+                                val t = anchorRect.top + offsetY
+                                childAt.layout(l, t, l + childAt.measuredWidth, t + childAt.measuredHeight)
+                            }
+                            TOP -> {
+                                val t = anchorRect.top - offsetY - childAt.measuredHeight
+                                val l = anchorRect.left + offsetX
+                                childAt.layout(l, t, l + childAt.measuredWidth, t + childAt.measuredHeight)
+                            }
+                            RIGHT -> {
+                                val l = anchorRect.right + offsetX
+                                val t = anchorRect.top + offsetY
+                                childAt.layout(l, t, l + childAt.measuredWidth, t + childAt.measuredHeight)
+                            }
+                            BOTTOM -> {
+                                val l = anchorRect.left + offsetX
+                                val t = anchorRect.bottom + offsetY
+                                childAt.layout(l, t, l + childAt.measuredWidth, t + childAt.measuredHeight)
+                            }
+                            CENTER -> {
+                                val l = anchorRect.centerX() - childAt.measuredWidth / 2
+                                val t = anchorRect.centerY() - childAt.measuredHeight / 2
+                                childAt.layout(l + offsetX, t + offsetY, l + childAt.measuredWidth + offsetX, t + childAt.measuredHeight + offsetY)
+                            }
+                            else -> {
 
+                            }
                         }
                     }
                 }
@@ -128,12 +156,20 @@ class GuideFrameLayout(context: Context, attributeSet: AttributeSet? = null) : F
         var offsetX = 0
         var offsetY = 0
 
+        /*只当 isAnchor=true 时有效*/
+        var offsetWidth = 0
+        var offsetHeight = 0
+        var isAnchor = false
+
         constructor(c: Context, attrs: AttributeSet?) : super(c, attrs) {
             val a = c.obtainStyledAttributes(attrs, R.styleable.GuideFrameLayout)
             anchorIndex = a.getInt(R.styleable.GuideFrameLayout_r_guide_show_in_anchor, anchorIndex)
             guideGravity = a.getInt(R.styleable.GuideFrameLayout_r_guide_gravity, guideGravity)
             offsetX = a.getDimensionPixelOffset(R.styleable.GuideFrameLayout_r_guide_offset_x, offsetX)
             offsetY = a.getDimensionPixelOffset(R.styleable.GuideFrameLayout_r_guide_offset_y, offsetY)
+            offsetWidth = a.getDimensionPixelOffset(R.styleable.GuideFrameLayout_r_guide_offset_width, offsetWidth)
+            offsetHeight = a.getDimensionPixelOffset(R.styleable.GuideFrameLayout_r_guide_offset_height, offsetHeight)
+            isAnchor = a.getBoolean(R.styleable.GuideFrameLayout_r_guide_is_anchor, isAnchor)
             a.recycle()
         }
 

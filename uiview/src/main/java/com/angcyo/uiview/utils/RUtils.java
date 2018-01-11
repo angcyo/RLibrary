@@ -531,6 +531,14 @@ public class RUtils {
         return version;
     }
 
+    public static String getAppVersionName() {
+        return getAppVersionName(RApplication.getApp());
+    }
+
+    public static int getAppVersionCode() {
+        return getAppVersionCode(RApplication.getApp());
+    }
+
     /**
      * 返回app的版本代码.
      *
