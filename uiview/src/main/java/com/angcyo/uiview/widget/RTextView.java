@@ -78,6 +78,8 @@ public class RTextView extends AppCompatTextView {
     private int mLeftOffset = 0, mTopOffset = 0, mBottomOffset = 0, textLeftOffset = (int) (2 * density());
     private String mLeftString;
 
+    private boolean leftStringBold = false;
+
     /**
      * 是否显示 未读小红点
      */
@@ -139,6 +141,7 @@ public class RTextView extends AppCompatTextView {
         mBottomOffset = typedArray.getDimensionPixelOffset(R.styleable.RTextView_r_bottom_margin, mBottomOffset);
         mTopOffset = typedArray.getDimensionPixelOffset(R.styleable.RTextView_r_top_margin, mTopOffset);
         textLeftOffset = typedArray.getDimensionPixelOffset(R.styleable.RTextView_r_left_text_offset, textLeftOffset);
+        leftStringBold = typedArray.getBoolean(R.styleable.RTextView_r_left_text_bold, leftStringBold);
 
         String string = typedArray.getString(R.styleable.RTextView_r_left_text);
         setLeftString(string);
@@ -253,6 +256,8 @@ public class RTextView extends AppCompatTextView {
 //                            getPaddingTop() + mTextPaint.getTextHeight() / 2
 //            );
             TextPaint textPaint = mTextPaint.getTextPaint();
+            addPaintFlags(textPaint, leftStringBold, Paint.FAKE_BOLD_TEXT_FLAG);
+            //textPaint.setFakeBoldText(leftStringBold);
             Paint.FontMetrics fontMetrics = textPaint.getFontMetrics();
 //            canvas.drawText(mLeftString,
 //                    getPaddingLeft() + mPaddingLeft,
@@ -711,8 +716,13 @@ public class RTextView extends AppCompatTextView {
 
     public void addFlags(boolean add, int flat) {
         TextPaint paint = getPaint();
+        addPaintFlags(paint, add, flat);
+    }
+
+
+    public void addPaintFlags(TextPaint paint, boolean add, int flat) {
         if (add) {
-            paint.setFlags(flat);
+            paint.setFlags(paint.getFlags() | flat);
         } else {
             paint.setFlags(paint.getFlags() & ~flat);
         }

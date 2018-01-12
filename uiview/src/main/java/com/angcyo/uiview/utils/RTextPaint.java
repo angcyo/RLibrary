@@ -35,7 +35,9 @@ public class RTextPaint {
     }
 
     public RTextPaint(TextPaint textPaint) {
-        mTextPaint = new TextPaint(textPaint);
+        mTextPaint = new TextPaint();
+        mTextPaint.setTextSize(textPaint.getTextSize());
+        mTextPaint.setColor(textPaint.getColor());
     }
 
     public RTextPaint(float textSize) {

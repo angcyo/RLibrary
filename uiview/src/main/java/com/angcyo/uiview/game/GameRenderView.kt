@@ -43,16 +43,20 @@ class GameRenderView(context: Context, attributeSet: AttributeSet? = null) : Vie
     @Volatile
     var isGameRenderStart = false
 
+    /**界面显示时, 是否开始渲染*/
+    var autoStartRender = true
+
     init {
         val array = context.obtainStyledAttributes(attributeSet, R.styleable.GameRenderView)
         maxTouchPoint = array.getInt(R.styleable.GameRenderView_r_max_touch_point, maxTouchPoint)
+        autoStartRender = array.getBoolean(R.styleable.GameRenderView_r_auto_start_render, autoStartRender)
         array.recycle()
     }
 
     override fun onAttachedToWindow() {
         super.onAttachedToWindow()
         isGameViewDetached = false
-        startRender()
+        startRenderInner()
     }
 
     override fun onDetachedFromWindow() {
@@ -64,7 +68,7 @@ class GameRenderView(context: Context, attributeSet: AttributeSet? = null) : Vie
     override fun onVisibilityChanged(changedView: View?, visibility: Int) {
         super.onVisibilityChanged(changedView, visibility)
         if (visibility == View.VISIBLE) {
-            startRender()
+            startRenderInner()
         } else {
             endRender()
         }
@@ -72,11 +76,10 @@ class GameRenderView(context: Context, attributeSet: AttributeSet? = null) : Vie
 
     override fun onSizeChanged(w: Int, h: Int, oldw: Int, oldh: Int) {
         super.onSizeChanged(w, h, oldw, oldh)
-        startRender()
-
         for (i in 0 until layerList.size) {
             layerList[i].onSizeChanged(w, h, oldw, oldh)
         }
+        startRenderInner()
     }
 
     /*多点控制*/
@@ -176,8 +179,15 @@ class GameRenderView(context: Context, attributeSet: AttributeSet? = null) : Vie
     /*开始渲染的时间*/
     private var gameRenderStartTime = 0L
 
+    private fun startRenderInner() {
+        if (autoStartRender) {
+            startRender()
+        }
+    }
+
     /*开始渲染界面*/
-    private fun startRender() {
+    fun startRender() {
+        L.e("startRender -> w:$measuredWidth h:$measuredHeight detach:$isGameViewDetached v:$visibility start:$isGameRenderStart ${renderAnim.isStarted}")
         if (measuredWidth == 0 || measuredHeight == 0) {
             isGameRenderStart = false
             return
@@ -230,6 +240,10 @@ class GameRenderView(context: Context, attributeSet: AttributeSet? = null) : Vie
 
     fun addLayer(layer: BaseLayer) {
         layerList.add(layer)
+    }
+
+    fun clearLayer() {
+        layerList.clear()
     }
 
     /**子线程用来计算游戏数据*/

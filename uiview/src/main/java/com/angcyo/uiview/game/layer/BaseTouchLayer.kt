@@ -247,7 +247,7 @@ abstract class BaseTouchLayer : BaseFrameLayer() {
                                 if (dx < bean.getSpiritDrawRect().width()) {
                                     //控制位移的幅度, 防止漂移现象
                                     bean.offset(dx, 0)
-                                    L.e("updateRainList ->evaluate:$evaluate fl:$fl dx:$dx $maxY")
+                                    //L.e("updateRainList ->evaluate:$evaluate fl:$fl dx:$dx $maxY")
                                 }
                             }
                         } else {

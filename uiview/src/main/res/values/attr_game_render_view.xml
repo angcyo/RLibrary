@@ -2,5 +2,6 @@
 <resources>
     <declare-styleable name="GameRenderView">
         <attr name="r_max_touch_point" format="integer"/>
+        <attr name="r_auto_start_render" format="boolean"/>
     </declare-styleable>
 </resources>

@@ -890,11 +890,19 @@ public class RUtils {
         return getShortString(number, "");
     }
 
+    public static String getShortString(String number, boolean needDecimal, boolean isEnglish) {
+        return getShortString(number, "", needDecimal, isEnglish);
+    }
+
     public static String getShortString(String number, String suffix) {
         return getShortString(number, suffix, false);
     }
 
     public static String getShortString(String number, String suffix, boolean needDecimal) {
+        return getShortString(number, suffix, needDecimal, false);
+    }
+
+    public static String getShortString(String number, String suffix, boolean needDecimal, boolean isEnglish) {
         if (TextUtils.isEmpty(number)) {
             return "";
         }
@@ -903,9 +911,16 @@ public class RUtils {
         String num;
         int decimal = 0;
         if (number.length() > 9) {
+            if (isEnglish) {
+                return "9kw+";
+            }
             return "9千万+";
         } else if (number.length() > 7) {
-            unit = "千万";
+            if (isEnglish) {
+                unit = "kw";
+            } else {
+                unit = "千万";
+            }
 
             int end = number.length() - 7;
             num = number.substring(0, end);
@@ -916,7 +931,11 @@ public class RUtils {
                 decimal = Integer.parseInt(number.substring(end, end + 2));
             }
         } else if (number.length() > 4) {
-            unit = "万";
+            if (isEnglish) {
+                unit = "w";
+            } else {
+                unit = "万";
+            }
 
             int end = number.length() - 4;
             num = number.substring(0, end);

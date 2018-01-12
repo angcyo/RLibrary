@@ -36,12 +36,17 @@ public abstract class RBaseAdapter<T> extends RecyclerView.Adapter<RBaseViewHold
     protected boolean mEnableLoadMore = false;
 
     /**
+     * 当调用setLoadMoreEnd时, 是否自动开启mEnableLoadMore
+     */
+    protected boolean mAutoEnableLoadMore = true;
+
+    /**
      * 激活加载到倒数第几个item时, 回调加载更多, 此值需要mEnableLoadMore=true
      * -1, 表示关闭
      */
     protected int mEnableLoadMoreWithLastIndex = -1;
 
-    protected ILoadMore mLoadMore;
+    protected ILoadMore mLoadMoreView;
     protected OnAdapterLoadMoreListener mLoadMoreListener;
     /**
      * 是否激活布局状态显示, 可以在Item中显示,空布局, 无网络布局, 加载中布局,和错误布局
@@ -122,7 +127,7 @@ public abstract class RBaseAdapter<T> extends RecyclerView.Adapter<RBaseViewHold
      * 返回是否激活加载更多
      */
     public boolean isEnableLoadMore() {
-        return mEnableLoadMore;
+        return mEnableLoadMore || mEnableLoadMoreWithLastIndex != -1;
     }
 
     /**
@@ -189,7 +194,7 @@ public abstract class RBaseAdapter<T> extends RecyclerView.Adapter<RBaseViewHold
             } else if (mEnableLoadMore && viewType == ITEM_TYPE_LOAD_MORE) {
                 itemView = LayoutInflater.from(mContext)
                         .inflate(R.layout.base_item_load_more_layout, parent, false);
-                mLoadMore = (ILoadMore) itemView;
+                mLoadMoreView = (ILoadMore) itemView;
             } else {
                 itemLayoutId = getItemLayoutId(viewType);
                 if (itemLayoutId == 0) {
@@ -228,15 +233,14 @@ public abstract class RBaseAdapter<T> extends RecyclerView.Adapter<RBaseViewHold
                 onBindLoadMore(position);
                 onBindLoadMoreView(holder, position);
             } else {
-                if (mEnableLoadMore &&
-                        ((mEnableLoadMoreWithLastIndex > 0 &&
-                                (getAllDataCount() - position) <= mEnableLoadMoreWithLastIndex))) {
+                if ((mEnableLoadMoreWithLastIndex > 0 &&
+                        (getAllDataCount() - position) <= mEnableLoadMoreWithLastIndex)) {
                     onBindLoadMore(position);
                 }
                 onBindView(holder, position, mAllDatas.size() > position ? mAllDatas.get(position) : null);
             }
         } catch (Exception e) {
-            L.e("请及时处理此处BUG.(RBaseAdapter.java:192)#onBindViewHolder");
+            L.e("请及时处理此处BUG.(RBaseAdapter.java:239)#onBindViewHolder#" + e.getMessage());
             e.printStackTrace();
         }
     }
@@ -277,8 +281,8 @@ public abstract class RBaseAdapter<T> extends RecyclerView.Adapter<RBaseViewHold
     }
 
     private void updateLoadMoreView() {
-        if (mLoadMore != null) {
-            mLoadMore.setLoadState(mLoadState);
+        if (mLoadMoreView != null) {
+            mLoadMoreView.setLoadState(mLoadState);
         }
     }
 
@@ -294,13 +298,17 @@ public abstract class RBaseAdapter<T> extends RecyclerView.Adapter<RBaseViewHold
      */
     public void setLoadMoreEnd() {
         mLoadState = ILoadMore.NORMAL;
-        setEnableLoadMore(true);
+        if (mAutoEnableLoadMore) {
+            setEnableLoadMore(true);
+        }
         updateLoadMoreView();
     }
 
     public void setLoadError() {
         mLoadState = ILoadMore.LOAD_ERROR;
-        setEnableLoadMore(true);
+        if (mAutoEnableLoadMore) {
+            setEnableLoadMore(true);
+        }
         updateLoadMoreView();
     }
 
@@ -310,7 +318,9 @@ public abstract class RBaseAdapter<T> extends RecyclerView.Adapter<RBaseViewHold
 
     public void setNoMore(boolean refresh) {
         mLoadState = ILoadMore.NO_MORE;
-        setEnableLoadMore(true);
+        if (mAutoEnableLoadMore) {
+            setEnableLoadMore(true);
+        }
         if (refresh) {
             updateLoadMoreView();//不需要及时刷新
         }
@@ -519,6 +529,9 @@ public abstract class RBaseAdapter<T> extends RecyclerView.Adapter<RBaseViewHold
         return mAllDatas;
     }
 
+    /**
+     * 空布局, 无网络布局, 加载中布局,和错误布局
+     */
     public void setEnableShowState(boolean enableShowState) {
         mEnableShowState = enableShowState;
     }
@@ -561,6 +574,14 @@ public abstract class RBaseAdapter<T> extends RecyclerView.Adapter<RBaseViewHold
         } else {
             mIShowState.setShowState(showState);
         }
+    }
+
+    public boolean isAutoEnableLoadMore() {
+        return mAutoEnableLoadMore;
+    }
+
+    public void setAutoEnableLoadMore(boolean autoEnableLoadMore) {
+        mAutoEnableLoadMore = autoEnableLoadMore;
     }
 
     @Override
