@@ -7,6 +7,8 @@ import android.view.ViewGroup
 import android.widget.FrameLayout
 import com.angcyo.uiview.R
 import com.angcyo.uiview.kotlin.exactlyMeasure
+import com.angcyo.uiview.kotlin.getDrawable
+import com.angcyo.uiview.utils.UI
 
 /**
  * Copyright (C) 2016,深圳市红鸟网络科技股份有限公司 All rights reserved.
@@ -27,6 +29,11 @@ class GuideFrameLayout(context: Context, attributeSet: AttributeSet? = null) : F
         val RIGHT = 3
         val BOTTOM = 4
         val CENTER = 5
+
+        val LEFT_CENTER = 6
+        val TOP_CENTER = 7
+        val RIGHT_CENTER = 8
+        val BOTTOM_CENTER = 9
     }
 
     /*锚点坐标列表*/
@@ -89,6 +96,10 @@ class GuideFrameLayout(context: Context, attributeSet: AttributeSet? = null) : F
                     val offsetY = layoutParams.offsetY
 
                     if (layoutParams.isAnchor) {
+                        //自动设置锚点View的背景为 蚂蚁线
+                        if (childAt.background == null) {
+                            UI.setBackgroundDrawable(childAt, getDrawable(R.drawable.base_guide_shape_line_dash))
+                        }
                         val l = anchorRect.centerX() - childAt.measuredWidth / 2
                         val t = anchorRect.centerY() - childAt.measuredHeight / 2
                         childAt.layout(l + offsetX, t + offsetY, l + childAt.measuredWidth + offsetX, t + childAt.measuredHeight + offsetY)
@@ -115,9 +126,29 @@ class GuideFrameLayout(context: Context, attributeSet: AttributeSet? = null) : F
                                 childAt.layout(l, t, l + childAt.measuredWidth, t + childAt.measuredHeight)
                             }
                             CENTER -> {
-                                val l = anchorRect.centerX() - childAt.measuredWidth / 2
-                                val t = anchorRect.centerY() - childAt.measuredHeight / 2
-                                childAt.layout(l + offsetX, t + offsetY, l + childAt.measuredWidth + offsetX, t + childAt.measuredHeight + offsetY)
+                                val l = anchorRect.centerX() - childAt.measuredWidth / 2 + offsetX
+                                val t = anchorRect.centerY() - childAt.measuredHeight / 2 + offsetY
+                                childAt.layout(l, t, l + childAt.measuredWidth, t + childAt.measuredHeight)
+                            }
+                            LEFT_CENTER -> {
+                                val l = anchorRect.left - offsetX - childAt.measuredWidth
+                                val t = anchorRect.centerY() - childAt.measuredHeight / 2 + offsetY
+                                childAt.layout(l, t, l + childAt.measuredWidth, t + childAt.measuredHeight)
+                            }
+                            TOP_CENTER -> {
+                                val t = anchorRect.top - offsetY - childAt.measuredHeight
+                                val l = anchorRect.centerX() - childAt.measuredWidth / 2 + offsetX
+                                childAt.layout(l, t, l + childAt.measuredWidth, t + childAt.measuredHeight)
+                            }
+                            RIGHT_CENTER -> {
+                                val l = anchorRect.right + offsetX
+                                val t = anchorRect.centerY() - childAt.measuredHeight / 2 + offsetY
+                                childAt.layout(l, t, l + childAt.measuredWidth, t + childAt.measuredHeight)
+                            }
+                            BOTTOM_CENTER -> {
+                                val t = anchorRect.bottom + offsetY
+                                val l = anchorRect.centerX() - childAt.measuredWidth / 2 + offsetX
+                                childAt.layout(l, t, l + childAt.measuredWidth, t + childAt.measuredHeight)
                             }
                             else -> {
 

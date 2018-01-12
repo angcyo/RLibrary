@@ -14,6 +14,10 @@
             <enum name="TOP" value="2"/>
             <enum name="BOTTOM" value="4"/>
             <enum name="CENTER" value="5"/>
+            <enum name="LEFT_CENTER" value="6"/>
+            <enum name="TOP_CENTER" value="7"/>
+            <enum name="RIGHT_CENTER" value="8"/>
+            <enum name="BOTTOM_CENTER" value="9"/>
         </attr>
 
         <!--会受到gravity的影响-->

@@ -79,9 +79,9 @@ public fun <T> T.textHeight(paint: Paint): Float = paint.descent() - paint.ascen
 public fun TextView.textHeight(): Float = paint.descent() - paint.ascent()
 
 /**文本宽度*/
-public fun View.textWidth(paint: Paint, text: String): Float = paint.measureText(text)
+public fun View.textWidth(paint: Paint?, text: String?): Float = paint?.measureText(text ?: "") ?: 0F
 
-public fun TextView.textWidth(text: String): Float = paint.measureText(text)
+public fun TextView.textWidth(text: String?): Float = paint.measureText(text ?: "")
 
 public fun View.getColor(id: Int): Int = ContextCompat.getColor(context, id)
 

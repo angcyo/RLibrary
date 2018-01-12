@@ -4,7 +4,7 @@
     <!--虚线, 需要配合 android:layerType="software" -->
     <stroke
         android:width="2dp"
-        android:color="@color/default_base_line"
+        android:color="@color/base_white"
         android:dashGap="2dp"
         android:dashWidth="6dp"/>
 </shape>

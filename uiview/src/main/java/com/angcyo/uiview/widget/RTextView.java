@@ -159,6 +159,9 @@ public class RTextView extends AppCompatTextView {
 
         isShowTipText = typedArray.getBoolean(R.styleable.RTextView_r_is_show_tip_text, isShowTipText);
         tipText = typedArray.getString(R.styleable.RTextView_r_tip_text);
+        if (tipText == null) {
+            tipText = "";
+        }
         tipTextBgColor = typedArray.getColor(R.styleable.RTextView_r_tip_text_bg, tipTextBgColor);
         tipTextColor = typedArray.getColor(R.styleable.RTextView_r_tip_text_color, tipTextColor);
         tipTextSize = typedArray.getDimensionPixelOffset(R.styleable.RTextView_r_tip_text_size, tipTextSize);
@@ -234,6 +237,8 @@ public class RTextView extends AppCompatTextView {
         if (leftWidth > 0) {
             canvas.drawRect(leftColorRect, colorPaint);
         }
+
+        ensurePaint();
 
         if (!TextUtils.isEmpty(mLeftString)) {
             //底部绘制文本
