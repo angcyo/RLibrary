@@ -87,6 +87,7 @@
 
     <declare-styleable name="RGalleryLayout">
         <attr name="r_animator_to_first" format="boolean"/>
+        <attr name="r_item_offset_space" format="dimension"/>
     </declare-styleable>
 
     <declare-styleable name="RRecyclerView">

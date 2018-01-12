@@ -320,7 +320,7 @@ public class RTextView extends AppCompatTextView {
             canvas.restoreToCount(centerSaveCount);
         }
 
-        if (isShowTipText || isInEditMode()) {
+        if (isShowTipText /*|| isInEditMode()*/) {
             TextPaint textPaint = mTextPaint.getTextPaint();
             textPaint.setStyle(Paint.Style.FILL);
 

@@ -324,7 +324,7 @@ abstract class BaseTouchLayer : BaseFrameLayer() {
         spiritBean.startX = getSpiritStartX(spiritBean, sw)
         spiritBean.startY = getSpiritStartY(spiritBean)
 
-        spiritBean.bezierHelper = createBezierHelper(spiritBean.startX, spiritBean.startY, intrinsicWidth, intrinsicHeight)
+        spiritBean.bezierHelper = createBezierHelper(spiritBean, spiritBean.startX, spiritBean.startY, intrinsicWidth, intrinsicHeight)
 
         var sx = spiritBean.startX
         var sy = spiritBean.startY
@@ -342,7 +342,7 @@ abstract class BaseTouchLayer : BaseFrameLayer() {
         spiritBean.setRect(sx, sy, width, height)
     }
 
-    open protected fun createBezierHelper(randomX: Int, randomY: Int, intrinsicWidth: Int, intrinsicHeight: Int): BezierHelper {
+    open protected fun createBezierHelper(spirit: TouchSpiritBean, randomX: Int, randomY: Int, intrinsicWidth: Int, intrinsicHeight: Int): BezierHelper {
         val randomStepY = random.nextInt(7)
 
         val x: Float = randomX.toFloat()

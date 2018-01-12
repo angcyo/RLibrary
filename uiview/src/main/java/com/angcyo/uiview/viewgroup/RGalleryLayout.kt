@@ -27,12 +27,16 @@ class RGalleryLayout(context: Context, attributeSet: AttributeSet? = null) : Lin
     /**当滚动到最后一个时, 是否增益滚动到第一个*/
     var animatorToFirst = true
 
+    /**每个Item之间, 需要留出的间隙*/
+    @Deprecated("暂不支持")
+    var itemOffsetSpace = 0
+
 //    var galleryAdapter: RGalleryAdapter? = null
 
     init {
         val typedArray = context.obtainStyledAttributes(attributeSet, R.styleable.RGalleryLayout)
         animatorToFirst = typedArray.getBoolean(R.styleable.RGalleryLayout_r_animator_to_first, animatorToFirst)
-
+        itemOffsetSpace = typedArray.getDimensionPixelOffset(R.styleable.RGalleryLayout_r_item_offset_space, itemOffsetSpace)
         typedArray.recycle()
     }
 
@@ -53,13 +57,17 @@ class RGalleryLayout(context: Context, attributeSet: AttributeSet? = null) : Lin
             super.onMeasure(widthMeasureSpec, heightMeasureSpec)
         }
     }
-//
-//    override fun onLayout(changed: Boolean, l: Int, t: Int, r: Int, b: Int) {
-////        for (i in 0 until childCount) {
-////            val childAt = getChildAt(i)
-////            childAt.layout(0, 0, childAt.measuredWidth, childAt.measuredHeight)
-////        }
-//    }
+
+    override fun onLayout(changed: Boolean, l: Int, t: Int, r: Int, b: Int) {
+        if (itemOffsetSpace > 0) {
+//            for (i in 0 until childCount) {
+//                val childAt = getChildAt(i)
+//                childAt.layout(0, 0, childAt.measuredWidth, childAt.measuredHeight)
+//            }
+        } else {
+            super.onLayout(changed, l, t, r, b)
+        }
+    }
 
     override fun onSizeChanged(w: Int, h: Int, oldw: Int, oldh: Int) {
         super.onSizeChanged(w, h, oldw, oldh)
