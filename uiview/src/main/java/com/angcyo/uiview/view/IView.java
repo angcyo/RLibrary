@@ -8,10 +8,12 @@ import android.view.View;
 import android.view.animation.Animation;
 import android.widget.FrameLayout;
 
+import com.angcyo.uiview.base.UIBaseView;
 import com.angcyo.uiview.base.UILayoutActivity;
 import com.angcyo.uiview.container.ILayout;
 import com.angcyo.uiview.container.UIParam;
 import com.angcyo.uiview.model.TitleBarPattern;
+import com.angcyo.uiview.model.ViewPattern;
 import com.angcyo.uiview.skin.ISkin;
 import com.angcyo.uiview.widget.viewpager.UIViewPager;
 
@@ -270,6 +272,14 @@ public interface IView {
      * 获取需要请求的屏幕方向
      */
     int getDefaultRequestedOrientation();//2017-12-8
+
+    /**
+     * 当整个界面在Ilayout中布局时, 回调
+     */
+    void onIViewLayout(ViewPattern viewPattern,
+                       UIBaseView.LayoutState layoutState /*当IView继承UIBaseView时才有值*/,
+                       IViewShowState viewShowState,
+                       View rootView);//2018-1-12
 
     enum IViewShowState {
         STATE_NORMAL,

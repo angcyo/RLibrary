@@ -51,6 +51,7 @@ public class L {
     public static String TAG = "angcyo";
     public static boolean LOG_DEBUG = true;
     private static long lastLogETime = 0L;
+    private static long lastLogITime = 0L;
 
     public static void init(boolean isDebug, String tag) {
         TAG = tag;
@@ -79,6 +80,14 @@ public class L {
             sb.append(obj + ",");
         }
         log(INFO, null, sb.substring(0, Math.max(0, sb.length() - 1)));
+    }
+
+    public static void i2(long interval /*毫秒*/, Object... msg) {
+        long millis = System.currentTimeMillis();
+        if (millis - lastLogITime > interval) {
+            i(msg);
+            lastLogITime = millis;
+        }
     }
 
     public static void w(String msg) {

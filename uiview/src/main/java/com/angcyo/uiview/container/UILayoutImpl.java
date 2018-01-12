@@ -30,6 +30,7 @@ import com.angcyo.uiview.R;
 import com.angcyo.uiview.RApplication;
 import com.angcyo.uiview.RCrashHandler;
 import com.angcyo.uiview.Root;
+import com.angcyo.uiview.base.UIBaseView;
 import com.angcyo.uiview.base.UILayoutActivity;
 import com.angcyo.uiview.kotlin.ViewExKt;
 import com.angcyo.uiview.kotlin.ViewGroupExKt;
@@ -2135,6 +2136,24 @@ public class UILayoutImpl extends SwipeBackLayout implements ILayout<UIParam>, U
                     setIViewNeedLayout(childAt, true);
                 }
             }
+            if (i == count - 1) {
+                //最后一个界面
+                ViewPattern viewPatternByView = findViewPatternByView(childAt);
+                UIBaseView.LayoutState layoutState = UIBaseView.LayoutState.NONE;
+                if (viewPatternByView.mIView instanceof UIBaseView) {
+                    layoutState = ((UIBaseView) viewPatternByView.mIView).getLayoutState();
+                }
+                IView.IViewShowState viewShowState = viewPatternByView.mIView.getIViewShowState();
+                viewPatternByView.mIView.onIViewLayout(viewPatternByView, layoutState, viewShowState, childAt);
+
+//                if (showDebugInfo) {
+//                    L.i("布局->" + viewPatternByView.mIView + " "
+//                            + layoutState + " "
+//                            + viewShowState + " "
+//                            + viewPatternByView.mView + " ");
+//                }
+
+            }
         }
 //        for (int i = 0; i < getChildCount(); i++) {
 //            View childAt = getChildAt(i);
@@ -2294,11 +2313,25 @@ public class UILayoutImpl extends SwipeBackLayout implements ILayout<UIParam>, U
             if (i == childCount - 1) {
                 ViewPattern topViewPattern = findViewPatternByView(childAt);
                 if (topViewPattern != null) {
-                    if (topViewPattern.mView.getMeasuredWidth() == 0 || topViewPattern.mView.getMeasuredHeight() == 0) {
-                        L.e("请注意:界面出现异常." + topViewPattern.mIView.getClass().getSimpleName());
-                        saveToSDCard("请注意:界面出现异常." + topViewPattern.mIView.getClass().getSimpleName());
-                        topViewPattern.mView.measure(exactlyMeasure(getMeasuredWidth()), exactlyMeasure(getMeasuredHeight()));
-                        topViewPattern.mView.layout(0, 0, getMeasuredWidth(), getMeasuredHeight());
+                    int width = topViewPattern.mView.getMeasuredWidth();
+                    int height = topViewPattern.mView.getMeasuredHeight();
+                    if (width == 0 || height == 0) {
+                        StringBuilder log = new StringBuilder();
+                        log.append("请注意:界面出现异常.");
+                        log.append(topViewPattern.mIView.getClass().getSimpleName());
+                        log.append("w:");
+                        log.append(width);
+                        log.append(" h:");
+                        log.append(height);
+                        log.append(" ");
+                        log.append(topViewPattern.mIView.getIViewShowState());
+                        L.e(log.toString());
+                        saveToSDCard(log.toString());
+
+                        int vw = getMeasuredWidth();
+                        int vh = getMeasuredHeight();
+                        topViewPattern.mView.measure(exactlyMeasure(vw), exactlyMeasure(vh));
+                        topViewPattern.mView.layout(0, 0, vw, vh);
 
 //                        topViewPattern.mIView.onViewCreate(topViewPattern.mView);
 //                        topViewPattern.mIView.loadContentView(topViewPattern.mView);
@@ -2311,7 +2344,7 @@ public class UILayoutImpl extends SwipeBackLayout implements ILayout<UIParam>, U
                             public void run() {
                                 requestLayout();
                             }
-                        }, 100);
+                        }, 60);
                     }
                 }
             }

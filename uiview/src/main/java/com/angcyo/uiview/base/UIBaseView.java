@@ -1006,12 +1006,19 @@ public abstract class UIBaseView extends UIIViewImpl {
      * 指示当前布局的显示状态, 当前那个布局在显示
      */
     public enum LayoutState {
+        NONE,//占位
         NORMAL,//正常
         EMPTY,//空布局
         LOAD,//装载布局
         NONET,//无网络
         CONTENT, //内容
         ERROR //异常
+        ;
+
+        @Override
+        public String toString() {
+            return super.toString();
+        }
     }
 
     /**

@@ -5,6 +5,7 @@ import android.graphics.Point
 import android.graphics.Rect
 import android.graphics.drawable.Drawable
 import com.angcyo.uiview.helper.BezierHelper
+import com.angcyo.uiview.kotlin.scale
 import com.angcyo.uiview.kotlin.scaleTo
 
 /**
@@ -77,6 +78,12 @@ open class TouchSpiritBean(drawableArray: Array<Drawable>) : FrameBean(drawableA
 
     open fun getSpiritDrawRect() = spiritDrawRect
     open fun getSpiritRect() = spiritRect
+
+    /**获取Drawable缩放后的Bounds*/
+    fun getDrawableScaleBounds(): Rect = Rect().apply {
+        set(0, 0, this@TouchSpiritBean.width(), this@TouchSpiritBean.height())
+        scale(scaleX, scaleY)
+    }
 
     override fun getDrawDrawableBounds(drawable: Drawable): Rect {
         return spiritDrawRect
