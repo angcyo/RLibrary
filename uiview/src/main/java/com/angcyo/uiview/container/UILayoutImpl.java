@@ -219,6 +219,11 @@ public class UILayoutImpl extends SwipeBackLayout implements ILayout<UIParam>, U
      */
     private long firstDownTime = 0;
 
+    /**
+     * 拦截所有touch事件
+     */
+    private boolean interceptTouchEvent = false;
+
     public UILayoutImpl(Context context) {
         super(context);
         initLayout();
@@ -2589,8 +2594,8 @@ public class UILayoutImpl extends SwipeBackLayout implements ILayout<UIParam>, U
             return true;
         }
 
-        if (isFinishing || isStarting) {
-            L.i("拦截事件：" + actionMasked + " isFinishing:" + isFinishing + " isStarting:" + isStarting);
+        if (isFinishing || isStarting || interceptTouchEvent) {
+            L.i("拦截事件：" + actionMasked + " isFinishing:" + isFinishing + " isStarting:" + isStarting + " interceptTouchEvent:" + interceptTouchEvent);
             return true;
         }
         return super.onInterceptTouchEvent(ev);
@@ -3056,6 +3061,10 @@ public class UILayoutImpl extends SwipeBackLayout implements ILayout<UIParam>, U
      */
     protected void onFinishIViewEnd(ViewPattern viewPattern) {
 
+    }
+
+    public void setInterceptTouchEvent(boolean interceptTouchEvent) {
+        this.interceptTouchEvent = interceptTouchEvent;
     }
 
     /**

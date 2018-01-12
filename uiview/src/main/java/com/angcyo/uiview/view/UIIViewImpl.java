@@ -1181,4 +1181,13 @@ public abstract class UIIViewImpl implements IView {
     public void onIViewLayout(ViewPattern viewPattern, UIBaseView.LayoutState layoutState, IViewShowState viewShowState, View rootView) {
         L.i2(160, this.getClass().getSimpleName(), layoutState + " " + viewShowState + " w:" + rootView.getMeasuredWidth() + " h:" + rootView.getMeasuredHeight());
     }
+
+    /**
+     * 是否请求拦截所有touch事件
+     */
+    public void interceptTouchEvent(boolean intercept) {
+        if (mParentILayout instanceof UILayoutImpl) {
+            ((UILayoutImpl) mParentILayout).setInterceptTouchEvent(intercept);
+        }
+    }
 }

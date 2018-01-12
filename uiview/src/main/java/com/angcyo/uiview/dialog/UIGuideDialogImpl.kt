@@ -1,6 +1,7 @@
 package com.angcyo.uiview.dialog
 
 import android.graphics.Rect
+import android.os.Bundle
 import android.view.View
 import android.view.animation.Animation
 import com.angcyo.uiview.R
@@ -56,6 +57,11 @@ open abstract class UIGuideDialogImpl : UIIDialogImpl() {
     open fun getGuideFrameLayout(): GuideFrameLayout? = v(R.id.base_guide_layout)
 
     open fun getFinishButton(): View? = v(R.id.base_finish_view)
+
+    override fun onViewShow(bundle: Bundle?) {
+        super.onViewShow(bundle)
+        interceptTouchEvent(false)
+    }
 
     override fun loadLayoutAnimation(): Animation {
         return super.loadLayoutAnimation()
