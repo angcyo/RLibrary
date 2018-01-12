@@ -86,13 +86,26 @@ open class GlideImageView(context: Context, attributeSet: AttributeSet? = null) 
 
     var bitmapTransform: Transformation<Bitmap>? = null
 
+    var noPlaceholderDrawable = false
+
     init {
         val typedArray = context.obtainStyledAttributes(attributeSet, R.styleable.GlideImageView)
         defaultPlaceholderDrawable = typedArray.getDrawable(R.styleable.GlideImageView_r_placeholder_drawable)
+        noPlaceholderDrawable = typedArray.getBoolean(R.styleable.GlideImageView_r_no_placeholder_drawable, noPlaceholderDrawable)
+
         if (defaultPlaceholderDrawable != null) {
             placeholderDrawable = defaultPlaceholderDrawable
-            setImageDrawable(defaultPlaceholderDrawable)
         }
+
+        if (noPlaceholderDrawable) {
+            defaultPlaceholderDrawable = null
+            placeholderDrawable = null
+        } else {
+            if (defaultPlaceholderDrawable != null) {
+                setImageDrawable(defaultPlaceholderDrawable)
+            }
+        }
+
         typedArray.recycle()
     }
 
@@ -107,7 +120,7 @@ open class GlideImageView(context: Context, attributeSet: AttributeSet? = null) 
     fun clear() {
         reset()
         setImageDrawable(null)
-        if (defaultPlaceholderDrawable != null) {
+        if (!noPlaceholderDrawable && defaultPlaceholderDrawable != null) {
             placeholderDrawable = defaultPlaceholderDrawable
             setImageDrawable(defaultPlaceholderDrawable)
         }
