@@ -112,8 +112,10 @@ open class CircleImageView(context: Context, attributeSet: AttributeSet? = null)
         super.onSizeChanged(w, h, oldw, oldh)
         bitmapSource?.recycle()
         bitmapCanvas = null
-        bitmapSource = Bitmap.createBitmap(w, h, Bitmap.Config.ARGB_8888)
-        bitmapCanvas = Canvas(bitmapSource)
+        if (w > 0 && h > 0) {
+            bitmapSource = Bitmap.createBitmap(w, h, Bitmap.Config.ARGB_8888)
+            bitmapCanvas = Canvas(bitmapSource)
+        }
     }
 
     /**实现圆角的方式*/
