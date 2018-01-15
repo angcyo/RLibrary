@@ -228,6 +228,13 @@ public class BmpUtil {
      */
     public static Bitmap getRoundedCornerBitmap(Context context, Bitmap bitmap, int width, int height,
                                                 @DrawableRes int backgroundDrawable, float roundPx, int offset) {
+        return getRoundedCornerBitmap(context, bitmap, width, height, backgroundDrawable, roundPx, offset, offset);
+    }
+
+    public static Bitmap getRoundedCornerBitmap(Context context, Bitmap bitmap /*需要圆角的图片*/,
+                                                int width /*输出图片宽度*/, int height/*输出图片高度*/,
+                                                @DrawableRes int backgroundDrawable /*背景*/,
+                                                float roundPx /*圆角大小*/, int offsetX /*横向偏移*/, int offsetY /*纵向偏移*/) {
         Bitmap output = Bitmap.createBitmap(width, height, Bitmap.Config.ARGB_8888);
         Canvas canvas = new Canvas(output);
 
@@ -237,11 +244,12 @@ public class BmpUtil {
         bgDrawable.draw(canvas);
 
         //在背景的上面绘制圆角图片
-        int out = (int) (context.getResources().getDisplayMetrics().density * offset);
+        int outX = (int) (context.getResources().getDisplayMetrics().density * offsetX);
+        int outY = (int) (context.getResources().getDisplayMetrics().density * offsetY);
 
         final int color = 0xff424242;
         final Paint paint = new Paint();
-        final Rect rect = new Rect(out, out, width - out, width - out);
+        final Rect rect = new Rect(outX, outY, width - outX, height - outY);
         final RectF rectF = new RectF(rect);
 
         paint.setAntiAlias(true);
