@@ -138,7 +138,7 @@ open class CircleImageView(context: Context, attributeSet: AttributeSet? = null)
 
                 if (showType == CIRCLE) {
                     clipPath.addCircle(cx, cy, cr, Path.Direction.CW)
-                    borderPath.addCircle(cx, cy, cr - lineWidth / 2, Path.Direction.CW)
+                    borderPath.addCircle(cx, cy, cr - lineWidth / 2 + 0.5f, Path.Direction.CW)
                 } else {
                     if (showType == ROUND_RECT) {
                         roundRectF.set(paddingLeft.toFloat(), paddingTop.toFloat(),
@@ -147,7 +147,7 @@ open class CircleImageView(context: Context, attributeSet: AttributeSet? = null)
                         roundRectF.set(cx - cr, cy - cr, cx + cr, cy + cr)
                     }
                     clipPath.addRoundRect(roundRectF, radius, Path.Direction.CW)
-                    roundRectF.inset(lineWidth / 2, lineWidth / 2)
+                    roundRectF.inset(lineWidth / 2 - 0.5f, lineWidth / 2 - 0.5f)
                     borderPath.addRoundRect(roundRectF, radius, Path.Direction.CW)
                 }
 
