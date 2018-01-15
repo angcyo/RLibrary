@@ -85,7 +85,7 @@ open class CircleImageView(context: Context, attributeSet: AttributeSet? = null)
         super.onMeasure(widthMeasureSpec, heightMeasureSpec)
         if (equWidth) {
             setMeasuredDimension(measuredWidth, measuredWidth)
-        }else if (equHeight) {
+        } else if (equHeight) {
             setMeasuredDimension(measuredHeight, measuredHeight)
         } else {
             calcWidthHeightRatio(widthHeightRatio)?.let {
@@ -93,6 +93,31 @@ open class CircleImageView(context: Context, attributeSet: AttributeSet? = null)
             }
         }
     }
+
+    private var bitmapCanvas: Canvas? = null
+    private var bitmapSource: Bitmap? = null
+    private val bitmapPaint: Paint by lazy {
+        Paint(Paint.ANTI_ALIAS_FLAG).apply {
+            isFilterBitmap = false
+        }
+    }
+    private val bitmapClearPaint: Paint by lazy {
+        Paint(Paint.ANTI_ALIAS_FLAG).apply {
+            isFilterBitmap = false
+            xfermode = PorterDuffXfermode(PorterDuff.Mode.CLEAR)
+        }
+    }
+
+    override fun onSizeChanged(w: Int, h: Int, oldw: Int, oldh: Int) {
+        super.onSizeChanged(w, h, oldw, oldh)
+        bitmapSource?.recycle()
+        bitmapCanvas = null
+        bitmapSource = Bitmap.createBitmap(w, h, Bitmap.Config.ARGB_8888)
+        bitmapCanvas = Canvas(bitmapSource)
+    }
+
+    /**实现圆角的方式*/
+    var schemeVersion = SCHEME_CANVAS_BITMAP
 
     override fun onDraw(canvas: Canvas) {
         when (showType) {
@@ -124,27 +149,41 @@ open class CircleImageView(context: Context, attributeSet: AttributeSet? = null)
                     borderPath.addRoundRect(roundRectF, radius, Path.Direction.CW)
                 }
 
-                fun save(canvas: Canvas) = if (TextUtils.equals(Build.MANUFACTURER, "HUAWEI") &&
-                        Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP /*华为手机处理圆角, 偶尔会失败.*/) {
-                    canvas.saveLayer(0f, 0f, measuredWidth.toFloat(), measuredHeight.toFloat(), paint, Canvas.ALL_SAVE_FLAG)
-                } else {
-                    canvas.save()
+                when (schemeVersion) {
+                    SCHEME_CLIP_PATH -> {
+                        fun save(canvas: Canvas) = if (TextUtils.equals(Build.MANUFACTURER, "HUAWEI") &&
+                                Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP /*华为手机处理圆角, 偶尔会失败.*/) {
+                            canvas.saveLayer(0f, 0f, measuredWidth.toFloat(), measuredHeight.toFloat(), paint, Canvas.ALL_SAVE_FLAG)
+                        } else {
+                            canvas.save()
+                        }
+
+                        var save1 = save(canvas)
+                        canvas.clipPath(clipPath, Region.Op.INTERSECT)//交集显示
+
+                        //val savePath = canvas.saveLayer(null, null, Canvas.ALL_SAVE_FLAG)
+                        var save2 = save(canvas)
+                        //                if (TextUtils.equals(Build.MODEL, "VTR-AL00") /*华为P10处理圆角, 偶尔会失败.*/) {
+                        //                if (TextUtils.equals(Build.MANUFACTURER, "HUAWEI") && Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP /*华为手机处理圆角, 偶尔会失败.*/) {
+                        //                    save2 = canvas.saveLayer(0f, 0f, measuredWidth.toFloat(), measuredHeight.toFloat(), paint, Canvas.ALL_SAVE_FLAG)
+                        //                } else {
+                        //                    save2 = canvas.save()
+                        //                }
+                        super.onDraw(canvas)
+                        canvas.restoreToCount(save2)
+                        canvas.restoreToCount(save1)
+                    }
+                    SCHEME_CANVAS_BITMAP -> {
+                        bitmapCanvas?.let {
+                            it.save()
+                            it.drawPaint(bitmapClearPaint)
+                            it.clipPath(clipPath)//交集显示
+                            super.onDraw(it)
+                            it.restore()
+                            canvas.drawBitmap(bitmapSource, 0f, 0f, null)
+                        }
+                    }
                 }
-
-                var save1 = save(canvas)
-                canvas.clipPath(clipPath, Region.Op.INTERSECT)//交集显示
-
-                //val savePath = canvas.saveLayer(null, null, Canvas.ALL_SAVE_FLAG)
-                var save2 = save(canvas)
-//                if (TextUtils.equals(Build.MODEL, "VTR-AL00") /*华为P10处理圆角, 偶尔会失败.*/) {
-//                if (TextUtils.equals(Build.MANUFACTURER, "HUAWEI") && Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP /*华为手机处理圆角, 偶尔会失败.*/) {
-//                    save2 = canvas.saveLayer(0f, 0f, measuredWidth.toFloat(), measuredHeight.toFloat(), paint, Canvas.ALL_SAVE_FLAG)
-//                } else {
-//                    save2 = canvas.save()
-//                }
-                super.onDraw(canvas)
-                canvas.restoreToCount(save2)
-                canvas.restoreToCount(save1)
 
                 if (drawBorder) {
                     canvas.drawPath(borderPath, paint)
@@ -169,5 +208,10 @@ open class CircleImageView(context: Context, attributeSet: AttributeSet? = null)
         const val CIRCLE = 1
         const val ROUND = 2 //正方形的圆角
         const val ROUND_RECT = 3 //长方形的圆角
+
+        /**使用clip的方式实现圆角*/
+        const val SCHEME_CLIP_PATH = 1
+        /**使用canvas的方式实现圆角*/
+        const val SCHEME_CANVAS_BITMAP = 2
     }
 }

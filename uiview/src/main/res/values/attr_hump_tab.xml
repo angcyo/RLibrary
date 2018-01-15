@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <declare-styleable name="HumpTabLayout">
+        <!--凸起的高度-->
+        <attr name="r_hump_height" format="dimension"/>
+        <!--是否需要凸起(作用在子View上)-->
+        <attr name="r_is_hump" format="boolean"/>
+    </declare-styleable>
+</resources>
