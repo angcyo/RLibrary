@@ -37,6 +37,7 @@ public class RTextPaint {
     public RTextPaint(TextPaint textPaint) {
         mTextPaint = new TextPaint(Paint.ANTI_ALIAS_FLAG);
         mTextPaint.setTextSize(textPaint.getTextSize());
+
         mTextPaint.setColor(textPaint.getColor());
     }
 

@@ -1,11 +1,14 @@
 <?xml version="1.0" encoding="utf-8"?>
-<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
-             xmlns:tools="http://schemas.android.com/tools"
-             android:layout_width="match_parent"
-             android:layout_height="wrap_content"
-             android:layout_marginEnd="@dimen/base_xxhdpi"
-             android:layout_marginStart="@dimen/base_xxhdpi"
-             android:background="@drawable/base_white_round_bg_5x">
+<com.angcyo.uiview.viewgroup.RFrameLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_marginEnd="@dimen/base_xxhdpi"
+    android:layout_marginStart="@dimen/base_xxhdpi"
+    android:background="@drawable/base_white_round_bg_5x"
+    app:r_max_height="-0.75px">
 
     <!--<ImageView-->
     <!--android:layout_width="match_parent"-->
@@ -32,7 +35,8 @@
 
         <ScrollView
             android:layout_width="match_parent"
-            android:layout_height="120dp"
+            android:layout_height="0dp"
+            android:layout_weight="1"
             android:paddingEnd="@dimen/base_xxhdpi"
             android:paddingStart="@dimen/base_xxhdpi">
 
@@ -40,7 +44,7 @@
                 android:id="@+id/base_version_content_view"
                 style="@style/BaseDarkTextStyle"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
+                android:layout_height="match_parent"
                 android:gravity="top"
                 android:lineSpacingExtra="4dp"
                 tools:text="测试文本内容\nasdf\nnasdf"/>
@@ -84,4 +88,4 @@
         android:src="@drawable/base_icon_cha_button"
         tools:visibility="visible"/>
 
-</FrameLayout>
+</com.angcyo.uiview.viewgroup.RFrameLayout>

@@ -315,11 +315,11 @@ abstract class BaseTouchLayer : BaseFrameLayer() {
             spiritBean.stepY = randomStepY
         }
 
-        val sw = if (gameRenderView!!.measuredWidth == 0) ScreenUtil.screenWidth else gameRenderView!!.measuredWidth
+        val sw = if (gameRenderView.measuredWidth == 0) ScreenUtil.screenWidth else gameRenderView.measuredWidth
 
         val drawable = spiritBean.drawableArray[0]
-        val intrinsicWidth = drawable.intrinsicWidth * ScreenUtil.density().toInt()
-        val intrinsicHeight = drawable.intrinsicHeight * ScreenUtil.density().toInt()
+        val intrinsicWidth = (drawable.intrinsicWidth * ScreenUtil.density()).toInt()
+        val intrinsicHeight = (drawable.intrinsicHeight * ScreenUtil.density()).toInt()
 
         spiritBean.startX = getSpiritStartX(spiritBean, sw)
         spiritBean.startY = getSpiritStartY(spiritBean)

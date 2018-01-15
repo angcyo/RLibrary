@@ -58,6 +58,7 @@ open class BaseLayer {
 
     @CallSuper
     open fun onSizeChanged(w: Int, h: Int, oldw: Int, oldh: Int) {
+        //L.i("BaseLayer: onSizeChanged -> w:$w h:$h")
         layerRect.set(0, 0, w, h)
     }
 
@@ -75,6 +76,8 @@ open class BaseLayer {
     /**开始渲染的回调*/
     @CallSuper
     open fun onRenderStart(gameRenderView: GameRenderView) {
+        //L.i("call: onRenderStart -> w:${gameRenderView.measuredWidth} h:${gameRenderView.measuredHeight}")
+        layerRect.set(0, 0, gameRenderView.measuredWidth, gameRenderView.measuredHeight)
         this.gameRenderView = gameRenderView
         isRenderStart = true
     }

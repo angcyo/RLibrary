@@ -37,8 +37,10 @@ open class RFrameLayout(context: Context, attributeSet: AttributeSet? = null) : 
     private var rBackgroundDrawable: Drawable? = null
     /**
      * 允许的最大高度, 如果为-2px,那么就是屏幕高度的一半, 如果是-3px,那么就是屏幕高度的三分之, 以此内推, 0不处理
+     * 如果是负数,就是屏幕的倍数.
+     * 如果是正数,就是确确的值
      */
-    private var maxHeight = -1
+    private var maxHeight = 0
 
     init {
         val typedArray = context.obtainStyledAttributes(attributeSet, R.styleable.RFrameLayout)
@@ -46,7 +48,8 @@ open class RFrameLayout(context: Context, attributeSet: AttributeSet? = null) : 
         widthHeightRatio = typedArray.getString(R.styleable.RFrameLayout_r_width_height_ratio)
 
         rBackgroundDrawable = typedArray.getDrawable(R.styleable.RFrameLayout_r_background)
-        maxHeight = typedArray.getDimensionPixelOffset(R.styleable.RFrameLayout_r_max_height, -1)
+        resetMaxHeight(typedArray.getDimension(R.styleable.RFrameLayout_r_max_height, 0f))
+        //maxHeight = typedArray.getDimension(R.styleable.RFrameLayout_r_max_height, maxHeight)
 
         typedArray.recycle()
 
@@ -87,9 +90,18 @@ open class RFrameLayout(context: Context, attributeSet: AttributeSet? = null) : 
     }
 
     private fun resetMaxHeight() {
-        if (maxHeight < -1) {
+        if (maxHeight < 0) {
             val num = Math.abs(maxHeight)
-            maxHeight = ScreenUtil.screenHeight / num
+            maxHeight = ScreenUtil.screenHeight * num
+        }
+    }
+
+    private fun resetMaxHeight(height: Float) {
+        if (height < 0) {
+            val num = Math.abs(height)
+            maxHeight = (ScreenUtil.screenHeight * num).toInt()
+        } else {
+            maxHeight = height.toInt()
         }
     }
 
@@ -99,6 +111,10 @@ open class RFrameLayout(context: Context, attributeSet: AttributeSet? = null) : 
         requestLayout()
     }
 
+    fun setMaxHeight2(height: Float) {
+        resetMaxHeight(height)
+        requestLayout()
+    }
 
     /*正在触摸的浮动View*/
     private var touchFloatView: View? = null

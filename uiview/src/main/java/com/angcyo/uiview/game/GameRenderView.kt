@@ -209,6 +209,8 @@ class GameRenderView(context: Context, attributeSet: AttributeSet? = null) : Vie
 
         isGameRenderStart = true
 
+        fps = 0
+
         if (renderAnim.isStarted) {
         } else {
             gameRenderStartTime = time()

@@ -108,14 +108,14 @@ open class TouchSpiritBean(drawableArray: Array<Drawable>) : FrameBean(drawableA
         0
     } else {
         val drawable = drawableArray[0]
-        drawable.intrinsicWidth * density.toInt()
+        (drawable.intrinsicWidth * density).toInt()
     }
 
     open fun height() = if (drawableArray.isEmpty()) {
         0
     } else {
         val drawable = drawableArray[0]
-        drawable.intrinsicHeight * density.toInt()
+        (drawable.intrinsicHeight * density).toInt()
     }
 
     /**用来更新精灵的参数, 返回true, 表示完全控制精灵*/
