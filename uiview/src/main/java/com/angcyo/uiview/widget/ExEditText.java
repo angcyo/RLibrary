@@ -852,7 +852,17 @@ public class ExEditText extends AppCompatEditText {
      */
     @Override
     public InputConnection onCreateInputConnection(EditorInfo outAttrs) {
-        return new HackInputConnection(super.onCreateInputConnection(outAttrs), true, this);
+        HackInputConnection hackInputConnection = null;
+        try {
+            hackInputConnection = new HackInputConnection(super.onCreateInputConnection(outAttrs), true, this);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        if (hackInputConnection == null) {
+            return super.onCreateInputConnection(outAttrs);
+        } else {
+            return hackInputConnection;
+        }
     }
 
     /**
@@ -1465,7 +1475,13 @@ public class ExEditText extends AppCompatEditText {
         @Override
         public boolean commitText(CharSequence text, int newCursorPosition) {
             //editText.getText();
-            return super.commitText(text, newCursorPosition);
+            boolean commitText = false;
+            try {
+                commitText = super.commitText(text, newCursorPosition);
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+            return commitText;
         }
 
         @Override

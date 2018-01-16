@@ -620,10 +620,20 @@ public class AnimUtil {
      * 围绕自身中心点, 360旋转, 的动画
      */
     public static Animation rotateAnimation() {
+        return rotateAnimation(false);
+    }
+
+    public static Animation rotateAnimation(boolean circle /*循环动画*/) {
         RotateAnimation animation = new RotateAnimation(0f, 360f,
                 Animation.RELATIVE_TO_SELF, 0.5f, Animation.RELATIVE_TO_SELF, 0.5f);
         animation.setInterpolator(new LinearInterpolator());
         animation.setDuration(300);
+
+        if (circle) {
+            animation.setRepeatCount(Animation.INFINITE);
+            animation.setRepeatMode(Animation.RESTART);
+            animation.setDuration(2000);
+        }
         return animation;
     }
 

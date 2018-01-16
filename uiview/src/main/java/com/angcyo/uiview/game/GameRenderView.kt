@@ -187,7 +187,7 @@ class GameRenderView(context: Context, attributeSet: AttributeSet? = null) : Vie
 
     /*开始渲染界面*/
     fun startRender() {
-        L.e("startRender -> w:$measuredWidth h:$measuredHeight detach:$isGameViewDetached v:$visibility start:$isGameRenderStart ${renderAnim.isStarted}")
+        L.e("startRender -> w:$measuredWidth h:$measuredHeight detach:$isGameViewDetached v:$visibility isRenderStart:$isGameRenderStart isAnimStart:${renderAnim.isStarted}")
         if (measuredWidth == 0 || measuredHeight == 0) {
             isGameRenderStart = false
             return
@@ -218,7 +218,11 @@ class GameRenderView(context: Context, attributeSet: AttributeSet? = null) : Vie
         }
 
         for (i in 0 until layerList.size) {
-            layerList[i].onRenderStart(this)
+            try {
+                layerList[i].onRenderStart(this)
+            } catch (e: Exception) {
+                e.printStackTrace()
+            }
         }
 
         //开始渲染子线程
@@ -230,12 +234,16 @@ class GameRenderView(context: Context, attributeSet: AttributeSet? = null) : Vie
     /**结束渲染*/
     fun endRender() {
         if (isGameRenderStart) {
+            isGameRenderStart = false
             gameRenderStartTime = 0L
             renderAnim.cancel()
-            isGameRenderStart = false
 
             for (i in 0 until layerList.size) {
-                layerList[i].onRenderEnd(this)
+                try {
+                    layerList[i].onRenderEnd(this)
+                } catch (e: Exception) {
+                    e.printStackTrace()
+                }
             }
         }
     }
@@ -269,7 +277,6 @@ class GameRenderView(context: Context, attributeSet: AttributeSet? = null) : Vie
                     Thread.sleep(16) //60帧速率 回调
 
                     lastRenderTimeThread = nowTime
-
                     //L.e("call: renderThread -> $id $name")
                 } catch (e: Exception) {
                     e.printStackTrace()
