@@ -35,6 +35,7 @@ import com.angcyo.uiview.kotlin.ViewExKt;
 import com.angcyo.uiview.skin.SkinHelper;
 import com.angcyo.uiview.utils.RTextPaint;
 import com.angcyo.uiview.utils.Reflect;
+import com.angcyo.uiview.utils.ScreenUtil;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -48,6 +49,15 @@ import java.util.regex.Pattern;
  */
 
 public class RTextView extends AppCompatTextView {
+
+    /**
+     * 滚动文本的方式, 从视图外, 缓缓的向左滚动
+     */
+    public static final int SCROLL_TYPE_DEFAULT = 1;
+    /**
+     * 滚动文本的方式, 从0开始, 缓缓的向左滚动
+     */
+    public static final int SCROLL_TYPE_START = 2;
 
     /**
      * 左边垂直矩形的颜色
@@ -71,15 +81,19 @@ public class RTextView extends AppCompatTextView {
      * 将textLeftDrawable和TextView的文本居中都居中显示. (默认情况 文本会居中显示, 然后leftDrawable在文本的左边绘制)
      */
     boolean centerLeftDrawable = false;
+    float scrollCurX = 0f;
+    /**
+     * 滚动步长
+     */
+    int scrollStep = 2;
     private Drawable mBackgroundDrawable;
     private CharSequence mRawText;
     private int mPaddingLeft;
     private RTextPaint mTextPaint;
+    private TextPaint mScrollTextPaint;
     private int mLeftOffset = 0, mTopOffset = 0, mBottomOffset = 0, textLeftOffset = (int) (2 * density());
     private String mLeftString;
-
     private boolean leftStringBold = false;
-
     /**
      * 是否显示 未读小红点
      */
@@ -90,15 +104,12 @@ public class RTextView extends AppCompatTextView {
     private float noReadRadius = 4 * density();
     private float noReadPaddingTop = 2 * density();
     private float noReadPaddingRight = 2 * density();
-
     private boolean autoFixTextSize = false;
-
     /**
      * 宽高是否相等, 取其中最大值计算
      */
     private boolean aeqWidth = false;
     private boolean hideWithEmptyText = false;
-
     /**
      * 是否显示tip文本 (目前只支持右上角显示)
      */
@@ -111,6 +122,21 @@ public class RTextView extends AppCompatTextView {
     private int tipTextTopOffset = 0;
     private int tipTextLeftOffset = 0;
     private RectF tipTextRectF = new RectF();
+    /**
+     * 是否滚动文本
+     * android:ellipsize="none"
+     * android:singleLine="true"
+     */
+    private boolean isScrollText = false;
+    /**
+     * 是否循环绘制文本, 在文本后面连续绘制文本
+     */
+    private boolean isScrollTextCircle = false;
+    /**
+     * 循环绘制文本的间隙
+     */
+    private int scrollTextCircleOffset = (int) (10 * ScreenUtil.density());
+    private int scrollType = SCROLL_TYPE_DEFAULT;
 
     public RTextView(Context context) {
         this(context, null);
@@ -171,6 +197,11 @@ public class RTextView extends AppCompatTextView {
         tipTextTopOffset = typedArray.getDimensionPixelOffset(R.styleable.RTextView_r_tip_text_top_offset, tipTextTopOffset);
         tipTextLeftOffset = typedArray.getDimensionPixelOffset(R.styleable.RTextView_r_tip_text_left_offset, tipTextLeftOffset);
 
+        isScrollText = typedArray.getBoolean(R.styleable.RTextView_r_is_scroll_text, isScrollText);
+        isScrollTextCircle = typedArray.getBoolean(R.styleable.RTextView_r_is_scroll_text_circle, isScrollTextCircle);
+        scrollStep = typedArray.getInt(R.styleable.RTextView_r_scroll_step, scrollStep);
+        scrollType = typedArray.getInt(R.styleable.RTextView_r_scroll_type, scrollType);
+        scrollTextCircleOffset = typedArray.getDimensionPixelOffset(R.styleable.RTextView_r_scroll_text_offset, scrollTextCircleOffset);
         typedArray.recycle();
 
         initView();
@@ -224,8 +255,56 @@ public class RTextView extends AppCompatTextView {
         initLeftRes();
     }
 
+    protected void onDrawScrollText(Canvas canvas) {
+        String text = String.valueOf(getText());
+        if (text == null) {
+            text = "";
+        }
+        if (mScrollTextPaint == null) {
+            mScrollTextPaint = new TextPaint(getPaint());
+        }
+
+        float textWidth = mScrollTextPaint.measureText(text);
+
+        if (scrollType == SCROLL_TYPE_DEFAULT) {
+            canvas.drawText(text, getMeasuredWidth() - scrollCurX, ViewExKt.textHeight(this), mScrollTextPaint);
+
+            if (isScrollTextCircle) {
+                canvas.drawText(text, getMeasuredWidth() - scrollCurX + textWidth + scrollTextCircleOffset, ViewExKt.textHeight(this), mScrollTextPaint);
+            }
+        } else if (scrollType == SCROLL_TYPE_START) {
+            canvas.drawText(text, -scrollCurX, ViewExKt.textHeight(this), mScrollTextPaint);
+
+            if (isScrollTextCircle) {
+                canvas.drawText(text, -scrollCurX + textWidth + scrollTextCircleOffset, ViewExKt.textHeight(this), mScrollTextPaint);
+            }
+        }
+
+        scrollCurX += scrollStep;
+
+        if (scrollType == SCROLL_TYPE_DEFAULT) {
+            if (scrollCurX >= (getMeasuredWidth() + textWidth + scrollTextCircleOffset)) {
+                scrollCurX = 0;
+            }
+        } else if (scrollType == SCROLL_TYPE_START) {
+            if (scrollCurX >= textWidth + scrollTextCircleOffset) {
+                scrollCurX = 0;
+            }
+        }
+
+        postInvalidateOnAnimation();
+        //canvas.drawText(text, );
+        //canvas.translate(-100, 0);
+        //super.onDraw(canvas);
+    }
+
     @Override
     protected void onDraw(Canvas canvas) {
+        if (isScrollText) {
+            onDrawScrollText(canvas);
+            return;
+        }
+
         if (hasUnderline) {
             getPaint().setFlags(Paint.UNDERLINE_TEXT_FLAG);
             getPaint().setAntiAlias(true);

@@ -164,6 +164,14 @@
         <attr name="r_tip_text_bg"/>
         <attr name="r_tip_text_left_offset"/>
         <attr name="r_tip_text_top_offset"/>
+        <attr name="r_is_scroll_text" format="boolean"/>
+        <attr name="r_is_scroll_text_circle" format="boolean"/>
+        <attr name="r_scroll_type" format="enum">
+            <enum name="SCROLL_TYPE_DEFAULT" value="1"/>
+            <enum name="SCROLL_TYPE_START" value="2"/>
+        </attr>
+        <attr name="r_scroll_step" format="integer"/>
+        <attr name="r_scroll_text_offset" format="dimension"/>
 
     </declare-styleable>
 

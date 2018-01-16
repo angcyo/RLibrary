@@ -146,7 +146,7 @@ class GameRenderView(context: Context, attributeSet: AttributeSet? = null) : Vie
                 layer.draw(canvas, gameRenderStartTime, lastRenderTime, nowTime)
             }
         }
-        if (showFps) {
+        if (showFps && !isInEditMode) {
             val text = fpsText
             canvas.drawText(text, 10 * density, measuredHeight - 10 * density, fpsPaint)
         }

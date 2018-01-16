@@ -46,6 +46,7 @@ public class SkinHelper {
     public static ISkin getSkin() {
         if (mSkin == null) {
             throw new NullPointerException("please call SkinHelper#init method.");
+            //init(RApplication.getApp());
         }
         return mSkin;
     }
