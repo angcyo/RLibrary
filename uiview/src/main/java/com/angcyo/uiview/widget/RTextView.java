@@ -198,6 +198,10 @@ public class RTextView extends AppCompatTextView {
         tipTextLeftOffset = typedArray.getDimensionPixelOffset(R.styleable.RTextView_r_tip_text_left_offset, tipTextLeftOffset);
 
         isScrollText = typedArray.getBoolean(R.styleable.RTextView_r_is_scroll_text, isScrollText);
+        if (isScrollText) {
+            setSingleLine(true);
+            setEllipsize(null);
+        }
         isScrollTextCircle = typedArray.getBoolean(R.styleable.RTextView_r_is_scroll_text_circle, isScrollTextCircle);
         scrollStep = typedArray.getInt(R.styleable.RTextView_r_scroll_step, scrollStep);
         scrollType = typedArray.getInt(R.styleable.RTextView_r_scroll_type, scrollType);
