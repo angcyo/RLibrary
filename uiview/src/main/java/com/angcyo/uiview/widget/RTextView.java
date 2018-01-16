@@ -267,6 +267,7 @@ public class RTextView extends AppCompatTextView {
         if (mScrollTextPaint == null) {
             mScrollTextPaint = new TextPaint(getPaint());
         }
+        mScrollTextPaint.setColor(getCurrentTextColor());
 
         float textWidth = mScrollTextPaint.measureText(text);
 
