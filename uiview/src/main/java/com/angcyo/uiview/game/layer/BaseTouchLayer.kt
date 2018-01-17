@@ -306,9 +306,10 @@ abstract class BaseTouchLayer : BaseFrameLayer() {
         return ContextCompat.getDrawable(gameRenderView.context, id)
     }
 
+    /**添加新的精灵*/
     abstract fun onAddNewSpirit(): TouchSpiritBean
 
-    /**基础配置*/
+    /**精灵的默认基础配置*/
     protected fun initSpirit(spiritBean: TouchSpiritBean) {
         val randomStepY = spiritBean.stepY + random.nextInt(5)
         if (spiritBean.randomStep) {
@@ -356,16 +357,18 @@ abstract class BaseTouchLayer : BaseFrameLayer() {
 
     /*随机产生x轴*/
     open protected fun getSpiritStartX(spiritBean: TouchSpiritBean, sw: Int): Int {
+        val width = spiritBean.width() * spiritBean.scaleX
         if (spiritBean.useBezier) {
-            return (random.nextFloat() * (sw - 2 * spiritBean.width())).toInt() + spiritBean.width()
+            return (random.nextFloat() * (sw - 2 * width) + width).toInt()
         } else {
-            return (random.nextFloat() * (sw - spiritBean.width())).toInt() + spiritBean.width() / 4
+            return (random.nextFloat() * (sw - width) + width / 4).toInt()
         }
     }
 
     /*随机产生y轴*/
     open protected fun getSpiritStartY(spiritBean: TouchSpiritBean): Int {
-        return -(random.nextFloat() * spiritBean.height() / 2).toInt() - spiritBean.height()
+        val height = spiritBean.height() * spiritBean.scaleY
+        return (-(random.nextFloat() * height / 2) - height).toInt()
     }
 
     override fun addFrameBean(frameBean: BaseLayerBean) {

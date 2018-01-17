@@ -17,7 +17,7 @@ import com.angcyo.uiview.kotlin.getBoundsWith
  * 修改备注：
  * Version: 1.0.0
  */
-open class MoveBean(val drawables: Array<Drawable>,
+open class MoveBean(drawables: Array<Drawable>,
                     val startPoint: Point /*开始的点*/,
                     val endPoint: Point /*结束的点*/) : FrameBean(drawables, startPoint) {
 
@@ -36,6 +36,9 @@ open class MoveBean(val drawables: Array<Drawable>,
 
     /**是否循环移动*/
     var isLoopMove = false
+
+    /**激活自动透明, 离终点越近越透明*/
+    var enableAlpha = false
 
     init {
         loopDrawFrame = true
@@ -61,6 +64,13 @@ open class MoveBean(val drawables: Array<Drawable>,
 
             drawPoint.set(x(time).toInt(), y(time).toInt())
 
+            if (enableAlpha) {
+                val x1 = endPoint.x - startPoint.x
+                val x2 = drawPoint.x - startPoint.x
+                val fl = 1 - Math.abs(x2) * 1f / Math.abs(x1)
+                //L.e("call: draw -> $fl")
+                drawableAlpha = (255 * fl).toInt()
+            }
             //L.i("call: draw -> ${maxMoveTime} $time $drawPoint $startPoint $endPoint ${aX()} ${aY()}")
             super.draw(canvas, gameStartTime, lastRenderTime, nowRenderTime, onDrawEnd)
             //L.w("${drawDrawable.bounds}")
@@ -72,12 +82,18 @@ open class MoveBean(val drawables: Array<Drawable>,
         drawPoint.set(startPoint.x, startPoint.y)
     }
 
+    /**加速移动时的x*/
     private fun aX(): Float = (endPoint.x - startPoint.x).toFloat() / (maxMoveTime * maxMoveTime)
+
     private fun aY(): Float = (endPoint.y - startPoint.y).toFloat() / (maxMoveTime * maxMoveTime)
 
+    /**匀速移动时的x*/
     private fun vX() = ((endPoint.x - startPoint.x).toFloat() / maxMoveTime)
+
     private fun vY() = ((endPoint.y - startPoint.y).toFloat() / maxMoveTime)
 
+    /**自动判断是加速还是匀速*/
     private fun x(t: Float) = startPoint.x + if (constantSpeed) vX() * t else aX() * t * t
+
     private fun y(t: Float) = startPoint.y + if (constantSpeed) vY() * t else aY() * t * t
 }

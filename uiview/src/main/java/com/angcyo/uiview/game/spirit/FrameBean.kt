@@ -53,15 +53,15 @@ open class FrameBean(val drawableArray: Array<Drawable> /*需要播放的帧动�
     /**绘制结束的回调*/
     var onDrawEndFun: ((Point) -> Unit)? = null
 
-    init {
-        frameDrawIntervalTime = 160L
-    }
-
     /*正在绘制的帧*/
     open protected val drawDrawable: Drawable
         get() {
             return drawableArray[frameIndex]
         }
+
+    init {
+        frameDrawIntervalTime = 160L
+    }
 
     /**当前绘制的中心点坐标*/
     open fun getDrawPointFun(): Point = drawPoint
