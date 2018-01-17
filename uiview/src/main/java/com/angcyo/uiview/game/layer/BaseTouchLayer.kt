@@ -36,7 +36,7 @@ abstract class BaseTouchLayer : BaseFrameLayer() {
     /**每次新增 时间间隔*/
     var spiritAddInterval = 700L
         set(value) {
-            drawIntervalTime = value
+            drawIntervalThreadTime = value
             field = value
         }
 
@@ -82,7 +82,8 @@ abstract class BaseTouchLayer : BaseFrameLayer() {
         }
 
     init {
-        drawIntervalTime = spiritAddInterval
+        //drawIntervalTime = spiritAddInterval
+        drawIntervalThreadTime = spiritAddInterval
         pauseDrawFrame = true //暂停绘制
     }
 

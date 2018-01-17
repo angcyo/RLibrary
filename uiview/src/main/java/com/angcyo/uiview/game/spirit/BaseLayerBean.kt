@@ -23,6 +23,7 @@ open class BaseLayerBean {
      *  注意: 此间隔 是在 BaseLayer drawIntervalTime = 0 作用下的
      *  */
     var frameDrawIntervalTime = 0L
+    var frameDrawThreadIntervalTime = 0L
 
     protected var lastFrameOnDrawTime = 0L
     protected var lastFrameOnDrawTimeThread = 0L
@@ -38,7 +39,7 @@ open class BaseLayerBean {
         Random(System.nanoTime())
     }
 
-    /**此回调一定是60帧速率*/
+    /** 此回调一定是60帧速率*/
     open fun draw(canvas: Canvas, gameStartTime: Long, lastRenderTime: Long, nowRenderTime: Long, onDrawEnd: (() -> Unit)? = null) {
         if (nowRenderTime - lastFrameDrawTime > frameDrawIntervalTime) {
             lastFrameDrawTime = nowRenderTime
@@ -46,7 +47,7 @@ open class BaseLayerBean {
         }
     }
 
-    /**此回调会收到BaseLayer drawIntervalTime 的影响*/
+    /**此回调会受到BaseLayer drawIntervalTime 的影响*/
     open fun onDraw(canvas: Canvas, gameStartTime: Long, lastRenderTime: Long, nowRenderTime: Long) {
         if (nowRenderTime - lastFrameOnDrawTime > frameDrawIntervalTime) {
             lastFrameOnDrawTime = nowRenderTime
@@ -64,7 +65,7 @@ open class BaseLayerBean {
 
     /**子线程执行*/
     open fun drawThread(gameStartTime: Long, lastRenderTimeThread: Long, nowRenderTime: Long) {
-        if (nowRenderTime - lastFrameDrawTimeThread > frameDrawIntervalTime) {
+        if (nowRenderTime - lastFrameDrawTimeThread > frameDrawThreadIntervalTime) {
             lastFrameDrawTimeThread = nowRenderTime
             onFrameDrawIntervalThread(gameStartTime, lastRenderTimeThread, nowRenderTime)
         }
@@ -72,7 +73,7 @@ open class BaseLayerBean {
 
     /**子线程执行*/
     open fun onDrawThread(gameStartTime: Long, lastRenderTimeThread: Long, nowRenderTime: Long) {
-        if (nowRenderTime - lastFrameOnDrawTimeThread > frameDrawIntervalTime) {
+        if (nowRenderTime - lastFrameOnDrawTimeThread > frameDrawThreadIntervalTime) {
             lastFrameOnDrawTimeThread = nowRenderTime
             onFrameOnDrawIntervalThread(gameStartTime, lastRenderTimeThread, nowRenderTime)
         }

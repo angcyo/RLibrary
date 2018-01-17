@@ -66,6 +66,12 @@ open class BaseFrameLayer : BaseLayer() {
         }
     }
 
+    open fun removeFrameBean(frameBean: BaseLayerBean) {
+        synchronized(lock) {
+            frameList.remove(frameBean)
+        }
+    }
+
     override fun drawThread(gameStartTime: Long, lastRenderTimeThread: Long, nowRenderTime: Long) {
         if (!pauseDrawFrameThread) {
             super.drawThread(gameStartTime, lastRenderTimeThread, nowRenderTime)
