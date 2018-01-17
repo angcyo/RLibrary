@@ -9,6 +9,7 @@ import com.angcyo.library.utils.L
 import com.angcyo.uiview.game.spirit.BaseLayerBean
 import com.angcyo.uiview.game.spirit.TouchSpiritBean
 import com.angcyo.uiview.helper.BezierHelper
+import com.angcyo.uiview.kotlin.nowTime
 import com.angcyo.uiview.utils.ScreenUtil
 import com.angcyo.uiview.utils.ThreadExecutor
 
@@ -94,6 +95,8 @@ abstract class BaseTouchLayer : BaseFrameLayer() {
         touchUpSpiritNum = 0
         isSpiritAddEnd = false
         pauseDrawFrame = true //暂停绘制
+
+        onRenderStartTime = nowTime()
     }
 
     /**结束绘制*/

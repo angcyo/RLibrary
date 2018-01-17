@@ -6,6 +6,7 @@ import android.graphics.Rect
 import android.support.annotation.CallSuper
 import android.view.MotionEvent
 import com.angcyo.uiview.game.GameRenderView
+import com.angcyo.uiview.kotlin.nowTime
 import com.angcyo.uiview.utils.ScreenUtil
 import java.util.*
 
@@ -38,6 +39,9 @@ open class BaseLayer {
     /**绘制帧之间的间隔小时, 默认是60帧的速率绘制, 也就是16毫秒 (控制的是所有在上面绘制元素的速率)*/
     var drawIntervalTime = 0L
     var drawIntervalThreadTime = 0L
+
+    /**记录开始渲染的调用时间*/
+    protected var onRenderStartTime = 0L
 
     /**是否需要处理Touch事件, 最上层的Layout会优先回调此方法*/
     open fun onTouchEvent(event: MotionEvent, point: PointF): Boolean {
@@ -81,6 +85,7 @@ open class BaseLayer {
         layerRect.set(0, 0, gameRenderView.measuredWidth, gameRenderView.measuredHeight)
         this.gameRenderView = gameRenderView
         isRenderStart = true
+        onRenderStartTime = nowTime()
     }
 
     /**主方法2, 在GameRenderView里面的子线程回调, 子线程执行, 用来更新界面参数*/
