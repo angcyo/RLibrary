@@ -52,6 +52,7 @@ import com.angcyo.github.utilcode.utils.CmdUtil;
 import com.angcyo.github.utilcode.utils.ImageUtils;
 import com.angcyo.github.utilcode.utils.PhoneUtils;
 import com.angcyo.library.utils.L;
+import com.angcyo.library.utils.RIo;
 import com.angcyo.uiview.RApplication;
 import com.angcyo.uiview.RCrashHandler;
 import com.angcyo.uiview.Root;
@@ -1602,7 +1603,7 @@ public class RUtils {
 //            intent.setData(uri);
 //            context.sendBroadcast(intent);
 
-            MediaScannerConnection.scanFile(context, new String[]{filePath}, null,
+            MediaScannerConnection.scanFile(context.getApplicationContext(), new String[]{filePath}, null,
                     new MediaScannerConnection.MediaScannerConnectionClient() {
                         @Override
                         public void onMediaScannerConnected() {
@@ -1636,14 +1637,43 @@ public class RUtils {
     }
 
     /**
+     * 将文件复制到相册目录, 系统相册就会自动扫描
+     *
+     * @param filePath 需要复制的文件全路径
+     * @param newName  新的文件名, 如果为空, 则使用源文件名
+     */
+    public static boolean copyToDCIM(String filePath, String newName) {
+        //相册文件夹
+        try {
+            File dcimFolder = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DCIM);
+            File srcFile = new File(filePath);
+            File targetFile;
+            if (TextUtils.isEmpty(newName)) {
+                targetFile = new File(dcimFolder.getPath(), srcFile.getName());
+            } else {
+                targetFile = new File(dcimFolder.getPath(), newName);
+            }
+            long l = RIo.copyFile(srcFile, targetFile);
+            boolean result = l != -1;
+            if (result) {
+                scanFile(RApplication.getApp(), targetFile.getAbsolutePath());
+            }
+            return result;
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return false;
+    }
+
+    /**
      * 将视频插入图库
      *
      * @param videoPath 视频路径地址
      */
-    public static void updateVideo(Context context, String videoPath, long videoDuration /*毫秒*/) {
+    public static boolean updateVideo(Context context, String videoPath, long videoDuration /*毫秒*/) {
         File file = new File(videoPath);
         if (!file.exists()) {
-            return;
+            return false;
         }
         //获取ContentResolve对象，来操作插入视频
         ContentResolver localContentResolver = context.getContentResolver();
@@ -1652,6 +1682,7 @@ public class RUtils {
         //insert语句负责插入一条新的纪录，如果插入成功则会返回这条记录的id，如果插入失败会返回-1。
         Uri localUri = localContentResolver.insert(MediaStore.Video.Media.EXTERNAL_CONTENT_URI, localContentValues);
         L.e("call: updateVideo([context, videoPath])-> " + localUri);
+        return localUri != null;
     }
 
     //再往数据库中插入数据的时候将，将要插入的值都放到一个ContentValues的实例当中

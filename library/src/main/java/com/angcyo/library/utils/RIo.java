@@ -36,6 +36,10 @@ public class RIo {
         return copyFile(from, new File(toFilePath));
     }
 
+    public static long copyFile(File fromFile, File toFile) throws FileNotFoundException {
+        return copyFile(new FileInputStream(fromFile), toFile);
+    }
+
     public static long copyFile(InputStream from, File toFile) {
         BufferedSource bufferedSource = null;
         BufferedSink bufferedSink = null;
