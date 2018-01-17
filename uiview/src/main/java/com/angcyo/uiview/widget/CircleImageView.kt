@@ -110,6 +110,10 @@ open class CircleImageView(context: Context, attributeSet: AttributeSet? = null)
 
     override fun onSizeChanged(w: Int, h: Int, oldw: Int, oldh: Int) {
         super.onSizeChanged(w, h, oldw, oldh)
+        createBitmapCanvas(w, h)
+    }
+
+    fun createBitmapCanvas(w: Int, h: Int) {
         bitmapSource?.recycle()
         bitmapCanvas = null
         if (w > 0 && h > 0) {

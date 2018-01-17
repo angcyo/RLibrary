@@ -26,9 +26,12 @@ import android.provider.MediaStore;
 import android.support.annotation.DrawableRes;
 import android.text.TextUtils;
 import android.util.Log;
+import android.widget.ImageView;
 
 import com.angcyo.library.utils.L;
 import com.angcyo.uiview.BuildConfig;
+import com.angcyo.uiview.kotlin.ViewExKt;
+import com.angcyo.uiview.widget.CircleImageView;
 
 import java.io.BufferedInputStream;
 import java.io.BufferedOutputStream;
@@ -229,6 +232,54 @@ public class BmpUtil {
     public static Bitmap getRoundedCornerBitmap(Context context, Bitmap bitmap, int width, int height,
                                                 @DrawableRes int backgroundDrawable, float roundPx, int offset) {
         return getRoundedCornerBitmap(context, bitmap, width, height, backgroundDrawable, roundPx, offset, offset);
+    }
+
+    public static Bitmap getRoundedCornerBitmap2(Context context, Bitmap bitmap /*需要圆角的图片*/,
+                                                 int width /*输出图片宽度*/, int height/*输出图片高度*/,
+                                                 @DrawableRes int backgroundDrawable /*背景*/,
+                                                 float roundPx /*圆角大小*/, int offsetX /*横向偏移*/, int offsetY /*纵向偏移*/) {
+        Bitmap output = Bitmap.createBitmap(width, height, Bitmap.Config.ARGB_8888);
+        Canvas canvas = new Canvas(output);
+
+        //绘制背景
+        Drawable bgDrawable = context.getResources().getDrawable(backgroundDrawable);
+        bgDrawable.setBounds(0, 0, width, height);
+        bgDrawable.draw(canvas);
+
+        //在背景的上面绘制圆角图片
+        int outX = (int) (context.getResources().getDisplayMetrics().density * offsetX);
+        int outY = (int) (context.getResources().getDisplayMetrics().density * offsetY);
+
+        CircleImageView imageView = new CircleImageView(context, null);
+        imageView.setDrawBorder(false);
+        imageView.setShowType(CircleImageView.CIRCLE);
+        imageView.setScaleType(ImageView.ScaleType.CENTER_CROP);
+        int vW = width - 2 * outX;
+        int vH = height - 2 * outY;
+        imageView.measure(ViewExKt.exactlyMeasure(imageView, vW), ViewExKt.exactlyMeasure(imageView, vH));
+        imageView.layout(outX, outY, outX + vW, outY + vH);
+        //imageView.createBitmapCanvas(width, height);
+        imageView.setImageBitmap(bitmap);
+        canvas.translate(outX, outY);
+        imageView.draw(canvas);
+
+//        final int color = 0xff424242;
+//        final Paint paint = new Paint();
+//        final Rect rect = new Rect(outX, outY, width - outX, height - outY);
+//        final RectF rectF = new RectF(rect);
+//
+//        paint.setAntiAlias(true);
+//        int layer = canvas.saveLayer(0, 0, width, height, null, Canvas.ALL_SAVE_FLAG);
+//        canvas.drawARGB(0, 0, 0, 0);
+//        paint.setColor(color);
+//        canvas.drawRoundRect(rectF, roundPx, roundPx, paint);
+//
+//        paint.setXfermode(new PorterDuffXfermode(PorterDuff.Mode.SRC_IN));
+////        第二个参数为null,表示绘制整个目标图片
+//        canvas.drawBitmap(bitmap, null, rect, paint);
+//        canvas.restoreToCount(layer);
+
+        return output;
     }
 
     public static Bitmap getRoundedCornerBitmap(Context context, Bitmap bitmap /*需要圆角的图片*/,
