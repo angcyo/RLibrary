@@ -15,6 +15,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.animation.Animation;
+import android.view.animation.AnimationSet;
 import android.view.animation.CycleInterpolator;
 import android.view.animation.DecelerateInterpolator;
 import android.view.animation.LinearInterpolator;
@@ -967,15 +968,31 @@ public abstract class UIBaseView extends UIIViewImpl {
         if (mRootView == null) {
             return;
         }
-        TranslateAnimation translateAnimation = new TranslateAnimation(Animation.RELATIVE_TO_SELF, 0f, Animation.RELATIVE_TO_SELF, .02f,
+
+        AnimationSet animationSet = new AnimationSet(true);
+
+        TranslateAnimation translateAnimationX = new TranslateAnimation(
+                Animation.RELATIVE_TO_SELF, 0f, Animation.RELATIVE_TO_SELF, .02f,
                 Animation.RELATIVE_TO_SELF, 0f, Animation.RELATIVE_TO_SELF, 0f);
-        translateAnimation.setInterpolator(new CycleInterpolator(1f));
-        translateAnimation.setRepeatCount(1);
-        translateAnimation.setRepeatMode(Animation.REVERSE);
-        translateAnimation.setDuration(300);
-        translateAnimation.setFillAfter(false);
+        translateAnimationX.setInterpolator(new CycleInterpolator(1f));
+        translateAnimationX.setRepeatCount(1);
+        translateAnimationX.setRepeatMode(Animation.REVERSE);
+        translateAnimationX.setDuration(300);
+        translateAnimationX.setFillAfter(false);
         //translateAnimation.start();
-        mRootView.startAnimation(translateAnimation);
+        TranslateAnimation translateAnimationY = new TranslateAnimation(
+                Animation.RELATIVE_TO_SELF, .02f, Animation.RELATIVE_TO_SELF, 0f,
+                Animation.RELATIVE_TO_SELF, 0f, Animation.RELATIVE_TO_SELF, 0f);
+        translateAnimationY.setInterpolator(new CycleInterpolator(1f));
+        translateAnimationY.setRepeatCount(1);
+        translateAnimationY.setRepeatMode(Animation.REVERSE);
+        translateAnimationY.setDuration(300);
+        translateAnimationY.setFillAfter(false);
+
+        animationSet.addAnimation(translateAnimationX);
+        animationSet.addAnimation(translateAnimationY);
+
+        mRootView.startAnimation(animationSet);
     }
 
     public LayoutState getLayoutState() {
