@@ -814,13 +814,14 @@ public class Luban {
             return list;
         }
 
-        public static ImageItem get(String string) {
+        public static ImageItem get(String string /* path|thumbPath 格式*/) {
             ImageItem imageItem = new ImageItem();
             if (TextUtils.isEmpty(string)) {
                 return imageItem;
             }
             String[] split = string.split("\\|");
             if (split.length != 2) {
+                imageItem.path = string;
                 return imageItem;
             }
             imageItem.path = split[0];

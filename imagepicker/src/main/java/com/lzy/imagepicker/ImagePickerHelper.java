@@ -161,6 +161,11 @@ public class ImagePickerHelper {
         ImagePicker.getInstance().clearSelectedImages();
     }
 
+    public static void addSelectedPath(List<ImageItem> imageItems) {
+        ArrayList<ImageItem> selectedImages = ImagePicker.getInstance().getSelectedImages();
+        selectedImages.addAll(imageItems);
+    }
+
     /**
      * 取消选中状态中的图片
      *
