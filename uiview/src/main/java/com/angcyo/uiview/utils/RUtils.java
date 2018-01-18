@@ -1530,6 +1530,10 @@ public class RUtils {
         return dateFormat.format(new Date(date));
     }
 
+    public static String getDataTime(String pattern) {
+        return getDataTime(pattern, System.currentTimeMillis());
+    }
+
     public static String getDataTime() {
         return getDataTime("yyyy-MM-dd HH:mm", System.currentTimeMillis());
     }
@@ -1858,7 +1862,11 @@ public class RUtils {
     }
 
     public static String getShotTimeString(long milliseconds) {
-        return TimeUtil.getTimeShowString(milliseconds, true);
+        return getShotTimeString(milliseconds, true);
+    }
+
+    public static String getShotTimeString(long milliseconds, boolean abbreviate) {
+        return TimeUtil.getTimeShowString(milliseconds, abbreviate);
     }
 
     /**

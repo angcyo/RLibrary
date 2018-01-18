@@ -37,6 +37,25 @@ public class Root {
         return externalStorageDirectory();
     }
 
+    /**
+     * @param type The type of storage directory to return. Should be one of
+     *             {@link Environment#DIRECTORY_MUSIC}, {@link Environment#DIRECTORY_PODCASTS},
+     *             {@link Environment#DIRECTORY_RINGTONES}, {@link Environment#DIRECTORY_ALARMS},
+     *             {@link Environment#DIRECTORY_NOTIFICATIONS}, {@link Environment#DIRECTORY_PICTURES},
+     *             {@link Environment#DIRECTORY_MOVIES}, {@link Environment#DIRECTORY_DOWNLOADS},
+     *             {@link Environment#DIRECTORY_DCIM}, or {@link Environment#DIRECTORY_DOCUMENTS}. May not be null.
+     */
+    public static String getExternalStoragePublicDirectory(String type) {
+        return Environment.getExternalStoragePublicDirectory(type).getAbsolutePath();
+    }
+
+    /**
+     * 获取录屏路径
+     */
+    public static String getScreenshotsDirectory() {
+        return Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES).getAbsolutePath() + "/Screenshots";
+    }
+
     public static String getAppExternalFolder(String folder) {
         if (folder == null) {
             folder = "";
