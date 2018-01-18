@@ -293,7 +293,7 @@ public class RTextView extends AppCompatTextView {
 
         if (scrollType == SCROLL_TYPE_DEFAULT) {
             if (scrollCurX >= (getMeasuredWidth() + textWidth + scrollTextCircleOffset)) {
-                scrollCurX = 0;
+                scrollCurX = getMeasuredWidth();
             }
         } else if (scrollType == SCROLL_TYPE_START) {
             if (scrollCurX >= textWidth + scrollTextCircleOffset) {
