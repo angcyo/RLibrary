@@ -37,6 +37,7 @@ class RecentlyPhotoImageView(context: Context, attributeSet: AttributeSet? = nul
     }
 
     fun addPhotoList(photos: List<String>) {
+        removeCallbacks(switchRunnable)
         photoList.clear()
         photoList.addAll(photos)
         photoIndex = 0
@@ -49,6 +50,7 @@ class RecentlyPhotoImageView(context: Context, attributeSet: AttributeSet? = nul
                 measuredWidth != 0 &&
                 photoList.isNotEmpty()) {
             url = photoList[photoIndex]
+            removeCallbacks(switchRunnable)
             postDelayed(switchRunnable, switchInterval)
         } else {
             removeCallbacks(switchRunnable)

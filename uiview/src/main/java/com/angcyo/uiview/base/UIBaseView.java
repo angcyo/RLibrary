@@ -740,10 +740,6 @@ public abstract class UIBaseView extends UIIViewImpl {
         return new ColorDrawable(getDefaultBackgroundColor());
     }
 
-    public void updateSkin() {
-        onSkinChanged(SkinHelper.getSkin());
-    }
-
     @Override
     public void onSkinChanged(ISkin skin) {
         super.onSkinChanged(skin);

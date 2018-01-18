@@ -139,6 +139,14 @@ public class RCheckGroup extends LinearLayout implements View.OnClickListener {
         mCheckChangedListener = checkChangedListener;
     }
 
+    public OnCheckChangedListener getCheckChangedListener() {
+        return mCheckChangedListener;
+    }
+
+    public void setCheckChangedListener(OnCheckChangedListener checkChangedListener) {
+        mCheckChangedListener = checkChangedListener;
+    }
+
     @Override
     public void onClick(View v) {
         View oldView = this.checkView;
@@ -166,7 +174,7 @@ public class RCheckGroup extends LinearLayout implements View.OnClickListener {
         /**
          * 其他按钮选中
          */
-        void onChecked(View fromm, View to);
+        void onChecked(View from, View to);
 
         /**
          * 相同按钮重复选中

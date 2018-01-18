@@ -86,6 +86,10 @@ public class RTextView extends AppCompatTextView {
      * 滚动步长
      */
     int scrollStep = 2;
+    /**
+     * 暂停滚动
+     */
+    boolean pauseScroll = false;
     private Drawable mBackgroundDrawable;
     private CharSequence mRawText;
     private int mPaddingLeft;
@@ -297,7 +301,9 @@ public class RTextView extends AppCompatTextView {
             }
         }
 
-        postInvalidateOnAnimation();
+        if (getVisibility() == View.VISIBLE && !pauseScroll) {
+            postInvalidateOnAnimation();
+        }
         //canvas.drawText(text, );
         //canvas.translate(-100, 0);
         //super.onDraw(canvas);
@@ -864,5 +870,13 @@ public class RTextView extends AppCompatTextView {
 
     public void setTipTextLeftOffset(int tipTextLeftOffset) {
         this.tipTextLeftOffset = tipTextLeftOffset;
+    }
+
+    public boolean isPauseScroll() {
+        return pauseScroll;
+    }
+
+    public void setPauseScroll(boolean pauseScroll) {
+        this.pauseScroll = pauseScroll;
     }
 }

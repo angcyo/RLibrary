@@ -121,6 +121,10 @@ public class ImageDataSource implements LoaderManager.LoaderCallbacks<Cursor> {
      * 查询5个小时之内的图片信息, 用来实现, 类似QQ的你有新照片提醒 (主线程执行, 速度很快)
      */
     public static ArrayList<ImageItem> queryRecentlyPhoto(ContentResolver contentResolver) {
+        return queryRecentlyPhoto(contentResolver, System.currentTimeMillis() / 1000L - 5 * 60 * 60);
+    }
+
+    public static ArrayList<ImageItem> queryRecentlyPhoto(ContentResolver contentResolver, long recentlyTime /*最近多长时间的照片, 秒*/) {
         final String[] IMAGE_PROJECTION = {
                 MediaStore.Images.Media.DISPLAY_NAME,
                 MediaStore.Images.Media.DATA,
@@ -131,7 +135,7 @@ public class ImageDataSource implements LoaderManager.LoaderCallbacks<Cursor> {
                 MediaStore.Images.Media.DATE_ADDED};
 
         Cursor query = contentResolver.query(MediaStore.Images.Media.EXTERNAL_CONTENT_URI,
-                IMAGE_PROJECTION, IMAGE_PROJECTION[6] + ">" + (System.currentTimeMillis() / 1000L - 5 * 60 * 60),
+                IMAGE_PROJECTION, IMAGE_PROJECTION[6] + ">" + recentlyTime,
                 null, IMAGE_PROJECTION[6] + " DESC" /*按照时间降序*/);
         ArrayList<ImageItem> allImages = new ArrayList<>();
         if (query != null) {

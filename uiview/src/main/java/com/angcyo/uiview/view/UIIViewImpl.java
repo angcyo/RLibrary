@@ -863,6 +863,10 @@ public abstract class UIIViewImpl implements IView {
         return false;
     }
 
+    public void updateSkin() {
+        onSkinChanged(SkinHelper.getSkin());
+    }
+
     @Override
     public void onSkinChanged(ISkin skin) {
         L.v(this.getClass().getSimpleName(), "onSkinChanged: " + skin.skinName());
