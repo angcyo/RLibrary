@@ -972,21 +972,21 @@ public abstract class UIBaseView extends UIIViewImpl {
         AnimationSet animationSet = new AnimationSet(true);
 
         TranslateAnimation translateAnimationX = new TranslateAnimation(
-                Animation.RELATIVE_TO_SELF, 0f, Animation.RELATIVE_TO_SELF, .02f,
+                Animation.RELATIVE_TO_SELF, -.02f, Animation.RELATIVE_TO_SELF, .02f,
                 Animation.RELATIVE_TO_SELF, 0f, Animation.RELATIVE_TO_SELF, 0f);
         translateAnimationX.setInterpolator(new CycleInterpolator(1f));
-        translateAnimationX.setRepeatCount(1);
+        translateAnimationX.setRepeatCount(2);
         translateAnimationX.setRepeatMode(Animation.REVERSE);
-        translateAnimationX.setDuration(300);
+        translateAnimationX.setDuration(200);
         translateAnimationX.setFillAfter(false);
         //translateAnimation.start();
         TranslateAnimation translateAnimationY = new TranslateAnimation(
-                Animation.RELATIVE_TO_SELF, .02f, Animation.RELATIVE_TO_SELF, 0f,
-                Animation.RELATIVE_TO_SELF, 0f, Animation.RELATIVE_TO_SELF, 0f);
+                Animation.RELATIVE_TO_SELF, 0f, Animation.RELATIVE_TO_SELF, 0f,
+                Animation.RELATIVE_TO_SELF, .02f, Animation.RELATIVE_TO_SELF, -.02f);
         translateAnimationY.setInterpolator(new CycleInterpolator(1f));
-        translateAnimationY.setRepeatCount(1);
+        translateAnimationY.setRepeatCount(2);
         translateAnimationY.setRepeatMode(Animation.REVERSE);
-        translateAnimationY.setDuration(300);
+        translateAnimationY.setDuration(200);
         translateAnimationY.setFillAfter(false);
 
         animationSet.addAnimation(translateAnimationX);
