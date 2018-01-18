@@ -114,15 +114,17 @@ open class ClipLayout(context: Context, attributeSet: AttributeSet? = null) : Fr
                     (measuredWidth - paddingRight).toFloat(), (measuredHeight - paddingBottom).toFloat())
         }
         rBackgroundDrawable?.setBounds(0, 0, measuredWidth, measuredHeight)
+
+        if (guidMode) {
+            guidBitmap?.recycle()
+            guidBitmap = Bitmap.createBitmap(measuredWidth, measuredHeight, Bitmap.Config.ARGB_8888)
+            guidCanvas = Canvas(guidBitmap)
+        }
     }
 
-    private val guidBitmap by lazy {
-        Bitmap.createBitmap(measuredWidth, measuredHeight, Bitmap.Config.ARGB_8888)
-    }
+    private var guidBitmap: Bitmap? = null
 
-    private val guidCanvas by lazy {
-        Canvas(guidBitmap)
-    }
+    private var guidCanvas: Canvas? = null
 
     var guidMaskColor = Color.parseColor("#40000000")
     var guidColor = Color.TRANSPARENT
@@ -131,10 +133,10 @@ open class ClipLayout(context: Context, attributeSet: AttributeSet? = null) : Fr
         if (guidMode) {
             paint.xfermode = null
             paint.color = guidMaskColor
-            guidCanvas.drawRect(0f, 0f, measuredWidth.toFloat(), measuredHeight.toFloat(), paint)
+            guidCanvas?.drawRect(0f, 0f, measuredWidth.toFloat(), measuredHeight.toFloat(), paint)
             paint.xfermode = PorterDuffXfermode(PorterDuff.Mode.SRC_OUT)
             paint.color = guidColor
-            guidCanvas.drawCircle(cx, cy, clipRadius, paint)
+            guidCanvas?.drawCircle(cx, cy, clipRadius, paint)
             paint.xfermode = null
 
             canvas.drawBitmap(guidBitmap, 0f, 0f, null)
@@ -289,7 +291,7 @@ open class ClipLayout(context: Context, attributeSet: AttributeSet? = null) : Fr
 
     override fun onDetachedFromWindow() {
         super.onDetachedFromWindow()
-        guidBitmap.recycle()
+        guidBitmap?.recycle()
     }
 
     override fun onMeasure(widthMeasureSpec: Int, heightMeasureSpec: Int) {
