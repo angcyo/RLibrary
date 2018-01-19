@@ -1030,7 +1030,7 @@ public class RefreshLayout extends ViewGroup {
     }
 
     /**
-     * 取消时间监听, 取消刷新视图
+     * 取消事件监听, 取消刷新视图
      */
     public void setNoNotifyPlaceholder() {
         setPlaceholderView();

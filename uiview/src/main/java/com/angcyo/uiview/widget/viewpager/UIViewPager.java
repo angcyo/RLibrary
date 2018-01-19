@@ -17,7 +17,6 @@ import com.angcyo.uiview.container.UILayoutImpl;
 import com.angcyo.uiview.design.StickLayout;
 import com.angcyo.uiview.skin.SkinHelper;
 import com.angcyo.uiview.utils.Reflect;
-import com.angcyo.uiview.utils.SafeRunnable;
 import com.angcyo.uiview.utils.UI;
 import com.angcyo.uiview.view.UIIViewImpl;
 
@@ -33,17 +32,14 @@ public class UIViewPager extends ViewPager implements Runnable, StickLayout.CanS
      * 是否要拦截事件
      */
     public static boolean interceptTouch = true;
-
+    boolean isOnAttachedToWindow = false;
     /**
      * 迟钝处理touch事件
      */
     private boolean slowTouch = false;
-
     private int lastItem = -1;
-
     private int defaultShowItem = 0;
     private float downY, downX;
-
     /**
      * adapter中的ILayout, 属于哪个IView
      */
@@ -208,12 +204,12 @@ public class UIViewPager extends ViewPager implements Runnable, StickLayout.CanS
 //                        mParentUIView.setChildILayout(null);
 //                    }
                     if (available instanceof OnPagerShowListener) {
-                        post(new SafeRunnable() {
-                            @Override
-                            public void onRun() {
-                                ((OnPagerShowListener) available).onHideInPager(UIViewPager.this);
-                            }
-                        });
+//                        post(new SafeRunnable() {
+//                            @Override
+//                            public void onRun() {
+                        ((OnPagerShowListener) available).onHideInPager(UIViewPager.this);
+//                            }
+//                        });
                     }
                 }
             } else if (currentItem == position) {
@@ -223,12 +219,12 @@ public class UIViewPager extends ViewPager implements Runnable, StickLayout.CanS
                     }
 
                     if (available instanceof OnPagerShowListener) {
-                        post(new SafeRunnable() {
-                            @Override
-                            public void onRun() {
-                                ((OnPagerShowListener) available).onShowInPager(UIViewPager.this);
-                            }
-                        });
+//                        post(new SafeRunnable() {
+//                        @Override
+//                            public void onRun() {
+                        ((OnPagerShowListener) available).onShowInPager(UIViewPager.this);
+//                            }
+//                        });
                     }
                 }
             }
@@ -236,9 +232,6 @@ public class UIViewPager extends ViewPager implements Runnable, StickLayout.CanS
 
         lastItem = currentItem;
     }
-
-
-    boolean isOnAttachedToWindow = false;
 
     @Override
     protected void onAttachedToWindow() {

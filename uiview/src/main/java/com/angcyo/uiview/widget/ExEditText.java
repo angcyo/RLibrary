@@ -421,6 +421,7 @@ public class ExEditText extends AppCompatEditText {
         }
     }
 
+    /***/
     public void setInputText(String text) {
         setText(text);
         setSelection(TextUtils.isEmpty(text) ? 0 : text.length());
@@ -901,25 +902,29 @@ public class ExEditText extends AppCompatEditText {
      * 在指定的位置插入text
      */
     public void insert(int where, CharSequence text) {
-        if (text == null) {
-            return;
-        }
-        where = Math.max(where, 0);
+        try {
+            if (text == null) {
+                return;
+            }
+            where = Math.max(where, 0);
 
-        int start = Math.max(getSelectionStart(), 0);
-        int end = Math.max(getSelectionEnd(), 0);
-        int length = text.length();
+            int start = Math.max(getSelectionStart(), 0);
+            int end = Math.max(getSelectionEnd(), 0);
+            int length = text.length();
 
-        if (length < 0) {
-            return;
-        }
+            if (length < 0) {
+                return;
+            }
 
-        if (start == end) {
-            getText().insert(where, text);
-            setSelection(where + length, where + length);
-        } else {
-            getText().replace(start, end, text, 0, length);
-            setSelection(start + length, start + length);
+            if (start == end) {
+                getText().insert(where, text);
+                setSelection(where + length, where + length);
+            } else {
+                getText().replace(start, end, text, 0, length);
+                setSelection(start + length, start + length);
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
         }
     }
 

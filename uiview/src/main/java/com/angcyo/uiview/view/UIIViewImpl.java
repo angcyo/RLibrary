@@ -1022,7 +1022,7 @@ public abstract class UIIViewImpl implements IView {
     }
 
     /**
-     * 设置窗口键盘弹出模式
+     * 设置窗口键盘弹出模式 (默认是RESIZE, ADJUST)
      */
     public void adjustPan(boolean adjust) {
         if (adjust) {
@@ -1192,6 +1192,17 @@ public abstract class UIIViewImpl implements IView {
     public void interceptTouchEvent(boolean intercept) {
         if (mParentILayout instanceof UILayoutImpl) {
             ((UILayoutImpl) mParentILayout).setInterceptTouchEvent(intercept);
+        }
+    }
+
+    /**
+     * 获取音频焦点
+     */
+    public void audioFocus(boolean focus) {
+        if (focus) {
+            RUtils.requestAudioFocus(mActivity);
+        } else {
+            RUtils.abandonAudioFocus(mActivity);
         }
     }
 }

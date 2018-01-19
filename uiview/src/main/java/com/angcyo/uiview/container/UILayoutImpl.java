@@ -2147,11 +2147,13 @@ public class UILayoutImpl extends SwipeBackLayout implements ILayout<UIParam>, U
                 //最后一个界面
                 ViewPattern viewPatternByView = findViewPatternByView(childAt);
                 UIBaseView.LayoutState layoutState = UIBaseView.LayoutState.NONE;
-                if (viewPatternByView.mIView instanceof UIBaseView) {
-                    layoutState = ((UIBaseView) viewPatternByView.mIView).getLayoutState();
+                if (viewPatternByView.mIView != null) {
+                    if (viewPatternByView.mIView instanceof UIBaseView) {
+                        layoutState = ((UIBaseView) viewPatternByView.mIView).getLayoutState();
+                    }
+                    IView.IViewShowState viewShowState = viewPatternByView.mIView.getIViewShowState();
+                    viewPatternByView.mIView.onIViewLayout(viewPatternByView, layoutState, viewShowState, childAt);
                 }
-                IView.IViewShowState viewShowState = viewPatternByView.mIView.getIViewShowState();
-                viewPatternByView.mIView.onIViewLayout(viewPatternByView, layoutState, viewShowState, childAt);
 
 //                if (showDebugInfo) {
 //                    L.i("布局->" + viewPatternByView.mIView + " "
