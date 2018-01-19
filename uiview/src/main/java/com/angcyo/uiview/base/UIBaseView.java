@@ -970,9 +970,23 @@ public abstract class UIBaseView extends UIIViewImpl {
         }
 
         AnimationSet animationSet = new AnimationSet(true);
+        float fx, tx;
+        float fy, ty;
+
+        long millis = System.currentTimeMillis();
+        if (millis / 1000 % 2 == 0) {
+            fx = -.02f;
+            tx = .02f;
+
+        } else {
+            fx = .02f;
+            tx = -.02f;
+        }
+        fy = tx;
+        ty = fx;
 
         TranslateAnimation translateAnimationX = new TranslateAnimation(
-                Animation.RELATIVE_TO_SELF, -.02f, Animation.RELATIVE_TO_SELF, .02f,
+                Animation.RELATIVE_TO_SELF, fx, Animation.RELATIVE_TO_SELF, tx,
                 Animation.RELATIVE_TO_SELF, 0f, Animation.RELATIVE_TO_SELF, 0f);
         translateAnimationX.setInterpolator(new CycleInterpolator(1f));
         translateAnimationX.setRepeatCount(2);
@@ -982,12 +996,14 @@ public abstract class UIBaseView extends UIIViewImpl {
         //translateAnimation.start();
         TranslateAnimation translateAnimationY = new TranslateAnimation(
                 Animation.RELATIVE_TO_SELF, 0f, Animation.RELATIVE_TO_SELF, 0f,
-                Animation.RELATIVE_TO_SELF, .02f, Animation.RELATIVE_TO_SELF, -.02f);
+                Animation.RELATIVE_TO_SELF, fy, Animation.RELATIVE_TO_SELF, ty);
         translateAnimationY.setInterpolator(new CycleInterpolator(1f));
         translateAnimationY.setRepeatCount(2);
         translateAnimationY.setRepeatMode(Animation.REVERSE);
         translateAnimationY.setDuration(160);
         translateAnimationY.setFillAfter(false);
+
+        //L.e("call: shakeView([])-> fx:" + fx + " fy:" + fy + " tx:" + tx + " ty:" + ty);
 
         animationSet.addAnimation(translateAnimationX);
         animationSet.addAnimation(translateAnimationY);
