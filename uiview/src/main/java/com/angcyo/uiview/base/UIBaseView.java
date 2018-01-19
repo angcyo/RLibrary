@@ -977,7 +977,7 @@ public abstract class UIBaseView extends UIIViewImpl {
         translateAnimationX.setInterpolator(new CycleInterpolator(1f));
         translateAnimationX.setRepeatCount(2);
         translateAnimationX.setRepeatMode(Animation.REVERSE);
-        translateAnimationX.setDuration(200);
+        translateAnimationX.setDuration(160);
         translateAnimationX.setFillAfter(false);
         //translateAnimation.start();
         TranslateAnimation translateAnimationY = new TranslateAnimation(
@@ -986,7 +986,7 @@ public abstract class UIBaseView extends UIIViewImpl {
         translateAnimationY.setInterpolator(new CycleInterpolator(1f));
         translateAnimationY.setRepeatCount(2);
         translateAnimationY.setRepeatMode(Animation.REVERSE);
-        translateAnimationY.setDuration(200);
+        translateAnimationY.setDuration(160);
         translateAnimationY.setFillAfter(false);
 
         animationSet.addAnimation(translateAnimationX);
