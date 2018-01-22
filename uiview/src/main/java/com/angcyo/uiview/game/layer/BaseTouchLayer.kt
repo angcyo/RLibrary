@@ -71,6 +71,11 @@ abstract class BaseTouchLayer : BaseFrameLayer() {
     /*开始绘制的时间, 游戏开始的时间*/
     private var startDrawTime = 0L
 
+    /*在那个位置按下了*/
+    protected val touchPointF: PointF by lazy {
+        PointF()
+    }
+
     override var pauseDrawFrame: Boolean = true
         set(value) {
             field = value
@@ -158,6 +163,8 @@ abstract class BaseTouchLayer : BaseFrameLayer() {
     }
 
     override fun onTouchEvent(event: MotionEvent, point: PointF): Boolean {
+        touchPointF.set(point)
+
         if (!checkTouchEvent) {
             return super.onTouchEvent(event, point)
         }

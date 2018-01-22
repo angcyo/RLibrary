@@ -19,6 +19,7 @@ import android.content.res.Resources;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
+import android.graphics.Color;
 import android.graphics.Matrix;
 import android.graphics.Paint;
 import android.graphics.Point;
@@ -1878,6 +1879,31 @@ public class RUtils {
         long time = Long.parseLong(retriever.extractMetadata(MediaMetadataRetriever.METADATA_KEY_DURATION));
         retriever.release();
         return time;
+    }
+
+    public static int randomColor(Random random) {
+        return randomColor(random, 120, 250);
+    }
+
+    /**
+     * 随机颜色, 设置一个最小值, 设置一个最大值, 第三个值在这2者之间随机改变
+     */
+    public static int randomColor(Random random, int minValue, int maxValue) {
+        int a = minValue + random.nextInt(maxValue - minValue);
+        int b = minValue;
+        int c = maxValue;
+        List<Integer> list1 = new ArrayList<>();
+        List<Integer> list2 = new ArrayList<>();
+        list1.add(a);
+        list1.add(b);
+        list1.add(c);
+
+        while (list2.size() != 3) {
+            int i = random.nextInt(list1.size());
+            list2.add(list1.remove(i));
+        }
+
+        return Color.rgb(list2.get(0), list2.get(1), list2.get(2));
     }
 
     public enum ImageType {

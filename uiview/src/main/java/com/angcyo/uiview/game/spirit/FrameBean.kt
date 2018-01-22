@@ -2,7 +2,6 @@ package com.angcyo.uiview.game.spirit
 
 import android.graphics.*
 import android.graphics.drawable.Drawable
-import com.angcyo.library.utils.L
 import com.angcyo.uiview.kotlin.getBoundsWith
 import com.angcyo.uiview.kotlin.scale
 
@@ -60,7 +59,7 @@ open class FrameBean(val drawableArray: Array<Drawable> /*需要播放的帧动�
 
     companion object {
         /**开启调试信息*/
-        var SHOW_DEBUG = L.LOG_DEBUG
+        var SHOW_DEBUG = false
     }
 
     init {
@@ -130,7 +129,9 @@ open class FrameBean(val drawableArray: Array<Drawable> /*需要播放的帧动�
      * 每一帧的bounds, 仅控制宽度和高度, x和y 请使用 {@link FrameBean#getDrawPointFun()}
      * */
     open fun getDrawDrawableBounds(drawable: Drawable): Rect {
-        return drawable.getBoundsWith(getDrawPointFun(), parentRect).apply { scale(scaleX, scaleY) }
+        return drawable.getBoundsWith(getDrawPointFun(), parentRect).apply {
+            scale(scaleX, scaleY)
+        }
     }
 
     /**帧的间隔绘制方法*/

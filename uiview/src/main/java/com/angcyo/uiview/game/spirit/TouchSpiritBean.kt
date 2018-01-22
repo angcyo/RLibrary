@@ -6,6 +6,7 @@ import android.graphics.Point
 import android.graphics.Rect
 import android.graphics.drawable.Drawable
 import com.angcyo.uiview.helper.BezierHelper
+import com.angcyo.uiview.kotlin.rotateTo
 import com.angcyo.uiview.kotlin.scale
 import com.angcyo.uiview.kotlin.scaleTo
 
@@ -25,6 +26,20 @@ open class TouchSpiritBean(drawableArray: Array<Drawable>) : FrameBean(drawableA
     private val spiritDrawRect = Rect()
     /**未缩放变化的坐标位置*/
     private val spiritRect = Rect()
+
+    /**旋转缩放之后的矩形*/
+    private val spiritRotateRect = Rect()
+        get() {
+            field.set(spiritDrawRect)
+            field.rotateTo(field, rotateDegrees)
+            field.inset(-touchOffsetDx, -touchOffsetDy)
+            return field
+        }
+
+    /**判断点击事件时, 需要放大矩形的偏移量, 值越大矩形放大越大*/
+    var touchOffsetDx = 0
+    /**判断点击事件时, 需要放大矩形的偏移量, 值越大矩形放大越大*/
+    var touchOffsetDy = 0
 
     /**Y轴每次移动的步长 dp单位 可以单独控制某一个的下降速度*/
     var stepY = 4 //px
@@ -55,6 +70,8 @@ open class TouchSpiritBean(drawableArray: Array<Drawable>) : FrameBean(drawableA
     init {
         loopDrawFrame = true
         frameDrawIntervalTime = 100
+
+        //SHOW_DEBUG = L.LOG_DEBUG
     }
 
     open fun setRect(x: Int, y: Int, w: Int, h: Int) {
@@ -75,7 +92,8 @@ open class TouchSpiritBean(drawableArray: Array<Drawable>) : FrameBean(drawableA
         return spiritDrawRect.bottom
     }
 
-    open fun isIn(x: Int, y: Int) = spiritDrawRect.contains(x, y)
+    /**判断坐标点是否点中精灵*/
+    open fun isIn(x: Int, y: Int) = spiritRotateRect.contains(x, y)
 
     open fun getSpiritDrawRect() = spiritDrawRect
     open fun getSpiritRect() = spiritRect
@@ -119,7 +137,7 @@ open class TouchSpiritBean(drawableArray: Array<Drawable>) : FrameBean(drawableA
         (drawable.intrinsicHeight * density).toInt()
     }
 
-    /**用来更新精灵的参数, 返回true, 表示完全控制精灵*/
+    /**用来更新精灵的参数, 返回true, 表示完全控制精灵, 重写此方法自动控制精灵参数*/
     open fun onUpdateSpiritList() = false
 
     override fun draw(canvas: Canvas, gameStartTime: Long, lastRenderTime: Long, nowRenderTime: Long, onDrawEnd: (() -> Unit)?) {
@@ -128,6 +146,9 @@ open class TouchSpiritBean(drawableArray: Array<Drawable>) : FrameBean(drawableA
             canvas.save()
             debugPaint.color = Color.GREEN
             canvas.drawRect(spiritDrawRect, debugPaint)
+
+            debugPaint.color = Color.BLUE
+            canvas.drawRect(spiritRotateRect, debugPaint)
             canvas.restore()
         }
     }

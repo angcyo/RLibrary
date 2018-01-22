@@ -17,6 +17,8 @@ import com.angcyo.uiview.game.layer.BaseLayer
 import com.angcyo.uiview.kotlin.density
 import com.angcyo.uiview.resources.RAnimListener
 import com.angcyo.uiview.skin.SkinHelper
+import com.angcyo.uiview.utils.RUtils
+import java.util.*
 import java.util.concurrent.CopyOnWriteArrayList
 import java.util.concurrent.atomic.AtomicBoolean
 
@@ -52,6 +54,10 @@ class GameRenderView(context: Context, attributeSet: AttributeSet? = null) : Vie
 
     /**界面显示时, 是否开始渲染*/
     var autoStartRender = true
+
+    companion object {
+        var SHOW_DEBUG = L.LOG_DEBUG
+    }
 
     init {
         val array = context.obtainStyledAttributes(attributeSet, R.styleable.GameRenderView)
@@ -97,7 +103,9 @@ class GameRenderView(context: Context, attributeSet: AttributeSet? = null) : Vie
 
     /*多点控制*/
     private val pointList = SparseArray<PointF>()
-    private val deviation = 10
+    private val pointColorList = SparseArray<Int>()
+    /*触摸点偏差多少距离算点击事件*/
+    private val deviation = 10 * density
 
     override fun onTouchEvent(event: MotionEvent): Boolean {
         val actionIndex = event.actionIndex
@@ -111,9 +119,11 @@ class GameRenderView(context: Context, attributeSet: AttributeSet? = null) : Vie
                 if (maxTouchPoint > 0) {
                     if (pointList.size() < maxTouchPoint) {
                         pointList.put(id, PointF(eventX, eventY))
+                        pointColorList.put(id, RUtils.randomColor(random, 0, 255))
                     }
                 } else {
                     pointList.put(id, PointF(eventX, eventY))
+                    pointColorList.put(id, RUtils.randomColor(random, 0, 255))
                 }
             }
             MotionEvent.ACTION_UP, MotionEvent.ACTION_POINTER_UP -> {
@@ -129,6 +139,7 @@ class GameRenderView(context: Context, attributeSet: AttributeSet? = null) : Vie
                         }
                     }
                     pointList.remove(id)
+                    pointColorList.remove(id)
                 }
             }
         }
@@ -150,6 +161,10 @@ class GameRenderView(context: Context, attributeSet: AttributeSet? = null) : Vie
 
     private var lastRenderTime = 0L
     private var lastRenderTimeThread = 0L
+    protected val random: Random by lazy {
+        Random(System.nanoTime())
+    }
+
     override fun onDraw(canvas: Canvas) {
         super.onDraw(canvas)
 
@@ -163,8 +178,21 @@ class GameRenderView(context: Context, attributeSet: AttributeSet? = null) : Vie
             }
             lastRenderTime = nowTime
         }
+
+        if (SHOW_DEBUG) {
+            canvas.save()
+            for (i in 0 until pointList.size()) {
+                val pointF = pointList.get(pointList.keyAt(i))
+                fpsPaint.color = pointColorList.get(pointList.keyAt(i))
+                canvas.drawLine(0f, pointF.y, measuredWidth.toFloat(), pointF.y, fpsPaint)
+                canvas.drawLine(pointF.x, 0f, pointF.x, measuredHeight.toFloat(), fpsPaint)
+            }
+            canvas.restore()
+        }
+
         if (showFps && !isInEditMode) {
             val text = fpsText
+            fpsPaint.color = SkinHelper.getSkin().themeSubColor
             canvas.drawText(text, 10 * density, measuredHeight - 10 * density, fpsPaint)
         }
     }

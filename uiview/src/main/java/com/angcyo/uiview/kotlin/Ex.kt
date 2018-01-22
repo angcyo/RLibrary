@@ -98,7 +98,7 @@ public fun Rect.rotateTo(inRect: Rect, degrees: Float) {
     dw = nW.toInt() - this.width()
     dh = nH.toInt() - this.height()
 
-    inRect.set(this.left, this.top, this.right, this.bottom)
+    inRect.set(this)
     inRect.inset(-dw / 2, -dh / 2)
 }
 
@@ -108,7 +108,6 @@ public fun Rect.c(): Double {
     val c = Math.sqrt(Math.pow(this.width().toDouble(), 2.toDouble()) + Math.pow(this.height().toDouble(), 2.toDouble()))
     return c
 }
-
 
 public fun Rect.scaleTo(inRect: Rect /*用来接收最后结果的矩形*/, scaleX: Float, scaleY: Float) {
     var dw = 0
