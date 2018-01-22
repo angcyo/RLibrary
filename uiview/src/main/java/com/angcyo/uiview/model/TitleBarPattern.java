@@ -15,6 +15,7 @@ import android.widget.TextView;
 
 import com.angcyo.uiview.RApplication;
 import com.angcyo.uiview.container.UITitleBarContainer;
+import com.angcyo.uiview.rsen.RGestureDetector;
 import com.angcyo.uiview.widget.RTitleCenterLayout;
 
 import java.util.ArrayList;
@@ -114,6 +115,10 @@ public class TitleBarPattern {
      */
     public boolean showDarkLoading = false;
 
+    /**
+     * 双击标题的回调
+     */
+    public RGestureDetector.OnDoubleTapListener mOnTitleDoubleTapListener;
 
     private TitleBarPattern(String titleString) {
         mTitleString = titleString;
@@ -165,6 +170,11 @@ public class TitleBarPattern {
 
     public static TitleBarItem buildImage(@DrawableRes int icoRes, View.OnClickListener listener) {
         return new TitleBarItem(icoRes, listener);
+    }
+
+    public TitleBarPattern setOnTitleDoubleTapListener(RGestureDetector.OnDoubleTapListener onTitleDoubleTapListener) {
+        mOnTitleDoubleTapListener = onTitleDoubleTapListener;
+        return this;
     }
 
     public TitleBarPattern setTitleBarBGColor(@ColorInt int titleBarBGColor) {

@@ -113,6 +113,11 @@ public class UIBottomItemDialog extends UIItemDialog {
                 textView.setTextColor(getColor(R.color.base_text_color));
             }
             textView.setBackgroundResource(R.drawable.base_bg_selector);
+
+            if (mItemConfig != null) {
+                mItemConfig.onCreateItem(textView, i);
+            }
+
             mItemContentLayout.addView(textView,
                     new ViewGroup.LayoutParams(-1,
                             mActivity.getResources().getDimensionPixelSize(R.dimen.base_item_size)));

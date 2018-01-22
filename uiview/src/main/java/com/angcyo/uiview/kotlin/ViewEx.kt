@@ -21,6 +21,13 @@ public fun <V : View> View.v(id: Int): V? {
     return view as V?
 }
 
+public fun View.getDrawable(resId: Int): Drawable? {
+    if (resId == -1) {
+        return null
+    }
+    return ContextCompat.getDrawable(context, resId)
+}
+
 public val View.scaledDensity: Float
     get() = resources.displayMetrics.scaledDensity
 public val View.density: Float
@@ -79,13 +86,12 @@ public fun <T> T.textHeight(paint: Paint): Float = paint.descent() - paint.ascen
 public fun TextView.textHeight(): Float = paint.descent() - paint.ascent()
 
 /**文本宽度*/
-public fun View.textWidth(paint: Paint?, text: String?): Float = paint?.measureText(text ?: "") ?: 0F
+public fun View.textWidth(paint: Paint?, text: String?): Float = paint?.measureText(text ?: "")
+        ?: 0F
 
 public fun TextView.textWidth(text: String?): Float = paint.measureText(text ?: "")
 
 public fun View.getColor(id: Int): Int = ContextCompat.getColor(context, id)
-
-public fun View.getDrawable(id: Int): Drawable = ContextCompat.getDrawable(context, id)
 
 public fun View.getDimensionPixelOffset(id: Int): Int = resources.getDimensionPixelOffset(id)
 

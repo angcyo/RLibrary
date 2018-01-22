@@ -76,7 +76,7 @@ class BlockSeekBar(context: Context, attributeSet: AttributeSet? = null) : View(
         }
 
     init {
-        sliderDrawable = getDrawable(R.drawable.base_slider).apply {
+        sliderDrawable = getDrawable(R.drawable.base_slider)?.apply {
             setBounds(0, 0, intrinsicWidth, intrinsicHeight)
         }
 

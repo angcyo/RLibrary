@@ -23,7 +23,7 @@ import java.util.ArrayList;
 /**
  * Copyright (C) 2016,深圳市红鸟网络科技股份有限公司 All rights reserved.
  * 项目名称：
- * 类的描述：提供Item选择样式的对话框
+ * 类的描述：提供Item选择样式的对话框, 默认是IOS的底部弹窗样式, 窗口距离左右右边距, 文本居中. 取消按钮单独隔开.
  * 创建人员：Robi
  * 创建时间：2016/12/13 17:20
  * 修改人员：Robi
@@ -192,10 +192,10 @@ public class UIItemDialog extends UIIDialogImpl {
                     }
                 }
                 textView.setTextColor(SkinHelper.getSkin().getThemeSubColor());
+            }
 
-                if (mItemConfig != null) {
-                    mItemConfig.onCreateItem(textView);
-                }
+            if (mItemConfig != null) {
+                mItemConfig.onCreateItem(textView, i);
             }
         }
 
@@ -227,7 +227,7 @@ public class UIItemDialog extends UIIDialogImpl {
     }
 
     public interface ItemConfig {
-        void onCreateItem(TextView itemView);
+        void onCreateItem(TextView itemView, int position);
 
         void onLoadContent(UIItemDialog dialog, RBaseViewHolder viewHolder);
     }

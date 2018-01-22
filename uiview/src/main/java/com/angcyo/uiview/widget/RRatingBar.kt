@@ -20,10 +20,10 @@ import kotlin.reflect.KProperty
 class RRatingBar(context: Context, attributeSet: AttributeSet? = null) : View(context, attributeSet) {
 
     /*五角星 选中的 图案*/
-    var ratingSelectorDrawable by LayoutProperty(getDrawable(R.drawable.base_wujiaoxing_20))
+    var ratingSelectorDrawable by LayoutProperty(getDrawable(R.drawable.base_wujiaoxing_20)!!)
 
     /*五角星 未选中的 图案*/
-    var ratingNormalDrawable by LayoutProperty(getDrawable(R.drawable.base_wujiaoxing_20_n))
+    var ratingNormalDrawable by LayoutProperty(getDrawable(R.drawable.base_wujiaoxing_20_n)!!)
 
     /**星星的数量*/
     var ratingNum: Float by RefreshProperty(5f)

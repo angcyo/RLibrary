@@ -28,6 +28,7 @@ import android.util.TypedValue;
 import android.view.Gravity;
 import android.view.View;
 import android.view.inputmethod.EditorInfo;
+import android.widget.TextView;
 
 import com.angcyo.uiview.R;
 import com.angcyo.uiview.kotlin.ExKt;
@@ -213,6 +214,31 @@ public class RTextView extends AppCompatTextView {
         typedArray.recycle();
 
         initView();
+    }
+
+    public static void setLeftIco(TextView textView, @DrawableRes int leftIco) {
+        Drawable[] compoundDrawables = textView.getCompoundDrawables();
+        textView.setCompoundDrawablesWithIntrinsicBounds(ViewExKt.getDrawable(textView, leftIco),
+                compoundDrawables[1], compoundDrawables[2], compoundDrawables[3]);
+    }
+
+    public static void setRightIco(TextView textView, @DrawableRes int rightIco) {
+        Drawable[] compoundDrawables = textView.getCompoundDrawables();
+        textView.setCompoundDrawablesWithIntrinsicBounds(compoundDrawables[0],
+                compoundDrawables[1], ViewExKt.getDrawable(textView, rightIco), compoundDrawables[3]);
+    }
+
+    public static void setTopIco(TextView textView, @DrawableRes int topIco) {
+        Drawable[] compoundDrawables = textView.getCompoundDrawables();
+        textView.setCompoundDrawablesWithIntrinsicBounds(compoundDrawables[0], ViewExKt.getDrawable(textView, topIco),
+                compoundDrawables[2], compoundDrawables[3]);
+    }
+
+    public static void setBottomIco(TextView textView, @DrawableRes int bottomIco) {
+        Drawable[] compoundDrawables = textView.getCompoundDrawables();
+        textView.setCompoundDrawablesWithIntrinsicBounds(
+                compoundDrawables[0], compoundDrawables[1],
+                compoundDrawables[2], ViewExKt.getDrawable(textView, bottomIco));
     }
 
     public void setTextLeftDrawable(@DrawableRes int id) {
@@ -623,28 +649,19 @@ public class RTextView extends AppCompatTextView {
     }
 
     public void setLeftIco(@DrawableRes int leftIco) {
-        final Drawable[] compoundDrawables = getCompoundDrawables();
-        setCompoundDrawablesWithIntrinsicBounds(getDrawable(leftIco),
-                compoundDrawables[1], compoundDrawables[2], compoundDrawables[3]);
+        setLeftIco(this, leftIco);
     }
 
     public void setRightIco(@DrawableRes int rightIco) {
-        final Drawable[] compoundDrawables = getCompoundDrawables();
-        setCompoundDrawablesWithIntrinsicBounds(compoundDrawables[0],
-                compoundDrawables[1], getDrawable(rightIco), compoundDrawables[3]);
+        setRightIco(this, rightIco);
     }
 
     public void setTopIco(@DrawableRes int topIco) {
-        final Drawable[] compoundDrawables = getCompoundDrawables();
-        setCompoundDrawablesWithIntrinsicBounds(compoundDrawables[0], getDrawable(topIco),
-                compoundDrawables[2], compoundDrawables[3]);
+        setTopIco(this, topIco);
     }
 
     public void setBottomIco(@DrawableRes int bottomIco) {
-        final Drawable[] compoundDrawables = getCompoundDrawables();
-        setCompoundDrawablesWithIntrinsicBounds(
-                compoundDrawables[0], compoundDrawables[1],
-                compoundDrawables[2], getDrawable(bottomIco));
+        setBottomIco(this, bottomIco);
     }
 
     public void setLeftOffset(int leftOffset) {

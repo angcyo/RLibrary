@@ -31,6 +31,7 @@ import com.angcyo.uiview.kotlin.ViewExKt;
 import com.angcyo.uiview.model.TitleBarPattern;
 import com.angcyo.uiview.recycler.RBaseViewHolder;
 import com.angcyo.uiview.resources.ResUtil;
+import com.angcyo.uiview.rsen.RGestureDetector;
 import com.angcyo.uiview.skin.SkinHelper;
 import com.angcyo.uiview.widget.LoadingImageView;
 import com.angcyo.uiview.widget.RTextView;
@@ -61,33 +62,28 @@ public class UITitleBarContainer extends FrameLayout {
 
     protected ArrayList<View> mLeftViews = new ArrayList<>();
     protected ArrayList<View> mRightViews = new ArrayList<>();
+
     private int mStatusBarHeight;
     private boolean mLayoutFullscreen;
     private OnClickListener mOnBackListener;
     private Drawable mBackgroundDrawable;
-
     /**
      * 显示底部的横线
      */
     private boolean showBottomLine = false;
-
     /**
      * 底部横线的高度, 1px
      */
     private int bottomLineHeight = getContext().getResources().getDimensionPixelOffset(R.dimen.base_line);
-
     /**
      * 底部横线的颜色
      */
     private int bottomLineColor = ContextCompat.getColor(getContext(), R.color.default_base_line);
-
     private Paint mPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
 
     public UITitleBarContainer(Context context) {
         super(context);
     }
-
-    //----------------------------公共方法-----------------------------
 
     public UITitleBarContainer(Context context, AttributeSet attrs) {
         super(context, attrs);
@@ -106,9 +102,12 @@ public class UITitleBarContainer extends FrameLayout {
         typedArray.recycle();
     }
 
+    //----------------------------公共方法-----------------------------
+
     private static <T> T find(View view, int id) {
         return (T) view.findViewById(id);
     }
+
 
     public void onAttachToLayout(ILayout container) {
         mILayout = container;
@@ -268,6 +267,11 @@ public class UITitleBarContainer extends FrameLayout {
 
         if (mTitleBarPattern.titleHide) {
             mTitleView.setVisibility(GONE);
+        }
+
+        if (mTitleBarPattern.mOnTitleDoubleTapListener != null) {
+            mTitleView.setClickable(true);
+            RGestureDetector.onDoubleTap(mTitleView, mTitleBarPattern.mOnTitleDoubleTapListener);
         }
 
         if (!TextUtils.isEmpty(mTitleBarPattern.mTitleString) && mTitleBarPattern.titleAnim) {
