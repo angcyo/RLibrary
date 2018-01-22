@@ -18,6 +18,7 @@ import com.angcyo.uiview.kotlin.density
 import com.angcyo.uiview.resources.RAnimListener
 import com.angcyo.uiview.skin.SkinHelper
 import java.util.concurrent.CopyOnWriteArrayList
+import java.util.concurrent.atomic.AtomicBoolean
 
 /**
  * Copyright (C) 2016,深圳市红鸟网络科技股份有限公司 All rights reserved.
@@ -42,6 +43,12 @@ class GameRenderView(context: Context, attributeSet: AttributeSet? = null) : Vie
     /**是否在渲染中*/
     @Volatile
     var isGameRenderStart = false
+
+    /**暂停游戏渲染, 数据更新线程还在进行*/
+    var pauseGameRender: AtomicBoolean = AtomicBoolean(false)
+
+    /**暂停游戏数据更新线程*/
+    var pauseGameRenderThread: AtomicBoolean = AtomicBoolean(false)
 
     /**界面显示时, 是否开始渲染*/
     var autoStartRender = true
@@ -80,6 +87,12 @@ class GameRenderView(context: Context, attributeSet: AttributeSet? = null) : Vie
             layerList[i].onSizeChanged(w, h, oldw, oldh)
         }
         startRenderInner()
+    }
+
+    /**暂停渲染, 暂停数据线程*/
+    fun pauseGame() {
+        pauseGameRender.set(true)
+        pauseGameRenderThread.set(true)
     }
 
     /*多点控制*/
@@ -139,18 +152,21 @@ class GameRenderView(context: Context, attributeSet: AttributeSet? = null) : Vie
     private var lastRenderTimeThread = 0L
     override fun onDraw(canvas: Canvas) {
         super.onDraw(canvas)
-        val nowTime = time()
-        for (i in 0 until layerList.size) {
-            val layer = layerList[i]
-            if (layer.isRenderStart) {
-                layer.draw(canvas, gameRenderStartTime, lastRenderTime, nowTime)
+
+        if (!pauseGameRender.get()) {
+            val nowTime = time()
+            for (i in 0 until layerList.size) {
+                val layer = layerList[i]
+                if (layer.isRenderStart) {
+                    layer.draw(canvas, gameRenderStartTime, lastRenderTime, nowTime)
+                }
             }
+            lastRenderTime = nowTime
         }
         if (showFps && !isInEditMode) {
             val text = fpsText
             canvas.drawText(text, 10 * density, measuredHeight - 10 * density, fpsPaint)
         }
-        lastRenderTime = nowTime
     }
 
     private var fps = 0
@@ -267,16 +283,17 @@ class GameRenderView(context: Context, attributeSet: AttributeSet? = null) : Vie
             super.run()
             while (isGameRenderStart) {
                 try {
-                    val nowTime = time()
-                    for (i in 0 until layerList.size) {
-                        val layer = layerList[i]
-                        if (layer.isRenderStart) {
-                            layer.drawThread(gameRenderStartTime, lastRenderTimeThread, nowTime)
+                    if (!pauseGameRenderThread.get()) {
+                        val nowTime = time()
+                        for (i in 0 until layerList.size) {
+                            val layer = layerList[i]
+                            if (layer.isRenderStart) {
+                                layer.drawThread(gameRenderStartTime, lastRenderTimeThread, nowTime)
+                            }
                         }
+                        lastRenderTimeThread = nowTime
                     }
                     Thread.sleep(16) //60帧速率 回调
-
-                    lastRenderTimeThread = nowTime
                     //L.e("call: renderThread -> $id $name")
                 } catch (e: Exception) {
                     e.printStackTrace()

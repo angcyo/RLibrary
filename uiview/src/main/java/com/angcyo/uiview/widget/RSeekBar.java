@@ -370,7 +370,7 @@ public class RSeekBar extends View {
     }
 
     public interface OnProgressChangeListener {
-        void onProgress(int progress, boolean fromTouch);
+        void onProgress(int progress /*非百分比*/, boolean fromTouch /*是否是Touch事件产生的回调*/);
 
         void onStartTouch();
 

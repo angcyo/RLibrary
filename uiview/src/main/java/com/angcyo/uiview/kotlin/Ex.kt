@@ -53,6 +53,7 @@ public fun Int.maxValue(value: Int) = Math.min(value, this)
 
 public fun String.int() = if ((TextUtils.isEmpty(this) || "null".equals(this, true))) 0 else this.toInt()
 
+/**矩形缩放*/
 public fun Rect.scale(scaleX: Float, scaleY: Float) {
     var dw = 0
     var dh = 0
@@ -68,6 +69,46 @@ public fun Rect.scale(scaleX: Float, scaleY: Float) {
     }
     inset(-dw, -dh)
 }
+
+/**矩形旋转*/
+public fun Rect.rotateTo(inRect: Rect, degrees: Float) {
+    var dw = 0
+    var dh = 0
+
+    /*斜边长度*/
+    val c = c()
+
+    /*斜边与邻边的幅度*/
+    val aR = Math.asin(this.height().toDouble() / c /*弧度*/)
+
+    /*角度转弧度*/
+    val d = Math.toRadians(degrees.toDouble()) /*弧度*/
+
+    val nW1 = Math.abs(c / 2 * Math.cos(aR - d))
+    val nW2 = Math.abs(c / 2 * Math.cos(Math.PI - aR - d))
+
+    val nH1 = Math.abs(c / 2 * Math.sin(aR - d))
+    val nH2 = Math.abs(c / 2 * Math.sin(Math.PI - aR - d))
+
+    /*新的宽度*/
+    val nW = 2 * Math.max(nW1, nW2)
+    /*新的宽度*/
+    val nH = 2 * Math.max(nH1, nH2)
+
+    dw = nW.toInt() - this.width()
+    dh = nH.toInt() - this.height()
+
+    inRect.set(this.left, this.top, this.right, this.bottom)
+    inRect.inset(-dw / 2, -dh / 2)
+}
+
+/**矩形斜边长度*/
+public fun Rect.c(): Double {
+    /*斜边长度*/
+    val c = Math.sqrt(Math.pow(this.width().toDouble(), 2.toDouble()) + Math.pow(this.height().toDouble(), 2.toDouble()))
+    return c
+}
+
 
 public fun Rect.scaleTo(inRect: Rect /*用来接收最后结果的矩形*/, scaleX: Float, scaleY: Float) {
     var dw = 0

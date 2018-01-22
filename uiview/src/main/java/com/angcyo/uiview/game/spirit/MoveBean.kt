@@ -49,7 +49,6 @@ open class MoveBean(drawables: Array<Drawable>,
 
     override fun draw(canvas: Canvas, gameStartTime: Long, lastRenderTime: Long, nowRenderTime: Long, onDrawEnd: (() -> Unit)?) {
         val nowTime = System.currentTimeMillis()
-
         if (startDrawTime > 0L && (nowTime - startDrawTime) / 1000F > maxMoveTime) {
             if (isLoopMove) {
                 onLoopMove()
@@ -57,13 +56,6 @@ open class MoveBean(drawables: Array<Drawable>,
                 onDrawEnd?.invoke()
             }
         } else {
-            if (startDrawTime == 0L) {
-                startDrawTime = nowTime
-            }
-            val time = (nowTime - startDrawTime) / 1000F
-
-            drawPoint.set(x(time).toInt(), y(time).toInt())
-
             if (enableAlpha) {
                 val x1 = endPoint.x - startPoint.x
                 val x2 = drawPoint.x - startPoint.x
@@ -75,6 +67,16 @@ open class MoveBean(drawables: Array<Drawable>,
             super.draw(canvas, gameStartTime, lastRenderTime, nowRenderTime, onDrawEnd)
             //L.w("${drawDrawable.bounds}")
         }
+    }
+
+    override fun drawThread(gameStartTime: Long, lastRenderTimeThread: Long, nowRenderTime: Long) {
+        super.drawThread(gameStartTime, lastRenderTimeThread, nowRenderTime)
+        val nowTime = System.currentTimeMillis()
+        if (startDrawTime == 0L) {
+            startDrawTime = nowTime
+        }
+        val time = (nowTime - startDrawTime) / 1000F
+        drawPoint.set(x(time).toInt(), y(time).toInt())
     }
 
     open fun onLoopMove() {

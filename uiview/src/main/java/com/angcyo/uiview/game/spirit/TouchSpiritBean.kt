@@ -1,6 +1,7 @@
 package com.angcyo.uiview.game.spirit
 
 import android.graphics.Canvas
+import android.graphics.Color
 import android.graphics.Point
 import android.graphics.Rect
 import android.graphics.drawable.Drawable
@@ -120,4 +121,14 @@ open class TouchSpiritBean(drawableArray: Array<Drawable>) : FrameBean(drawableA
 
     /**用来更新精灵的参数, 返回true, 表示完全控制精灵*/
     open fun onUpdateSpiritList() = false
+
+    override fun draw(canvas: Canvas, gameStartTime: Long, lastRenderTime: Long, nowRenderTime: Long, onDrawEnd: (() -> Unit)?) {
+        super.draw(canvas, gameStartTime, lastRenderTime, nowRenderTime, onDrawEnd)
+        if (SHOW_DEBUG) {
+            canvas.save()
+            debugPaint.color = Color.GREEN
+            canvas.drawRect(spiritDrawRect, debugPaint)
+            canvas.restore()
+        }
+    }
 }

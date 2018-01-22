@@ -1,9 +1,8 @@
 package com.angcyo.uiview.game.spirit
 
-import android.graphics.Canvas
-import android.graphics.Point
-import android.graphics.Rect
+import android.graphics.*
 import android.graphics.drawable.Drawable
+import com.angcyo.library.utils.L
 import com.angcyo.uiview.kotlin.getBoundsWith
 import com.angcyo.uiview.kotlin.scale
 
@@ -24,7 +23,7 @@ open class FrameBean(val drawableArray: Array<Drawable> /*需要播放的帧动�
     /**是否循环播放*/
     var loopDrawFrame = true
 
-    /**X轴的旋转角度*/
+    /**X轴的旋转角度(非弧度)*/
     var rotateDegrees = 0f
 
     /**缩放比率*/
@@ -59,8 +58,21 @@ open class FrameBean(val drawableArray: Array<Drawable> /*需要播放的帧动�
             return drawableArray[frameIndex]
         }
 
+    companion object {
+        /**开启调试信息*/
+        var SHOW_DEBUG = L.LOG_DEBUG
+    }
+
     init {
         frameDrawIntervalTime = 160L
+    }
+
+    protected val debugPaint: Paint by lazy {
+        Paint(Paint.ANTI_ALIAS_FLAG).apply {
+            style = Paint.Style.STROKE
+            strokeWidth = 2 * density
+            color = Color.YELLOW
+        }
     }
 
     /**当前绘制的中心点坐标*/
@@ -100,6 +112,17 @@ open class FrameBean(val drawableArray: Array<Drawable> /*需要播放的帧动�
                 it.draw(canvas)
             }
             canvas.restore()
+        }
+
+        /*绘制调试信息*/
+        if (SHOW_DEBUG) {
+            //绘制矩形边界
+            if (frameIndex < frameSize) {
+                canvas.save()
+                debugPaint.color = Color.YELLOW
+                canvas.drawRect(getDrawDrawableBounds(drawDrawable), debugPaint)
+                canvas.restore()
+            }
         }
     }
 
