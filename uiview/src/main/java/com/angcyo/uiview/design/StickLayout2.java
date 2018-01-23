@@ -230,7 +230,7 @@ public class StickLayout2 extends RelativeLayout {
 
     int floatViewHeight() {
         if (mFloatView != null) {
-            mFloatView.getMeasuredHeight();
+            return mFloatView.getMeasuredHeight();
         }
         return 0;
     }
