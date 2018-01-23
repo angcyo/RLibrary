@@ -1909,12 +1909,16 @@ public class RUtils {
     /**
      * 根据包名 启动其他应用
      */
-    public static void startApp(String packageName) {
+    public static String startApp(String packageName) {
+        String error = "";
         try {
             CmdUtil.startApp(RApplication.getApp(), packageName);
         } catch (Exception e) {
             e.printStackTrace();
+            error = e.getMessage();
         }
+
+        return error;
     }
 
     public enum ImageType {

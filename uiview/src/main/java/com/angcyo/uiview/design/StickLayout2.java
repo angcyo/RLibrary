@@ -10,6 +10,7 @@ import android.view.GestureDetector;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewConfiguration;
+import android.view.ViewGroup;
 import android.widget.OverScroller;
 import android.widget.RelativeLayout;
 
@@ -23,7 +24,7 @@ import com.angcyo.uiview.utils.Reflect;
  * 布局规则
  * 1: 先布局 头部
  * 2: 内容部分
- * 3: 悬停布局
+ * 3: 悬停布局, 可以不需要
  */
 
 public class StickLayout2 extends RelativeLayout {
@@ -111,6 +112,36 @@ public class StickLayout2 extends RelativeLayout {
     }
 
     @Override
+    public void addView(View child, int index, ViewGroup.LayoutParams params) {
+        super.addView(child, index, params);
+
+        if (getChildCount() > 1) {
+            View scrollView = getChildAt(1);
+            if (scrollView instanceof StickLayout.CanScrollUpCallBack) {
+                mScrollTarget = (StickLayout.CanScrollUpCallBack) scrollView;
+            } else {
+                if (mScrollTarget == null) {
+                    mScrollTarget = new StickLayout.CanScrollUpCallBack() {
+                        @Override
+                        public boolean canChildScrollUp() {
+                            return false;
+                        }
+
+                        @Override
+                        public RecyclerView getRecyclerView() {
+                            return null;
+                        }
+                    };
+                }
+            }
+        }
+
+        if (getChildCount() > 2) {
+            mFloatView = getChildAt(2);
+        }
+    }
+
+    @Override
     public void computeScroll() {
         if (mOverScroller.computeScrollOffset()) {
             int currY = mOverScroller.getCurrY();
@@ -166,24 +197,6 @@ public class StickLayout2 extends RelativeLayout {
         int heightSize = MeasureSpec.getSize(heightMeasureSpec);
         View topView = getChildAt(0);
         View scrollView = getChildAt(1);
-        if (scrollView instanceof StickLayout.CanScrollUpCallBack) {
-            mScrollTarget = (StickLayout.CanScrollUpCallBack) scrollView;
-        } else {
-            if (mScrollTarget == null) {
-                mScrollTarget = new StickLayout.CanScrollUpCallBack() {
-                    @Override
-                    public boolean canChildScrollUp() {
-                        return false;
-                    }
-
-                    @Override
-                    public RecyclerView getRecyclerView() {
-                        return null;
-                    }
-                };
-            }
-        }
-        mFloatView = getChildAt(2);
 
         if (topView instanceof IWebView) {
             int webViewContentHeight = ((IWebView) topView).getWebViewContentHeight();
@@ -201,16 +214,25 @@ public class StickLayout2 extends RelativeLayout {
             measureChild(topView, widthMeasureSpec, MeasureSpec.makeMeasureSpec(heightSize, MeasureSpec.UNSPECIFIED));
         }
 
-        measureChild(mFloatView, widthMeasureSpec, heightMeasureSpec);
+        if (mFloatView != null) {
+            measureChild(mFloatView, widthMeasureSpec, heightMeasureSpec);
+        }
         measureChild(scrollView, widthMeasureSpec,
-                MeasureSpec.makeMeasureSpec(heightSize - mFloatView.getMeasuredHeight() - floatTopOffset, MeasureSpec.EXACTLY));
+                MeasureSpec.makeMeasureSpec(heightSize - floatViewHeight() - floatTopOffset, MeasureSpec.EXACTLY));
 
         floatTop = topView.getMeasuredHeight();
         maxScrollY = floatTop - floatTopOffset;
-        topHeight = floatTop + mFloatView.getMeasuredHeight();
+        topHeight = floatTop + floatViewHeight();
 
-        viewMaxHeight = floatTop + mFloatView.getMeasuredHeight() + scrollView.getMeasuredHeight();
+        viewMaxHeight = floatTop + floatViewHeight() + scrollView.getMeasuredHeight();
         setMeasuredDimension(widthMeasureSpec, heightMeasureSpec);
+    }
+
+    int floatViewHeight() {
+        if (mFloatView != null) {
+            mFloatView.getMeasuredHeight();
+        }
+        return 0;
     }
 
     @Override
@@ -221,8 +243,8 @@ public class StickLayout2 extends RelativeLayout {
         firstView.layout(0, 0, r, firstView.getMeasuredHeight());
 
         View lastView = getChildAt(1);
-        lastView.layout(0, firstView.getMeasuredHeight() + mFloatView.getMeasuredHeight(), r,
-                firstView.getMeasuredHeight() + mFloatView.getMeasuredHeight() + lastView.getMeasuredHeight());
+        lastView.layout(0, firstView.getMeasuredHeight() + floatViewHeight(), r,
+                firstView.getMeasuredHeight() + floatViewHeight() + lastView.getMeasuredHeight());
 
         if (mFloatView != null) {
             int scrollY = getScrollY();
@@ -444,7 +466,7 @@ public class StickLayout2 extends RelativeLayout {
         isFling = false;
 
         if (isFloat()) {
-            if (mFloatView.getMeasuredHeight() + floatTopOffset > downY) {
+            if (floatViewHeight() + floatTopOffset > downY) {
                 inTopTouch = true;
             } else {
                 inTopTouch = false;
@@ -523,6 +545,10 @@ public class StickLayout2 extends RelativeLayout {
 
     public void setOnScrollListener(StickLayout.OnScrollListener onScrollListener) {
         mOnScrollListener = onScrollListener;
+    }
+
+    public void setScrollTarget(StickLayout.CanScrollUpCallBack scrollTarget) {
+        mScrollTarget = scrollTarget;
     }
 
     @Override

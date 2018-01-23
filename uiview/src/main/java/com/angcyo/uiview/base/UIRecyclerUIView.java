@@ -69,10 +69,25 @@ public abstract class UIRecyclerUIView<H, T, F> extends UIContentView
      * 复写此方法, 重写根布局
      */
     protected void createRecyclerRootView(ContentLayout baseContentLayout, LayoutInflater inflater) {
-        mRefreshLayout = new RefreshLayout(mActivity);
+        int layoutId = getRecyclerRootLayoutId();
+        if (layoutId == -1) {
+            mRefreshLayout = new RefreshLayout(mActivity);
+            mRecyclerView = new RRecyclerView(mActivity);
+        } else {
+            View view = inflater.inflate(layoutId, baseContentLayout);
+            mRefreshLayout = view.findViewById(R.id.base_refresh_view);
+            mRecyclerView = view.findViewById(R.id.base_recycler_view);
+        }
+
         initRefreshLayout(mRefreshLayout, baseContentLayout);
-        mRecyclerView = new RRecyclerView(mActivity);
         initRecyclerView(mRecyclerView, baseContentLayout);
+    }
+
+    /**
+     * 返回自定义Layout的id, 请确保控件id R.id.base_refresh_view/R.id.base_recycler_view
+     */
+    protected int getRecyclerRootLayoutId() {
+        return R.layout.base_recycler_view_layout;
     }
 
     /**

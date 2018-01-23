@@ -26,6 +26,7 @@ import android.widget.OverScroller;
 
 import com.angcyo.library.utils.L;
 import com.angcyo.uiview.R;
+import com.angcyo.uiview.design.StickLayout;
 import com.angcyo.uiview.kotlin.ViewExKt;
 import com.angcyo.uiview.recycler.adapter.RBaseAdapter;
 import com.angcyo.uiview.recycler.recyclerview.adapters.AnimationAdapter;
@@ -46,7 +47,7 @@ import java.lang.reflect.Constructor;
  * 动画样式:https://github.com/wasabeef/recyclerview-animators
  * Created by angcyo on 16-03-01-001.
  */
-public class RRecyclerView extends RecyclerView {
+public class RRecyclerView extends RecyclerView implements StickLayout.CanScrollUpCallBack {
     public static final long AUTO_SCROLL_TIME = 1500;
 
     protected LayoutManager layoutManager;
@@ -853,6 +854,16 @@ public class RRecyclerView extends RecyclerView {
             }
         }
         return visible;
+    }
+
+    @Override
+    public boolean canChildScrollUp() {
+        return UI.canChildScrollUp(this);
+    }
+
+    @Override
+    public RecyclerView getRecyclerView() {
+        return this;
     }
 
     /**

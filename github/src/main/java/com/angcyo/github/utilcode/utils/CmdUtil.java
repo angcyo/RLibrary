@@ -542,10 +542,15 @@ public class CmdUtil {
         public String packageName = "";//包名
         public String processName = "";//进程名
 
-        public String appName;
-        public String versionName;
-        public int versionCode;
+        public String appName = "";
+        public String versionName = "";
+        public int versionCode = 0;
         public Drawable appIcon;
+
+        @Override
+        public boolean equals(Object o) {
+            return packageName.equalsIgnoreCase(((AppInfo) o).packageName);
+        }
     }
 
     public static class FileInfo {
