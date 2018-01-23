@@ -1865,7 +1865,7 @@ public class UILayoutImpl extends SwipeBackLayout implements ILayout<UIParam>, U
                     try {
                         removeView(view);
                     } catch (Exception e) {
-
+                        e.printStackTrace();
                     }
 
                     isFinishing = false;
@@ -1880,6 +1880,8 @@ public class UILayoutImpl extends SwipeBackLayout implements ILayout<UIParam>, U
                     ensureLastViewPattern();
 
                     onFinishIViewEnd(viewPattern);
+
+                    viewPattern.mIView.onViewUnload();
 
                     L.e("call: removeViewPattern()-> 关闭界面结束:" + viewPattern.mIView.getClass().getSimpleName());
                 } catch (Exception e) {

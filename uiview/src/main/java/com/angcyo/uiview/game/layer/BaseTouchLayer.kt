@@ -314,7 +314,7 @@ abstract class BaseTouchLayer : BaseFrameLayer() {
     }
 
     fun getDrawable(id: Int): Drawable {
-        return ContextCompat.getDrawable(gameRenderView.context, id)
+        return ContextCompat.getDrawable(gameRenderView.context, id)!!
     }
 
     /**添加新的精灵*/

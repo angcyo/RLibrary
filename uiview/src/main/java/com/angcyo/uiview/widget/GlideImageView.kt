@@ -249,8 +249,8 @@ open class GlideImageView(context: Context, attributeSet: AttributeSet? = null) 
             request.apply(requestOptions)
             if (animType == AnimType.TRANSITION) {
                 request.into(object : SimpleTarget<File>() {
-                    override fun onResourceReady(resource: File?, transition: Transition<in File>?) {
-                        if (resource != null && placeholderDrawable != null) {
+                    override fun onResourceReady(resource: File, transition: Transition<in File>?) {
+                        if (placeholderDrawable != null) {
                             setImageDrawable(placeholderDrawable!!, BitmapDrawable(resources, resource.absolutePath))
                         }
                     }
@@ -270,8 +270,8 @@ open class GlideImageView(context: Context, attributeSet: AttributeSet? = null) 
             request.apply(requestOptions)
             if (animType == AnimType.TRANSITION) {
                 request.into(object : SimpleTarget<GifDrawable>() {
-                    override fun onResourceReady(resource: GifDrawable?, transition: Transition<in GifDrawable>?) {
-                        if (resource != null && placeholderDrawable != null) {
+                    override fun onResourceReady(resource: GifDrawable, transition: Transition<in GifDrawable>?) {
+                        if (placeholderDrawable != null) {
                             setImageDrawable(placeholderDrawable!!, resource)
                             resource.start()
                         }
@@ -292,8 +292,8 @@ open class GlideImageView(context: Context, attributeSet: AttributeSet? = null) 
             request.apply(requestOptions)
             if (animType == AnimType.TRANSITION) {
                 request.into(object : SimpleTarget<Drawable>() {
-                    override fun onResourceReady(resource: Drawable?, transition: Transition<in Drawable>?) {
-                        if (resource != null && placeholderDrawable != null) {
+                    override fun onResourceReady(resource: Drawable, transition: Transition<in Drawable>?) {
+                        if (placeholderDrawable != null) {
                             setImageDrawable(placeholderDrawable!!, resource)
                         }
                     }
@@ -313,8 +313,8 @@ open class GlideImageView(context: Context, attributeSet: AttributeSet? = null) 
             request.apply(requestOptions)
             if (animType == AnimType.TRANSITION) {
                 request.into(object : SimpleTarget<Bitmap>() {
-                    override fun onResourceReady(resource: Bitmap?, transition: Transition<in Bitmap>?) {
-                        if (resource != null && placeholderDrawable != null) {
+                    override fun onResourceReady(resource: Bitmap, transition: Transition<in Bitmap>?) {
+                        if (placeholderDrawable != null) {
                             setImageDrawable(placeholderDrawable!!, BitmapDrawable(resources, resource))
                         }
                     }
@@ -420,8 +420,8 @@ open class GlideImageView(context: Context, attributeSet: AttributeSet? = null) 
         intoConfig {
             request.apply(defaultConfig(true))
             request.into(object : SimpleTarget<File>() {
-                override fun onResourceReady(resource: File?, transition: Transition<in File>?) {
-                    resource?.let {
+                override fun onResourceReady(resource: File, transition: Transition<in File>?) {
+                    resource.let {
                         try {
                             L.e("call: 加载Gif 本地地址 -> ${resource.absolutePath}")
                             val gifDrawable = GifDrawableBuilder().from(resource).build()
@@ -558,8 +558,8 @@ open class GlideImageView(context: Context, attributeSet: AttributeSet? = null) 
         intoConfig {
             request.apply(defaultConfig(true))
             request.into(object : SimpleTarget<File>() {
-                override fun onResourceReady(resource: File?, transition: Transition<in File>?) {
-                    resource?.let {
+                override fun onResourceReady(resource: File, transition: Transition<in File>?) {
+                    resource.let {
                         try {
                             //L.i("call: 加载Gif 本地地址 -> ${resource.absolutePath}")
                             val gifDrawable = GifDrawableBuilder().from(resource).build()

@@ -79,6 +79,11 @@ public interface IView {
     void onViewUnload();
 
     /**
+     * 当有些界面需要释放很多资源时, 为了界面流畅, 请在此方法中释放
+     */
+    void onViewUnloadDelay();//2018-1-23
+
+    /**
      * 开始动画
      */
     Animation loadStartAnimation();

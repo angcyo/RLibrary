@@ -369,6 +369,17 @@ public abstract class UIIViewImpl implements IView {
 
     @CallSuper
     @Override
+    public void onViewUnloadDelay() {
+        L.d(this.getClass().getSimpleName(), "onViewUnload: " + mIViewStatus);
+        mIViewStatus = IViewShowState.STATE_VIEW_UNLOAD;
+        if (mOnUIViewListener != null) {
+            mOnUIViewListener.onViewUnloadDelay(this);
+        }
+        setChildILayout(null);
+    }
+
+    @CallSuper
+    @Override
     public void release() {
         mOnUIViewListener = null;
         //mActivity = null;
@@ -1183,7 +1194,7 @@ public abstract class UIIViewImpl implements IView {
 
     @Override
     public void onIViewLayout(ViewPattern viewPattern, UIBaseView.LayoutState layoutState, IViewShowState viewShowState, View rootView) {
-        L.i2(160, this.getClass().getSimpleName(), layoutState + " " + viewShowState + " w:" + rootView.getMeasuredWidth() + " h:" + rootView.getMeasuredHeight());
+        L.i2(160, this.getClass().getSimpleName(), " " + layoutState + " " + viewShowState + " w:" + rootView.getMeasuredWidth() + " h:" + rootView.getMeasuredHeight());
     }
 
     /**

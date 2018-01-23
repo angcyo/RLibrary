@@ -22,6 +22,10 @@ abstract class OnUIViewListener {
 
     }
 
+    open fun onViewUnloadDelay(uiview: IView) {
+
+    }
+
     open fun onViewLoad(uiview: IView) {
 
     }

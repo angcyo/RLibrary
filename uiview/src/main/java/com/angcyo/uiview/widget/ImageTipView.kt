@@ -131,19 +131,19 @@ class ImageTipView : View {
 
     /**小红点*/
     val redDotDrawable: Drawable by lazy {
-        val drawable = ContextCompat.getDrawable(context, R.drawable.skin_tips_dot_png)
+        val drawable = ContextCompat.getDrawable(context, R.drawable.skin_tips_dot_png)!!
         drawable.setBounds(0, 0, drawable.intrinsicWidth, drawable.intrinsicHeight)
         drawable
     }
     /**.9格式的小红点*/
     val newMessageDrawable: Drawable by lazy {
-        val drawable = ContextCompat.getDrawable(context, R.drawable.skin_tips_newmessage_9_png)
+        val drawable = ContextCompat.getDrawable(context, R.drawable.skin_tips_newmessage_9_png)!!
         drawable.setBounds(0, 0, drawable.intrinsicWidth, drawable.intrinsicHeight)
         drawable
     }
     /**99+*/
     val ninetyNineDrawable: Drawable by lazy {
-        val drawable = ContextCompat.getDrawable(context, R.drawable.skin_tips_newmessage_ninetynine_png)
+        val drawable = ContextCompat.getDrawable(context, R.drawable.skin_tips_newmessage_ninetynine_png)!!
         drawable.setBounds(0, 0, drawable.intrinsicWidth, drawable.intrinsicHeight)
         drawable
     }

@@ -36,7 +36,6 @@ open class RSwipeLayout(context: Context, attributeSet: AttributeSet? = null) : 
     private var contentView: View? = null
 
     private val viewDragCallback = object : ViewDragHelper.Callback() {
-
         /**希望拖拽的方向*/
         var captureDragDirection: Int = 0
 
@@ -62,10 +61,7 @@ open class RSwipeLayout(context: Context, attributeSet: AttributeSet? = null) : 
             }
         }
 
-        override fun tryCaptureView(child: View?, pointerId: Int): Boolean {
-            if (child == null) {
-                return false
-            }
+        override fun tryCaptureView(child: View, pointerId: Int): Boolean {
             if (child == menuView) {
                 return false
             }
@@ -84,7 +80,7 @@ open class RSwipeLayout(context: Context, attributeSet: AttributeSet? = null) : 
         }
 
         /**放开手指之后*/
-        override fun onViewReleased(releasedChild: View?, xvel: Float, yvel: Float) {
+        override fun onViewReleased(releasedChild: View, xvel: Float, yvel: Float) {
             super.onViewReleased(releasedChild, xvel, yvel)
             L.e("call: onViewReleased -> $xvel $yvel")
             if (captureDragDirection.have(DRAG_RIGHT)) {
@@ -128,7 +124,7 @@ open class RSwipeLayout(context: Context, attributeSet: AttributeSet? = null) : 
             postInvalidateOnAnimation()
         }
 
-        override fun onViewPositionChanged(changedView: View?, left: Int, top: Int, dx: Int, dy: Int) {
+        override fun onViewPositionChanged(changedView: View, left: Int, top: Int, dx: Int, dy: Int) {
             super.onViewPositionChanged(changedView, left, top, dx, dy)
             L.e("call: onViewPositionChanged -> $left $top")
         }
@@ -139,7 +135,7 @@ open class RSwipeLayout(context: Context, attributeSet: AttributeSet? = null) : 
         private fun isDragHorizontal(direction: Int): Boolean = direction.have(DRAG_LEFT) || direction.have(DRAG_RIGHT)
 
         /**允许拖动的范围*/
-        override fun getViewVerticalDragRange(child: View?): Int {
+        override fun getViewVerticalDragRange(child: View): Int {
             if (dragDirection.have(DRAG_BOTTOM) || dragDirection.have(DRAG_TOP)) {
                 return (measuredHeight * menuMaxOpenRatio).toInt()
             } else {
@@ -147,7 +143,7 @@ open class RSwipeLayout(context: Context, attributeSet: AttributeSet? = null) : 
             }
         }
 
-        override fun getViewHorizontalDragRange(child: View?): Int {
+        override fun getViewHorizontalDragRange(child: View): Int {
             if (dragDirection.have(DRAG_LEFT) || dragDirection.have(DRAG_RIGHT)) {
                 return (measuredWidth * menuMaxOpenRatio).toInt()
             } else {
@@ -156,7 +152,7 @@ open class RSwipeLayout(context: Context, attributeSet: AttributeSet? = null) : 
         }
 
         /**修正当前拖拽的位置*/
-        override fun clampViewPositionVertical(child: View?, top: Int, dy: Int): Int {
+        override fun clampViewPositionVertical(child: View, top: Int, dy: Int): Int {
             if (isDragHorizontal(captureDragDirection)) {
                 return 0
             }
@@ -169,7 +165,7 @@ open class RSwipeLayout(context: Context, attributeSet: AttributeSet? = null) : 
             }
         }
 
-        override fun clampViewPositionHorizontal(child: View?, left: Int, dx: Int): Int {
+        override fun clampViewPositionHorizontal(child: View, left: Int, dx: Int): Int {
             if (isDragVertical(captureDragDirection)) {
                 return 0
             }

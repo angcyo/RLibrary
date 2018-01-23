@@ -12,7 +12,6 @@ import android.view.View
 import com.angcyo.uiview.R
 import com.angcyo.uiview.kotlin.density
 import com.angcyo.uiview.kotlin.getDrawCenterTextCy
-import com.angcyo.uiview.kotlin.scaledDensity
 import com.angcyo.uiview.kotlin.textHeight
 
 /**
@@ -37,10 +36,10 @@ open class SexView(context: Context, attributeSet: AttributeSet? = null) : View(
     }
 
     private val maleDrawable: Drawable by lazy {
-        ContextCompat.getDrawable(context, R.drawable.base_male_18)
+        ContextCompat.getDrawable(context, R.drawable.base_male_18)!!
     }
     private val femaleDrawable: Drawable by lazy {
-        ContextCompat.getDrawable(context, R.drawable.base_female_18)
+        ContextCompat.getDrawable(context, R.drawable.base_female_18)!!
     }
 
     /*背景颜色*/
