@@ -211,14 +211,34 @@ public class UIItemDialog extends UIIDialogImpl {
         textView.setTextSize(TypedValue.COMPLEX_UNIT_PX, SkinHelper.getSkin().getMainTextSize());
         textView.setGravity(Gravity.CENTER);
         if (info.mClickListener instanceof RClickListener) {
-            textView.setOnClickListener(info.mClickListener);
+            textView.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(final View view) {
+                    if (info.autoCloseDialog) {
+                        finishDialog(new Runnable() {
+                            @Override
+                            public void run() {
+                                info.mClickListener.onClick(view);
+                            }
+                        });
+                    } else {
+                        info.mClickListener.onClick(view);
+                    }
+                }
+            });
         } else {
             textView.setOnClickListener(new RClickListener(1000) {
                 @Override
-                public void onRClick(View view) {
-                    info.mClickListener.onClick(view);
+                public void onRClick(final View view) {
                     if (info.autoCloseDialog) {
-                        finishDialog();
+                        finishDialog(new Runnable() {
+                            @Override
+                            public void run() {
+                                info.mClickListener.onClick(view);
+                            }
+                        });
+                    } else {
+                        info.mClickListener.onClick(view);
                     }
                 }
             });

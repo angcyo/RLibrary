@@ -12,6 +12,7 @@ import android.support.v4.content.CursorLoader;
 import android.support.v4.content.Loader;
 import android.widget.Toast;
 
+import com.lzy.imagepicker.adapter.ThreadExecutor;
 import com.lzy.imagepicker.bean.ImageFolder;
 import com.lzy.imagepicker.bean.ImageItem;
 
@@ -203,23 +204,21 @@ public class ImageDataSource implements LoaderManager.LoaderCallbacks<Cursor> {
         if (data != null) {
             ArrayList<ImageItem> allImages = new ArrayList<>();   //所有图片的集合,不分文件夹
 
-            MediaMetadataRetriever mediaMetadataRetriever = new MediaMetadataRetriever();
-
             Debug.logTimeStart("开始扫描媒体:");
             while (data.moveToNext()) {
                 if (mLoaderType == IMAGE) {
                     loadImage(data, allImages);
                 } else if (mLoaderType == VIDEO) {
-                    loadVideo(data, allImages, mediaMetadataRetriever);
+                    loadVideo(data, allImages);
                 }
             }
             Debug.logTimeEnd("扫描媒体结束:");
 
-            try {
-                mediaMetadataRetriever.release();
-            } catch (Exception e) {
-
-            }
+//            try {
+//                mediaMetadataRetriever.release();
+//            } catch (Exception e) {
+//                e.printStackTrace();
+//            }
 
             //防止没有图片报异常
             if (data.getCount() > 0 && !allImages.isEmpty()) {
@@ -290,10 +289,10 @@ public class ImageDataSource implements LoaderManager.LoaderCallbacks<Cursor> {
         }
     }
 
-    private void loadVideo(Cursor data, ArrayList<ImageItem> allImages, MediaMetadataRetriever mediaMetadataRetriever) {
+    private void loadVideo(Cursor data, ArrayList<ImageItem> allImages) {
         //查询数据
         String imageName = data.getString(data.getColumnIndexOrThrow(VIDEO_PROJECTION[0]));
-        String imagePath = data.getString(data.getColumnIndexOrThrow(VIDEO_PROJECTION[1]));
+        final String imagePath = data.getString(data.getColumnIndexOrThrow(VIDEO_PROJECTION[1]));
 
         long videoDuration = data.getLong(data.getColumnIndexOrThrow(VIDEO_PROJECTION[2]));
         //String thumbId = data.getString(data.getColumnIndexOrThrow(VIDEO_PROJECTION[3])); //缩略图id
@@ -319,7 +318,7 @@ public class ImageDataSource implements LoaderManager.LoaderCallbacks<Cursor> {
         }
 
         //封装实体
-        ImageItem imageItem = new ImageItem(VIDEO);
+        final ImageItem imageItem = new ImageItem(VIDEO);
         imageItem.name = imageName;
         imageItem.path = imagePath;
         imageItem.size = imageSize;
@@ -332,29 +331,43 @@ public class ImageDataSource implements LoaderManager.LoaderCallbacks<Cursor> {
         imageItem.resolution = resolution;
         //imageItem.placeholderDrawable = ContextCompat.getDrawable(activity, R.drawable.image_placeholder_shape);
 
-        try {
-            mediaMetadataRetriever.setDataSource(imagePath);
-            imageItem.videoRotation = Integer.parseInt(mediaMetadataRetriever
-                    .extractMetadata(MediaMetadataRetriever.METADATA_KEY_VIDEO_ROTATION));
-            if (imageWidth == 0) {
-                imageWidth = Integer.parseInt(mediaMetadataRetriever
-                        .extractMetadata(MediaMetadataRetriever.METADATA_KEY_VIDEO_WIDTH));
-                imageItem.width = imageWidth;
+        final int[] imageSizeArray = new int[]{imageWidth, imageHeight};
+
+        ThreadExecutor.instance().onThread(new Runnable() {
+            @Override
+            public void run() {
+                MediaMetadataRetriever mediaMetadataRetriever = new MediaMetadataRetriever();
+                try {
+                    mediaMetadataRetriever.setDataSource(imagePath);
+                    imageItem.videoRotation = Integer.parseInt(mediaMetadataRetriever
+                            .extractMetadata(MediaMetadataRetriever.METADATA_KEY_VIDEO_ROTATION));
+                    if (imageSizeArray[0] == 0) {
+                        imageSizeArray[0] = Integer.parseInt(mediaMetadataRetriever
+                                .extractMetadata(MediaMetadataRetriever.METADATA_KEY_VIDEO_WIDTH));
+                        imageItem.width = imageSizeArray[0];
+                    }
+                    if (imageSizeArray[1] == 0) {
+                        imageSizeArray[1] = Integer.parseInt(mediaMetadataRetriever
+                                .extractMetadata(MediaMetadataRetriever.METADATA_KEY_VIDEO_HEIGHT));
+                        imageItem.height = imageSizeArray[1];
+                    }
+
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+
+                if (imageItem.videoRotation == 90 || imageItem.videoRotation == 270) {
+                    imageItem.width = imageSizeArray[1];
+                    imageItem.height = imageSizeArray[0];
+                }
+
+                try {
+                    mediaMetadataRetriever.release();
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
             }
-            if (imageHeight == 0) {
-                imageHeight = Integer.parseInt(mediaMetadataRetriever
-                        .extractMetadata(MediaMetadataRetriever.METADATA_KEY_VIDEO_HEIGHT));
-                imageItem.height = imageHeight;
-            }
-
-        } catch (Exception e) {
-
-        }
-
-        if (imageItem.videoRotation == 90 || imageItem.videoRotation == 270) {
-            imageItem.width = imageHeight;
-            imageItem.height = imageWidth;
-        }
+        });
 
 //        try {
 //            String[] split = resolution.split("x");
@@ -400,7 +413,7 @@ public class ImageDataSource implements LoaderManager.LoaderCallbacks<Cursor> {
             try {
                 path = dataCursor.getString(dataCursor.getColumnIndexOrThrow(MediaStore.Video.Thumbnails.DATA));
             } catch (Exception e) {
-                System.err.print("未找到视频缩略图. id:" + videoId);
+                System.err.print(" 未找到视频缩略图->id:" + videoId);
             }
             dataCursor.close();
         }
