@@ -3084,6 +3084,35 @@ public class UILayoutImpl extends SwipeBackLayout implements ILayout<UIParam>, U
         void onIViewRemove(final UILayoutImpl uiLayout, final ViewPattern viewPattern);
     }
 
+    public static class SimpleOnIViewChangedListener implements OnIViewChangedListener {
+
+        @Override
+        public void onIViewAdd(UILayoutImpl uiLayout, ViewPattern viewPattern) {
+
+        }
+
+        @Override
+        public void onIViewShow(UILayoutImpl uiLayout, ViewPattern viewPattern) {
+
+        }
+
+        @Override
+        public void onIViewHide(UILayoutImpl uiLayout, ViewPattern viewPattern) {
+
+        }
+
+        @Override
+        public void onIViewCreate(UILayoutImpl uiLayout, IView iView, View rootView) {
+
+        }
+
+        @Override
+        public void onIViewRemove(UILayoutImpl uiLayout, ViewPattern viewPattern) {
+
+        }
+    }
+
+
     static class AnimRunnable implements Animation.AnimationListener {
 
         private Runnable mRunnable;

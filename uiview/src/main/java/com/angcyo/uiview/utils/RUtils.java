@@ -1906,6 +1906,17 @@ public class RUtils {
         return Color.rgb(list2.get(0), list2.get(1), list2.get(2));
     }
 
+    /**
+     * 根据包名 启动其他应用
+     */
+    public static void startApp(String packageName) {
+        try {
+            CmdUtil.startApp(RApplication.getApp(), packageName);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
     public enum ImageType {
         JPEG, GIF, PNG, BMP, UNKNOWN
     }
