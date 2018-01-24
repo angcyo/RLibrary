@@ -27,6 +27,9 @@ class Api : RRetrofit() {
         var API_URL = "http://api.klgwl.com/"
         var API_TEST_URL = "http://120.78.182.253:8181/"
 
+        var OPEN_URL = "http://open.klgwl.com/"
+        var OPEN_TEST_URL = "http://120.78.182.253:8185/"
+
         var SERVICE_URL = "http://service.klgwl.com/"
         var SERVICE_TEST_URL = "http://120.78.182.253:80/"
 
@@ -38,8 +41,16 @@ class Api : RRetrofit() {
             return api(cls, CacheType.NO_CACHE)
         }
 
+        fun <T> open(cls: Class<T>): T {
+            return open(cls, CacheType.NO_CACHE)
+        }
+
         fun <T> service(cls: Class<T>): T {
             return service(cls, CacheType.NO_CACHE)
+        }
+
+        fun <T> open(cls: Class<T>, cacheType: CacheType): T {
+            return create(cls, cacheType, if (IS_TEST) OPEN_TEST_URL else OPEN_URL)
         }
 
         fun <T> api(cls: Class<T>, cacheType: CacheType): T {
