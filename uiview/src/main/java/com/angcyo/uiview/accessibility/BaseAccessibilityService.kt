@@ -9,14 +9,12 @@ import android.graphics.Rect
 import android.os.Build
 import android.os.Bundle
 import android.provider.Settings
-import android.text.TextUtils
 import android.util.Log
 import android.view.View
 import android.view.ViewGroup
 import android.view.accessibility.AccessibilityEvent
 import android.view.accessibility.AccessibilityManager
 import android.view.accessibility.AccessibilityNodeInfo
-import android.widget.TextView
 import com.angcyo.github.utilcode.utils.ClipboardUtils
 import com.angcyo.library.utils.L
 import com.angcyo.uiview.RApplication
@@ -109,12 +107,39 @@ abstract class BaseAccessibilityService : AccessibilityService() {
             nodeInfo.performAction(AccessibilityNodeInfo.ACTION_SCROLL_BACKWARD)
         }
 
+        /**返回ListNode*/
+        fun findListView(rootNodeInfo: AccessibilityNodeInfo): AccessibilityNodeInfo? {
+            var node: AccessibilityNodeInfo? = null
+            if (rootNodeInfo.className.contains("ListView") ||
+                    rootNodeInfo.className.contains("RecyclerView")) {
+                node = rootNodeInfo
+            } else {
+                for (i in 0 until rootNodeInfo.childCount) {
+                    node = findListView(rootNodeInfo.getChild(i))
+                    if (node != null) {
+                        break
+                    }
+                }
+            }
+            return node
+        }
+
+        fun nodeFromPath(rootNodeInfo: AccessibilityNodeInfo, path: String /*0_0_1_2 这种路径拿到Node*/): AccessibilityNodeInfo {
+            fun getNode(nodeInfo: AccessibilityNodeInfo, index: Int): AccessibilityNodeInfo {
+                return nodeInfo.getChild(index)
+            }
+
+            var nodeInfo: AccessibilityNodeInfo = rootNodeInfo
+            path.split("_").toList().map {
+                nodeInfo = getNode(nodeInfo, it.toInt())
+            }
+            return nodeInfo
+        }
+
         fun logNodeInfo(rootNodeInfo: AccessibilityNodeInfo) {
-            val stringBuild = StringBuilder()
             Log.i(TAG, "╔═══════════════════════════════════════════════════════════════════════════════════════")
             debugNodeInfo(rootNodeInfo)
             Log.i(TAG, "╚═══════════════════════════════════════════════════════════════════════════════════════")
-            //L.e("call: logNodeInfo -> $stringBuild")
         }
 
         fun debugNodeInfo(nodeInfo: AccessibilityNodeInfo, index: Int = 0 /*缩进控制*/, preIndex: String = "" /*child路径*/) {
@@ -128,27 +153,26 @@ abstract class BaseAccessibilityService : AccessibilityService() {
 
             val stringBuilder = StringBuilder("|")
             stringBuilder.append("${newLine(index)}")
-            stringBuilder.append(nodeInfo.className)
+            stringBuilder.append(" ${nodeInfo.className}")
+            stringBuilder.append(" c:${nodeInfo.isClickable}")
+            stringBuilder.append(" s:${nodeInfo.isSelected}")
+            stringBuilder.append(" ck:${nodeInfo.isChecked}")
 //            stringBuilder.append(" idName:")
 //            stringBuilder.append(nodeInfo.viewIdResourceName)
-            if (TextUtils.equals(TextView::class.java.name, nodeInfo.className)) {
-                stringBuilder.append("[")
-                stringBuilder.append(nodeInfo.text)
-                stringBuilder.append("]")
-            }
-            stringBuilder.append(" Count:")
-            stringBuilder.append(nodeInfo.childCount)
-            stringBuilder.append(" $preIndex")
+            stringBuilder.append(" [${nodeInfo.text}]")
+            stringBuilder.append(" ${nodeInfo.childCount}")
 
             val rect = Rect()
             nodeInfo.getBoundsInScreen(rect)
-            stringBuilder.append(" Bounds:")
-            stringBuilder.append(rect)
+            stringBuilder.append(" $rect")
+            stringBuilder.append(" $preIndex")
 
             Log.i(TAG, "$stringBuilder")
 
             for (i in 0 until nodeInfo.childCount) {
-                debugNodeInfo(nodeInfo.getChild(i), index + 1, "${if (preIndex.isEmpty()) preIndex else "${preIndex}_"}$i")
+                nodeInfo.getChild(i)?.let {
+                    debugNodeInfo(it, index + 1, "${if (preIndex.isEmpty()) preIndex else "${preIndex}_"}$i")
+                }
             }
         }
     }
@@ -193,6 +217,13 @@ abstract class BaseAccessibilityService : AccessibilityService() {
                 view.layoutParams = ViewGroup.LayoutParams(100, 100)
                 view.setBackgroundColor(Color.RED)
                 //event.source.getChild(0).getChild(0).getChild(0).addChild(view)
+//                val nodeFromPath = nodeFromPath(event.source, "0_0_2_1_0")
+//                Rx.base({
+//                    Thread.sleep(2000)
+//                }) {
+//                    clickNode(nodeFromPath)
+//                }
+                L.e("call: onAccessibilityEvent -> ${findListView(event.source)}")
                 logNodeInfo(event.source)
             }
             AccessibilityEvent.TYPE_WINDOW_CONTENT_CHANGED -> {
