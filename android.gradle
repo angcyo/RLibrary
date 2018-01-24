@@ -25,7 +25,7 @@ android {
         angcyo {
             keyAlias 'angcyo'
             keyPassword 'angcyo'
-            storeFile file('../angcyo.jks')
+            storeFile file('../RLibrary/angcyo.jks')
             storePassword 'angcyo'
         }
     }

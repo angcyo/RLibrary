@@ -1,43 +1,7 @@
-
-
-
-
-
-
-
-
-#2018-1-24 只需要下面一行代码即可
-
-apply from: '../RLibrary/app.gradle'
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 apply plugin: 'com.android.application'
 apply plugin: 'kotlin-android'
 //apply plugin: 'com.getkeepsafe.dexcount'
-apply from: 'build_time.gradle'
+//apply from: 'build_time.gradle'
 apply from: '../RLibrary/android.gradle'
 
 def apkTime() {
@@ -128,7 +92,7 @@ android {
         }
 
         variant.getPackageApplication().outputScope.apkDatas.forEach { apkData ->
-            apkData.outputFileName = "UIViewDemo-" +
+            apkData.outputFileName = rootProject.name + "-" +
                     variant.versionName + "_" +
                     apk_time + "_" +
                     variant.flavorName + "_" +

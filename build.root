@@ -1,3 +1,33 @@
+
+
+
+
+
+
+
+
+
+
+#2018-1-24 只需要下面一行代码即可
+
+apply from: 'RLibrary/root.gradle'
+
+#保留buildscript中的内容
+buildscript{
+
+}
+
+
+
+
+
+
+
+
+
+
+
+
 // Top-level build file where you can add configuration options common to all sub-projects/modules.
 
 buildscript {
