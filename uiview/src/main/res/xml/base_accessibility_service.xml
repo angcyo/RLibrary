@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="utf-8"?>
+<accessibility-service
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:accessibilityEventTypes="typeAllMask"
+    android:accessibilityFeedbackType="feedbackAllMask"
+    android:accessibilityFlags="flagDefault"
+    android:canRetrieveWindowContent="true"
+    android:canControlMagnification="true"
+    android:canPerformGestures="true"
+    android:canRequestEnhancedWebAccessibility="true"
+    android:canRequestFilterKeyEvents="true"
+    android:canRequestFingerprintGestures="true"
+    android:canRequestTouchExplorationMode="true"
+    android:description="@string/base_accessibility_description"
+    android:packageNames="com.tencent.mm,com.tencent.mobileqq"
+    android:summary="@string/base_accessibility_summary"
+    />
+    <!--android:notificationTimeout="10"-->
+    <!--android:packageNames="com.tencent.mm,com.tencent.mobileqq"-->
+    <!--android:settingsActivity="com.angcyo.accessibility.RAccessibilityActivity"-->
+
+    <!--控制内容放大功能-->
+    <!--android:canControlMagnification="true"-->
+
+    <!--执行手势-->
+    <!--android:canPerformGestures="true"-->
+    <!--android:canRequestFingerprintGestures="true"-->
+
+    <!--启用网页无障碍增强功能-->
+    <!--android:canRequestEnhancedWebAccessibility="true"-->
+
+    <!--监听按键输入-->
+    <!--android:canRequestFilterKeyEvents="true"-->
+
+    <!--启用触摸浏览-->
+    <!--android:canRequestTouchExplorationMode="true"-->

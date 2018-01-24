@@ -193,4 +193,18 @@ class PermissionDeniedUIView(val permission: String) : UIContentView() {
         mActivity.finishSelf()
         RCrashHandler.resetStartActivity(mActivity)
     }
+
+    override fun canTryCaptureView(): Boolean {
+        return false
+    }
+
+    override fun onViewShow(bundle: Bundle?) {
+        super.onViewShow(bundle)
+        lightStatusBar(true)
+    }
+
+    override fun onViewHide() {
+        super.onViewHide()
+        lightStatusBar(false)
+    }
 }

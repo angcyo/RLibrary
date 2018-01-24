@@ -550,7 +550,9 @@ public class RCrashHandler implements Thread.UncaughtExceptionHandler {
     public static void resetStartActivity(Context context, Throwable ex) {
         try {
             Class<? extends Activity> restartClass = getRestartActivityClassWithIntentFilter(context);
-            if (restartClass != null) {
+            if (restartClass == null) {
+                RUtils.startApp(context.getPackageName());
+            } else {
                 Intent intent = new Intent(context, restartClass);
                 intent.addFlags(getStartIntentFlags());
                 Bundle args = new Bundle();
