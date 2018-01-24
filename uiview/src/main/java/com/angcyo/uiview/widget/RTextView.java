@@ -140,7 +140,7 @@ public class RTextView extends AppCompatTextView {
     /**
      * 循环绘制文本的间隙
      */
-    private int scrollTextCircleOffset = (int) (10 * ScreenUtil.density());
+    private int scrollTextCircleOffset = 0;
     private int scrollType = SCROLL_TYPE_DEFAULT;
 
     public RTextView(Context context) {
@@ -210,6 +210,9 @@ public class RTextView extends AppCompatTextView {
         isScrollTextCircle = typedArray.getBoolean(R.styleable.RTextView_r_is_scroll_text_circle, isScrollTextCircle);
         scrollStep = typedArray.getInt(R.styleable.RTextView_r_scroll_step, scrollStep);
         scrollType = typedArray.getInt(R.styleable.RTextView_r_scroll_type, scrollType);
+        if (!isInEditMode()) {
+            scrollTextCircleOffset = (int) (10 * ScreenUtil.density());
+        }
         scrollTextCircleOffset = typedArray.getDimensionPixelOffset(R.styleable.RTextView_r_scroll_text_offset, scrollTextCircleOffset);
         typedArray.recycle();
 

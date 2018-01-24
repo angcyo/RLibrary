@@ -690,6 +690,14 @@ public class ResUtil {
         return listDrawable;
     }
 
+    public static Drawable selectorSelected(Drawable normalDrawable, Drawable selectDrawable) {
+        StateListDrawable listDrawable = new StateListDrawable();//状态shape
+        listDrawable.addState(new int[]{android.R.attr.state_pressed}, selectDrawable);//按下状态
+        listDrawable.addState(new int[]{android.R.attr.state_selected}, selectDrawable);//按下状态
+        listDrawable.addState(new int[]{}, normalDrawable);//其他状态
+        return listDrawable;
+    }
+
     /**
      * 创建Ripple
      */
