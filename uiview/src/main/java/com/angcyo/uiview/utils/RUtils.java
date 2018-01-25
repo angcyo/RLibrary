@@ -57,6 +57,7 @@ import com.angcyo.library.utils.RIo;
 import com.angcyo.uiview.RApplication;
 import com.angcyo.uiview.RCrashHandler;
 import com.angcyo.uiview.Root;
+import com.angcyo.uiview.accessibility.permission.SettingsCompat;
 import com.angcyo.uiview.widget.RExTextView;
 
 import java.io.BufferedWriter;
@@ -1919,6 +1920,13 @@ public class RUtils {
         }
 
         return error;
+    }
+
+    /**
+     * 是否有浮窗权限 xml需要  Manifest.permission.SYSTEM_ALERT_WINDOW
+     */
+    public static boolean canDrawOverlays() {
+        return SettingsCompat.canDrawOverlays(RApplication.getApp());
     }
 
     public enum ImageType {

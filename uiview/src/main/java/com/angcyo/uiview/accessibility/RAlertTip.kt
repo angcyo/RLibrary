@@ -3,11 +3,9 @@ package com.angcyo.uiview.accessibility
 import android.app.Dialog
 import android.graphics.Color
 import android.graphics.drawable.ColorDrawable
+import android.os.Build
 import android.support.annotation.LayoutRes
-import android.view.LayoutInflater
-import android.view.View
-import android.view.Window
-import android.view.WindowManager
+import android.view.*
 import com.angcyo.uiview.RApplication
 
 /**
@@ -26,8 +24,16 @@ class RAlertTip {
     /**是否需要点击事件*/
     var needTouch = false
 
-    fun show(@LayoutRes contentLayoutId: Int, initView: ((View) -> Unit)? = null) {
-        show(LayoutInflater.from(RApplication.getApp()).inflate(contentLayoutId, null), initView)
+    var windowWidth = -1
+    var windowHeight = -1
+
+    var windowGravity = Gravity.CENTER
+
+    var offsetX = 0
+    var offsetY = 0
+
+    fun show(@LayoutRes contentLayoutId: Int, initView: ((View) -> Unit)? = null): Dialog {
+        return show(LayoutInflater.from(RApplication.getApp()).inflate(contentLayoutId, null), initView)
     }
 
     fun show(contentView: View, initView: ((View) -> Unit)? = null): Dialog {
@@ -37,6 +43,13 @@ class RAlertTip {
         }
     }
 
+    fun hide() {
+        dialog?.let {
+            it.dismiss()
+        }
+    }
+
+    private var dialog: Dialog? = null
     private fun createTipDialog(contentView: View): Dialog {
 //        val alertDialog = AlertDialog.Builder(RApplication.getApp())
 //                .setCancelable(false)
@@ -73,13 +86,29 @@ class RAlertTip {
 //        return alertDialog
 
         return Dialog(RApplication.getApp()).apply {
+            dialog = this
             window.let {
                 it.requestFeature(Window.FEATURE_NO_TITLE) //去掉标题部分
                 it.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
                 it.setContentView(contentView)
-                it.setLayout(-1, -1)
+                it.setLayout(windowWidth, windowHeight)
+                it.setGravity(windowGravity)
 
-                it.setType(WindowManager.LayoutParams.TYPE_TOAST) //显示在其他窗口上
+                it.attributes.let {
+                    it.x = offsetX
+                    it.y = offsetY
+                    window.attributes = it
+                }
+
+                /**
+                 * 需要权限 Manifest.permission.SYSTEM_ALERT_WINDOW
+                 */
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+                    it.setType(WindowManager.LayoutParams.TYPE_APPLICATION_OVERLAY)
+                } else {
+                    it.setType(WindowManager.LayoutParams.TYPE_SYSTEM_ALERT)
+                }
+                //it.setType(WindowManager.LayoutParams.TYPE_TOAST) //显示在其他窗口上
                 it.addFlags(WindowManager.LayoutParams.FLAG_LAYOUT_IN_SCREEN) //能够显示到状态栏
                 if (!needTouch) {
                     it.addFlags(WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE) //去掉点击事件
