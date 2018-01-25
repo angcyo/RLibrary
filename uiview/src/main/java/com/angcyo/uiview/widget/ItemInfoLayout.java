@@ -4,6 +4,7 @@ import android.content.Context;
 import android.content.res.TypedArray;
 import android.graphics.Color;
 import android.graphics.drawable.Drawable;
+import android.support.annotation.ColorInt;
 import android.support.annotation.DrawableRes;
 import android.support.v4.content.ContextCompat;
 import android.text.TextUtils;
@@ -287,6 +288,12 @@ public class ItemInfoLayout extends RRelativeLayout {
     public ItemInfoLayout setItemDarkText(String itemDarkText) {
         this.itemDarkText = itemDarkText;
         mDarkTextView.setText(itemDarkText);
+        return this;
+    }
+
+    public ItemInfoLayout setItemDarkTextColor(@ColorInt int color) {
+        this.itemDarkTextColor = color;
+        mDarkTextView.setTextColor(itemDarkTextColor);
         return this;
     }
 

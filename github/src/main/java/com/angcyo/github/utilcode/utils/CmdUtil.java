@@ -158,6 +158,25 @@ public class CmdUtil {
     }
 
     /**
+     * 根据包名, 拿到对应程序的信息
+     */
+    public static AppInfo getAppInfo(Context context, String packageName) {
+        AppInfo tmpInfo = null;
+        try {
+            PackageInfo info = context.getPackageManager().getPackageInfo(packageName, 0);
+            tmpInfo = new AppInfo();
+            tmpInfo.appName = info.applicationInfo.loadLabel(context.getPackageManager()).toString();
+            tmpInfo.packageName = info.packageName;
+            tmpInfo.versionName = info.versionName;
+            tmpInfo.versionCode = info.versionCode;
+            tmpInfo.appIcon = info.applicationInfo.loadIcon(context.getPackageManager());
+        } catch (PackageManager.NameNotFoundException e) {
+            e.printStackTrace();
+        }
+        return tmpInfo;
+    }
+
+    /**
      * 通过包名,获取标签名
      */
     public static String getPackageNameLabel(Context context, String packageName) {
