@@ -4,14 +4,11 @@ import android.accessibilityservice.AccessibilityService
 import android.accessibilityservice.AccessibilityServiceInfo
 import android.content.Context
 import android.content.Intent
-import android.graphics.Color
 import android.graphics.Rect
 import android.os.Build
 import android.os.Bundle
 import android.provider.Settings
 import android.util.Log
-import android.view.View
-import android.view.ViewGroup
 import android.view.accessibility.AccessibilityEvent
 import android.view.accessibility.AccessibilityManager
 import android.view.accessibility.AccessibilityNodeInfo
@@ -124,6 +121,7 @@ abstract class BaseAccessibilityService : AccessibilityService() {
             return node
         }
 
+        /**通过 0_0_1_2 这种路径拿到Node*/
         fun nodeFromPath(rootNodeInfo: AccessibilityNodeInfo, path: String /*0_0_1_2 这种路径拿到Node*/): AccessibilityNodeInfo {
             fun getNode(nodeInfo: AccessibilityNodeInfo, index: Int): AccessibilityNodeInfo {
                 return nodeInfo.getChild(index)
@@ -134,6 +132,15 @@ abstract class BaseAccessibilityService : AccessibilityService() {
                 nodeInfo = getNode(nodeInfo, it.toInt())
             }
             return nodeInfo
+        }
+
+        /**拿到最根节点的NodeInfo*/
+        fun getRootNodeInfo(node: AccessibilityNodeInfo): AccessibilityNodeInfo {
+            var rootNode = node
+            if (node.parent == null) {
+                return rootNode
+            }
+            return getRootNodeInfo(node.parent)
         }
 
         fun logNodeInfo(rootNodeInfo: AccessibilityNodeInfo) {
@@ -213,25 +220,36 @@ abstract class BaseAccessibilityService : AccessibilityService() {
             AccessibilityEvent.TYPE_WINDOW_STATE_CHANGED -> {
                 //当被监听的程序窗口状态变化时回调, 通常打开程序时会回调
 
-                val view = View(applicationContext)
-                view.layoutParams = ViewGroup.LayoutParams(100, 100)
-                view.setBackgroundColor(Color.RED)
-                //event.source.getChild(0).getChild(0).getChild(0).addChild(view)
-//                val nodeFromPath = nodeFromPath(event.source, "0_0_2_1_0")
-//                Rx.base({
-//                    Thread.sleep(2000)
-//                }) {
-//                    clickNode(nodeFromPath)
-//                }
-                L.e("call: onAccessibilityEvent -> ${findListView(event.source)}")
-                logNodeInfo(event.source)
+//                val view = View(applicationContext)
+//                view.layoutParams = ViewGroup.LayoutParams(100, 100)
+//                view.setBackgroundColor(Color.RED)
+//                //event.source.getChild(0).getChild(0).getChild(0).addChild(view)
+////                val nodeFromPath = nodeFromPath(event.source, "0_0_2_1_0")
+////                Rx.base({
+////                    Thread.sleep(2000)
+////                }) {
+////                    clickNode(nodeFromPath)
+////                }
+//                L.e("call: onAccessibilityEvent -> ${findListView(event.source)}")
+//                logNodeInfo(event.source)
+
+                onWindowStateChanged(event)
             }
             AccessibilityEvent.TYPE_WINDOW_CONTENT_CHANGED -> {
                 //当窗口上有内容发生变化的时候回调
-
+                onWindowContentChanged(event)
             }
         }
     }
 
+    /**打开了新窗口*/
+    open fun onWindowStateChanged(event: AccessibilityEvent) {
+
+    }
+
+    /**窗口中, 有内容发生了变化*/
+    open fun onWindowContentChanged(event: AccessibilityEvent) {
+
+    }
 
 }

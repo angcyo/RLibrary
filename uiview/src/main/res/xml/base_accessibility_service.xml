@@ -4,17 +4,18 @@
     android:accessibilityEventTypes="typeAllMask"
     android:accessibilityFeedbackType="feedbackAllMask"
     android:accessibilityFlags="flagDefault"
-    android:canRetrieveWindowContent="true"
     android:canControlMagnification="true"
     android:canPerformGestures="true"
     android:canRequestEnhancedWebAccessibility="true"
     android:canRequestFilterKeyEvents="true"
     android:canRequestFingerprintGestures="true"
     android:canRequestTouchExplorationMode="true"
+    android:canRetrieveWindowContent="true"
     android:description="@string/base_accessibility_description"
-    android:packageNames="com.tencent.mm,com.tencent.mobileqq"
     android:summary="@string/base_accessibility_summary"
     />
+    <!--过滤所有-->
+    <!--android:packageNames="com.tencent.mm,com.tencent.mobileqq"-->
     <!--android:notificationTimeout="10"-->
     <!--android:packageNames="com.tencent.mm,com.tencent.mobileqq"-->
     <!--android:settingsActivity="com.angcyo.accessibility.RAccessibilityActivity"-->
