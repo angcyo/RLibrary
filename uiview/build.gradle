@@ -1,26 +1,13 @@
-apply plugin: 'com.android.library'
+apply from: '../lib.gradle'
+
 apply plugin: 'kotlin-android'
 
 android {
-    compileSdkVersion rootProject.C_SDK as int
-    buildToolsVersion rootProject.B_TOOLS
 
-    defaultConfig {
-        minSdkVersion Integer.parseInt(rootProject.M_SDK)
-        targetSdkVersion Integer.parseInt(rootProject.T_SDK)
-        versionCode 1
-        versionName "1.0"
 //
 //        manifestPlaceholders = [
 //                PACKAGE_NAME: "com.angcyo.uidemo"
 //        ]
-    }
-    buildTypes {
-        release {
-            minifyEnabled false
-            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
-        }
-    }
 
 //    packagingOptions {
 //        exclude 'META-INF/DEPENDENCIES'
@@ -41,7 +28,6 @@ android {
 //        javaMaxHeapSize "4g"
 //    }
 }
-
 
 //https://developer.android.google.cn/studio/build/gradle-plugin-3-0-0-migration.html#new_configurations
 dependencies {

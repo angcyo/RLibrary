@@ -1,14 +1,4 @@
-apply plugin: 'com.android.library'
-
-android {
-    compileSdkVersion rootProject.C_SDK as int
-    buildToolsVersion rootProject.B_TOOLS
-
-    defaultConfig {
-        minSdkVersion rootProject.M_SDK as int
-        targetSdkVersion rootProject.T_SDK as int
-    }
-}
+apply from: '../lib.gradle'
 
 dependencies {
     //api fileTree(include: ['*.jar'], dir: 'libs')
