@@ -14,6 +14,7 @@ import android.view.accessibility.AccessibilityManager
 import android.view.accessibility.AccessibilityNodeInfo
 import com.angcyo.github.utilcode.utils.ClipboardUtils
 import com.angcyo.library.utils.L
+import com.angcyo.library.utils.RIo
 import com.angcyo.uiview.RApplication
 import com.angcyo.uiview.utils.Tip
 import java.util.concurrent.CopyOnWriteArrayList
@@ -174,13 +175,21 @@ open class BaseAccessibilityService : AccessibilityService() {
             return getRootNodeInfo(node.parent)
         }
 
-        fun logNodeInfo(rootNodeInfo: AccessibilityNodeInfo) {
-            Log.i(TAG, "╔═══════════════════════════════════════════════════════════════════════════════════════")
-            debugNodeInfo(rootNodeInfo)
-            Log.i(TAG, "╚═══════════════════════════════════════════════════════════════════════════════════════")
+        fun logNodeInfo(rootNodeInfo: AccessibilityNodeInfo, logFilePath: String? = null) {
+            if (logFilePath == null) {
+                Log.i(TAG, "╔═══════════════════════════════════════════════════════════════════════════════════════")
+            } else {
+                RIo.appendToFile(logFilePath, "╔═══════════════════════════════════════════════════════════════════════════════════════")
+            }
+            debugNodeInfo(rootNodeInfo, 0, "", logFilePath)
+            if (logFilePath == null) {
+                Log.i(TAG, "╚═══════════════════════════════════════════════════════════════════════════════════════")
+            } else {
+                RIo.appendToFile(logFilePath, "╚═══════════════════════════════════════════════════════════════════════════════════════")
+            }
         }
 
-        fun debugNodeInfo(nodeInfo: AccessibilityNodeInfo, index: Int = 0 /*缩进控制*/, preIndex: String = "" /*child路径*/) {
+        fun debugNodeInfo(nodeInfo: AccessibilityNodeInfo, index: Int = 0 /*缩进控制*/, preIndex: String = "" /*child路径*/, logFilePath: String? = null) {
             fun newLine(i: Int): String {
                 val sb = StringBuilder()
                 for (j in 0 until i) {
@@ -205,7 +214,11 @@ open class BaseAccessibilityService : AccessibilityService() {
             stringBuilder.append(" $rect")
             stringBuilder.append(" $preIndex")
 
-            Log.i(TAG, "$stringBuilder")
+            if (logFilePath == null) {
+                Log.i(TAG, "$stringBuilder")
+            } else {
+                RIo.appendToFile(logFilePath, "$stringBuilder")
+            }
 
             for (i in 0 until nodeInfo.childCount) {
                 nodeInfo.getChild(i)?.let {

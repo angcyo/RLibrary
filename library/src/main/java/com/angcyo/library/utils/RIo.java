@@ -79,4 +79,31 @@ public class RIo {
         }
         return -1;
     }
+
+    /**
+     * 追加数据到文件
+     */
+    public static boolean appendToFile(String filePath, String data) {
+        BufferedSink bufferedSink = null;
+        try {
+            File file = new File(filePath);
+            Sink sink = Okio.appendingSink(file);
+            bufferedSink = Okio.buffer(sink);
+            //bufferedSink.writeAll(Okio.source(file));
+            bufferedSink.writeUtf8(data);
+            bufferedSink.flush();
+            return true;
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+        } catch (Exception e) {
+            e.printStackTrace();
+        } finally {
+            try {
+                bufferedSink.close();
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
+        return false;
+    }
 }
