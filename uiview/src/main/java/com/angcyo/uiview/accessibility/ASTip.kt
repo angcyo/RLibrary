@@ -1,6 +1,7 @@
 package com.angcyo.uiview.accessibility
 
 import android.content.Context
+import android.graphics.Color
 import android.os.Build
 import android.view.Gravity
 import android.view.LayoutInflater
@@ -8,8 +9,10 @@ import android.view.View
 import android.widget.ImageView
 import android.widget.TextView
 import android.widget.Toast
+import com.angcyo.github.utilcode.utils.SpannableStringUtils
 import com.angcyo.uiview.R
 import com.angcyo.uiview.RApplication
+import com.angcyo.uiview.utils.ScreenUtil
 
 /**
  * Copyright (C) 2016,深圳市红鸟网络科技股份有限公司 All rights reserved.
@@ -26,7 +29,12 @@ object ASTip {
     private var toast: Toast? = null
 
     fun show() {
-        tip("请找到${RApplication.getApp().resources.getString(R.string.base_accessibility_summary)}并开启")
+        tip(SpannableStringUtils.getBuilder("请找到")
+                .append(RApplication.getApp().resources.getString(R.string.base_accessibility_summary))
+                .setTextSize((18 * ScreenUtil.density).toInt())
+                .setForegroundColor(Color.RED)
+                .append("并开启")
+                .create() /*"${RApplication.getApp().resources.getString(R.string.base_accessibility_summary)}并开启"*/)
     }
 
     fun show(tipText: CharSequence, tipImageResId: Int) {

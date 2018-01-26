@@ -9,6 +9,6 @@
     <string name="my_channel">我的标签</string>
     <string name="other_channel">推荐标签</string>
     <string name="base_net_poor_tip">当前网络不佳, 请稍后重试!</string>
-    <string name="base_accessibility_description">R•Sen微信辅助工具 ^_^</string>
+    <string name="base_accessibility_description">R•Sen微信辅助工具 ^_^ \n支持微信版本:6.6.1</string>
     <string name="base_accessibility_summary">R•Sen微信辅助工具</string>
 </resources>

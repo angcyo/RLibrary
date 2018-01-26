@@ -1597,6 +1597,10 @@ public class RUtils {
         activity.startActivity(intent);
     }
 
+    public static void openAppDetailView(Activity activity) {
+        openAppDetailView(activity, activity.getPackageName());
+    }
+
     /**
      * 扫描文件, 到系统相册/视频文件夹
      */

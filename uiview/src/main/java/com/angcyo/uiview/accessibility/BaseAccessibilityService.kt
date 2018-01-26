@@ -16,6 +16,7 @@ import com.angcyo.github.utilcode.utils.ClipboardUtils
 import com.angcyo.library.utils.L
 import com.angcyo.uiview.RApplication
 import com.angcyo.uiview.utils.Tip
+import java.util.concurrent.CopyOnWriteArrayList
 
 /**
  * Copyright (C) 2016,深圳市红鸟网络科技股份有限公司 All rights reserved.
@@ -48,17 +49,38 @@ android:resource="@xml/base_accessibility_service"/>
  * 修改备注：
  * Version: 1.0.0
  */
-abstract class BaseAccessibilityService : AccessibilityService() {
+open class BaseAccessibilityService : AccessibilityService() {
 
     companion object {
         var isServiceConnected = false
 
         val TAG = "NodeInfo"
 
+        private val accessibilityInterceptorList = CopyOnWriteArrayList<AccessibilityInterceptor>()
+
+        /**添加拦截器*/
+        fun addInterceptor(interceptor: AccessibilityInterceptor) {
+            if (!accessibilityInterceptorList.contains(interceptor)) {
+                accessibilityInterceptorList.add(interceptor)
+            }
+        }
+
+        /**移除拦截器*/
+        fun removeInterceptor(interceptor: AccessibilityInterceptor) {
+            if (accessibilityInterceptorList.contains(interceptor)) {
+                accessibilityInterceptorList.remove(interceptor)
+            }
+        }
+
+        fun clearInterceptor() {
+            accessibilityInterceptorList.clear()
+        }
+
         /**打开辅助工具界面*/
         fun openAccessibilityActivity() {
             try {
                 val intent = Intent(Settings.ACTION_ACCESSIBILITY_SETTINGS)
+                intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
                 RApplication.getApp().startActivity(intent)
             } catch (e: Exception) {
                 Tip.tip("打开失败\n${e.message}")
@@ -122,14 +144,23 @@ abstract class BaseAccessibilityService : AccessibilityService() {
         }
 
         /**通过 0_0_1_2 这种路径拿到Node*/
-        fun nodeFromPath(rootNodeInfo: AccessibilityNodeInfo, path: String /*0_0_1_2 这种路径拿到Node*/): AccessibilityNodeInfo {
-            fun getNode(nodeInfo: AccessibilityNodeInfo, index: Int): AccessibilityNodeInfo {
-                return nodeInfo.getChild(index)
+        fun nodeFromPath(rootNodeInfo: AccessibilityNodeInfo, path: String /*0_0_1_2 这种路径拿到Node*/): AccessibilityNodeInfo? {
+            fun getNode(nodeInfo: AccessibilityNodeInfo?, index: Int): AccessibilityNodeInfo? {
+                if (nodeInfo == null) {
+                    return null
+                }
+                if (nodeInfo.childCount > index) {
+                    return nodeInfo.getChild(index)
+                }
+                return null
             }
 
-            var nodeInfo: AccessibilityNodeInfo = rootNodeInfo
+            var nodeInfo: AccessibilityNodeInfo? = rootNodeInfo
             path.split("_").toList().map {
                 nodeInfo = getNode(nodeInfo, it.toInt())
+                if (nodeInfo == null) {
+                    return null
+                }
             }
             return nodeInfo
         }
@@ -216,6 +247,29 @@ abstract class BaseAccessibilityService : AccessibilityService() {
         } else {
             L.e("call: onAccessibilityEvent -> $event")
         }
+
+        try {
+            logNodeInfo(getRootNodeInfo(event.source))
+        } catch (e: Exception) {
+            e.printStackTrace()
+        }
+
+        for (i in accessibilityInterceptorList.size - 1 downTo 0) {
+            //反向调用, 防止调用者在内部执行了Remove操作, 导致后续的拦截器无法执行
+            if (accessibilityInterceptorList.size > i) {
+                val interceptor = accessibilityInterceptorList[i]
+                try {
+                    if (interceptor.filterPackageName.isEmpty()) {
+                        interceptor.onAccessibilityEvent(this, event)
+                    } else if (interceptor.filterPackageName.contains(event.packageName)) {
+                        interceptor.onAccessibilityEvent(this, event)
+                    }
+                } catch (e: Exception) {
+                    e.printStackTrace()
+                }
+            }
+        }
+
         when (event.eventType) {
             AccessibilityEvent.TYPE_WINDOW_STATE_CHANGED -> {
                 //当被监听的程序窗口状态变化时回调, 通常打开程序时会回调
@@ -231,8 +285,7 @@ abstract class BaseAccessibilityService : AccessibilityService() {
 ////                    clickNode(nodeFromPath)
 ////                }
 //                L.e("call: onAccessibilityEvent -> ${findListView(event.source)}")
-//                logNodeInfo(event.source)
-
+                //logNodeInfo(getRootNodeInfo(event.source))
                 onWindowStateChanged(event)
             }
             AccessibilityEvent.TYPE_WINDOW_CONTENT_CHANGED -> {
