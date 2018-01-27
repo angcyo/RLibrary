@@ -14,6 +14,8 @@ import android.view.ContextMenu
 import android.view.inputmethod.EditorInfo
 import com.angcyo.uiview.R
 import com.angcyo.uiview.kotlin.density
+import com.angcyo.uiview.kotlin.textHeight
+import com.angcyo.uiview.kotlin.textWidth
 
 /**
  * Copyright (C) 2016,深圳市红鸟网络科技股份有限公司 All rights reserved.
@@ -41,13 +43,36 @@ class PasswordInputEditText(context: Context, attributeSet: AttributeSet? = null
     var strokeWidth = 2 * density
 
     var passwordHighlightColor = Color.RED
+    /*背景颜色*/
     var passwordBgColor = Color.TRANSPARENT
+    /*密码的颜色*/
     var passwordColor = Color.GRAY
+    /**边框的颜色*/
     var passwordBorderColor = Color.GRAY
+
+    /**密码不可见时的提示样式*/
+    var passwordTipType = TIP_TYPE_CIRCLE
+
+    /**是否需要显示高亮框*/
+    var showHighlight = true
+
+    companion object {
+        /**画圆*/
+        const val TIP_TYPE_CIRCLE = 1
+        /**画真实数字*/
+        const val TIP_TYPE_RAW = 2
+        /**画矩形*/
+        const val TIP_TYPE_RECT = 3
+    }
 
     private val paint: Paint by lazy {
         val p = Paint(Paint.ANTI_ALIAS_FLAG)
         p.strokeWidth = strokeWidth
+        p
+    }
+
+    private val textRawPaint: Paint by lazy {
+        val p = Paint(Paint.ANTI_ALIAS_FLAG)
         p
     }
 
@@ -71,7 +96,14 @@ class PasswordInputEditText(context: Context, attributeSet: AttributeSet? = null
         passwordColor = array.getColor(R.styleable.PasswordInputEditText_r_password_color, passwordColor)
         passwordBorderColor = array.getColor(R.styleable.PasswordInputEditText_r_password_border_color, passwordBorderColor)
 
+        showHighlight = array.getBoolean(R.styleable.PasswordInputEditText_r_show_highlight, showHighlight)
+        passwordTipType = array.getInt(R.styleable.PasswordInputEditText_r_password_tip_type, passwordTipType)
+
         array.recycle()
+
+        if (passwordTipType == TIP_TYPE_RAW) {
+            textRawPaint.set(getPaint())
+        }
 
         setBackgroundColor(Color.TRANSPARENT)
         setTextColor(Color.TRANSPARENT)
@@ -134,7 +166,7 @@ class PasswordInputEditText(context: Context, attributeSet: AttributeSet? = null
         highlightRect.setEmpty()
 
         var left: Float
-        for (i in 0..passwordCount - 1) {
+        for (i in 0 until passwordCount) {
             if (passwordSpace == 0f) {
                 left = paddingLeft + passwordSize * i + strokeWidth / 2
             } else {
@@ -153,8 +185,11 @@ class PasswordInputEditText(context: Context, attributeSet: AttributeSet? = null
             paint.style = Paint.Style.STROKE
             if (isFocused && text.length == i) {
                 //高亮颜色
-                paint.color = passwordHighlightColor
-
+                if (showHighlight) {
+                    paint.color = passwordHighlightColor
+                } else {
+                    paint.color = passwordBorderColor
+                }
                 highlightRect.set(rect)
             } else {
                 paint.color = passwordBorderColor
@@ -165,12 +200,29 @@ class PasswordInputEditText(context: Context, attributeSet: AttributeSet? = null
             if (text.length > i) {
                 paint.style = Paint.Style.FILL_AND_STROKE
                 paint.color = passwordColor
-                canvas.drawCircle(rect.centerX().toFloat(), rect.centerY().toFloat(), passwordSize * 0.6f / 2, paint)
+
+                when (passwordTipType) {
+                    TIP_TYPE_CIRCLE -> {
+                        canvas.drawCircle(rect.centerX().toFloat(), rect.centerY().toFloat(), passwordSize * 0.6f / 2, paint)
+                    }
+                    TIP_TYPE_RECT -> {
+                        val offset = 4 * density
+                        canvas.drawRect(rect.left + offset, rect.top + offset, rect.right - offset, rect.bottom - offset, paint)
+                    }
+                    TIP_TYPE_RAW -> {
+                        val s = text.toString()[i].toString()
+                        textRawPaint.color = passwordColor
+                        canvas.drawText(text.toString()[i].toString(),
+                                rect.centerX() - textWidth(textRawPaint, s) / 2,
+                                rect.centerY() + textHeight(textRawPaint) / 2 - textRawPaint.descent(), textRawPaint)
+                    }
+                }
             }
         }
 
         //高亮处理
-        if (passwordSpace == 0f) {
+        if (passwordSpace == 0f && showHighlight) {
+            //间隙等于0时, 高亮的矩形会被左右的矩形覆盖, 所以需要重新绘制
             paint.color = passwordHighlightColor
             canvas.drawRect(highlightRect, paint)
         }
