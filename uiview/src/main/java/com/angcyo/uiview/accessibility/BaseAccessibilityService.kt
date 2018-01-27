@@ -179,13 +179,13 @@ open class BaseAccessibilityService : AccessibilityService() {
             if (logFilePath == null) {
                 Log.i(TAG, "╔═══════════════════════════════════════════════════════════════════════════════════════")
             } else {
-                RIo.appendToFile(logFilePath, "╔═══════════════════════════════════════════════════════════════════════════════════════")
+                RIo.appendToFile(logFilePath, "╔═══════════════════════════\n")
             }
             debugNodeInfo(rootNodeInfo, 0, "", logFilePath)
             if (logFilePath == null) {
                 Log.i(TAG, "╚═══════════════════════════════════════════════════════════════════════════════════════")
             } else {
-                RIo.appendToFile(logFilePath, "╚═══════════════════════════════════════════════════════════════════════════════════════")
+                RIo.appendToFile(logFilePath, "╚═══════════════════════════\n")
             }
         }
 
@@ -217,12 +217,12 @@ open class BaseAccessibilityService : AccessibilityService() {
             if (logFilePath == null) {
                 Log.i(TAG, "$stringBuilder")
             } else {
-                RIo.appendToFile(logFilePath, "$stringBuilder")
+                RIo.appendToFile(logFilePath, "$stringBuilder\n")
             }
 
             for (i in 0 until nodeInfo.childCount) {
                 nodeInfo.getChild(i)?.let {
-                    debugNodeInfo(it, index + 1, "${if (preIndex.isEmpty()) preIndex else "${preIndex}_"}$i")
+                    debugNodeInfo(it, index + 1, "${if (preIndex.isEmpty()) preIndex else "${preIndex}_"}$i", logFilePath)
                 }
             }
         }
