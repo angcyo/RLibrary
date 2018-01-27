@@ -12,7 +12,7 @@ import android.widget.OverScroller;
 /**
  * Copyright (C) 2016,深圳市红鸟网络科技股份有限公司 All rights reserved.
  * 项目名称：
- * 类的描述：
+ * 类的描述：银行卡 布局
  * 创建人员：Robi
  * 创建时间：2017/09/14 15:14
  * 修改人员：Robi
