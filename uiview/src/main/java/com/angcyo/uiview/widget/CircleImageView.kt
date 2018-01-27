@@ -5,11 +5,12 @@ import android.graphics.*
 import android.graphics.drawable.Drawable
 import android.os.Build
 import android.support.v7.widget.AppCompatImageView
-import android.text.TextUtils
+import android.text.TextPaint
 import android.util.AttributeSet
 import com.angcyo.uiview.R
 import com.angcyo.uiview.kotlin.calcWidthHeightRatio
 import com.angcyo.uiview.kotlin.density
+import com.angcyo.uiview.kotlin.textHeight
 
 /**
  * Copyright (C) 2016,深圳市红鸟网络科技股份有限公司 All rights reserved.
@@ -81,6 +82,17 @@ open class CircleImageView(context: Context, attributeSet: AttributeSet? = null)
         p
     }
 
+    val debugPaint: Paint by lazy {
+        val p = TextPaint(Paint.ANTI_ALIAS_FLAG)
+        p.strokeJoin = Paint.Join.ROUND
+        p.strokeCap = Paint.Cap.ROUND
+        p.style = Paint.Style.STROKE
+        p.isFilterBitmap = true
+        p.color = Color.GREEN
+        p.textSize = 14 * density
+        p
+    }
+
     override fun onMeasure(widthMeasureSpec: Int, heightMeasureSpec: Int) {
         super.onMeasure(widthMeasureSpec, heightMeasureSpec)
         if (equWidth) {
@@ -110,10 +122,12 @@ open class CircleImageView(context: Context, attributeSet: AttributeSet? = null)
 
     override fun onSizeChanged(w: Int, h: Int, oldw: Int, oldh: Int) {
         super.onSizeChanged(w, h, oldw, oldh)
-        createBitmapCanvas(w, h)
+        if (schemeVersion == SCHEME_CANVAS_BITMAP) {
+            createBitmapCanvas(w, h)
+        }
     }
 
-    fun createBitmapCanvas(w: Int, h: Int) {
+    private fun createBitmapCanvas(w: Int, h: Int) {
         bitmapSource?.recycle()
         bitmapCanvas = null
         if (w > 0 && h > 0) {
@@ -123,7 +137,7 @@ open class CircleImageView(context: Context, attributeSet: AttributeSet? = null)
     }
 
     /**实现圆角的方式*/
-    var schemeVersion = SCHEME_CANVAS_BITMAP
+    var schemeVersion = SCHEME_CLIP_PATH
 
     override fun onDraw(canvas: Canvas) {
         when (showType) {
@@ -157,26 +171,33 @@ open class CircleImageView(context: Context, attributeSet: AttributeSet? = null)
 
                 when (schemeVersion) {
                     SCHEME_CLIP_PATH -> {
-                        fun save(canvas: Canvas) = if (TextUtils.equals(Build.MANUFACTURER, "HUAWEI") &&
-                                Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP /*华为手机处理圆角, 偶尔会失败.*/) {
-                            canvas.saveLayer(0f, 0f, measuredWidth.toFloat(), measuredHeight.toFloat(), paint, Canvas.ALL_SAVE_FLAG)
+//                        fun save(canvas: Canvas) = if (TextUtils.equals(Build.MANUFACTURER, "HUAWEI") &&
+//                                Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP /*华为手机处理圆角, 偶尔会失败.*/) {
+//                            canvas.saveLayer(0f, 0f, measuredWidth.toFloat(), measuredHeight.toFloat(), null)
+//                        } else {
+//                            canvas.save()
+//                        }
+
+                        fun save(canvas: Canvas) = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+                            canvas.saveLayer(0f, 0f, measuredWidth.toFloat(), measuredHeight.toFloat(), null)
                         } else {
-                            canvas.save()
+                            canvas.saveLayer(0f, 0f, measuredWidth.toFloat(), measuredHeight.toFloat(), null, Canvas.ALL_SAVE_FLAG)
                         }
 
                         var save1 = save(canvas)
                         canvas.clipPath(clipPath, Region.Op.INTERSECT)//交集显示
 
                         //val savePath = canvas.saveLayer(null, null, Canvas.ALL_SAVE_FLAG)
-                        var save2 = save(canvas)
+                        //var save2 = save(canvas)
                         //                if (TextUtils.equals(Build.MODEL, "VTR-AL00") /*华为P10处理圆角, 偶尔会失败.*/) {
                         //                if (TextUtils.equals(Build.MANUFACTURER, "HUAWEI") && Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP /*华为手机处理圆角, 偶尔会失败.*/) {
                         //                    save2 = canvas.saveLayer(0f, 0f, measuredWidth.toFloat(), measuredHeight.toFloat(), paint, Canvas.ALL_SAVE_FLAG)
                         //                } else {
                         //                    save2 = canvas.save()
                         //                }
+                        canvas.drawColor(Color.TRANSPARENT, PorterDuff.Mode.CLEAR)
                         super.onDraw(canvas)
-                        canvas.restoreToCount(save2)
+                        //canvas.restoreToCount(save2)
                         canvas.restoreToCount(save1)
                     }
                     SCHEME_CANVAS_BITMAP -> {
@@ -202,6 +223,10 @@ open class CircleImageView(context: Context, attributeSet: AttributeSet? = null)
                 //canvas.restoreToCount(saveLayer)
             }
         }
+
+        if (SHOW_DEBUG) {
+            canvas.drawText("$showType $schemeVersion", 0f, debugPaint.textHeight(), debugPaint)
+        }
     }
 
     val drawDrawable: Drawable?
@@ -219,5 +244,7 @@ open class CircleImageView(context: Context, attributeSet: AttributeSet? = null)
         const val SCHEME_CLIP_PATH = 1
         /**使用canvas的方式实现圆角*/
         const val SCHEME_CANVAS_BITMAP = 2
+
+        val SHOW_DEBUG = false
     }
 }
