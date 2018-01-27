@@ -295,7 +295,11 @@ public class RTextView extends AppCompatTextView {
     protected void onDrawScrollText(Canvas canvas) {
         String text = String.valueOf(getText());
         if (text == null) {
-            text = "";
+            if (isInEditMode()) {
+                text = "会滚动的文本";
+            } else {
+                text = "";
+            }
         }
         if (mScrollTextPaint == null) {
             mScrollTextPaint = new TextPaint(getPaint());
@@ -304,17 +308,19 @@ public class RTextView extends AppCompatTextView {
 
         float textWidth = mScrollTextPaint.measureText(text);
 
+        float drawTextY = getPaddingTop() - mScrollTextPaint.ascent();//getMeasuredHeight() - getPaddingBottom();
+
         if (scrollType == SCROLL_TYPE_DEFAULT) {
-            canvas.drawText(text, getMeasuredWidth() - scrollCurX, ViewExKt.textHeight(this), mScrollTextPaint);
+            canvas.drawText(text, getMeasuredWidth() - scrollCurX, drawTextY, mScrollTextPaint);
 
             if (isScrollTextCircle) {
-                canvas.drawText(text, getMeasuredWidth() - scrollCurX + textWidth + scrollTextCircleOffset, ViewExKt.textHeight(this), mScrollTextPaint);
+                canvas.drawText(text, getMeasuredWidth() - scrollCurX + textWidth + scrollTextCircleOffset, drawTextY, mScrollTextPaint);
             }
         } else if (scrollType == SCROLL_TYPE_START) {
-            canvas.drawText(text, -scrollCurX, ViewExKt.textHeight(this), mScrollTextPaint);
+            canvas.drawText(text, -scrollCurX, drawTextY, mScrollTextPaint);
 
             if (isScrollTextCircle) {
-                canvas.drawText(text, -scrollCurX + textWidth + scrollTextCircleOffset, ViewExKt.textHeight(this), mScrollTextPaint);
+                canvas.drawText(text, -scrollCurX + textWidth + scrollTextCircleOffset, drawTextY, mScrollTextPaint);
             }
         }
 
@@ -330,9 +336,13 @@ public class RTextView extends AppCompatTextView {
             }
         }
 
-        if (getVisibility() == View.VISIBLE && !pauseScroll) {
-            postInvalidateOnAnimation();
+        if (isInEditMode()) {
+        } else {
+            if (getVisibility() == View.VISIBLE && !pauseScroll) {
+                postInvalidateOnAnimation();
+            }
         }
+
         //canvas.drawText(text, );
         //canvas.translate(-100, 0);
         //super.onDraw(canvas);

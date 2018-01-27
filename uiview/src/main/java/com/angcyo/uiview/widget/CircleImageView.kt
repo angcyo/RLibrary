@@ -5,12 +5,10 @@ import android.graphics.*
 import android.graphics.drawable.Drawable
 import android.os.Build
 import android.support.v7.widget.AppCompatImageView
-import android.text.TextPaint
 import android.util.AttributeSet
 import com.angcyo.uiview.R
 import com.angcyo.uiview.kotlin.calcWidthHeightRatio
 import com.angcyo.uiview.kotlin.density
-import com.angcyo.uiview.kotlin.textHeight
 
 /**
  * Copyright (C) 2016,深圳市红鸟网络科技股份有限公司 All rights reserved.
@@ -79,17 +77,6 @@ open class CircleImageView(context: Context, attributeSet: AttributeSet? = null)
         p.strokeCap = Paint.Cap.ROUND
         p.style = Paint.Style.STROKE
         p.isFilterBitmap = true
-        p
-    }
-
-    val debugPaint: Paint by lazy {
-        val p = TextPaint(Paint.ANTI_ALIAS_FLAG)
-        p.strokeJoin = Paint.Join.ROUND
-        p.strokeCap = Paint.Cap.ROUND
-        p.style = Paint.Style.STROKE
-        p.isFilterBitmap = true
-        p.color = Color.GREEN
-        p.textSize = 14 * density
         p
     }
 
@@ -224,9 +211,9 @@ open class CircleImageView(context: Context, attributeSet: AttributeSet? = null)
             }
         }
 
-        if (SHOW_DEBUG) {
-            canvas.drawText("$showType $schemeVersion", 0f, debugPaint.textHeight(), debugPaint)
-        }
+//        if (SHOW_DEBUG) {
+//            canvas.drawText("$showType $schemeVersion", 0f, debugPaint.textHeight(), debugPaint)
+//        }
     }
 
     val drawDrawable: Drawable?

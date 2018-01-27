@@ -561,6 +561,15 @@ public class ExEditText extends AppCompatEditText {
                 isDownIn ||
                 ExKt.have(getInputType(), EditorInfo.TYPE_TEXT_VARIATION_PASSWORD)) {
             //禁止掉系统的所有菜单选项, 同时文本的光标定位, 选择功能也会不可用
+            if (action == MotionEvent.ACTION_DOWN) {
+                super.onTouchEvent(event);
+            } else if (action == MotionEvent.ACTION_CANCEL || action == MotionEvent.ACTION_UP) {
+                if (!isFocused()) {
+                    super.onTouchEvent(event);
+                } else {
+                    setSelection(getText().length());
+                }
+            }
             return true;
         } else {
             return super.onTouchEvent(event);
