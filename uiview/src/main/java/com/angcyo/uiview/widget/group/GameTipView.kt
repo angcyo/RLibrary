@@ -129,9 +129,11 @@ class GameCountDownView(context: Context, attributeSet: AttributeSet? = null) : 
     fun formatTime(millisecond: Long /*毫秒*/): String {
         val mill = millisecond / 1000
 
-        val min = mill / 60
-        val hour = min / 60
+        var min = mill / 60
+        var hour = min / 60
         val second = mill % 60
+        min %= 60
+        hour %= 24
 
         val builder = StringBuilder()
         if (hour > 0 || showHour) {
@@ -150,9 +152,11 @@ class GameCountDownView(context: Context, attributeSet: AttributeSet? = null) : 
     fun formatTime2(millisecond: Long /*毫秒*/): String {
         val mill = millisecond / 1000
 
-        val min = mill / 60
-        val hour = min / 60
+        var min = mill / 60
+        var hour = min / 60
         val second = mill % 60
+        min %= 60
+        hour %= 24
 
         val builder = StringBuilder()
         if (hour > 0 || showHour) {
