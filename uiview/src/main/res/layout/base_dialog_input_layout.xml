@@ -1,0 +1,96 @@
+<?xml version="1.0" encoding="utf-8"?>
+<com.angcyo.uiview.widget.RSoftInputLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:layout_gravity="bottom">
+
+    <FrameLayout
+        android:id="@+id/base_input_dialog_root_layout"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <LinearLayout
+            android:id="@+id/base_input_dialog_content_root_layout"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_gravity="bottom"
+            android:background="@color/base_chat_bg_color"
+            android:orientation="vertical">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="center_vertical"
+                android:orientation="horizontal">
+
+                <com.angcyo.uiview.widget.RTextView
+                    android:id="@+id/base_input_title_view"
+                    style="@style/BaseMainTextStyle"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center_vertical"
+                    android:layout_weight="1"
+                    android:paddingStart="@dimen/base_xhdpi"
+                    android:visibility="invisible"
+                    tools:text="输入框的标题文本"
+                    tools:visibility="visible"/>
+
+                <com.angcyo.uiview.widget.Button
+                    android:id="@+id/base_dialog_ok_view"
+                    style="@style/BaseSkinButtonLittleStyle"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="@dimen/base_xhdpi"
+                    android:layout_marginEnd="@dimen/base_xhdpi"
+                    android:layout_marginTop="@dimen/base_xhdpi"
+                    android:enabled="true"
+                    android:gravity="center"
+                    android:text="确定"/>
+
+            </LinearLayout>
+
+            <com.angcyo.uiview.widget.RTextView
+                android:id="@+id/base_input_tip_view"
+                style="@style/BaseDarkTextStyle"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:paddingBottom="@dimen/base_xhdpi"
+                android:paddingStart="@dimen/base_xhdpi"
+                android:visibility="gone"
+                tools:text="测试文本"
+                tools:visibility="visible"/>
+
+            <com.angcyo.uiview.widget.ExEditText
+                android:id="@+id/base_edit_text_view"
+                style="@style/BaseMainTextStyle"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="@color/base_white"
+                android:imeOptions="actionDone"
+                android:maxHeight="220dp"
+                android:minHeight="@dimen/base_item_size"
+                android:padding="@dimen/base_xhdpi"
+                android:textColor="@color/base_text_color"
+                android:textColorHint="@color/base_text_color_dark"
+                tools:layout_height="100dp"/>
+
+            <com.angcyo.uiview.widget.viewpager.TextIndicator
+                android:id="@+id/base_single_text_indicator_view"
+                style="@style/BaseDarkTextStyle"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="end"
+                android:layout_marginBottom="@dimen/base_xhdpi"
+                android:layout_marginEnd="@dimen/base_xhdpi"
+                android:layout_marginTop="@dimen/base_ldpi"
+                android:textSize="@dimen/default_text_little_size"
+                android:visibility="gone"
+                tools:text="100/100"
+                tools:visibility="visible"/>
+
+        </LinearLayout>
+
+    </FrameLayout>
+</com.angcyo.uiview.widget.RSoftInputLayout>

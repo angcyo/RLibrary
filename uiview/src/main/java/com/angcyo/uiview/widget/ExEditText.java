@@ -60,7 +60,7 @@ import java.util.regex.Pattern;
 public class ExEditText extends AppCompatEditText {
 
     Rect clearRect = new Rect();//删除按钮区域
-    boolean isDownIn = false;//是否在按钮区域按下
+    boolean isDownIn = false;//是否在 一键清空 按钮区域按下
     Drawable clearDrawable;
 
     boolean showClear = true;//是否显示删除按钮
@@ -499,7 +499,7 @@ public class ExEditText extends AppCompatEditText {
     protected void onSizeChanged(int w, int h, int oldw, int oldh) {
         super.onSizeChanged(w, h, oldw, oldh);
         if (showClear) {
-            int offset = (int) (2 * getResources().getDisplayMetrics().density);
+            int offset = (int) (4 * getResources().getDisplayMetrics().density);
             clearRect.set(w - getPaddingRight() - getClearDrawable().getIntrinsicWidth() - offset,
                     getPaddingTop(), w - getPaddingRight() + offset, Math.min(w, h) - getPaddingBottom());
         }
@@ -520,6 +520,7 @@ public class ExEditText extends AppCompatEditText {
                 if (isDownIn && checkClear(event.getX(), event.getY())) {
                     if (!TextUtils.isEmpty(getText())) {
                         setText("");
+                        setSelection(0);
                         return true;
                     }
                 }
@@ -556,7 +557,14 @@ public class ExEditText extends AppCompatEditText {
 //                hidePassword();
 //            }
 //        }
-        return super.onTouchEvent(event);
+        if (!showContentMenu ||
+                isDownIn ||
+                ExKt.have(getInputType(), EditorInfo.TYPE_TEXT_VARIATION_PASSWORD)) {
+            //禁止掉系统的所有菜单选项, 同时文本的光标定位, 选择功能也会不可用
+            return true;
+        } else {
+            return super.onTouchEvent(event);
+        }
     }
 
     private void updateState(boolean isDownIn) {

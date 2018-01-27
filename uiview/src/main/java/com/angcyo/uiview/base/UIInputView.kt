@@ -23,7 +23,6 @@ import com.angcyo.uiview.widget.viewpager.TextIndicator
  * 修改备注：
  * Version: 1.0.0
  */
-
 abstract class UIInputView : UIItemUIView<SingleItem>() {
     override fun createItems(items: MutableList<SingleItem>?) {
         items?.add(object : SingleItem() {
@@ -32,7 +31,7 @@ abstract class UIInputView : UIItemUIView<SingleItem>() {
             }
 
             override fun getItemLayoutId(): Int {
-                return R.layout.base_item_input_layout
+                return this@UIInputView.getItemLayoutId()
             }
 
         })
@@ -47,6 +46,10 @@ abstract class UIInputView : UIItemUIView<SingleItem>() {
                         }
                     }
                 })
+    }
+
+    open protected fun getItemLayoutId(): Int {
+        return R.layout.base_item_input_layout
     }
 
     override fun getTitleString(): String {

@@ -111,6 +111,28 @@
         <item name="android:textSize">@dimen/default_text_size</item>
     </style>
 
+    <style name="BaseSkinButtonLittleStyle">
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:gravity">center</item>
+        <item name="android:paddingTop">4dp</item>
+        <item name="android:paddingBottom">4dp</item>
+        <item name="android:paddingStart">6dp</item>
+        <item name="android:paddingEnd">6dp</item>
+        <item name="android:clickable">true</item>
+        <item name="android:textColor">@color/base_white</item>
+        <item name="android:textSize">@dimen/default_text_size</item>
+    </style>
+
+    <style name="BaseSkinButtonNoPaddingStyle">
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:gravity">center</item>
+        <item name="android:clickable">true</item>
+        <item name="android:textColor">@color/base_white</item>
+        <item name="android:textSize">@dimen/default_text_size</item>
+    </style>
+
     <!--标准的Item Info 样式-->
     <style name="BaseItemInfoStyle">
         <item name="android:layout_width">match_parent</item>

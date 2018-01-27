@@ -1933,6 +1933,17 @@ public class RUtils {
         return SettingsCompat.canDrawOverlays(RApplication.getApp());
     }
 
+    public static String getClassSimpleName(Class<?> cls) {
+        if (cls == null) {
+            return "NoClassName";
+        }
+        if (cls.isAnonymousClass()) {
+            //匿名类
+            return getClassSimpleName(cls.getSuperclass());
+        }
+        return cls.getSimpleName();
+    }
+
     public enum ImageType {
         JPEG, GIF, PNG, BMP, UNKNOWN
     }

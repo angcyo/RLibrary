@@ -40,6 +40,7 @@ import com.angcyo.uiview.resources.AnimUtil;
 import com.angcyo.uiview.rsen.RGestureDetector;
 import com.angcyo.uiview.skin.ISkin;
 import com.angcyo.uiview.utils.Debug;
+import com.angcyo.uiview.utils.RUtils;
 import com.angcyo.uiview.view.ILifecycle;
 import com.angcyo.uiview.view.IView;
 import com.angcyo.uiview.view.UIIViewImpl;
@@ -3037,7 +3038,7 @@ public class UILayoutImpl extends SwipeBackLayout implements ILayout<UIParam>, U
                 float dp2 = 2 * density();
                 debugPaint.setShadowLayer(dp2, dp2, dp2, Color.BLACK);
 
-                canvas.drawText(viewPatternByView.mIView.getClass().getSimpleName(),
+                canvas.drawText(RUtils.getClassSimpleName(viewPatternByView.mIView.getClass()),
                         hSpace, t + textHeight, debugPaint);
 
                 t += hSize + vSpace;

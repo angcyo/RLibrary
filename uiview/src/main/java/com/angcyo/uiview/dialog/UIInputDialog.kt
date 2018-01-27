@@ -1,5 +1,6 @@
 package com.angcyo.uiview.dialog
 
+import android.graphics.Color
 import android.support.design.widget.TextInputLayout
 import android.view.Gravity
 import android.view.LayoutInflater
@@ -54,6 +55,7 @@ open class UIInputDialog : UIIDialogImpl {
             //初始化视图数据
             editText?.hint = "请输入..."
             okButton.text = "确定"
+            okButton.setTextColor(Color.WHITE)
 
             dialogConfig?.onInitInputDialog(this, titleBarLayout, textInputLayout, editText!!, okButton)
 
@@ -80,7 +82,9 @@ open class UIInputDialog : UIIDialogImpl {
         dialogConfig?.autoShowSoftInput()?.let { b ->
             editText?.let {
                 if (b) {
-                    showSoftInput(it)
+                    post {
+                        showSoftInput(it)
+                    }
                 }
             }
         }
