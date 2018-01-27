@@ -6,6 +6,7 @@ import android.view.View
 import android.widget.FrameLayout
 import com.angcyo.uiview.R
 import com.angcyo.uiview.base.UIIDialogImpl
+import com.angcyo.uiview.recycler.RBaseViewHolder
 import com.angcyo.uiview.utils.UI
 import com.angcyo.uiview.widget.ExEditText
 import com.angcyo.uiview.widget.viewpager.TextIndicator
@@ -49,6 +50,12 @@ open class UIInputExDialog : UIIDialogImpl {
     /**文本返回回调*/
     var onInputTextResult: ((String) -> Unit)? = null
 
+    /**初始化回调方法*/
+    var onInitLayoutCallback: ((RBaseViewHolder) -> Unit)? = null
+
+    /**拦截OK按钮事件, 返回true表示可以关闭界面*/
+    var onOkButtonClick: ((UIInputExDialog, RBaseViewHolder, String) -> Boolean)? = null
+
     /**重写此方法, 定制布局*/
     override fun inflateDialogView(dialogRootLayout: FrameLayout?, inflater: LayoutInflater?): View {
         return inflate(R.layout.base_dialog_input_layout)
@@ -57,6 +64,7 @@ open class UIInputExDialog : UIIDialogImpl {
     override fun initDialogContentView() {
         super.initDialogContentView()
         onInitLayout()
+        onInitLayoutCallback?.invoke(`$`)
     }
 
     /**基础控制初始化*/
@@ -122,8 +130,20 @@ open class UIInputExDialog : UIIDialogImpl {
         mViewHolder.tv(R.id.base_dialog_ok_view).apply {
             text = okButtonTextString
             click(this) {
-                finishDialog {
-                    onInputTextResult?.invoke(editText?.string() ?: "")
+                if (onOkButtonClick == null) {
+                    finishDialog {
+                        onInputTextResult?.invoke(editText?.string() ?: "")
+                    }
+                } else {
+                    if (onOkButtonClick!!.invoke(this@UIInputExDialog, `$`, editText?.string()
+                                    ?: "")) {
+                        //验证通过了
+                        finishDialog {
+                            onInputTextResult?.invoke(editText?.string() ?: "")
+                        }
+                    } else {
+                        editText?.error()
+                    }
                 }
             }
         }
