@@ -13,6 +13,7 @@ import android.view.WindowManager;
 
 import com.angcyo.library.utils.L;
 import com.angcyo.uiview.R;
+import com.angcyo.uiview.kotlin.ExKt;
 
 /**
  * Created by angcyo on 2016-11-12.
@@ -109,5 +110,31 @@ public abstract class StyleActivity extends AppCompatActivity {
     public void onDetachedFromWindow() {
         super.onDetachedFromWindow();
         L.e(this.getClass().getSimpleName() + " onDetachedFromWindow([])-> taskId:" + getTaskId());
+    }
+
+    /**
+     * @see com.angcyo.uiview.view.UIIViewImpl#lightStatusBar(boolean)
+     */
+    public void lightStatusBar(boolean light) {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+            int systemUiVisibility = this.getWindow().getDecorView().getSystemUiVisibility();
+            if (light) {
+                if (ExKt.have(systemUiVisibility, View.SYSTEM_UI_FLAG_LIGHT_STATUS_BAR)) {
+                    return;
+                }
+                this.getWindow()
+                        .getDecorView()
+                        .setSystemUiVisibility(
+                                systemUiVisibility | View.SYSTEM_UI_FLAG_LIGHT_STATUS_BAR);
+            } else {
+                if (!ExKt.have(systemUiVisibility, View.SYSTEM_UI_FLAG_LIGHT_STATUS_BAR)) {
+                    return;
+                }
+                this.getWindow()
+                        .getDecorView()
+                        .setSystemUiVisibility(
+                                systemUiVisibility & ~View.SYSTEM_UI_FLAG_LIGHT_STATUS_BAR);
+            }
+        }
     }
 }
