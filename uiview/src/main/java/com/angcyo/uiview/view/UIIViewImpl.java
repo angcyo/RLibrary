@@ -5,6 +5,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.pm.ActivityInfo;
 import android.content.res.ColorStateList;
+import android.content.res.Configuration;
 import android.content.res.Resources;
 import android.graphics.Color;
 import android.graphics.drawable.Drawable;
@@ -1160,7 +1161,13 @@ public abstract class UIIViewImpl implements IView {
 
     @Override
     public int getDefaultRequestedOrientation() {
-        return ActivityInfo.SCREEN_ORIENTATION_PORTRAIT;
+        int orientation;
+        if (getScreenOrientation() == Configuration.ORIENTATION_LANDSCAPE) {
+            orientation = ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE;
+        } else {
+            orientation = ActivityInfo.SCREEN_ORIENTATION_PORTRAIT;
+        }
+        return orientation;//ActivityInfo.SCREEN_ORIENTATION_PORTRAIT;
     }
 
     public RBaseViewHolder get$() {

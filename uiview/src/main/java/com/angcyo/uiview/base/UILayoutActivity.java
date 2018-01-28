@@ -4,7 +4,6 @@ import android.Manifest;
 import android.annotation.TargetApi;
 import android.content.Context;
 import android.content.Intent;
-import android.content.pm.ActivityInfo;
 import android.graphics.Color;
 import android.os.Build;
 import android.view.View;
@@ -73,7 +72,8 @@ public abstract class UILayoutActivity extends StyleActivity {
      * 初始化屏幕方向
      */
     protected void initScreenOrientation() {
-        setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);//竖屏
+        //setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);//竖屏
+        setRequestedOrientation(getResources().getConfiguration().orientation);//采用系统的布局方向
     }
 
     protected void checkPermissions() {
