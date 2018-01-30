@@ -2378,7 +2378,7 @@ public class UILayoutImpl extends SwipeBackLayout implements ILayout<UIParam>, U
                         StringBuilder log = new StringBuilder();
                         log.append("请注意:界面出现异常.");
                         log.append(topViewPattern.mIView.getClass().getSimpleName());
-                        log.append("w:");
+                        log.append(" w:");
                         log.append(width);
                         log.append(" h:");
                         log.append(height);
