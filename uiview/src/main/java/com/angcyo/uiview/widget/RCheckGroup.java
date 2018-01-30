@@ -85,11 +85,11 @@ public class RCheckGroup extends LinearLayout implements View.OnClickListener {
         }
 
         if (checkView != null) {
-            notifyListener(oldView, checkView);
+            notifyListener(oldView, checkView, true);
         }
     }
 
-    private void notifyListener(View from, View to) {
+    private void notifyListener(View from, View to, boolean notify) {
         if (from != null) {
             if (from instanceof ICheckView) {
                 ((ICheckView) from).setChecked(false);
@@ -100,7 +100,7 @@ public class RCheckGroup extends LinearLayout implements View.OnClickListener {
                 ((ICheckView) to).setChecked(true);
             }
         }
-        if (mCheckChangedListener != null) {
+        if (mCheckChangedListener != null && notify) {
             if (from == to) {
                 mCheckChangedListener.onReChecked(to);
             } else {
@@ -119,7 +119,7 @@ public class RCheckGroup extends LinearLayout implements View.OnClickListener {
         this.checkView = checkView;
         this.checkId = checkView.getId();
 
-        notifyListener(oldView, checkView);
+        notifyListener(oldView, checkView, true);
     }
 
     public int getCheckId() {
@@ -127,12 +127,16 @@ public class RCheckGroup extends LinearLayout implements View.OnClickListener {
     }
 
     public void setCheckId(int checkId) {
+        setCheckId(checkId, true);
+    }
+
+    public void setCheckId(int checkId, boolean notify) {
         View oldView = this.checkView;
 
         this.checkId = checkId;
         this.checkView = findViewById(checkId);
 
-        notifyListener(oldView, checkView);
+        notifyListener(oldView, checkView, notify);
     }
 
     public void setOnCheckChangedListener(OnCheckChangedListener checkChangedListener) {
@@ -166,7 +170,7 @@ public class RCheckGroup extends LinearLayout implements View.OnClickListener {
                 iCheckView.setChecked(true);
             }
 
-            notifyListener(oldView, v);
+            notifyListener(oldView, v, true);
         }
     }
 

@@ -121,6 +121,10 @@ public class ExEditText extends AppCompatEditText {
     private boolean showContentMenu = true;
 
     private OnTextEmptyListener mOnTextEmptyListener;
+    /**
+     * 屏幕一键删除按钮点击后, 触发输入框选择, 弹出的菜单的问题
+     */
+    private int touchDownWithHandle = 0;
 
     public ExEditText(Context context) {
         super(context);
@@ -197,6 +201,17 @@ public class ExEditText extends AppCompatEditText {
         }
         final String phone = string.trim();
         return !TextUtils.isEmpty(phone) && phone.matches("^1[3-8]\\d{9}$");
+    }
+
+    /**
+     * 是否是邮箱
+     */
+    public static boolean isEmail(String string) {
+        if (TextUtils.isEmpty(string)) {
+            return false;
+        }
+        final String s = string.trim();
+        return !TextUtils.isEmpty(s) && s.matches("^[A-Za-z\\d]+([-_.][A-Za-z\\d]+)*@([A-Za-z\\d]+[-.])+[A-Za-z\\d]{2,4}$");
     }
 
     public static float getInputNumber(Editable editable) {
@@ -488,6 +503,7 @@ public class ExEditText extends AppCompatEditText {
         checkEdit(focused);
 
         if (!focused) {
+            touchDownWithHandle = 0;
             //没有焦点的时候, 检查自动匹配输入
             if (isInputTipPattern()) {
                 setText(mInputTipText);
@@ -509,9 +525,12 @@ public class ExEditText extends AppCompatEditText {
     public boolean onTouchEvent(MotionEvent event) {
         int action = event.getAction();
 
+        boolean downInClearButton = isDownIn;
+
         if (showClear && isFocused()) {
             if (action == MotionEvent.ACTION_DOWN) {
                 isDownIn = checkClear(event.getX(), event.getY());
+                downInClearButton = isDownIn;
                 updateState(isDownIn);
             } else if (action == MotionEvent.ACTION_MOVE) {
                 updateState(checkClear(event.getX(), event.getY()));
@@ -558,14 +577,19 @@ public class ExEditText extends AppCompatEditText {
 //            }
 //        }
         if (!showContentMenu ||
-                isDownIn ||
+                downInClearButton ||
                 ExKt.have(getInputType(), EditorInfo.TYPE_TEXT_VARIATION_PASSWORD)) {
             //禁止掉系统的所有菜单选项, 同时文本的光标定位, 选择功能也会不可用
             if (action == MotionEvent.ACTION_DOWN) {
-                super.onTouchEvent(event);
-            } else if (action == MotionEvent.ACTION_CANCEL || action == MotionEvent.ACTION_UP) {
-                if (!isFocused()) {
+                if (touchDownWithHandle != 0) {
+                } else {
                     super.onTouchEvent(event);
+                    touchDownWithHandle = 1;
+                }
+            } else if (action == MotionEvent.ACTION_CANCEL || action == MotionEvent.ACTION_UP) {
+                if (touchDownWithHandle == 1) {
+                    super.onTouchEvent(event);
+                    touchDownWithHandle = 2;
                 } else {
                     setSelection(getText().length());
                 }
@@ -775,7 +799,9 @@ public class ExEditText extends AppCompatEditText {
         return isPhone(string());
     }
 
-    //------------------------------------@功能支持-----------------------------------------//
+    public boolean isEmail() {
+        return isEmail(string());
+    }
 
     /**
      * 判断是否是有效

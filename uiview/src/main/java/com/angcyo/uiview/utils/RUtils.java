@@ -1944,6 +1944,10 @@ public class RUtils {
         return cls.getSimpleName();
     }
 
+    public static boolean isListEmpty(List<?> list) {
+        return list == null || list.isEmpty();
+    }
+
     public enum ImageType {
         JPEG, GIF, PNG, BMP, UNKNOWN
     }

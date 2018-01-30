@@ -184,7 +184,11 @@ public class Root {
      * 创建时间文件名
      */
     public static String createTimeFileName() {
-        String dataTime = RCrashHandler.getDataTime("yyyy-MM-dd_HH-mm-ss-SSS");
+        return createTimeFileName("yyyy-MM-dd_HH-mm-ss-SSS");
+    }
+
+    public static String createTimeFileName(String format) {
+        String dataTime = RCrashHandler.getDataTime(format);
         return dataTime;
     }
 
