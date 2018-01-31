@@ -129,7 +129,12 @@ open class CircleImageView(context: Context, attributeSet: AttributeSet? = null)
     override fun onDraw(canvas: Canvas) {
         when (showType) {
             NORMAL -> {
-                super.onDraw(canvas)
+                try {
+                    super.onDraw(canvas)
+                } catch (e: Exception) {
+                    onDrawError()
+                    e.printStackTrace()
+                }
             }
             ROUND, CIRCLE, ROUND_RECT -> {
                 val size = Math.min(measuredHeight - paddingTop - paddingBottom,
@@ -183,7 +188,12 @@ open class CircleImageView(context: Context, attributeSet: AttributeSet? = null)
                         //                    save2 = canvas.save()
                         //                }
                         canvas.drawColor(Color.TRANSPARENT, PorterDuff.Mode.CLEAR)
-                        super.onDraw(canvas)
+                        try {
+                            super.onDraw(canvas)
+                        } catch (e: Exception) {
+                            onDrawError()
+                            e.printStackTrace()
+                        }
                         //canvas.restoreToCount(save2)
                         canvas.restoreToCount(save1)
                     }
@@ -214,6 +224,10 @@ open class CircleImageView(context: Context, attributeSet: AttributeSet? = null)
 //        if (SHOW_DEBUG) {
 //            canvas.drawText("$showType $schemeVersion", 0f, debugPaint.textHeight(), debugPaint)
 //        }
+    }
+
+    open fun onDrawError() {
+
     }
 
     val drawDrawable: Drawable?

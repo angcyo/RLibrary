@@ -640,5 +640,10 @@ open class GlideImageView(context: Context, attributeSet: AttributeSet? = null) 
             e.printStackTrace()
         }
     }
+
+    override fun onDrawError() {
+        super.onDrawError()
+        loadSuccessUrl = ""
+    }
 }
 

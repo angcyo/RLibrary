@@ -1,41 +1,41 @@
-// apply from: '../lib.gradle'
-apply plugin: 'com.android.library'
+ apply from: '../lib.gradle'
+//apply plugin: 'com.android.library'
 
 apply plugin: 'kotlin-android'
 
-android {
-    compileSdkVersion Integer.parseInt(rootProject.C_SDK)
-    buildToolsVersion rootProject.B_TOOLS
-
-    defaultConfig {
-        minSdkVersion Integer.parseInt(rootProject.M_SDK)
-        targetSdkVersion Integer.parseInt(rootProject.T_SDK)
-    }
-
+//android {
+//    compileSdkVersion Integer.parseInt(rootProject.C_SDK)
+//    buildToolsVersion rootProject.B_TOOLS
 //
-//        manifestPlaceholders = [
-//                PACKAGE_NAME: "com.angcyo.uidemo"
-//        ]
-
-//    packagingOptions {
-//        exclude 'META-INF/DEPENDENCIES'
-//        exclude 'META-INF/NOTICE'
-//        exclude 'META-INF/LICENSE'
-//        exclude 'META-INF/LICENSE.txt'
-//        exclude 'META-INF/NOTICE.txt'
+//    defaultConfig {
+//        minSdkVersion Integer.parseInt(rootProject.M_SDK)
+//        targetSdkVersion Integer.parseInt(rootProject.T_SDK)
 //    }
 //
-//    lintOptions {
-//        checkReleaseBuilds false
-//        abortOnError false
-//    }
-//    dexOptions {
-//        incremental true
-//        preDexLibraries false
-//        jumboMode true
-//        javaMaxHeapSize "4g"
-//    }
-}
+////
+////        manifestPlaceholders = [
+////                PACKAGE_NAME: "com.angcyo.uidemo"
+////        ]
+//
+////    packagingOptions {
+////        exclude 'META-INF/DEPENDENCIES'
+////        exclude 'META-INF/NOTICE'
+////        exclude 'META-INF/LICENSE'
+////        exclude 'META-INF/LICENSE.txt'
+////        exclude 'META-INF/NOTICE.txt'
+////    }
+////
+////    lintOptions {
+////        checkReleaseBuilds false
+////        abortOnError false
+////    }
+////    dexOptions {
+////        incremental true
+////        preDexLibraries false
+////        jumboMode true
+////        javaMaxHeapSize "4g"
+////    }
+//}
 
 //https://developer.android.google.cn/studio/build/gradle-plugin-3-0-0-migration.html#new_configurations
 dependencies {
