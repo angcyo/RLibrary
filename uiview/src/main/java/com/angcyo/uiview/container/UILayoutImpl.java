@@ -3109,7 +3109,7 @@ public class UILayoutImpl extends SwipeBackLayout implements ILayout<UIParam>, U
 
             if (isFullOverlayDrawable) {
                 if (context instanceof Activity) {
-                    ((Activity) context).getWindow().getDecorView().getMeasuredHeight();
+                    screenHeight = ((Activity) context).getWindow().getDecorView().getMeasuredHeight();
                 }
             }
 
