@@ -9,6 +9,7 @@ import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.Rect;
+import android.graphics.drawable.Drawable;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Environment;
@@ -224,6 +225,11 @@ public class UILayoutImpl extends SwipeBackLayout implements ILayout<UIParam>, U
      * 拦截所有touch事件
      */
     private boolean interceptTouchEvent = false;
+
+    /**
+     * 覆盖在的所有IView上的Drawable
+     */
+    private Drawable overlayDrawable;
 
     public UILayoutImpl(Context context) {
         super(context);
@@ -3091,6 +3097,18 @@ public class UILayoutImpl extends SwipeBackLayout implements ILayout<UIParam>, U
                 t += hSize + vSpace;
             }
         }
+
+        if (overlayDrawable != null) {
+//            Context context = getContext();
+//            int screenHeight = 0;
+//            if (context instanceof Activity) {
+//                ((Activity) context).getWindow().getDecorView().getMeasuredHeight();
+//            } else {
+//                screenHeight = context.getResources().getDisplayMetrics().heightPixels;
+//            }
+            overlayDrawable.setBounds(0, 0, getMeasuredWidth(), getMeasuredHeight());
+            overlayDrawable.draw(canvas);
+        }
     }
 
     @Override
@@ -3117,6 +3135,11 @@ public class UILayoutImpl extends SwipeBackLayout implements ILayout<UIParam>, U
 
     public void setInterceptTouchEvent(boolean interceptTouchEvent) {
         this.interceptTouchEvent = interceptTouchEvent;
+    }
+
+    public void setOverlayDrawable(Drawable overlayDrawable) {
+        this.overlayDrawable = overlayDrawable;
+        postInvalidate();
     }
 
     /**

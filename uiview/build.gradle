@@ -1,8 +1,16 @@
-apply from: '../lib.gradle'
+// apply from: '../lib.gradle'
+apply plugin: 'com.android.library'
 
 apply plugin: 'kotlin-android'
 
 android {
+    compileSdkVersion Integer.parseInt(rootProject.C_SDK)
+    buildToolsVersion rootProject.B_TOOLS
+
+    defaultConfig {
+        minSdkVersion Integer.parseInt(rootProject.M_SDK)
+        targetSdkVersion Integer.parseInt(rootProject.T_SDK)
+    }
 
 //
 //        manifestPlaceholders = [
