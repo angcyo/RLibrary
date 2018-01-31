@@ -38,6 +38,7 @@
     <color name="default_base_bg_disable2">#DDDDDD</color>
     <color name="default_base_bg_dark">#333333</color>
     <color name="default_base_bg_dark2">#F0F0F5</color>
+    <color name="default_base_bg_dark2_tran">#60F0F0F5</color>
     <color name="default_base_white">#ffffff</color>
     <color name="base_white">#ffffff</color>
     <color name="base_white_tran">#19ffffff</color>

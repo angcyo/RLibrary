@@ -231,6 +231,11 @@ public class UILayoutImpl extends SwipeBackLayout implements ILayout<UIParam>, U
      */
     private Drawable overlayDrawable;
 
+    /**
+     * 高度使用DecorView的高度, 否则使用View的高度
+     */
+    private boolean isFullOverlayDrawable = false;
+
     public UILayoutImpl(Context context) {
         super(context);
         initLayout();
@@ -3099,14 +3104,16 @@ public class UILayoutImpl extends SwipeBackLayout implements ILayout<UIParam>, U
         }
 
         if (overlayDrawable != null) {
-//            Context context = getContext();
-//            int screenHeight = 0;
-//            if (context instanceof Activity) {
-//                ((Activity) context).getWindow().getDecorView().getMeasuredHeight();
-//            } else {
-//                screenHeight = context.getResources().getDisplayMetrics().heightPixels;
-//            }
-            overlayDrawable.setBounds(0, 0, getMeasuredWidth(), getMeasuredHeight());
+            Context context = getContext();
+            int screenHeight = getMeasuredHeight();
+
+            if (isFullOverlayDrawable) {
+                if (context instanceof Activity) {
+                    ((Activity) context).getWindow().getDecorView().getMeasuredHeight();
+                }
+            }
+
+            overlayDrawable.setBounds(0, 0, getMeasuredWidth(), screenHeight);
             overlayDrawable.draw(canvas);
         }
     }
@@ -3140,6 +3147,10 @@ public class UILayoutImpl extends SwipeBackLayout implements ILayout<UIParam>, U
     public void setOverlayDrawable(Drawable overlayDrawable) {
         this.overlayDrawable = overlayDrawable;
         postInvalidate();
+    }
+
+    public void setFullOverlayDrawable(boolean fullOverlayDrawable) {
+        isFullOverlayDrawable = fullOverlayDrawable;
     }
 
     /**
