@@ -170,12 +170,15 @@ open class CircleImageView(context: Context, attributeSet: AttributeSet? = null)
 //                            canvas.save()
 //                        }
 
-                        fun save(canvas: Canvas) = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+                        /*DisplayListCanvas */
+                        fun save(canvas: Canvas) = if (canvas.javaClass.name.contains("GLES20RecordingCanvas")) {
+                            canvas.save()
+                        } else if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
                             canvas.saveLayer(0f, 0f, measuredWidth.toFloat(), measuredHeight.toFloat(), null)
                         } else {
                             canvas.saveLayer(0f, 0f, measuredWidth.toFloat(), measuredHeight.toFloat(), null, Canvas.ALL_SAVE_FLAG)
                         }
-
+//
                         var save1 = save(canvas)
                         canvas.clipPath(clipPath, Region.Op.INTERSECT)//交集显示
 
@@ -187,7 +190,7 @@ open class CircleImageView(context: Context, attributeSet: AttributeSet? = null)
                         //                } else {
                         //                    save2 = canvas.save()
                         //                }
-                        canvas.drawColor(Color.TRANSPARENT, PorterDuff.Mode.CLEAR)
+//                        canvas.drawColor(Color.TRANSPARENT, PorterDuff.Mode.CLEAR)
                         try {
                             super.onDraw(canvas)
                         } catch (e: Exception) {
