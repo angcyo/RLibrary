@@ -145,6 +145,7 @@ abstract class BaseTouchLayer : BaseFrameLayer() {
     override fun onDraw(canvas: Canvas, gameStartTime: Long, lastRenderTime: Long, nowRenderTime: Long) {
         super.onDraw(canvas, gameStartTime, lastRenderTime, nowRenderTime)
         //checkAddNewSpirit()
+        onLayerDrawListener?.onLayerOnDraw(startDrawTime, nowRenderTime)
     }
 
     override fun onDrawThread(gameStartTime: Long, lastRenderTimeThread: Long, nowRenderTime: Long) {
@@ -393,4 +394,5 @@ interface OnClickSpiritListener {
 
 interface OnLayerDrawListener {
     fun onLayerDraw(startDrawTime: Long, nowDrawTime: Long)
+    fun onLayerOnDraw(startDrawTime: Long, nowDrawTime: Long)
 }
