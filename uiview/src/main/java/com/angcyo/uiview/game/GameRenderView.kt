@@ -107,6 +107,18 @@ class GameRenderView(context: Context, attributeSet: AttributeSet? = null) : Vie
     /*触摸点偏差多少距离算点击事件*/
     private val deviation = 10 * density
 
+//    override fun dispatchTouchEvent(event: MotionEvent): Boolean {
+//        val actionIndex = event.actionIndex
+//        val id = event.getPointerId(actionIndex)
+//
+//        if (event.actionMasked == MotionEvent.ACTION_DOWN ||
+//                event.actionMasked == MotionEvent.ACTION_POINTER_DOWN) {
+//            L.e("call: dispatchTouchEvent -> $id $event")
+//        }
+//
+//        return super.dispatchTouchEvent(event)
+//    }
+
     override fun onTouchEvent(event: MotionEvent): Boolean {
         val actionIndex = event.actionIndex
         val id = event.getPointerId(actionIndex)
@@ -116,6 +128,9 @@ class GameRenderView(context: Context, attributeSet: AttributeSet? = null) : Vie
 
         when (event.actionMasked) {
             MotionEvent.ACTION_DOWN, MotionEvent.ACTION_POINTER_DOWN -> {
+
+                //L.e("call: dispatchTouchEvent -> _$id $event")
+
                 if (maxTouchPoint > 0) {
                     if (pointList.size() < maxTouchPoint) {
                         pointList.put(id, PointF(eventX, eventY))
