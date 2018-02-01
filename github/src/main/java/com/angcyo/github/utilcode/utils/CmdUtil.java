@@ -566,6 +566,10 @@ public class CmdUtil {
         public int versionCode = 0;
         public Drawable appIcon;
 
+        //签名相关
+        public String md5;
+        public String sha1;
+
         @Override
         public boolean equals(Object o) {
             return packageName.equalsIgnoreCase(((AppInfo) o).packageName);
