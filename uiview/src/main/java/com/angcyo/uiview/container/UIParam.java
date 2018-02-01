@@ -22,6 +22,11 @@ public class UIParam {
 
     public boolean mAnim = true;
     public boolean mAsync = true;
+
+    /**
+     * 是否是后台关闭的界面, 请勿手动赋值
+     */
+    public boolean isFinishBack = false;
     /**
      * 是否是滑动返回, true 不判断是否允许退出
      */

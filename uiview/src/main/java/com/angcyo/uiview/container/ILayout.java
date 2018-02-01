@@ -40,6 +40,8 @@ public interface ILayout<T extends UIParam> {
 
     void finishIView(Class<?> clz);//2017-3-15 根据类型, 关闭页面
 
+    void finishIView(Class<?> clz, boolean keepLast /*如果clz是最后一个, 是否需要keep?*/);//2018-2-1
+
     /**
      * 显示一个View
      */
