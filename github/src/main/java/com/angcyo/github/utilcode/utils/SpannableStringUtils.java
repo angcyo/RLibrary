@@ -441,7 +441,7 @@ public class SpannableStringUtils {
         }
 
         /**
-         * 字体大小 pf单位
+         * 字体大小 px单位
          */
         public Builder setTextSize(int textSize) {
             this.textSize = textSize;

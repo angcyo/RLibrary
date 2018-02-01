@@ -512,6 +512,22 @@ public class RUtils {
     }
 
     /**
+     * 获取APP的名字
+     */
+    public static String getAppName() {
+        String appName = RApplication.getApp().getPackageName();
+        PackageManager packageManager = RApplication.getApp().getPackageManager();
+        PackageInfo packInfo;
+        try {
+            packInfo = packageManager.getPackageInfo(appName, 0);
+            appName = packInfo.applicationInfo.loadLabel(RApplication.getApp().getPackageManager()).toString();
+        } catch (PackageManager.NameNotFoundException e) {
+            e.printStackTrace();
+        }
+        return appName;
+    }
+
+    /**
      * 返回app的版本名称.
      *
      * @param context the context

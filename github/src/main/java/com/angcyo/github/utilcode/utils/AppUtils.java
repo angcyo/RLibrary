@@ -4,11 +4,14 @@ import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.app.ActivityManager;
 import android.content.Context;
+import android.content.Intent;
 import android.content.pm.ApplicationInfo;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
 import android.content.pm.Signature;
 import android.graphics.drawable.Drawable;
+import android.os.Build;
+import android.provider.Settings;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -51,7 +54,7 @@ public class AppUtils {
     }
 
     /**
-     * 安装App（支持6.0）
+     * 安装App（支持6.0） 安卓8.0 需要请求安装权限 Manifest.permission.REQUEST_INSTALL_PACKAGES
      *
      * @param context 上下文
      * @param file    文件
@@ -59,6 +62,17 @@ public class AppUtils {
     public static void installApp(Context context, File file) {
         if (!FileUtils.isFileExists(file)) return;
         context.startActivity(IntentUtils.getInstallAppIntent(file));
+    }
+
+
+    /**
+     * 未知来源应用管理界面
+     */
+    public static void startUnknownAppManage(Activity activity) {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            Intent intent = new Intent(Settings.ACTION_MANAGE_UNKNOWN_APP_SOURCES);
+            activity.startActivity(intent);
+        }
     }
 
     /**
