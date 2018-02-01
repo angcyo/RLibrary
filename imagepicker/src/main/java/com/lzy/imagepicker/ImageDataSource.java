@@ -125,6 +125,9 @@ public class ImageDataSource implements LoaderManager.LoaderCallbacks<Cursor> {
         return queryRecentlyPhoto(contentResolver, System.currentTimeMillis() / 1000L - 5 * 60 * 60);
     }
 
+    /**
+     * 已按时间降序排序
+     */
     public static ArrayList<ImageItem> queryRecentlyPhoto(ContentResolver contentResolver, long recentlyTime /*最近多长时间的照片, 秒*/) {
         final String[] IMAGE_PROJECTION = {
                 MediaStore.Images.Media.DISPLAY_NAME,

@@ -4,7 +4,6 @@ import android.Manifest;
 import android.annotation.TargetApi;
 import android.content.Context;
 import android.content.Intent;
-import android.graphics.Color;
 import android.os.Build;
 import android.view.View;
 import android.view.inputmethod.InputMethodManager;
@@ -36,28 +35,29 @@ public abstract class UILayoutActivity extends StyleActivity {
 
     @Override
     protected void onCreateView() {
-        mLayout = new UILayoutImpl(this);
-        mLayout.setMainLayout(true);
+        View rootView = initUILayout();
+//        if (isEnableSwipeMenu()) {
+//            mSwipeLayout = new RSwipeLayout(this, null);
+//            mSwipeLayout.setDragDirection(getSwipeDirection());
+//
+//            View menuView = new View(this);
+//            menuView.setBackgroundColor(Color.RED);
+//
+//            mSwipeLayout.setMenuView(menuView);
+//            mSwipeLayout.setContentView(mLayout.getLayout());
+//            setContentView(mSwipeLayout);
+//        } else {
+//            setContentView(mLayout.getLayout());
+//        }
 
-        initUILayout(mLayout);
-        if (isEnableSwipeMenu()) {
-            mSwipeLayout = new RSwipeLayout(this, null);
-            mSwipeLayout.setDragDirection(getSwipeDirection());
-
-            View menuView = new View(this);
-            menuView.setBackgroundColor(Color.RED);
-
-            mSwipeLayout.setMenuView(menuView);
-            mSwipeLayout.setContentView(mLayout.getLayout());
-            setContentView(mSwipeLayout);
-        } else {
-            setContentView(mLayout.getLayout());
-        }
+        setContentView(rootView);
         onAfterCreateView();
     }
 
-    protected void initUILayout(ILayout layout) {
-
+    protected View initUILayout() {
+        mLayout = new UILayoutImpl(this);
+        mLayout.setMainLayout(true);
+        return mLayout.getLayout();
     }
 
     protected void onAfterCreateView() {
