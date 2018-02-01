@@ -1198,9 +1198,10 @@ public class RUtils {
     public static void shareFile(Activity activity, String filePath) {
         Intent share = new Intent(Intent.ACTION_SEND);
         share.putExtra(Intent.EXTRA_STREAM,
-                Uri.fromFile(new File(filePath)));
+                uriFromFile(new File(filePath)));
         share.setType("*/*");//此处可发送多种文件
-        share.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+        share.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+        share.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
         activity.startActivity(Intent.createChooser(share, "发送给..."));
     }
 
@@ -1208,9 +1209,10 @@ public class RUtils {
         Intent share = new Intent(Intent.ACTION_SEND);
         share.putExtra(Intent.EXTRA_TEXT, content);
         share.putExtra(Intent.EXTRA_STREAM,
-                Uri.fromFile(new File(imgFilePath)));
+                uriFromFile(new File(imgFilePath)));
         share.setType("image/*");
-        share.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+        share.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+        share.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
         activity.startActivity(Intent.createChooser(share, "发送给..."));
     }
 
@@ -1218,9 +1220,10 @@ public class RUtils {
         Intent share = new Intent(Intent.ACTION_SEND);
         share.putExtra(Intent.EXTRA_TEXT, content);
         share.putExtra(Intent.EXTRA_STREAM,
-                Uri.fromFile(new File(videoFilePath)));
+                uriFromFile(new File(videoFilePath)));
         share.setType("video/*");
-        share.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+        share.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+        share.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
         activity.startActivity(Intent.createChooser(share, "发送给..."));
     }
 
@@ -1229,7 +1232,8 @@ public class RUtils {
         intent.setType("text/plain");
         intent.putExtra(Intent.EXTRA_SUBJECT, "分享：" + title);
         intent.putExtra(Intent.EXTRA_TEXT, title + " " + text);
-        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+        intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+        intent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
         activity.startActivity(Intent.createChooser(intent, "选择分享"));
     }
 
@@ -1625,7 +1629,7 @@ public class RUtils {
         if (file.exists() && context != null) {
             /*需要android.intent.action.MEDIA_MOUNTED系统权限，但是再Android 4.4系统以后，限制了只有系统应用才有使用广播通知系统扫描的权限，否则会抛出异常信息*/
 //            Intent intent = new Intent(Intent.ACTION_MEDIA_SCANNER_SCAN_FILE);
-//            Uri uri = Uri.fromFile(file);
+//            Uri uri = uriFromFile(file);
 //            intent.setData(uri);
 //            context.sendBroadcast(intent);
 
@@ -1734,7 +1738,7 @@ public class RUtils {
         ContentValues localContentValues = getImageContentValues(context, file, System.currentTimeMillis());
         localContentResolver.insert(MediaStore.Images.Media.EXTERNAL_CONTENT_URI, localContentValues);
         Intent localIntent = new Intent("android.intent.action.MEDIA_SCANNER_SCAN_FILE");
-        final Uri localUri = Uri.fromFile(file);
+        final Uri localUri = uriFromFile(file);
         localIntent.setData(localUri);
         //发送广播即时更新图库
         context.sendBroadcast(localIntent);
@@ -1962,6 +1966,10 @@ public class RUtils {
 
     public static boolean isListEmpty(List<?> list) {
         return list == null || list.isEmpty();
+    }
+
+    public static Uri uriFromFile(File file) {
+        return getFileUri(RApplication.getApp(), file);
     }
 
     public enum ImageType {
