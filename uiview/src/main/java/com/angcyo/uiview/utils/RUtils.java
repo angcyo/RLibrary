@@ -1358,7 +1358,7 @@ public class RUtils {
             String dataTime = RCrashHandler.getDataTime("yyyy-MM-dd_HH-mm-ss-SSS");
             File file = new File(saveFolder, fileName);
             boolean append = true;
-            if (file.length() > 1024 * 1024 * 10 /*大于10MB重写*/) {
+            if (file.length() > 1024 * 1024 * 1 /*大于10MB重写*/) {
                 append = false;
             }
             PrintWriter pw = new PrintWriter(new BufferedWriter(new FileWriter(file, append)));

@@ -232,6 +232,12 @@ public class UIScanView extends UIContentView implements SurfaceHolder.Callback,
     @Override
     public void onViewUnload() {
         super.onViewUnload();
+    }
+
+    @Override
+    public void onViewUnloadDelay() {
+        super.onViewUnloadDelay();
+
         inactivityTimer.shutdown();
         mViewfinderView.recycleLineDrawable();
 
