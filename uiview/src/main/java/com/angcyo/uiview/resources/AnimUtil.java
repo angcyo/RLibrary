@@ -545,7 +545,7 @@ public class AnimUtil {
         setDefaultConfig(animation, false);
         setDefaultConfig(alphaAnimation, false);
 
-        animation.setInterpolator(new OvershootInterpolator(2));
+        //animation.setInterpolator(new OvershootInterpolator(2));
 
         AnimationSet animationSet = new AnimationSet(false);
         animationSet.addAnimation(alphaAnimation);
