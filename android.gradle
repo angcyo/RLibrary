@@ -75,7 +75,7 @@ dependencies {
         def fileName = aarFile.getName()
         if (fileName.endsWith(".aar")) {
             fileName = fileName.replaceAll(".aar", "")
-            println("compile aar:" + fileName)
+            println("implementation aar:" + fileName)
             implementation name: "${fileName}", ext: 'aar'
         }
     }
