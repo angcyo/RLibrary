@@ -35,11 +35,23 @@ open class CircleImageView(context: Context, attributeSet: AttributeSet? = null)
         RectF()
     }
 
+    /**默认1dp*/
     var lineWidth = 0f
     var lineColor: Int = Color.WHITE
 
     /**是否绘制边框*/
     var drawBorder = true
+        set(value) {
+            field = value
+            postInvalidate()
+        }
+
+    /**在showType为NORMAL时, 是否显示边框*/
+    var drawInnerBorder = false
+        set(value) {
+            field = value
+            postInvalidate()
+        }
 
     /**4个角的圆角信息*/
     val radius: FloatArray
@@ -63,6 +75,7 @@ open class CircleImageView(context: Context, attributeSet: AttributeSet? = null)
         equWidth = typedArray.getBoolean(R.styleable.CircleImageView_r_equ_width, equWidth)
         equHeight = typedArray.getBoolean(R.styleable.CircleImageView_r_equ_height, equHeight)
         drawBorder = typedArray.getBoolean(R.styleable.CircleImageView_r_draw_border, drawBorder)
+        drawInnerBorder = typedArray.getBoolean(R.styleable.CircleImageView_r_draw_inner_border, drawInnerBorder)
         widthHeightRatio = typedArray.getString(R.styleable.CircleImageView_r_width_height_ratio)
         typedArray.recycle()
     }
@@ -134,6 +147,13 @@ open class CircleImageView(context: Context, attributeSet: AttributeSet? = null)
                 } catch (e: Exception) {
                     onDrawError()
                     e.printStackTrace()
+                }
+                if (drawInnerBorder) {
+                    borderPath.reset()
+                    val l2 = lineWidth * 1f / 2
+                    borderPath.addRect(l2, l2, measuredWidth - l2, measuredHeight - l2, Path.Direction.CW)
+                    paint.color = lineColor
+                    canvas.drawPath(borderPath, paint)
                 }
             }
             ROUND, CIRCLE, ROUND_RECT -> {

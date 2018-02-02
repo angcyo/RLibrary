@@ -36,6 +36,7 @@
         <attr name="r_width_height_ratio"/>
         <!--绘制边框-->
         <attr name="r_draw_border" format="boolean"/>
+        <attr name="r_draw_inner_border" format="boolean"/>
         <!--&lt;!&ndash;需要显示的文本&ndash;&gt;-->
         <!--<attr name="r_show_text"/>-->
         <!--<attr name="r_show_text_color"/>-->

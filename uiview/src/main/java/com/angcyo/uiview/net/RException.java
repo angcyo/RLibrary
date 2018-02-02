@@ -25,6 +25,11 @@ public class RException extends RuntimeException {
     private String msg;
     private String more;
 
+    /**
+     * 临时变量
+     */
+    private String temp;
+
     public RException(int code, String msg, String more) {
         this.code = code;
         this.msg = msg;
@@ -59,5 +64,13 @@ public class RException extends RuntimeException {
 
     public int getCode() {
         return code;
+    }
+
+    public String getTemp() {
+        return temp;
+    }
+
+    public void setTemp(String temp) {
+        this.temp = temp;
     }
 }
