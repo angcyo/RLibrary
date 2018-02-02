@@ -578,17 +578,29 @@ public class ExEditText extends AppCompatEditText {
 //        }
         if (!showContentMenu ||
                 downInClearButton ||
-                ExKt.have(getInputType(), EditorInfo.TYPE_TEXT_VARIATION_PASSWORD)) {
+                isInputTypePassword()) {
             //禁止掉系统的所有菜单选项, 同时文本的光标定位, 选择功能也会不可用
             if (action == MotionEvent.ACTION_DOWN) {
                 if (touchDownWithHandle != 0) {
+                    if (isFocused()) {
+                        showSoftInput();
+                    }
                 } else {
-                    super.onTouchEvent(event);
+                    if (isInputTypePassword()) {
+                        //密码类型
+                        showSoftInput();
+                        setSelection(getText().length());
+                    } else {
+                        super.onTouchEvent(event);
+                    }
                     touchDownWithHandle = 1;
                 }
             } else if (action == MotionEvent.ACTION_CANCEL || action == MotionEvent.ACTION_UP) {
                 if (touchDownWithHandle == 1) {
-                    super.onTouchEvent(event);
+                    if (isInputTypePassword()) {
+                    } else {
+                        super.onTouchEvent(event);
+                    }
                     touchDownWithHandle = 2;
                 } else {
                     setSelection(getText().length());
@@ -598,6 +610,10 @@ public class ExEditText extends AppCompatEditText {
         } else {
             return super.onTouchEvent(event);
         }
+    }
+
+    private boolean isInputTypePassword() {
+        return ExKt.have(getInputType(), EditorInfo.TYPE_TEXT_VARIATION_PASSWORD);
     }
 
     private void updateState(boolean isDownIn) {
