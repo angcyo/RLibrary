@@ -13,6 +13,7 @@ def releaseTime() {
 def apkTime() {
     return new Date().format("yyyy-MM-dd_HH-mm", TimeZone.getTimeZone("UTC"))
 }
+
 def apk_time = apkTime()
 
 def build_time = getBuildTime()
@@ -21,14 +22,6 @@ def release_time = releaseTime()
 println "开始编译:" + build_time
 
 android {
-    signingConfigs {
-        angcyo {
-            keyAlias 'angcyo'
-            keyPassword 'angcyo'
-            storeFile file('../RLibrary/angcyo.jks')
-            storePassword 'angcyo'
-        }
-    }
 
     defaultConfig {
         resValue "string", "build_time", build_time
@@ -83,7 +76,7 @@ dependencies {
         if (fileName.endsWith(".aar")) {
             fileName = fileName.replaceAll(".aar", "")
             println("compile aar:" + fileName)
-            compile name: "${fileName}", ext: 'aar'
+            implementation name: "${fileName}", ext: 'aar'
         }
     }
     println("查找结束.")
