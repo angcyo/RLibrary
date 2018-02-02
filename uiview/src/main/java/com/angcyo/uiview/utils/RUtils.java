@@ -1187,6 +1187,7 @@ public class RUtils {
         StringBuilder builder = new StringBuilder();
         if (hour > 0) {
             builder.append(hour >= 10 ? hour : ("0" + hour));
+            builder.append(":");
         }
         builder.append(min >= 10 ? min : ("0" + min));
         builder.append(":");

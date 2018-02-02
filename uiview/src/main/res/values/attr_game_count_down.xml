@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <declare-styleable name="GameCountDownView">
+        <attr name="r_show_hour" format="boolean"/>
+        <attr name="r_show_min" format="boolean"/>
+        <attr name="r_two_sec_bit" format="boolean"/>
+    </declare-styleable>
+</resources>
