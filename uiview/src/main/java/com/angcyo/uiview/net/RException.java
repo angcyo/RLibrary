@@ -21,9 +21,9 @@ public class RException extends RuntimeException {
      * more :
      */
 
-    private int code;
-    private String msg;
-    private String more;
+    private int code = 0;
+    private String msg = "";
+    private String more = "";
 
     /**
      * 临时变量
@@ -38,6 +38,38 @@ public class RException extends RuntimeException {
 
     public RException(int code, String msg) {
         this(code, msg, "no more");
+    }
+
+    public String toJsonString() {
+        StringBuilder builder = new StringBuilder();
+        builder.append("{");
+
+        builder.append("\"");
+        builder.append("code");
+        builder.append("\"");
+        builder.append(":");
+        builder.append(code);
+        builder.append(",");
+
+        builder.append("\"");
+        builder.append("msg");
+        builder.append("\"");
+        builder.append(":");
+        builder.append("\"");
+        builder.append(msg);
+        builder.append("\"");
+        builder.append(",");
+
+        builder.append("\"");
+        builder.append("more");
+        builder.append("\"");
+        builder.append(":");
+        builder.append("\"");
+        builder.append(more);
+        builder.append("\"");
+
+        builder.append("}");
+        return builder.toString();
     }
 
     @Override
