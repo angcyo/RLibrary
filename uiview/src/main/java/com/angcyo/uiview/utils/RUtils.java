@@ -1181,6 +1181,9 @@ public class RUtils {
         long hour = min / 60;
         long second = mill % 60;
 
+        min %= 60;
+        hour %= 24;
+
         StringBuilder builder = new StringBuilder();
         if (hour > 0) {
             builder.append(hour >= 10 ? hour : ("0" + hour));

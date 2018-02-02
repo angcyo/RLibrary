@@ -385,6 +385,10 @@ public class UITitleBarContainer extends FrameLayout {
                 view.setMinimumWidth(itemSize);
             }
 
+            if (item.id != -1) {
+                view.setId(item.id);
+            }
+
             ViewExKt.setOnRClickListener(view, item.listener);
             view.setBackgroundResource(R.drawable.base_bg2_selector_v21);
 
@@ -493,10 +497,26 @@ public class UITitleBarContainer extends FrameLayout {
         }
     }
 
+    public void showRightItemById(int id) {
+        mRightControlLayout.findViewById(id).setVisibility(VISIBLE);
+    }
+
+    public void hideRightItemById(int id) {
+        mRightControlLayout.findViewById(id).setVisibility(GONE);
+    }
+
     public void hideRightItem(int index) {
         if (mRightControlLayout.getChildCount() > index) {
             mRightControlLayout.getChildAt(index).setVisibility(GONE);
         }
+    }
+
+    public void showLeftItemById(int id) {
+        mLeftControlLayout.findViewById(id).setVisibility(VISIBLE);
+    }
+
+    public void hideLeftItemById(int id) {
+        mLeftControlLayout.findViewById(id).setVisibility(GONE);
     }
 
     /**

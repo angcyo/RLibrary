@@ -5,6 +5,7 @@ import android.graphics.Color;
 import android.graphics.drawable.Drawable;
 import android.support.annotation.ColorInt;
 import android.support.annotation.DrawableRes;
+import android.support.annotation.IdRes;
 import android.support.annotation.StringRes;
 import android.support.v4.content.ContextCompat;
 import android.text.TextUtils;
@@ -350,6 +351,12 @@ public class TitleBarPattern {
          */
         public float alpha = 0f;
 
+        /**
+         * View 的id
+         */
+        @IdRes
+        public int id = -1;
+
         public OnItemInitListener mOnItemInitListener;
 
         private TitleBarItem() {
@@ -393,6 +400,11 @@ public class TitleBarPattern {
             } else {
                 setIcoDrawable(ContextCompat.getDrawable(RApplication.getApp(), res));
             }
+            return this;
+        }
+
+        public TitleBarItem setId(int id) {
+            this.id = id;
             return this;
         }
 
