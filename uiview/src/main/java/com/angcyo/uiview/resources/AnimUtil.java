@@ -20,6 +20,7 @@ import android.view.animation.LayoutAnimationController;
 import android.view.animation.LinearInterpolator;
 import android.view.animation.OvershootInterpolator;
 import android.view.animation.RotateAnimation;
+import android.view.animation.ScaleAnimation;
 import android.view.animation.TranslateAnimation;
 
 import com.angcyo.uiview.R;
@@ -519,6 +520,37 @@ public class AnimUtil {
                 .setInterpolator(new OvershootInterpolator(2))
                 .setDuration(300)
                 .start();
+    }
+
+    public static Animation scaleOvershootStartAnimation() {
+        ScaleAnimation animation = new ScaleAnimation(0f, 1f, 0f, 1f,
+                Animation.RELATIVE_TO_SELF, 0.5f, Animation.RELATIVE_TO_SELF, 0.5f);
+        AlphaAnimation alphaAnimation = new AlphaAnimation(0, 1);
+        setDefaultConfig(animation, false);
+        setDefaultConfig(alphaAnimation, false);
+
+        animation.setInterpolator(new OvershootInterpolator(2));
+
+        AnimationSet animationSet = new AnimationSet(false);
+        animationSet.addAnimation(alphaAnimation);
+        animationSet.addAnimation(animation);
+        return animationSet;
+    }
+
+
+    public static Animation scaleOvershootExitAnimation() {
+        ScaleAnimation animation = new ScaleAnimation(1f, 0f, 1f, 0f,
+                Animation.RELATIVE_TO_SELF, 0.5f, Animation.RELATIVE_TO_SELF, 0.5f);
+        AlphaAnimation alphaAnimation = new AlphaAnimation(1, 0);
+        setDefaultConfig(animation, false);
+        setDefaultConfig(alphaAnimation, false);
+
+        animation.setInterpolator(new OvershootInterpolator(2));
+
+        AnimationSet animationSet = new AnimationSet(false);
+        animationSet.addAnimation(alphaAnimation);
+        animationSet.addAnimation(animation);
+        return animationSet;
     }
 
     /**
