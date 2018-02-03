@@ -286,6 +286,11 @@ public interface IView {
                        IViewShowState viewShowState,
                        View rootView);//2018-1-12
 
+    /**
+     * 是否是高亮的状态栏, 如果是 状态栏字体要变成灰色
+     */
+    boolean isLightStatusBar();//2018-2-3
+
     enum IViewShowState {
         STATE_NORMAL,
         STATE_VIEW_CREATE,

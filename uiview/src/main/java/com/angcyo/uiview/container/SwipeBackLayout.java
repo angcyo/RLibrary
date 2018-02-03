@@ -28,14 +28,14 @@ public abstract class SwipeBackLayout extends TouchLayout {
 
     protected int mViewDragState = ViewDragHelper.STATE_IDLE;
     protected ViewDragHelper mDragHelper;
-    Paint mStatusPaint;
-    private OnPanelSlideListener mListener;
-    private int mScreenWidth;
-    private int mScreenHeight;
     /**
      * 正在滑动的view
      */
     protected View mTargetView;
+    Paint mStatusPaint;
+    private OnPanelSlideListener mListener;
+    private int mScreenWidth;
+    private int mScreenHeight;
     /**
      * 阴影的绘制区域
      */

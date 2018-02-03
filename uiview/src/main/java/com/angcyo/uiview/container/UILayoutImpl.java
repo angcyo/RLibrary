@@ -1618,6 +1618,14 @@ public class UILayoutImpl extends SwipeBackLayout implements ILayout<UIParam>, U
 //        viewPattern.mView.bringToFront();
         viewPattern.mIView.onViewShow(bundle);
 
+        if (viewPattern.mIView.isDialog()) {
+
+        } else {
+            if (viewPattern.mIView instanceof UIIViewImpl) {
+                ((UIIViewImpl) viewPattern.mIView).lightStatusBar(viewPattern.mIView.isLightStatusBar());
+            }
+        }
+
         for (OnIViewChangedListener listener : mOnIViewChangedListeners) {
             try {
                 listener.onIViewShow(UILayoutImpl.this, viewPattern);
@@ -3104,6 +3112,8 @@ public class UILayoutImpl extends SwipeBackLayout implements ILayout<UIParam>, U
         }
 
         super.draw(canvas);
+
+        /*调试模式绘制*/
         if (isInDebugLayout) {
             initDebugPaint();
             int childCount = getChildCount();
@@ -3135,6 +3145,7 @@ public class UILayoutImpl extends SwipeBackLayout implements ILayout<UIParam>, U
             }
         }
 
+        /*全屏覆盖绘制Drawable*/
         if (overlayDrawable != null) {
             Context context = getContext();
             int screenHeight = getMeasuredHeight();

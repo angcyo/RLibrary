@@ -200,11 +200,13 @@ class PermissionDeniedUIView(val permission: String) : UIContentView() {
 
     override fun onViewShow(bundle: Bundle?) {
         super.onViewShow(bundle)
-        lightStatusBar(true)
     }
 
     override fun onViewHide() {
         super.onViewHide()
-        lightStatusBar(false)
+    }
+
+    override fun isLightStatusBar(): Boolean {
+        return true
     }
 }
