@@ -410,3 +410,4 @@ public abstract class SwipeBackLayout extends TouchLayout {
         void onSlideChange(float percent);
     }
 }
+
