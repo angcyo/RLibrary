@@ -106,6 +106,7 @@ open class TouchLayout(context: Context, attributeSet: AttributeSet? = null) : F
 
     override fun onTouchEvent(event: MotionEvent): Boolean {
         orientationGestureDetector.onTouchEvent(event)
+        super.onTouchEvent(event) //防止onClickListener无效
         return true
     }
 
