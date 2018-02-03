@@ -29,6 +29,15 @@
     <!--宽高是否相等-->
     <attr name="r_is_aeq_width" format="boolean"/>
 
+    <!--是否显示内部边框, 用来实现选中后的边框展示-->
+    <attr name="r_show_inner_border" format="boolean"/>
+    <!--默认2dp-->
+    <attr name="r_inner_border_width" format="dimension"/>
+    <!--默认主题颜色-->
+    <attr name="r_inner_border_color" format="color"/>
+    <!--允许偏移的距离(与边框的距离)-->
+    <attr name="r_inner_border_offset" format="dimension"/>
+
     <!--progress bar-->
     <!--进度颜色-->
     <attr name="r_progress_color" format="color"/>
@@ -78,6 +87,11 @@
         <attr name="r_float_auto_adsorb" format="boolean"/>
         <!--是否限制浮动rect-->
         <attr name="r_float_fix_rect" format="boolean"/>
+
+        <attr name="r_inner_border_color"/>
+        <attr name="r_inner_border_width"/>
+        <attr name="r_inner_border_offset"/>
+        <attr name="r_show_inner_border"/>
     </declare-styleable>
 
     <declare-styleable name="RRelativeLayout">

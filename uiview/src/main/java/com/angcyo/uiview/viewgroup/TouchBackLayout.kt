@@ -4,7 +4,10 @@ import android.content.Context
 import android.util.AttributeSet
 import android.view.MotionEvent
 import android.view.View
+import com.angcyo.uiview.R
 import com.angcyo.uiview.kotlin.abs
+import com.angcyo.uiview.kotlin.calcLayoutWidthHeight
+import com.angcyo.uiview.kotlin.exactlyMeasure
 import com.angcyo.uiview.rsen.RefreshLayout
 import com.angcyo.uiview.utils.UI
 
@@ -35,10 +38,21 @@ open class TouchBackLayout(context: Context, attributeSet: AttributeSet? = null)
             }
         }
 
+    private var defaultOffsetScrollTop = 0
     private var isFling = false
 
+    private var rLayoutWidth: String? = null
+    private var rLayoutHeight: String? = null
+
     init {
-        scrollTo(0, -offsetScrollTop)
+        val typedArray = context.obtainStyledAttributes(attributeSet, R.styleable.TouchBackLayout)
+        enableTouchBack = typedArray.getBoolean(R.styleable.TouchBackLayout_r_enable_touch_back, enableTouchBack)
+        defaultOffsetScrollTop = typedArray.getDimensionPixelOffset(R.styleable.TouchBackLayout_r_touch_offset_scroll_top, defaultOffsetScrollTop)
+        rLayoutWidth = typedArray.getString(R.styleable.TouchBackLayout_r_layout_width)
+        rLayoutHeight = typedArray.getString(R.styleable.TouchBackLayout_r_layout_height)
+        typedArray.recycle()
+
+        offsetScrollTop = defaultOffsetScrollTop
     }
 
 //    /**布局方式, 采用的是垂直方向的线性布局方式*/
@@ -177,24 +191,45 @@ open class TouchBackLayout(context: Context, attributeSet: AttributeSet? = null)
         return y
     }
 
-    fun scrollToBack() {
-        startScrollY(-measuredHeight - scrollY)
-        postInvalidate()
+    /**滚动到底部, 并返回*/
+    fun scrollToBack(anim: Boolean = true) {
+        if (anim) {
+            startScrollY(-measuredHeight - scrollY)
+            postInvalidate()
+        } else {
+            scrollTo(0, -measuredHeight)
+        }
     }
 
-    fun scrollToDefault() {
-        startScrollY(-offsetScrollTop - scrollY)
-        postInvalidate()
+    /**滚动到初始位置 (顶部)*/
+    fun scrollToDefault(anim: Boolean = true) {
+        if (anim) {
+            startScrollY(-offsetScrollTop - scrollY)
+            postInvalidate()
+        } else {
+            scrollTo(0, 0)
+        }
     }
 
-    fun resetScroll() {
+    /**滚动到最开始偏移位置, 如果没有偏移位置, 那么就是顶部*/
+    fun scrollToDefaultOffset(anim: Boolean = true) {
+        if (anim) {
+            startScrollY(-scrollY - defaultOffsetScrollTop)
+            postInvalidate()
+        } else {
+            scrollTo(0, -defaultOffsetScrollTop)
+        }
+    }
+
+    /**重置位置*/
+    fun resetScroll(anim: Boolean = true) {
         val scrollY = scrollY
         if (scrollY.abs() - offsetScrollTop >= (measuredHeight - offsetScrollTop) / 4) {
             //需要下滑返回
-            scrollToBack()
+            scrollToBack(anim)
         } else {
             //恢复到初始化位置
-            scrollToDefault()
+            scrollToDefault(anim)
         }
     }
 
@@ -207,6 +242,23 @@ open class TouchBackLayout(context: Context, attributeSet: AttributeSet? = null)
     }
 
     var onTouchBackListener: OnTouchBackListener? = null
+
+    override fun onMeasure(widthMeasureSpec: Int, heightMeasureSpec: Int) {
+        val layoutWidthHeight = calcLayoutWidthHeight(rLayoutWidth, rLayoutHeight, 0, 0)
+        val width = layoutWidthHeight[0]
+        val height = layoutWidthHeight[1]
+        if (width == -1 && height == -1) {
+            super.onMeasure(widthMeasureSpec, heightMeasureSpec)
+        } else if (width > 0 && height > 0) {
+            super.onMeasure(exactlyMeasure(width), exactlyMeasure(height))
+        } else {
+            if (width == -1) {
+                super.onMeasure(widthMeasureSpec, exactlyMeasure(height))
+            } else {
+                super.onMeasure(exactlyMeasure(width), heightMeasureSpec)
+            }
+        }
+    }
 
     interface OnTouchBackListener {
         fun onTouchBackListener(layout: TouchBackLayout,

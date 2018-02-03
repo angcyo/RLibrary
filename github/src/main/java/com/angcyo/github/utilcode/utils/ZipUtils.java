@@ -14,6 +14,7 @@ import java.util.Enumeration;
 import java.util.List;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
+import java.util.zip.ZipInputStream;
 import java.util.zip.ZipOutputStream;
 
 import static com.angcyo.github.utilcode.utils.ConstUtils.KB;
@@ -410,5 +411,76 @@ public class ZipUtils {
             throws IOException {
         if (zipFile == null) return null;
         return new ZipFile(zipFile).entries();
+    }
+
+    public static void unzipSteam(InputStream is, String outputPath)
+            throws Exception {
+        ZipInputStream inputZip = new ZipInputStream(is);
+        ZipEntry zipEntry;
+        String tempPathName = "";
+
+        while ((zipEntry = inputZip.getNextEntry()) != null) {
+            tempPathName = zipEntry.getName();
+
+            if (zipEntry.isDirectory()) {
+                // 获取文件夹名
+                tempPathName = tempPathName.substring(0, tempPathName.length() - 1);
+
+                getOrMakeNomediaDir(outputPath + File.separator + tempPathName);
+            } else {
+                File file = new File(outputPath + File.separator + tempPathName);
+                if (!file.exists()) {
+                    File fileParentDir = file.getParentFile();
+                    {
+                        if (!fileParentDir.exists()) {
+                            fileParentDir.mkdirs();
+                        }
+                    }
+                    file.createNewFile();
+                }
+
+                // 获取文件输出流
+                FileOutputStream fos = new FileOutputStream(file);
+                int len;
+
+                // 缓冲数组
+                byte[] buffer = new byte[1024];
+
+                // 读取1024字节进缓冲数组
+                while ((len = inputZip.read(buffer)) > 0) {
+                    fos.write(buffer, 0, len);
+                    fos.flush();
+                }
+                fos.close();
+            }
+        }
+        inputZip.close();
+    }
+
+
+    public static File getOrMakeNomediaDir(String path) {
+        File dir = null;
+
+        try {
+            dir = new File(path);
+
+            if (dir.isFile())
+                if (!dir.delete())
+                    return null;
+
+            if (!dir.exists()) {
+                if (!dir.mkdirs())
+                    return null;
+                File file = new File(path, ".nomedia");
+                try {
+                    file.createNewFile();
+                } catch (IOException e) {
+                }
+            }
+        } catch (Throwable tr) {
+            return null;
+        }
+
+        return dir;
     }
 }

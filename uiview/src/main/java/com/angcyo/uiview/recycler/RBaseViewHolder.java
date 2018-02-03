@@ -139,6 +139,10 @@ public class RBaseViewHolder extends RecyclerView.ViewHolder {
         return v(resId);
     }
 
+    public boolean isVisible(@IdRes int resId) {
+        return v(resId).getVisibility() == View.VISIBLE;
+    }
+
     public void visible(@IdRes int resId) {
         v(resId).setVisibility(View.VISIBLE);
     }

@@ -2,6 +2,8 @@ package com.angcyo.uiview.viewgroup
 
 import android.content.Context
 import android.graphics.Canvas
+import android.graphics.Color
+import android.graphics.Paint
 import android.graphics.Rect
 import android.graphics.drawable.Drawable
 import android.support.v4.view.ViewCompat
@@ -14,7 +16,9 @@ import android.widget.FrameLayout
 import com.angcyo.uiview.R
 import com.angcyo.uiview.kotlin.calcWidthHeightRatio
 import com.angcyo.uiview.kotlin.centerX
+import com.angcyo.uiview.kotlin.density
 import com.angcyo.uiview.kotlin.findView
+import com.angcyo.uiview.skin.SkinHelper
 import com.angcyo.uiview.utils.ScreenUtil
 
 /**
@@ -42,10 +46,41 @@ open class RFrameLayout(context: Context, attributeSet: AttributeSet? = null) : 
      */
     private var maxHeight = 0
 
+    var showInnerBorder = false
+        set(value) {
+            field = value
+            setWillNotDraw(!field)
+        }
+
+    var innerBorderWidth = 0
+    var innerBorderOffset = 0
+    var innerBorderColor = Color.WHITE
+
+    private val innerBorderPaint: Paint by lazy {
+        val p = Paint(Paint.ANTI_ALIAS_FLAG)
+        p.strokeWidth = innerBorderWidth.toFloat()
+        p.strokeJoin = Paint.Join.ROUND
+        p.strokeCap = Paint.Cap.ROUND
+        p.style = Paint.Style.STROKE
+        p.isFilterBitmap = true
+        p
+    }
+
+
     init {
         val typedArray = context.obtainStyledAttributes(attributeSet, R.styleable.RFrameLayout)
         equWidth = typedArray.getBoolean(R.styleable.RFrameLayout_r_is_aeq_width, equWidth)
         widthHeightRatio = typedArray.getString(R.styleable.RFrameLayout_r_width_height_ratio)
+
+        showInnerBorder = typedArray.getBoolean(R.styleable.RFrameLayout_r_show_inner_border, showInnerBorder)
+        if (isInEditMode) {
+            innerBorderWidth = typedArray.getDimensionPixelOffset(R.styleable.RFrameLayout_r_inner_border_width, 4)
+            innerBorderColor = typedArray.getColor(R.styleable.RFrameLayout_r_inner_border_color, Color.RED)
+        } else {
+            innerBorderWidth = typedArray.getDimensionPixelOffset(R.styleable.RFrameLayout_r_inner_border_width, (2 * density).toInt())
+            innerBorderColor = typedArray.getColor(R.styleable.RFrameLayout_r_inner_border_color, SkinHelper.getSkin().themeSubColor)
+        }
+        innerBorderOffset = typedArray.getDimensionPixelOffset(R.styleable.RFrameLayout_r_inner_border_offset, innerBorderOffset)
 
         rBackgroundDrawable = typedArray.getDrawable(R.styleable.RFrameLayout_r_background)
         resetMaxHeight(typedArray.getDimension(R.styleable.RFrameLayout_r_max_height, 0f))
@@ -87,6 +122,19 @@ open class RFrameLayout(context: Context, attributeSet: AttributeSet? = null) : 
             it.draw(canvas)
         }
         super.draw(canvas)
+    }
+
+    override fun onDraw(canvas: Canvas?) {
+        super.onDraw(canvas)
+
+        if (showInnerBorder) {
+            innerBorderPaint.strokeWidth = innerBorderWidth.toFloat()
+            innerBorderPaint.color = innerBorderColor
+            val l2 = innerBorderWidth * 1f / 2
+            canvas?.drawRect(l2 + innerBorderOffset, l2 + innerBorderOffset,
+                    measuredWidth - l2 - innerBorderOffset, measuredHeight - l2 - innerBorderOffset,
+                    innerBorderPaint)
+        }
     }
 
     private fun resetMaxHeight() {

@@ -309,7 +309,6 @@ open class ClipLayout(context: Context, attributeSet: AttributeSet? = null) : Fr
                 super.onMeasure(exactlyMeasure(width), heightMeasureSpec)
             }
         }
-
         calcWidthHeightRatio(widthHeightRatio)?.let {
             super.onMeasure(exactlyMeasure(it[0]), exactlyMeasure(it[1]))
         }

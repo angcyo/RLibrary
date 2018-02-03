@@ -156,7 +156,7 @@ public fun View.calcLayoutWidthHeight(rLayoutWidth: String?, rLayoutHeight: Stri
         }
     }
     if (!TextUtils.isEmpty(rLayoutHeight)) {
-        if (rLayoutHeight!!.contains("sw", true)) {
+        if (rLayoutHeight!!.contains("sh", true)) {
             val ratio = rLayoutHeight.replace("sh", "", true).toFloatOrNull()
             ratio?.let {
                 size[1] = (ratio * (ScreenUtil.screenHeight - rLayoutHeightExclude)).toInt()
