@@ -316,6 +316,58 @@ public class Rx<Rx> extends Observable<Rx> {
         };
     }
 
+    /**
+     * 拿到的原始数据, 直接返回
+     */
+    public static Observable.Transformer<ResponseBody, String> transformerRaw() {
+        return new Observable.Transformer<ResponseBody, String>() {
+
+            @Override
+            public Observable<String> call(Observable<ResponseBody> responseObservable) {
+                return responseObservable.unsubscribeOn(Schedulers.io())
+                        .subscribeOn(Schedulers.io())
+                        .map(new Func1<ResponseBody, String>() {
+                            @Override
+                            public String call(ResponseBody stringResponse) {
+                                String body;
+                                try {
+                                    body = stringResponse.string();
+                                    //"接口返回数据-->\n" +
+                                    L.json(body);
+
+                                } catch (Exception e) {
+                                    e.printStackTrace();
+                                    body = e.getMessage();
+                                }
+                                return body;
+                            }
+                        })
+                        .retry(new Func2<Integer, Throwable, Boolean>() {
+                            @Override
+                            public Boolean call(Integer integer, Throwable throwable) {
+                                if (throwable instanceof RException) {
+                                    if (needRetryOnError((RException) throwable)) {
+//                                        if (integer < RETRY_ERROR_COUNT) {
+                                        runErrorRetry(((RException) throwable).getCode());
+//                                            return true;
+//                                        }
+                                    }
+                                }
+                                try {
+                                    Thread.sleep(500);
+                                } catch (Exception e) {
+
+                                }
+                                L.e("retry ..." + integer + " " + throwable);
+                                return false;
+                            }
+                        })
+                        .retry(RETRY_COUNT)
+                        .observeOn(AndroidSchedulers.mainThread());
+            }
+        };
+    }
+
     public static <T> Observable.Transformer<ResponseBody, T> transformer(final Class<T> type) {
         return new Observable.Transformer<ResponseBody, T>() {
 
