@@ -1,0 +1,100 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layer-list xmlns:android="http://schemas.android.com/apk/res/android">
+    <!-- 第一层 -->
+    <!--<item-->
+    <!--android:bottom="6dp"-->
+    <!--android:top="6dp">-->
+    <!--<shape>-->
+    <!--<gradient-->
+    <!--android:angle="180"-->
+    <!--android:centerColor="@color/transparent_dark80"-->
+    <!--android:endColor="@color/transparent_dark20"-->
+    <!--android:startColor="@color/transparent_dark20"/>-->
+    <!--</shape>-->
+    <!--</item>-->
+
+    <!--  <item>
+          <shape>
+              <gradient
+                  android:angle="-90"
+                  android:centerColor="@color/transparent_dark20"
+                  android:endColor="@color/transparent"
+                  android:startColor="@color/transparent"/>
+          </shape>
+      </item>-->
+
+    <item
+        android:left="3dp"
+        android:top="3dp">
+        <shape android:shape="rectangle">
+            <solid android:color="#10000000"/>
+        </shape>
+    </item>
+
+    <item
+        android:bottom="3dp"
+        android:right="3dp">
+        <shape android:shape="rectangle">
+            <solid android:color="@color/base_white"/>
+        </shape>
+    </item>
+
+    <!--    &lt;!&ndash;right&ndash;&gt;
+        <item android:width="20dp" android:gravity="end">
+            <shape>
+                <gradient
+                    android:angle="180"
+                    android:endColor="@color/default_base_black"
+                    android:startColor="@color/transparent"/>
+            </shape>
+        </item>
+
+        &lt;!&ndash;left&ndash;&gt;
+        <item  android:width="20dp" android:gravity="start">
+            <shape>
+                <gradient
+                    android:angle="0"
+                    android:endColor="@color/default_base_black"
+                    android:startColor="@color/transparent"/>
+            </shape>
+        </item>-->
+
+    <!--top-->
+    <!--<item  android:height="20dp" android:gravity="top">-->
+    <!--<shape>-->
+    <!--<gradient-->
+    <!--android:angle="-90"-->
+    <!--android:endColor="@color/default_base_black"-->
+    <!--android:startColor="@color/transparent"/>-->
+    <!--</shape>-->
+    <!--</item>-->
+
+    <!--&lt;!&ndash;bottom&ndash;&gt;-->
+    <!--<item>-->
+    <!--<shape>-->
+    <!--<gradient-->
+    <!--android:angle="90"-->
+    <!--android:endColor="@color/default_base_black"-->
+    <!--android:startColor="@color/transparent"/>-->
+    <!--</shape>-->
+    <!--</item>-->
+
+    <!--&lt;!&ndash; 第二层 &ndash;&gt;-->
+    <!--<item-->
+    <!--android:bottom="4dp"-->
+    <!--android:right="4dp">-->
+    <!--<shape>-->
+    <!--<solid android:color="#00ff00"/>-->
+    <!--<corners android:radius="3dp"/>-->
+    <!--</shape>-->
+    <!--</item>-->
+    <!--&lt;!&ndash; 第三层 &ndash;&gt;-->
+    <!--<item-->
+    <!--android:bottom="6dp"-->
+    <!--android:right="6dp">-->
+    <!--<shape>-->
+    <!--<solid android:color="#0000ff"/>-->
+    <!--<corners android:radius="3dp"/>-->
+    <!--</shape>-->
+    <!--</item>-->
+</layer-list>
