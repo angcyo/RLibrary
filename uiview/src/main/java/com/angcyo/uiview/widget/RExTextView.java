@@ -909,6 +909,10 @@ public class RExTextView extends RTextView {
             return mShowContent.length();
         }
 
+        public String getShowContent() {
+            return mShowContent;
+        }
+
         public boolean isCanClick() {
             return canClick;
         }
@@ -1080,6 +1084,7 @@ public class RExTextView extends RTextView {
                         }
 
                     } else {
+                        L.e("onTouchEvent-> " + imageTextSpan.getShowContent());
                         Selection.removeSelection(buffer);
                     }
                     return isTouchInSpan;
