@@ -70,6 +70,12 @@ public class RExTextView extends RTextView {
      */
     public final static Pattern patternPhone = Pattern.compile("\\d{3}-\\d{8}|\\d{3}-\\d{7}|\\d{4}-\\d{8}|\\d{3}-\\d{4}-\\d{4}|\\d{4}-\\d{7}|1+[34578]+\\d{9}|\\d{8}|\\d{7}");
 
+
+    /**
+     * 5位以上数字帐号匹配
+     */
+    public final static Pattern patternNumberAccount = Pattern.compile("\\d{5,}");
+
     /**
      * 座机号码正则
      */
@@ -104,9 +110,13 @@ public class RExTextView extends RTextView {
      */
     private boolean needPatternMention = true;
     /**
-     * 是否匹配数字
+     * 是否匹配手机号码, 座机, 联系方式
      */
     private boolean needPatternPhone = true;
+    /**
+     * 是否匹配纯数据帐号
+     */
+    private boolean needPatternNumberAccount = true;
 
     public RExTextView(Context context) {
         this(context, null);
@@ -298,6 +308,9 @@ public class RExTextView extends RTextView {
             }
             if (needPatternMention) {
                 patternMention(spanBuilder, text);
+            }
+            if (needPatternNumberAccount) {
+                patternNumberAccount(spanBuilder, text);
             }
             if (needPatternPhone) {
                 patternPhone(spanBuilder, text);
@@ -550,10 +563,29 @@ public class RExTextView extends RTextView {
         while (matcher.find()) {
             int start = matcher.start();
             int end = matcher.end();
+            String group = matcher.group();
 
             if (!isInOtherSpan(builder, input.length(), start, end)) {
                 builder.setSpan(new ImageTextSpan(getContext(), ImageTextSpan.initDrawable(getTextSize()),
-                                matcher.group(), matcher.group())
+                                group, group)
+                                .setOnImageSpanClick(mOnImageSpanClick)
+                                .setTextColor(mImageSpanTextColor),
+                        start, end, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
+            }
+        }
+    }
+
+    protected void patternNumberAccount(SpannableStringBuilder builder, CharSequence input) {
+        Matcher matcher = patternNumberAccount.matcher(input);
+
+        while (matcher.find()) {
+            int start = matcher.start();
+            int end = matcher.end();
+            String group = matcher.group();
+
+            if (!isInOtherSpan(builder, input.length(), start, end)) {
+                builder.setSpan(new ImageTextSpan(getContext(), ImageTextSpan.initDrawable(getTextSize()),
+                                group, group)
                                 .setOnImageSpanClick(mOnImageSpanClick)
                                 .setTextColor(mImageSpanTextColor),
                         start, end, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
@@ -576,6 +608,7 @@ public class RExTextView extends RTextView {
         needPatternMention = true;
         needPatternPhone = true;
 
+        needPatternNumberAccount = true;
         needPatternUrl = true;
         needPatternUrlCheckHttp = true;
         showPatternUrlIco = true;
@@ -583,7 +616,7 @@ public class RExTextView extends RTextView {
     }
 
     public boolean isNeedPattern() {
-        return needPatternPhone || needPatternMention || needPatternUrl;
+        return needPatternPhone || needPatternMention || needPatternUrl || needPatternNumberAccount;
     }
 
     /**
@@ -593,6 +626,7 @@ public class RExTextView extends RTextView {
         this.needPatternUrl = needPattern;
         this.needPatternMention = needPattern;
         this.needPatternPhone = needPattern;
+        this.needPatternNumberAccount = needPattern;
         setMovementMethod(getDefaultMovementMethod());
         return this;
     }
@@ -605,6 +639,11 @@ public class RExTextView extends RTextView {
 
     public RExTextView setNeedPatternUrlCheckHttp(boolean needPatternUrlCheckHttp) {
         this.needPatternUrlCheckHttp = needPatternUrlCheckHttp;
+        return this;
+    }
+
+    public RExTextView setNeedPatternNumberAccount(boolean needPatternNumberAccount) {
+        this.needPatternNumberAccount = needPatternNumberAccount;
         return this;
     }
 
