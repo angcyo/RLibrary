@@ -1083,7 +1083,7 @@ public class RExTextView extends RTextView {
                         }
 
                     } else {
-                        L.e("onTouchEvent-> " + imageTextSpan.getShowContent());
+                        L.e("onTouchEvent " + action + " -> " + imageTextSpan.getShowContent());
                         Selection.removeSelection(buffer);
                     }
                     return isTouchInSpan;
