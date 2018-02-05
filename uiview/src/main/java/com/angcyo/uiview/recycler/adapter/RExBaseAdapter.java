@@ -1,6 +1,7 @@
 package com.angcyo.uiview.recycler.adapter;
 
 import android.content.Context;
+import android.support.annotation.NonNull;
 
 import com.angcyo.uiview.recycler.RBaseViewHolder;
 
@@ -175,7 +176,7 @@ public abstract class RExBaseAdapter<H, T, F> extends RModelAdapter<T> {
     }
 
     @Override
-    protected void onBindCommonView(RBaseViewHolder holder, int position, T bean) {
+    protected void onBindCommonView(@NonNull RBaseViewHolder holder, int position, T bean) {
         //L.e("call: onBindCommonView............ 111111111111: -> " + position);
 
         if (isInHeader(position)) {
@@ -195,28 +196,28 @@ public abstract class RExBaseAdapter<H, T, F> extends RModelAdapter<T> {
     }
 
     @Override
-    protected void onBindNormalView(RBaseViewHolder holder, int position, T bean) {
+    protected void onBindNormalView(@NonNull RBaseViewHolder holder, int position, T bean) {
 
     }
 
     /**
      * 尾部布局数据绑定
      */
-    protected void onBindFooterView(RBaseViewHolder holder, int posInFooter, F footerBean) {
+    protected void onBindFooterView(@NonNull RBaseViewHolder holder, int posInFooter, F footerBean) {
 
     }
 
     /**
      * 头部布局数据绑定
      */
-    protected void onBindHeaderView(RBaseViewHolder holder, int posInHeader, H headerBean) {
+    protected void onBindHeaderView(@NonNull RBaseViewHolder holder, int posInHeader, H headerBean) {
 
     }
 
     /**
      * 中间布局数据绑定
      */
-    protected void onBindDataView(RBaseViewHolder holder, int posInData, T dataBean) {
+    protected void onBindDataView(@NonNull RBaseViewHolder holder, int posInData, T dataBean) {
 
     }
 

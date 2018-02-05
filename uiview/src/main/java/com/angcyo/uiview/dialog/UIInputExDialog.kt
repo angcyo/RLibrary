@@ -57,7 +57,7 @@ open class UIInputExDialog : UIIDialogImpl {
     var onOkButtonClick: ((UIInputExDialog, RBaseViewHolder, String) -> Boolean)? = null
 
     /**重写此方法, 定制布局*/
-    override fun inflateDialogView(dialogRootLayout: FrameLayout?, inflater: LayoutInflater?): View {
+    override fun inflateDialogView(dialogRootLayout: FrameLayout, inflater: LayoutInflater): View {
         return inflate(R.layout.base_dialog_input_layout)
     }
 

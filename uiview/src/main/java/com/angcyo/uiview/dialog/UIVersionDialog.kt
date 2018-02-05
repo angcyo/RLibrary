@@ -83,7 +83,7 @@ class UIVersionDialog : UIIDialogRxImpl() {
         setCanCanceledOnOutside(false)
     }
 
-    override fun inflateDialogView(dialogRootLayout: FrameLayout?, inflater: LayoutInflater?): View {
+    override fun inflateDialogView(dialogRootLayout: FrameLayout, inflater: LayoutInflater): View {
         return inflate(R.layout.base_version_dialog_layout)
     }
 

@@ -17,7 +17,7 @@ abstract class UIRecyclerDialog<H, T, F> : UIIDialogImpl() {
     lateinit var recyclerView: RRecyclerView
     lateinit var adapter: RExBaseAdapter<H, T, F>
 
-    override fun inflateDialogView(dialogRootLayout: FrameLayout?, inflater: LayoutInflater?): View {
+    override fun inflateDialogView(dialogRootLayout: FrameLayout, inflater: LayoutInflater): View {
         return inflate(R.layout.base_recycler_dialog_layout)
     }
 

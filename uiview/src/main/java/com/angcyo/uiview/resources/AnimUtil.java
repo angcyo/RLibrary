@@ -14,6 +14,7 @@ import android.view.ViewTreeObserver;
 import android.view.animation.AlphaAnimation;
 import android.view.animation.Animation;
 import android.view.animation.AnimationSet;
+import android.view.animation.AnticipateInterpolator;
 import android.view.animation.BounceInterpolator;
 import android.view.animation.DecelerateInterpolator;
 import android.view.animation.LayoutAnimationController;
@@ -529,7 +530,7 @@ public class AnimUtil {
         setDefaultConfig(animation, false);
         setDefaultConfig(alphaAnimation, false);
 
-        animation.setInterpolator(new OvershootInterpolator(2));
+        animation.setInterpolator(new OvershootInterpolator(2));//先变化到最大值, 还要大, 然后回到最大值.
 
         AnimationSet animationSet = new AnimationSet(false);
         animationSet.addAnimation(alphaAnimation);
@@ -545,7 +546,7 @@ public class AnimUtil {
         setDefaultConfig(animation, false);
         setDefaultConfig(alphaAnimation, false);
 
-        //animation.setInterpolator(new OvershootInterpolator(2));
+        animation.setInterpolator(new AnticipateInterpolator(2));//先变大, 后变小
 
         AnimationSet animationSet = new AnimationSet(false);
         animationSet.addAnimation(alphaAnimation);

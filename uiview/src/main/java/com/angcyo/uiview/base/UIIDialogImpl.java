@@ -2,6 +2,7 @@ package com.angcyo.uiview.base;
 
 import android.content.pm.ActivityInfo;
 import android.support.annotation.LayoutRes;
+import android.support.annotation.NonNull;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -136,7 +137,7 @@ public abstract class UIIDialogImpl extends UIIViewImpl {
     /**
      * 需要实现的方法
      */
-    protected abstract View inflateDialogView(FrameLayout dialogRootLayout, LayoutInflater inflater);
+    protected abstract View inflateDialogView(@NonNull FrameLayout dialogRootLayout, @NonNull LayoutInflater inflater);
 
     @Override
     public boolean showOnDialog() {

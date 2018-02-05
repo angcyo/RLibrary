@@ -36,7 +36,7 @@ open class UIGuideDialog : UIGuideDialogImpl {
         this.anchorRectList.addAll(anchorRectList)
     }
 
-    override fun inflateDialogView(dialogRootLayout: FrameLayout?, inflater: LayoutInflater?): View {
+    override fun inflateDialogView(dialogRootLayout: FrameLayout, inflater: LayoutInflater): View {
         return inflate(layoutId)
     }
 

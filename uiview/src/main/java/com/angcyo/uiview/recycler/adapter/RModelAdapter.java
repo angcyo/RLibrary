@@ -81,7 +81,7 @@ public abstract class RModelAdapter<T> extends RBaseAdapter<T> {
     }
 
     @Override
-    final protected void onBindView(RBaseViewHolder holder, int position, T bean) {
+    final protected void onBindView(@NonNull RBaseViewHolder holder, int position, T bean) {
 //        L.e("call: onBindView([holder, position, bean])-> put:" + position);
         mBaseViewHolderMap.put(position, holder);
         onBindCommonView(holder, position, bean);
@@ -114,19 +114,19 @@ public abstract class RModelAdapter<T> extends RBaseAdapter<T> {
     /**
      * 选择模式下, 和正常模式下都会执行
      */
-    protected abstract void onBindCommonView(RBaseViewHolder holder, int position, T bean);
+    protected abstract void onBindCommonView(@NonNull RBaseViewHolder holder, int position, T bean);
 
     /**
      * 只在选择模式下,会执行
      */
-    protected void onBindModelView(int model, boolean isSelector, RBaseViewHolder holder, int position, T bean) {
+    protected void onBindModelView(int model, boolean isSelector, @NonNull RBaseViewHolder holder, int position, T bean) {
 
     }
 
     /**
      * 只在正常模式下,会执行
      */
-    protected void onBindNormalView(RBaseViewHolder holder, int position, T bean) {
+    protected void onBindNormalView(@NonNull RBaseViewHolder holder, int position, T bean) {
 
     }
 
@@ -136,7 +136,7 @@ public abstract class RModelAdapter<T> extends RBaseAdapter<T> {
      *
      * @return true 表示处理, false 不处理
      */
-    protected boolean onUnSelectorPosition(RBaseViewHolder viewHolder, int position, boolean isSelector) {
+    protected boolean onUnSelectorPosition(@NonNull RBaseViewHolder viewHolder, int position, boolean isSelector) {
         return false;
     }
 
@@ -146,7 +146,7 @@ public abstract class RModelAdapter<T> extends RBaseAdapter<T> {
      *
      * @return true 表示处理, false 不处理
      */
-    protected boolean onSelectorPosition(RBaseViewHolder viewHolder, int position, boolean isSelector) {
+    protected boolean onSelectorPosition(@NonNull RBaseViewHolder viewHolder, int position, boolean isSelector) {
         return false;
     }
 

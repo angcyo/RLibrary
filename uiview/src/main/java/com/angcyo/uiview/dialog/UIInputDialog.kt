@@ -29,7 +29,7 @@ open class UIInputDialog : UIIDialogImpl {
         setGravity(Gravity.TOP)
     }
 
-    override fun inflateDialogView(dialogRootLayout: FrameLayout?, inflater: LayoutInflater?): View {
+    override fun inflateDialogView(dialogRootLayout: FrameLayout, inflater: LayoutInflater): View {
         val view: View? = dialogConfig?.onInflateDialogView(dialogRootLayout, inflater)
         if (view == null) {
             //用来过滤状态栏的根布局

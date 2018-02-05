@@ -276,7 +276,7 @@ public abstract class RBaseAdapter<T> extends RecyclerView.Adapter<RBaseViewHold
     /**
      * 重写此方法, 可以修改加载更多视图
      */
-    protected void onBindLoadMoreView(RBaseViewHolder holder, int position) {
+    protected void onBindLoadMoreView(@NonNull RBaseViewHolder holder, int position) {
 
     }
 
@@ -384,7 +384,7 @@ public abstract class RBaseAdapter<T> extends RecyclerView.Adapter<RBaseViewHold
 
     protected abstract int getItemLayoutId(int viewType);
 
-    protected abstract void onBindView(RBaseViewHolder holder, int position, T bean);
+    protected abstract void onBindView(@NonNull RBaseViewHolder holder, int position, T bean);
 
     //----------------Item 数据的操作-----------------//
 

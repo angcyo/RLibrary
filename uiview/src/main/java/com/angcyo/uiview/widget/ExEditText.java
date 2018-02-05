@@ -264,6 +264,11 @@ public class ExEditText extends AppCompatEditText {
         mMaxNumber = typedArray.getFloat(R.styleable.ExEditText_r_max_number, mMaxNumber);
         mDecimalCount = typedArray.getInteger(R.styleable.ExEditText_r_decimal_count, mDecimalCount);
 
+        showClear = typedArray.getBoolean(R.styleable.ExEditText_r_show_clear, showClear);
+        if (typedArray.getBoolean(R.styleable.ExEditText_r_filter_emoji, false)) {
+            addEmojiFilter();
+        }
+
         setShowContentMenu(typedArray.getBoolean(R.styleable.ExEditText_r_show_content_menu, showContentMenu));
 
         typedArray.recycle();
@@ -456,7 +461,7 @@ public class ExEditText extends AppCompatEditText {
             String tagString = String.valueOf(tag);
             if (tagString.contains("emoji")) {
                 //激活emoji表情过滤
-                addFilter(new EmojiFilter());
+                addEmojiFilter();
             }
 
             if (tagString.contains("password")) {
@@ -473,6 +478,10 @@ public class ExEditText extends AppCompatEditText {
             }
         }
         getClearDrawable();
+    }
+
+    private void addEmojiFilter() {
+        addFilter(new EmojiFilter());
     }
 
     private Drawable getClearDrawable() {

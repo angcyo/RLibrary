@@ -92,7 +92,7 @@ open class UIFileSelectorDialog : UIIDialogImpl {
         this.onFileSelector = onFileSelector
     }
 
-    override fun inflateDialogView(dialogRootLayout: FrameLayout?, inflater: LayoutInflater?): View {
+    override fun inflateDialogView(dialogRootLayout: FrameLayout, inflater: LayoutInflater): View {
         return inflate(R.layout.base_dialog_file_selector)
     }
 
