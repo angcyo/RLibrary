@@ -70,7 +70,6 @@ public class RExTextView extends RTextView {
      */
     public final static Pattern patternPhone = Pattern.compile("\\d{3}-\\d{8}|\\d{3}-\\d{7}|\\d{4}-\\d{8}|\\d{3}-\\d{4}-\\d{4}|\\d{4}-\\d{7}|1+[34578]+\\d{9}|\\d{8}|\\d{7}");
 
-
     /**
      * 5位以上数字帐号匹配
      */
