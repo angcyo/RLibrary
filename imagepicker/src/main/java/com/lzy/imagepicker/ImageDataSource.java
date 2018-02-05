@@ -126,52 +126,57 @@ public class ImageDataSource implements LoaderManager.LoaderCallbacks<Cursor> {
     }
 
     /**
-     * 已按时间降序排序
+     * 已按时间降序排序, 请注意读写权限
      */
     public static ArrayList<ImageItem> queryRecentlyPhoto(ContentResolver contentResolver, long recentlyTime /*最近多长时间的照片, 秒*/) {
-        final String[] IMAGE_PROJECTION = {
-                MediaStore.Images.Media.DISPLAY_NAME,
-                MediaStore.Images.Media.DATA,
-                MediaStore.Images.Media.SIZE,
-                MediaStore.Images.Media.WIDTH,
-                MediaStore.Images.Media.HEIGHT,
-                MediaStore.Images.Media.MIME_TYPE,
-                MediaStore.Images.Media.DATE_ADDED};
-
-        Cursor query = contentResolver.query(MediaStore.Images.Media.EXTERNAL_CONTENT_URI,
-                IMAGE_PROJECTION, IMAGE_PROJECTION[6] + ">" + recentlyTime,
-                null, IMAGE_PROJECTION[6] + " DESC" /*按照时间降序*/);
         ArrayList<ImageItem> allImages = new ArrayList<>();
-        if (query != null) {
-            while (query.moveToNext()) {
-                //查询数据
-                String imageName = query.getString(query.getColumnIndexOrThrow(IMAGE_PROJECTION[0]));
-                String imagePath = query.getString(query.getColumnIndexOrThrow(IMAGE_PROJECTION[1]));
-                long imageSize = query.getLong(query.getColumnIndexOrThrow(IMAGE_PROJECTION[2]));
-                int imageWidth = query.getInt(query.getColumnIndexOrThrow(IMAGE_PROJECTION[3]));
-                int imageHeight = query.getInt(query.getColumnIndexOrThrow(IMAGE_PROJECTION[4]));
-                String imageMimeType = query.getString(query.getColumnIndexOrThrow(IMAGE_PROJECTION[5]));
-                long imageAddTime = query.getLong(query.getColumnIndexOrThrow(IMAGE_PROJECTION[6]));
 
-                File imageFile = new File(imagePath);
-                if (!imageFile.exists() || !imageFile.isFile()) {
-                    continue;
+        try {
+            final String[] IMAGE_PROJECTION = {
+                    MediaStore.Images.Media.DISPLAY_NAME,
+                    MediaStore.Images.Media.DATA,
+                    MediaStore.Images.Media.SIZE,
+                    MediaStore.Images.Media.WIDTH,
+                    MediaStore.Images.Media.HEIGHT,
+                    MediaStore.Images.Media.MIME_TYPE,
+                    MediaStore.Images.Media.DATE_ADDED};
+
+            Cursor query = contentResolver.query(MediaStore.Images.Media.EXTERNAL_CONTENT_URI,
+                    IMAGE_PROJECTION, IMAGE_PROJECTION[6] + ">" + recentlyTime,
+                    null, IMAGE_PROJECTION[6] + " DESC" /*按照时间降序*/);
+            if (query != null) {
+                while (query.moveToNext()) {
+                    //查询数据
+                    String imageName = query.getString(query.getColumnIndexOrThrow(IMAGE_PROJECTION[0]));
+                    String imagePath = query.getString(query.getColumnIndexOrThrow(IMAGE_PROJECTION[1]));
+                    long imageSize = query.getLong(query.getColumnIndexOrThrow(IMAGE_PROJECTION[2]));
+                    int imageWidth = query.getInt(query.getColumnIndexOrThrow(IMAGE_PROJECTION[3]));
+                    int imageHeight = query.getInt(query.getColumnIndexOrThrow(IMAGE_PROJECTION[4]));
+                    String imageMimeType = query.getString(query.getColumnIndexOrThrow(IMAGE_PROJECTION[5]));
+                    long imageAddTime = query.getLong(query.getColumnIndexOrThrow(IMAGE_PROJECTION[6]));
+
+                    File imageFile = new File(imagePath);
+                    if (!imageFile.exists() || !imageFile.isFile()) {
+                        continue;
+                    }
+
+                    //封装实体
+                    ImageItem imageItem = new ImageItem(IMAGE);
+                    imageItem.name = imageName;
+                    imageItem.path = imagePath;
+                    imageItem.size = imageSize;
+                    imageItem.width = imageWidth;
+                    imageItem.height = imageHeight;
+                    imageItem.mimeType = imageMimeType;
+                    imageItem.addTime = imageAddTime;
+                    //imageItem.placeholderDrawable = ContextCompat.getDrawable(activity, R.drawable.image_placeholder_shape);
+
+                    allImages.add(imageItem);
                 }
-
-                //封装实体
-                ImageItem imageItem = new ImageItem(IMAGE);
-                imageItem.name = imageName;
-                imageItem.path = imagePath;
-                imageItem.size = imageSize;
-                imageItem.width = imageWidth;
-                imageItem.height = imageHeight;
-                imageItem.mimeType = imageMimeType;
-                imageItem.addTime = imageAddTime;
-                //imageItem.placeholderDrawable = ContextCompat.getDrawable(activity, R.drawable.image_placeholder_shape);
-
-                allImages.add(imageItem);
+                query.close();
             }
-            query.close();
+        } catch (Exception e) {
+            e.printStackTrace();
         }
         //L.e("call: initOnShowContentLayout -> ${allImages.size}");
         return allImages;

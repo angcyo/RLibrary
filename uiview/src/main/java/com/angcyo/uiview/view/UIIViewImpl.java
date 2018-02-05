@@ -937,10 +937,14 @@ public abstract class UIIViewImpl implements IView {
     }
 
     public void click(View view, final View.OnClickListener listener) {
+        click(view, DEFAULT_CLICK_DELAY_TIME, listener);
+    }
+
+    public void click(View view, int delayTime, final View.OnClickListener listener) {
         if (listener instanceof RClickListener) {
             view.setOnClickListener(listener);
         } else {
-            view.setOnClickListener(new RClickListener(DEFAULT_CLICK_DELAY_TIME) {
+            view.setOnClickListener(new RClickListener(delayTime) {
                 @Override
                 public void onRClick(View view) {
                     if (listener != null) {

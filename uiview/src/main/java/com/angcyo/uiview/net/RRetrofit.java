@@ -278,10 +278,8 @@ public class RRetrofit {
 
             try {
                 saveToSDCard(data);
-
-
             } catch (Exception e) {
-
+                e.printStackTrace();
             }
 
             Request.Builder builder = request.newBuilder();
