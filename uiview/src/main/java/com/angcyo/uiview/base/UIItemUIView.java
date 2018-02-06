@@ -192,7 +192,7 @@ public abstract class UIItemUIView<T extends Item> extends UIRecyclerUIView<Stri
     /**
      * 创建Item
      */
-    protected abstract void createItems(List<T> items);
+    protected abstract void createItems(@NonNull List<T> items);
 
     protected boolean isLast(int position) {
         return mExBaseAdapter.isLast(position);

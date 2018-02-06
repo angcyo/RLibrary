@@ -24,7 +24,7 @@ import com.angcyo.uiview.widget.viewpager.TextIndicator
  * Version: 1.0.0
  */
 abstract class UIInputView : UIItemUIView<SingleItem>() {
-    override fun createItems(items: MutableList<SingleItem>?) {
+    override fun createItems(items: MutableList<SingleItem>) {
         items?.add(object : SingleItem() {
             override fun onBindView(holder: RBaseViewHolder, posInData: Int, dataBean: Item?) {
                 initItemView(holder)

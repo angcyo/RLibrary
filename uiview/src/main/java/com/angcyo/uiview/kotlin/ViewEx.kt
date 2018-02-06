@@ -9,6 +9,7 @@ import android.view.View
 import android.widget.TextView
 import com.angcyo.uiview.utils.ScreenUtil
 import com.angcyo.uiview.view.RClickListener
+import java.util.*
 
 /**
  * Kotlin View的扩展
@@ -28,6 +29,9 @@ public fun View.getDrawable(resId: Int): Drawable? {
     return ContextCompat.getDrawable(context, resId)
 }
 
+public val View.random: Random by lazy {
+    Random(System.nanoTime())
+}
 public val View.scaledDensity: Float
     get() = resources.displayMetrics.scaledDensity
 public val View.density: Float
