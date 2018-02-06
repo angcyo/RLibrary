@@ -1976,6 +1976,23 @@ public class RUtils {
         return getFileUri(RApplication.getApp(), file);
     }
 
+    /**
+     * 将手机号码, 138****9876显示
+     */
+    public static String safePhoneString(String phone) {
+        String result = "";
+        if (!TextUtils.isEmpty(phone)) {
+            if (phone.length() >= 11) {
+                StringBuilder builder = new StringBuilder();
+                builder.append(phone.substring(0, 3));
+                builder.append("****");
+                builder.append(phone.substring(7, phone.length()));
+                result = builder.toString();
+            }
+        }
+        return result;
+    }
+
     public enum ImageType {
         JPEG, GIF, PNG, BMP, UNKNOWN
     }

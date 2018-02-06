@@ -175,12 +175,18 @@ class RGalleryLayout(context: Context, attributeSet: AttributeSet? = null) : Lin
     /**修正child的滚动位置, 防止滚动到一半, 停下来了*/
     private fun resetScroll() {
         if (isVertical()) {
+            if (measuredHeight == 0) {
+                return
+            }
             val offset = scrollY % measuredHeight
             if (offset.compareTo(0f) != 0) {
                 //需要修正
                 scrollBy(0, measuredHeight - offset)
             }
         } else {
+            if (measuredWidth == 0) {
+                return
+            }
             val offset = scrollX % measuredWidth
             if (offset.compareTo(0f) != 0) {
                 //需要修正
@@ -203,7 +209,7 @@ class RGalleryLayout(context: Context, attributeSet: AttributeSet? = null) : Lin
                 visibility == View.VISIBLE &&
                 measuredWidth > 0 &&
                 measuredHeight > 0 &&
-                childCount > 0
+                childCount > 1
         /*&& galleryAdapter != null*/) {
             return true
         }
