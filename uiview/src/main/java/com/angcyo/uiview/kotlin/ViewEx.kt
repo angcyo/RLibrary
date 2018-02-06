@@ -1,5 +1,6 @@
 package com.angcyo.uiview.kotlin
 
+import android.graphics.Color
 import android.graphics.Paint
 import android.graphics.drawable.Drawable
 import android.support.v4.content.ContextCompat
@@ -8,6 +9,7 @@ import android.view.MotionEvent
 import android.view.View
 import android.widget.TextView
 import com.angcyo.uiview.utils.ScreenUtil
+import com.angcyo.uiview.utils.ScreenUtil.density
 import com.angcyo.uiview.view.RClickListener
 import java.util.*
 
@@ -34,6 +36,7 @@ public val View.random: Random by lazy {
 }
 public val View.scaledDensity: Float
     get() = resources.displayMetrics.scaledDensity
+
 public val View.density: Float
     get() = resources.displayMetrics.density
 
@@ -42,6 +45,14 @@ public val View.viewDrawWith: Int
 
 public val View.viewDrawHeight: Int
     get() = measuredHeight - paddingTop - paddingBottom
+
+public val View.debugPaint: Paint by lazy {
+    Paint(Paint.ANTI_ALIAS_FLAG).apply {
+        color = Color.RED
+        style = Paint.Style.STROKE
+        strokeWidth = 1 * density
+    }
+}
 
 /**返回居中绘制文本的y坐标*/
 public fun View.getDrawCenterTextCy(paint: Paint): Float {

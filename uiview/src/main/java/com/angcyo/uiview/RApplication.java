@@ -149,9 +149,9 @@ public class RApplication extends Application {
     }
 
     public static RApplication getApp() {
-        if (app == null) {
-            throw new IllegalArgumentException("application 初始化了吗?");
-        }
+//        if (app == null) {
+//            throw new IllegalArgumentException("application 初始化了吗?");
+//        }
         return app;
     }
 

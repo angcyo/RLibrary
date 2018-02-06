@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <declare-styleable name="ShakeImageView">
+        <!--抖动中心点的比例, 与宽度的比例, 默认0.5的宽度-->
+        <attr name="r_shake_x_ratio" format="float"/>
+        <!--抖动中心点的比例, 与高度的比例, 默认0.8的高度-->
+        <attr name="r_shake_y_ratio" format="float"/>
+    </declare-styleable>
+</resources>
