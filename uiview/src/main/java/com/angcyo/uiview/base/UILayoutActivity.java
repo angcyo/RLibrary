@@ -5,6 +5,7 @@ import android.annotation.TargetApi;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Build;
+import android.os.Bundle;
 import android.view.View;
 import android.view.inputmethod.InputMethodManager;
 
@@ -207,6 +208,18 @@ public abstract class UILayoutActivity extends StyleActivity {
         if (mLayout.requestBackPressed()) {
             onUIBackPressed();
         }
+    }
+
+    @Override
+    protected void onSaveInstanceState(Bundle outState) {
+        try {
+            if (outState != null) {
+                outState.clear();
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        super.onSaveInstanceState(outState);
     }
 
     protected void onUIBackPressed() {
