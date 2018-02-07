@@ -279,10 +279,19 @@ public abstract class UIIViewImpl implements IView {
         onViewShow(null);
     }
 
+    @Override
+    public void onViewShow(Bundle bundle, Class<?> fromClz) {
+        String className = "null";
+        if (fromClz != null) {
+            className = fromClz.getSimpleName();
+        }
+        L.d(this.getClass().getSimpleName(), "onViewShow: " + mIViewStatus + " from:" + className);
+    }
+
     @CallSuper
     @Override
     public void onViewShow(Bundle bundle) {
-        L.d(this.getClass().getSimpleName(), "onViewShow: " + mIViewStatus);
+        //L.d(this.getClass().getSimpleName(), "onViewShow: " + mIViewStatus);
         mIViewStatus = IViewShowState.STATE_VIEW_SHOW;
         long lastShowTime = mLastShowTime;
         viewShowCount++;

@@ -128,7 +128,7 @@ public class UILayoutImpl extends SwipeBackLayout implements ILayout<UIParam>, U
                 if (mLastShowViewPattern != null &&
                         !mLastShowViewPattern.mIView.haveParentILayout() /*&&
                         mLastShowViewPattern.mView.getVisibility() != VISIBLE*/) {
-                    viewShow(mLastShowViewPattern, null);
+                    viewShow(mLastShowViewPattern, null, null);
                 }
             }
         }
@@ -315,7 +315,7 @@ public class UILayoutImpl extends SwipeBackLayout implements ILayout<UIParam>, U
 
     @Override
     public void onLastViewShow(Bundle bundle) {
-        viewShow(mLastShowViewPattern, bundle);
+        viewShow(mLastShowViewPattern, bundle, null);
     }
 
     @Override
@@ -664,7 +664,7 @@ public class UILayoutImpl extends SwipeBackLayout implements ILayout<UIParam>, U
         }
 
         if (lastViewPattern != null) {
-            viewShow(lastViewPattern, null);
+            viewShow(lastViewPattern, null, null);
         }
         mLastShowViewPattern = lastViewPattern;
     }
@@ -1007,7 +1007,7 @@ public class UILayoutImpl extends SwipeBackLayout implements ILayout<UIParam>, U
         final Runnable endRunnable = new Runnable() {
             @Override
             public void run() {
-                viewShow(mLastShowViewPattern, param == null ? null : param.getBundle());
+                viewShow(mLastShowViewPattern, param == null ? null : param.getBundle(), null);
                 printLog();
             }
         };
@@ -1367,7 +1367,7 @@ public class UILayoutImpl extends SwipeBackLayout implements ILayout<UIParam>, U
             @Override
             public void run() {
                 L.i(name(topViewPattern.mIView) + " 启动完毕.");
-                viewShow(topViewPattern, param.getBundle());
+                viewShow(topViewPattern, param.getBundle(), null);
                 topViewPattern.isAnimToStart = false;
                 isStarting = false;
                 onStartIViewEnd(topViewPattern);
@@ -1495,7 +1495,7 @@ public class UILayoutImpl extends SwipeBackLayout implements ILayout<UIParam>, U
             @Override
             public void run() {
                 if (!quiet) {
-                    viewShow(bottomViewPattern, null);
+                    viewShow(bottomViewPattern, null, topViewPattern.mIView.getClass());
                 }
                 bottomViewPattern.mIView.onViewReShow(null);
                 finishEnd();
@@ -1606,7 +1606,7 @@ public class UILayoutImpl extends SwipeBackLayout implements ILayout<UIParam>, U
     /**
      * 执行IView生命周期onViewShow
      */
-    private void viewShow(final ViewPattern viewPattern, final Bundle bundle) {
+    private void viewShow(final ViewPattern viewPattern, final Bundle bundle, Class<?> fromClz /*哪个类关闭了*/) {
         isStarting = false;
         if (viewPattern == null ||
                 viewPattern.mIView == null ||
@@ -1617,6 +1617,7 @@ public class UILayoutImpl extends SwipeBackLayout implements ILayout<UIParam>, U
 //        viewPattern.mView.setVisibility(VISIBLE);
 //        viewPattern.mView.bringToFront();
         viewPattern.mIView.onViewShow(bundle);
+        viewPattern.mIView.onViewShow(bundle, fromClz);
 
         if (viewPattern.mIView.isDialog()) {
 

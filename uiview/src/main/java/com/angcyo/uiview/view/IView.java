@@ -66,7 +66,13 @@ public interface IView {
     /**
      * 生命周期顺序: 5
      */
+    @Deprecated
     void onViewShow(final Bundle bundle);//2016-12-15
+
+    /**
+     * 补充
+     */
+    void onViewShow(final Bundle bundle, Class<?> fromClz /*哪个类关闭了*/);//2018-2-7 14:22:53
 
     /**
      * {@link com.angcyo.uiview.container.UIParam#start_mode} 是 {@link com.angcyo.uiview.container.UIParam#SINGLE_TOP}
