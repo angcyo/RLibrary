@@ -391,7 +391,7 @@ public class RCrashHandler implements Thread.UncaughtExceptionHandler {
     }
 
     /**
-     * 获取SDCARD剩余存储空间
+     * 获取SDCARD剩余存储空间 kb单位->KB->MB
      *
      * @return
      */
