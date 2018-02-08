@@ -799,8 +799,12 @@ public abstract class UIIViewImpl implements IView {
                                 systemUiVisibility & ~View.SYSTEM_UI_FLAG_LIGHT_STATUS_BAR);
             }
         } else {
-            if (!isFullScreen() && mParentILayout instanceof UILayoutImpl) {
-                ((UILayoutImpl) mParentILayout).setDimStatusBar(light);
+            if (mParentILayout instanceof UILayoutImpl) {
+                if (isFullScreen()) {
+                    ((UILayoutImpl) mParentILayout).setDimStatusBar(false);
+                } else {
+                    ((UILayoutImpl) mParentILayout).setDimStatusBar(light);
+                }
             }
         }
     }

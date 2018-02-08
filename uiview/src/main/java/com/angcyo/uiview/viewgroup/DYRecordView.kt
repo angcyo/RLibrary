@@ -13,12 +13,14 @@ import android.view.animation.AccelerateInterpolator
 import android.view.animation.LinearInterpolator
 import com.angcyo.library.utils.L
 import com.angcyo.uiview.R
+import com.angcyo.uiview.RCrashHandler
 import com.angcyo.uiview.kotlin.density
 import com.angcyo.uiview.kotlin.getDrawCenterTextCx
 import com.angcyo.uiview.kotlin.maxValue
 import com.angcyo.uiview.kotlin.textHeight
 import com.angcyo.uiview.resources.RAnimListener
 import com.angcyo.uiview.skin.SkinHelper
+import com.angcyo.uiview.utils.T_
 
 /**
  * Copyright (C) 2016,深圳市红鸟网络科技股份有限公司 All rights reserved.
@@ -265,7 +267,15 @@ class DYRecordView(context: Context, attributeSet: AttributeSet? = null) : View(
         //L.e("call: onTouchEvent -> ${isEnabled} $event")
         if (isEnabled) {
             when (event.actionMasked) {
-                MotionEvent.ACTION_DOWN -> isTouchDown = true
+                MotionEvent.ACTION_DOWN -> {
+                    if (onRecordListener != null) {
+                        if (onRecordListener!!.onTouchDown()) {
+                            isTouchDown = false
+                            return false
+                        }
+                    }
+                    isTouchDown = true
+                }
             }
             //return super.onTouchEvent(event)
         } else {
@@ -534,7 +544,37 @@ class DYRecordView(context: Context, attributeSet: AttributeSet? = null) : View(
 
     var onRecordListener: OnRecordListener? = null
 
+    /**是否检查sd卡剩余空间*/
+    var checkSDAvailable = true
+    /**是否检查内存剩余空间*/
+    var checkMemoryInfo = true
+
+    public fun canRecord(): Boolean {
+        var result = true
+        if (checkSDAvailable) {
+            result = RCrashHandler.getAvailableExternalMemorySize() / 1024 / 1024 > 500
+            if (!result) {
+                T_.error("存储空间不足, 请清理.")
+                return result
+            }
+        }
+        if (checkMemoryInfo && result) {
+            val memoryInfo = RCrashHandler.getMemoryInfo(context)
+            if (memoryInfo.availMem / 1024 / 1024 < 100) {
+                result = false
+                T_.error("内存不足, 请清理.")
+            }
+        }
+        return result
+    }
+
     abstract class OnRecordListener {
+
+        /**当手指按下的时候, 会回调此方法, 返回true, 表示拦截事件, 不处理录制*/
+        open fun onTouchDown(): Boolean {
+            return false
+        }
+
         open fun onRecordStart() {
 
         }
