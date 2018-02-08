@@ -72,7 +72,9 @@ android {
             signingConfig signingConfigs.angcyo
         }
     }
-
+    lintOptions {
+        abortOnError false
+    }
     /*Gradle3.0 以下的方法*/
 //    getApplicationVariants().all { variant ->
 //        variant.outputs.each { output ->

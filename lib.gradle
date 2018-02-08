@@ -8,4 +8,8 @@ android {
         minSdkVersion Integer.parseInt(rootProject.M_SDK)
         targetSdkVersion Integer.parseInt(rootProject.T_SDK)
     }
+
+    lintOptions {
+        abortOnError false
+    }
 }
