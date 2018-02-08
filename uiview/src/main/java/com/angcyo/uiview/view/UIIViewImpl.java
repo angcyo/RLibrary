@@ -1226,6 +1226,11 @@ public abstract class UIIViewImpl implements IView {
         return false;
     }
 
+    @Override
+    public boolean isFullScreen() {
+        return false;
+    }
+
     /**
      * 是否请求拦截所有touch事件
      */

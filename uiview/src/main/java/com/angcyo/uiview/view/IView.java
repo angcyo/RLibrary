@@ -297,6 +297,11 @@ public interface IView {
      */
     boolean isLightStatusBar();//2018-2-3
 
+    /**
+     * 是否全屏, 隐藏状态栏
+     */
+    boolean isFullScreen();//2018-2-8
+
     enum IViewShowState {
         STATE_NORMAL,
         STATE_VIEW_CREATE,
