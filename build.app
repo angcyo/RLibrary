@@ -2,6 +2,28 @@
 
 
 
+#2018-2-8 使用方法
+请在 key.gradle 文件中编写签名key, 并且复制到 app 模型的根目录,
+之后
+apply from: 'key.gradle'
+即可
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
@@ -11,27 +33,15 @@
 apply from: '../RLibrary/app.gradle'
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+#2018-2-8 可能需要的签名配置
+    signingConfigs {
+        angcyo {
+            keyAlias 'angcyo'
+            keyPassword 'angcyo'
+            storeFile file('../RLibrary/angcyo.jks')
+            storePassword 'angcyo'
+        }
+    }
 
 
 apply plugin: 'com.android.application'

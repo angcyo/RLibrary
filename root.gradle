@@ -12,6 +12,8 @@
 //    }
 //}
 
+//apply from: './RLibrary/root.gradle'
+
 allprojects {
 
     repositories {

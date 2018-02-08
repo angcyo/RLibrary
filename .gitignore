@@ -21,4 +21,7 @@ gradlew.bat
 /RLibrary
 /apk
 *.log
+/RTbs
+/RJpush
+/RJoup
 
