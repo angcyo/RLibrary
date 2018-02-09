@@ -65,40 +65,20 @@ public class CircleScaleLayoutManager extends ViewPagerLayoutManager {
         this.zAlignment = zAlignment;
     }
 
+    private static void assertGravity(int gravity) {
+        if (gravity != LEFT && gravity != RIGHT && gravity != TOP && gravity != BOTTOM) {
+            throw new IllegalArgumentException("gravity must be one of LEFT RIGHT TOP and BOTTOM");
+        }
+    }
+
+    private static void assertZAlignmentState(int zAlignment) {
+        if (zAlignment != LEFT_ON_TOP && zAlignment != RIGHT_ON_TOP && zAlignment != CENTER_ON_TOP) {
+            throw new IllegalArgumentException("zAlignment must be one of LEFT_ON_TOP RIGHT_ON_TOP and CENTER_ON_TOP");
+        }
+    }
+
     public int getRadius() {
         return radius;
-    }
-
-    public int getAngleInterval() {
-        return angleInterval;
-    }
-
-    public float getCenterScale() {
-        return centerScale;
-    }
-
-    public float getMoveSpeed() {
-        return moveSpeed;
-    }
-
-    public float getMaxRemoveAngle() {
-        return maxRemoveAngle;
-    }
-
-    public float getMinRemoveAngle() {
-        return minRemoveAngle;
-    }
-
-    public int getGravity() {
-        return gravity;
-    }
-
-    public boolean getFlipRotate() {
-        return flipRotate;
-    }
-
-    public int getZAlignment() {
-        return zAlignment;
     }
 
     public void setRadius(int radius) {
@@ -108,11 +88,19 @@ public class CircleScaleLayoutManager extends ViewPagerLayoutManager {
         removeAllViews();
     }
 
+    public int getAngleInterval() {
+        return angleInterval;
+    }
+
     public void setAngleInterval(int angleInterval) {
         assertNotInLayoutOrScroll(null);
         if (this.angleInterval == angleInterval) return;
         this.angleInterval = angleInterval;
         removeAllViews();
+    }
+
+    public float getCenterScale() {
+        return centerScale;
     }
 
     public void setCenterScale(float centerScale) {
@@ -122,10 +110,18 @@ public class CircleScaleLayoutManager extends ViewPagerLayoutManager {
         requestLayout();
     }
 
+    public float getMoveSpeed() {
+        return moveSpeed;
+    }
+
     public void setMoveSpeed(float moveSpeed) {
         assertNotInLayoutOrScroll(null);
         if (this.moveSpeed == moveSpeed) return;
         this.moveSpeed = moveSpeed;
+    }
+
+    public float getMaxRemoveAngle() {
+        return maxRemoveAngle;
     }
 
     public void setMaxRemoveAngle(float maxRemoveAngle) {
@@ -135,11 +131,19 @@ public class CircleScaleLayoutManager extends ViewPagerLayoutManager {
         requestLayout();
     }
 
+    public float getMinRemoveAngle() {
+        return minRemoveAngle;
+    }
+
     public void setMinRemoveAngle(float minRemoveAngle) {
         assertNotInLayoutOrScroll(null);
         if (this.minRemoveAngle == minRemoveAngle) return;
         this.minRemoveAngle = minRemoveAngle;
         requestLayout();
+    }
+
+    public int getGravity() {
+        return gravity;
     }
 
     public void setGravity(int gravity) {
@@ -155,11 +159,19 @@ public class CircleScaleLayoutManager extends ViewPagerLayoutManager {
         requestLayout();
     }
 
+    public boolean getFlipRotate() {
+        return flipRotate;
+    }
+
     public void setFlipRotate(boolean flipRotate) {
         assertNotInLayoutOrScroll(null);
         if (this.flipRotate == flipRotate) return;
         this.flipRotate = flipRotate;
         requestLayout();
+    }
+
+    public int getZAlignment() {
+        return zAlignment;
     }
 
     public void setZAlignment(int zAlignment) {
@@ -281,26 +293,17 @@ public class CircleScaleLayoutManager extends ViewPagerLayoutManager {
         return 1 / moveSpeed;
     }
 
-    private static void assertGravity(int gravity) {
-        if (gravity != LEFT && gravity != RIGHT && gravity != TOP && gravity != BOTTOM) {
-            throw new IllegalArgumentException("gravity must be one of LEFT RIGHT TOP and BOTTOM");
-        }
-    }
-
-    private static void assertZAlignmentState(int zAlignment) {
-        if (zAlignment != LEFT_ON_TOP && zAlignment != RIGHT_ON_TOP && zAlignment != CENTER_ON_TOP) {
-            throw new IllegalArgumentException("zAlignment must be one of LEFT_ON_TOP RIGHT_ON_TOP and CENTER_ON_TOP");
-        }
-    }
-
     public static class Builder {
+        private static final float SCALE_RATE = 1.2f;
         private static int INTERVAL_ANGLE = 30;// The default mInterval angle between each items
         private static float DISTANCE_RATIO = 10f; // Finger swipe distance divide item rotate angle
-        private static final float SCALE_RATE = 1.2f;
         private static int INVALID_VALUE = Integer.MIN_VALUE;
 
         private int radius;
         private int angleInterval;
+        /**
+         * 中间的缩放比例
+         */
         private float centerScale;
         private float moveSpeed;
         private float maxRemoveAngle;

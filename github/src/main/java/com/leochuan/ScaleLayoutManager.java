@@ -52,22 +52,6 @@ public class ScaleLayoutManager extends ViewPagerLayoutManager {
         return itemSpace;
     }
 
-    public float getMinScale() {
-        return minScale;
-    }
-
-    public float getMoveSpeed() {
-        return moveSpeed;
-    }
-
-    public float getMaxAlpha() {
-        return maxAlpha;
-    }
-
-    public float getMinAlpha() {
-        return minAlpha;
-    }
-
     public void setItemSpace(int itemSpace) {
         assertNotInLayoutOrScroll(null);
         if (this.itemSpace == itemSpace) return;
@@ -75,11 +59,29 @@ public class ScaleLayoutManager extends ViewPagerLayoutManager {
         removeAllViews();
     }
 
+    public float getMinScale() {
+        return minScale;
+    }
+
     public void setMinScale(float minScale) {
         assertNotInLayoutOrScroll(null);
         if (this.minScale == minScale) return;
         this.minScale = minScale;
         removeAllViews();
+    }
+
+    public float getMoveSpeed() {
+        return moveSpeed;
+    }
+
+    public void setMoveSpeed(float moveSpeed) {
+        assertNotInLayoutOrScroll(null);
+        if (this.moveSpeed == moveSpeed) return;
+        this.moveSpeed = moveSpeed;
+    }
+
+    public float getMaxAlpha() {
+        return maxAlpha;
     }
 
     public void setMaxAlpha(float maxAlpha) {
@@ -90,18 +92,16 @@ public class ScaleLayoutManager extends ViewPagerLayoutManager {
         requestLayout();
     }
 
+    public float getMinAlpha() {
+        return minAlpha;
+    }
+
     public void setMinAlpha(float minAlpha) {
         assertNotInLayoutOrScroll(null);
         if (minAlpha < 0) minAlpha = 0;
         if (this.minAlpha == minAlpha) return;
         this.minAlpha = minAlpha;
         requestLayout();
-    }
-
-    public void setMoveSpeed(float moveSpeed) {
-        assertNotInLayoutOrScroll(null);
-        if (this.moveSpeed == moveSpeed) return;
-        this.moveSpeed = moveSpeed;
     }
 
     @Override
@@ -147,10 +147,22 @@ public class ScaleLayoutManager extends ViewPagerLayoutManager {
         private static float MIN_ALPHA = 1f;
         private static float MAX_ALPHA = 1f;
 
+        /**
+         * 间隔距离
+         */
         private int itemSpace;
+        /**
+         * 方向
+         */
         private int orientation;
+        /**
+         * 最小item的 缩放比例, 如果为1, 那么就没有方法缩小的效果
+         */
         private float minScale;
         private float moveSpeed;
+        /**
+         * 透明度
+         */
         private float maxAlpha;
         private float minAlpha;
         private boolean reverseLayout;

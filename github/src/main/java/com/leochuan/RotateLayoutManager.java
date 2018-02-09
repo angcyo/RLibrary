@@ -50,23 +50,15 @@ public class RotateLayoutManager extends ViewPagerLayoutManager {
         return itemSpace;
     }
 
-    public float getAngle() {
-        return angle;
-    }
-
-    public float getMoveSpeed() {
-        return moveSpeed;
-    }
-
-    public boolean getReverseRotate() {
-        return reverseRotate;
-    }
-
     public void setItemSpace(int itemSpace) {
         assertNotInLayoutOrScroll(null);
         if (this.itemSpace == itemSpace) return;
         this.itemSpace = itemSpace;
         removeAllViews();
+    }
+
+    public float getAngle() {
+        return angle;
     }
 
     public void setAngle(float centerScale) {
@@ -76,10 +68,18 @@ public class RotateLayoutManager extends ViewPagerLayoutManager {
         requestLayout();
     }
 
+    public float getMoveSpeed() {
+        return moveSpeed;
+    }
+
     public void setMoveSpeed(float moveSpeed) {
         assertNotInLayoutOrScroll(null);
         if (this.moveSpeed == moveSpeed) return;
         this.moveSpeed = moveSpeed;
+    }
+
+    public boolean getReverseRotate() {
+        return reverseRotate;
     }
 
     public void setReverseRotate(boolean reverseRotate) {
@@ -111,14 +111,22 @@ public class RotateLayoutManager extends ViewPagerLayoutManager {
     }
 
     public static class Builder {
-        private static float INTERVAL_ANGLE = 360f;
         private static final float DEFAULT_SPEED = 1f;
-
+        private static float INTERVAL_ANGLE = 360f;
         private int itemSpace;
         private int orientation;
+        /**
+         * 需要旋转的角度
+         */
         private float angle;
         private float moveSpeed;
+        /**
+         * 反向旋转
+         */
         private boolean reverseRotate;
+        /**
+         * 反向布局
+         */
         private boolean reverseLayout;
         private Context context;
         private int maxVisibleItemCount;
