@@ -347,6 +347,11 @@ public abstract class UIIViewImpl implements IView {
         }
     }
 
+    @Override
+    public void onViewHideFromDialog() {
+        L.d(this.getClass().getSimpleName(), "onViewHideFromDialog: " + mIViewStatus);
+    }
+
     @CallSuper
     @Override
     public void onViewHide() {

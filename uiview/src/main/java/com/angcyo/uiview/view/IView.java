@@ -82,6 +82,11 @@ public interface IView {
 
     void onViewHide();
 
+    /**
+     * 对话框启动后, 底部IView执行的回调, 不会执行onViewHide
+     */
+    void onViewHideFromDialog();//2018-2-9
+
     void onViewUnload();
 
     /**
