@@ -12,6 +12,7 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.IOException;
+import java.net.SocketTimeoutException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -202,6 +203,33 @@ public class Rx<Rx> extends Observable<Rx> {
         };
     }
 
+    private static Func2<Integer, Throwable, Boolean> createRetry() {
+        return new Func2<Integer, Throwable, Boolean>() {
+            @Override
+            public Boolean call(Integer integer, Throwable throwable) {
+                if (throwable instanceof SocketTimeoutException) {
+                    L.e("retry ..." + integer + " 无网络");
+                    throw new RException(RSubscriber.NO_NETWORK, "无网络");
+                }
+                if (throwable instanceof RException) {
+                    if (needRetryOnError((RException) throwable)) {
+//                                        if (integer < RETRY_ERROR_COUNT) {
+                        runErrorRetry(((RException) throwable).getCode());
+//                                            return true;
+//                                        }
+                    }
+                }
+                try {
+                    Thread.sleep(500);
+                } catch (Exception e) {
+
+                }
+                L.e("retry ..." + integer + " " + throwable);
+                return false;
+            }
+        };
+    }
+
     /**
      * 不检查数据返回, 直接转换成Bean
      */
@@ -233,26 +261,7 @@ public class Rx<Rx> extends Observable<Rx> {
                                 return null;
                             }
                         })
-                        .retry(new Func2<Integer, Throwable, Boolean>() {
-                            @Override
-                            public Boolean call(Integer integer, Throwable throwable) {
-                                if (throwable instanceof RException) {
-                                    if (needRetryOnError((RException) throwable)) {
-//                                        if (integer < RETRY_ERROR_COUNT) {
-                                        runErrorRetry(((RException) throwable).getCode());
-//                                            return true;
-//                                        }
-                                    }
-                                }
-                                try {
-                                    Thread.sleep(500);
-                                } catch (Exception e) {
-
-                                }
-                                L.e("retry ..." + integer + " " + throwable);
-                                return false;
-                            }
-                        })
+                        .retry(createRetry())
                         .retry(RETRY_COUNT)
                         .observeOn(AndroidSchedulers.mainThread());
             }
@@ -290,26 +299,7 @@ public class Rx<Rx> extends Observable<Rx> {
                                 return list;
                             }
                         })
-                        .retry(new Func2<Integer, Throwable, Boolean>() {
-                            @Override
-                            public Boolean call(Integer integer, Throwable throwable) {
-                                if (throwable instanceof RException) {
-                                    if (needRetryOnError((RException) throwable)) {
-//                                        if (integer < RETRY_ERROR_COUNT) {
-                                        runErrorRetry(((RException) throwable).getCode());
-//                                            return true;
-//                                        }
-                                    }
-                                }
-                                try {
-                                    Thread.sleep(500);
-                                } catch (Exception e) {
-
-                                }
-                                L.e("retry ..." + integer + " " + throwable);
-                                return false;
-                            }
-                        })
+                        .retry(createRetry())
                         .retry(RETRY_COUNT)
                         .observeOn(AndroidSchedulers.mainThread());
             }
@@ -342,26 +332,7 @@ public class Rx<Rx> extends Observable<Rx> {
                                 return body;
                             }
                         })
-                        .retry(new Func2<Integer, Throwable, Boolean>() {
-                            @Override
-                            public Boolean call(Integer integer, Throwable throwable) {
-                                if (throwable instanceof RException) {
-                                    if (needRetryOnError((RException) throwable)) {
-//                                        if (integer < RETRY_ERROR_COUNT) {
-                                        runErrorRetry(((RException) throwable).getCode());
-//                                            return true;
-//                                        }
-                                    }
-                                }
-                                try {
-                                    Thread.sleep(500);
-                                } catch (Exception e) {
-
-                                }
-                                L.e("retry ..." + integer + " " + throwable);
-                                return false;
-                            }
-                        })
+                        .retry(createRetry())
                         .retry(RETRY_COUNT)
                         .observeOn(AndroidSchedulers.mainThread());
             }
@@ -437,26 +408,7 @@ public class Rx<Rx> extends Observable<Rx> {
                                 return null;
                             }
                         })
-                        .retry(new Func2<Integer, Throwable, Boolean>() {
-                            @Override
-                            public Boolean call(Integer integer, Throwable throwable) {
-                                if (throwable instanceof RException) {
-                                    if (needRetryOnError((RException) throwable)) {
-//                                        if (integer < RETRY_ERROR_COUNT) {
-                                        runErrorRetry(((RException) throwable).getCode());
-//                                            return true;
-//                                        }
-                                    }
-                                }
-                                try {
-                                    Thread.sleep(500);
-                                } catch (Exception e) {
-
-                                }
-                                L.e("retry ..." + integer + " " + throwable);
-                                return false;
-                            }
-                        })
+                        .retry(createRetry())
                         .retry(RETRY_COUNT)
                         .observeOn(AndroidSchedulers.mainThread());
             }
@@ -522,26 +474,7 @@ public class Rx<Rx> extends Observable<Rx> {
                                 return null;
                             }
                         })
-                        .retry(new Func2<Integer, Throwable, Boolean>() {
-                            @Override
-                            public Boolean call(Integer integer, Throwable throwable) {
-                                if (throwable instanceof RException) {
-                                    if (needRetryOnError((RException) throwable)) {
-//                                        if (integer < RETRY_ERROR_COUNT) {
-                                        runErrorRetry(((RException) throwable).getCode());
-//                                            return true;
-//                                        }
-                                    }
-                                }
-                                try {
-                                    Thread.sleep(500);
-                                } catch (Exception e) {
-
-                                }
-                                L.e("retry ..." + integer + " " + throwable);
-                                return false;
-                            }
-                        })
+                        .retry(createRetry())
                         .retry(RETRY_COUNT)
                         .observeOn(AndroidSchedulers.mainThread());
             }
@@ -610,26 +543,7 @@ public class Rx<Rx> extends Observable<Rx> {
                                 return bean;
                             }
                         })
-                        .retry(new Func2<Integer, Throwable, Boolean>() {
-                            @Override
-                            public Boolean call(Integer integer, Throwable throwable) {
-                                if (throwable instanceof RException) {
-                                    if (needRetryOnError((RException) throwable)) {
-//                                        if (integer < RETRY_ERROR_COUNT) {
-                                        runErrorRetry(((RException) throwable).getCode());
-//                                            return true;
-//                                        }
-                                    }
-                                }
-                                try {
-                                    Thread.sleep(500);
-                                } catch (Exception e) {
-
-                                }
-                                L.e("retry ..." + integer + " " + throwable);
-                                return false;
-                            }
-                        })
+                        .retry(createRetry())
                         .retry(RETRY_COUNT)
                         .observeOn(AndroidSchedulers.mainThread());
             }
@@ -698,26 +612,7 @@ public class Rx<Rx> extends Observable<Rx> {
                                 return bean;
                             }
                         })
-                        .retry(new Func2<Integer, Throwable, Boolean>() {
-                            @Override
-                            public Boolean call(Integer integer, Throwable throwable) {
-                                if (throwable instanceof RException) {
-                                    if (needRetryOnError((RException) throwable)) {
-                                        if (integer < RETRY_ERROR_COUNT) {
-                                            runErrorRetry(((RException) throwable).getCode());
-//                                            return true;
-                                        }
-                                    }
-                                }
-                                try {
-                                    Thread.sleep(500);
-                                } catch (Exception e) {
-
-                                }
-                                L.e("retry ..." + integer + " " + throwable);
-                                return false;
-                            }
-                        })
+                        .retry(createRetry())
                         .retry(RETRY_COUNT)
                         .observeOn(AndroidSchedulers.mainThread());
             }
