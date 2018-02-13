@@ -1,3 +1,5 @@
+//apply from: 'key.gradle'
+
 apply plugin: 'com.android.application'
 
 android {

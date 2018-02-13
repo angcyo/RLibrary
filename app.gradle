@@ -18,8 +18,8 @@ android {
         applicationId "$application_id"
         minSdkVersion Integer.parseInt(rootProject.M_SDK)
         targetSdkVersion Integer.parseInt(rootProject.T_SDK)
-        versionCode 1
-        versionName "1.0"
+        versionCode Integer.parseInt(rootProject.V_CODE)
+        versionName "$V_NAME"
         multiDexEnabled true
 
 //        ndk {
