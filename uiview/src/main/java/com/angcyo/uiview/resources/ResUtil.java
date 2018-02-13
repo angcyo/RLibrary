@@ -642,6 +642,22 @@ public class ResUtil {
         return drawable;
     }
 
+    /**
+     * 构建一个线性渐变的Drawable
+     */
+    public static Drawable createGradientDrawable() {
+        return createGradientDrawable(getThemeColor(RApplication.getApp(), "colorPrimary"),
+                getThemeColor(RApplication.getApp(), "colorPrimaryDark"));
+    }
+
+    public static Drawable createGradientDrawable(int startColor, int endColor) {
+        GradientDrawable drawable = new GradientDrawable();
+        drawable.setGradientType(GradientDrawable.LINEAR_GRADIENT);//渐变类型
+        drawable.setOrientation(GradientDrawable.Orientation.LEFT_RIGHT);
+        drawable.setColors(new int[]{startColor, endColor});
+        return drawable;
+    }
+
     public static Drawable createColorDrawable(int color) {
         return new ColorDrawable(color);
     }

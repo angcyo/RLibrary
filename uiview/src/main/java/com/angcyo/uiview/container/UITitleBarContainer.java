@@ -232,7 +232,11 @@ public class UITitleBarContainer extends FrameLayout {
         int itemSize = getResources().getDimensionPixelSize(R.dimen.base_title_bar_item_size);
         int animTime = 300;
 
-        setBackgroundColor(mTitleBarPattern.mTitleBarBGColor);
+        if (mTitleBarPattern.mTitleBarBGDrawable == null) {
+            setBackgroundColor(mTitleBarPattern.mTitleBarBGColor);
+        } else {
+            setBackground(mTitleBarPattern.mTitleBarBGDrawable);
+        }
 
         /*返回按钮*/
         if (mTitleBarPattern.isShowBackImageView) {

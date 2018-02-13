@@ -23,7 +23,7 @@ import kotlin.jvm.functions.Function2;
  */
 
 public class Root {
-    public static String APP_FOLDER = "A_APP";
+    public static String APP_FOLDER = RApplication.getApp().getPackageName();
 
     public static String getAppExternalFolder() {
         return getAppExternalFolder("");

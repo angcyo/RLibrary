@@ -31,6 +31,7 @@ public class TitleBarPattern {
      * 标题栏背景颜色
      */
     public int mTitleBarBGColor = Color.TRANSPARENT;
+    public Drawable mTitleBarBGDrawable = null;
     /**
      * 标题颜色
      */
@@ -304,6 +305,11 @@ public class TitleBarPattern {
         mLeftItems.clear();
         mRightItems.clear();
         mOnInitTitleLayout = null;
+    }
+
+    public TitleBarPattern setTitleBarBGDrawable(Drawable titleBarBGDrawable) {
+        mTitleBarBGDrawable = titleBarBGDrawable;
+        return this;
     }
 
     public TitleBarPattern setShowDarkLoading(boolean showDarkLoading) {
