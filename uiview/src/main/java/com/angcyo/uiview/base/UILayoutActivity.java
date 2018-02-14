@@ -226,7 +226,7 @@ public abstract class UILayoutActivity extends StyleActivity {
         super.onBackPressed();
     }
 
-    protected void moveTaskToBack() {
+    public void moveTaskToBack() {
         super.moveTaskToBack(true);
     }
 

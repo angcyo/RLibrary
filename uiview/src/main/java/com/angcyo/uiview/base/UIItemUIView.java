@@ -179,6 +179,18 @@ public abstract class UIItemUIView<T extends Item> extends UIRecyclerUIView<Stri
     }
 
     /**
+     * 刷新某一个item
+     */
+    public void notifyItemChanged(T item) {
+        if (mExBaseAdapter != null) {
+            int indexOf = mItems.indexOf(item);
+            if (indexOf > -1) {
+                mExBaseAdapter.notifyItemChanged(indexOf);
+            }
+        }
+    }
+
+    /**
      * 返回布局
      */
     protected int getItemLayoutId(int position) {

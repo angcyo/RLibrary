@@ -646,15 +646,20 @@ public class ResUtil {
      * 构建一个线性渐变的Drawable
      */
     public static Drawable createGradientDrawable() {
-        return createGradientDrawable(getThemeColor(RApplication.getApp(), "colorPrimary"),
-                getThemeColor(RApplication.getApp(), "colorPrimaryDark"));
+        return createGradientDrawable(0f);
     }
 
-    public static Drawable createGradientDrawable(int startColor, int endColor) {
+    public static Drawable createGradientDrawable(float radii) {
+        return createGradientDrawable(getThemeColor(RApplication.getApp(), "colorPrimary"),
+                getThemeColor(RApplication.getApp(), "colorPrimaryDark"), radii);
+    }
+
+    public static Drawable createGradientDrawable(int startColor, int endColor, float radii /*4个角的圆角半径*/) {
         GradientDrawable drawable = new GradientDrawable();
         drawable.setGradientType(GradientDrawable.LINEAR_GRADIENT);//渐变类型
         drawable.setOrientation(GradientDrawable.Orientation.LEFT_RIGHT);
         drawable.setColors(new int[]{startColor, endColor});
+        drawable.setCornerRadius(radii);
         return drawable;
     }
 

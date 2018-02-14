@@ -1,7 +1,6 @@
 package com.angcyo.uiview.widget;
 
 import android.content.Context;
-import android.content.res.ColorStateList;
 import android.content.res.TypedArray;
 import android.graphics.Canvas;
 import android.graphics.Color;
@@ -10,7 +9,6 @@ import android.util.AttributeSet;
 import android.view.Gravity;
 
 import com.angcyo.uiview.R;
-import com.angcyo.uiview.RApplication;
 import com.angcyo.uiview.kotlin.ViewExKt;
 import com.angcyo.uiview.resources.ResUtil;
 import com.angcyo.uiview.skin.SkinHelper;
@@ -41,9 +39,14 @@ public class Button extends RTextView {
      */
     public static final int ROUND_BORDER = 3;
     /**
-     * 正常边框, 按下主题颜色填充
+     * 正常边框不填充, 按下主题颜色填充
      */
     public static final int ROUND_BORDER_FILL = 4;
+
+    /**
+     * 透明渐变, 很小的圆角矩形填充样式
+     */
+    public static final int ROUND_GRADIENT_RECT = 5;
     public static final int RADII = 300;
 
     int mButtonStyle = DEFAULT;
@@ -85,49 +88,55 @@ public class Button extends RTextView {
     }
 
     private void initButton() {
+        setTextColor(getTextColors());
+
         if (getBackground() == null) {
-            if (mButtonStyle == ROUND) {
-                setBackground(ResUtil.ripple(themeSubColor,
-                        ResUtil.selector(
-                                ResUtil.createDrawable(themeSubColor, RADII),
-                                ResUtil.createDrawable(themeDarkColor, RADII),
-                                ResUtil.createDrawable(disableColor, RADII)
-                        )));
-                setTextColor(getTextColors());
-            } else if (mButtonStyle == ROUND_BORDER) {
-                setBackground(ResUtil.ripple(themeSubColor,
-                        ResUtil.selector(
-                                ResUtil.createDrawable(themeSubColor, Color.TRANSPARENT, borderWidth, RADII),
-                                ResUtil.createDrawable(themeDarkColor, Color.TRANSPARENT, borderWidth, RADII),
-                                ResUtil.createDrawable(disableColor, Color.TRANSPARENT, borderWidth, RADII)
-                        )));
-                setTextColor(ColorStateList.valueOf(themeSubColor));
-            } else if (mButtonStyle == ROUND_BORDER_FILL) {
-                setBackground(ResUtil.ripple(themeSubColor,
-                        ResUtil.selector(
-                                ResUtil.createDrawable(ViewExKt.getColor(this, R.color.default_base_line),
-                                        Color.TRANSPARENT, borderWidth,
-                                        roundRadii),
-                                ResUtil.createDrawable(themeSubColor,
-                                        roundRadii),
-                                ResUtil.createDrawable(disableColor,
-                                        roundRadii)
-                        )));
-                setTextColor(ResUtil.generateTextColor(getCurrentTextColor(), ViewExKt.getColor(this, R.color.base_text_color)));
-            } else {
-                setTextColor(getTextColors());
-                if (isInEditMode()) {
-                    setBackground(ResUtil.generateRippleRoundMaskDrawable(roundRadii,
-                            Color.WHITE, Color.BLUE, disableColor, Color.BLUE));
-                } else {
-                    //setBackground(SkinHelper.getSkin().getThemeMaskBackgroundRoundSelector());
+            switch (mButtonStyle) {
+                case ROUND:
+                    setBackground(ResUtil.ripple(themeSubColor,
+                            ResUtil.selector(
+                                    ResUtil.createDrawable(themeSubColor, RADII),
+                                    ResUtil.createDrawable(themeDarkColor, RADII),
+                                    ResUtil.createDrawable(disableColor, RADII)
+                            )));
+                    break;
+                case ROUND_BORDER:
+                    setBackground(ResUtil.ripple(themeSubColor,
+                            ResUtil.selector(
+                                    ResUtil.createDrawable(themeSubColor, Color.TRANSPARENT, borderWidth, RADII),
+                                    ResUtil.createDrawable(themeDarkColor, Color.TRANSPARENT, borderWidth, RADII),
+                                    ResUtil.createDrawable(disableColor, Color.TRANSPARENT, borderWidth, RADII)
+                            )));
+                    break;
+                case ROUND_BORDER_FILL:
+                    setBackground(ResUtil.ripple(themeSubColor,
+                            ResUtil.selector(
+                                    ResUtil.createDrawable(ViewExKt.getColor(this, R.color.default_base_line),
+                                            Color.TRANSPARENT, borderWidth,
+                                            roundRadii),
+                                    ResUtil.createDrawable(themeSubColor,
+                                            roundRadii),
+                                    ResUtil.createDrawable(disableColor,
+                                            roundRadii)
+                            )));
+                    setTextColor(ResUtil.generateTextColor(getCurrentTextColor(), ViewExKt.getColor(this, R.color.base_text_color)));
+                    break;
+                case ROUND_GRADIENT_RECT:
+                    setBackground(ResUtil.ripple(Color.WHITE,
+                            ResUtil.selector(
+                                    ResUtil.createGradientDrawable(roundRadii),
+                                    ResUtil.createGradientDrawable(roundRadii),
+                                    ResUtil.createGradientDrawable(roundRadii))
+                    ));
+                    break;
+                default:
                     setBackground(
                             ResUtil.generateRippleRoundMaskDrawable(roundRadii,
                                     Color.WHITE, themeDarkColor,
-                                    ContextCompat.getColor(RApplication.getApp(), R.color.base_color_disable),
+                                    ContextCompat.getColor(getContext(), R.color.base_color_disable),
                                     themeSubColor
                             ));
-                }
+                    break;
             }
         }
     }

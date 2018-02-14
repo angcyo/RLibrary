@@ -76,7 +76,7 @@ public abstract class UIIViewImpl implements IView {
     public static final int DEFAULT_DELAY_ANIM_TIME = 260;
     public static final int DEFAULT_FINISH_ANIM_TIME = 200;//完成动画,尽量比启动动画快一点(相差最好是一帧的时间)
     public static final int DEFAULT_DIALOG_FINISH_ANIM_TIME = 150;
-    public static final int DEFAULT_CLICK_DELAY_TIME = 300;
+    public static int DEFAULT_CLICK_DELAY_TIME = RClickListener.Companion.getDEFAULT_DELAY_CLICK_TIME();
 
     protected ILayout mILayout;
     protected ILayout mParentILayout;//上层ILayout, 用来管理上层IView的生命周期, 如果有值, 会等于mILayout

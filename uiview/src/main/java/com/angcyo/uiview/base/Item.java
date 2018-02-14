@@ -2,6 +2,7 @@ package com.angcyo.uiview.base;
 
 import android.graphics.Canvas;
 import android.graphics.Rect;
+import android.support.annotation.NonNull;
 import android.text.TextPaint;
 import android.view.View;
 
@@ -13,7 +14,7 @@ import com.angcyo.uiview.recycler.RBaseViewHolder;
  */
 
 public interface Item {
-    void onBindView(RBaseViewHolder holder, int posInData, Item dataBean);
+    void onBindView(@NonNull RBaseViewHolder holder, int posInData, Item dataBean);
 
     @Deprecated
     void setItemOffsets(Rect rect);

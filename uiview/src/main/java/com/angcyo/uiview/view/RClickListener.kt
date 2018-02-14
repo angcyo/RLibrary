@@ -20,7 +20,7 @@ import com.angcyo.uiview.utils.T_
 abstract class RClickListener : View.OnClickListener {
 
     companion object {
-        val DEFAULT_DELAY_CLICK_TIME = 160
+        var DEFAULT_DELAY_CLICK_TIME = 160
     }
 
     /**快速点击间隔时间(毫秒), 0表示不延迟处理*/

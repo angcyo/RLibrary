@@ -105,6 +105,16 @@
         <item name="android:paddingEnd">8dp</item>
     </style>
 
+    <style name="BaseSkinButtonStyle2" parent="BaseSkinButtonStyle">
+        <item name="android:paddingTop">0dp</item>
+        <item name="android:paddingBottom">0dp</item>
+        <item name="android:layout_height">35dp</item>
+    </style>
+
+    <style name="BaseGradientButtonStyle" parent="BaseSkinButtonStyle2">
+        <item name="r_button_style">ROUND_GRADIENT_RECT</item>
+    </style>
+
     <style name="BaseSkinButtonLittleStyle" parent="BaseSkinButtonNoPaddingStyle">
         <item name="android:paddingTop">4dp</item>
         <item name="android:paddingBottom">4dp</item>
