@@ -1,9 +1,14 @@
 package com.angcyo.uiview;
 
+import android.app.Activity;
+import android.os.Build;
 import android.os.Environment;
 import android.text.TextUtils;
 
+import com.angcyo.github.utilcode.utils.AppUtils;
 import com.angcyo.library.utils.L;
+import com.angcyo.uiview.resources.ResUtil;
+import com.angcyo.uiview.utils.ScreenUtil;
 
 import java.io.File;
 import java.io.FileReader;
@@ -24,6 +29,39 @@ import kotlin.jvm.functions.Function2;
 
 public class Root {
     public static String APP_FOLDER = RApplication.getApp().getPackageName();
+
+    public static String device_info(Activity activity) {
+        StringBuilder builder = new StringBuilder();
+        builder.append(AppUtils.getAppVersionName(RApplication.getApp()));
+        builder.append(" by ");
+        builder.append(ResUtil.getThemeString(RApplication.getApp(), "build_time"));
+        builder.append(" on ");
+        builder.append(ResUtil.getThemeString(RApplication.getApp(), "os_name"));
+        builder.append(" ");
+        builder.append(ScreenUtil.screenWidth);
+        builder.append("×");
+        builder.append(ScreenUtil.screenHeight);
+        builder.append(" ");
+        builder.append(activity.getWindow().getDecorView().getMeasuredHeight());
+        builder.append(" ");
+        builder.append(ScreenUtil.densityDpi);
+        builder.append(" ");
+        builder.append(ScreenUtil.density);
+        builder.append(" \n");
+        builder.append("v:");
+        builder.append(Build.MANUFACTURER);
+        builder.append(" ");
+        builder.append("m:");
+        builder.append(Build.MODEL);
+        builder.append(" ");
+        builder.append("d:");
+        builder.append(Build.DEVICE);
+        builder.append(" ");
+        builder.append("h:");
+        builder.append(Build.HARDWARE);
+        builder.append(" ");
+        return builder.toString();
+    }
 
     public static String getAppExternalFolder() {
         return getAppExternalFolder("");

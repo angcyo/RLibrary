@@ -474,6 +474,11 @@ public class ResUtil {
         return context.getResources().getDimension(id);
     }
 
+    public static String getThemeString(Context context, String name) {
+        int id = getThemeIdentifier(context, name, "string");
+        return context.getResources().getString(id);
+    }
+
     public static Drawable getThemeDrawable(Context context, String name) {
         int id = getThemeIdentifier(context, name, "drawable");
         return ContextCompat.getDrawable(context, id);
