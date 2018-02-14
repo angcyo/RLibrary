@@ -316,6 +316,11 @@
         <item name="android:textColor">@color/base_text_color</item>
     </style>
 
+    <style name="BaseSingleEditTextStyle" parent="BaseMainTextStyle">
+        <item name="android:singleLine">true</item>
+        <item name="android:maxLines">1</item>
+    </style>
+
     <style name="BaseWhiteMainTextStyle" parent="BaseMainTextStyle">
         <item name="android:textColor">@color/base_white</item>
     </style>

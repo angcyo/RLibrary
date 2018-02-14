@@ -1,5 +1,6 @@
 package com.angcyo.uiview.kotlin
 
+
 import android.graphics.Color
 import android.graphics.Paint
 import android.graphics.drawable.Drawable
@@ -7,9 +8,11 @@ import android.support.v4.content.ContextCompat
 import android.text.TextUtils
 import android.view.MotionEvent
 import android.view.View
+import android.widget.EditText
 import android.widget.TextView
 import com.angcyo.uiview.utils.ScreenUtil
 import com.angcyo.uiview.utils.ScreenUtil.density
+import com.angcyo.uiview.utils.string.SingleTextWatcher
 import com.angcyo.uiview.view.RClickListener
 import java.util.*
 
@@ -183,3 +186,32 @@ public fun View.calcLayoutWidthHeight(rLayoutWidth: String?, rLayoutHeight: Stri
 
 /**手势是否结束*/
 public fun View.isTouchFinish(event: MotionEvent) = event.actionMasked == MotionEvent.ACTION_UP || event.actionMasked == MotionEvent.ACTION_CANCEL
+
+public fun View.clickIt(listener: View.OnClickListener) {
+    if (listener is RClickListener) {
+        setOnClickListener(listener)
+    } else {
+        setOnClickListener(object : RClickListener() {
+            override fun onRClick(view: View?) {
+                listener.onClick(view)
+            }
+        })
+    }
+}
+
+/**焦点变化改变监听*/
+public fun EditText.onFocusChange(listener: (Boolean) -> Unit) {
+    this.onFocusChangeListener = View.OnFocusChangeListener { _, hasFocus -> listener.invoke(hasFocus) }
+    listener.invoke(this.isFocused)
+}
+
+/**空文本变化监听*/
+public fun EditText.onEmptyText(listener: (Boolean) -> Unit) {
+    this.addTextChangedListener(object : SingleTextWatcher() {
+        override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
+            super.onTextChanged(s, start, before, count)
+            listener.invoke(TextUtils.isEmpty(s))
+        }
+    })
+    listener.invoke(TextUtils.isEmpty(this.text))
+}

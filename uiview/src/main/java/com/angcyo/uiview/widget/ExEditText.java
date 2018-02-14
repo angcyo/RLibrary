@@ -119,6 +119,7 @@ public class ExEditText extends AppCompatEditText {
     private int lastRollAnimValue = -100;
 
     private boolean showContentMenu = true;
+    private boolean checkInputNumber = false;
 
     private OnTextEmptyListener mOnTextEmptyListener;
     /**
@@ -268,6 +269,7 @@ public class ExEditText extends AppCompatEditText {
         if (typedArray.getBoolean(R.styleable.ExEditText_r_filter_emoji, false)) {
             addEmojiFilter();
         }
+        checkInputNumber = typedArray.getBoolean(R.styleable.ExEditText_r_check_input_number, checkInputNumber);
 
         setShowContentMenu(typedArray.getBoolean(R.styleable.ExEditText_r_show_content_menu, showContentMenu));
 
@@ -672,9 +674,9 @@ public class ExEditText extends AppCompatEditText {
             checkMentionString();
         }
 
-        if (isInputTypeNumber() &&
-                mMaxNumber != Float.MAX_VALUE &&
-                mDecimalCount != Integer.MAX_VALUE) {
+        if (isInputTypeNumber() && (
+                mMaxNumber != Float.MAX_VALUE && mDecimalCount != Integer.MAX_VALUE) ||
+                checkInputNumber) {
 
             if (!TextUtils.isEmpty(text)) {
                 Float value;

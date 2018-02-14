@@ -214,6 +214,8 @@
         <attr name="r_filter_emoji" format="boolean"/>
         <!--是否显示删除按钮-->
         <attr name="r_show_clear" format="boolean"/>
+        <!--检查输入的数字的有效性, 需要inputType的支持-->
+        <attr name="r_check_input_number" format="boolean"/>
     </declare-styleable>
 
     <declare-styleable name="JumpAdProgressBar">
