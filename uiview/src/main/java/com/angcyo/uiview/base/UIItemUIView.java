@@ -185,8 +185,14 @@ public abstract class UIItemUIView<T extends Item> extends UIRecyclerUIView<Stri
         if (mExBaseAdapter != null) {
             int indexOf = mItems.indexOf(item);
             if (indexOf > -1) {
-                mExBaseAdapter.notifyItemChanged(indexOf);
+                notifyItemChanged(indexOf);
             }
+        }
+    }
+
+    public void notifyItemChanged(int position) {
+        if (mExBaseAdapter != null) {
+            mExBaseAdapter.notifyItemChanged(position);
         }
     }
 

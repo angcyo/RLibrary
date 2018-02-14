@@ -80,7 +80,7 @@ open class UIInputExDialog : UIIDialogImpl {
 
             it.hint = inputHintString
             post {
-                it.setInputText(inputDefaultString)
+                setInputText(inputDefaultString)
             }
 
             if (autoShowSoftInput) {
@@ -146,6 +146,13 @@ open class UIInputExDialog : UIIDialogImpl {
                     }
                 }
             }
+        }
+    }
+
+    fun setInputText(string: String) {
+        /*输入框*/
+        editText?.let {
+            it.setInputText(string)
         }
     }
 }

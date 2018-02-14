@@ -45,6 +45,10 @@ public class DateDialog extends UIIDialogImpl {
         mDateConfig = dateConfig;
     }
 
+    public void setShowType(boolean[] showType) {
+        mShowType = showType;
+    }
+
     /**
      * 获取周岁(时间格式 必须是: yyyy-MM-dd)
      */
@@ -63,6 +67,16 @@ public class DateDialog extends UIIDialogImpl {
         } catch (ParseException e) {
             e.printStackTrace();
             return 0;
+        }
+    }
+
+    public static long parseTime(String time /*2018-2-14 0:0:0 解析这种格式的时间*/) {
+        SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss");
+        try {
+            return dateFormat.parse(time).getTime();
+        } catch (ParseException e) {
+            e.printStackTrace();
+            return 0L;
         }
     }
 
@@ -179,7 +193,7 @@ public class DateDialog extends UIIDialogImpl {
 
         @Override
         public void onDateSelector(WheelTime wheelTime) {
-            L.e("onDateSelector() -> " + wheelTime.getTime());
+            L.e("onDateSelector() -> " + wheelTime.getTime()); //2018-2-14 0:0:0
         }
 
         @Override
