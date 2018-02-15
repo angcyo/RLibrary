@@ -124,9 +124,9 @@ public class Button extends RTextView {
                 case ROUND_GRADIENT_RECT:
                     setBackground(ResUtil.ripple(Color.WHITE,
                             ResUtil.selector(
-                                    ResUtil.createGradientDrawable(roundRadii),
-                                    ResUtil.createGradientDrawable(roundRadii),
-                                    ResUtil.createGradientDrawable(roundRadii))
+                                    ResUtil.createGradientDrawable(getContext(), roundRadii),
+                                    ResUtil.createGradientDrawable(getContext(), roundRadii),
+                                    ResUtil.createGradientDrawable(getContext(), roundRadii))
                     ));
                     break;
                 default:

@@ -199,6 +199,14 @@ public fun View.clickIt(listener: View.OnClickListener) {
     }
 }
 
+public fun View.clickIt(onClick: (View) -> Unit) {
+    setOnClickListener(object : RClickListener() {
+        override fun onRClick(view: View?) {
+            onClick.invoke(this@clickIt)
+        }
+    })
+}
+
 /**焦点变化改变监听*/
 public fun EditText.onFocusChange(listener: (Boolean) -> Unit) {
     this.onFocusChangeListener = View.OnFocusChangeListener { _, hasFocus -> listener.invoke(hasFocus) }

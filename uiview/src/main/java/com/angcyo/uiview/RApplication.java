@@ -60,7 +60,7 @@ public class RApplication extends Application {
     public static int memoryClass = 0;
     public static int largeMemoryClass = 0;
 
-    private static RApplication app;
+    public static RApplication app;
 
     /**
      * 获取设备唯一标识码, 需要权限 android.permission.READ_PHONE_STATE

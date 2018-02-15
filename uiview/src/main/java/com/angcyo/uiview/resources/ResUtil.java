@@ -655,8 +655,12 @@ public class ResUtil {
     }
 
     public static Drawable createGradientDrawable(float radii) {
-        return createGradientDrawable(getThemeColor(RApplication.getApp(), "colorPrimary"),
-                getThemeColor(RApplication.getApp(), "colorPrimaryDark"), radii);
+        return createGradientDrawable(RApplication.getApp(), radii);
+    }
+
+    public static Drawable createGradientDrawable(Context context, float radii) {
+        return createGradientDrawable(getThemeColor(context, "colorPrimary"),
+                getThemeColor(context, "colorPrimaryDark"), radii);
     }
 
     public static Drawable createGradientDrawable(int startColor, int endColor, float radii /*4个角的圆角半径*/) {
