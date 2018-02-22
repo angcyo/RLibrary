@@ -514,7 +514,10 @@ public class UILayoutImpl extends SwipeBackLayout implements ILayout<UIParam>, U
     }
 
     private void startInner(final IView iView, final UIParam param) {
-        if (!isAttachedToWindow) {
+        if (!isAttachedToWindow || isStarting || isFinishing) {
+            if (checkInterruptAndRemove(iView)) {
+                return;
+            }
             post(new Runnable() {
                 @Override
                 public void run() {
