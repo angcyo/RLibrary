@@ -139,7 +139,7 @@ public class Ok {
     }
 
     public enum ImageType {
-        JPEG, GIF, PNG, BMP, UNKNOWN;
+        JPEG, GIF, PNG, BMP, WEBP, UNKNOWN;
 
         public static ImageType of(String type) {
             if (TextUtils.isEmpty(type)) {
@@ -156,6 +156,9 @@ public class Ok {
             }
             if ("BMP".equalsIgnoreCase(type)) {
                 return BMP;
+            }
+            if ("WEBP".equalsIgnoreCase(type)) {
+                return WEBP;
             }
             return UNKNOWN;
         }
@@ -207,6 +210,7 @@ public class Ok {
             if (isGIF(bytes)) return "GIF";
             if (isPNG(bytes)) return "PNG";
             if (isBMP(bytes)) return "BMP";
+            if (isWebP(bytes)) return "WEBP";
             return null;
         }
 
@@ -233,6 +237,12 @@ public class Ok {
         private static boolean isBMP(byte[] b) {
             return b.length >= 2
                     && (b[0] == 0x42) && (b[1] == 0x4d);
+        }
+
+        private static boolean isWebP(byte[] b) {
+            return b.length >= 4
+                    && b[0] == (byte) 82 && b[1] == (byte) 73
+                    && b[2] == (byte) 70 && b[3] == (byte) 70;
         }
     }
 
