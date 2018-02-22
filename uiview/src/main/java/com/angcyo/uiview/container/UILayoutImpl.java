@@ -1625,7 +1625,12 @@ public class UILayoutImpl extends SwipeBackLayout implements ILayout<UIParam>, U
         } else {
             if (viewPattern.mIView instanceof UIIViewImpl) {
                 ((UIIViewImpl) viewPattern.mIView).fullscreen(viewPattern.mIView.isFullScreen());
-                ((UIIViewImpl) viewPattern.mIView).lightStatusBar(viewPattern.mIView.isLightStatusBar());
+                postDelayed(new Runnable() {
+                    @Override
+                    public void run() {
+                        ((UIIViewImpl) viewPattern.mIView).lightStatusBar(viewPattern.mIView.isLightStatusBar());
+                    }
+                }, 16);
             }
         }
 
