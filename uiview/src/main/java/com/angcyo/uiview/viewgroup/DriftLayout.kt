@@ -10,12 +10,12 @@ import android.widget.FrameLayout
 import com.angcyo.uiview.R
 import com.angcyo.uiview.kotlin.abs
 import com.angcyo.uiview.kotlin.density
-import com.angcyo.uiview.kotlin.random
+import java.util.*
 
 /**
  * Copyright (C) 2016,深圳市红鸟网络科技股份有限公司 All rights reserved.
  * 项目名称：
- * 类的描述：一个中心View, 其他View在周边浮动旋转
+ * 类的描述：浮动布局, 一个中心View, 其他View在周边浮动旋转
  * 创建人员：Robi
  * 创建时间：2018/02/23 10:44
  * 修改人员：Robi
@@ -119,7 +119,7 @@ class DriftLayout(context: Context, attributeSet: AttributeSet? = null) : FrameL
                                     layoutParams.animDriftAngle += layoutParams.animDriftAngleStep
                                 }
                                 if (enableShake) {
-                                    if (random.nextBoolean()) {
+                                    if (layoutParams.animDriftIsOffsetX) {
                                         layoutParams.animDriftXOffset += layoutParams.animDriftXOffsetStep
                                     } else {
                                         layoutParams.animDriftYOffset += layoutParams.animDriftYOffsetStep
@@ -172,7 +172,13 @@ class DriftLayout(context: Context, attributeSet: AttributeSet? = null) : FrameL
         //每帧旋转的角度
         var animDriftAngleStep = 0.1f
 
-        var animDriftXOffsetMax = 20
+        private val random: Random by lazy {
+            Random(System.nanoTime())
+        }
+
+        var animDriftIsOffsetX = true
+
+        var animDriftXOffsetMax = 10 + random.nextInt(10)
         //每帧x轴抖动的距离
         var animDriftXOffsetStep = 0.15f
         var animDriftXOffset = 0f //px 自动转换为dp
@@ -180,20 +186,24 @@ class DriftLayout(context: Context, attributeSet: AttributeSet? = null) : FrameL
                 field = value
                 if (value > animDriftXOffsetMax) {
                     animDriftXOffsetStep = -animDriftXOffsetStep.abs()
+                    animDriftIsOffsetX = random.nextBoolean()
                 } else if (value < -animDriftXOffsetMax) {
                     animDriftXOffsetStep = animDriftXOffsetStep.abs()
+                    animDriftIsOffsetX = random.nextBoolean()
                 }
             }
 
-        var animDriftYOffsetMax = animDriftXOffsetMax
+        var animDriftYOffsetMax = 10 + random.nextInt(10)
         var animDriftYOffsetStep = animDriftXOffsetStep
         var animDriftYOffset = 0f
             set(value) {
                 field = value
                 if (value > animDriftYOffsetMax) {
                     animDriftYOffsetStep = -animDriftYOffsetStep.abs()
+                    animDriftIsOffsetX = random.nextBoolean()
                 } else if (value < -animDriftYOffsetMax) {
                     animDriftYOffsetStep = animDriftYOffsetStep.abs()
+                    animDriftIsOffsetX = random.nextBoolean()
                 }
             }
 

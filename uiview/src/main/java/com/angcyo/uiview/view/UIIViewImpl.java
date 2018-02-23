@@ -1189,9 +1189,9 @@ public abstract class UIIViewImpl implements IView {
     public int getDefaultRequestedOrientation() {
         int orientation;
         if (getScreenOrientation() == Configuration.ORIENTATION_LANDSCAPE) {
-            orientation = ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE;
+            orientation = ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE; //横屏
         } else {
-            orientation = ActivityInfo.SCREEN_ORIENTATION_PORTRAIT;
+            orientation = ActivityInfo.SCREEN_ORIENTATION_PORTRAIT; // 竖屏
         }
         return orientation;//ActivityInfo.SCREEN_ORIENTATION_PORTRAIT;
     }
