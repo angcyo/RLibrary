@@ -21,6 +21,9 @@ import com.angcyo.uiview.view.UIIViewImpl
 /**整型数中, 是否包含另一个整数*/
 public fun Int.have(value: Int): Boolean = value != 0 && this and value == value
 
+public fun Int.remove(value: Int): Int = this and value.inv()
+public fun Int.add(value: Int): Int = this or value
+
 /**文本的高度*/
 public fun Paint.textHeight(): Float = descent() - ascent()
 

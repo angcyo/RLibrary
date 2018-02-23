@@ -42,6 +42,7 @@ public abstract class RSubscriber<T> extends Subscriber<T> {
         try {
             onEnd(false, false, null);
         } catch (Exception e) {
+            e.printStackTrace();
         }
     }
 

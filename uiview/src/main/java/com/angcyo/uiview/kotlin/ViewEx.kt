@@ -10,6 +10,7 @@ import android.view.MotionEvent
 import android.view.View
 import android.widget.EditText
 import android.widget.TextView
+import com.angcyo.uiview.recycler.RRecyclerView
 import com.angcyo.uiview.utils.ScreenUtil
 import com.angcyo.uiview.utils.ScreenUtil.density
 import com.angcyo.uiview.utils.string.SingleTextWatcher
@@ -223,4 +224,10 @@ public fun EditText.onEmptyText(listener: (Boolean) -> Unit) {
         }
     })
     listener.invoke(TextUtils.isEmpty(this.text))
+}
+
+public fun RRecyclerView.onSizeChanged(listener: (w: Int, h: Int, oldw: Int, oldh: Int) -> Unit) {
+    this.setOnSizeChangedListener { w, h, oldw, oldh ->
+        listener.invoke(w, h, oldw, oldh)
+    }
 }

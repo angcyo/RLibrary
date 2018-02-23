@@ -160,6 +160,7 @@ public class RRecyclerView extends RecyclerView implements StickLayout.CanScroll
             return super.onScroll(e1, e2, distanceX, distanceY);
         }
     });
+    private OnSizeChangedListener mOnSizeChangedListener;
 
     public RRecyclerView(Context context) {
         this(context, null);
@@ -206,6 +207,8 @@ public class RRecyclerView extends RecyclerView implements StickLayout.CanScroll
         }
     }
 
+    //-----------获取 默认的adapter, 获取 RBaseAdapter, 获取 AnimationAdapter----------//
+
     private static void setEdgeEffect(RecyclerView recyclerView, int color) {
         Object mGlow = Reflect.getMember(RecyclerView.class, recyclerView, "mTopGlow");
         setEdgetEffect(mGlow, color);
@@ -216,8 +219,6 @@ public class RRecyclerView extends RecyclerView implements StickLayout.CanScroll
         mGlow = Reflect.getMember(RecyclerView.class, recyclerView, "mBottomGlow");
         setEdgetEffect(mGlow, color);
     }
-
-    //-----------获取 默认的adapter, 获取 RBaseAdapter, 获取 AnimationAdapter----------//
 
     public static void setEdgetEffect(Object edgeEffectCompat, @ColorInt int color) {
         Object mEdgeEffect = Reflect.getMember(edgeEffectCompat, "mEdgeEffect");
@@ -280,6 +281,8 @@ public class RRecyclerView extends RecyclerView implements StickLayout.CanScroll
         addOnScrollListener(mScrollListener);
     }
 
+    //----------------end--------------------//
+
     @Override
     protected void onMeasure(int widthSpec, int heightSpec) {
         super.onMeasure(widthSpec, heightSpec);
@@ -294,20 +297,21 @@ public class RRecyclerView extends RecyclerView implements StickLayout.CanScroll
         }
     }
 
-    //----------------end--------------------//
-
-    @Override
-    protected void onSizeChanged(int w, int h, int oldw, int oldh) {
-        super.onSizeChanged(w, h, oldw, oldh);
-        if (!isInEditMode()) {
-            ensureGlow(RRecyclerView.this, SkinHelper.getSkin().getThemeSubColor());
-        }
-    }
-
 //    @Override
 //    public RBaseAdapter getAdapter() {
 //        return (RBaseAdapter) super.getAdapter();
 //    }
+
+    @Override
+    protected void onSizeChanged(int w, int h, int oldw, int oldh) {
+        super.onSizeChanged(w, h, oldw, oldh);
+        if (mOnSizeChangedListener != null) {
+            mOnSizeChangedListener.onSizeChanged(w, h, oldw, oldh);
+        }
+        if (!isInEditMode()) {
+            ensureGlow(RRecyclerView.this, SkinHelper.getSkin().getThemeSubColor());
+        }
+    }
 
     @Override
     public void setTag(Object tag) {
@@ -573,7 +577,6 @@ public class RRecyclerView extends RecyclerView implements StickLayout.CanScroll
         }
     }
 
-
     public void startAutoScroll() {
         LayoutManager layoutManager = getLayoutManager();
         if (enableScroll && getAdapter() != null && getAdapter().getItemCount() > 1 &&
@@ -817,7 +820,6 @@ public class RRecyclerView extends RecyclerView implements StickLayout.CanScroll
         return !UI.canChildScrollDown(this);
     }
 
-
     public void setOnFastTouchListener(OnFastTouchListener onFastTouchListener) {
         mOnFastTouchListener = onFastTouchListener;
     }
@@ -866,6 +868,14 @@ public class RRecyclerView extends RecyclerView implements StickLayout.CanScroll
         return this;
     }
 
+    public OnSizeChangedListener getOnSizeChangedListener() {
+        return mOnSizeChangedListener;
+    }
+
+    public void setOnSizeChangedListener(OnSizeChangedListener onSizeChangedListener) {
+        mOnSizeChangedListener = onSizeChangedListener;
+    }
+
     /**
      * RecyclerView滚动结束后的回调
      */
@@ -876,7 +886,6 @@ public class RRecyclerView extends RecyclerView implements StickLayout.CanScroll
         void onScrollTopEnd(float currVelocity);
     }
 
-
     public interface OnFastTouchListener {
 
         int FAST_TIME = 100;
@@ -885,5 +894,9 @@ public class RRecyclerView extends RecyclerView implements StickLayout.CanScroll
          * 快速单击事件监听 (100毫秒内的DOWN UP)
          */
         void onFastClick();
+    }
+
+    public interface OnSizeChangedListener {
+        void onSizeChanged(int w, int h, int oldw, int oldh);
     }
 }
