@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <declare-styleable name="DriftLayout">
+        <!--是否浮动起来, 默认True-->
+        <attr name="r_enable_drift" format="boolean"/>
+        <!--是否激活抖动, 就是左右晃动, 默认true-->
+        <attr name="r_enable_shake" format="boolean"/>
+
+        <!--是否是居中的View, 只能有一个, 其他View, 会以这个View为中心-->
+        <attr name="r_is_drift_center" format="boolean"/>
+        <!--在中心点View的什么角度上布局, 角度从3点钟方向, 顺时针开始0-360度-->
+        <attr name="r_drift_angle" format="integer"/>
+        <!--每帧旋转的角度-->
+        <attr name="r_drift_angle_step" format="float"/>
+        <!--半径偏移距离-->
+        <attr name="r_drift_r_offset" format="dimension"/>
+    </declare-styleable>
+</resources>

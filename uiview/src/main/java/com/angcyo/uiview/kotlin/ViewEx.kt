@@ -37,6 +37,7 @@ public fun View.getDrawable(resId: Int): Drawable? {
 public val View.random: Random by lazy {
     Random(System.nanoTime())
 }
+
 public val View.scaledDensity: Float
     get() = resources.displayMetrics.scaledDensity
 
