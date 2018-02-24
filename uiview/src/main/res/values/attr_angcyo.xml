@@ -216,6 +216,8 @@
         <attr name="r_show_clear" format="boolean"/>
         <!--检查输入的数字的有效性, 需要inputType的支持-->
         <attr name="r_check_input_number" format="boolean"/>
+        <attr name="r_use_char_length_filter" format="boolean"/>
+        <attr name="r_max_length" format="integer"/>
     </declare-styleable>
 
     <declare-styleable name="JumpAdProgressBar">

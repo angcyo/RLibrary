@@ -15,6 +15,7 @@ import android.text.Editable;
 import android.text.InputFilter;
 import android.text.Spannable;
 import android.text.SpannableStringBuilder;
+import android.text.Spanned;
 import android.text.TextPaint;
 import android.text.TextUtils;
 import android.text.TextWatcher;
@@ -45,6 +46,8 @@ import com.angcyo.uiview.kotlin.ExKt;
 import com.angcyo.uiview.resources.RAnimListener;
 import com.angcyo.uiview.skin.SkinHelper;
 import com.angcyo.uiview.utils.RTextPaint;
+import com.angcyo.uiview.utils.RUtils;
+import com.angcyo.uiview.utils.Reflect;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -126,6 +129,16 @@ public class ExEditText extends AppCompatEditText {
      * 屏幕一键删除按钮点击后, 触发输入框选择, 弹出的菜单的问题
      */
     private int touchDownWithHandle = 0;
+
+    /**
+     * 使用英文字符数过滤, 一个汉字等于2个英文, 一个emoji表情等于2个汉字
+     */
+    private boolean useCharLengthFilter = false;
+
+    /**
+     * 过滤的最大长度
+     */
+    private int maxCharLength = 0;
 
     public ExEditText(Context context) {
         super(context);
@@ -256,6 +269,27 @@ public class ExEditText extends AppCompatEditText {
 
         ensurePaint();
         TypedArray typedArray = context.obtainStyledAttributes(attrs, R.styleable.ExEditText);
+        setUseCharLengthFilter(typedArray.getBoolean(R.styleable.ExEditText_r_use_char_length_filter, useCharLengthFilter));
+
+        if (!useCharLengthFilter) {
+            InputFilter[] filters = getFilters();
+            for (int i = 0; i < filters.length; i++) {
+                InputFilter filter = filters[i];
+                if (filter instanceof InputFilter.LengthFilter) {
+                    Object mMax = Reflect.getMember(filter, "mMax");
+                    if (mMax != null) {
+                        maxCharLength = (int) mMax;
+                    }
+                    break;
+                }
+            }
+        }
+
+        int maxLength = typedArray.getInteger(R.styleable.ExEditText_r_max_length, maxCharLength);
+        if (maxLength > 0) {
+            setMaxLength(maxLength);
+        }
+
         int color = typedArray.getColor(R.styleable.ExEditText_r_left_text_color, getCurrentTextColor());
         mLeftOffset = typedArray.getDimensionPixelOffset(R.styleable.ExEditText_r_left_text_offset,
                 getResources().getDimensionPixelOffset(R.dimen.base_ldpi));
@@ -884,7 +918,14 @@ public class ExEditText extends AppCompatEditText {
     }
 
     public String string() {
-        String rawText = getText().toString().trim();
+        return string(true);
+    }
+
+    public String string(boolean trim) {
+        String rawText = getText().toString();
+        if (trim) {
+            rawText = rawText.trim();
+        }
         String tipText = mInputTipText.trim();
 
         if (TextUtils.isEmpty(rawText)) {
@@ -900,21 +941,43 @@ public class ExEditText extends AppCompatEditText {
         return TextUtils.isEmpty(string());
     }
 
+    public int getMaxCharLength() {
+        return maxCharLength;
+    }
+
     public void setMaxLength(int length) {
+        maxCharLength = length;
         InputFilter[] filters = getFilters();
-        boolean have = false;
-        InputFilter.LengthFilter lengthFilter = new InputFilter.LengthFilter(length);
-        for (int i = 0; i < filters.length; i++) {
-            InputFilter filter = filters[i];
-            if (filter instanceof InputFilter.LengthFilter) {
-                have = true;
-                filters[i] = lengthFilter;
-                setFilters(filters);
-                break;
+        if (useCharLengthFilter) {
+            boolean have = false;
+            CharLengthFilter lengthFilter = new CharLengthFilter(length);
+            for (int i = 0; i < filters.length; i++) {
+                InputFilter filter = filters[i];
+                if (filter instanceof CharLengthFilter) {
+                    have = true;
+                    filters[i] = lengthFilter;
+                    setFilters(filters);
+                    break;
+                }
             }
-        }
-        if (!have) {
-            addFilter(lengthFilter);
+            if (!have) {
+                addFilter(lengthFilter);
+            }
+        } else {
+            boolean have = false;
+            InputFilter.LengthFilter lengthFilter = new InputFilter.LengthFilter(length);
+            for (int i = 0; i < filters.length; i++) {
+                InputFilter filter = filters[i];
+                if (filter instanceof InputFilter.LengthFilter) {
+                    have = true;
+                    filters[i] = lengthFilter;
+                    setFilters(filters);
+                    break;
+                }
+            }
+            if (!have) {
+                addFilter(lengthFilter);
+            }
         }
     }
 
@@ -1416,6 +1479,73 @@ public class ExEditText extends AppCompatEditText {
         }
     }
 
+    public boolean isUseCharLengthFilter() {
+        return useCharLengthFilter;
+    }
+
+    /**
+     * 请在调用此方法后, 调用{@link #setMaxLength(int)}
+     */
+    public void setUseCharLengthFilter(boolean useCharLengthFilter) {
+        boolean old = this.useCharLengthFilter;
+        this.useCharLengthFilter = useCharLengthFilter;
+
+        if (old != useCharLengthFilter) {
+            if (useCharLengthFilter) {
+                InputFilter[] filters = getFilters();
+                int num = 0;
+                for (int i = 0; i < filters.length; i++) {
+                    InputFilter filter = filters[i];
+                    if (filter instanceof InputFilter.LengthFilter) {
+                        num++;
+                    }
+                }
+                if (num > 0) {
+                    InputFilter[] newFilters = new InputFilter[filters.length - num];
+                    int index = 0;
+                    for (int i = 0; i < filters.length; i++) {
+                        InputFilter filter = filters[i];
+                        if (filter instanceof InputFilter.LengthFilter) {
+
+                        } else {
+                            newFilters[index++] = filter;
+                        }
+                    }
+                    setFilters(newFilters);
+                }
+            } else {
+                InputFilter[] filters = getFilters();
+                int num = 0;
+                for (int i = 0; i < filters.length; i++) {
+                    InputFilter filter = filters[i];
+                    if (filter instanceof CharLengthFilter) {
+                        num++;
+                    }
+                }
+                if (num > 0) {
+                    InputFilter[] newFilters = new InputFilter[filters.length - num];
+                    int index = 0;
+                    for (int i = 0; i < filters.length; i++) {
+                        InputFilter filter = filters[i];
+                        if (filter instanceof CharLengthFilter) {
+
+                        } else {
+                            newFilters[index++] = filter;
+                        }
+                    }
+                    setFilters(newFilters);
+                }
+            }
+        }
+    }
+
+    /**
+     * 一个汉字等于2个英文, 一个emoji表情等于2个汉字
+     */
+    public int getCharLength() {
+        return RUtils.getCharLength(string(false));
+    }
+
     public interface getIdFromUserName {
         String userId(String userName);
     }
@@ -1442,6 +1572,12 @@ public class ExEditText extends AppCompatEditText {
         void onTextEmpty(boolean isEmpty);
     }
 
+//    @Override
+//    protected void onCreateContextMenu(ContextMenu menu) {
+//        L.e("call: onCreateContextMenu([menu])-> ");
+//        super.onCreateContextMenu(menu);
+//    }
+
     /**
      * {@code @}文本样式Span
      */
@@ -1467,41 +1603,47 @@ public class ExEditText extends AppCompatEditText {
         }
     }
 
-//    @Override
-//    protected void onCreateContextMenu(ContextMenu menu) {
-//        L.e("call: onCreateContextMenu([menu])-> ");
-//        super.onCreateContextMenu(menu);
-//    }
+    public static class CharLengthFilter implements InputFilter {
+        public static final int MAX_CHAR = 255;
+        private final int maxLen;
 
-    /**
-     * 用来监听@字符输入
-     */
-    private class MentionTextWatcher implements TextWatcher {
-        @Override
-        public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+        public CharLengthFilter(int maxLen) {
+            this.maxLen = maxLen;
         }
 
         @Override
-        public void onTextChanged(CharSequence charSequence, int index, int i1, int count) {
-            if (!enableCallback) {
-                return;
-            }
-            if (count == 1 && !TextUtils.isEmpty(charSequence)) {
-                char mentionChar = charSequence.toString().charAt(index);
-                if ('@' == mentionChar && mOnMentionInputListener != null) {
-                    mOnMentionInputListener.onMentionCharacterInput();
+        public CharSequence filter(CharSequence source, int start, int end, Spanned dest, int dstart, int dend) {
+            int dindex = 0;
+            int count = 0;
+
+            while (count <= maxLen && dindex < dest.length()) {
+                char c = dest.charAt(dindex++);
+                if (c <= MAX_CHAR) {
+                    count = count + 1;
+                } else {
+                    count = count + 2;
                 }
             }
-        }
 
-        @Override
-        public void afterTextChanged(Editable editable) {
-            //文本内容为空时, 解决光标不显示的BUG
-            if (editable.length() > 0) {
-                setMovementMethod(LinkMovementMethod.getInstance());
-            } else {
-                setMovementMethod(getDefaultMovementMethod());
+            if (count > maxLen) {
+                return dest.subSequence(0, dindex - 1);
             }
+
+            int sindex = 0;
+            while (count <= maxLen && sindex < source.length()) {
+                char c = source.charAt(sindex++);
+                if (c <= MAX_CHAR) {
+                    count = count + 1;
+                } else {
+                    count = count + 2;
+                }
+            }
+
+            if (count > maxLen) {
+                sindex--;
+            }
+
+            return source.subSequence(0, sindex);
         }
     }
 
@@ -1535,6 +1677,38 @@ public class ExEditText extends AppCompatEditText {
 //        L.e("call: getContextMenuInfo([])-> ");
 //        return super.getContextMenuInfo();
 //    }
+
+    /**
+     * 用来监听@字符输入
+     */
+    private class MentionTextWatcher implements TextWatcher {
+        @Override
+        public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+        }
+
+        @Override
+        public void onTextChanged(CharSequence charSequence, int index, int i1, int count) {
+            if (!enableCallback) {
+                return;
+            }
+            if (count == 1 && !TextUtils.isEmpty(charSequence)) {
+                char mentionChar = charSequence.toString().charAt(index);
+                if ('@' == mentionChar && mOnMentionInputListener != null) {
+                    mOnMentionInputListener.onMentionCharacterInput();
+                }
+            }
+        }
+
+        @Override
+        public void afterTextChanged(Editable editable) {
+            //文本内容为空时, 解决光标不显示的BUG
+            if (editable.length() > 0) {
+                setMovementMethod(LinkMovementMethod.getInstance());
+            } else {
+                setMovementMethod(getDefaultMovementMethod());
+            }
+        }
+    }
 
     /**
      * 用来处理按下删除键的时候,删除整个@文本内容

@@ -6,12 +6,15 @@ import android.support.v4.view.PagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.support.v7.widget.AppCompatTextView;
 import android.text.Editable;
+import android.text.InputFilter;
 import android.text.TextUtils;
 import android.text.TextWatcher;
 import android.util.AttributeSet;
 import android.widget.EditText;
 
 import com.angcyo.github.utilcode.utils.SpannableStringUtils;
+import com.angcyo.uiview.utils.Reflect;
+import com.angcyo.uiview.widget.ExEditText;
 
 
 /**
@@ -25,6 +28,7 @@ public class TextIndicator extends AppCompatTextView implements ViewPager.OnPage
     private int maxCount, currentCount;
 
     private boolean autoHide = true;
+    private ExEditText mExEditText;
     private TextWatcher mTextWatcher = new TextWatcher() {
         @Override
         public void beforeTextChanged(CharSequence s, int start, int count, int after) {
@@ -38,7 +42,15 @@ public class TextIndicator extends AppCompatTextView implements ViewPager.OnPage
 
         @Override
         public void afterTextChanged(Editable s) {
-            setCurrentCount(s.length());
+            if (mExEditText != null) {
+                if (mExEditText.isUseCharLengthFilter()) {
+                    initIndicator(mExEditText.getCharLength(), maxCount);
+                } else {
+                    setCurrentCount(s.length());
+                }
+            } else {
+                setCurrentCount(s.length());
+            }
         }
     };
 
@@ -58,6 +70,26 @@ public class TextIndicator extends AppCompatTextView implements ViewPager.OnPage
         mViewPager = viewPager;
         mViewPager.addOnPageChangeListener(this);
         initView();
+    }
+
+    public void setupEditText(EditText editText) {
+        int max = 0;
+        if (editText instanceof ExEditText && ((ExEditText) editText).isUseCharLengthFilter()) {
+            initIndicator(((ExEditText) editText).getMaxCharLength(), editText);
+        } else {
+            InputFilter[] filters = editText.getFilters();
+            for (int i = 0; i < filters.length; i++) {
+                InputFilter filter = filters[i];
+                if (filter instanceof InputFilter.LengthFilter) {
+                    Object mMax = Reflect.getMember(filter, "mMax");
+                    if (mMax != null) {
+                        max = (int) mMax;
+                    }
+                    initIndicator(max, editText);
+                    break;
+                }
+            }
+        }
     }
 
     public TextIndicator setCurrentCount(int currentCount) {
@@ -90,7 +122,16 @@ public class TextIndicator extends AppCompatTextView implements ViewPager.OnPage
     }
 
     public TextIndicator initIndicator(int maxCount, final EditText editText) {
-        initIndicator(TextUtils.isEmpty(editText.getText()) ? 0 : editText.length(), maxCount);
+        if (editText instanceof ExEditText) {
+            mExEditText = (ExEditText) editText;
+            if (mExEditText.isUseCharLengthFilter()) {
+                initIndicator(mExEditText.getCharLength(), maxCount);
+            } else {
+                initIndicator(TextUtils.isEmpty(editText.getText()) ? 0 : editText.length(), maxCount);
+            }
+        } else {
+            initIndicator(TextUtils.isEmpty(editText.getText()) ? 0 : editText.length(), maxCount);
+        }
         editText.removeTextChangedListener(mTextWatcher);
         editText.addTextChangedListener(mTextWatcher);
         return this;

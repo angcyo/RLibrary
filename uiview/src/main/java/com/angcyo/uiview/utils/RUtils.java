@@ -58,6 +58,7 @@ import com.angcyo.uiview.RApplication;
 import com.angcyo.uiview.RCrashHandler;
 import com.angcyo.uiview.Root;
 import com.angcyo.uiview.accessibility.permission.SettingsCompat;
+import com.angcyo.uiview.widget.ExEditText;
 import com.angcyo.uiview.widget.RExTextView;
 
 import java.io.BufferedWriter;
@@ -1991,6 +1992,25 @@ public class RUtils {
             }
         }
         return result;
+    }
+
+    /**
+     * 一个汉字等于2个英文, 一个emoji表情等于2个汉字
+     */
+    public static int getCharLength(String text) {
+        if (TextUtils.isEmpty(text)) {
+            return 0;
+        }
+
+        int count = 0;
+        for (int i = 0; i < text.length(); i++) {
+            if (text.charAt(i) <= (char) ExEditText.CharLengthFilter.MAX_CHAR) {
+                count = count + 1;
+            } else {
+                count = count + 2;
+            }
+        }
+        return count;
     }
 
     public enum ImageType {
