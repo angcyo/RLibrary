@@ -1,5 +1,7 @@
 package com.angcyo.uiview.net;
 
+import android.text.TextUtils;
+
 import com.angcyo.uiview.container.ILayout;
 import com.angcyo.uiview.dialog.UILoading;
 
@@ -17,15 +19,25 @@ import com.angcyo.uiview.dialog.UILoading;
 public abstract class RLoadingSubscriber<T> extends RSubscriber<T> {
 
     protected ILayout ilayout;
+    private String tip;
 
     public RLoadingSubscriber(ILayout ilayout) {
         this.ilayout = ilayout;
     }
 
+    public RLoadingSubscriber(ILayout ilayout, String tip) {
+        this.ilayout = ilayout;
+        this.tip = tip;
+    }
+
     @Override
     public void onStart() {
         super.onStart();
-        UILoading.show2(ilayout);
+        if (TextUtils.isEmpty(tip)) {
+            UILoading.show2(ilayout);
+        } else {
+            UILoading.show2(ilayout).setLoadingTipText(tip);
+        }
     }
 
     @Override

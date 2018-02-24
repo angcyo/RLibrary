@@ -35,7 +35,6 @@ abstract class UIRecyclerDialog<H, T, F> : UIIDialogImpl() {
 
     open fun initRefreshLayout() {
         refreshLayout.setNotifyListener(false)
-        refreshLayout.setPlaceholderView()
     }
 
     open fun initRecyclerView() {
