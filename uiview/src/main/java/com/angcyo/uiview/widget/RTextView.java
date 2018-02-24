@@ -490,7 +490,13 @@ public class RTextView extends AppCompatTextView {
         super.onMeasure(widthMeasureSpec, heightMeasureSpec);
         if (aeqWidth) {
             int size = Math.max(getMeasuredWidth(), getMeasuredHeight());
-            setMeasuredDimension(size, size);
+            if (ExKt.have(getGravity(), Gravity.CENTER) ||
+                    ExKt.have(getGravity(), Gravity.CENTER_HORIZONTAL) ||
+                    ExKt.have(getGravity(), Gravity.CENTER_VERTICAL)) {
+                super.onMeasure(ViewExKt.exactlyMeasure(this, size), ViewExKt.exactlyMeasure(this, size));
+            } else {
+                setMeasuredDimension(size, size);
+            }
         }
     }
 
