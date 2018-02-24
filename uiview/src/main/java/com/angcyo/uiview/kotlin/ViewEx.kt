@@ -226,6 +226,15 @@ public fun EditText.onEmptyText(listener: (Boolean) -> Unit) {
     listener.invoke(TextUtils.isEmpty(this.text))
 }
 
+public fun EditText.onTextChanage(listener: (String) -> Unit) {
+    this.addTextChangedListener(object : SingleTextWatcher() {
+        override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
+            super.onTextChanged(s, start, before, count)
+            listener.invoke(s?.toString() ?: "")
+        }
+    })
+}
+
 public fun RRecyclerView.onSizeChanged(listener: (w: Int, h: Int, oldw: Int, oldh: Int) -> Unit) {
     this.setOnSizeChangedListener { w, h, oldw, oldh ->
         listener.invoke(w, h, oldw, oldh)
