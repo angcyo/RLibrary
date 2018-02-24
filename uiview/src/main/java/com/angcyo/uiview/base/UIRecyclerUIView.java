@@ -239,7 +239,13 @@ public abstract class UIRecyclerUIView<H, T, F> extends UIContentView
     public void onUILoadFinish(List<T> datas) {
         resetUI();
         if (datas == null || datas.isEmpty()) {
-            onUILoadEmpty();
+            if (page <= 1) {
+                onUILoadEmpty();
+            } else {
+                if (mExBaseAdapter.isEnableLoadMore()) {
+                    mExBaseAdapter.setNoMore(true);
+                }
+            }
         } else {
             showContentLayout();
             if (mExBaseAdapter != null) {
