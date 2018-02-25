@@ -130,3 +130,9 @@ public fun Rect.scaleTo(inRect: Rect /*用来接收最后结果的矩形*/, scal
 }
 
 public inline fun <T> T.nowTime() = System.currentTimeMillis()
+
+public fun <K, V> Map<K, V>.each(item: (key: K, value: V) -> Unit) {
+    for (entry in this.entries) {
+        item.invoke(entry.key, entry.value)
+    }
+}

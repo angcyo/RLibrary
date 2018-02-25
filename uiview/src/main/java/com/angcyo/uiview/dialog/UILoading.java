@@ -25,21 +25,22 @@ import com.angcyo.uiview.container.UIParam;
  */
 public class UILoading extends UIIDialogImpl {
 
+    /**
+     * 对话框显示的样式
+     */
+    public static final int DIALOG_TYPE_DEFAULT = 1; //默认的横条样式
+    public static final int DIALOG_TYPE_PROGRESS = 2;//居中的进度圈圈提示
     protected static boolean isShowing = false;
-
     private static UILoading mUILoading;
-
     protected ViewGroup mBaseLoadingRootLayout;
-
     protected View mBaseLoadingView;
-
     protected TextView mBaseLoadingTipView;
-
     String mLoadingTipText = "别怕, 马上就好...";
+    private int dialogType = DIALOG_TYPE_DEFAULT;
 
     protected UILoading() {
+        setGravity(Gravity.TOP);
     }
-
 
     @Deprecated
     public static UILoading build() {
@@ -81,6 +82,23 @@ public class UILoading extends UIIDialogImpl {
         return mUILoading;
     }
 
+    public static UILoading progress(ILayout layout) {
+        if (isShowing) {
+            mUILoading.initLoadingUI();
+        } else {
+            if (mUILoading == null) {
+                mUILoading = new UILoading();
+                mUILoading.mLoadingTipText = "加载中...";
+                mUILoading.setGravity(Gravity.CENTER);
+                mUILoading.dialogType = DIALOG_TYPE_PROGRESS;
+            }
+            layout.startIView(mUILoading);
+            isShowing = true;
+        }
+
+        return mUILoading;
+    }
+
     /**
      * 显示
      */
@@ -106,7 +124,11 @@ public class UILoading extends UIIDialogImpl {
 
     @Override
     protected View inflateDialogView(FrameLayout dialogRootLayout, LayoutInflater inflater) {
-        return inflate(R.layout.base_loading_layout);
+        if (dialogType == DIALOG_TYPE_PROGRESS) {
+            return inflate(R.layout.base_progress_loading_layout);
+        } else {
+            return inflate(R.layout.base_loading_layout);
+        }
     }
 
     @Override
@@ -135,11 +157,6 @@ public class UILoading extends UIIDialogImpl {
         super.onViewUnload();
         mUILoading = null;
         isShowing = false;
-    }
-
-    @Override
-    public int getGravity() {
-        return Gravity.TOP;
     }
 
     @Override

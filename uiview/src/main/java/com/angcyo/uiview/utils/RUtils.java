@@ -778,12 +778,24 @@ public class RUtils {
     }
 
     public static ArrayList<String> split(String string, String regex) {
+        return split(string, regex, false);
+    }
+
+    public static ArrayList<String> split(String string, String regex, boolean allowEmpty) {
         final ArrayList<String> list = new ArrayList<>();
         if (!"null".equalsIgnoreCase(string) && !TextUtils.isEmpty(string)) {
-            final String[] split = string.split(regex);
+            final String[] split = string.split(regex, Integer.MAX_VALUE);
             for (String s : split) {
-                if (!TextUtils.isEmpty(s)) {
-                    list.add(s);
+                if (allowEmpty) {
+                    if (s == null) {
+                        list.add("");
+                    } else {
+                        list.add(s);
+                    }
+                } else {
+                    if (!TextUtils.isEmpty(s)) {
+                        list.add(s);
+                    }
                 }
             }
         }
@@ -798,15 +810,18 @@ public class RUtils {
     }
 
     public static <T> String connect(List<T> list) {
+        return connect(list, ",");
+    }
+
+    public static <T> String connect(List<T> list, String regex) {
         if (list == null) {
             return "";
         }
         StringBuilder builder = new StringBuilder();
         for (T bean : list) {
             builder.append(bean.toString());
-            builder.append(",");
+            builder.append(regex);
         }
-
         return safe(builder);
     }
 

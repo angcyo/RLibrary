@@ -76,7 +76,7 @@ public abstract class RBaseSwipeAdapter<H, T, F> extends RExBaseAdapter<H, T, F>
     /**
      * 重写此方法, 设置菜单
      */
-    protected void onBindMenuView(MenuBuilder menuBuilder, int viewType, int position) {
+    protected void onBindMenuView(@NonNull MenuBuilder menuBuilder, int viewType, int position) {
 
     }
 

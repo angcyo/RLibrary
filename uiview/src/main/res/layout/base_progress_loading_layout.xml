@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tolls="http://schemas.android.com/tools"
+    android:id="@+id/base_progress_root_layout"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:layout_gravity="center"
+    android:background="@drawable/base_dark2_solid_round_shape"
+    android:orientation="vertical"
+    android:padding="@dimen/base_xhdpi">
+
+    <com.angcyo.uiview.widget.SimpleProgressBar
+        android:id="@+id/base_load_view"
+        android:layout_width="@dimen/base_50dpi"
+        android:layout_height="@dimen/base_50dpi"
+        android:layout_gravity="center_horizontal"
+        app:r_incertitude_progress="true"
+        app:r_progress_style="CIRCLE"/>
+
+    <com.angcyo.uiview.widget.RTextView
+        android:id="@+id/base_load_tip_view"
+        style="@style/BaseMainTextStyle"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center_horizontal"
+        android:paddingTop="@dimen/base_ldpi"
+        android:textColor="@color/base_white"
+        android:textSize="@dimen/default_text_size9"
+        tolls:text="正在处理中..."/>
+
+</LinearLayout>

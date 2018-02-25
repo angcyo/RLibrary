@@ -45,6 +45,11 @@ class DriftLayout(context: Context, attributeSet: AttributeSet? = null) : FrameL
             //修正布局坐标
             for (i in 0 until childCount) {
                 val childAt = getChildAt(i)
+
+                if (childAt.visibility != View.VISIBLE) {
+                    continue
+                }
+
                 val layoutParams = childAt.layoutParams
                 if (layoutParams is LayoutParams) {
                     if (childAt != it) {

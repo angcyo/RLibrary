@@ -49,6 +49,9 @@ public class RSwipeRecycleView extends RRecyclerView {
     }
 
 
+    /**
+     * @see RBaseSwipeAdapter
+     */
     @Override
     public void setAdapter(Adapter adapter) {
         if (adapter instanceof RBaseSwipeAdapter) {

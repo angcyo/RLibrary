@@ -57,6 +57,7 @@ public class SimpleProgressBar extends View {
     boolean incertitudeProgress = false;
     int drawColor;
     private ValueAnimator mColorAnimator;
+    private ValueAnimator animator;
 
     public SimpleProgressBar(Context context) {
         this(context, null);
@@ -77,6 +78,7 @@ public class SimpleProgressBar extends View {
         mProgressBgColor = typedArray.getColor(R.styleable.SimpleProgressBar_r_progress_bg_color, mProgressBgColor);
         mProgressTextColor = typedArray.getColor(R.styleable.SimpleProgressBar_r_progress_text_color, mProgressTextColor);
         setProgressStyle(typedArray.getInt(R.styleable.SimpleProgressBar_r_progress_style, STYLE_RECT));
+        incertitudeProgress = typedArray.getBoolean(R.styleable.SimpleProgressBar_r_incertitude_progress, incertitudeProgress);
 
         typedArray.recycle();
 
@@ -239,6 +241,14 @@ public class SimpleProgressBar extends View {
         endIncertitudeAnimator();
     }
 
+    @Override
+    protected void onAttachedToWindow() {
+        super.onAttachedToWindow();
+        if (incertitudeProgress) {
+            startIncertitudeAnimator();
+        }
+    }
+
     private void endIncertitudeAnimator() {
         if (mColorAnimator != null) {
             mColorAnimator.cancel();
@@ -288,9 +298,6 @@ public class SimpleProgressBar extends View {
     public void setProgressTextSize(float progressTextSize) {
         mProgressTextSize = progressTextSize;
     }
-
-
-    private ValueAnimator animator;
 
     /**
      * 动画的方式执行动画
