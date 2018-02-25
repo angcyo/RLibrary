@@ -25,15 +25,10 @@ import java.util.*
  */
 class DriftLayout(context: Context, attributeSet: AttributeSet? = null) : FrameLayout(context, attributeSet) {
 
-    var enableDrift = true
-    var enableShake = true
-
-    init {
-        val typedArray = context.obtainStyledAttributes(attributeSet, R.styleable.DriftLayout)
-        enableDrift = typedArray.getBoolean(R.styleable.DriftLayout_r_enable_drift, enableDrift)
-        enableShake = typedArray.getBoolean(R.styleable.DriftLayout_r_enable_shake, enableShake)
-        typedArray.recycle()
-    }
+//    init {
+//        val typedArray = context.obtainStyledAttributes(attributeSet, R.styleable.DriftLayout)
+//        typedArray.recycle()
+//    }
 
     override fun onLayout(changed: Boolean, left: Int, top: Int, right: Int, bottom: Int) {
         super.onLayout(changed, left, top, right, bottom)
@@ -120,10 +115,10 @@ class DriftLayout(context: Context, attributeSet: AttributeSet? = null) : FrameL
                         val layoutParams = childAt.layoutParams
                         if (layoutParams is LayoutParams) {
                             if (childAt != it) {
-                                if (enableDrift) {
+                                if (layoutParams.enableDrift) {
                                     layoutParams.animDriftAngle += layoutParams.animDriftAngleStep
                                 }
-                                if (enableShake) {
+                                if (layoutParams.enableShake) {
                                     if (layoutParams.animDriftIsOffsetX) {
                                         layoutParams.animDriftXOffset += layoutParams.animDriftXOffsetStep
                                     } else {
@@ -173,6 +168,9 @@ class DriftLayout(context: Context, attributeSet: AttributeSet? = null) : FrameL
         var isDriftCenterView = false
         var driftAngle = 0
         var driftROffset = 0
+
+        var enableDrift = true
+        var enableShake = true
 
         //每帧旋转的角度
         var animDriftAngleStep = 0.1f
@@ -230,6 +228,9 @@ class DriftLayout(context: Context, attributeSet: AttributeSet? = null) : FrameL
             animDriftAngleStep = a.getFloat(R.styleable.DriftLayout_r_drift_angle_step, animDriftAngleStep)
             animDriftAngle = driftAngle.toFloat()
             driftROffset = a.getDimensionPixelOffset(R.styleable.DriftLayout_r_drift_r_offset, driftROffset)
+
+            enableDrift = a.getBoolean(R.styleable.DriftLayout_r_enable_drift, enableDrift)
+            enableShake = a.getBoolean(R.styleable.DriftLayout_r_enable_shake, enableShake)
             a.recycle()
         }
 
