@@ -2028,6 +2028,38 @@ public class RUtils {
         return count;
     }
 
+    /**
+     * 等比缩放宽高
+     */
+    public static int[] scaleWidthHeight(float srcWidth, float srcHeight /*目标原始宽高*/,
+                                         float maxWidth, float maxHeight /*束缚的最大宽高*/) {
+        int[] size = new int[2];
+        final float TARGET_WIDTH = maxWidth;
+        final float TARGET_HEIGHT = maxHeight;
+
+        float scale = 1f;
+        if (srcWidth == srcHeight) {
+            scale = Math.min(TARGET_HEIGHT, TARGET_WIDTH) / srcWidth;
+        } else if (srcWidth > srcHeight) {
+            //宽图
+            scale = TARGET_WIDTH / srcWidth;
+            if (srcHeight * scale > maxHeight) {
+                scale = TARGET_HEIGHT / srcHeight;
+            }
+        } else {
+            //高图
+            scale = TARGET_HEIGHT / srcHeight;
+            if (srcWidth * scale > maxWidth) {
+                scale = TARGET_WIDTH / srcWidth;
+            }
+        }
+
+        size[0] = (int) (srcWidth * scale);
+        size[1] = (int) (srcHeight * scale);
+
+        return size;
+    }
+
     public enum ImageType {
         JPEG, GIF, PNG, BMP, UNKNOWN
     }
