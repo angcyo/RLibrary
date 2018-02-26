@@ -87,7 +87,17 @@ public abstract class UIRecyclerUIView<H, T, F> extends UIContentView
      * 返回自定义Layout的id, 请确保控件id R.id.base_refresh_view/R.id.base_recycler_view
      */
     protected int getRecyclerRootLayoutId() {
+        if (haveSoftInput()) {
+            return R.layout.base_input_recycler_view_layout;
+        }
         return R.layout.base_recycler_view_layout;
+    }
+
+    /**
+     * 是否需要软键盘
+     */
+    protected boolean haveSoftInput() {
+        return false;
     }
 
     /**

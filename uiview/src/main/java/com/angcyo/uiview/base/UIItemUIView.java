@@ -224,6 +224,7 @@ public abstract class UIItemUIView<T extends Item> extends UIRecyclerUIView<Stri
     /**
      * 如果需要在界面中处理键盘事件, 请返回true, 否则 RSoftInputLayout 将忽略键盘处理
      */
+    @Override
     protected boolean haveSoftInput() {
         return false;
     }

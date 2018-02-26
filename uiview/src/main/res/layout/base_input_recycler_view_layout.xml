@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<com.angcyo.uiview.widget.RSoftInputLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/base_soft_input_layout"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <com.angcyo.uiview.rsen.RefreshLayout
+        android:id="@+id/base_refresh_view"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <com.angcyo.uiview.recycler.RRecyclerView
+            android:id="@+id/base_recycler_view"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"/>
+
+    </com.angcyo.uiview.rsen.RefreshLayout>
+</com.angcyo.uiview.widget.RSoftInputLayout>
