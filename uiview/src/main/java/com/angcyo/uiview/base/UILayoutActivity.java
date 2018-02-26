@@ -216,6 +216,7 @@ public abstract class UILayoutActivity extends StyleActivity {
             if (outState != null) {
                 outState.clear();
             }
+            finish();
         } catch (Exception e) {
             e.printStackTrace();
         }
