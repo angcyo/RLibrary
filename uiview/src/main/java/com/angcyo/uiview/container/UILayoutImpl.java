@@ -888,14 +888,19 @@ public class UILayoutImpl extends SwipeBackLayout implements ILayout<UIParam>, U
                     mLastShowViewPattern.mIView.isDialog()) {
                 ensureLastViewPattern();
 
-                logLayoutInfo();
-                L.i(name(iview) + " 等待对话框:" + name(mLastShowViewPattern.mIView) + " 的关闭");
-                postDelayed(new Runnable() {
-                    @Override
-                    public void run() {
-                        finishIView(iview, param, false);
-                    }
-                }, DEFAULT_ANIM_TIME);
+                if (viewPattern.mIView.isDialog()) {
+                    //上层是对话框, 需要关闭的也是对话框
+                    finishIView(viewPattern.mIView.getClass());
+                } else {
+                    logLayoutInfo();
+                    L.i(name(iview) + " 等待对话框:" + name(mLastShowViewPattern.mIView) + " 的关闭");
+                    postDelayed(new Runnable() {
+                        @Override
+                        public void run() {
+                            finishIView(iview, param, false);
+                        }
+                    }, DEFAULT_ANIM_TIME);
+                }
                 return;
             }
 
@@ -1631,7 +1636,9 @@ public class UILayoutImpl extends SwipeBackLayout implements ILayout<UIParam>, U
                 postDelayed(new Runnable() {
                     @Override
                     public void run() {
-                        ((UIIViewImpl) viewPattern.mIView).lightStatusBar(viewPattern.mIView.isLightStatusBar());
+                        if (viewPattern.mIView instanceof UIIViewImpl && viewPattern.mIView != null) {
+                            ((UIIViewImpl) viewPattern.mIView).lightStatusBar(viewPattern.mIView.isLightStatusBar());
+                        }
                     }
                 }, 16);
             }
