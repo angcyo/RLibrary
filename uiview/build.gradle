@@ -37,14 +37,6 @@ apply plugin: 'kotlin-android'
 ////    }
 //}
 
-android {
-    defaultConfig {
-        manifestPlaceholders = [
-                PACKAGE_NAME: "$application_id"
-        ]
-    }
-}
-
 //https://developer.android.google.cn/studio/build/gradle-plugin-3-0-0-migration.html#new_configurations
 dependencies {
     api project(':RLibrary:library')
