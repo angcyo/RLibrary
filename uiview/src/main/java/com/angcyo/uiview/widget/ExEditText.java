@@ -986,16 +986,20 @@ public class ExEditText extends AppCompatEditText {
      */
     @Override
     public InputConnection onCreateInputConnection(EditorInfo outAttrs) {
-        HackInputConnection hackInputConnection = null;
-        try {
-            hackInputConnection = new HackInputConnection(super.onCreateInputConnection(outAttrs), true, this);
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-        if (hackInputConnection == null) {
-            return super.onCreateInputConnection(outAttrs);
+        if (enableMention) {
+            HackInputConnection hackInputConnection = null;
+            try {
+                hackInputConnection = new HackInputConnection(super.onCreateInputConnection(outAttrs), true, this);
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+            if (hackInputConnection == null) {
+                return super.onCreateInputConnection(outAttrs);
+            } else {
+                return hackInputConnection;
+            }
         } else {
-            return hackInputConnection;
+            return super.onCreateInputConnection(outAttrs);
         }
     }
 

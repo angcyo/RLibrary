@@ -775,6 +775,8 @@ public class UILayoutImpl extends SwipeBackLayout implements ILayout<UIParam>, U
                 viewPattern.interrupt = false;
                 viewPattern.mView.setEnabled(true);
                 finishEnd();
+
+                L.i(name(viewPattern.mIView) + "关闭被取消");
                 return;
             }
         }
@@ -1428,7 +1430,10 @@ public class UILayoutImpl extends SwipeBackLayout implements ILayout<UIParam>, U
                 removeViewPattern(topViewPattern, param, new Runnable() {
                     @Override
                     public void run() {
-                        mLastShowViewPattern = bottomViewPattern;//星期一 2017-1-16
+                        if (isStarting) {
+                        } else {
+                            mLastShowViewPattern = bottomViewPattern;//星期一 2017-1-16
+                        }
                     }
                 });
 
@@ -3297,8 +3302,8 @@ public class UILayoutImpl extends SwipeBackLayout implements ILayout<UIParam>, U
                     mView.post(mRunnable);
                 } else {
                     mRunnable.run();
+                    mRunnable = null;
                 }
-                mRunnable = null;
             }
             if (mView != null) {
                 mView.clearAnimation();
