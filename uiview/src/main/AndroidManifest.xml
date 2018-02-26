@@ -34,26 +34,26 @@
         android:allowBackup="true"
         android:supportsRtl="true">
 
-<!--        &lt;!&ndash;MainActivity配置&ndash;&gt;
-        <activity
-            android:name=".MainActivity"
-            android:allowTaskReparenting="true"
-            android:configChanges="orientation|keyboardHidden|screenSize|fontScale|smallestScreenSize|density|screenLayout"
-            android:launchMode="singleTop"
-            android:screenOrientation="portrait"
-            android:theme="@style/SplashTheme"
-            android:windowSoftInputMode="adjustResize">
-            <intent-filter>
-                <action android:name="android.intent.action.MAIN" />
+        <!--        &lt;!&ndash;MainActivity配置&ndash;&gt;
+                <activity
+                    android:name=".MainActivity"
+                    android:allowTaskReparenting="true"
+                    android:configChanges="orientation|keyboardHidden|screenSize|fontScale|smallestScreenSize|density|screenLayout"
+                    android:launchMode="singleTop"
+                    android:screenOrientation="portrait"
+                    android:theme="@style/SplashTheme"
+                    android:windowSoftInputMode="adjustResize">
+                    <intent-filter>
+                        <action android:name="android.intent.action.MAIN" />
 
-                <category android:name="android.intent.category.LAUNCHER" />
-            </intent-filter>
-            <intent-filter>
-                <action android:name="com.angcyo.crash" />
+                        <category android:name="android.intent.category.LAUNCHER" />
+                    </intent-filter>
+                    <intent-filter>
+                        <action android:name="com.angcyo.crash" />
 
-                <category android:name="android.intent.category.DEFAULT" />
-            </intent-filter>
-        </activity>-->
+                        <category android:name="android.intent.category.DEFAULT" />
+                    </intent-filter>
+                </activity>-->
 
         <!--        <activity android:name=".base.RCrashActivity">
                     <intent-filter>
@@ -71,16 +71,16 @@
             </intent-filter>
         </receiver>
 
-        <!--&lt;!&ndash;Android7.0 文件权限&ndash;&gt;-->
-        <!--<provider-->
-        <!--android:name="android.support.v4.content.FileProvider"-->
-        <!--android:authorities="${PACKAGE_NAME}"-->
-        <!--android:exported="false"-->
-        <!--android:grantUriPermissions="true">-->
-        <!--<meta-data-->
-        <!--android:name="android.support.FILE_PROVIDER_PATHS"-->
-        <!--android:resource="@xml/provider_paths"/>-->
-        <!--</provider>-->
+        <!--Android7.0 文件权限-->
+        <provider
+            android:name="android.support.v4.content.FileProvider"
+            android:authorities="${PACKAGE_NAME}"
+            android:exported="false"
+            android:grantUriPermissions="true">
+            <meta-data
+                android:name="android.support.FILE_PROVIDER_PATHS"
+                android:resource="@xml/provider_paths"/>
+        </provider>
     </application>
 
 </manifest>

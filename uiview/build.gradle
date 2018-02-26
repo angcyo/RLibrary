@@ -1,4 +1,4 @@
- apply from: '../lib.gradle'
+apply from: '../lib.gradle'
 //apply plugin: 'com.android.library'
 
 apply plugin: 'kotlin-android'
@@ -36,6 +36,14 @@ apply plugin: 'kotlin-android'
 ////        javaMaxHeapSize "4g"
 ////    }
 //}
+
+android {
+    defaultConfig {
+        manifestPlaceholders = [
+                PACKAGE_NAME: "$application_id"
+        ]
+    }
+}
 
 //https://developer.android.google.cn/studio/build/gradle-plugin-3-0-0-migration.html#new_configurations
 dependencies {
