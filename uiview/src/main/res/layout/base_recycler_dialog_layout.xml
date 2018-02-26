@@ -2,20 +2,39 @@
 <com.angcyo.uiview.container.ContentLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@color/base_white"
     app:r_max_height="-2px">
 
-    <com.angcyo.uiview.rsen.RefreshLayout
-        android:id="@+id/base_refresh_view"
+    <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent">
+        android:layout_height="match_parent"
+        android:orientation="vertical">
 
-        <com.angcyo.uiview.recycler.RRecyclerView
-            android:id="@+id/base_recycler_view"
+        <com.angcyo.uiview.widget.RTextView
+            android:id="@+id/base_title_view"
+            style="@style/BaseMainTextStyle"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_horizontal"
+            android:padding="@dimen/base_hdpi"
+            android:visibility="gone"
+            tools:text="标题"
+            tools:visibility="visible"/>
+
+        <com.angcyo.uiview.rsen.RefreshLayout
+            android:id="@+id/base_refresh_view"
             android:layout_width="match_parent"
-            android:layout_height="match_parent"/>
+            android:layout_height="0dp"
+            android:layout_weight="1">
 
-    </com.angcyo.uiview.rsen.RefreshLayout>
+            <com.angcyo.uiview.recycler.RRecyclerView
+                android:id="@+id/base_recycler_view"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"/>
+
+        </com.angcyo.uiview.rsen.RefreshLayout>
+    </LinearLayout>
 </com.angcyo.uiview.container.ContentLayout>
