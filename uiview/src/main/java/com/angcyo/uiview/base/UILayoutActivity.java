@@ -10,6 +10,7 @@ import android.view.View;
 import android.view.inputmethod.InputMethodManager;
 
 import com.angcyo.library.utils.L;
+import com.angcyo.uiview.BuildConfig;
 import com.angcyo.uiview.container.ILayout;
 import com.angcyo.uiview.container.RSwipeLayout;
 import com.angcyo.uiview.container.UILayoutImpl;
@@ -216,7 +217,9 @@ public abstract class UILayoutActivity extends StyleActivity {
             if (outState != null) {
                 outState.clear();
             }
-            finish();
+            if (!BuildConfig.DEBUG) {
+                finish();
+            }
         } catch (Exception e) {
             e.printStackTrace();
         }
