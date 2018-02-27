@@ -55,9 +55,10 @@ import rx.functions.Action1;
  * 创建时间：2017/04/18 14:48
  * 修改人员：Robi
  * 修改时间：2017/04/18 14:48
- * 修改备注：
+ * 修改备注：请使用 {@link UIScanView2}
  * Version: 1.0.0
  */
+@Deprecated
 public class UIScanView extends UIContentView implements SurfaceHolder.Callback, IDecodeCallback {
     private static final long VIBRATE_DURATION = 50;
     protected BeepManager beepManager;
