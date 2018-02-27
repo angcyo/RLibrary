@@ -10,7 +10,6 @@ import android.view.View;
 import android.view.inputmethod.InputMethodManager;
 
 import com.angcyo.library.utils.L;
-import com.angcyo.uiview.BuildConfig;
 import com.angcyo.uiview.container.ILayout;
 import com.angcyo.uiview.container.RSwipeLayout;
 import com.angcyo.uiview.container.UILayoutImpl;
@@ -213,16 +212,17 @@ public abstract class UILayoutActivity extends StyleActivity {
 
     @Override
     protected void onSaveInstanceState(Bundle outState) {
-        try {
-            if (outState != null) {
-                outState.clear();
-            }
-            if (!BuildConfig.DEBUG) {
-                finish();
-            }
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
+        //设置 android:stateNotNeeded="true" 之后, 此方法不会执行
+//        try {
+//            if (outState != null) {
+//                outState.clear();
+//            }
+//            if (!BuildConfig.DEBUG) {
+//                finish();
+//            }
+//        } catch (Exception e) {
+//            e.printStackTrace();
+//        }
         super.onSaveInstanceState(outState);
     }
 
