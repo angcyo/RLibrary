@@ -32,7 +32,6 @@ import com.angcyo.uiview.net.RSubscriber
 import com.angcyo.uiview.net.Rx
 import com.angcyo.uiview.resources.AnimUtil
 import com.angcyo.uiview.skin.SkinHelper
-import com.angcyo.uiview.utils.Debug
 import com.angcyo.uiview.utils.T_
 import com.angcyo.uiview.view.IView
 import com.angcyo.uiview.widget.RImageCheckView
@@ -40,6 +39,7 @@ import com.angcyo.zxingzbar.*
 import com.angcyo.zxingzbar.camera.CameraManager
 import com.angcyo.zxingzbar.encode.QRCodeEncoder.HINTS_DECODE
 import com.google.zxing.*
+import com.google.zxing.client.android.DecodeHandlerJni
 import com.google.zxing.common.GlobalHistogramBinarizer
 import com.google.zxing.common.HybridBinarizer
 import com.tbruyelle.rxpermissions.RxPermissions
@@ -425,9 +425,18 @@ open class UIScanView2 : UIContentView(), IActivity, SurfaceHolder.Callback {
 
         fun scanPictureFun3(scanBitmap: Bitmap): String {
             val barcode = Image(scanBitmap.width, scanBitmap.height, "Y800")
-            Debug.logTimeStart("rgb2YUV")
-            barcode.data = rgb2YUV(scanBitmap) //BmpUtil.generateBitstream(scanBitmap, Bitmap.CompressFormat.JPEG, 100)
-            Debug.logTimeEnd("rgb2YUV")
+//            Debug.logTimeStart("rgb2YUV")
+//            barcode.data = rgb2YUV(scanBitmap) //BmpUtil.generateBitstream(scanBitmap, Bitmap.CompressFormat.JPEG, 100)
+//            Debug.logTimeEnd("rgb2YUV")
+
+            val width = scanBitmap.width
+            val height = scanBitmap.height
+            val pixels = IntArray(width * height)
+            scanBitmap.getPixels(pixels, 0, width, 0, 0, width, height)
+//            Debug.logTimeStart("rgb2YUV_2")
+            barcode.data = DecodeHandlerJni.rgb2yuv(pixels, width, height)
+//            Debug.logTimeEnd("rgb2YUV_2")
+
             val mImageScanner = ImageScanner()
             val result = mImageScanner.scanImage(barcode)
             var resultQRcode: String? = null

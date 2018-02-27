@@ -6,9 +6,13 @@ package com.google.zxing.client.android;
 
 public class DecodeHandlerJni {
 
-    static{
+    static {
         System.loadLibrary("decodeHandler");
     }
 
     public static native byte[] dataHandler(byte[] by, int length, int width, int height);
+
+    public static native byte[] rgb2yuv(int[] by, int width, int height);
+
+    public static native byte[] rgb2yuv(byte[] by, int width, int height);
 }
