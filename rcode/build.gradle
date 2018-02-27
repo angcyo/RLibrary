@@ -1,5 +1,6 @@
 apply from: '../lib.gradle'
 
 dependencies {
-    api 'com.google.zxing:core:3.3.0'
+    //api 'com.google.zxing:core:3.3.0'
+    api project(':RLibrary:zxingzbar')
 }

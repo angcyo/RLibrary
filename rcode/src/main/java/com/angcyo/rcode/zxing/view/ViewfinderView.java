@@ -136,6 +136,7 @@ public final class ViewfinderView extends View {
             // 画出四个角
             paint.setColor(mCenterColor);
 
+            //左上角
             canvas.drawRect(frame.left, frame.top, frame.left + 50,
                     frame.top + 5, paint);
             canvas.drawRect(frame.left, frame.top, frame.left + 5,

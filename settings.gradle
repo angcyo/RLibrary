@@ -1,8 +1,9 @@
 //必选
 include ':RLibrary:uiview'
 include ':RLibrary:library'
-include ':RLibrary:rcode'
 include ':RLibrary:github'
+include ':RLibrary:rcode'
+include ':RLibrary:zxingzbar'
 
 //可选
 include ':RLibrary:imagepicker'
