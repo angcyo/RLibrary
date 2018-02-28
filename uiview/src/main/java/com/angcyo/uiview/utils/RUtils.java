@@ -44,6 +44,7 @@ import android.support.v4.content.FileProvider;
 import android.support.v7.widget.RecyclerView;
 import android.telephony.TelephonyManager;
 import android.text.TextUtils;
+import android.text.format.Formatter;
 import android.util.DisplayMetrics;
 import android.util.LruCache;
 import android.view.View;
@@ -1069,6 +1070,10 @@ public class RUtils {
             e.printStackTrace();
         }
         return fileName;
+    }
+
+    public static String formatFileSize(long size) {
+        return Formatter.formatFileSize(RApplication.getApp(), size);
     }
 
     /**

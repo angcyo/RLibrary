@@ -371,6 +371,7 @@ public abstract class UIIViewImpl implements IView {
         }
     }
 
+    @Deprecated
     @CallSuper
     @Override
     public void onViewUnload() {
@@ -382,6 +383,7 @@ public abstract class UIIViewImpl implements IView {
         setChildILayout(null);
     }
 
+    @Deprecated
     @CallSuper
     @Override
     public void onViewUnloadDelay() {
@@ -391,6 +393,16 @@ public abstract class UIIViewImpl implements IView {
             mOnUIViewListener.onViewUnloadDelay(this);
         }
         setChildILayout(null);
+    }
+
+    @Override
+    public void onViewUnload(UIParam uiParam) {
+
+    }
+
+    @Override
+    public void onViewUnloadDelay(UIParam uiParam) {
+
     }
 
     @CallSuper

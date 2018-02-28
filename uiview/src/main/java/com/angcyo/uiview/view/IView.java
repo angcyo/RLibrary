@@ -87,12 +87,18 @@ public interface IView {
      */
     void onViewHideFromDialog();//2018-2-9
 
+    @Deprecated
     void onViewUnload();
+
+    void onViewUnload(UIParam uiParam /*关闭时, 传递过来的参数*/);
 
     /**
      * 当有些界面需要释放很多资源时, 为了界面流畅, 请在此方法中释放
      */
+    @Deprecated
     void onViewUnloadDelay();//2018-1-23
+
+    void onViewUnloadDelay(UIParam uiParam);//2018-2-28
 
     /**
      * 开始动画

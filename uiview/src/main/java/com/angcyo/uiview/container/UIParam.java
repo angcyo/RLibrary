@@ -149,6 +149,9 @@ public class UIParam {
     }
 
     public Bundle getBundle() {
+        if (mBundle == null) {
+            mBundle = new Bundle();
+        }
         return mBundle;
     }
 
@@ -181,9 +184,15 @@ public class UIParam {
     }
 
     public void clear() {
-        mBundle = null;
         replaceIView = null;
         unloadRunnable = null;
+    }
+
+    public void clearBundle() {
+        if (mBundle != null) {
+            mBundle.clear();
+        }
+        mBundle = null;
     }
 
     public UIParam setNeedTransitionStartAnim(boolean needTransitionStartAnim) {

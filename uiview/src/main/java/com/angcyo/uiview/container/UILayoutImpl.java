@@ -1973,7 +1973,25 @@ public class UILayoutImpl extends SwipeBackLayout implements ILayout<UIParam>, U
 
                     onFinishIViewEnd(viewPattern);
 
-                    viewPattern.mIView.onViewUnload();
+                    try {
+                        viewPattern.mIView.onViewUnload();
+                        viewPattern.mIView.onViewUnload(param);
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                    }
+
+                    postDelayed(new Runnable() {
+                        @Override
+                        public void run() {
+                            try {
+                                viewPattern.mIView.onViewUnloadDelay();
+                                viewPattern.mIView.onViewUnloadDelay(param);
+                            } catch (Exception e) {
+                                e.printStackTrace();
+                            }
+                            param.clearBundle();
+                        }
+                    }, 15);
 
                     L.e("removeViewPattern()-> 关闭界面结束:" + name(viewPattern.mIView));
                 } catch (Exception e) {
