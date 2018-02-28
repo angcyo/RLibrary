@@ -3,6 +3,7 @@ package com.angcyo.uiview.kotlin
 
 import android.graphics.Color
 import android.graphics.Paint
+import android.graphics.Rect
 import android.graphics.drawable.Drawable
 import android.support.v4.content.ContextCompat
 import android.text.TextUtils
@@ -62,6 +63,19 @@ public val View.debugPaint: Paint by lazy {
         style = Paint.Style.STROKE
         strokeWidth = 1 * density
     }
+}
+
+public val View.viewSize: Int
+    get() = viewDrawWith.maxValue(viewDrawHeight)
+
+private val View.tempRect: Rect by lazy {
+    Rect()
+}
+
+public fun View.getGlobalVisibleRect(): Rect {
+    //top 永远都不会少于0  bottom 永远都不会大于屏幕高度, 可见的rect就是, 不可见的会被剃掉
+    getGlobalVisibleRect(tempRect)
+    return tempRect
 }
 
 /**返回居中绘制文本的y坐标*/

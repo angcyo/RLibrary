@@ -877,6 +877,13 @@ public class RRecyclerView extends RecyclerView implements StickLayout.CanScroll
     }
 
     /**
+     * 局部刷新
+     */
+    public void localRefresh(RBaseAdapter.OnLocalRefresh onLocalRefresh) {
+        RBaseAdapter.localRefresh(this, onLocalRefresh);
+    }
+
+    /**
      * RecyclerView滚动结束后的回调
      */
     public interface OnFlingEndListener {
