@@ -1062,6 +1062,7 @@ public class RUtils {
     public static String getFileNameFromUrl(String url) {
         String fileName = "unknown";
         try {
+            url = url.split("\\?")[0];
             int indexOf = url.lastIndexOf('/');
             if (indexOf != -1) {
                 fileName = url.substring(indexOf + 1);
