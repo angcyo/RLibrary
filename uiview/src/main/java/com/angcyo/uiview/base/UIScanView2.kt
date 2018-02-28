@@ -257,23 +257,7 @@ open class UIScanView2 : UIContentView(), IActivity, SurfaceHolder.Callback {
             // The activity was paused but not stopped, so the surface still exists. Therefore
             // surfaceCreated() won't be called, so init the camera here.
             //initCamera(surfaceView.holder)
-
-            RxPermissions(mActivity)
-                    .request(Manifest.permission.CAMERA)
-                    .subscribe { aBoolean ->
-                        if (aBoolean!!) {
-                            if (surfaceView.background is ColorDrawable &&
-                                    (surfaceView.background as ColorDrawable).color == 0) {
-
-                            } else {
-                                AnimUtil.startArgb(surfaceView, Color.BLACK, Color.TRANSPARENT, 200)
-                            }
-                            initCamera(surfaceView.holder)
-                        } else {
-                            displayFrameworkBugMessageAndExit()
-                            finishIView()
-                        }
-                    }
+            initCamera(surfaceView.holder)
         }
     }
 
@@ -305,29 +289,48 @@ open class UIScanView2 : UIContentView(), IActivity, SurfaceHolder.Callback {
     private var characterSet: String? = null
 
     private fun initCamera(surfaceHolder: SurfaceHolder?) {
-        if (surfaceHolder == null) {
-            throw IllegalStateException("No SurfaceHolder provided")
-        }
-        if (cameraManager.isOpen) {
-            Log.w(TAG, "initCamera() while already open -- late SurfaceView callback?")
-            return
-        }
-        try {
-            cameraManager.openDriver(surfaceHolder)
-            // Creating the handler starts the preview, which can also throw a RuntimeException.
-            if (handler == null) {
-                handler = CaptureActivityHandler(this, decodeFormats, decodeHints, characterSet, cameraManager)
+        fun doIt() {
+            if (surfaceHolder == null) {
+                throw IllegalStateException("No SurfaceHolder provided")
             }
-            decodeOrStoreSavedBitmap(null, null)
-        } catch (ioe: IOException) {
-            Log.w(TAG, ioe)
-            displayFrameworkBugMessageAndExit()
-        } catch (e: RuntimeException) {
-            // Barcode Scanner has seen crashes in the wild of this variety:
-            // java.?lang.?RuntimeException: Fail to connect to camera service
-            Log.w(TAG, "Unexpected error initializing camera", e)
-            displayFrameworkBugMessageAndExit()
+            if (cameraManager.isOpen) {
+                Log.w(TAG, "initCamera() while already open -- late SurfaceView callback?")
+                return
+            }
+            try {
+                cameraManager.openDriver(surfaceHolder)
+                // Creating the handler starts the preview, which can also throw a RuntimeException.
+                if (handler == null) {
+                    handler = CaptureActivityHandler(this, decodeFormats, decodeHints, characterSet, cameraManager)
+                }
+                decodeOrStoreSavedBitmap(null, null)
+            } catch (ioe: IOException) {
+                Log.w(TAG, ioe)
+                displayFrameworkBugMessageAndExit()
+            } catch (e: RuntimeException) {
+                // Barcode Scanner has seen crashes in the wild of this variety:
+                // java.?lang.?RuntimeException: Fail to connect to camera service
+                Log.w(TAG, "Unexpected error initializing camera", e)
+                displayFrameworkBugMessageAndExit()
+            }
         }
+
+        RxPermissions(mActivity)
+                .request(Manifest.permission.CAMERA)
+                .subscribe { aBoolean ->
+                    if (aBoolean!!) {
+                        if (surfaceView.background is ColorDrawable &&
+                                (surfaceView.background as ColorDrawable).color == 0) {
+
+                        } else {
+                            AnimUtil.startArgb(surfaceView, Color.BLACK, Color.TRANSPARENT, 200)
+                        }
+                        doIt()
+                    } else {
+                        displayFrameworkBugMessageAndExit()
+                        finishIView()
+                    }
+                }
     }
 
     private fun decodeOrStoreSavedBitmap(bitmap: Bitmap?, result: Result?) {
