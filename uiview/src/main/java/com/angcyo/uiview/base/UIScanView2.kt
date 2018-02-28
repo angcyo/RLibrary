@@ -126,15 +126,19 @@ open class UIScanView2 : UIContentView(), IActivity, SurfaceHolder.Callback {
         var result = ""
         if (TextUtils.isEmpty(data)) {
             //T_.ok("unknown")
-            result = "unknown"
+            result = ""
         } else {
             //playVibrate()
             result = data!!
             //T_.ok(data)
         }
         beepManager.playBeepSoundAndVibrate()
+        onHandleDecode(result)
+    }
+
+    open fun onHandleDecode(data: String) {
         finishIView {
-            onScanResult?.invoke(result)
+            onScanResult?.invoke(data)
         }
         //重复扫描请调用此方法
         //scanAgain()
@@ -364,7 +368,7 @@ open class UIScanView2 : UIContentView(), IActivity, SurfaceHolder.Callback {
         UILoading.show2(mParentILayout).setLoadingTipText("正在扫描...").setCanCancel(false)
         Rx.base(object : RFunc<String>() {
             override fun onFuncCall(): String {
-                return scanPictureFun2(mActivity, picturePath)
+                return scanPictureFun(mActivity, picturePath)
             }
         }, object : RSubscriber<String>() {
             override fun onSucceed(bean: String) {
@@ -399,7 +403,8 @@ open class UIScanView2 : UIContentView(), IActivity, SurfaceHolder.Callback {
 
     companion object {
 
-        fun scanPictureFun2(scanBitmap: Bitmap): String {
+        /**第二层 扫描*/
+        private fun scanPictureFun2(scanBitmap: Bitmap): String {
             val source = PlanarYUVLuminanceSource(
                     rgb2YUV(scanBitmap),
                     scanBitmap.width,
@@ -426,7 +431,8 @@ open class UIScanView2 : UIContentView(), IActivity, SurfaceHolder.Callback {
             return result.text ?: ""
         }
 
-        fun scanPictureFun3(scanBitmap: Bitmap): String {
+        /**第三层 扫描方法, 使用 ZBar*/
+        private fun scanPictureFun3(scanBitmap: Bitmap): String {
             val barcode = Image(scanBitmap.width, scanBitmap.height, "Y800")
 //            Debug.logTimeStart("rgb2YUV")
 //            barcode.data = rgb2YUV(scanBitmap) //BmpUtil.generateBitstream(scanBitmap, Bitmap.CompressFormat.JPEG, 100)
@@ -451,6 +457,7 @@ open class UIScanView2 : UIContentView(), IActivity, SurfaceHolder.Callback {
             return resultQRcode ?: ""
         }
 
+        /**第一层 扫描*/
         fun scanPictureFun1(bitmap: Bitmap?): String {
             var result: Result? = null
             var source: RGBLuminanceSource? = null
@@ -477,7 +484,7 @@ open class UIScanView2 : UIContentView(), IActivity, SurfaceHolder.Callback {
             }
         }
 
-        fun scanPictureFun2(context: Context, bitmapPath: String): String {
+        fun scanPictureFun(context: Context, bitmapPath: String): String {
             return scanPictureFun1(createBitmap(context, bitmapPath))
         }
 
