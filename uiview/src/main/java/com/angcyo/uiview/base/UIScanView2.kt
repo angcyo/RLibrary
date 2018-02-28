@@ -365,7 +365,7 @@ open class UIScanView2 : UIContentView(), IActivity, SurfaceHolder.Callback {
     }
 
     fun scanPicture(picturePath: String) {
-        UILoading.show2(mParentILayout).setLoadingTipText("正在扫描...").setCanCancel(false)
+        UILoading.show2(mParentILayout).setLoadingTipText("正在识别...").setCanCancel(false)
         Rx.base(object : RFunc<String>() {
             override fun onFuncCall(): String {
                 return scanPictureFun(mActivity, picturePath)
@@ -383,7 +383,7 @@ open class UIScanView2 : UIContentView(), IActivity, SurfaceHolder.Callback {
     }
 
     fun scanPicture(scanBitmap: Bitmap) {
-        UILoading.show2(mParentILayout).setLoadingTipText("正在扫描...").setCanCancel(false)
+        UILoading.show2(mParentILayout).setLoadingTipText("正在识别...").setCanCancel(false)
         Rx.base(object : RFunc<String>() {
             override fun onFuncCall(): String {
                 return scanPictureFun1(scanBitmap)
