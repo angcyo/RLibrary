@@ -177,7 +177,7 @@ open class GlideImageView(context: Context, attributeSet: AttributeSet? = null) 
         } else {
             setTagUrl(url!!)
             if (loadSuccessUrl.isNotEmpty() && TextUtils.equals(url, loadSuccessUrl)) {
-                L.i("startLoadUrl 重复加载url -> $url")
+                L.d("startLoadUrl 重复加载url -> $url")
             } else if (measuredHeight == 0 ||
                     measuredWidth == 0) {
 

@@ -15,6 +15,7 @@ import com.angcyo.uiview.utils.ScreenUtil
 import com.angcyo.uiview.utils.ScreenUtil.density
 import com.angcyo.uiview.utils.string.SingleTextWatcher
 import com.angcyo.uiview.view.RClickListener
+import com.angcyo.uiview.view.UIIViewImpl
 import java.util.*
 
 /**
@@ -36,6 +37,10 @@ public fun View.getDrawable(resId: Int): Drawable? {
 }
 
 public val View.random: Random by lazy {
+    Random(System.nanoTime())
+}
+
+public val UIIViewImpl.random: Random by lazy {
     Random(System.nanoTime())
 }
 

@@ -1227,7 +1227,7 @@ public abstract class UIIViewImpl implements IView {
 
     @Override
     public void onIViewLayout(ViewPattern viewPattern, UIBaseView.LayoutState layoutState, IViewShowState viewShowState, View rootView) {
-        L.i2(160, this.getClass().getSimpleName(), " " + layoutState + " " + viewShowState + " w:" + rootView.getMeasuredWidth() + " h:" + rootView.getMeasuredHeight());
+        //L.i2(160, this.getClass().getSimpleName(), " " + layoutState + " " + viewShowState + " w:" + rootView.getMeasuredWidth() + " h:" + rootView.getMeasuredHeight());
     }
 
     @Override

@@ -71,7 +71,7 @@ public class RApplication extends Application {
             imei = ((TelephonyManager) getApp()
                     .getSystemService(Context.TELEPHONY_SERVICE))
                     .getDeviceId();
-            L.e("call: getIMEI([])-> " + imei);
+            L.w("call: getIMEI([])-> " + imei);
         } catch (Exception e) {
             e.printStackTrace();
             L.e("call: getIMEI([])-> " + imei + " " + e.getMessage());
