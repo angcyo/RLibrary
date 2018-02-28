@@ -246,6 +246,7 @@
         <attr name="r_paddingRight"/>
         <attr name="r_paddingBottom"/>
         <attr name="r_paddingTop"/>
+        <attr name="r_line_image_count" format="integer"/>
     </declare-styleable>
 
     <declare-styleable name="ContentLayout">
