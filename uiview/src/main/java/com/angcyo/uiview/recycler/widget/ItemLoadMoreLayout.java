@@ -4,7 +4,7 @@ import android.content.Context;
 import android.text.TextUtils;
 import android.util.AttributeSet;
 import android.view.View;
-import android.widget.RelativeLayout;
+import android.widget.FrameLayout;
 
 import com.angcyo.uiview.R;
 
@@ -12,7 +12,7 @@ import com.angcyo.uiview.R;
  * Created by angcyo on 2016-12-18.
  */
 
-public class ItemLoadMoreLayout extends RelativeLayout implements ILoadMore {
+public class ItemLoadMoreLayout extends FrameLayout implements ILoadMore {
 
     int loadState = ILoadMore.NORMAL;
     View mLoadingIndicatorView;

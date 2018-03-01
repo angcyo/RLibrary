@@ -4,6 +4,7 @@ import android.content.Context;
 import android.support.annotation.NonNull;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
@@ -11,6 +12,7 @@ import android.view.ViewGroup;
 
 import com.angcyo.library.utils.L;
 import com.angcyo.uiview.R;
+import com.angcyo.uiview.RApplication;
 import com.angcyo.uiview.recycler.RBaseViewHolder;
 import com.angcyo.uiview.recycler.RRecyclerView;
 import com.angcyo.uiview.recycler.widget.ILoadMore;
@@ -277,7 +279,13 @@ public abstract class RBaseAdapter<T> extends RecyclerView.Adapter<RBaseViewHold
      * 重写此方法, 可以修改加载更多视图
      */
     protected void onBindLoadMoreView(@NonNull RBaseViewHolder holder, int position) {
+        //holder.tv(R.id.base_load_tip_view).setText();
+        //holder.tv(R.id.base_error_tip_view).setText();
+        //holder.tv(R.id.base_no_more_tip_view).setText("");
 
+        if (TextUtils.equals(RApplication.getApp().getPackageName(), "com.hn.d.valley")) {
+            holder.tv(R.id.base_no_more_tip_view).setText("恐龙君到底啦");
+        }
     }
 
     private void updateLoadMoreView() {

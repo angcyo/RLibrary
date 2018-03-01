@@ -1,6 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <com.angcyo.uiview.recycler.widget.ItemLoadMoreLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/base_load_more_layout"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:background="@color/default_base_line"
@@ -8,13 +10,15 @@
 
     <!--正在加载更多-->
     <LinearLayout
+        android:id="@+id/base_load_layout"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_centerInParent="true"
+        android:layout_gravity="center"
         android:gravity="center_vertical"
         android:orientation="horizontal"
         android:tag="load_view"
-        android:visibility="visible">
+        android:visibility="visible"
+        tools:visibility="gone">
 
         <com.angcyo.uiview.widget.LoadingImageView
             android:id="@+id/load_view"
@@ -22,6 +26,7 @@
             android:layout_height="@dimen/base_xxhdpi"/>
 
         <TextView
+            android:id="@+id/base_load_tip_view"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginLeft="@dimen/base_hdpi"
@@ -32,11 +37,13 @@
 
     <!--我是有底线的-->
     <RelativeLayout
+        android:id="@+id/base_no_more_layout"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_centerInParent="true"
+        android:layout_gravity="center"
         android:tag="no_more_view"
-        android:visibility="invisible">
+        android:visibility="invisible"
+        tools:visibility="visible">
 
         <View
             android:layout_width="260dp"
@@ -45,6 +52,7 @@
             android:background="#EFEFEF"/>
 
         <TextView
+            android:id="@+id/base_no_more_tip_view"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_centerInParent="true"
@@ -59,13 +67,15 @@
 
     <!--网络异常-->
     <RelativeLayout
+        android:id="@+id/base_error_layout"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_centerInParent="true"
+        android:layout_gravity="center"
         android:tag="error_view"
         android:visibility="invisible">
 
         <TextView
+            android:id="@+id/base_error_tip_view"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_centerInParent="true"
