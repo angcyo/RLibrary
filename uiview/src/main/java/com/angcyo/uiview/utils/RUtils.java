@@ -83,6 +83,7 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Random;
+import java.util.Set;
 
 import static com.angcyo.uiview.utils.RUtils.ImageType.BMP;
 import static com.angcyo.uiview.utils.RUtils.ImageType.GIF;
@@ -1063,15 +1064,66 @@ public class RUtils {
     public static String getFileNameFromUrl(String url) {
         String fileName = "unknown";
         try {
-            url = url.split("\\?")[0];
-            int indexOf = url.lastIndexOf('/');
-            if (indexOf != -1) {
-                fileName = url.substring(indexOf + 1);
+
+            String nameFrom = getFileNameFrom(url);
+            if (!TextUtils.isEmpty(nameFrom)) {
+                fileName = nameFrom;
+            }
+
+            Uri parse = Uri.parse(url);
+            Set<String> parameterNames = parse.getQueryParameterNames();
+            if (parameterNames.isEmpty()) {
+
+            } else {
+                String param = "";
+                for (String s : parameterNames) {
+                    param = parse.getQueryParameter(s);
+                    try {
+                        if (/*s.contains("name") ||*/ param.contains("name=")) {
+                            break;
+                        }
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                    }
+                }
+
+                try {
+                    fileName = param.split("name=")[1];
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
             }
         } catch (Exception e) {
             e.printStackTrace();
         }
         return fileName;
+    }
+
+    public static String getFileNameFrom(String url) {
+        String result = "";
+        try {
+            url = url.split("\\?")[0];
+            int indexOf = url.lastIndexOf('/');
+            if (indexOf != -1) {
+                result = url.substring(indexOf + 1);
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return result;
+    }
+
+    /**
+     * attachment;filename="百度手机助手(360手机助手).apk"
+     */
+    public static String getFileNameFromAttachment(String attachment) {
+        String result = attachment;
+        try {
+            result = attachment.split("name=")[1];
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return result;
     }
 
     public static String formatFileSize(long size) {

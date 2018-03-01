@@ -7,6 +7,7 @@ import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.Rect;
 import android.graphics.RectF;
+import android.graphics.Typeface;
 import android.graphics.drawable.ColorDrawable;
 import android.graphics.drawable.Drawable;
 import android.support.annotation.ColorInt;
@@ -838,6 +839,18 @@ public class RTextView extends AppCompatTextView {
      */
     public void setBoldText(boolean bool) {
         addFlags(bool, Paint.FAKE_BOLD_TEXT_FLAG);
+    }
+
+    /**
+     * 设置是否斜体
+     */
+    public void setItalic(boolean bool) {
+        if (bool) {
+            setTypeface(getTypeface(), Typeface.ITALIC);
+        } else {
+            setTypeface(getTypeface(), Typeface.NORMAL);
+            //setTypeface(Typeface.defaultFromStyle(Typeface.NORMAL), Typeface.NORMAL);
+        }
     }
 
     public void addFlags(boolean add, int flat) {
