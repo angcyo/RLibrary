@@ -457,7 +457,7 @@ public class UILayoutImpl extends SwipeBackLayout implements ILayout<UIParam>, U
                 runnableCount--;
             }
         };
-        if (isFinishing ||
+        if (isStartOrFinish() ||
                 (mLastShowViewPattern != null && mLastShowViewPattern.interrupt) ||
                 (mLastShowViewPattern != null && mLastShowViewPattern.mIView.isDialog() && !iView.showOnDialog())
                 ) {
@@ -475,7 +475,14 @@ public class UILayoutImpl extends SwipeBackLayout implements ILayout<UIParam>, U
             }, UIIViewImpl.DEFAULT_ANIM_TIME);
         } else {
             if (param.mAsync) {
-                post(endRunnable);
+                isStarting = true;
+                post(new Runnable() {
+                    @Override
+                    public void run() {
+                        isStarting = false;
+                        endRunnable.run();
+                    }
+                });
             } else {
                 endRunnable.run();
             }
@@ -849,9 +856,19 @@ public class UILayoutImpl extends SwipeBackLayout implements ILayout<UIParam>, U
         finishIView(iview, param, true);
     }
 
-    protected void finishIView(final IView iview, final UIParam param, boolean checkInterrupt) {
+    protected void finishIView(final IView iview, final UIParam param, final boolean checkInterrupt) {
         if (iview == null) {
             //finishEnd();
+            return;
+        }
+
+        if (isStartOrFinish()) {
+            post(new Runnable() {
+                @Override
+                public void run() {
+                    finishIView(iview, param, checkInterrupt);
+                }
+            });
             return;
         }
 
@@ -913,7 +930,7 @@ public class UILayoutImpl extends SwipeBackLayout implements ILayout<UIParam>, U
                     finishIViewInner(viewPattern, param);
                 }
             };
-
+            isFinishing = true;
             if (param.mAsync) {
                 post(endRunnable);
                 return;
@@ -1430,6 +1447,8 @@ public class UILayoutImpl extends SwipeBackLayout implements ILayout<UIParam>, U
                 removeViewPattern(topViewPattern, param, new Runnable() {
                     @Override
                     public void run() {
+                        finishEnd();
+
                         if (isStarting) {
                         } else {
                             mLastShowViewPattern = bottomViewPattern;//星期一 2017-1-16
@@ -1437,7 +1456,6 @@ public class UILayoutImpl extends SwipeBackLayout implements ILayout<UIParam>, U
                     }
                 });
 
-                finishEnd();
                 printLog();
             }
         };
@@ -1936,7 +1954,6 @@ public class UILayoutImpl extends SwipeBackLayout implements ILayout<UIParam>, U
         hideSoftInput();
         final View view = viewPattern.mView;
         //ViewCompat.setAlpha(view, 0);
-        viewPattern.mIView.onViewUnload();
 
         view.setEnabled(false);
         ViewCompat.setAlpha(view, 0);
@@ -1960,14 +1977,10 @@ public class UILayoutImpl extends SwipeBackLayout implements ILayout<UIParam>, U
                         e.printStackTrace();
                     }
 
-                    isFinishing = false;
-                    isBackPress = false;
+//                    isFinishing = false;
+//                    isBackPress = false;
                     viewPattern.mIView.release();
                     removeInterrupt(viewPattern.mIView);
-
-                    if (runnable != null) {
-                        runnable.run();
-                    }
 
                     ensureLastViewPattern();
 
@@ -1978,6 +1991,16 @@ public class UILayoutImpl extends SwipeBackLayout implements ILayout<UIParam>, U
                         viewPattern.mIView.onViewUnload(param);
                     } catch (Exception e) {
                         e.printStackTrace();
+                    }
+
+                    try {
+                        runUnloadRunnable(param);
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                    }
+
+                    if (runnable != null) {
+                        runnable.run();
                     }
 
                     postDelayed(new Runnable() {
@@ -1997,7 +2020,6 @@ public class UILayoutImpl extends SwipeBackLayout implements ILayout<UIParam>, U
                 } catch (Exception e) {
                     e.printStackTrace();
                 }
-                runUnloadRunnable(param);
             }
         };
         if (param.isFinishBack && !param.mAnim) {
@@ -2017,10 +2039,11 @@ public class UILayoutImpl extends SwipeBackLayout implements ILayout<UIParam>, U
 
     private void runUnloadRunnable(final UIParam param) {
         if (param != null && param.getUnloadRunnable() != null) {
+            Runnable unloadRunnable = param.getUnloadRunnable();
             if (param.mAsync) {
-                post(param.getUnloadRunnable());
+                post(unloadRunnable);
             } else {
-                param.getUnloadRunnable().run();
+                unloadRunnable.run();
             }
             param.clear();
         }
@@ -2202,8 +2225,15 @@ public class UILayoutImpl extends SwipeBackLayout implements ILayout<UIParam>, U
         setMeasuredDimension(widthSize, heightSize);
     }
 
+    /**
+     * 是否正在执行操作
+     */
     private boolean isTransition() {
         return isSwipeDrag || isStarting || isFinishing;
+    }
+
+    private boolean isStartOrFinish() {
+        return isStarting || isFinishing;
     }
 
     @Override
