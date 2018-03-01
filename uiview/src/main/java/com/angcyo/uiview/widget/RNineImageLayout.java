@@ -183,7 +183,7 @@ public class RNineImageLayout extends RelativeLayout implements View.OnClickList
             final int columns = getColumns(size);
             final int rows = getRows(size);
 
-            L.e("call: onLayout([changed, left, top, right, bottom])-> 行:" + rows + " 列:" + columns);
+            //L.e("call: onLayout([changed, left, top, right, bottom])-> 行:" + rows + " 列:" + columns);
             if (size == 1 && lineImageCount <= 0) {
                 //一张图片
                 final View firstView = getChildAt(0);
