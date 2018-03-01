@@ -341,6 +341,37 @@ public class RUtils {
     }
 
     /**
+     * 剔除字符串src, 左右的ch
+     */
+    public static String trimMarks(String src, String ch) {
+        int s = src.indexOf(ch);
+        int e = src.lastIndexOf(ch);
+
+        int ss = 0;
+        int ee = src.length();
+
+        if (s != -1) {
+            ss = s + ch.length();
+        }
+
+        if (e != -1) {
+            ee = e;
+        }
+
+        String result = src;
+        if (ee < ss) {
+            result = "";
+        } else {
+            try {
+                result = src.substring(ss, ee);
+            } catch (Exception e1) {
+                e1.printStackTrace();
+            }
+        }
+        return result;
+    }
+
+    /**
      * 返回现在的时间,不包含日期
      *
      * @return the now time
