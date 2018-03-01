@@ -23,6 +23,7 @@ import android.graphics.Color;
 import android.graphics.Matrix;
 import android.graphics.Paint;
 import android.graphics.Point;
+import android.graphics.Rect;
 import android.graphics.RectF;
 import android.graphics.drawable.ColorDrawable;
 import android.graphics.drawable.Drawable;
@@ -1992,6 +1993,10 @@ public class RUtils {
 
     public static boolean isListEmpty(List<?> list) {
         return list == null || list.isEmpty();
+    }
+
+    public static boolean isRectEmpty(Rect rect) {
+        return rect == null || rect.isEmpty();
     }
 
     public static Uri uriFromFile(File file) {

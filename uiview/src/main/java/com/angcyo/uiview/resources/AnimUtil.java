@@ -125,6 +125,54 @@ public class AnimUtil {
     }
 
     /**
+     * 放大并且慢慢透明的 退出动画
+     */
+    public static Animation scaleAlphaToMax(final View targetView, final Runnable onAnimationEnd) {
+        ScaleAnimation animation = new ScaleAnimation(1f, 2f, 1f, 2f,
+                Animation.RELATIVE_TO_SELF, 0.5f, Animation.RELATIVE_TO_SELF, 0.5f);
+        AlphaAnimation alphaAnimation = new AlphaAnimation(0.8f, 0);
+        setDefaultConfig(animation, true);
+        setDefaultConfig(alphaAnimation, true);
+
+        final AnimationSet animationSet = new AnimationSet(false);
+        animationSet.addAnimation(alphaAnimation);
+        animationSet.addAnimation(animation);
+
+        animationSet.setAnimationListener(new Animation.AnimationListener() {
+            @Override
+            public void onAnimationStart(Animation animation) {
+
+            }
+
+            @Override
+            public void onAnimationEnd(Animation animation) {
+                if (onAnimationEnd != null) {
+                    onAnimationEnd.run();
+                }
+            }
+
+            @Override
+            public void onAnimationRepeat(Animation animation) {
+
+            }
+        });
+
+        if (targetView.getMeasuredWidth() == 0 || targetView.getMeasuredHeight() == 0) {
+            targetView.getViewTreeObserver().addOnPreDrawListener(new ViewTreeObserver.OnPreDrawListener() {
+                @Override
+                public boolean onPreDraw() {
+                    targetView.startAnimation(animationSet);
+                    targetView.getViewTreeObserver().removeOnPreDrawListener(this);
+                    return false;
+                }
+            });
+        } else {
+            targetView.startAnimation(animationSet);
+        }
+        return animationSet;
+    }
+
+    /**
      * 视图从一个中心点坐标, 平移放大到结束点坐标
      */
     public static ValueAnimator startToMaxAnim(Rect startRect, final View targetView,
