@@ -227,9 +227,13 @@ public class RTextView extends AppCompatTextView {
     }
 
     public static void setRightIco(TextView textView, @DrawableRes int rightIco) {
+        setRightIco(textView, ViewExKt.getDrawable(textView, rightIco));
+    }
+
+    public static void setRightIco(TextView textView, Drawable rightIco) {
         Drawable[] compoundDrawables = textView.getCompoundDrawables();
         textView.setCompoundDrawablesWithIntrinsicBounds(compoundDrawables[0],
-                compoundDrawables[1], ViewExKt.getDrawable(textView, rightIco), compoundDrawables[3]);
+                compoundDrawables[1], rightIco, compoundDrawables[3]);
     }
 
     public static void setTopIco(TextView textView, @DrawableRes int topIco) {
