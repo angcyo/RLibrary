@@ -239,6 +239,12 @@ public class UILayoutImpl extends SwipeBackLayout implements ILayout<UIParam>, U
      * 高度使用DecorView的高度, 否则使用View的高度
      */
     private boolean isFullOverlayDrawable = false;
+    /**
+     * 任务是否执行中
+     */
+    private ViewTask currentViewTask = null;
+
+    private boolean isTaskSuspend = false;
 
     public UILayoutImpl(Context context) {
         super(context);
@@ -446,53 +452,109 @@ public class UILayoutImpl extends SwipeBackLayout implements ILayout<UIParam>, U
         }
     }
 
+    private boolean isTaskRunning() {
+        return currentViewTask != null;
+    }
+
+    private void checkStartTask() {
+        if (isTaskRunning()) {
+            return;
+        }
+        startTask();
+    }
+
+    private void startTask() {
+        if (mViewTasks.isEmpty()) {
+            currentViewTask = null;
+        } else {
+            startTaskInner(mViewTasks.get(0));
+        }
+    }
+
+    private void startTaskInner(ViewTask viewTask) {
+        currentViewTask = viewTask;
+        switch (viewTask.taskType) {
+            case ViewTask.TASK_TYPE_START:
+                startTaskType();
+                break;
+            case ViewTask.TASK_TYPE_FINISH:
+                finishTaskType();
+                break;
+            case ViewTask.TASK_TYPE_SHOW:
+                showTaskType();
+                break;
+            case ViewTask.TASK_TYPE_HIDE:
+                hideTaskType();
+                break;
+        }
+    }
+
+    private void startTaskType() {
+        currentViewTask.iView.onAttachedToILayout(this);
+        if (checkInterruptAndRemove(currentViewTask.iView)) {
+            //中断了当前的任务
+            nextTask();
+        } else {
+            if (mLastShowViewPattern != null &&
+                    mLastShowViewPattern.mIView.isDialog() &&
+                    !currentViewTask.iView.showOnDialog()) {
+                //没有启动条件, 中断任务执行
+                isTaskSuspend = true;
+            } else {
+                if (currentViewTask.param.mAsync) {
+                    isStarting = true;
+                    post(new Runnable() {
+                        @Override
+                        public void run() {
+                            if (checkInterruptAndRemove(currentViewTask.iView)) {
+                                //中断了当前的任务
+                                nextTask();
+                            } else {
+                                startInner(currentViewTask.iView, currentViewTask.param);
+                            }
+                        }
+                    });
+                } else {
+                    startInner(currentViewTask.iView, currentViewTask.param);
+                }
+            }
+        }
+    }
+
+    private void finishTaskType() {
+
+    }
+
+    private void showTaskType() {
+
+    }
+
+    private void hideTaskType() {
+
+    }
+
+    /**
+     * 执行下一个任务
+     */
+    private void nextTask() {
+        if (isTaskSuspend) {
+            //恢复任务
+            startTask();
+        } else {
+            currentViewTask = null;
+            mViewTasks.remove(0);
+            checkStartTask();
+        }
+    }
+
     @Override
     public void startIView(final IView iView, final UIParam param) {
         String log = name(this) + " 请求启动:" + name(iView);
         L.i(log);
         saveToSDCard(log);
 
-        iView.onAttachedToILayout(this);
-        if (checkInterruptAndRemove(iView)) return;
-
-        runnableCount++;
-        final Runnable endRunnable = new Runnable() {
-            @Override
-            public void run() {
-                startInner(iView, param);
-                runnableCount--;
-            }
-        };
-        if (isStartOrFinish() ||
-                (mLastShowViewPattern != null && mLastShowViewPattern.interrupt) ||
-                (mLastShowViewPattern != null && mLastShowViewPattern.mIView.isDialog() && !iView.showOnDialog())
-                ) {
-            ensureLastViewPattern();
-
-            L.i(mLastShowViewPattern);
-            //如果在对话框上,启动一个IView的时候, 切启动的iView不是对话框
-            runnableCount--;
-            postDelayed(new Runnable() {
-                @Override
-                public void run() {
-                    isFinishing = false;
-                    startIView(iView, param);
-                }
-            }, UIIViewImpl.DEFAULT_ANIM_TIME);
-        } else {
-            if (param.mAsync) {
-                isStarting = true;
-                post(new Runnable() {
-                    @Override
-                    public void run() {
-                        isStarting = false;
-                        endRunnable.run();
-                    }
-                });
-            } else {
-                endRunnable.run();
-            }
-        }
+        mViewTasks.add(new ViewTask(ViewTask.TASK_TYPE_START, iView, param));
+        checkStartTask();
     }
 
     private void addInterrupt(IView iView) {
@@ -527,26 +589,8 @@ public class UILayoutImpl extends SwipeBackLayout implements ILayout<UIParam>, U
     }
 
     private void startInner(final IView iView, final UIParam param) {
-        if (!isAttachedToWindow || isStarting || isFinishing) {
-            if (checkInterruptAndRemove(iView)) {
-                return;
-            }
-            post(new Runnable() {
-                @Override
-                public void run() {
-                    startInner(iView, param);
-                }
-            });
-            return;
-        }
-
         if (isSwipeDrag()) {
             restoreCaptureView();
-        }
-
-        if (checkInterruptAndRemove(iView)) {
-            finishEnd();
-            return;
         }
 
         final ViewPattern oldViewPattern = getLastViewPattern();
