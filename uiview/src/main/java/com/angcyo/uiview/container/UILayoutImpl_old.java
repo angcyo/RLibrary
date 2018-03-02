@@ -37,7 +37,6 @@ import com.angcyo.uiview.base.UILayoutActivity;
 import com.angcyo.uiview.kotlin.ViewExKt;
 import com.angcyo.uiview.kotlin.ViewGroupExKt;
 import com.angcyo.uiview.model.ViewPattern;
-import com.angcyo.uiview.model.ViewTask;
 import com.angcyo.uiview.resources.AnimUtil;
 import com.angcyo.uiview.rsen.RGestureDetector;
 import com.angcyo.uiview.skin.ISkin;
@@ -66,11 +65,11 @@ import static com.angcyo.uiview.view.UIIViewImpl.DEFAULT_ANIM_TIME;
 import static com.angcyo.uiview.view.UIIViewImpl.DEFAULT_DELAY_ANIM_TIME;
 
 /**
- * 可以用来显示IView的布局, 每一层的管理, 重写于2018-3-2
+ * 可以用来显示IView的布局, 每一层的管理
  * Created by angcyo on 2016-11-12.
  */
-
-public class UILayoutImpl extends SwipeBackLayout implements ILayout<UIParam>, UIViewPager.OnPagerShowListener {
+@Deprecated
+public class UILayoutImpl_old extends SwipeBackLayout implements ILayout<UIParam>, UIViewPager.OnPagerShowListener {
 
     public static final String TAG_MAIN = "main";
     private static final String TAG = "UILayoutImpl";
@@ -85,11 +84,6 @@ public class UILayoutImpl extends SwipeBackLayout implements ILayout<UIParam>, U
      * 已经追加到内容层的View
      */
     protected Stack<ViewPattern> mAttachViews = new Stack<>();
-
-    /**
-     * 任务
-     */
-    protected Stack<ViewTask> mViewTasks = new Stack<>();
     /**
      * 最前显示的View
      */
@@ -98,7 +92,7 @@ public class UILayoutImpl extends SwipeBackLayout implements ILayout<UIParam>, U
     protected UILayoutActivity mLayoutActivity;
     int hSpace = (int) (30 * getResources().getDisplayMetrics().density);
     int vSpace = (int) (30 * getResources().getDisplayMetrics().density);
-    int viewMaxHeight = 0; //debug模式下的成员变量
+    int viewMaxHeight = 0;
     boolean isInDebugLayout = false;
     Paint debugPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
     StringBuilder measureLogBuilder = new StringBuilder();
@@ -240,12 +234,12 @@ public class UILayoutImpl extends SwipeBackLayout implements ILayout<UIParam>, U
      */
     private boolean isFullOverlayDrawable = false;
 
-    public UILayoutImpl(Context context) {
+    public UILayoutImpl_old(Context context) {
         super(context);
         initLayout();
     }
 
-    public UILayoutImpl(Context context, IView iView) {
+    public UILayoutImpl_old(Context context, IView iView) {
         super(context);
         initLayout();
 
@@ -256,7 +250,7 @@ public class UILayoutImpl extends SwipeBackLayout implements ILayout<UIParam>, U
         }
     }
 
-    public UILayoutImpl(Context context, AttributeSet attrs) {
+    public UILayoutImpl_old(Context context, AttributeSet attrs) {
         super(context, attrs);
         initLayout();
     }
@@ -332,8 +326,8 @@ public class UILayoutImpl extends SwipeBackLayout implements ILayout<UIParam>, U
     /**
      * 获取屏幕方向
      *
-     * @see android.content.res.Configuration#ORIENTATION_LANDSCAPE
-     * @see android.content.res.Configuration#ORIENTATION_PORTRAIT
+     * @see Configuration#ORIENTATION_LANDSCAPE
+     * @see Configuration#ORIENTATION_PORTRAIT
      */
     public int getScreenOrientation() {
         return getResources().getConfiguration().orientation;
@@ -1634,7 +1628,7 @@ public class UILayoutImpl extends SwipeBackLayout implements ILayout<UIParam>, U
 
         for (OnIViewChangedListener listener : mOnIViewChangedListeners) {
             try {
-                listener.onIViewHide(UILayoutImpl.this, viewPattern);
+                listener.onIViewHide(UILayoutImpl_old.this, viewPattern);
             } catch (Exception e) {
                 e.printStackTrace();
             }
@@ -1675,7 +1669,7 @@ public class UILayoutImpl extends SwipeBackLayout implements ILayout<UIParam>, U
 
         for (OnIViewChangedListener listener : mOnIViewChangedListeners) {
             try {
-                listener.onIViewShow(UILayoutImpl.this, viewPattern);
+                listener.onIViewShow(UILayoutImpl_old.this, viewPattern);
             } catch (Exception e) {
                 e.printStackTrace();
             }
@@ -2554,7 +2548,7 @@ public class UILayoutImpl extends SwipeBackLayout implements ILayout<UIParam>, U
         }
     }
 
-    public UILayoutImpl addIWindowInsetsListener(IWindowInsetsListener listener) {
+    public UILayoutImpl_old addIWindowInsetsListener(IWindowInsetsListener listener) {
         if (listener == null) {
             return this;
         }
@@ -2565,7 +2559,7 @@ public class UILayoutImpl extends SwipeBackLayout implements ILayout<UIParam>, U
         return this;
     }
 
-    public UILayoutImpl removeIWindowInsetsListener(IWindowInsetsListener listener) {
+    public UILayoutImpl_old removeIWindowInsetsListener(IWindowInsetsListener listener) {
         if (listener == null || mIWindowInsetsListeners == null) {
             return this;
         }
@@ -2573,7 +2567,7 @@ public class UILayoutImpl extends SwipeBackLayout implements ILayout<UIParam>, U
         return this;
     }
 
-    public UILayoutImpl addOnIViewChangeListener(OnIViewChangedListener listener) {
+    public UILayoutImpl_old addOnIViewChangeListener(OnIViewChangedListener listener) {
         if (listener == null) {
             return this;
         }
@@ -2581,7 +2575,7 @@ public class UILayoutImpl extends SwipeBackLayout implements ILayout<UIParam>, U
         return this;
     }
 
-    public UILayoutImpl removeOnIViewChangeListener(OnIViewChangedListener listener) {
+    public UILayoutImpl_old removeOnIViewChangeListener(OnIViewChangedListener listener) {
         if (listener == null || mOnIViewChangedListeners == null) {
             return this;
         }
@@ -2687,7 +2681,7 @@ public class UILayoutImpl extends SwipeBackLayout implements ILayout<UIParam>, U
      */
     public void setMainLayout(boolean main) {
         if (main) {
-            setTag(R.id.tag, UILayoutImpl.TAG_MAIN);
+            setTag(R.id.tag, UILayoutImpl_old.TAG_MAIN);
         } else {
             setTag(R.id.tag, "");
         }
@@ -3293,41 +3287,41 @@ public class UILayoutImpl extends SwipeBackLayout implements ILayout<UIParam>, U
      * IView 添加,移除监听
      */
     public interface OnIViewChangedListener {
-        void onIViewAdd(final UILayoutImpl uiLayout, final ViewPattern viewPattern);
+        void onIViewAdd(final UILayoutImpl_old uiLayout, final ViewPattern viewPattern);
 
-        void onIViewShow(final UILayoutImpl uiLayout, final ViewPattern viewPattern);
+        void onIViewShow(final UILayoutImpl_old uiLayout, final ViewPattern viewPattern);
 
-        void onIViewHide(final UILayoutImpl uiLayout, final ViewPattern viewPattern);
+        void onIViewHide(final UILayoutImpl_old uiLayout, final ViewPattern viewPattern);
 
-        void onIViewCreate(final UILayoutImpl uiLayout, final IView iView, final View rootView);
+        void onIViewCreate(final UILayoutImpl_old uiLayout, final IView iView, final View rootView);
 
-        void onIViewRemove(final UILayoutImpl uiLayout, final ViewPattern viewPattern);
+        void onIViewRemove(final UILayoutImpl_old uiLayout, final ViewPattern viewPattern);
     }
 
     public static class SimpleOnIViewChangedListener implements OnIViewChangedListener {
 
         @Override
-        public void onIViewAdd(UILayoutImpl uiLayout, ViewPattern viewPattern) {
+        public void onIViewAdd(UILayoutImpl_old uiLayout, ViewPattern viewPattern) {
 
         }
 
         @Override
-        public void onIViewShow(UILayoutImpl uiLayout, ViewPattern viewPattern) {
+        public void onIViewShow(UILayoutImpl_old uiLayout, ViewPattern viewPattern) {
 
         }
 
         @Override
-        public void onIViewHide(UILayoutImpl uiLayout, ViewPattern viewPattern) {
+        public void onIViewHide(UILayoutImpl_old uiLayout, ViewPattern viewPattern) {
 
         }
 
         @Override
-        public void onIViewCreate(UILayoutImpl uiLayout, IView iView, View rootView) {
+        public void onIViewCreate(UILayoutImpl_old uiLayout, IView iView, View rootView) {
 
         }
 
         @Override
-        public void onIViewRemove(UILayoutImpl uiLayout, ViewPattern viewPattern) {
+        public void onIViewRemove(UILayoutImpl_old uiLayout, ViewPattern viewPattern) {
 
         }
     }
