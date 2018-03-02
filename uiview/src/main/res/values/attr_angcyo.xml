@@ -26,6 +26,8 @@
     <attr name="r_max_height" format="dimension"/>
     <attr name="r_min_height" format="dimension"/>
     <attr name="r_show_content_menu" format="boolean"/>
+    <!--是否使用皮肤样式, 比如颜色啊, 字体啊等-->
+    <attr name="r_use_skin_style" format="boolean"/>
     <!--宽高是否相等-->
     <attr name="r_is_aeq_width" format="boolean"/>
 
@@ -187,6 +189,7 @@
         <attr name="r_scroll_step" format="integer"/>
         <attr name="r_scroll_text_offset" format="dimension"/>
 
+        <attr name="r_use_skin_style"/>
     </declare-styleable>
 
     <declare-styleable name="RExTextView">
@@ -280,7 +283,6 @@
         <attr name="r_button_border_width" format="dimension"/>
         <!--圆角模式下, 圆角的半径 (圆形不受影响)-->
         <attr name="r_button_round_radii" format="dimension"/>
-
     </declare-styleable>
 
     <declare-styleable name="RRangeBar">

@@ -60,7 +60,7 @@ public class RTextView extends AppCompatTextView {
      * 滚动文本的方式, 从0开始, 缓缓的向左滚动
      */
     public static final int SCROLL_TYPE_START = 2;
-
+    protected boolean useSkinStyle = false;
     /**
      * 左边垂直矩形的颜色
      */
@@ -71,9 +71,7 @@ public class RTextView extends AppCompatTextView {
     int leftColor;
     int leftStringColor;
     int leftStringSize = 14;
-
     boolean hasUnderline = false;
-
     boolean isAttached = false;
     /**
      * 由于系统的drawableLeft, 并不会显示在居中文本的左边, 所以自定义此属性
@@ -215,6 +213,8 @@ public class RTextView extends AppCompatTextView {
             scrollTextCircleOffset = (int) (10 * ScreenUtil.density());
         }
         scrollTextCircleOffset = typedArray.getDimensionPixelOffset(R.styleable.RTextView_r_scroll_text_offset, scrollTextCircleOffset);
+
+        useSkinStyle = typedArray.getBoolean(R.styleable.RTextView_r_use_skin_style, useSkinStyle);
         typedArray.recycle();
 
         initView();

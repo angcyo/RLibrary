@@ -109,9 +109,18 @@ public class Button extends RTextView {
                             )));
                     break;
                 case ROUND_BORDER_FILL:
+                    int subColor = SkinHelper.getSkin().getThemeSubColor();
+                    int lineColor = ViewExKt.getColor(this, R.color.default_base_line);
+                    if (useSkinStyle) {
+                        lineColor = subColor;
+                        setTextColor(ResUtil.generateTextColor(Color.WHITE, subColor));
+                    } else {
+                        setTextColor(ResUtil.generateTextColor(getCurrentTextColor(), ViewExKt.getColor(this, R.color.base_text_color)));
+                    }
+
                     setBackground(ResUtil.ripple(themeSubColor,
                             ResUtil.selector(
-                                    ResUtil.createDrawable(ViewExKt.getColor(this, R.color.default_base_line),
+                                    ResUtil.createDrawable(lineColor,
                                             Color.TRANSPARENT, borderWidth,
                                             roundRadii),
                                     ResUtil.createDrawable(themeSubColor,
@@ -119,7 +128,7 @@ public class Button extends RTextView {
                                     ResUtil.createDrawable(disableColor,
                                             roundRadii)
                             )));
-                    setTextColor(ResUtil.generateTextColor(getCurrentTextColor(), ViewExKt.getColor(this, R.color.base_text_color)));
+
                     break;
                 case ROUND_GRADIENT_RECT:
                     setBackground(ResUtil.ripple(Color.WHITE,
