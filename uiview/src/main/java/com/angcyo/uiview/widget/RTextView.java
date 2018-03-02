@@ -233,8 +233,12 @@ public class RTextView extends AppCompatTextView {
     }
 
     public static void setTopIco(TextView textView, @DrawableRes int topIco) {
+        setTopIco(textView, ViewExKt.getDrawable(textView, topIco));
+    }
+
+    public static void setTopIco(TextView textView, Drawable topIco) {
         Drawable[] compoundDrawables = textView.getCompoundDrawables();
-        textView.setCompoundDrawablesWithIntrinsicBounds(compoundDrawables[0], ViewExKt.getDrawable(textView, topIco),
+        textView.setCompoundDrawablesWithIntrinsicBounds(compoundDrawables[0], topIco,
                 compoundDrawables[2], compoundDrawables[3]);
     }
 

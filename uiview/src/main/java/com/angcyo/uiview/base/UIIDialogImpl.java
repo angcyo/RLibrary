@@ -16,6 +16,7 @@ import android.widget.FrameLayout;
 import com.angcyo.uiview.container.ILayout;
 import com.angcyo.uiview.container.UILayoutImpl;
 import com.angcyo.uiview.container.UIParam;
+import com.angcyo.uiview.recycler.RBaseViewHolder;
 import com.angcyo.uiview.view.UIIViewImpl;
 import com.angcyo.uiview.widget.SoftRelativeLayout;
 
@@ -77,6 +78,7 @@ public abstract class UIIDialogImpl extends UIIViewImpl {
     protected boolean autoFinishDialog = true;
 
     protected int dimColor = super.getDimColor();
+    private OnInitDialogContent mOnInitDialogContent;
 
     @Override
     protected View inflateBaseView(FrameLayout container, LayoutInflater inflater) {
@@ -123,7 +125,9 @@ public abstract class UIIDialogImpl extends UIIViewImpl {
      * 初始化内容
      */
     protected void initDialogContentView() {
-
+        if (mOnInitDialogContent != null) {
+            mOnInitDialogContent.onInitDialogContent(this, mViewHolder);
+        }
     }
 
     /**
@@ -349,7 +353,20 @@ public abstract class UIIDialogImpl extends UIIViewImpl {
         return this;
     }
 
+    public OnInitDialogContent getOnInitDialogContent() {
+        return mOnInitDialogContent;
+    }
+
+    public UIIDialogImpl setOnInitDialogContent(OnInitDialogContent onInitDialogContent) {
+        mOnInitDialogContent = onInitDialogContent;
+        return this;
+    }
+
     public interface OnDismissListener {
         void onDismiss();
+    }
+
+    public interface OnInitDialogContent {
+        void onInitDialogContent(@NonNull UIIDialogImpl dialog, @NonNull RBaseViewHolder viewHolder);
     }
 }

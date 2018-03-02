@@ -13,6 +13,7 @@ import com.angcyo.uiview.RApplication;
 import com.angcyo.uiview.base.UIIDialogImpl;
 import com.angcyo.uiview.base.UIViewConfig;
 import com.angcyo.uiview.skin.SkinHelper;
+import com.angcyo.uiview.widget.RTextView;
 import com.angcyo.uiview.widget.SimpleProgressBar;
 
 /**
@@ -28,8 +29,9 @@ public class UIDialog extends UIIDialogImpl {
      */
     boolean isX5Style = true;
 
-    TextView mBaseDialogTitleView;
-    TextView mBaseDialogContentView;
+    RTextView mBaseDialogTitleView;
+    RTextView mBaseDialogTopContentView;
+    RTextView mBaseDialogContentView;
     TextView mBaseDialogCancelView;
     TextView mBaseDialogOkView;
     LinearLayout mBaseDialogRootLayout;
@@ -55,9 +57,8 @@ public class UIDialog extends UIIDialogImpl {
      * 进度
      */
     int progress = 0;
-    private SimpleProgressBar mBaseProgressBar;
-
     UIViewConfig mViewConfig;
+    private SimpleProgressBar mBaseProgressBar;
 
     private UIDialog() {
         cancelText = RApplication.getApp().getString(R.string.base_cancel);
@@ -154,17 +155,23 @@ public class UIDialog extends UIIDialogImpl {
     }
 
     @Override
+    protected void initDialogContentView() {
+        super.initDialogContentView();
+    }
+
+    @Override
     public void loadContentView(View rootView) {
         super.loadContentView(rootView);
 
-        mBaseProgressBar = (SimpleProgressBar) rootView.findViewById(R.id.progress_bar);
+        mBaseProgressBar = rootView.findViewById(R.id.progress_bar);
         mBaseProgressBar.setProgressColor(SkinHelper.getSkin().getThemeTranColor(0x80));
 
-        mBaseDialogTitleView = (TextView) rootView.findViewById(R.id.base_dialog_title_view);
-        mBaseDialogContentView = (TextView) rootView.findViewById(R.id.base_dialog_content_view);
-        mBaseDialogRootLayout = (LinearLayout) rootView.findViewById(R.id.base_dialog_root_layout);
-        mBaseDialogOkView = (TextView) rootView.findViewById(R.id.base_dialog_ok_view);
-        mBaseDialogCancelView = (TextView) rootView.findViewById(R.id.base_dialog_cancel_view);
+        mBaseDialogTitleView = rootView.findViewById(R.id.base_dialog_title_view);
+        mBaseDialogContentView = rootView.findViewById(R.id.base_dialog_content_view);
+        mBaseDialogTopContentView = rootView.findViewById(R.id.base_dialog_top_content_view);
+        mBaseDialogRootLayout = rootView.findViewById(R.id.base_dialog_root_layout);
+        mBaseDialogOkView = rootView.findViewById(R.id.base_dialog_ok_view);
+        mBaseDialogCancelView = rootView.findViewById(R.id.base_dialog_cancel_view);
         if (!isX5Style) {
             mLineLayout = rootView.findViewById(R.id.line_layout);
         }

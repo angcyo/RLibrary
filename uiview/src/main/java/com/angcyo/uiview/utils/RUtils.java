@@ -722,7 +722,7 @@ public class RUtils {
         List<ResolveInfo> resolveInfos = packageManager.queryIntentActivities(intent, PackageManager.GET_RESOLVED_FILTER);
         int size = resolveInfos.size();
         if (size > 0) {
-            if (size == 1) {
+            if (size >= 1) {
                 ActivityInfo activityInfo = resolveInfos.get(0).activityInfo;
                 //T_.show("正在打开:" + activityInfo.applicationInfo.loadLabel(packageManager));
 
@@ -731,6 +731,37 @@ public class RUtils {
             } else {
                 context.startActivity(intent);
             }
+        }
+    }
+
+    public static QueryAppBean queryIntentFromUrl(String url) {
+        if (TextUtils.isEmpty(url)) {
+            return null;
+        }
+
+        Intent intent = new Intent(Intent.ACTION_VIEW);
+        intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+        intent.addCategory(Intent.CATEGORY_BROWSABLE);
+        intent.setData(Uri.parse(url));
+
+        PackageManager packageManager = RApplication.getApp().getPackageManager();
+        List<ResolveInfo> resolveInfos = packageManager.queryIntentActivities(intent, PackageManager.GET_RESOLVED_FILTER);
+        int size = resolveInfos.size();
+        if (size > 0) {
+            QueryAppBean appBean = new QueryAppBean();
+            appBean.startIntent = intent;
+            if (size >= 1) {
+                ActivityInfo activityInfo = resolveInfos.get(0).activityInfo;
+                //T_.show("正在打开:" + activityInfo.applicationInfo.loadLabel(packageManager));
+                appBean.mAppInfo = CmdUtil.getAppInfo(RApplication.getApp(), activityInfo.packageName);
+
+                intent.setComponent(new ComponentName(activityInfo.packageName, activityInfo.name));
+            } else {
+            }
+
+            return appBean;
+        } else {
+            return null;
         }
     }
 
@@ -2160,5 +2191,10 @@ public class RUtils {
 
     interface OnPutValue {
         void onValue(String key, String value);
+    }
+
+    public static class QueryAppBean {
+        public CmdUtil.AppInfo mAppInfo;
+        public Intent startIntent;
     }
 }

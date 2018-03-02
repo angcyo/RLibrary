@@ -23,6 +23,15 @@
         tools:text="对话框标题"/>
 
     <com.angcyo.uiview.widget.RTextView
+        android:id="@+id/base_dialog_top_content_view"
+        style="@style/BaseDialogTextStyle"
+        android:gravity="left"
+        android:lineSpacingExtra="@dimen/base_ldpi"
+        android:textSize="@dimen/default_text_little_size"
+        android:visibility="gone"
+        tools:text="对话框内容对话框内容对话框内容"/>
+
+    <com.angcyo.uiview.widget.RTextView
         android:id="@+id/base_dialog_content_view"
         style="@style/BaseDialogTextStyle"
         android:gravity="left"

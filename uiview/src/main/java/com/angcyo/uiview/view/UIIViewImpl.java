@@ -88,7 +88,7 @@ public abstract class UIIViewImpl implements IView {
     protected View mRootView;
 
     /**
-     * 用来管理rootView
+     * 用来管理rootView, onViewCreate 中创建了
      */
     protected RBaseViewHolder mViewHolder;
     protected RBaseViewHolder $;

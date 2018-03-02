@@ -11,11 +11,13 @@ import android.text.method.DigitsKeyListener
 import android.util.AttributeSet
 import android.util.TypedValue
 import android.view.ContextMenu
+import android.view.MotionEvent
 import android.view.inputmethod.EditorInfo
 import com.angcyo.uiview.R
 import com.angcyo.uiview.kotlin.density
 import com.angcyo.uiview.kotlin.textHeight
 import com.angcyo.uiview.kotlin.textWidth
+import com.angcyo.uiview.skin.SkinHelper
 
 /**
  * Copyright (C) 2016,深圳市红鸟网络科技股份有限公司 All rights reserved.
@@ -37,7 +39,7 @@ class PasswordInputEditText(context: Context, attributeSet: AttributeSet? = null
     /**密码与密码之间的间隙*/
     var passwordSpace: Float = 10 * density
 
-    /**密码提示框的大小, 当空隙为0时, 自动层叠边框*/
+    /**密码提示框的大小, 当空隙为0时, 自动层叠边框, 小于等于0时, 自动平分View的宽度*/
     var passwordSize: Float = 30 * density
 
     var strokeWidth = 2 * density
@@ -91,6 +93,10 @@ class PasswordInputEditText(context: Context, attributeSet: AttributeSet? = null
         passwordSize = array.getDimensionPixelOffset(R.styleable.PasswordInputEditText_r_password_size, passwordSize.toInt()).toFloat()
         strokeWidth = array.getDimensionPixelOffset(R.styleable.PasswordInputEditText_r_border_width, strokeWidth.toInt()).toFloat()
 
+        if (!isInEditMode) {
+            passwordHighlightColor = SkinHelper.getSkin().themeSubColor
+        }
+
         passwordHighlightColor = array.getColor(R.styleable.PasswordInputEditText_r_password_highlight_color, passwordHighlightColor)
         passwordBgColor = array.getColor(R.styleable.PasswordInputEditText_r_password_bg_color, passwordBgColor)
         passwordColor = array.getColor(R.styleable.PasswordInputEditText_r_password_color, passwordColor)
@@ -112,7 +118,7 @@ class PasswordInputEditText(context: Context, attributeSet: AttributeSet? = null
         setTextIsSelectable(false)
         inputType = EditorInfo.TYPE_CLASS_NUMBER
         filters = arrayOf(InputFilter.LengthFilter(passwordCount))
-        imeOptions = EditorInfo.IME_FLAG_NO_EXTRACT_UI
+        imeOptions = imeOptions or EditorInfo.IME_FLAG_NO_EXTRACT_UI
         keyListener = DigitsKeyListener.getInstance("1234567890")
     }
 
@@ -122,19 +128,25 @@ class PasswordInputEditText(context: Context, attributeSet: AttributeSet? = null
         var heightSize = MeasureSpec.getSize(heightMeasureSpec)
         val heightMode = MeasureSpec.getMode(heightMeasureSpec)
 
+        val pSize: Float = if (passwordSize <= 0) {
+            ((widthSize - paddingLeft - paddingRight) / passwordCount).toFloat()
+        } else {
+            passwordSize
+        }
+
         if (widthMode != MeasureSpec.EXACTLY) {
             if (passwordSpace == 0f) {
-                widthSize = (passwordCount * passwordSize + strokeWidth +
+                widthSize = (passwordCount * pSize + strokeWidth +
                         paddingLeft + paddingRight).toInt()
             } else {
-                widthSize = (passwordCount * (passwordSize + strokeWidth) +
+                widthSize = (passwordCount * (pSize + strokeWidth) +
                         Math.max(passwordCount - 1, 0) * passwordSpace +
                         paddingLeft + paddingRight).toInt()
             }
         }
 
         if (heightMode != MeasureSpec.EXACTLY) {
-            heightSize = (passwordSize + strokeWidth + paddingTop + paddingBottom).toInt()
+            heightSize = (pSize + strokeWidth + paddingTop + paddingBottom).toInt()
         }
 
         setMeasuredDimension(widthSize, heightSize)
@@ -165,16 +177,22 @@ class PasswordInputEditText(context: Context, attributeSet: AttributeSet? = null
         paint.strokeWidth = strokeWidth
         highlightRect.setEmpty()
 
+        val pSize: Float = if (passwordSize <= 0) {
+            ((measuredWidth - paddingLeft - paddingRight) / passwordCount).toFloat()
+        } else {
+            passwordSize
+        }
+
         var left: Float
         for (i in 0 until passwordCount) {
             if (passwordSpace == 0f) {
-                left = paddingLeft + passwordSize * i + strokeWidth / 2
+                left = paddingLeft + pSize * i + strokeWidth / 2
             } else {
-                left = paddingLeft + strokeWidth / 2 + (passwordSize + strokeWidth) * i + Math.max(i, 0) * passwordSpace
+                left = paddingLeft + strokeWidth / 2 + (pSize + strokeWidth) * i + Math.max(i, 0) * passwordSpace
             }
 
             rect.set(left.toInt(), (paddingTop + strokeWidth / 2).toInt(),
-                    (left + passwordSize).toInt(), (paddingTop + strokeWidth / 2 + passwordSize).toInt())
+                    (left + pSize).toInt(), (paddingTop + strokeWidth / 2 + pSize).toInt())
 
             //填充密码框
             paint.style = Paint.Style.FILL_AND_STROKE
@@ -203,7 +221,7 @@ class PasswordInputEditText(context: Context, attributeSet: AttributeSet? = null
 
                 when (passwordTipType) {
                     TIP_TYPE_CIRCLE -> {
-                        canvas.drawCircle(rect.centerX().toFloat(), rect.centerY().toFloat(), passwordSize * 0.6f / 2, paint)
+                        canvas.drawCircle(rect.centerX().toFloat(), rect.centerY().toFloat(), pSize * 0.6f / 2, paint)
                     }
                     TIP_TYPE_RECT -> {
                         val offset = 4 * density
@@ -243,6 +261,13 @@ class PasswordInputEditText(context: Context, attributeSet: AttributeSet? = null
     fun string(): String {
         val rawText = text.toString().trim()
         return rawText
+    }
+
+    override fun onTouchEvent(event: MotionEvent?): Boolean {
+        if (!isEnabled) {
+            return false
+        }
+        return super.onTouchEvent(event)
     }
 
     var onPasswordInputListener: OnPasswordInputListener? = null
