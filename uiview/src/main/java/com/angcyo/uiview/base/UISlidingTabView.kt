@@ -3,10 +3,13 @@ package com.angcyo.uiview.base
 import android.os.Bundle
 import android.support.v4.content.ContextCompat
 import android.view.LayoutInflater
+import android.view.View
 import com.angcyo.uiview.R
 import com.angcyo.uiview.container.ContentLayout
 import com.angcyo.uiview.github.tablayout.SlidingTabLayout
+import com.angcyo.uiview.model.TitleBarPattern
 import com.angcyo.uiview.skin.SkinHelper
+import com.angcyo.uiview.utils.UI
 import com.angcyo.uiview.view.IView
 import com.angcyo.uiview.widget.viewpager.UIPagerAdapter
 import com.angcyo.uiview.widget.viewpager.UIViewPager
@@ -27,8 +30,7 @@ abstract class UISlidingTabView : UIContentView(), UIBaseView.OnViewLoadListener
     companion object {
         fun baseInitTabLayout(tabLayout: SlidingTabLayout) {
             val density = tabLayout.context.resources.displayMetrics.density
-            tabLayout.setIndicatorWidthEqualTitle(true)
-            //tabLayout.indicatorWidth = 100 * density
+
             tabLayout.textSelectColor = SkinHelper.getSkin().themeSubColor
             tabLayout.textUnselectColor = ContextCompat.getColor(tabLayout.context, R.color.base_text_color)
             tabLayout.indicatorHeight = 1 * density
@@ -38,9 +40,17 @@ abstract class UISlidingTabView : UIContentView(), UIBaseView.OnViewLoadListener
             tabLayout.indicatorMarginLeft = 0f //指示器左偏移的距离
             tabLayout.tabPadding = 5 * density
             tabLayout.setTextSizePx(SkinHelper.getSkin().mainTextSize)
-            tabLayout.isTabSpaceEqual = false //tab 是否平分 TabLayout的宽度
             tabLayout.setItemNoBackground(false) //item 是否禁用点击效果
+
+            tabLayout.setIndicatorWidthEqualTitle(true)
+            //tabLayout.indicatorWidth = 100 //px单位, 自动换算
+            tabLayout.isTabSpaceEqual = false //tab 是否平分 TabLayout的宽度
+            //UI.setViewWidth(tabLayout, (300 * density).toInt())
         }
+    }
+
+    override fun getTitleBar(): TitleBarPattern {
+        return super.getTitleBar()
     }
 
     override fun onShowLoadView() {
@@ -65,6 +75,10 @@ abstract class UISlidingTabView : UIContentView(), UIBaseView.OnViewLoadListener
         mViewHolder.v<SlidingTabLayout>(R.id.base_tab_layout)
     }
 
+    val mTabWrapperLayout: View by lazy {
+        mViewHolder.v<View>(R.id.base_tab_wrapper_layout)
+    }
+
     override fun inflateContentLayout(baseContentLayout: ContentLayout?, inflater: LayoutInflater?) {
         inflate(R.layout.base_sliding_tab_view)
     }
@@ -78,6 +92,10 @@ abstract class UISlidingTabView : UIContentView(), UIBaseView.OnViewLoadListener
 
         mViewPager.adapter = createAdapter()
         mSlidingTab.setViewPager(mViewPager)
+    }
+
+    open fun getCurrentIndex(): Int {
+        return mSlidingTab.currentTab
     }
 
     override fun onViewShowFirst(bundle: Bundle?) {
@@ -94,6 +112,13 @@ abstract class UISlidingTabView : UIContentView(), UIBaseView.OnViewLoadListener
 
     open fun initTabLayout(tabLayout: SlidingTabLayout) {
         baseInitTabLayout(tabLayout)
+    }
+
+    /**居中展示TabLayout*/
+    fun centerTabLayout(tabLayout: SlidingTabLayout) {
+        tabLayout.indicatorWidth = 80f
+        tabLayout.isTabSpaceEqual = true
+        UI.setViewWidth(tabLayout, (300 * density()).toInt())
     }
 
     open fun initViewPager(viewPager: UIViewPager) {

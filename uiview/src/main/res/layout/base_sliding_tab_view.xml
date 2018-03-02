@@ -6,11 +6,19 @@
     android:layout_height="match_parent"
     android:orientation="vertical">
 
-    <com.angcyo.uiview.github.tablayout.SlidingTabLayout
-        android:id="@+id/base_tab_layout"
+    <FrameLayout
+        android:id="@+id/base_tab_wrapper_layout"
         android:layout_width="match_parent"
-        android:layout_height="@dimen/base_title_bar_item_size"
-        tools:background="@color/base_red_d85940"/>
+        android:layout_height="wrap_content">
+
+        <com.angcyo.uiview.github.tablayout.SlidingTabLayout
+            android:id="@+id/base_tab_layout"
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/base_title_bar_item_size"
+            android:layout_gravity="center"
+            tools:background="@color/base_red_d85940"/>
+
+    </FrameLayout>
 
     <com.angcyo.uiview.widget.viewpager.UIViewPager
         android:id="@+id/base_view_pager"

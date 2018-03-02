@@ -283,6 +283,27 @@ public abstract class UIRecyclerUIView<H, T, F> extends UIContentView
         showEmptyLayout();
     }
 
+    /**
+     * 当网络加载失败时, 如果有数据, 则不显示错误视图
+     */
+    public void onUILoadDataError() {
+        resetUI();
+        if (page <= 1 && (mExBaseAdapter == null || mExBaseAdapter.getRawItemCount() < 1)) {
+            showNonetLayout(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    onBaseLoadData();
+                }
+            });
+        } else {
+            if (mExBaseAdapter != null) {
+                if (mExBaseAdapter.getRawItemCount() > 0 && mExBaseAdapter.isEnableLoadMore()) {
+                    mExBaseAdapter.setLoadError();
+                }
+            }
+        }
+    }
+
     @Override
     public void showNonetLayout() {
         showNonetLayout(new View.OnClickListener() {

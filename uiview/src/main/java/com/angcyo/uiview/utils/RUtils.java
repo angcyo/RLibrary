@@ -77,6 +77,7 @@ import java.text.DateFormat;
 import java.text.DecimalFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -2183,6 +2184,24 @@ public class RUtils {
         size[1] = (int) (srcHeight * scale);
 
         return size;
+    }
+
+    /**
+     * 获取当前时间的年月日
+     */
+    public static String yyyyMMdd(long time) {
+        return new SimpleDateFormat("yyyy-MM-dd", Locale.CHINA).format(new Date(time));
+    }
+
+    public static int month(long time) {
+        Calendar cal = Calendar.getInstance();
+        cal.setTimeInMillis(time);
+
+        int year = cal.get(Calendar.YEAR);//2018
+        int month = cal.get(Calendar.MONTH) + 1;//3
+        int day = cal.get(Calendar.DAY_OF_MONTH);//2
+
+        return month;
     }
 
     public enum ImageType {

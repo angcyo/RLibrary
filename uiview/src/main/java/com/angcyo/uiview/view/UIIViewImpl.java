@@ -578,10 +578,10 @@ public abstract class UIIViewImpl implements IView {
         if (iView == null) {
             return;
         }
-        if (mILayout == null) {
-            throw new IllegalArgumentException("ILayout 还未初始化");
+        if (mParentILayout == null) {
+            throw new IllegalArgumentException("mParentILayout 还未初始化");
         }
-        mILayout.startIView(iView, param);
+        mParentILayout.startIView(iView, param);
     }
 
     public void finishIView() {
@@ -596,10 +596,10 @@ public abstract class UIIViewImpl implements IView {
         if (iView == null) {
             return;
         }
-        if (mILayout == null) {
-            throw new IllegalArgumentException("ILayout 还未初始化");
+        if (mParentILayout == null) {
+            throw new IllegalArgumentException("mParentILayout 还未初始化");
         }
-        mILayout.finishIView(iView, param);
+        mParentILayout.finishIView(iView, param);
     }
 
     public void finishIView(final UIParam param) {
@@ -618,10 +618,10 @@ public abstract class UIIViewImpl implements IView {
         if (iView == null) {
             return;
         }
-        if (mILayout == null) {
-            throw new IllegalArgumentException("ILayout 还未初始化");
+        if (mParentILayout == null) {
+            throw new IllegalArgumentException("mParentILayout 还未初始化");
         }
-        mILayout.finishIView(iView, anim, quiet);
+        mParentILayout.finishIView(iView, anim, quiet);
     }
 
     public void showIView(final View view) {
@@ -636,10 +636,10 @@ public abstract class UIIViewImpl implements IView {
         if (view == null) {
             return;
         }
-        if (mILayout == null) {
-            throw new IllegalArgumentException("ILayout 还未初始化");
+        if (mParentILayout == null) {
+            throw new IllegalArgumentException("mParentILayout 还未初始化");
         }
-        mILayout.showIView(view, new UIParam(needAnim).setBundle(bundle));
+        mParentILayout.showIView(view, new UIParam(needAnim).setBundle(bundle));
     }
 
     public void showIView(IView iview, boolean needAnim) {
@@ -654,10 +654,10 @@ public abstract class UIIViewImpl implements IView {
         if (iview == null) {
             return;
         }
-        if (mILayout == null) {
-            throw new IllegalArgumentException("ILayout 还未初始化");
+        if (mParentILayout == null) {
+            throw new IllegalArgumentException("mParentILayout 还未初始化");
         }
-        mILayout.showIView(iview, new UIParam(needAnim).setBundle(bundle));
+        mParentILayout.showIView(iview, new UIParam(needAnim).setBundle(bundle));
     }
 
     public void replaceIView(IView iView, boolean needAnim) {
@@ -672,11 +672,11 @@ public abstract class UIIViewImpl implements IView {
         if (iView == null) {
             return;
         }
-        if (mILayout == null) {
-            throw new IllegalArgumentException("ILayout 还未初始化");
+        if (mParentILayout == null) {
+            throw new IllegalArgumentException("mParentILayout 还未初始化");
         }
         param.setReplaceIView(this);
-        mILayout.replaceIView(iView, param);
+        mParentILayout.replaceIView(iView, param);
     }
 
     public void post(Runnable action) {
