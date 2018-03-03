@@ -184,6 +184,8 @@ public class RefreshLayout extends ViewGroup {
                 mTargetView.measure(MeasureSpec.makeMeasureSpec(widthSize, MeasureSpec.EXACTLY),
                         MeasureSpec.makeMeasureSpec(heightSize, MeasureSpec.EXACTLY));
                 setMeasuredDimension(mTargetView.getMeasuredWidth(), mTargetView.getMeasuredHeight());
+            } else {
+                super.onMeasure(widthMeasureSpec, heightMeasureSpec);
             }
 
         } else {

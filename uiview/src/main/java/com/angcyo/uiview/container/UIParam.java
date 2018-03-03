@@ -2,6 +2,7 @@ package com.angcyo.uiview.container;
 
 import android.os.Bundle;
 
+import com.angcyo.uiview.model.AnimParam;
 import com.angcyo.uiview.view.IView;
 
 /**
@@ -42,7 +43,7 @@ public class UIParam {
     /**
      * 启动一个新的IView 时, 是否隐藏之前顶部的IView
      */
-    public boolean hideLastIView = false;
+    public boolean hideLastIView = true;
     /**
      * 是否需要过渡动画, 在低设备上默认会关闭动画, 可以通过这2个方法, 强行开启动画
      */
@@ -52,6 +53,7 @@ public class UIParam {
      * 点击在标题栏上的返回按钮, 用来控制当只有一个UIView时, 关闭Activity的
      */
     public boolean clickOnTitleBack = false;
+    public AnimParam mAnimParam = new AnimParam();
     /**
      * 需要替换的iview, 只在replaceIView时使用, 用来判断目标的可行性
      */

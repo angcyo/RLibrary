@@ -14,6 +14,8 @@ public class ViewPattern {
     public boolean isAnimToEnd = false;//正在播放退出动画
     public boolean isAnimToStart = false;//正在播放进场动画
 
+    public boolean isIViewHide = false;//界面是否被隐藏了, 调用了 HideIView
+
     public boolean interrupt = false;//在还没有启动完成的时候, 马上调用结束. 需要中断启动操作
 
     public ViewPattern(IView IView) {
@@ -57,6 +59,7 @@ public class ViewPattern {
         builder.append(" isAnimToEnd:").append(isAnimToEnd);
         builder.append("\n");
         builder.append(" interrupt:").append(interrupt);
+        builder.append(" isIViewHide:").append(isIViewHide);
         builder.append("\n");
         return builder.toString();
     }

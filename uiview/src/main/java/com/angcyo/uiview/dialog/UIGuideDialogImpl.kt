@@ -6,6 +6,7 @@ import android.view.View
 import android.view.animation.Animation
 import com.angcyo.uiview.R
 import com.angcyo.uiview.base.UIIDialogImpl
+import com.angcyo.uiview.model.AnimParam
 import com.angcyo.uiview.widget.group.GuideFrameLayout
 
 /**
@@ -63,27 +64,27 @@ open abstract class UIGuideDialogImpl : UIIDialogImpl() {
         interceptTouchEvent(false)
     }
 
-    override fun loadLayoutAnimation(): Animation {
-        return super.loadLayoutAnimation()
+    override fun loadLayoutAnimation(animParam: AnimParam): Animation {
+        return super.loadLayoutAnimation(animParam)
     }
 
     override fun isDimBehind(): Boolean {
         return true
     }
 
-    override fun loadStartAnimation(): Animation? {
+    override fun loadStartAnimation(animParam: AnimParam): Animation? {
         return null
     }
 
-    override fun loadFinishAnimation(): Animation? {
+    override fun loadFinishAnimation(animParam: AnimParam): Animation? {
         return null
     }
 
-    override fun loadOtherEnterAnimation(): Animation? {
+    override fun loadOtherEnterAnimation(animParam: AnimParam): Animation? {
         return null
     }
 
-    override fun loadOtherExitAnimation(): Animation? {
+    override fun loadOtherExitAnimation(animParam: AnimParam): Animation? {
         return null
     }
 

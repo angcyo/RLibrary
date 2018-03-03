@@ -28,11 +28,13 @@ import android.widget.TextView;
 
 import com.angcyo.uiview.R;
 import com.angcyo.uiview.kotlin.ViewExKt;
+import com.angcyo.uiview.model.TitleBarItem;
 import com.angcyo.uiview.model.TitleBarPattern;
 import com.angcyo.uiview.recycler.RBaseViewHolder;
 import com.angcyo.uiview.resources.ResUtil;
 import com.angcyo.uiview.rsen.RGestureDetector;
 import com.angcyo.uiview.skin.SkinHelper;
+import com.angcyo.uiview.widget.ImageTextView2;
 import com.angcyo.uiview.widget.LoadingImageView;
 import com.angcyo.uiview.widget.RTextView;
 import com.angcyo.uiview.widget.RTitleCenterLayout;
@@ -53,7 +55,7 @@ public class UITitleBarContainer extends FrameLayout {
     protected LinearLayout mLeftControlLayout;
     protected ViewGroup mCenterControlLayout;
     protected LinearLayout mRightControlLayout;
-    protected ImageView mBackImageView;
+    protected ImageTextView2 mBackImageView;
     protected RTextView mTitleView;
     protected View mLoadView;
 
@@ -241,6 +243,7 @@ public class UITitleBarContainer extends FrameLayout {
         /*返回按钮*/
         if (mTitleBarPattern.isShowBackImageView) {
             mBackImageView.setVisibility(VISIBLE);
+            mBackImageView.setShowText(mTitleBarPattern.backImageString);
             if (mTitleBarPattern.backImageRes != 0) {
                 mBackImageView.setImageResource(mTitleBarPattern.backImageRes);
             }
@@ -367,7 +370,7 @@ public class UITitleBarContainer extends FrameLayout {
     /**
      * 填充左右控制按钮
      */
-    private void fillViews(LinearLayout layout, ArrayList<TitleBarPattern.TitleBarItem> items, ArrayList<View> views) {
+    private void fillViews(LinearLayout layout, ArrayList<TitleBarItem> items, ArrayList<View> views) {
         if (items == null || items.isEmpty()) {
             return;
         }
@@ -375,11 +378,14 @@ public class UITitleBarContainer extends FrameLayout {
         int itemSize = getResources().getDimensionPixelSize(R.dimen.base_title_bar_item_size);
 
         for (int i = 0; i < items.size(); i++) {
-            final TitleBarPattern.TitleBarItem item = items.get(i);
+            final TitleBarItem item = items.get(i);
             View view;
             if (item.icoDrawable == null) {
                 //不是图片, 就创建文本按钮
                 view = createTextItem(item.text, item.textColor);
+                RTextView textView = (RTextView) view;
+                textView.setLeftIco(item.textLeftRes);
+                textView.setRightIco(item.textRightRes);
                 if (item.textSize != -1) {
                     ((TextView) view).setTextSize(TypedValue.COMPLEX_UNIT_PX, item.textSize);
                 }
@@ -408,7 +414,7 @@ public class UITitleBarContainer extends FrameLayout {
             }
         }
 
-//        for (TitleBarPattern.TitleBarItem item : items) {
+//        for (TitleBarItem item : items) {
 //            View view;
 //            if (item.res == -1) {
 //                //不是图片, 就创建文本按钮
@@ -429,8 +435,8 @@ public class UITitleBarContainer extends FrameLayout {
         return item;
     }
 
-    private TextView createTextItem(String text, @ColorInt int color) {
-        TextView item = new RTextView(getContext());
+    private RTextView createTextItem(String text, @ColorInt int color) {
+        RTextView item = new RTextView(getContext());
         int padding = getResources().getDimensionPixelOffset(R.dimen.base_ldpi);
         item.setPadding(padding, 0, padding, 0);
         item.setText(text);

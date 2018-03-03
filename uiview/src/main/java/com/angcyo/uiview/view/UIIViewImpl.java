@@ -43,6 +43,7 @@ import com.angcyo.uiview.container.ILayout;
 import com.angcyo.uiview.container.UILayoutImpl;
 import com.angcyo.uiview.container.UIParam;
 import com.angcyo.uiview.kotlin.ExKt;
+import com.angcyo.uiview.model.AnimParam;
 import com.angcyo.uiview.model.TitleBarPattern;
 import com.angcyo.uiview.model.ViewPattern;
 import com.angcyo.uiview.recycler.RBaseViewHolder;
@@ -219,7 +220,7 @@ public abstract class UIIViewImpl implements IView {
      * 开始布局动画
      */
     public void startLayoutAnim(View parent) {
-        final Animation layoutAnimation = loadLayoutAnimation();
+        final Animation layoutAnimation = loadLayoutAnimation(new AnimParam());
         if (layoutAnimation != null && parent instanceof ViewGroup) {
             AnimUtil.applyLayoutAnimation(findChildViewGroup((ViewGroup) parent), layoutAnimation);
         }
@@ -417,7 +418,7 @@ public abstract class UIIViewImpl implements IView {
     }
 
     @Override
-    public Animation loadStartAnimation() {
+    public Animation loadStartAnimation(AnimParam animParam) {
         L.v(this.getClass().getSimpleName(), "loadStartAnimation: " + mIViewStatus);
         TranslateAnimation translateAnimation;
         if (mIsRightJumpLeft) {
@@ -432,7 +433,7 @@ public abstract class UIIViewImpl implements IView {
     }
 
     @Override
-    public Animation loadFinishAnimation() {
+    public Animation loadFinishAnimation(AnimParam animParam) {
         L.v(this.getClass().getSimpleName(), "loadFinishAnimation: ");
         TranslateAnimation translateAnimation = new TranslateAnimation(Animation.RELATIVE_TO_SELF, 0, Animation.RELATIVE_TO_SELF, 1f,
                 Animation.RELATIVE_TO_SELF, 0f, Animation.RELATIVE_TO_SELF, 0f);
@@ -441,19 +442,19 @@ public abstract class UIIViewImpl implements IView {
     }
 
     @Override
-    public Animation loadShowAnimation() {
+    public Animation loadShowAnimation(AnimParam animParam) {
         L.v(this.getClass().getSimpleName(), "loadShowAnimation: ");
-        return loadStartAnimation();
+        return loadStartAnimation(animParam);
     }
 
     @Override
-    public Animation loadHideAnimation() {
+    public Animation loadHideAnimation(AnimParam animParam) {
         L.v(this.getClass().getSimpleName(), "loadHideAnimation: ");
-        return loadFinishAnimation();
+        return loadFinishAnimation(animParam);
     }
 
     @Override
-    public Animation loadOtherExitAnimation() {
+    public Animation loadOtherExitAnimation(AnimParam animParam) {
         L.v(this.getClass().getSimpleName(), "loadOtherExitAnimation: ");
         TranslateAnimation translateAnimation;
         if (mIsRightJumpLeft) {
@@ -468,7 +469,7 @@ public abstract class UIIViewImpl implements IView {
     }
 
     @Override
-    public Animation loadOtherEnterAnimation() {
+    public Animation loadOtherEnterAnimation(AnimParam animParam) {
         L.v(this.getClass().getSimpleName(), "loadOtherEnterAnimation: ");
         TranslateAnimation translateAnimation = new TranslateAnimation(Animation.RELATIVE_TO_SELF, -1f, Animation.RELATIVE_TO_SELF, 0,
                 Animation.RELATIVE_TO_SELF, 0f, Animation.RELATIVE_TO_SELF, 0f);
@@ -477,17 +478,17 @@ public abstract class UIIViewImpl implements IView {
     }
 
     @Override
-    public Animation loadOtherHideAnimation() {
-        return loadOtherExitAnimation();
+    public Animation loadOtherHideAnimation(AnimParam animParam) {
+        return loadOtherExitAnimation(animParam);
     }
 
     @Override
-    public Animation loadOtherShowAnimation() {
-        return loadOtherEnterAnimation();
+    public Animation loadOtherShowAnimation(AnimParam animParam) {
+        return loadOtherEnterAnimation(animParam);
     }
 
     @Override
-    public Animation loadLayoutAnimation() {
+    public Animation loadLayoutAnimation(AnimParam animParam) {
         L.v(this.getClass().getSimpleName(), "loadLayoutAnimation: ");
 //        if (mIsRightJumpLeft) {
 //
@@ -659,6 +660,43 @@ public abstract class UIIViewImpl implements IView {
         }
         mParentILayout.showIView(iview, new UIParam(needAnim).setBundle(bundle));
     }
+
+    public void hideIView(final View view) {
+        hideIView(view, true);
+    }
+
+    public void hideIView(final View view, final boolean needAnim) {
+        hideIView(view, needAnim, null);
+    }
+
+    public void hideIView(final View view, final boolean needAnim, final Bundle bundle) {
+        if (view == null) {
+            return;
+        }
+        if (mParentILayout == null) {
+            throw new IllegalArgumentException("mParentILayout 还未初始化");
+        }
+        mParentILayout.hideIView(view, new UIParam(needAnim).setBundle(bundle));
+    }
+
+    public void hideIView(IView iview, boolean needAnim) {
+        hideIView(iview, needAnim, null);
+    }
+
+    public void hideIView(IView iview) {
+        hideIView(iview, true);
+    }
+
+    public void hideIView(IView iview, boolean needAnim, Bundle bundle) {
+        if (iview == null) {
+            return;
+        }
+        if (mParentILayout == null) {
+            throw new IllegalArgumentException("mParentILayout 还未初始化");
+        }
+        mParentILayout.hideIView(iview, new UIParam(needAnim).setBundle(bundle));
+    }
+
 
     public void replaceIView(IView iView, boolean needAnim) {
         replaceIView(iView, new UIParam(needAnim));

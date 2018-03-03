@@ -5,6 +5,7 @@ import android.text.TextUtils
 import android.view.Gravity
 import android.view.View
 import com.angcyo.uiview.R
+import com.angcyo.uiview.model.TitleBarItem
 import com.angcyo.uiview.model.TitleBarPattern
 import com.angcyo.uiview.recycler.RBaseViewHolder
 import com.angcyo.uiview.utils.UI
@@ -39,7 +40,7 @@ abstract class UIInputView : UIItemUIView<SingleItem>() {
 
     override fun getTitleBar(): TitleBarPattern {
         return super.getTitleBar()
-                .addRightItem(TitleBarPattern.TitleBarItem(getRightItemString()) {
+                .addRightItem(TitleBarItem(getRightItemString()) {
                     if (onRightItemClick()) {
                         finishIView {
                             onInputTextResult(editView.string())

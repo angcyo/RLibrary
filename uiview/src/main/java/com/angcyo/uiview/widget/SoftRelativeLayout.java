@@ -50,6 +50,7 @@ public class SoftRelativeLayout extends TouchBackLayout implements ILifecycle {
      * 悬浮标题View, 不悬浮采用上下竖直布局
      */
     private boolean floatingTitleView = true;
+    private boolean isOnAttachedToWindow = false;
 
     public SoftRelativeLayout(Context context) {
         this(context, null);
@@ -84,6 +85,7 @@ public class SoftRelativeLayout extends TouchBackLayout implements ILifecycle {
     @Override
     protected void onAttachedToWindow() {
         super.onAttachedToWindow();
+        isOnAttachedToWindow = true;
         setFitsSystemWindows(mFitSystemWindow);
         setClickable(true);
         setFocusable(true);
@@ -391,7 +393,9 @@ public class SoftRelativeLayout extends TouchBackLayout implements ILifecycle {
 
     @Override
     public void draw(Canvas canvas) {
-        mClipHelper.draw(canvas);
+        if (mClipHelper != null) {
+            mClipHelper.draw(canvas);
+        }
         super.draw(canvas);
     }
 
@@ -434,12 +438,12 @@ public class SoftRelativeLayout extends TouchBackLayout implements ILifecycle {
     @Override
     protected void onDetachedFromWindow() {
         super.onDetachedFromWindow();
+        isOnAttachedToWindow = false;
         if (mOnWindowInsetsListeners != null) {
             mOnWindowInsetsListeners.clear();
             mOnWindowInsetsListeners = null;
         }
         mOnInterceptTouchListener = null;
-        mClipHelper = null;
     }
 
     public interface OnInterceptTouchListener {

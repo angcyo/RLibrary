@@ -69,6 +69,10 @@ public interface ILayout<T extends UIParam> {
      */
     void hideIView(View view, boolean needAnim);
 
+    void hideIView(View view, UIParam param);
+
+    void hideIView(IView iView, UIParam param);
+
     void hideIView(View view);
 
     /**
@@ -132,4 +136,7 @@ public interface ILayout<T extends UIParam> {
     void onLastViewHide();//星期二 2017-5-23
 
     void setChildILayout(ILayout iLayout);//星期二 2017-5-23
+
+    ViewPattern findViewPatternByClass(Class<?> clz);//2018-03-03
+
 }

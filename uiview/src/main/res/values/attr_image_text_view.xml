@@ -10,4 +10,12 @@
         <!--图片大小(正方形)-->
         <attr name="r_image_size" format="dimension"/>
     </declare-styleable>
+
+    <declare-styleable name="ImageTextView2">
+        <!--需要显示的文本-->
+        <attr name="r_show_text"/>
+        <attr name="r_show_text_color"/>
+        <attr name="r_show_text_size"/>
+        <attr name="r_text_offset"/>
+    </declare-styleable>
 </resources>

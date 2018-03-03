@@ -36,6 +36,7 @@ import com.angcyo.uiview.base.UIBaseView;
 import com.angcyo.uiview.base.UILayoutActivity;
 import com.angcyo.uiview.kotlin.ViewExKt;
 import com.angcyo.uiview.kotlin.ViewGroupExKt;
+import com.angcyo.uiview.model.AnimParam;
 import com.angcyo.uiview.model.ViewPattern;
 import com.angcyo.uiview.resources.AnimUtil;
 import com.angcyo.uiview.rsen.RGestureDetector;
@@ -1041,11 +1042,11 @@ public class UILayoutImpl_old extends SwipeBackLayout implements ILayout<UIParam
 
         isStarting = true;
         if (mLastShowViewPattern.mIView.isDialog()) {
-            startDialogAnim(mLastShowViewPattern, param.mAnim ? mLastShowViewPattern.mIView.loadShowAnimation() : null, endRunnable);
+            startDialogAnim(mLastShowViewPattern, param.mAnim ? mLastShowViewPattern.mIView.loadShowAnimation(param.mAnimParam) : null, endRunnable);
         } else {
             if (lastShowViewPattern != null) {
                 safeStartAnim(lastShowViewPattern.mView, needAnim(param, false) ?
-                        mLastShowViewPattern.mIView.loadOtherHideAnimation() : null, new Runnable() {
+                        mLastShowViewPattern.mIView.loadOtherHideAnimation(param.mAnimParam) : null, new Runnable() {
                     @Override
                     public void run() {
                         viewHide(lastShowViewPattern);
@@ -1055,7 +1056,7 @@ public class UILayoutImpl_old extends SwipeBackLayout implements ILayout<UIParam
             safeStartAnim(mLastShowViewPattern.mView, (param.needTransitionStartAnim ||
                     mLastShowViewPattern.mIView.needTransitionStartAnim() ||
                     needAnim(param, false)) ?
-                    mLastShowViewPattern.mIView.loadShowAnimation() : null, endRunnable);
+                    mLastShowViewPattern.mIView.loadShowAnimation(param.mAnimParam) : null, endRunnable);
         }
     }
 
@@ -1082,13 +1083,23 @@ public class UILayoutImpl_old extends SwipeBackLayout implements ILayout<UIParam
                     }
                 };
                 if (viewPattern.mIView.isDialog()) {
-                    finishDialogAnim(viewPattern, needAnim ? viewPattern.mIView.loadHideAnimation() : null, endRunnable);
+                    finishDialogAnim(viewPattern, needAnim ? viewPattern.mIView.loadHideAnimation(new AnimParam()) : null, endRunnable);
                 } else {
                     //隐藏的时候, 会错乱!!! 找不到之前显示的View, 慎用隐藏...
-                    safeStartAnim(view, needAnim ? viewPattern.mIView.loadHideAnimation() : null, endRunnable);
+                    safeStartAnim(view, needAnim ? viewPattern.mIView.loadHideAnimation(new AnimParam()) : null, endRunnable);
                 }
             }
         });
+    }
+
+    @Override
+    public void hideIView(View view, UIParam param) {
+
+    }
+
+    @Override
+    public void hideIView(IView iView, UIParam param) {
+
     }
 
     @Override
@@ -1385,7 +1396,7 @@ public class UILayoutImpl_old extends SwipeBackLayout implements ILayout<UIParam
 
     private void topViewStart(final ViewPattern topViewPattern, final UIParam param) {
 
-        final Animation animation = topViewPattern.mIView.loadStartAnimation();
+        final Animation animation = topViewPattern.mIView.loadStartAnimation(param.mAnimParam);
         if (animation != null) {
             animation.setFillAfter(false);
         }
@@ -1433,7 +1444,7 @@ public class UILayoutImpl_old extends SwipeBackLayout implements ILayout<UIParam
      * 顶上视图退出的动画
      */
     private void topViewFinish(final ViewPattern bottomViewPattern, final ViewPattern topViewPattern, final UIParam param) {
-        final Animation animation = topViewPattern.mIView.loadFinishAnimation();
+        final Animation animation = topViewPattern.mIView.loadFinishAnimation(param.mAnimParam);
         if (animation != null) {
             animation.setFillAfter(true);//2017-9-1
         }
@@ -1547,7 +1558,7 @@ public class UILayoutImpl_old extends SwipeBackLayout implements ILayout<UIParam
             if (RApplication.isLowDevice || !anim || quiet) {
                 endRunnable.run();
             } else {
-                final Animation animation = topViewPattern.mIView.loadOtherEnterAnimation();
+                final Animation animation = topViewPattern.mIView.loadOtherEnterAnimation(new AnimParam());
                 if (animation != null) {
                     animation.setFillAfter(false);
                 }
@@ -1595,7 +1606,7 @@ public class UILayoutImpl_old extends SwipeBackLayout implements ILayout<UIParam
             bottomViewPattern.mIView.onViewHideFromDialog();
         } else {
             if (!RApplication.isLowDevice || param.mAnim) {
-                final Animation animation = topViewPattern.mIView.loadOtherExitAnimation();
+                final Animation animation = topViewPattern.mIView.loadOtherExitAnimation(param.mAnimParam);
                 if (animation != null) {
                     animation.setFillAfter(false);
                 }
@@ -1713,7 +1724,7 @@ public class UILayoutImpl_old extends SwipeBackLayout implements ILayout<UIParam
                 //伴随, 需要产生的动画
                 if (isStart) {
                     //上层的View退出, 下层的View进入的动画
-                    final Animation animation = newViewPattern.mIView.loadOtherEnterAnimation();
+                    final Animation animation = newViewPattern.mIView.loadOtherEnterAnimation(new AnimParam());
 
                     safeStartAnim(lastViewPattern.mView, animation, new Runnable() {
                         @Override
@@ -1727,7 +1738,7 @@ public class UILayoutImpl_old extends SwipeBackLayout implements ILayout<UIParam
                     });
                 } else if (lastViewPattern != null) {
                     //上层的View进入, 下层的View退出的动画
-                    final Animation animation = newViewPattern.mIView.loadOtherExitAnimation();
+                    final Animation animation = newViewPattern.mIView.loadOtherExitAnimation(new AnimParam());
                     safeStartAnim(lastViewPattern.mView, animation, new Runnable() {
                         @Override
                         public void run() {
@@ -1744,7 +1755,7 @@ public class UILayoutImpl_old extends SwipeBackLayout implements ILayout<UIParam
             if (newViewPattern.mIView.isDialog()) {
                 if (isStart) {
                     //对话框的启动动画,作用在第一个子View上
-                    startDialogAnim(newViewPattern, newViewPattern.mIView.loadStartAnimation(), new Runnable() {
+                    startDialogAnim(newViewPattern, newViewPattern.mIView.loadStartAnimation(new AnimParam()), new Runnable() {
                         @Override
                         public void run() {
                             newViewPattern.mIView.onViewShow(null);
@@ -1752,7 +1763,7 @@ public class UILayoutImpl_old extends SwipeBackLayout implements ILayout<UIParam
                     });
                 } else {
                     //finish View的动画
-                    finishDialogAnim(newViewPattern, newViewPattern.mIView.loadFinishAnimation(), new Runnable() {
+                    finishDialogAnim(newViewPattern, newViewPattern.mIView.loadFinishAnimation(new AnimParam()), new Runnable() {
                         @Override
                         public void run() {
                             removeViewPattern(newViewPattern, null, null);
@@ -1763,7 +1774,7 @@ public class UILayoutImpl_old extends SwipeBackLayout implements ILayout<UIParam
                 //自己的动画
                 if (isStart) {
                     //启动View的动画
-                    final Animation animation = newViewPattern.mIView.loadStartAnimation();
+                    final Animation animation = newViewPattern.mIView.loadStartAnimation(new AnimParam());
                     safeStartAnim(newViewPattern.mView, animation, new Runnable() {
                         @Override
                         public void run() {
@@ -1772,7 +1783,7 @@ public class UILayoutImpl_old extends SwipeBackLayout implements ILayout<UIParam
                     });
                 } else {
                     //finish View的动画
-                    final Animation animation = newViewPattern.mIView.loadFinishAnimation();
+                    final Animation animation = newViewPattern.mIView.loadFinishAnimation(new AnimParam());
                     safeStartAnim(newViewPattern.mView, animation, new Runnable() {
                         @Override
                         public void run() {

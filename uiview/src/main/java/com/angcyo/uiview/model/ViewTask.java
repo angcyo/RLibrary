@@ -21,6 +21,7 @@ public class ViewTask {
     public static final int TASK_TYPE_FINISH = TASK_TYPE_START << 1;//关闭
     public static final int TASK_TYPE_SHOW = TASK_TYPE_FINISH << 1;//显示
     public static final int TASK_TYPE_HIDE = TASK_TYPE_SHOW << 1;//隐藏
+    public static final int TASK_TYPE_REPLACE = TASK_TYPE_HIDE << 1;//替换
 
     public int taskType = 0;//启动的任务类型
 
@@ -45,5 +46,16 @@ public class ViewTask {
             return false;
         }
         return iView == ((ViewTask) obj).iView;
+    }
+
+    @Override
+    public String toString() {
+        StringBuilder builder = new StringBuilder();
+        builder.append("\n");
+        builder.append(" taskType:").append(taskType);
+        builder.append("\n");
+        builder.append(" iView:").append(iView);
+        builder.append("\n");
+        return builder.toString();
     }
 }

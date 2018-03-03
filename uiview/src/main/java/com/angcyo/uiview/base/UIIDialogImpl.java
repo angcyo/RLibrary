@@ -16,6 +16,7 @@ import android.widget.FrameLayout;
 import com.angcyo.uiview.container.ILayout;
 import com.angcyo.uiview.container.UILayoutImpl;
 import com.angcyo.uiview.container.UIParam;
+import com.angcyo.uiview.model.AnimParam;
 import com.angcyo.uiview.recycler.RBaseViewHolder;
 import com.angcyo.uiview.view.UIIViewImpl;
 import com.angcyo.uiview.widget.SoftRelativeLayout;
@@ -254,7 +255,7 @@ public abstract class UIIDialogImpl extends UIIViewImpl {
      * 对话框启动时的动画
      */
     @Override
-    public Animation loadStartAnimation() {
+    public Animation loadStartAnimation(AnimParam animParam) {
         TranslateAnimation translateAnimation = new TranslateAnimation(Animation.RELATIVE_TO_SELF, 0f, Animation.RELATIVE_TO_SELF, 0,
                 Animation.RELATIVE_TO_SELF, 1f, Animation.RELATIVE_TO_SELF, 0f);
         AlphaAnimation alphaAnimation = new AlphaAnimation(0, 1);
@@ -271,7 +272,7 @@ public abstract class UIIDialogImpl extends UIIViewImpl {
      * 对话框结束时的动画
      */
     @Override
-    public Animation loadFinishAnimation() {
+    public Animation loadFinishAnimation(AnimParam animParam) {
         TranslateAnimation translateAnimation = new TranslateAnimation(Animation.RELATIVE_TO_SELF, 0, Animation.RELATIVE_TO_SELF, 0f,
                 Animation.RELATIVE_TO_SELF, 0f, Animation.RELATIVE_TO_SELF, 1f);
         AlphaAnimation alphaAnimation = new AlphaAnimation(1, 0);
@@ -291,7 +292,7 @@ public abstract class UIIDialogImpl extends UIIViewImpl {
      * 对话框的布局动画
      */
     @Override
-    public Animation loadLayoutAnimation() {
+    public Animation loadLayoutAnimation(AnimParam animParam) {
         if (layoutAnim) {
             if (layoutAnimation == null) {
                 TranslateAnimation translateAnimation = new TranslateAnimation(

@@ -12,6 +12,7 @@ import com.angcyo.uiview.base.UIBaseView;
 import com.angcyo.uiview.base.UILayoutActivity;
 import com.angcyo.uiview.container.ILayout;
 import com.angcyo.uiview.container.UIParam;
+import com.angcyo.uiview.model.AnimParam;
 import com.angcyo.uiview.model.TitleBarPattern;
 import com.angcyo.uiview.model.ViewPattern;
 import com.angcyo.uiview.skin.ISkin;
@@ -103,41 +104,41 @@ public interface IView {
     /**
      * 开始动画
      */
-    Animation loadStartAnimation();
+    Animation loadStartAnimation(AnimParam animParam);
 
     /**
      * 结束动画
      */
-    Animation loadFinishAnimation();
+    Animation loadFinishAnimation(AnimParam animParam);
 
     /**
      * 显示动画
      */
-    Animation loadShowAnimation();
+    Animation loadShowAnimation(AnimParam animParam);
 
     /**
      * 结隐藏动画
      */
-    Animation loadHideAnimation();
+    Animation loadHideAnimation(AnimParam animParam);
 
     /**
      * 其他View开始开始, 退出的动画
      */
-    Animation loadOtherExitAnimation();
+    Animation loadOtherExitAnimation(AnimParam animParam);
 
     /**
      * 其他View结束, 进入的动画
      */
-    Animation loadOtherEnterAnimation();
+    Animation loadOtherEnterAnimation(AnimParam animParam);
 
-    Animation loadOtherHideAnimation();
+    Animation loadOtherHideAnimation(AnimParam animParam);
 
-    Animation loadOtherShowAnimation();
+    Animation loadOtherShowAnimation(AnimParam animParam);
 
     /**
      * 布局动画
      */
-    Animation loadLayoutAnimation();
+    Animation loadLayoutAnimation(AnimParam animParam);
 
     /**
      * 是否是对话框, 对话框显示在对话框层

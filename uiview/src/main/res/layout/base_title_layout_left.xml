@@ -18,7 +18,7 @@
         android:gravity="start|center_vertical"
         android:orientation="horizontal">
 
-        <ImageView
+        <com.angcyo.uiview.widget.ImageTextView2
             android:id="@+id/base_back_image_view"
             android:layout_width="@dimen/base_title_bar_item_size"
             android:layout_height="match_parent"

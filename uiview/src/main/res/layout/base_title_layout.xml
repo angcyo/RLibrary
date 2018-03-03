@@ -1,12 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
 <FrameLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tool="http://schemas.android.com/apk/res-auto"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/base_title_bar_layout"
     android:layout_width="match_parent"
     android:layout_height="@dimen/action_bar_height"
-    tool:background="@android:color/holo_blue_dark">
+    tools:background="@android:color/holo_blue_dark">
 
     <!--左边控制区-->
     <LinearLayout
@@ -15,9 +15,10 @@
         android:layout_height="match_parent"
         android:layout_gravity="start"
         android:gravity="start|center_vertical"
-        android:orientation="horizontal">
+        android:orientation="horizontal"
+        tools:background="@color/transparent_dark20">
 
-        <ImageView
+        <com.angcyo.uiview.widget.ImageTextView2
             android:id="@+id/base_back_image_view"
             android:layout_width="@dimen/base_title_bar_item_size"
             android:layout_height="match_parent"
@@ -25,7 +26,9 @@
             android:clickable="true"
             android:scaleType="center"
             android:src="@drawable/base_back"
-            android:visibility="gone"/>
+            android:visibility="gone"
+            app:r_show_text="返回"
+            tools:visibility="visible"/>
 
     </LinearLayout>
 
@@ -36,7 +39,8 @@
         android:layout_height="match_parent"
         android:layout_centerHorizontal="true"
         android:layout_gravity="center"
-        tools:background="@android:color/holo_red_dark">
+        tools:background="@android:color/holo_red_dark"
+        tools:visibility="gone">
 
         <!--<LinearLayout-->
         <!--android:layout_width="wrap_content"-->
@@ -49,8 +53,8 @@
             android:id="@+id/base_load_view"
             android:layout_width="@dimen/base_load_view_size"
             android:layout_height="@dimen/base_load_view_size"
-            android:visibility="gone"
             android:tag="loading_view"
+            android:visibility="gone"
             tools:visibility="visible"/>
 
         <com.angcyo.uiview.widget.RTextView

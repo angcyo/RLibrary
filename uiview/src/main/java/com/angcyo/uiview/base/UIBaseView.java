@@ -31,6 +31,7 @@ import com.angcyo.uiview.container.ContentLayout;
 import com.angcyo.uiview.container.UILayoutImpl;
 import com.angcyo.uiview.container.UIParam;
 import com.angcyo.uiview.container.UITitleBarContainer;
+import com.angcyo.uiview.model.AnimParam;
 import com.angcyo.uiview.model.TitleBarPattern;
 import com.angcyo.uiview.resources.ResUtil;
 import com.angcyo.uiview.skin.ISkin;
@@ -750,46 +751,58 @@ public abstract class UIBaseView extends UIIViewImpl {
     }
 
     @Override
-    public Animation loadStartAnimation() {
+    public Animation loadStartAnimation(AnimParam animParam) {
+        if (animParam.needBaseAnim) {
+            return super.loadStartAnimation(animParam);
+        }
         if (mEnableClip && enableEnterClip()) {
             //为了不影响之前的动画逻辑, 这里使用一个效果不明显的动画
             Animation animation = createClipEnterAnim(0.8f);
             animation.setDuration(initClipTime());
             return animation;
         }
-        return super.loadStartAnimation();
+        return super.loadStartAnimation(animParam);
     }
 
     @Override
-    public Animation loadFinishAnimation() {
+    public Animation loadFinishAnimation(AnimParam animParam) {
+        if (animParam.needBaseAnim) {
+            return super.loadFinishAnimation(animParam);
+        }
         if (mEnableClip && enableExitClip()) {
             //为了不影响之前的动画逻辑, 这里使用一个效果不明显的动画
             Animation animation = createClipExitAnim(0.6f);
             animation.setDuration(initClipTime());
             return animation;
         }
-        return super.loadFinishAnimation();
+        return super.loadFinishAnimation(animParam);
     }
 
     @Override
-    public Animation loadOtherExitAnimation() {
+    public Animation loadOtherExitAnimation(AnimParam animParam) {
+        if (animParam.needBaseAnim) {
+            return super.loadOtherExitAnimation(animParam);
+        }
         if (mEnableClip && enableEnterClip()) {
             Animation animation = createClipExitAnim(1f);
             animation.setDuration(initClipTime());
             return animation;
         }
-        return super.loadOtherExitAnimation();
+        return super.loadOtherExitAnimation(animParam);
     }
 
     @Override
-    public Animation loadOtherEnterAnimation() {
+    public Animation loadOtherEnterAnimation(AnimParam animParam) {
+        if (animParam.needBaseAnim) {
+            return super.loadOtherEnterAnimation(animParam);
+        }
         if (mEnableClip && enableExitClip()) {
             //为了不影响之前的动画逻辑, 这里使用一个效果不明显的动画
             Animation animation = createClipEnterAnim(1f);
             animation.setDuration(initClipTime());
             return animation;
         }
-        return super.loadOtherEnterAnimation();
+        return super.loadOtherEnterAnimation(animParam);
     }
 
     private boolean enableEnterClip() {
