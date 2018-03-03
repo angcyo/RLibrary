@@ -638,90 +638,91 @@ public class UILayoutImpl extends SwipeBackLayout implements ILayout<UIParam>, U
 
         iView.onAttachedToILayout(this);
 
+        final ViewPattern topViewPattern = getLastViewPattern();
         if (param.isReplaceIViewEmpty()) {
-            nextTask();
-        } else {
-            final ViewPattern fromViewPattern = findViewPatternByIView(param.replaceIView);
-            final ViewPattern topViewPattern = getLastViewPattern();
-            final ViewPattern targetViewPattern = findViewPatternByClass(iView.getClass());
+            if (topViewPattern != null) {
+                param.setReplaceIView(topViewPattern.mIView);
+            }
+        }
+        final ViewPattern fromViewPattern = findViewPatternByIView(param.replaceIView);
+        final ViewPattern targetViewPattern = findViewPatternByClass(iView.getClass());
 
-            L.i(name(param.replaceIView +
-                            " 请求替换 " + name(iView)
+        L.i(name(param.replaceIView +
+                        " 请求替换 " + name(iView)
                     /*" LastIs:" + name(mLastShowViewPattern.mIView)*/));
 
-            final Runnable removeTargetViewPattern = new Runnable() {
-                @Override
-                public void run() {
-                    isBottomAnimationEnd = true;
-                    viewHide(fromViewPattern);
-                    removeViewPattern(fromViewPattern, param, new Runnable() {
-                        @Override
-                        public void run() {
-                            param.clear();
-                            checkTaskOnIViewAnimationEnd();
-                        }
-                    });
-                }
-            };
-
-            final Runnable newViewPatternRunnable = new Runnable() {
-                @Override
-                public void run() {
-                    ViewPattern newViewPattern;
-                    newViewPattern = startIViewInternal(iView, param);
-                    if (newViewPattern != null) {
-                        newViewPattern.mIView.onViewLoad();
-
-                        isBottomAnimationEnd = false;
-                        bottomViewRemove(fromViewPattern, newViewPattern, removeTargetViewPattern, true, param);
-
-                        topViewStart(newViewPattern, param);
-                    } else {
-                        nextTask();
+        final Runnable removeTargetViewPattern = new Runnable() {
+            @Override
+            public void run() {
+                isBottomAnimationEnd = true;
+                viewHide(fromViewPattern);
+                removeViewPattern(fromViewPattern, param, new Runnable() {
+                    @Override
+                    public void run() {
+                        param.clear();
+                        checkTaskOnIViewAnimationEnd();
                     }
-                }
-            };
-
-            final Runnable runnable = new Runnable() {
-                @Override
-                public void run() {
-                    ViewPattern newViewPattern;
-
-                    if (param.start_mode == UIParam.SINGLE_TOP) {
-                        param.mAnimParam.needBaseAnim = true;
-                        if (targetViewPattern == null) {
-                            //替换成一个新的IView
-
-                            newViewPatternRunnable.run();
-                        } else {
-                            newViewPattern = targetViewPattern;
-                            //替换成已经存在的IVew
-
-                            if (newViewPattern == topViewPattern) {
-                                topViewPattern.mIView.onViewReShow(param.getBundle());
-
-                                checkTaskOnIViewAnimationEnd();
-                            } else {
-                                mAttachViews.remove(newViewPattern);
-                                mAttachViews.push(newViewPattern);
-
-                                isBottomAnimationEnd = false;
-                                bottomViewRemove(fromViewPattern, newViewPattern, removeTargetViewPattern, true, param);
-
-                                topViewStart(newViewPattern, param);
-                            }
-                        }
-                    } else {
-                        newViewPatternRunnable.run();
-                    }
-                }
-            };
-
-            if (param.mAsync) {
-                post(runnable);
-            } else {
-                runnable.run();
+                });
             }
+        };
+
+        final Runnable newViewPatternRunnable = new Runnable() {
+            @Override
+            public void run() {
+                ViewPattern newViewPattern;
+                newViewPattern = startIViewInternal(iView, param);
+                if (newViewPattern != null) {
+                    newViewPattern.mIView.onViewLoad();
+
+                    isBottomAnimationEnd = false;
+                    bottomViewRemove(fromViewPattern, newViewPattern, removeTargetViewPattern, true, param);
+
+                    topViewStart(newViewPattern, param);
+                } else {
+                    nextTask();
+                }
+            }
+        };
+
+        final Runnable runnable = new Runnable() {
+            @Override
+            public void run() {
+                ViewPattern newViewPattern;
+
+                if (param.start_mode == UIParam.SINGLE_TOP) {
+                    param.mAnimParam.needBaseAnim = true;
+                    if (targetViewPattern == null) {
+                        //替换成一个新的IView
+
+                        newViewPatternRunnable.run();
+                    } else {
+                        newViewPattern = targetViewPattern;
+                        //替换成已经存在的IVew
+
+                        if (newViewPattern == topViewPattern) {
+                            topViewPattern.mIView.onViewReShow(param.getBundle());
+
+                            checkTaskOnIViewAnimationEnd();
+                        } else {
+                            mAttachViews.remove(newViewPattern);
+                            mAttachViews.push(newViewPattern);
+
+                            isBottomAnimationEnd = false;
+                            bottomViewRemove(fromViewPattern, newViewPattern, removeTargetViewPattern, true, param);
+
+                            topViewStart(newViewPattern, param);
+                        }
+                    }
+                } else {
+                    newViewPatternRunnable.run();
+                }
+            }
+        };
+
+        if (param.mAsync) {
+            post(runnable);
+        } else {
+            runnable.run();
         }
     }
 

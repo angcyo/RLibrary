@@ -163,7 +163,7 @@ public class Button extends RTextView {
         super.onMeasure(widthMeasureSpec, heightMeasureSpec);
         int heightMode = MeasureSpec.getMode(heightMeasureSpec);
         if ((heightMode == MeasureSpec.AT_MOST || heightMode == MeasureSpec.UNSPECIFIED) &&
-                getPaddingTop() == 0 && getPaddingBottom() == 0) {
+                getPaddingTop() == 0 && getPaddingBottom() == 0 && !aeqWidth) {
             setMeasuredDimension(getMeasuredWidth(), getResources().getDimensionPixelOffset(R.dimen.base_title_bar_item_size));
         }
     }

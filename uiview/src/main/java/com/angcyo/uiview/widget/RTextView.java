@@ -112,7 +112,7 @@ public class RTextView extends AppCompatTextView {
     /**
      * 宽高是否相等, 取其中最大值计算
      */
-    private boolean aeqWidth = false;
+    protected boolean aeqWidth = false;
     private boolean hideWithEmptyText = false;
     /**
      * 是否显示tip文本 (目前只支持右上角显示)
