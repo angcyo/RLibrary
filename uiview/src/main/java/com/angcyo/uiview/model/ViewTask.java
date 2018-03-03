@@ -31,6 +31,9 @@ public class ViewTask {
     public String uuid = "";
     public long createTime;
 
+//    public boolean isTopAnimationEnd = true;
+//    public boolean isBottomAnimationEnd = true;
+
     public ViewTask(int taskType, IView iView, UIParam param) {
         this.taskType = taskType;
         this.iView = iView;
@@ -52,7 +55,26 @@ public class ViewTask {
     public String toString() {
         StringBuilder builder = new StringBuilder();
         builder.append("\n");
-        builder.append(" taskType:").append(taskType);
+        String type = "";
+        switch (taskType) {
+            case TASK_TYPE_FINISH:
+                type = "FINISH";
+                break;
+            case TASK_TYPE_SHOW:
+                type = "SHOW";
+                break;
+            case TASK_TYPE_HIDE:
+                type = "HIDE";
+                break;
+            case TASK_TYPE_START:
+                type = "START";
+                break;
+            case TASK_TYPE_REPLACE:
+                type = "REPLACE";
+                break;
+        }
+
+        builder.append(" taskType:").append(type);
         builder.append("\n");
         builder.append(" iView:").append(iView);
         builder.append("\n");
