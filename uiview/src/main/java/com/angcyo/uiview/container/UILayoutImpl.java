@@ -1250,7 +1250,7 @@ public class UILayoutImpl extends SwipeBackLayout implements ILayout<UIParam>, U
             return true;
         }
 
-        ViewPattern lastViewPattern = findLastLifecycleViewPattern(null);
+        ViewPattern lastViewPattern = getLastViewPattern();
         if (iViewChildCount == 1) {
             if (lastViewPattern == null) {
                 return true;
