@@ -211,16 +211,31 @@ public abstract class UIRecyclerUIView<H, T, F> extends UIContentView
     }
 
     public void onBaseLoadMore() {
-        page++;
-        onUILoadData(page);
+        onBaseLoadMore("");
     }
 
     public void onBaseLoadData() {
-        page = 1;
-        onUILoadData(page);
+        onBaseLoadData("");
     }
 
+    public void onBaseLoadMore(String extend) {
+        page++;
+        onUILoadData(page);
+        onUILoadData(page, extend);
+    }
+
+    public void onBaseLoadData(String extend) {
+        page = 1;
+        onUILoadData(page);
+        onUILoadData(page, extend);
+    }
+
+    @Deprecated
     public void onUILoadData(int page) {
+        showLoadView();
+    }
+
+    public void onUILoadData(int page, String extend) {
         showLoadView();
     }
 
