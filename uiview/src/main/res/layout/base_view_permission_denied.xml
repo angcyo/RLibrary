@@ -25,19 +25,19 @@
             android:text="程序需要以下权限, 请手动开启:"
             android:textStyle="bold"/>
 
-        <ScrollView
+        <!--<ScrollView-->
+        <!--android:layout_width="match_parent"-->
+        <!--android:layout_height="wrap_content">-->
+
+        <com.angcyo.uiview.widget.RTextView
+            android:id="@+id/base_text_view"
+            style="@style/BaseMainTextStyle"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content">
+            android:layout_height="wrap_content"
+            android:gravity="start"
+            tools:text="测试文本"/>
 
-            <com.angcyo.uiview.widget.RTextView
-                android:id="@+id/base_text_view"
-                style="@style/BaseMainTextStyle"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:gravity="start"
-                tools:text="测试文本"/>
-
-        </ScrollView>
+        <!--</ScrollView>-->
 
         <com.angcyo.uiview.widget.Button
             android:id="@+id/base_button_view"
