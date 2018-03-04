@@ -60,6 +60,7 @@ import com.angcyo.uiview.RApplication;
 import com.angcyo.uiview.RCrashHandler;
 import com.angcyo.uiview.Root;
 import com.angcyo.uiview.accessibility.permission.SettingsCompat;
+import com.angcyo.uiview.net.rsa.Base64Utils;
 import com.angcyo.uiview.widget.ExEditText;
 import com.angcyo.uiview.widget.RExTextView;
 
@@ -2233,6 +2234,29 @@ public class RUtils {
         } else {
             return false;
         }
+    }
+
+    /**
+     * 使用Base64加密字符串
+     */
+    public static String encode(String value) {
+        String result = "";
+        try {
+            result = Base64Utils.encode(value.getBytes()).replace("\n", "");
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return result;
+    }
+
+    public static String decode(String value) {
+        String result = "";
+        try {
+            result = new String(Base64Utils.decode(value), "utf8");
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return result;
     }
 
     public enum ImageType {
