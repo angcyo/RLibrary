@@ -18,11 +18,13 @@ import java.util.List;
 
 import okhttp3.ResponseBody;
 import rx.Observable;
+import rx.Observer;
 import rx.Scheduler;
 import rx.Subscription;
 import rx.android.schedulers.AndroidSchedulers;
 import rx.functions.Func1;
 import rx.functions.Func2;
+import rx.observables.SyncOnSubscribe;
 import rx.schedulers.Schedulers;
 
 /**
@@ -617,5 +619,25 @@ public class Rx<Rx> extends Observable<Rx> {
                         .observeOn(AndroidSchedulers.mainThread());
             }
         };
+    }
+
+    public static <T> Observable<T> create(final Func<T> doFunc) {
+        return create(new SyncOnSubscribe<String, T>() {
+            @Override
+            protected String generateState() {
+                return "can do";
+            }
+
+            @Override
+            protected String next(String state, Observer<? super T> observer) {
+                //L.e("next-----() -> " + state);
+                if (TextUtils.isEmpty(state)) {
+                    observer.onCompleted();
+                } else {
+                    observer.onNext(doFunc.call(observer));
+                }
+                return "";
+            }
+        }).compose(com.angcyo.uiview.net.Rx.<T>transformer());
     }
 }

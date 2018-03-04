@@ -6,7 +6,11 @@ import android.content.Context;
 import android.content.res.TypedArray;
 import android.graphics.Canvas;
 import android.graphics.Color;
+import android.graphics.LinearGradient;
 import android.graphics.Paint;
+import android.graphics.Rect;
+import android.graphics.Region;
+import android.graphics.Shader;
 import android.graphics.drawable.ColorDrawable;
 import android.graphics.drawable.Drawable;
 import android.support.annotation.ColorInt;
@@ -33,6 +37,7 @@ import com.angcyo.uiview.model.TitleBarPattern;
 import com.angcyo.uiview.recycler.RBaseViewHolder;
 import com.angcyo.uiview.resources.ResUtil;
 import com.angcyo.uiview.rsen.RGestureDetector;
+import com.angcyo.uiview.skin.ISkin;
 import com.angcyo.uiview.skin.SkinHelper;
 import com.angcyo.uiview.widget.ImageTextView2;
 import com.angcyo.uiview.widget.LoadingImageView;
@@ -73,6 +78,11 @@ public class UITitleBarContainer extends FrameLayout {
      * 显示底部的横线
      */
     private boolean showBottomLine = false;
+    /**
+     * 显示底部阴影
+     */
+    private boolean showBottomShadow = false;
+    private Rect shadowRect = new Rect();
     /**
      * 底部横线的高度, 1px
      */
@@ -214,6 +224,10 @@ public class UITitleBarContainer extends FrameLayout {
      */
     public void setOnBackListener(OnClickListener onBackListener) {
         mOnBackListener = onBackListener;
+    }
+
+    public void onSkinChanged(ISkin skin) {
+
     }
 
     private void loadTitleBar() {
@@ -597,6 +611,13 @@ public class UITitleBarContainer extends FrameLayout {
     }
 
     @Override
+    protected void onSizeChanged(int w, int h, int oldw, int oldh) {
+        super.onSizeChanged(w, h, oldw, oldh);
+//        shadowDrawable = ResUtil.createGradientDrawable(Color.TRANSPARENT, Color.parseColor("#40000000"), 0);
+//        shadowDrawable.setBounds(0, 0, w, h);
+    }
+
+    @Override
     public void draw(Canvas canvas) {
         if (mBackgroundDrawable != null) {
             mBackgroundDrawable.setBounds(canvas.getClipBounds());
@@ -606,12 +627,36 @@ public class UITitleBarContainer extends FrameLayout {
         if (showBottomLine) {
             mPaint.setStrokeWidth(bottomLineHeight);
             mPaint.setColor(bottomLineColor);
+            mPaint.setShader(null);
             canvas.drawLine(0, getMeasuredHeight(), getMeasuredWidth(), getMeasuredHeight(), mPaint);
         }
+        if (showBottomShadow) {
+            canvas.save();
+            canvas.getClipBounds(shadowRect);
+            float shadowHeight = 10 * ViewExKt.getDensity(this);
+            shadowRect.top = shadowRect.bottom;
+            shadowRect.bottom += shadowHeight;
+            canvas.clipRect(shadowRect, Region.Op.REPLACE);
+//            canvas.drawColor(Color.RED);
+//            mPaint.setColor(Color.WHITE);
+            mPaint.setShader(new LinearGradient(0, shadowRect.bottom, 0, shadowRect.bottom - shadowHeight,
+                    new int[]{Color.TRANSPARENT, Color.parseColor("#40000000")}, null, Shader.TileMode.CLAMP));
+            canvas.drawRect(shadowRect, mPaint);
+            canvas.restore();
+        }
+    }
+
+    @Override
+    protected void onDraw(Canvas canvas) {
+        super.onDraw(canvas);
     }
 
     public void setShowBottomLine(boolean showBottomLine) {
         this.showBottomLine = showBottomLine;
+    }
+
+    public void setShowBottomShadow(boolean showBottomShadow) {
+        this.showBottomShadow = showBottomShadow;
     }
 
     public void setBottomLineHeight(int bottomLineHeight) {

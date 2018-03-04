@@ -4,8 +4,10 @@ import android.Manifest;
 import android.annotation.TargetApi;
 import android.content.Context;
 import android.content.Intent;
+import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
+import android.os.PowerManager;
 import android.view.View;
 import android.view.inputmethod.InputMethodManager;
 
@@ -296,5 +298,26 @@ public abstract class UILayoutActivity extends StyleActivity {
 
     public int getSwipeDirection() {
         return RSwipeLayout.DRAG_LEFT;
+    }
+
+    /**
+     * 请求忽略电池优化, 在后台存活机会会加大
+     */
+    public void ignoreBatteryOptimization() {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+            String packageName = getPackageName();
+            PowerManager pm = (PowerManager) getSystemService(Context.POWER_SERVICE);
+            if (!pm.isIgnoringBatteryOptimizations(packageName)) {
+                try {
+                    //some device doesn't has activity to handle this intent
+                    //so add try catch
+                    Intent intent = new Intent();
+                    intent.setAction(android.provider.Settings.ACTION_REQUEST_IGNORE_BATTERY_OPTIMIZATIONS);
+                    intent.setData(Uri.parse("package:" + packageName));
+                    startActivity(intent);
+                } catch (Exception e) {
+                }
+            }
+        }
     }
 }

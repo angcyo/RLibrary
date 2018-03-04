@@ -100,6 +100,7 @@ public class TitleBarPattern {
      * 显示底部的横线
      */
     public boolean showTitleBarBottomLine = false;
+    public boolean showBottomShadow = false;
 
     /**
      * 底部横线的高度, 1px
@@ -318,6 +319,11 @@ public class TitleBarPattern {
 
     public TitleBarPattern setShowDarkLoading(boolean showDarkLoading) {
         this.showDarkLoading = showDarkLoading;
+        return this;
+    }
+
+    public TitleBarPattern setShowTitleBarBottomShadow(boolean showBottomShadow) {
+        this.showBottomShadow = showBottomShadow;
         return this;
     }
 }

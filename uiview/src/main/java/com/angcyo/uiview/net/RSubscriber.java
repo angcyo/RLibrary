@@ -48,7 +48,11 @@ public abstract class RSubscriber<T> extends Subscriber<T> {
 
     @Override
     final public void onNext(T bean) {
-        L.d("订阅onNext->" + this.getClass().getSimpleName());
+        if (bean instanceof String) {
+            L.d("订阅onNext->" + bean);
+        } else {
+            L.d("订阅onNext->" + this.getClass().getSimpleName());
+        }
         try {
             onSucceed(bean);
         } catch (Exception e) {
@@ -80,7 +84,7 @@ public abstract class RSubscriber<T> extends Subscriber<T> {
             errorCode = ((RException) e).getCode();
             errorMore = ((RException) e).getMore();
         } else {
-            errorMsg = "未知错误:" + e.getMessage();
+            errorMsg = "错误:" + e.getMessage();
             errorCode = UNKNOWN_ERROR;
         }
 

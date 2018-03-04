@@ -156,6 +156,7 @@ public abstract class UIBaseView extends UIIViewImpl {
                 }
             });
             mUITitleBarContainer.setShowBottomLine(titleBarPattern.showTitleBarBottomLine);
+            mUITitleBarContainer.setShowBottomShadow(titleBarPattern.showBottomShadow);
             if (titleBarPattern.bottomTitleBarLineHeight >= 0) {
                 mUITitleBarContainer.setBottomLineHeight(titleBarPattern.bottomTitleBarLineHeight);
             }
@@ -746,6 +747,7 @@ public abstract class UIBaseView extends UIIViewImpl {
     public void onSkinChanged(ISkin skin) {
         super.onSkinChanged(skin);
         if (mUITitleBarContainer != null) {
+            mUITitleBarContainer.onSkinChanged(skin);
             mUITitleBarContainer.setBackgroundColor(getTitleBarBGColor());
         }
     }

@@ -11,6 +11,7 @@ import android.view.MotionEvent
 import android.view.View
 import android.widget.EditText
 import android.widget.TextView
+import com.angcyo.library.utils.Anim
 import com.angcyo.uiview.recycler.RRecyclerView
 import com.angcyo.uiview.utils.ScreenUtil
 import com.angcyo.uiview.utils.ScreenUtil.density
@@ -258,4 +259,48 @@ public fun RRecyclerView.onSizeChanged(listener: (w: Int, h: Int, oldw: Int, old
     this.setOnSizeChangedListener { w, h, oldw, oldh ->
         listener.invoke(w, h, oldw, oldh)
     }
+}
+
+/**
+ * 错误提示
+ */
+public fun View.error() {
+    Anim.band(this)
+}
+
+public fun TextView.isEmpty(): Boolean {
+    return TextUtils.isEmpty(string())
+}
+
+public fun TextView.string(trim: Boolean = true): String {
+    var rawText = if (TextUtils.isEmpty(text)) {
+        ""
+    } else {
+        text.toString()
+    }
+    if (trim) {
+        rawText = rawText.trim({ it <= ' ' })
+    }
+    return rawText
+}
+
+/**
+ * 返回结果表示是否为空
+ */
+public fun EditText.checkEmpty(checkPhone: Boolean = false): Boolean {
+    if (isEmpty()) {
+        error()
+        requestFocus()
+        return true
+    }
+    if (checkPhone) {
+//        if (isPhone()) {
+//
+//        } else {
+//            error()
+//            requestFocus()
+//            return true
+//        }
+    }
+    return false
 }
