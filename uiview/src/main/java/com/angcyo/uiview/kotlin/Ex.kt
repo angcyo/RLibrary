@@ -136,3 +136,18 @@ public fun <K, V> Map<K, V>.each(item: (key: K, value: V) -> Unit) {
         item.invoke(entry.key, entry.value)
     }
 }
+
+/**列表中, 不为空的字符串数量*/
+public fun List<String>.stringSize(checkExist: Boolean = false /*是否检查重复字符串*/): Int {
+    val list = mutableListOf<String>()
+    for (s in this) {
+        if (TextUtils.isEmpty(s)) {
+            continue
+        }
+        if (checkExist && list.contains(s)) {
+            continue
+        }
+        list.add(s)
+    }
+    return list.size
+}
