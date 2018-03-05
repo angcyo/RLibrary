@@ -68,7 +68,8 @@ public class UIItemDialog extends UIIDialogImpl {
 
     public UIItemDialog addItem(ItemInfo itemInfo) {
         mItemInfos.add(itemInfo);
-        if (getIViewShowState() == IViewShowState.STATE_VIEW_LOAD) {
+        if (getIViewShowState() == IViewShowState.STATE_VIEW_LOAD
+                || getIViewShowState() == IViewShowState.STATE_VIEW_SHOW) {
             int size = mItemInfos.size();
             addItemInner(size, size - 1, itemInfo);
         }
