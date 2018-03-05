@@ -328,6 +328,25 @@ public class Luban {
         }
     }
 
+    /**
+     * obtain the image's width and height
+     *
+     * @param imagePath the path of image
+     */
+    public static int[] getImageSize(String imagePath) {
+        int[] res = new int[2];
+
+        BitmapFactory.Options options = new BitmapFactory.Options();
+        options.inJustDecodeBounds = true;
+        options.inSampleSize = 1;
+        BitmapFactory.decodeFile(imagePath, options);
+
+        res[0] = options.outWidth;
+        res[1] = options.outHeight;
+
+        return res;
+    }
+
     public Luban launch() {
         checkNotNull(mFile, "the image file cannot be null, please call .load() before this method!");
 
@@ -543,25 +562,6 @@ public class Luban {
         }
 
         return compress(filePath, thumbFilePath, width, height, angle, size);
-    }
-
-    /**
-     * obtain the image's width and height
-     *
-     * @param imagePath the path of image
-     */
-    public int[] getImageSize(String imagePath) {
-        int[] res = new int[2];
-
-        BitmapFactory.Options options = new BitmapFactory.Options();
-        options.inJustDecodeBounds = true;
-        options.inSampleSize = 1;
-        BitmapFactory.decodeFile(imagePath, options);
-
-        res[0] = options.outWidth;
-        res[1] = options.outHeight;
-
-        return res;
     }
 
     /**

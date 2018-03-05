@@ -573,6 +573,9 @@ public class RNineImageLayout extends RelativeLayout implements View.OnClickList
         String getImageUrl();
     }
 
+    /**
+     * 使用此类时, 请使用 {@link #setImagesItems(List)}
+     */
     public static class ExNineImageConfig implements NineImageConfig {
 
         @Override

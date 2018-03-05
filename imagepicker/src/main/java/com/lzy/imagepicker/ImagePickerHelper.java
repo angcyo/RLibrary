@@ -217,3 +217,42 @@ public class ImagePickerHelper {
         return resultCode == Activity.RESULT_CANCELED;
     }
 }
+
+//public class Image {
+//    public static Observable<ArrayList<Luban.ImageItem>> onActivityResult(Activity activity, int requestCode, int resultCode, Intent data) {
+//        return onActivityResult(activity, requestCode, resultCode, data, null);
+//    }
+//
+//    public static Observable<ArrayList<Luban.ImageItem>> onActivityResult(Activity activity, int requestCode, int resultCode,
+//                                                                          Intent data, List<Luban.ImageItem> oldItems) {
+//        final ArrayList<String> images = ImagePickerHelper.getImages(activity, requestCode, resultCode, data);
+//        final boolean origin = ImagePickerHelper.isOrigin(requestCode, resultCode, data);
+//        if (images.isEmpty()) {
+//            return null;
+//        }
+//
+//        if (oldItems != null && !oldItems.isEmpty()) {
+//            for (int i = images.size() - 1; i >= 0; i--) {
+//                String path = images.get(i);
+//                for (Luban.ImageItem item : oldItems) {
+//                    if (TextUtils.equals(item.path, path)) {
+//                        images.remove(i);
+//                    }
+//                }
+//            }
+//        }
+//
+//        return Luban.luban2(activity, images);
+//    }
+//
+//    public static Luban.ImageItem isInList(List<Luban.ImageItem> itemList, String path) {
+//        if (itemList != null && !itemList.isEmpty()) {
+//            for (Luban.ImageItem item : itemList) {
+//                if (TextUtils.equals(item.path, path)) {
+//                    return item;
+//                }
+//            }
+//        }
+//        return null;
+//    }
+//}
