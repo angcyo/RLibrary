@@ -75,6 +75,10 @@ public class UI {
         }
     }
 
+    public static void setViewF(View view, float width, float height) {
+        setView(view, (int) width, (int) height);
+    }
+
     /**
      * View 顶部是否还有可滚动的距离
      *
