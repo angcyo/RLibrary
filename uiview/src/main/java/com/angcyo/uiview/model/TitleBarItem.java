@@ -79,7 +79,6 @@ public class TitleBarItem {
         return new TitleBarItem(icoRes, listener);
     }
 
-    @Deprecated
     public static TitleBarItem build() {
         return new TitleBarItem();
     }

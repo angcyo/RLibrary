@@ -55,6 +55,7 @@ import java.io.File;
 import java.io.FileWriter;
 import java.io.PrintWriter;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -294,6 +295,10 @@ public class UILayoutImpl extends SwipeBackLayout implements ILayout<UIParam>, U
         } catch (Exception e) {
             e.printStackTrace();
         }
+    }
+
+    public static List<Class<? extends IView>> getIViewList(Class<? extends IView>... iViews) {
+        return Arrays.asList(iViews);
     }
 
     @Override

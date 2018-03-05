@@ -2191,7 +2191,11 @@ public class RUtils {
      * 获取当前时间的年月日
      */
     public static String yyyyMMdd(long time) {
-        return new SimpleDateFormat("yyyy-MM-dd", Locale.CHINA).format(new Date(time));
+        return yyyyMMdd("yyyy-MM-dd", time);
+    }
+
+    public static String yyyyMMdd(String pattern, long time) {
+        return new SimpleDateFormat(pattern, Locale.CHINA).format(new Date(time));
     }
 
     public static int month(long time) {

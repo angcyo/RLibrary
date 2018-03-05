@@ -495,6 +495,16 @@ public class RCrashHandler implements Thread.UncaughtExceptionHandler {
         return b;
     }
 
+    /**
+     * 如果没有, 返回空字符
+     */
+    public static String lastCrashFilePath() {
+        if (isLastCrash(false)) {
+            return Hawk.get(RCrashHandler.KEY_CRASH_FILE, "");
+        }
+        return "";
+    }
+
     public static void checkCrash(final ILayout iLayout) {
         if (isLastCrash(true)) {
             ClipboardUtils.copyText(FileUtils.readFile2String(Hawk.get(RCrashHandler.KEY_CRASH_FILE, "-"), "utf8"));
