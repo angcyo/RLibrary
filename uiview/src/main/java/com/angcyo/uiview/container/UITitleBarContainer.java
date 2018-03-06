@@ -666,4 +666,8 @@ public class UITitleBarContainer extends FrameLayout {
     public void setBottomLineColor(int bottomLineColor) {
         this.bottomLineColor = bottomLineColor;
     }
+
+    public ImageTextView2 getBackImageView() {
+        return mBackImageView;
+    }
 }

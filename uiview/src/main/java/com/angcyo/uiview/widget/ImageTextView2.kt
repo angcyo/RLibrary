@@ -10,6 +10,7 @@ import android.util.AttributeSet
 import android.widget.ImageView
 import com.angcyo.uiview.R
 import com.angcyo.uiview.kotlin.density
+import com.angcyo.uiview.kotlin.getDrawCenterCx
 import com.angcyo.uiview.kotlin.textWidth
 
 /**
@@ -80,16 +81,26 @@ class ImageTextView2(context: Context, attributeSet: AttributeSet? = null) : Ima
 
     override fun onDraw(canvas: Canvas) {
         if (!showText.isNullOrEmpty()) {
-            canvas.save()
-            canvas.translate(-textWidth / 2, -1 * density)
-            super.onDraw(canvas)
-            canvas.restore()
-
-            //绘制需要显示的文本文本
-            val rawHeight = measuredHeight - paddingTop - paddingBottom
             textPaint.color = textShowColor
-            canvas.drawText(showText, paddingLeft + imageSize + textOffset - 4 * density,
-                    paddingTop + rawHeight / 2 + textHeight / 2 - textPaint.descent(), textPaint)
+
+            if (imageSize > 0) {
+                canvas.save()
+                canvas.translate(-textWidth / 2, -1 * density)
+                super.onDraw(canvas)
+                canvas.restore()
+
+                //绘制需要显示的文本文本
+                val rawHeight = measuredHeight - paddingTop - paddingBottom
+                canvas.drawText(showText, paddingLeft + imageSize + textOffset - 4 * density,
+                        paddingTop + rawHeight / 2 + textHeight / 2 - textPaint.descent(), textPaint)
+            } else {
+                super.onDraw(canvas)
+
+                //绘制需要显示的文本文本
+                val rawHeight = measuredHeight - paddingTop - paddingBottom
+                canvas.drawText(showText, getDrawCenterCx() - textWidth / 2,
+                        paddingTop + rawHeight / 2 + textHeight / 2 - textPaint.descent(), textPaint)
+            }
         } else {
             super.onDraw(canvas)
         }

@@ -106,6 +106,23 @@ public abstract class UIIViewImpl implements IView {
     protected long showInPagerCount = 0;
     protected int mBaseSoftInputMode;
     protected OnUIViewListener mOnUIViewListener;
+    OnCountDown mOnCountDown;
+    int maxCount;
+    int currentCount;
+    //提供倒计时的功能
+    protected Runnable countDownRunnable = new Runnable() {
+        @Override
+        public void run() {
+            currentCount--;
+            if (mOnCountDown != null) {
+                mOnCountDown.onCountDown(currentCount);
+                if (currentCount == 0) {
+                } else {
+                    postDelayed(this, 1000);
+                }
+            }
+        }
+    };
     private boolean mIsRightJumpLeft = false;
     private boolean interruptTask = false;
 
@@ -695,7 +712,6 @@ public abstract class UIIViewImpl implements IView {
         }
         mParentILayout.hideIView(iview, new UIParam(needAnim).setBundle(bundle));
     }
-
 
     public void replaceIView(IView iView, boolean needAnim) {
         replaceIView(iView, new UIParam(needAnim));
@@ -1318,5 +1334,28 @@ public abstract class UIIViewImpl implements IView {
         } else {
             RUtils.abandonAudioFocus(mActivity);
         }
+    }
+
+    /**
+     * 开始倒计时
+     */
+    public void startCountDown(int maxCount, OnCountDown onCountDown) {
+        stopCountDown();
+        removeCallbacks(countDownRunnable);
+        if (maxCount > 0) {
+            mOnCountDown = onCountDown;
+            currentCount = maxCount + 1;
+            post(countDownRunnable);
+        }
+    }
+
+    public void stopCountDown() {
+        removeCallbacks(countDownRunnable);
+        mOnCountDown = null;
+        maxCount = -1;
+    }
+
+    public interface OnCountDown {
+        void onCountDown(int count /*MaxCount 到 0 的值*/);
     }
 }
