@@ -74,7 +74,7 @@ public class ViewTask {
                 break;
         }
 
-        builder.append(" taskType:").append(type);
+        builder.append(type).append(" ").append(taskRun);
         //builder.append("\n");
         builder.append(" iView:").append(iView);
         //builder.append("\n");

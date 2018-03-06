@@ -2771,6 +2771,9 @@ public class UILayoutImpl extends SwipeBackLayout implements ILayout<UIParam>, U
                     pattern.interrupt = true;
                     UIParam uiParam = new UIParam(isLast, true, !isLast);
                     uiParam.isFinishBack = !isLast;
+
+                    currentViewTask = new ViewTask(ViewTask.TASK_TYPE_FINISH, pattern.mIView, uiParam);
+                    mViewTasks.add(currentViewTask);
                     finishIViewInner(pattern, uiParam);
                 }
             }
@@ -2810,10 +2813,15 @@ public class UILayoutImpl extends SwipeBackLayout implements ILayout<UIParam>, U
             if (pattern == getLastViewPattern() && lastFinishParam != null) {
                 //最后一个页面关闭时, 正常执行
                 //finishIViewInner(pattern, lastFinishParam);
+                currentViewTask = new ViewTask(ViewTask.TASK_TYPE_FINISH, pattern.mIView, lastFinishParam);
+                mViewTasks.add(currentViewTask);
                 finishIView(pattern.mIView, lastFinishParam);
             } else {
                 //看不见的页面关闭时, 安静执行
-                finishIViewInner(pattern, new UIParam(false, false, true));
+                UIParam uiParam = new UIParam(false, false, true);
+                currentViewTask = new ViewTask(ViewTask.TASK_TYPE_FINISH, pattern.mIView, uiParam);
+                mViewTasks.add(currentViewTask);
+                finishIViewInner(pattern, uiParam);
             }
         }
     }
