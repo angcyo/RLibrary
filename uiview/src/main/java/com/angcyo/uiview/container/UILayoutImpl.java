@@ -449,6 +449,15 @@ public class UILayoutImpl extends SwipeBackLayout implements ILayout<UIParam>, U
         return currentViewTask != null && !isTaskSuspend;
     }
 
+    private void logTaskList(String tag) {
+        StringBuilder taskBuilder = new StringBuilder(tag + " -> \n");
+        for (ViewTask task : mViewTasks) {
+            taskBuilder.append(task);
+            taskBuilder.append("\n");
+        }
+        L.w(taskBuilder.toString());
+    }
+
     private void checkStartTask() {
         if (!RUtils.isMainThread()) {
             ThreadExecutor.instance().onMain(new Runnable() {
@@ -459,7 +468,9 @@ public class UILayoutImpl extends SwipeBackLayout implements ILayout<UIParam>, U
             });
             return;
         }
-        if (isTaskRunning()) {
+        boolean taskRunning = isTaskRunning();
+        logTaskList("请求启动任务 :" + taskRunning);
+        if (taskRunning) {
             return;
         }
         startTask();
@@ -484,12 +495,7 @@ public class UILayoutImpl extends SwipeBackLayout implements ILayout<UIParam>, U
     private void startTaskInner(ViewTask viewTask) {
         currentViewTask = viewTask;
         //L.e("开始分发任务 -> " + viewTask);
-        StringBuilder taskBuilder = new StringBuilder("开始分发任务 -> \n");
-        for (ViewTask task : mViewTasks) {
-            taskBuilder.append(task);
-            taskBuilder.append("\n");
-        }
-        L.e(taskBuilder.toString());
+        logTaskList("开始分发任务");
 
         switch (viewTask.taskType) {
             case ViewTask.TASK_TYPE_START:
@@ -517,7 +523,8 @@ public class UILayoutImpl extends SwipeBackLayout implements ILayout<UIParam>, U
         final IView iView = currentViewTask.iView;
         final UIParam param = currentViewTask.param;
         iView.onAttachedToILayout(this);
-        if (checkInterruptAndRemove(iView)) {
+        if (checkInterruptAndRemove(iView) || currentViewTask.iView.isInterruptTask()) {
+            currentViewTask.iView.setInterruptTask(false);
             //中断了当前的任务
             nextTask();
         } else {
@@ -1511,7 +1518,7 @@ public class UILayoutImpl extends SwipeBackLayout implements ILayout<UIParam>, U
             isBottomAnimationEnd = false;
             bottomViewPattern.isAnimToStart = true;
             bottomViewPattern.isAnimToEnd = false;
-            
+
             if (RApplication.isLowDevice || !param.mAnim || param.isQuiet) {
                 endRunnable.run();
             } else {

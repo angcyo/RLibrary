@@ -314,6 +314,13 @@ public interface IView {
      */
     boolean isFullScreen();//2018-2-8
 
+    /**
+     * 是否需要中断任务, 用来在 还没有启动任务之前, 如果任务已经开始执行了, 那么无意义
+     */
+    boolean isInterruptTask();//2018-3-6
+
+    void setInterruptTask(boolean interruptTask);//2018-3-6
+
     enum IViewShowState {
         STATE_NORMAL,
         STATE_VIEW_CREATE,

@@ -107,6 +107,7 @@ public abstract class UIIViewImpl implements IView {
     protected int mBaseSoftInputMode;
     protected OnUIViewListener mOnUIViewListener;
     private boolean mIsRightJumpLeft = false;
+    private boolean interruptTask = false;
 
     public static void setDefaultConfig(Animation animation, boolean isFinish) {
         if (isFinish) {
@@ -579,6 +580,7 @@ public abstract class UIIViewImpl implements IView {
         if (iView == null) {
             return;
         }
+        iView.setInterruptTask(false);
         if (mParentILayout == null) {
             throw new IllegalArgumentException("mParentILayout 还未初始化");
         }
@@ -597,10 +599,12 @@ public abstract class UIIViewImpl implements IView {
         if (iView == null) {
             return;
         }
+        iView.setInterruptTask(true);
         if (mParentILayout == null) {
-            throw new IllegalArgumentException("mParentILayout 还未初始化");
+            //throw new IllegalArgumentException("mParentILayout 还未初始化");
+        } else {
+            mParentILayout.finishIView(iView, param);
         }
-        mParentILayout.finishIView(iView, param);
     }
 
     public void finishIView(final UIParam param) {
@@ -616,13 +620,7 @@ public abstract class UIIViewImpl implements IView {
     }
 
     public void finishIView(final IView iView, boolean anim, boolean quiet) {
-        if (iView == null) {
-            return;
-        }
-        if (mParentILayout == null) {
-            throw new IllegalArgumentException("mParentILayout 还未初始化");
-        }
-        mParentILayout.finishIView(iView, anim, quiet);
+        finishIView(iView, new UIParam(anim).setQuiet(quiet));
     }
 
     public void showIView(final View view) {
@@ -655,6 +653,7 @@ public abstract class UIIViewImpl implements IView {
         if (iview == null) {
             return;
         }
+        iview.setInterruptTask(false);
         if (mParentILayout == null) {
             throw new IllegalArgumentException("mParentILayout 还未初始化");
         }
@@ -710,6 +709,7 @@ public abstract class UIIViewImpl implements IView {
         if (iView == null) {
             return;
         }
+        iView.setInterruptTask(false);
         if (mParentILayout == null) {
             throw new IllegalArgumentException("mParentILayout 还未初始化");
         }
@@ -1288,6 +1288,16 @@ public abstract class UIIViewImpl implements IView {
     @Override
     public boolean isFullScreen() {
         return false;
+    }
+
+    @Override
+    public boolean isInterruptTask() {
+        return interruptTask;
+    }
+
+    @Override
+    public void setInterruptTask(boolean interruptTask) {
+        this.interruptTask = interruptTask;
     }
 
     /**
