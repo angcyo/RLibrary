@@ -304,3 +304,8 @@ public fun EditText.checkEmpty(checkPhone: Boolean = false): Boolean {
     }
     return false
 }
+
+public fun EditText.setInputText(text: String?) {
+    this.setText(text)
+    setSelection(text?.length ?: 0)
+}
