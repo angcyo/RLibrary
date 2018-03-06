@@ -31,8 +31,8 @@ public class ViewTask {
     public String uuid = "";
     public long createTime;
 
-//    public boolean isTopAnimationEnd = true;
-//    public boolean isBottomAnimationEnd = true;
+    /*这个值小于等于0时, 表示任务执行结束*/
+    public int taskRun = 0;
 
     public ViewTask(int taskType, IView iView, UIParam param) {
         this.taskType = taskType;
@@ -54,7 +54,7 @@ public class ViewTask {
     @Override
     public String toString() {
         StringBuilder builder = new StringBuilder();
-        builder.append("\n");
+        //builder.append("\n");
         String type = "";
         switch (taskType) {
             case TASK_TYPE_FINISH:
@@ -75,9 +75,9 @@ public class ViewTask {
         }
 
         builder.append(" taskType:").append(type);
-        builder.append("\n");
+        //builder.append("\n");
         builder.append(" iView:").append(iView);
-        builder.append("\n");
+        //builder.append("\n");
         return builder.toString();
     }
 }
