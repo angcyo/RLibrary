@@ -469,7 +469,7 @@ public class UILayoutImpl extends SwipeBackLayout implements ILayout<UIParam>, U
             return;
         }
         boolean taskRunning = isTaskRunning();
-        logTaskList("请求启动任务 :" + taskRunning);
+        logTaskList("请求执行任务 :" + taskRunning);
         if (taskRunning) {
             return;
         }
@@ -534,7 +534,7 @@ public class UILayoutImpl extends SwipeBackLayout implements ILayout<UIParam>, U
                     (!iView.showOnDialog() ||
                             !iView.isDialog())) {
                 //没有启动条件, 中断任务执行
-                isTaskSuspend = true;
+                setTaskSuspendWidth(lastViewPattern);
             } else {
                 currentViewTask.taskRun = 1;
                 if (param.mAsync) {
@@ -622,7 +622,7 @@ public class UILayoutImpl extends SwipeBackLayout implements ILayout<UIParam>, U
                 lastViewPattern.mIView.isDialog() &&
                 !iview.showOnDialog()) {
             //没有启动条件, 中断任务执行
-            isTaskSuspend = true;
+            setTaskSuspendWidth(lastViewPattern);
         } else {
             if (viewPattern == null) {
                 //显示一个不存在的IView, 则先启动它
@@ -767,6 +767,21 @@ public class UILayoutImpl extends SwipeBackLayout implements ILayout<UIParam>, U
             post(runnable);
         } else {
             runnable.run();
+        }
+    }
+
+    //设置任务被那个IView中断了
+    private void setTaskSuspendWidth(ViewPattern viewPattern /*被谁中断了*/) {
+        isTaskSuspend = true;
+        if (viewPattern != null) {
+            //中断任务的IView, 已经有关闭任务在任务列表
+            for (ViewTask task : mViewTasks) {
+                if (task.taskType == ViewTask.TASK_TYPE_FINISH) {
+                    if (task.iView == viewPattern.mIView) {
+                        checkTaskOnIViewAnimationEnd();
+                    }
+                }
+            }
         }
     }
 

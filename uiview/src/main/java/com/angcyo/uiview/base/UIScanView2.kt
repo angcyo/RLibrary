@@ -393,7 +393,7 @@ open class UIScanView2 : UIContentView(), IActivity, SurfaceHolder.Callback {
                 handleDecode(bean)
             }
 
-            override fun onEnd(isError: Boolean, isNoNetwork: Boolean, e: RException) {
+            override fun onEnd(isError: Boolean, isNoNetwork: Boolean, e: RException?) {
                 super.onEnd(isError, isNoNetwork, e)
                 UILoading.hide()
             }
