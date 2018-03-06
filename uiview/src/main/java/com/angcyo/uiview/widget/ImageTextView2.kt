@@ -45,6 +45,11 @@ class ImageTextView2(context: Context, attributeSet: AttributeSet? = null) : Ima
             }
             return field
         }
+        set(value) {
+            field = value
+            requestLayout()
+        }
+
     var textShowColor: Int = Color.WHITE
 
     var imageSize: Int = 0
@@ -65,18 +70,28 @@ class ImageTextView2(context: Context, attributeSet: AttributeSet? = null) : Ima
     override fun onMeasure(widthMeasureSpec: Int, heightMeasureSpec: Int) {
         super.onMeasure(widthMeasureSpec, heightMeasureSpec)
 
-        if (drawable == null) {
+        val wSize = MeasureSpec.getSize(widthMeasureSpec)
+        val wMode = MeasureSpec.getMode(widthMeasureSpec)
+
+        if (drawable == null || drawable.intrinsicWidth < 0) {
             imageSize = 0
-            if (!TextUtils.isEmpty(showText)) {
-                setMeasuredDimension((measuredWidth + textPaint.textWidth(showText!!)).toInt(), measuredHeight)
+
+            //无图片
+            if (wMode != MeasureSpec.EXACTLY) {
+                if (!TextUtils.isEmpty(showText)) {
+                    setMeasuredDimension((paddingLeft + paddingRight + textPaint.textWidth(showText!!)).toInt(), measuredHeight)
+                }
             }
         } else {
+            //有图片
             imageSize = drawable.intrinsicWidth
 
             if (!TextUtils.isEmpty(showText)) {
-                setMeasuredDimension((imageSize + textOffset + textPaint.textWidth(showText!!)).toInt(), measuredHeight)
+                setMeasuredDimension((paddingLeft + paddingRight + imageSize + textOffset + textPaint.textWidth(showText!!)).toInt(), measuredHeight)
             }
         }
+
+        //L.e("call: onMeasure -> $measuredWidth $wSize $showText")
     }
 
     override fun onDraw(canvas: Canvas) {
