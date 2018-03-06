@@ -129,12 +129,10 @@ public class ExEditText extends AppCompatEditText {
      * 屏幕一键删除按钮点击后, 触发输入框选择, 弹出的菜单的问题
      */
     private int touchDownWithHandle = 0;
-
     /**
      * 使用英文字符数过滤, 一个汉字等于2个英文, 一个emoji表情等于2个汉字
      */
     private boolean useCharLengthFilter = false;
-
     /**
      * 过滤的最大长度
      */
@@ -236,6 +234,10 @@ public class ExEditText extends AppCompatEditText {
             value = 0f;
         }
         return value;
+    }
+
+    public void setCheckInputNumber(boolean checkInputNumber) {
+        this.checkInputNumber = checkInputNumber;
     }
 
     public boolean unableCallback() {
