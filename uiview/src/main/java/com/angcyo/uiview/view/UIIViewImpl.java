@@ -215,9 +215,6 @@ public abstract class UIIViewImpl implements IView {
             baseView = new EmptyView(activity);
             ((EmptyView) baseView).setDefaultColor(SkinHelper.getSkin().getThemeSubColor());
         }
-        if (baseView == container) {
-            throw new IllegalStateException("IView Root View can't be UILayoutImpl");
-        }
         if (enableTouchBack() && baseView instanceof TouchBackLayout) {
             initTouchBackLayout((TouchBackLayout) baseView);
         }
