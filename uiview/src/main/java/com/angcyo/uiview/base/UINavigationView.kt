@@ -1,7 +1,9 @@
 package com.angcyo.uiview.base
 
+import android.graphics.Color
 import android.view.LayoutInflater
 import android.view.View
+import android.view.ViewGroup
 import android.widget.FrameLayout
 import com.angcyo.uiview.R
 import com.angcyo.uiview.container.UILayoutImpl
@@ -66,11 +68,12 @@ abstract class UINavigationView : UIIViewImpl() {
         //inflate(R.layout.base_navigation_view)
         val view = inflater.inflate(R.layout.base_navigation_view, container, false)
         initAfterInflateView(view)
+        container.addView(view, ViewGroup.LayoutParams(-1, -1))
         return view
     }
 
     open fun initAfterInflateView(rootView: View) {
-
+        rootView.setBackgroundColor(Color.WHITE)
     }
 
     /**是否使用ViewPager当主页面, 这样就可以支持左右滑动*/
@@ -97,10 +100,6 @@ abstract class UINavigationView : UIIViewImpl() {
 
             override fun onSelectorPosition(targetView: TouchMoveView, position: Int) {
                 //选择新页面
-                mainLayoutImpl?.startIView(pages?.get(position)?.iview?.setIsRightJumpLeft(lastIndex > position),
-                        UIParam(lastIndex != position).setLaunchMode(UIParam.SINGLE_TOP))
-
-                lastIndex = position
                 this@UINavigationView.onSelectorPosition(targetView, position)
             }
         }
@@ -145,6 +144,10 @@ abstract class UINavigationView : UIIViewImpl() {
     abstract fun createPages(pages: ArrayList<PageBean>)
 
     open fun onSelectorPosition(targetView: TouchMoveView, position: Int) {
+        mainLayoutImpl?.startIView(pages[position].iview.setIsRightJumpLeft(lastIndex > position),
+                UIParam(lastIndex != position).setLaunchMode(UIParam.SINGLE_TOP))
+
+        lastIndex = position
     }
 
     open fun onRepeatSelectorPosition(targetView: TouchMoveView, position: Int) {
