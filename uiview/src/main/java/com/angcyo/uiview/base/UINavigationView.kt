@@ -4,10 +4,9 @@ import android.view.LayoutInflater
 import android.view.View
 import android.widget.FrameLayout
 import com.angcyo.uiview.R
-import com.angcyo.uiview.container.ContentLayout
 import com.angcyo.uiview.container.UILayoutImpl
 import com.angcyo.uiview.container.UIParam
-import com.angcyo.uiview.model.TitleBarPattern
+import com.angcyo.uiview.view.UIIViewImpl
 import com.angcyo.uiview.widget.TouchMoveGroupLayout
 import com.angcyo.uiview.widget.TouchMoveView
 
@@ -22,7 +21,7 @@ import com.angcyo.uiview.widget.TouchMoveView
  * 修改备注：
  * Version: 1.0.0
  */
-abstract class UINavigationView : UIContentView() {
+abstract class UINavigationView : UIIViewImpl() {
 
     /**默认选择的页面*/
     var selectorPosition = 0
@@ -34,10 +33,6 @@ abstract class UINavigationView : UIContentView() {
     var pages = arrayListOf<PageBean>()
 
     var lastIndex = selectorPosition
-
-    override fun getTitleBar(): TitleBarPattern? {
-        return null
-    }
 
     /**导航的root layout, 用来包裹 TouchMoveView*/
     val touchMoveGroupLayout: TouchMoveGroupLayout? by lazy {
@@ -64,9 +59,22 @@ abstract class UINavigationView : UIContentView() {
             shadowView?.visibility = if (value) View.VISIBLE else View.GONE
         }
 
-    override fun inflateContentLayout(baseContentLayout: ContentLayout?, inflater: LayoutInflater?) {
-        inflate(R.layout.base_navigation_view)
+    //    override fun inflateContentLayout(baseContentLayout: ContentLayout?, inflater: LayoutInflater?) {
+//        inflate(R.layout.base_navigation_view)
+//    }
+    override fun inflateBaseView(container: FrameLayout, inflater: LayoutInflater): View {
+        //inflate(R.layout.base_navigation_view)
+        val view = inflater.inflate(R.layout.base_navigation_view, container, false)
+        initAfterInflateView(view)
+        return view
     }
+
+    open fun initAfterInflateView(rootView: View) {
+
+    }
+
+    /**是否使用ViewPager当主页面, 这样就可以支持左右滑动*/
+    open fun isUseViewPager() = false
 
     override fun onViewLoad() {
         super.onViewLoad()
@@ -76,7 +84,7 @@ abstract class UINavigationView : UIContentView() {
     }
 
     fun onCreatePages() {
-        pages?.forEach {
+        pages.forEach {
             touchMoveGroupLayout?.addView(createNavItem(it))
         }
         touchMoveGroupLayout?.selectorPosition = selectorPosition
@@ -140,30 +148,5 @@ abstract class UINavigationView : UIContentView() {
     }
 
     open fun onRepeatSelectorPosition(targetView: TouchMoveView, position: Int) {
-    }
-
-    /**页面*/
-    data class PageBean(
-            val iview: UIBaseView,
-            val textNormal: String? = null,
-            val textSelected: String? = null,
-            val textColorNormal: Int? = null,
-            val textColorSelected: Int? = null,
-            val icoResNormal: Int? = null,
-            val icoResSelected: Int? = null,
-            val icoSubResNormal: Int? = null,
-            val icoSubResSelected: Int? = null
-    ) {
-        constructor(iview: UIBaseView,
-                    textNormal: String? = null,
-                    icoResNormal: Int? = null
-        ) : this(iview, textNormal, textNormal, null, null, icoResNormal, icoResNormal, null, null)
-
-        constructor(iview: UIBaseView,
-                    textNormal: String? = null,
-                    textColorNormal: Int? = null,
-                    textColorSelected: Int? = null,
-                    icoResNormal: Int? = null
-        ) : this(iview, textNormal, textNormal, textColorNormal, textColorSelected, icoResNormal, icoResNormal, null, null)
     }
 }

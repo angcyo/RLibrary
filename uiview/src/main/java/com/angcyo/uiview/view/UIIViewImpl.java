@@ -18,6 +18,7 @@ import android.support.annotation.DimenRes;
 import android.support.annotation.DrawableRes;
 import android.support.annotation.IdRes;
 import android.support.annotation.IntegerRes;
+import android.support.annotation.NonNull;
 import android.support.annotation.StringRes;
 import android.support.v4.content.ContextCompat;
 import android.support.v4.view.ViewPager;
@@ -214,13 +215,16 @@ public abstract class UIIViewImpl implements IView {
             baseView = new EmptyView(activity);
             ((EmptyView) baseView).setDefaultColor(SkinHelper.getSkin().getThemeSubColor());
         }
+        if (baseView == container) {
+            throw new IllegalStateException("IView Root View can't be UILayoutImpl");
+        }
         if (enableTouchBack() && baseView instanceof TouchBackLayout) {
             initTouchBackLayout((TouchBackLayout) baseView);
         }
         return baseView;
     }
 
-    protected abstract View inflateBaseView(FrameLayout container, LayoutInflater inflater);
+    protected abstract View inflateBaseView(@NonNull FrameLayout container /*此View 就是UILayoutImpl*/, @NonNull LayoutInflater inflater);
 
     @CallSuper
     @Override
