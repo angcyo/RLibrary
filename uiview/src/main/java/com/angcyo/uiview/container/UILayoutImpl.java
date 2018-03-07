@@ -1599,6 +1599,7 @@ public class UILayoutImpl extends SwipeBackLayout implements ILayout<UIParam>, U
             //对话框弹出的时候, 底部IView 不执行周期
             bottomViewPattern.mIView.onViewHideFromDialog();
             isBottomAnimationEnd = true;
+            bottomViewPattern.isAnimToEnd = false;
             currentViewTask.taskRun--;
             checkTaskOnIViewAnimationEnd();
         } else {
