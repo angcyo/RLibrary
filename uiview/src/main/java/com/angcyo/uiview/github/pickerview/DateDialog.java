@@ -32,7 +32,6 @@ public class DateDialog extends UIIDialogImpl {
 
     public static DateFormat Date_FORMAT = new SimpleDateFormat("yyyy-MM-dd");
 
-
     /**
      * 年月日 时分秒 是否显示
      */
@@ -43,10 +42,6 @@ public class DateDialog extends UIIDialogImpl {
 
     public DateDialog(DateConfig dateConfig) {
         mDateConfig = dateConfig;
-    }
-
-    public void setShowType(boolean[] showType) {
-        mShowType = showType;
     }
 
     /**
@@ -78,6 +73,10 @@ public class DateDialog extends UIIDialogImpl {
             e.printStackTrace();
             return 0L;
         }
+    }
+
+    public void setShowType(boolean[] showType) {
+        mShowType = showType;
     }
 
     @Override
