@@ -8,6 +8,7 @@ import android.widget.FrameLayout
 import com.angcyo.uiview.R
 import com.angcyo.uiview.container.UILayoutImpl
 import com.angcyo.uiview.container.UIParam
+import com.angcyo.uiview.rsen.RGestureDetector
 import com.angcyo.uiview.view.UIIViewImpl
 import com.angcyo.uiview.widget.TouchMoveGroupLayout
 import com.angcyo.uiview.widget.TouchMoveView
@@ -33,6 +34,8 @@ abstract class UINavigationView : UIIViewImpl() {
 
     /**保存所有界面*/
     var pages = arrayListOf<PageBean>()
+
+    var pageViews = arrayListOf<TouchMoveView>()
 
     var lastIndex = selectorPosition
 
@@ -87,8 +90,14 @@ abstract class UINavigationView : UIIViewImpl() {
     }
 
     fun onCreatePages() {
-        pages.forEach {
-            touchMoveGroupLayout?.addView(createNavItem(it))
+        pages.forEachIndexed { index, pageBean ->
+            val navItem = createNavItem(pageBean)
+            pageViews.add(navItem)
+            touchMoveGroupLayout?.addView(navItem)
+
+            RGestureDetector.onDoubleTap(navItem) {
+                onNavItemDoubleTap(navItem, index)
+            }
         }
         touchMoveGroupLayout?.selectorPosition = selectorPosition
         touchMoveGroupLayout?.updateSelectorStyle()
@@ -151,5 +160,12 @@ abstract class UINavigationView : UIIViewImpl() {
     }
 
     open fun onRepeatSelectorPosition(targetView: TouchMoveView, position: Int) {
+    }
+
+    open fun onNavItemDoubleTap(targetView: TouchMoveView, position: Int) {
+        val iview = pages[position].iview
+        if (iview is UIRecyclerUIView<*, *, *>) {
+            iview.onDoubleScrollToTop()
+        }
     }
 }

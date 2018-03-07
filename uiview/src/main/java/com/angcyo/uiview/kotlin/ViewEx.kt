@@ -309,3 +309,9 @@ public fun EditText.setInputText(text: String?) {
     this.setText(text)
     setSelection(text?.length ?: 0)
 }
+
+
+/**取消增益滑动效果*/
+public fun View.setNoOverScroll() {
+    overScrollMode = View.OVER_SCROLL_NEVER
+}

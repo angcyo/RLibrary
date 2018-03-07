@@ -156,7 +156,7 @@ public abstract class UIBaseView extends UIIViewImpl {
                 }
             });
             mUITitleBarContainer.setShowBottomLine(titleBarPattern.showTitleBarBottomLine);
-            mUITitleBarContainer.setShowBottomShadow(titleBarPattern.showBottomShadow);
+            mBaseRootLayout.setShowBottomShadow(titleBarPattern.showBottomShadow);
             if (titleBarPattern.bottomTitleBarLineHeight >= 0) {
                 mUITitleBarContainer.setBottomLineHeight(titleBarPattern.bottomTitleBarLineHeight);
             }

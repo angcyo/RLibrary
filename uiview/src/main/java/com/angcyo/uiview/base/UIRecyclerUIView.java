@@ -230,6 +230,14 @@ public abstract class UIRecyclerUIView<H, T, F> extends UIContentView
         onUILoadData(page, extend);
     }
 
+    public void loadData() {
+        onBaseLoadData();
+    }
+
+    public void loadData(String extend) {
+        onBaseLoadData(extend);
+    }
+
     @Deprecated
     public void onUILoadData(int page) {
         showLoadView();

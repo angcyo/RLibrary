@@ -2,7 +2,11 @@ package com.angcyo.uiview.widget;
 
 import android.content.Context;
 import android.graphics.Canvas;
+import android.graphics.Color;
+import android.graphics.LinearGradient;
+import android.graphics.Paint;
 import android.graphics.Rect;
+import android.graphics.Shader;
 import android.os.Build;
 import android.support.v4.view.ViewCompat;
 import android.util.AttributeSet;
@@ -14,6 +18,8 @@ import android.view.inputmethod.InputMethodManager;
 
 import com.angcyo.uiview.R;
 import com.angcyo.uiview.container.IWindowInsetsListener;
+import com.angcyo.uiview.container.UITitleBarContainer;
+import com.angcyo.uiview.kotlin.ViewExKt;
 import com.angcyo.uiview.utils.ClipHelper;
 import com.angcyo.uiview.view.ILifecycle;
 import com.angcyo.uiview.viewgroup.TouchBackLayout;
@@ -51,6 +57,13 @@ public class SoftRelativeLayout extends TouchBackLayout implements ILifecycle {
      */
     private boolean floatingTitleView = true;
     private boolean isOnAttachedToWindow = false;
+    private Rect shadowRect = new Rect();
+    /**
+     * 显示底部阴影
+     */
+    private boolean showBottomShadow = true;
+    private float shadowHeight = 0;
+    private Paint mShadowPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
 
     public SoftRelativeLayout(Context context) {
         this(context, null);
@@ -73,7 +86,7 @@ public class SoftRelativeLayout extends TouchBackLayout implements ILifecycle {
 //
 //            }
 //        });
-
+        shadowHeight = 10 * ViewExKt.getDensity(this);
         mClipHelper = new ClipHelper(this);
     }
 
@@ -300,7 +313,6 @@ public class SoftRelativeLayout extends TouchBackLayout implements ILifecycle {
         return mInsets[3];
     }
 
-
     /**
      * 判断键盘是否显示
      */
@@ -397,6 +409,33 @@ public class SoftRelativeLayout extends TouchBackLayout implements ILifecycle {
             mClipHelper.draw(canvas);
         }
         super.draw(canvas);
+
+        if (showBottomShadow) {
+            for (int i = getChildCount() - 1; i >= 0; i--) {
+                View childAt = getChildAt(i);
+                if (childAt instanceof UITitleBarContainer) {
+                    shadowRect.left = 0;
+                    shadowRect.right = getMeasuredWidth();
+
+                    shadowRect.top = childAt.getBottom();
+                    shadowRect.bottom = (int) (shadowRect.top + shadowHeight);
+
+                    mShadowPaint.setShader(new LinearGradient(0, shadowRect.bottom, 0, shadowRect.bottom - shadowHeight,
+                            new int[]{Color.TRANSPARENT, Color.parseColor("#40000000")}, null, Shader.TileMode.CLAMP));
+                    canvas.drawRect(shadowRect, mShadowPaint);
+
+                    break;
+                }
+            }
+        }
+    }
+
+    public void setShowBottomShadow(boolean showBottomShadow) {
+        this.showBottomShadow = showBottomShadow;
+    }
+
+    public void setShadowHeight(float shadowHeight) {
+        this.shadowHeight = shadowHeight;
     }
 
     public ClipHelper getClipHelper() {

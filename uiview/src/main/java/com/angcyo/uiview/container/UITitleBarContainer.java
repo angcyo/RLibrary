@@ -6,11 +6,7 @@ import android.content.Context;
 import android.content.res.TypedArray;
 import android.graphics.Canvas;
 import android.graphics.Color;
-import android.graphics.LinearGradient;
 import android.graphics.Paint;
-import android.graphics.Rect;
-import android.graphics.Region;
-import android.graphics.Shader;
 import android.graphics.drawable.ColorDrawable;
 import android.graphics.drawable.Drawable;
 import android.support.annotation.ColorInt;
@@ -78,11 +74,7 @@ public class UITitleBarContainer extends FrameLayout {
      * 显示底部的横线
      */
     private boolean showBottomLine = false;
-    /**
-     * 显示底部阴影
-     */
-    private boolean showBottomShadow = false;
-    private Rect shadowRect = new Rect();
+
     /**
      * 底部横线的高度, 1px
      */
@@ -630,20 +622,6 @@ public class UITitleBarContainer extends FrameLayout {
             mPaint.setShader(null);
             canvas.drawLine(0, getMeasuredHeight(), getMeasuredWidth(), getMeasuredHeight(), mPaint);
         }
-        if (showBottomShadow) {
-            canvas.save();
-            canvas.getClipBounds(shadowRect);
-            float shadowHeight = 10 * ViewExKt.getDensity(this);
-            shadowRect.top = shadowRect.bottom;
-            shadowRect.bottom += shadowHeight;
-            canvas.clipRect(shadowRect, Region.Op.REPLACE);
-//            canvas.drawColor(Color.RED);
-//            mPaint.setColor(Color.WHITE);
-            mPaint.setShader(new LinearGradient(0, shadowRect.bottom, 0, shadowRect.bottom - shadowHeight,
-                    new int[]{Color.TRANSPARENT, Color.parseColor("#40000000")}, null, Shader.TileMode.CLAMP));
-            canvas.drawRect(shadowRect, mPaint);
-            canvas.restore();
-        }
     }
 
     @Override
@@ -653,10 +631,6 @@ public class UITitleBarContainer extends FrameLayout {
 
     public void setShowBottomLine(boolean showBottomLine) {
         this.showBottomLine = showBottomLine;
-    }
-
-    public void setShowBottomShadow(boolean showBottomShadow) {
-        this.showBottomShadow = showBottomShadow;
     }
 
     public void setBottomLineHeight(int bottomLineHeight) {
