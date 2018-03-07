@@ -262,12 +262,18 @@ class DYRecordView(context: Context, attributeSet: AttributeSet? = null) : View(
     }
 
     private var isTouchDown = true
+    private var downX = 0f
+    private var downY = 0f
+    private var downTime = 0L
 
     override fun onTouchEvent(event: MotionEvent): Boolean {
         //L.e("call: onTouchEvent -> ${isEnabled} $event")
         if (isEnabled) {
             when (event.actionMasked) {
                 MotionEvent.ACTION_DOWN -> {
+                    downX = event.x
+                    downY = event.y
+                    downTime = System.currentTimeMillis()
                     if (onRecordListener != null) {
                         if (onRecordListener!!.onTouchDown()) {
                             isTouchDown = false
@@ -275,6 +281,17 @@ class DYRecordView(context: Context, attributeSet: AttributeSet? = null) : View(
                         }
                     }
                     isTouchDown = true
+                }
+                MotionEvent.ACTION_UP -> {
+                    val x = event.x
+                    val y = event.y
+                    val time = System.currentTimeMillis()
+
+                    if (Math.abs(downX - x) < 10 &&
+                            Math.abs(downY - y) < 10 &&  /*手指移动的范围, 和触摸时间, 控制是否是点击事件*/
+                            (time - downTime) < 200) {
+                        onRecordListener?.onClickTap()
+                    }
                 }
             }
             //return super.onTouchEvent(event)
@@ -569,6 +586,11 @@ class DYRecordView(context: Context, attributeSet: AttributeSet? = null) : View(
     }
 
     abstract class OnRecordListener {
+
+        /**按下 抬起*/
+        open fun onClickTap() {
+
+        }
 
         /**当手指按下的时候, 会回调此方法, 返回true, 表示拦截事件, 不处理录制*/
         open fun onTouchDown(): Boolean {
