@@ -6,6 +6,7 @@ import android.graphics.Paint
 import android.graphics.Rect
 import android.graphics.drawable.Drawable
 import android.support.v4.content.ContextCompat
+import android.support.v4.view.ViewCompat
 import android.text.TextUtils
 import android.view.MotionEvent
 import android.view.View
@@ -18,6 +19,8 @@ import com.angcyo.uiview.utils.ScreenUtil.density
 import com.angcyo.uiview.utils.string.SingleTextWatcher
 import com.angcyo.uiview.view.RClickListener
 import com.angcyo.uiview.view.UIIViewImpl
+import com.wangjie.shadowviewhelper.ShadowProperty
+import com.wangjie.shadowviewhelper.ShadowViewDrawable
 import java.util.*
 
 /**
@@ -314,4 +317,16 @@ public fun EditText.setInputText(text: String?) {
 /**取消增益滑动效果*/
 public fun View.setNoOverScroll() {
     overScrollMode = View.OVER_SCROLL_NEVER
+}
+
+/**设置阴影背景*/
+public fun View.showShadowViewDrawable(shadowRadius: Int = 6) {
+    val sp = ShadowProperty()
+            .setShadowColor(0x77000000)
+            .setShadowDy((1f * density()).toInt())//y轴偏移
+            .setShadowRadius((shadowRadius * density()).toInt())//阴影半径
+            .setShadowSide(ShadowProperty.ALL)
+    val sd = ShadowViewDrawable(sp, Color.RED, 0f, 0f)
+    ViewCompat.setLayerType(this, ViewCompat.LAYER_TYPE_SOFTWARE, null)
+    ViewCompat.setBackground(this, sd)
 }
