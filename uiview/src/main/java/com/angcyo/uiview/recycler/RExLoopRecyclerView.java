@@ -1,11 +1,14 @@
 package com.angcyo.uiview.recycler;
 
 import android.content.Context;
+import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.util.AttributeSet;
 import android.view.View;
+import android.view.ViewGroup;
 
-import com.angcyo.library.utils.L;
 import com.leochuan.ViewPagerLayoutManager;
 
 /**
@@ -16,6 +19,7 @@ public class RExLoopRecyclerView extends RRecyclerView {
 
     private LoopLayoutManager mLoopLayoutManager;
     private boolean mInfinite = true;
+    private RPagerSnapHelper.OnPageListener mOnPageListener;
 
     public RExLoopRecyclerView(Context context) {
         this(context, null);
@@ -33,36 +37,41 @@ public class RExLoopRecyclerView extends RRecyclerView {
     protected void initView(Context context) {
         super.initView(context);
 
+        autoScrollRunnable = new Runnable() {
+            @Override
+            public void run() {
+                curScrollPosition = getCurrentPosition();
+
+                scrollToNext();
+
+                if (enableScroll) {
+                    postDelayed(autoScrollRunnable, autoScrollTimeInterval);
+                }
+            }
+        };
+
         mLoopLayoutManager = new LoopLayoutManager(getContext(), ViewPagerLayoutManager.HORIZONTAL, false);
         setInfinite(true);
         setLayoutManager(mLoopLayoutManager);
 
-        new RPagerSnapHelper().setOnPageListener(new RPagerSnapHelper.OnPageListener() {
+        new RExLoopRecyclerView.LoopSnapHelper().setOnPageListener(new RPagerSnapHelper.OnPageListener() {
             @Override
             public void onPageSelector(int fromPosition, int toPosition) {
                 super.onPageSelector(fromPosition, toPosition);
-                L.e("onPageSelector() -> " + fromPosition + " to " + toPosition);
+                //L.e("onPageSelector() -> " + fromPosition + " to " + toPosition);
+                if (mOnPageListener != null) {
+                    mOnPageListener.onPageSelector(fromPosition, toPosition);
+                }
             }
         }).attachToRecyclerView(this);
-
-//        setLayoutManager(new CircleLayoutManager(context));
     }
 
     @Override
     protected void onSizeChanged(int w, int h, int oldw, int oldh) {
         super.onSizeChanged(w, h, oldw, oldh);
         if (mLoopLayoutManager != null) {
-            mLoopLayoutManager.setItemInterval(getMeasuredWidth());
+            mLoopLayoutManager.setItemWidthHeight(w, h);
         }
-    }
-
-    @Override
-    public void setAdapter(Adapter adapter) {
-        super.setAdapter(adapter);
-//        mLoopLayoutManager = new LoopLayoutManager(getContext(), orientation, false);
-//        mLoopLayoutManager.setInfinite(mInfinite);
-//        //需要在adapter设置之后调用
-//        setLayoutManager(mLoopLayoutManager);
     }
 
     /**
@@ -75,9 +84,62 @@ public class RExLoopRecyclerView extends RRecyclerView {
         }
     }
 
+    /**
+     * @see ViewPagerLayoutManager#setOrientation(int)
+     */
+    public void setOrientation(int orientation) {
+        if (mLoopLayoutManager != null) {
+            mLoopLayoutManager.setOrientation(orientation);
+        }
+    }
+
+    /**
+     * 滚动到下一个
+     */
+    public void scrollToNext() {
+        scrollTo(true);
+    }
+
+    /**
+     * 滚动到上一个
+     */
+    public void scrollToPrev() {
+        scrollTo(false);
+    }
+
+    public void scrollTo(boolean forwardDirection) {
+        if (getLayoutManager() instanceof LoopLayoutManager && getAdapter() != null) {
+            final int offsetPosition;
+            if (forwardDirection) {
+                offsetPosition = 1;
+            } else {
+                offsetPosition = -1;
+            }
+
+            final int currentPosition = getCurrentPosition();
+
+            int position = ((LoopLayoutManager) getLayoutManager()).getReverseLayout() ?
+                    currentPosition - offsetPosition : currentPosition + offsetPosition;
+            smoothScrollToPosition(position);
+        }
+    }
+
+    public int getCurrentPosition() {
+        if (getLayoutManager() instanceof LoopLayoutManager) {
+            return ((LoopLayoutManager) getLayoutManager()).getCurrentPosition();
+        } else {
+            return RecyclerView.NO_POSITION;
+        }
+    }
+
+    public void setOnPageListener(RPagerSnapHelper.OnPageListener onPageListener) {
+        mOnPageListener = onPageListener;
+    }
+
     public static class LoopLayoutManager extends ViewPagerLayoutManager {
 
-        private float itemInterval = -1;
+        private float itemWidth = -1;
+        private float itemHeight = -1;
 
         public LoopLayoutManager(Context context) {
             this(context, ViewPagerLayoutManager.HORIZONTAL, false);
@@ -88,9 +150,21 @@ public class RExLoopRecyclerView extends RRecyclerView {
             setEnableBringCenterToFront(true);
         }
 
-        public void setItemInterval(float itemInterval) {
-            this.itemInterval = itemInterval;
+        public void setItemWidthHeight(float itemWidth, float itemHeight) {
+            this.itemWidth = itemWidth;
+            this.itemHeight = itemHeight;
             requestLayout();
+        }
+
+        @Override
+        public void setInfinite(boolean enable) {
+            if (!enable) {
+                int positionOffset = getCurrentPositionOffset();
+                if (positionOffset > getItemCount() || positionOffset < 0) {
+                    mOffset = 0;
+                }
+            }
+            super.setInfinite(enable);
         }
 
         /**
@@ -99,7 +173,10 @@ public class RExLoopRecyclerView extends RRecyclerView {
          */
         @Override
         protected float setInterval() {
-            return itemInterval;
+            if (getOrientation() == ViewPagerLayoutManager.VERTICAL) {
+                return itemHeight;
+            }
+            return itemWidth;
         }
 
         /**
@@ -110,6 +187,108 @@ public class RExLoopRecyclerView extends RRecyclerView {
             //targetOffset 和 itemInterval 密切广西
             //targetOffset 取值范围 -itemInterval/2  0  itemInterval/2
             //L.e("setItemViewProperty() -> " + targetOffset);
+        }
+    }
+
+    public static class LoopSnapHelper extends RPagerSnapHelper {
+
+        @Override
+        public boolean onFling(int velocityX, int velocityY) {
+            super.onFling(velocityX, velocityY);
+            //拦截fling操作
+            return true;
+        }
+
+        @Nullable
+        @Override
+        public View findSnapView(LayoutManager layoutManager) {
+            return super.findSnapView(layoutManager);
+        }
+
+        @Override
+        public int findTargetSnapPosition(LayoutManager lm, int velocityX, int velocityY) {
+            //return super.findTargetSnapPosition(layoutManager, velocityX, velocityY);
+            //重写fling操作
+            if (lm instanceof LoopLayoutManager) {
+            } else {
+                return RecyclerView.NO_POSITION;
+            }
+            RecyclerView.Adapter adapter = mRecyclerView.getAdapter();
+            if (adapter == null) {
+                return RecyclerView.NO_POSITION;
+            }
+
+            final int minFlingVelocity = mRecyclerView.getMinFlingVelocity();
+
+            LoopLayoutManager layoutManager = (LoopLayoutManager) lm;
+            int orientation = layoutManager.getOrientation();
+
+            final boolean forwardDirection;
+            if (layoutManager.canScrollHorizontally()) {
+                forwardDirection = velocityX > 0;
+            } else {
+                forwardDirection = velocityY > 0;
+            }
+            final int offsetPosition;
+            if (forwardDirection) {
+                offsetPosition = 1;
+            } else {
+                offsetPosition = -1;
+            }
+
+            final int currentPosition = layoutManager.getCurrentPosition();
+            if ((orientation == ViewPagerLayoutManager.VERTICAL
+                    && Math.abs(velocityY) > minFlingVelocity) || (orientation == ViewPagerLayoutManager.HORIZONTAL
+                    && Math.abs(velocityX) > minFlingVelocity)) {
+
+                int position = layoutManager.getReverseLayout() ?
+                        currentPosition - offsetPosition : currentPosition + offsetPosition;
+                mRecyclerView.smoothScrollToPosition(position);
+            }
+
+            //不需要默认的fling操作
+            return RecyclerView.NO_POSITION;
+        }
+
+        @Nullable
+        @Override
+        public int[] calculateDistanceToFinalSnap(@NonNull RecyclerView.LayoutManager layoutManager, @NonNull View targetView) {
+            RecyclerView.LayoutParams params = (RecyclerView.LayoutParams) targetView.getLayoutParams();
+            int position = params.getViewAdapterPosition();
+            int left = targetView.getLeft();
+            int right = targetView.getRight();
+            int top = targetView.getTop();
+            int bottom = targetView.getBottom();
+            ViewGroup viewGroup = (ViewGroup) targetView.getParent();
+
+            int[] out = new int[]{0, 0};
+            boolean isLastItem;
+            if (mOrientation == LinearLayoutManager.HORIZONTAL) {
+                isLastItem = position == layoutManager.getItemCount() - 1/*最后一个*/ && right == viewGroup.getMeasuredWidth();
+                out[0] = left;
+                out[1] = 0;
+            } else {
+                isLastItem = position == layoutManager.getItemCount() - 1/*最后一个*/ && bottom == viewGroup.getMeasuredHeight();
+                out[0] = 0;
+                out[1] = top;
+            }
+
+            if (mOnPageListener != null && mCurrentPosition != position) {
+                int currentPosition = mCurrentPosition;
+                boolean listener = false;
+                if (mOrientation == LinearLayoutManager.HORIZONTAL && (out[0] == 0 || isLastItem)) {
+                    listener = true;
+                } else if (mOrientation == LinearLayoutManager.VERTICAL && (out[1] == 0 || isLastItem)) {
+                    listener = true;
+                }
+
+                if (listener) {
+                    mCurrentPosition = position;
+                    mOnPageListener.onPageSelector(mCurrentPosition);
+                    mOnPageListener.onPageSelector(currentPosition, mCurrentPosition);
+                }
+            }
+            return out;
         }
     }
 }

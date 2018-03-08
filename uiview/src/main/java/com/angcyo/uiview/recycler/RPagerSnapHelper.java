@@ -21,9 +21,9 @@ import android.view.ViewGroup;
  */
 public class RPagerSnapHelper extends PagerSnapHelper {
 
+    protected RecyclerView mRecyclerView;
     OnPageListener mOnPageListener;
     int mCurrentPosition = -1;
-
     /**
      * 默认是横向Pager
      */
@@ -72,6 +72,8 @@ public class RPagerSnapHelper extends PagerSnapHelper {
     @Override
     public void attachToRecyclerView(@Nullable RecyclerView recyclerView) throws IllegalStateException {
         super.attachToRecyclerView(recyclerView);
+        mRecyclerView = recyclerView;
+
         if (recyclerView != null) {
             recyclerView.removeOnScrollListener(mScrollListener);
             recyclerView.addOnScrollListener(mScrollListener);

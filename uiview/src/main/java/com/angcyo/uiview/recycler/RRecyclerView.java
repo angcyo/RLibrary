@@ -113,15 +113,15 @@ public class RRecyclerView extends RecyclerView implements StickLayout.CanScroll
      */
     private boolean autoScrollToLastPosition = false;
     /**
-     * 是否自动开始滚动
+     * 是否自动开始滚动, 当界面onAttachedToWindow的时候 有效
      */
     private boolean isEnableAutoStartScroll = false;
 
     /**
      * 滚动时间间隔(毫秒)
      */
-    private long autoScrollTimeInterval = AUTO_SCROLL_TIME;
-    private Runnable autoScrollRunnable = new Runnable() {
+    protected long autoScrollTimeInterval = AUTO_SCROLL_TIME;
+    protected Runnable autoScrollRunnable = new Runnable() {
         @Override
         public void run() {
             curScrollPosition++;

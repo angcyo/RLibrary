@@ -17,7 +17,7 @@ import static android.support.v7.widget.RecyclerView.NO_POSITION;
 /**
  * An implementation of {@link RecyclerView.LayoutManager} which behaves like view pager.
  * Please make sure your child view have the same size.
- *
+ * <p>
  * 2018-2-9 2.0.12
  * https://github.com/leochuan/ViewPagerLayoutManager
  */
@@ -30,35 +30,18 @@ public abstract class ViewPagerLayoutManager extends LinearLayoutManager {
     public static final int HORIZONTAL = OrientationHelper.HORIZONTAL;
 
     public static final int VERTICAL = OrientationHelper.VERTICAL;
-
-    private static final int DIRECTION_NO_WHERE = -1;
-
-    private static final int DIRECTION_FORWARD = 0;
-
-    private static final int DIRECTION_BACKWARD = 1;
-
     protected static final int INVALID_SIZE = Integer.MAX_VALUE;
-
-    private SparseArray<View> positionCache = new SparseArray<>();
-
+    private static final int DIRECTION_NO_WHERE = -1;
+    private static final int DIRECTION_FORWARD = 0;
+    private static final int DIRECTION_BACKWARD = 1;
     protected int mDecoratedMeasurement;
-
     protected int mDecoratedMeasurementInOther;
-
-    /**
-     * Current orientation. Either {@link #HORIZONTAL} or {@link #VERTICAL}
-     */
-    int mOrientation;
-
     protected int mSpaceMain;
-
     protected int mSpaceInOther;
-
     /**
      * The offset of property which will change while scrolling
      */
     protected float mOffset;
-
     /**
      * Many calculations are made depending on orientation. To keep it clean, this interface
      * helps {@link LinearLayoutManager} make those decisions.
@@ -66,37 +49,34 @@ public abstract class ViewPagerLayoutManager extends LinearLayoutManager {
      * {@link #ensureLayoutState} method.
      */
     protected OrientationHelper mOrientationHelper;
-
+    protected float mInterval; //the mInterval of each item's mOffset
+    /**
+     * Current orientation. Either {@link #HORIZONTAL} or {@link #VERTICAL}
+     */
+    int mOrientation;
+    /* package */ OnPageChangeListener onPageChangeListener;
+    private SparseArray<View> positionCache = new SparseArray<>();
     /**
      * Defines if layout should be calculated from end to start.
      */
     private boolean mReverseLayout = false;
-
     /**
      * This keeps the final value for how LayoutManager should start laying out views.
      * It is calculated by checking {@link #getReverseLayout()} and View's layout direction.
      * {@link #onLayoutChildren(RecyclerView.Recycler, RecyclerView.State)} is run.
      */
     private boolean mShouldReverseLayout = false;
-
     /**
      * Works the same way as {@link android.widget.AbsListView#setSmoothScrollbarEnabled(boolean)}.
      * see {@link android.widget.AbsListView#setSmoothScrollbarEnabled(boolean)}
      */
     private boolean mSmoothScrollbarEnabled = true;
-
     /**
      * When LayoutManager needs to scroll to a position, it sets this variable and requests a
      * layout which will check this variable and re-layout accordingly.
      */
     private int mPendingScrollPosition = NO_POSITION;
-
     private SavedState mPendingSavedState = null;
-
-    protected float mInterval; //the mInterval of each item's mOffset
-
-    /* package */ OnPageChangeListener onPageChangeListener;
-
     private boolean mRecycleChildrenOnDetach;
 
     private boolean mInfinite = false;
@@ -122,22 +102,6 @@ public abstract class ViewPagerLayoutManager extends LinearLayoutManager {
     private View currentFocusView;
 
     /**
-     * @return the mInterval of each item's mOffset
-     */
-    protected abstract float setInterval();
-
-    protected abstract void setItemViewProperty(View itemView, float targetOffset);
-
-    /**
-     * cause elevation is not support below api 21,
-     * so you can set your elevation here for supporting it below api 21
-     * or you can just setElevation in {@link #setItemViewProperty(View, float)}
-     */
-    protected float setViewElevation(View itemView, float targetOffset) {
-        return 0;
-    }
-
-    /**
      * Creates a horizontal ViewPagerLayoutManager
      */
     public ViewPagerLayoutManager(Context context) {
@@ -154,6 +118,22 @@ public abstract class ViewPagerLayoutManager extends LinearLayoutManager {
         setReverseLayout(reverseLayout);
         setAutoMeasureEnabled(true);
         setItemPrefetchEnabled(false);
+    }
+
+    /**
+     * @return the mInterval of each item's mOffset
+     */
+    protected abstract float setInterval();
+
+    protected abstract void setItemViewProperty(View itemView, float targetOffset);
+
+    /**
+     * cause elevation is not support below api 21,
+     * so you can set your elevation here for supporting it below api 21
+     * or you can just setElevation in {@link #setItemViewProperty(View, float)}
+     */
+    protected float setViewElevation(View itemView, float targetOffset) {
+        return 0;
     }
 
     @Override
@@ -759,7 +739,7 @@ public abstract class ViewPagerLayoutManager extends LinearLayoutManager {
         return null;
     }
 
-    private int getCurrentPositionOffset() {
+    protected int getCurrentPositionOffset() {
         return Math.round(mOffset / mInterval);
     }
 
@@ -807,6 +787,10 @@ public abstract class ViewPagerLayoutManager extends LinearLayoutManager {
         this.onPageChangeListener = onPageChangeListener;
     }
 
+    public boolean getInfinite() {
+        return mInfinite;
+    }
+
     public void setInfinite(boolean enable) {
         assertNotInLayoutOrScroll(null);
         if (enable == mInfinite) {
@@ -814,10 +798,6 @@ public abstract class ViewPagerLayoutManager extends LinearLayoutManager {
         }
         mInfinite = enable;
         requestLayout();
-    }
-
-    public boolean getInfinite() {
-        return mInfinite;
     }
 
     public int getDistanceToBottom() {
@@ -830,6 +810,29 @@ public abstract class ViewPagerLayoutManager extends LinearLayoutManager {
         if (this.mDistanceToBottom == mDistanceToBottom) return;
         this.mDistanceToBottom = mDistanceToBottom;
         removeAllViews();
+    }
+
+    public boolean getEnableBringCenterToFront() {
+        return mEnableBringCenterToFront;
+    }
+
+    public void setEnableBringCenterToFront(boolean bringCenterToTop) {
+        assertNotInLayoutOrScroll(null);
+        if (mEnableBringCenterToFront == bringCenterToTop) {
+            return;
+        }
+        this.mEnableBringCenterToFront = bringCenterToTop;
+        requestLayout();
+    }
+
+    /**
+     * Returns the current state of the smooth scrollbar feature. It is enabled by default.
+     *
+     * @return True if smooth scrollbar is enabled, false otherwise.
+     * @see #setSmoothScrollbarEnabled(boolean)
+     */
+    public boolean getSmoothScrollbarEnabled() {
+        return mSmoothScrollbarEnabled;
     }
 
     /**
@@ -852,30 +855,25 @@ public abstract class ViewPagerLayoutManager extends LinearLayoutManager {
         mSmoothScrollbarEnabled = enabled;
     }
 
-    public void setEnableBringCenterToFront(boolean bringCenterToTop) {
-        assertNotInLayoutOrScroll(null);
-        if (mEnableBringCenterToFront == bringCenterToTop) {
-            return;
-        }
-        this.mEnableBringCenterToFront = bringCenterToTop;
-        requestLayout();
-    }
+    public interface OnPageChangeListener {
+        void onPageSelected(int position);
 
-    public boolean getEnableBringCenterToFront() {
-        return mEnableBringCenterToFront;
-    }
-
-    /**
-     * Returns the current state of the smooth scrollbar feature. It is enabled by default.
-     *
-     * @return True if smooth scrollbar is enabled, false otherwise.
-     * @see #setSmoothScrollbarEnabled(boolean)
-     */
-    public boolean getSmoothScrollbarEnabled() {
-        return mSmoothScrollbarEnabled;
+        void onPageScrollStateChanged(int state);
     }
 
     private static class SavedState implements Parcelable {
+        public static final Creator<SavedState> CREATOR
+                = new Creator<SavedState>() {
+            @Override
+            public SavedState createFromParcel(Parcel in) {
+                return new SavedState(in);
+            }
+
+            @Override
+            public SavedState[] newArray(int size) {
+                return new SavedState[size];
+            }
+        };
         int position;
         float offset;
         boolean isReverseLayout;
@@ -907,24 +905,5 @@ public abstract class ViewPagerLayoutManager extends LinearLayoutManager {
             dest.writeFloat(offset);
             dest.writeInt(isReverseLayout ? 1 : 0);
         }
-
-        public static final Creator<SavedState> CREATOR
-                = new Creator<SavedState>() {
-            @Override
-            public SavedState createFromParcel(Parcel in) {
-                return new SavedState(in);
-            }
-
-            @Override
-            public SavedState[] newArray(int size) {
-                return new SavedState[size];
-            }
-        };
-    }
-
-    public interface OnPageChangeListener {
-        void onPageSelected(int position);
-
-        void onPageScrollStateChanged(int state);
     }
 }
