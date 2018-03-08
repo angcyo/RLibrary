@@ -18,6 +18,7 @@ import com.angcyo.uiview.recycler.RRecyclerView;
 import com.angcyo.uiview.recycler.widget.ILoadMore;
 import com.angcyo.uiview.recycler.widget.IShowState;
 import com.angcyo.uiview.recycler.widget.ItemShowStateLayout;
+import com.angcyo.uiview.utils.RUtils;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -627,6 +628,25 @@ public abstract class RBaseAdapter<T> extends RecyclerView.Adapter<RBaseViewHold
 
     public void onScrollStateEnd(RRecyclerView rRecyclerView, boolean firstItemVisible, boolean lastItemVisible, boolean topCanScroll, boolean bottomCanScroll) {
 
+    }
+
+    /**
+     * 判断当前的数据, 是否和之前的数据一样, 用来在区分加载不同数据使用
+     */
+    public boolean isDataEqualPrev(int posInData, T bean) {
+        if (posInData <= 0) {
+            return false;
+        }
+        List<T> allDatas = getAllDatas();
+        if (RUtils.isListEmpty(allDatas)) {
+            return false;
+        }
+        T prevData = allDatas.get(posInData - 1);
+        return isDataEqual(prevData, bean);
+    }
+
+    public boolean isDataEqual(T prevData, T data) {
+        return prevData == data;
     }
 
     public interface OnAdapterLoadMoreListener {

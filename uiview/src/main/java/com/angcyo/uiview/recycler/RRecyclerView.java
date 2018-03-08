@@ -753,6 +753,11 @@ public class RRecyclerView extends RecyclerView implements StickLayout.CanScroll
     }
 
     @Override
+    public void draw(Canvas c) {
+        super.draw(c);
+    }
+
+    @Override
     public void onDraw(Canvas canvas) {
         super.onDraw(canvas);
 //        canvas.save();
