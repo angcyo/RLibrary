@@ -2328,6 +2328,28 @@ public class UILayoutImpl extends SwipeBackLayout implements ILayout<UIParam>, U
     }
 
     /**
+     * 获取具有生命周期的IView所在的索引(倒数)
+     */
+    private int getLifecycleLastIndex(ViewPattern viewPattern) {
+        ArrayList<ViewPattern> allVisibleIView = getAllVisibleIView();
+        if (RUtils.isListEmpty(allVisibleIView)) {
+            return -1;
+        }
+        int result = 0;
+        for (int i = allVisibleIView.size() - 1; i >= 0; i--) {
+            ViewPattern pattern = allVisibleIView.get(i);
+            if (viewPattern == pattern) {
+                return result;
+            }
+            if (pattern.mIView.isDialog()) {
+                continue;
+            }
+            result++;
+        }
+        return result;
+    }
+
+    /**
      * child的测量和显示状态
      */
     private boolean[] checkChildState(int childIndex) {
@@ -2348,6 +2370,7 @@ public class UILayoutImpl extends SwipeBackLayout implements ILayout<UIParam>, U
         }
 
         int indexFromIViews = getIndexFromIViews(viewPatternByView);
+        int lifecycleLastIndex = getLifecycleLastIndex(viewPatternByView);
 
         //-----------------只有部分界面需要测量, 优化性能---------
         boolean needMeasure = false;//是否需要测量
@@ -2366,50 +2389,58 @@ public class UILayoutImpl extends SwipeBackLayout implements ILayout<UIParam>, U
             //最后一个页面
             //needMeasure = true;
             needVisible = true;
+        } else if (viewPatternByView.mIView.isDialog()) {
+            //对话框必须显示
+            needVisible = true;
         } else if (childIndex == childCount - 1 /*|| i == count - 2*/) {
-            //倒数第一个, 第二个view
+            //child 的 倒数第一个, 第二个view
             //needMeasure = true;
             needVisible = true;
         } else if (indexFromIViews >= 0 && (indexFromIViews == iViewSize - 1 /*|| indexFromIViews == iViewSize - 2*/)) {
-            //倒数第一个, 第二个iview
+            //所有IView的 倒数第一个, 第二个iview
             //needMeasure = true;
             needVisible = true;
-        } else if ((childIndex == childCount - 2 || indexFromIViews == iViewSize - 2) &&
-                viewPatternByView.mIView.needForceVisible()) {
+        } else if (lifecycleLastIndex >= 0 && lifecycleLastIndex <= 1) {
+            //具有生命周期的IView 倒是第一个, 第二个...比如 中间很多对话框的情况
             needVisible = true;
         } else {
+            if ((childIndex == childCount - 2 || indexFromIViews == iViewSize - 2) &&
+                    viewPatternByView.mIView.needForceVisible()) {
+                needVisible = true;
+            } else {
 //            if (viewPatternByView.mIView.needForceMeasure() ||
 //                    viewPatternByView.mIView.haveParentILayout() /*||
 //                        viewPatternByView.mIView.haveChildILayout()*/) {
 //                //需要强制测量
 //                needMeasure = true;
 //            } else {
-            boolean isLastAllDialog = false;//界面上面全是对话框
-            IView iView = viewPatternByView.mIView;
-            for (int j = mAttachViews.size() - 1; j >= 0; j--) {
-                ViewPattern viewPattern = mAttachViews.get(j);
-                if (viewPattern.mIView.isDialog() ||
-                        viewPattern.mIView.showOnDialog() ||
-                        viewPattern.isAnimToEnd ||
-                        viewPattern.mIView.needTransitionExitAnim() ||
-                        viewPattern.mIView.needTransitionStartAnim()) {
-                    //界面上面全是对话框
-                    //needMeasure = true;
-                    isLastAllDialog = true;
-                    if (viewPattern.mIView == iView) {
+                boolean isLastAllDialog = false;//界面上面全是对话框
+                IView iView = viewPatternByView.mIView;
+                for (int j = mAttachViews.size() - 1; j >= 0; j--) {
+                    ViewPattern viewPattern = mAttachViews.get(j);
+                    if (viewPattern.mIView.isDialog() ||
+                            viewPattern.mIView.showOnDialog() ||
+                            viewPattern.isAnimToEnd ||
+                            viewPattern.mIView.needTransitionExitAnim() ||
+                            viewPattern.mIView.needTransitionStartAnim()) {
+                        //界面上面全是对话框
+                        //needMeasure = true;
+                        isLastAllDialog = true;
+                        if (viewPattern.mIView == iView) {
+                            break;
+                        }
+                    } else if (viewPattern.mIView == iView) {
+                        break;
+                    } else {
+                        isLastAllDialog = false;
                         break;
                     }
-                } else if (viewPattern.mIView == iView) {
-                    break;
-                } else {
-                    isLastAllDialog = false;
-                    break;
                 }
-            }
-            if (isLastAllDialog) {
-                needVisible = true;
-            }
+                if (isLastAllDialog) {
+                    needVisible = true;
+                }
 //            }
+            }
         }
 
         if (needVisible ||
