@@ -94,7 +94,7 @@ open class ClipLayout(context: Context, attributeSet: AttributeSet? = null) : Fr
     }
 
     private val size
-        get() = Math.min(measuredHeight - paddingTop - paddingBottom, measuredWidth - paddingLeft - paddingRight)
+        get() = Math.min(measuredHeight /*- paddingTop - paddingBottom*/, measuredWidth /*- paddingLeft - paddingRight*/)
 
     private val cx
         get() = (paddingLeft + (measuredWidth - paddingLeft - paddingRight) / 2).toFloat()
@@ -110,9 +110,11 @@ open class ClipLayout(context: Context, attributeSet: AttributeSet? = null) : Fr
         if (aeqWidth) {
             roundRectF.set(cx - cr, cy - cr, cx + cr, cy + cr)
         } else {
-            roundRectF.set(paddingLeft.toFloat(), paddingTop.toFloat(),
-                    (measuredWidth - paddingRight).toFloat(), (measuredHeight - paddingBottom).toFloat())
+//            roundRectF.set(paddingLeft.toFloat(), paddingTop.toFloat(),
+//                    (measuredWidth - paddingRight).toFloat(), (measuredHeight - paddingBottom).toFloat())
+            roundRectF.set(0f, 0f, measuredWidth.toFloat(), measuredHeight.toFloat())
         }
+
         rBackgroundDrawable?.setBounds(0, 0, measuredWidth, measuredHeight)
 
         if (guidMode) {
