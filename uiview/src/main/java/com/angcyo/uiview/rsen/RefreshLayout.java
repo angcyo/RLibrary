@@ -1009,6 +1009,9 @@ public class RefreshLayout extends ViewGroup {
         return UI.canChildScroll(view, direction);
     }
 
+    /**
+     * 关闭或者开启下拉刷新功能
+     */
     public void setNotifyListener(boolean notifyListener) {
         if (notifyListener) {
             setNotifyListener(BOTH);

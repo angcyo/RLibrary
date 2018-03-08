@@ -884,6 +884,13 @@ public class RRecyclerView extends RecyclerView implements StickLayout.CanScroll
     }
 
     /**
+     * 取消滚动增益特效
+     */
+    public void setNoOverScrollMode() {
+        setOverScrollMode(OVER_SCROLL_NEVER);
+    }
+
+    /**
      * RecyclerView滚动结束后的回调
      */
     public interface OnFlingEndListener {
