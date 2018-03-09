@@ -3366,7 +3366,7 @@ public class UILayoutImpl extends SwipeBackLayout implements ILayout<UIParam>, U
         public void onAnimationEnd(Animation animation) {
             if (mRunnable != null) {
                 if (mView != null && !isFinish) {
-                    //慢一帧启动
+                    //慢4帧启动
                     mView.postDelayed(mRunnable, 16);
                 } else {
                     mRunnable.run();

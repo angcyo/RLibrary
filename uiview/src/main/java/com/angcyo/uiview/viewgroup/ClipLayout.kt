@@ -58,7 +58,7 @@ open class ClipLayout(context: Context, attributeSet: AttributeSet? = null) : Fr
     var guidMode = false
 
     /**是否是等宽矩形*/
-    private var aeqWidth = true
+    private var aeqWidth = false
 
     private var rLayoutWidth: String? = null
     private var rLayoutHeight: String? = null
