@@ -1,5 +1,6 @@
 package com.angcyo.uiview.recycler.adapter;
 
+import com.angcyo.uiview.recycler.RBaseViewHolder;
 import com.angcyo.uiview.utils.RUtils;
 import com.brandongogetap.stickyheaders.exposed.StickyHeader;
 
@@ -27,6 +28,13 @@ public class RExGroupData<H, T> extends RGroupData<T> {
 
     public RExGroupData() {
         this(new ArrayList<H>(), new ArrayList<T>());
+    }
+
+    public RExGroupData(H headerData, List<T> allDatas) {
+        super(allDatas);
+        mAllHeaderDatas = new ArrayList<>();
+        mAllHeaderDatas.add(headerData);
+        checkHaveStickyHeader();
     }
 
     public RExGroupData(List<H> headerDatas, List<T> allDatas) {
@@ -60,5 +68,27 @@ public class RExGroupData<H, T> extends RGroupData<T> {
         if (haveStickyHeader) {
             groupAdapter.updateStickyDataList();
         }
+    }
+
+    @Override
+    public void onExpandChanged(RGroupAdapter groupAdapter, boolean fromExpand, boolean toExpand) {
+        super.onExpandChanged(groupAdapter, fromExpand, toExpand);
+        int startPosition = groupAdapter.getPositionFromGroup(this);
+        groupAdapter.notifyItemChanged(startPosition);
+    }
+
+    @Override
+    protected void onBindGroupView(RBaseViewHolder holder, int position, int indexInGroup) {
+        super.onBindGroupView(holder, position, indexInGroup);
+        onBindGroupView(holder, position, indexInGroup, getAllHeaderDatas().size() > indexInGroup ? getAllHeaderDatas().get(indexInGroup) : null);
+    }
+
+    protected void onBindGroupView(RBaseViewHolder holder, int position, int indexInGroup, H headerData) {
+
+    }
+
+    @Override
+    protected void onBindDataView(RBaseViewHolder holder, int position, int indexInData, T dataBean) {
+        super.onBindDataView(holder, position, indexInData, dataBean);
     }
 }

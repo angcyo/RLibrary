@@ -31,7 +31,7 @@ public class RGroupData<T> {
     /**
      * 分组是否展开
      */
-    protected boolean isExpand = true;
+    protected boolean isExpand = false;
 
     public RGroupData() {
         this(new ArrayList<T>());
@@ -50,6 +50,14 @@ public class RGroupData<T> {
      */
     public void setExpand(RGroupAdapter groupAdapter, boolean expand) {
         setExpand(groupAdapter, expand, false);
+    }
+
+    public void expandGroup(RGroupAdapter groupAdapter) {
+        expandGroup(groupAdapter, false);
+    }
+
+    public void expandGroup(RGroupAdapter groupAdapter, boolean closeOther) {
+        setExpand(groupAdapter, !isExpand, closeOther);
     }
 
     /**
@@ -78,7 +86,15 @@ public class RGroupData<T> {
             groupAdapter.notifyItemRangeInserted(startPosition, getDataCount());
             groupAdapter.notifyItemRangeChanged(startPosition, groupAdapter.getItemCount());
         }
+        onExpandChanged(groupAdapter, oldExpand, expand);
         onDataSizeChanged(groupAdapter);
+    }
+
+    /**
+     * 展开和关闭状态改变了
+     */
+    public void onExpandChanged(RGroupAdapter groupAdapter, boolean fromExpand, boolean toExpand) {
+
     }
 
     /**
@@ -96,10 +112,17 @@ public class RGroupData<T> {
     }
 
     /**
-     * 返回数据的数量
+     * 返回数据需要显示的数量
      */
     public int getDataCount() {
         return isExpand ? (mAllDatas == null ? 0 : mAllDatas.size()) : 0;
+    }
+
+    /**
+     * 数据真实的数量
+     */
+    public int getDataRawCount() {
+        return mAllDatas == null ? 0 : mAllDatas.size();
     }
 
     public List<T> getAllDatas() {
@@ -233,7 +256,7 @@ public class RGroupData<T> {
         onBindDataView(holder, position, indexInData, getAllDatas().size() > indexInData ? getAllDatas().get(indexInData) : null);
     }
 
-    protected void onBindDataView(RBaseViewHolder holder, int position, int indexInData, T bean) {
+    protected void onBindDataView(RBaseViewHolder holder, int position, int indexInData, T dataBean) {
 
     }
 }
