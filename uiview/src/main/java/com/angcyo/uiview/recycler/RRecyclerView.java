@@ -68,6 +68,35 @@ public class RRecyclerView extends RecyclerView implements StickLayout.CanScroll
      * 是否激活滚动, 激活滚动是自动滚动的前提
      */
     protected boolean enableScroll = false;
+    /**
+     * 滚动时间间隔(毫秒)
+     */
+    protected long autoScrollTimeInterval = AUTO_SCROLL_TIME;
+    protected Runnable autoScrollRunnable = new Runnable() {
+        @Override
+        public void run() {
+            curScrollPosition++;
+            if (getAdapter() != null) {
+                int maxItemCount = getAdapter().getItemCount();
+                if (curScrollPosition >= maxItemCount) {
+                    curScrollPosition = 0;
+                    scrollTo(0, false);
+                } else {
+                    int firstVisibleItemPosition = curScrollPosition;
+                    LayoutManager layoutManager = getLayoutManager();
+                    if (layoutManager instanceof LinearLayoutManager) {
+                        firstVisibleItemPosition = ((LinearLayoutManager) layoutManager).findFirstVisibleItemPosition();
+                    }
+                    //L.e("call: run([])-> " + curScrollPosition + " " + firstVisibleItemPosition);
+                    scrollTo(curScrollPosition, Math.abs(firstVisibleItemPosition - curScrollPosition) < 2);
+                }
+            }
+
+            if (enableScroll) {
+                postDelayed(autoScrollRunnable, autoScrollTimeInterval);
+            }
+        }
+    };
     OnTouchListener mInterceptTouchListener;
     OnFastTouchListener mOnFastTouchListener;
     OnFlingEndListener mOnFlingEndListener;
@@ -116,36 +145,6 @@ public class RRecyclerView extends RecyclerView implements StickLayout.CanScroll
      * 是否自动开始滚动, 当界面onAttachedToWindow的时候 有效
      */
     private boolean isEnableAutoStartScroll = false;
-
-    /**
-     * 滚动时间间隔(毫秒)
-     */
-    protected long autoScrollTimeInterval = AUTO_SCROLL_TIME;
-    protected Runnable autoScrollRunnable = new Runnable() {
-        @Override
-        public void run() {
-            curScrollPosition++;
-            if (getAdapter() != null) {
-                int maxItemCount = getAdapter().getItemCount();
-                if (curScrollPosition >= maxItemCount) {
-                    curScrollPosition = 0;
-                    scrollTo(0, false);
-                } else {
-                    int firstVisibleItemPosition = curScrollPosition;
-                    LayoutManager layoutManager = getLayoutManager();
-                    if (layoutManager instanceof LinearLayoutManager) {
-                        firstVisibleItemPosition = ((LinearLayoutManager) layoutManager).findFirstVisibleItemPosition();
-                    }
-                    //L.e("call: run([])-> " + curScrollPosition + " " + firstVisibleItemPosition);
-                    scrollTo(curScrollPosition, Math.abs(firstVisibleItemPosition - curScrollPosition) < 2);
-                }
-            }
-
-            if (enableScroll) {
-                postDelayed(autoScrollRunnable, autoScrollTimeInterval);
-            }
-        }
-    };
     private int lastVisiblePosition = -1;
     private int lastVisibleItemOffset = -1;
     private String widthHeightRatio;

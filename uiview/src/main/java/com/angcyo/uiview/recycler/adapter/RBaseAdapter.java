@@ -19,6 +19,7 @@ import com.angcyo.uiview.recycler.widget.ILoadMore;
 import com.angcyo.uiview.recycler.widget.IShowState;
 import com.angcyo.uiview.recycler.widget.ItemShowStateLayout;
 import com.angcyo.uiview.utils.RUtils;
+import com.brandongogetap.stickyheaders.exposed.StickyHeaderHandler;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -27,7 +28,7 @@ import java.util.List;
  * Created by angcyo on 16-01-18-018.
  */
 public abstract class RBaseAdapter<T> extends RecyclerView.Adapter<RBaseViewHolder>
-        implements RecyclerView.OnChildAttachStateChangeListener {
+        implements RecyclerView.OnChildAttachStateChangeListener, StickyHeaderHandler {
 
     public static final int ITEM_TYPE_LOAD_MORE = 666;
     public static final int ITEM_TYPE_SHOW_STATE = 667;
@@ -647,6 +648,14 @@ public abstract class RBaseAdapter<T> extends RecyclerView.Adapter<RBaseViewHold
 
     public boolean isDataEqual(T prevData, T data) {
         return prevData == data;
+    }
+
+    /**
+     * Item悬停库的支持
+     */
+    @Override
+    public List<?> getAdapterData() {
+        return mAllDatas;
     }
 
     public interface OnAdapterLoadMoreListener {

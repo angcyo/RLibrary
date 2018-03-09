@@ -78,6 +78,7 @@ public class RGroupData<T> {
             groupAdapter.notifyItemRangeInserted(startPosition, getDataCount());
             groupAdapter.notifyItemRangeChanged(startPosition, groupAdapter.getItemCount());
         }
+        onDataSizeChanged(groupAdapter);
     }
 
     /**
@@ -138,6 +139,8 @@ public class RGroupData<T> {
             groupAdapter.notifyItemRangeChanged(positionFromGroup, getCount());
         } else {
             groupAdapter.notifyDataSetChanged();
+
+            onDataSizeChanged(groupAdapter);
         }
     }
 
@@ -159,6 +162,8 @@ public class RGroupData<T> {
 
         groupAdapter.notifyItemRangeInserted(startPosition, allDatas.size());
         groupAdapter.notifyItemRangeChanged(startPosition, groupAdapter.getItemCount());
+
+        onDataSizeChanged(groupAdapter);
     }
 
     public void notifyItemUpdate(RGroupAdapter groupAdapter) {
@@ -185,6 +190,13 @@ public class RGroupData<T> {
                 }
             }
         });
+    }
+
+    /**
+     * 数据源的数量改变了, 用来支持头部悬停数据更新
+     */
+    public void onDataSizeChanged(RGroupAdapter groupAdapter) {
+
     }
 
 

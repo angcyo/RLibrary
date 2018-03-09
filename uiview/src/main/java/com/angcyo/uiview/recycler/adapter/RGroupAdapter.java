@@ -3,6 +3,7 @@ package com.angcyo.uiview.recycler.adapter;
 import android.content.Context;
 
 import com.angcyo.uiview.recycler.RBaseViewHolder;
+import com.angcyo.uiview.utils.RUtils;
 import com.angcyo.uiview.utils.T;
 
 import java.util.ArrayList;
@@ -23,6 +24,7 @@ public class RGroupAdapter<H, G extends RGroupData, F> extends RExBaseAdapter<H,
 
     public static final int TYPE_GROUP_HEAD = 0x11000;
     public static final int TYPE_GROUP_DATA = 0x22000;
+    private List<Object> mStickyDataList;
 
     public RGroupAdapter(Context context) {
         super(context);
@@ -246,6 +248,45 @@ public class RGroupAdapter<H, G extends RGroupData, F> extends RExBaseAdapter<H,
         int dataIndex = getDataIndex(posInData);
         if (dataIndex >= 0) {
             getGroupDataFromPosition(posInData).onBindDataView(holder, posInData + getHeaderCount(), dataIndex);
+        }
+    }
+
+    @Override
+    public List<?> getAdapterData() {
+        //L.e("call: getAdapterData([])-> ");
+
+        if (mStickyDataList == null) {
+            updateStickyDataList();
+        }
+        //return super.getAdapterData();
+        return mStickyDataList;
+    }
+
+    /**
+     * 更新悬停头部需要的数据源, 此方法实现的悬停
+     * 请不要开启头部 尾部数据, 否则会卡
+     */
+    public void updateStickyDataList() {
+        //L.e("call: updateStickyDataList([])-> ");
+
+        if (mStickyDataList == null) {
+            mStickyDataList = new ArrayList<>();
+        } else {
+            mStickyDataList.clear();
+        }
+        if (!RUtils.isListEmpty(mAllHeaderDatas)) {
+            mStickyDataList.addAll(mAllHeaderDatas);
+        }
+        for (G group : mAllDatas) {
+            if (group instanceof RExGroupData) {
+                mStickyDataList.addAll(((RExGroupData) group).getAllHeaderDatas());
+            }
+            if (group.isExpand()) {
+                mStickyDataList.addAll(group.getAllDatas());
+            }
+        }
+        if (!RUtils.isListEmpty(mAllFooterDatas)) {
+            mStickyDataList.addAll(mAllFooterDatas);
         }
     }
 }
