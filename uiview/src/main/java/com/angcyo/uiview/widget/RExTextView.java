@@ -78,7 +78,7 @@ public class RExTextView extends RTextView {
     /**
      * 座机号码正则
      */
-    public final static Pattern patternTel = Pattern.compile("^([0-9]{3,4}-)?[0-9]{7,8}$");
+    public final static Pattern patternTel = Pattern.compile("^([0-9]{3,4}-)?[0-9]{4,8}$");
 
     protected ImageTextSpan.OnImageSpanClick mOnImageSpanClick;
 
@@ -109,9 +109,13 @@ public class RExTextView extends RTextView {
      */
     private boolean needPatternMention = true;
     /**
-     * 是否匹配手机号码, 座机, 联系方式
+     * 是否匹配手机号码
      */
     private boolean needPatternPhone = true;
+    /**
+     * 是否匹配 座机, 联系方式
+     */
+    private boolean needPatternTel = true;
     /**
      * 是否匹配纯数据帐号
      */
@@ -310,6 +314,9 @@ public class RExTextView extends RTextView {
             }
             if (needPatternNumberAccount) {
                 patternNumberAccount(spanBuilder, text);
+            }
+            if (needPatternTel) {
+                patternTel(spanBuilder, text);
             }
             if (needPatternPhone) {
                 patternPhone(spanBuilder, text);
@@ -557,26 +564,24 @@ public class RExTextView extends RTextView {
      * 匹配 电话号码
      */
     protected void patternPhone(SpannableStringBuilder builder, CharSequence input) {
-        Matcher matcher = patternPhone.matcher(input);
-
-        while (matcher.find()) {
-            int start = matcher.start();
-            int end = matcher.end();
-            String group = matcher.group();
-
-            if (!isInOtherSpan(builder, input.length(), start, end)) {
-                builder.setSpan(new ImageTextSpan(getContext(), ImageTextSpan.initDrawable(getTextSize()),
-                                group, group)
-                                .setOnImageSpanClick(mOnImageSpanClick)
-                                .setTextColor(mImageSpanTextColor),
-                        start, end, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
-            }
-        }
+        pattern(patternPhone.matcher(input), builder, input);
     }
 
-    protected void patternNumberAccount(SpannableStringBuilder builder, CharSequence input) {
-        Matcher matcher = patternNumberAccount.matcher(input);
+    /**
+     * 匹配座机
+     */
+    protected void patternTel(SpannableStringBuilder builder, CharSequence input) {
+        pattern(patternTel.matcher(input), builder, input);
+    }
 
+    /**
+     * 匹配数字帐号
+     */
+    protected void patternNumberAccount(SpannableStringBuilder builder, CharSequence input) {
+        pattern(patternNumberAccount.matcher(input), builder, input);
+    }
+
+    protected void pattern(Matcher matcher, SpannableStringBuilder builder, CharSequence input) {
         while (matcher.find()) {
             int start = matcher.start();
             int end = matcher.end();
