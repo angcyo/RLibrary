@@ -943,12 +943,12 @@ public class RExTextView extends RTextView {
             L.e("ImageTextSpan Click-> " + mShowContent + ":" + url);
             if (mOnImageSpanClick != null) {
                 if (!mOnImageSpanClick.onClick(view, mShowContent, url)) {
-                    if (isWebUrl(url)) {
-                        mOnImageSpanClick.onUrlClick(view, url);
-                    } else if (isPhone(url) || isTel(url) || isTel2(url)) {
-                        mOnImageSpanClick.onPhoneClick(view, url);
-                    } else if (isNumber(url)) {
+                    if (!TextUtils.isEmpty(mShowContent) && mShowContent.charAt(0) == '@' && isNumber(url)) {
                         mOnImageSpanClick.onMentionClick(view, url);
+                    } else if (isWebUrl(url)) {
+                        mOnImageSpanClick.onUrlClick(view, url);
+                    } else if (isPhone(url) || isTel(url) || isTel2(url) || isNumber(url)) {
+                        mOnImageSpanClick.onPhoneClick(view, url);
                     }
                 }
             }

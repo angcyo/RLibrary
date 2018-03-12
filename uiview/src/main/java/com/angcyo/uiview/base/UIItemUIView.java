@@ -221,6 +221,11 @@ public abstract class UIItemUIView<T extends Item> extends UIRecyclerUIView<Stri
         //
     }
 
+    @Override
+    public void onUILoadData(int page, String extend) {
+        //super.onUILoadData(page, extend);
+    }
+
     /**
      * 如果需要在界面中处理键盘事件, 请返回true, 否则 RSoftInputLayout 将忽略键盘处理
      */
