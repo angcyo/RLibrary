@@ -270,6 +270,20 @@ public class RFlowLayout extends LinearLayout {
         }
     }
 
+    /**
+     * 清除除checkView以外的其他View 的check状态
+     */
+    public void clearCheck(RTextCheckView checkView) {
+        for (int i = 0; i < getChildCount(); i++) {
+            View childAt = getChildAt(i);
+            if (childAt instanceof RCheckGroup.ICheckView) {
+                if (childAt != checkView && ((RCheckGroup.ICheckView) childAt).isChecked()) {
+                    ((RCheckGroup.ICheckView) childAt).setChecked(false);
+                }
+            }
+        }
+    }
+
     public interface OnAddViewListener {
         void onInitView(View view);
     }
