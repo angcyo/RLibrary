@@ -6,10 +6,14 @@
         <item name="android:statusBarColor">@android:color/transparent</item>
     </style>
 
+    <style name="BaseTranslucentTheme" parent="BaseNoTitleBarTheme">
+        <item name="android:windowIsTranslucent">false</item>
+    </style>
+
     <!--<style name="BaseWhiteAppTheme" parent="BaseAppTheme">-->
-        <!--&lt;!&ndash; Customize your theme here. &ndash;&gt;-->
-        <!--&lt;!&ndash;Only fullscreen activities can request orientation&ndash;&gt;-->
-        <!--<item name="android:windowBackground">@android:color/white</item>-->
+    <!--&lt;!&ndash; Customize your theme here. &ndash;&gt;-->
+    <!--&lt;!&ndash;Only fullscreen activities can request orientation&ndash;&gt;-->
+    <!--<item name="android:windowBackground">@android:color/white</item>-->
     <!--</style>-->
 
 </resources>
