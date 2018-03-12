@@ -1524,6 +1524,13 @@ public class UILayoutImpl extends SwipeBackLayout implements ILayout<UIParam>, U
                 checkTaskOnIViewAnimationEnd();
             }
         };
+
+        if (bottomViewPattern == null) {
+            currentViewTask.taskRun--;
+            checkTaskOnIViewAnimationEnd();
+            return;
+        }
+
         setIViewNeedLayout(bottomViewPattern.mView, true);
         bottomViewPattern.mView.setVisibility(VISIBLE);
         showChildLayoutLastView();

@@ -138,6 +138,10 @@ public abstract class UILayoutActivity extends StyleActivity {
     }
 
     public void checkPermissions(String[] permissions, final Action1<Boolean> onResult) {
+        if (this.isDestroyed()) {
+            return;
+        }
+
         checkPermissionsResult(permissions, new Action1<String>() {
             @Override
             public void call(String s) {

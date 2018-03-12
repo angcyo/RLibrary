@@ -45,6 +45,11 @@ public class RGroupData<T> {
         return isExpand;
     }
 
+    public RGroupData setExpand(boolean expand) {
+        isExpand = expand;
+        return this;
+    }
+
     /**
      * 展开/关闭 分组数据的显示
      */
