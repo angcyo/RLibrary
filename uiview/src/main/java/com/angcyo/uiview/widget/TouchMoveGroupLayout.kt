@@ -46,16 +46,16 @@ class TouchMoveGroupLayout(context: Context, attributeSet: AttributeSet? = null)
     }
 
     /**更新样式*/
-    fun updateSelectorStyle() {
+    fun updateSelectorStyle(notify: Boolean = true) {
         if (childCount > selectorPosition) {
-            updateSelector(getChildAt(selectorPosition) as TouchMoveView)
+            updateSelector(getChildAt(selectorPosition) as TouchMoveView, notify)
         }
     }
 
     /**选中targetView*/
-    fun updateSelector(targetView: TouchMoveView) {
+    fun updateSelector(targetView: TouchMoveView, notify: Boolean = true) {
 
-        for (i in 0..childCount - 1) {
+        for (i in 0 until childCount) {
             //L.e("child at : $i")
             val childAt = getChildAt(i)
             if (childAt is TouchMoveView) {
@@ -67,18 +67,20 @@ class TouchMoveGroupLayout(context: Context, attributeSet: AttributeSet? = null)
                 if (newState) {
                     selectorPosition = i
                 }
-                if (newState && !oldState) {
-                    //L.e("selected : $i")
-                    listener?.onSelectorPosition(childAt, i)
-                } else if (newState && oldState) {
-                    listener?.onRepeatSelectorPosition(childAt, i)
+                if (notify) {
+                    if (newState && !oldState) {
+                        //L.e("selected : $i")
+                        listener?.onSelectorPosition(childAt, i)
+                    } else if (newState && oldState) {
+                        listener?.onRepeatSelectorPosition(childAt, i)
+                    }
                 }
             }
         }
 
         (0..childCount).map {
             val childAt: TouchMoveView? = getChildAt(it) as TouchMoveView?
-
+            /*微微的偏移部分角度, 模仿QQ底部导航栏*/
             if (it < selectorPosition) childAt?.mStartSubDrawOffsetRatioX = 0.3f
             if (it > selectorPosition) childAt?.mStartSubDrawOffsetRatioX = -0.3f
             if (it == selectorPosition) childAt?.mStartSubDrawOffsetRatioX = 0F

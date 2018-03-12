@@ -5,6 +5,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.FrameLayout
+import com.angcyo.library.utils.L
 import com.angcyo.uiview.R
 import com.angcyo.uiview.container.UILayoutImpl
 import com.angcyo.uiview.container.UIParam
@@ -79,17 +80,15 @@ abstract class UINavigationView : UIIViewImpl() {
         rootView.setBackgroundColor(Color.WHITE)
     }
 
-    /**是否使用ViewPager当主页面, 这样就可以支持左右滑动*/
-    open fun isUseViewPager() = false
-
     override fun onViewLoad() {
         super.onViewLoad()
         mainLayoutImpl?.setEnableSwipeBack(false)//关闭侧滑
         createPages(pages)
         onCreatePages()
+        onCreatePagesEnd()
     }
 
-    fun onCreatePages() {
+    open fun onCreatePages() {
         pages.forEachIndexed { index, pageBean ->
             val navItem = createNavItem(pageBean)
             pageViews.add(navItem)
@@ -99,6 +98,9 @@ abstract class UINavigationView : UIIViewImpl() {
                 onNavItemDoubleTap(navItem, index)
             }
         }
+    }
+
+    open fun onCreatePagesEnd() {
         touchMoveGroupLayout?.selectorPosition = selectorPosition
         touchMoveGroupLayout?.updateSelectorStyle()
         touchMoveGroupLayout?.listener = object : TouchMoveGroupLayout.OnSelectorPositionListener {
@@ -153,6 +155,7 @@ abstract class UINavigationView : UIIViewImpl() {
     abstract fun createPages(pages: ArrayList<PageBean>)
 
     open fun onSelectorPosition(targetView: TouchMoveView, position: Int) {
+        L.i("UINavigationView 选择 -> 位置:$position IView:${UILayoutImpl.name(pages[position].iview)}")
         mainLayoutImpl?.startIView(pages[position].iview.setIsRightJumpLeft(lastIndex > position),
                 UIParam(lastIndex != position).setLaunchMode(UIParam.SINGLE_TOP))
 
@@ -160,9 +163,12 @@ abstract class UINavigationView : UIIViewImpl() {
     }
 
     open fun onRepeatSelectorPosition(targetView: TouchMoveView, position: Int) {
+        L.i("UINavigationView 重复选择 -> 位置:$position IView:${UILayoutImpl.name(pages[position].iview)}")
     }
 
     open fun onNavItemDoubleTap(targetView: TouchMoveView, position: Int) {
+        L.i("UINavigationView 双击 -> 位置:$position IView:${UILayoutImpl.name(pages[position].iview)}")
+
         val iview = pages[position].iview
         if (iview is UIRecyclerUIView<*, *, *>) {
             iview.onDoubleScrollToTop()

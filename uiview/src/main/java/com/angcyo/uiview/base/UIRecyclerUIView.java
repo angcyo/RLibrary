@@ -247,10 +247,6 @@ public abstract class UIRecyclerUIView<H, T, F> extends UIContentView
         showLoadView();
     }
 
-    public boolean isShowInViewPager() {
-        return false;
-    }
-
     /**
      * 重置UI状态
      */

@@ -645,6 +645,8 @@ public class AnimUtil {
                 Animation.RELATIVE_TO_SELF, 1f, Animation.RELATIVE_TO_SELF, 0f);
         setDefaultConfig(translateAnimation, false);
 
+        translateAnimation.setDuration(2 * DEFAULT_DIALOG_FINISH_ANIM_TIME);
+
         AnimationSet animationSet = new AnimationSet(false);
         animationSet.addAnimation(translateAnimation);
         return animationSet;
@@ -658,7 +660,7 @@ public class AnimUtil {
                 Animation.RELATIVE_TO_SELF, 0f, Animation.RELATIVE_TO_SELF, 1f);
         setDefaultConfig(translateAnimation, true);
 
-        translateAnimation.setDuration(DEFAULT_DIALOG_FINISH_ANIM_TIME);
+        translateAnimation.setDuration(2 * DEFAULT_DIALOG_FINISH_ANIM_TIME);
 
         AnimationSet animationSet = new AnimationSet(false);
         animationSet.addAnimation(translateAnimation);

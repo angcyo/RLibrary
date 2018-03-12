@@ -304,6 +304,16 @@ public class UILayoutImpl extends SwipeBackLayout implements ILayout<UIParam>, U
         return Arrays.asList(iViews);
     }
 
+    public static String name(Object obj) {
+        if (obj == null) {
+            return "null object";
+        }
+        if (obj instanceof String) {
+            return "String:" + obj;
+        }
+        return obj.getClass().getSimpleName();
+    }
+
     @Override
     public void onLastViewReShow(Bundle bundle) {
         ViewPattern lastViewPattern = getLastViewPattern();
@@ -3293,10 +3303,6 @@ public class UILayoutImpl extends SwipeBackLayout implements ILayout<UIParam>, U
         isFullOverlayDrawable = fullOverlayDrawable;
     }
 
-    private String name(Object obj) {
-        return obj.getClass().getSimpleName();
-    }
-
     private void logTimeStart(String log) {
         if (SHOW_DEBUG_TIME) {
             Debug.logTimeStartI(log);
@@ -3374,7 +3380,8 @@ public class UILayoutImpl extends SwipeBackLayout implements ILayout<UIParam>, U
             if (mRunnable != null) {
                 if (mView != null && !isFinish) {
                     //慢4帧启动
-                    mView.postDelayed(mRunnable, 16);
+                    //mView.postDelayed(mRunnable, 16);
+                    mView.post(mRunnable);
                 } else {
                     mRunnable.run();
                     mRunnable = null;

@@ -105,8 +105,13 @@ public abstract class UIIViewImpl implements IView {
      */
     protected long viewShowCount = 0;
     protected long showInPagerCount = 0;
+    protected boolean isShowInViewPager = false;
     protected int mBaseSoftInputMode;
     protected OnUIViewListener mOnUIViewListener;
+    /**
+     * 启动IView的动画类型
+     */
+    protected IViewAnimationType mAnimationType = IViewAnimationType.TRANSLATE_HORIZONTAL;
     OnCountDown mOnCountDown;
     int maxCount;
     int currentCount;
@@ -439,25 +444,39 @@ public abstract class UIIViewImpl implements IView {
     @Override
     public Animation loadStartAnimation(AnimParam animParam) {
         L.v(this.getClass().getSimpleName(), "loadStartAnimation: " + mIViewStatus);
-        TranslateAnimation translateAnimation;
-        if (mIsRightJumpLeft) {
-            translateAnimation = new TranslateAnimation(Animation.RELATIVE_TO_SELF, -0.99f, Animation.RELATIVE_TO_SELF, 0,
-                    Animation.RELATIVE_TO_SELF, 0f, Animation.RELATIVE_TO_SELF, 0f);
-        } else {
-            translateAnimation = new TranslateAnimation(Animation.RELATIVE_TO_SELF, 0.99f, Animation.RELATIVE_TO_SELF, 0f,
-                    Animation.RELATIVE_TO_SELF, 0f, Animation.RELATIVE_TO_SELF, 0f);
+        switch (mAnimationType) {
+            case ALPHA:
+                return AnimUtil.createAlphaEnterAnim(0.8f);
+            case TRANSLATE_VERTICAL:
+                return AnimUtil.translateStartAnimation();
+            default:
+                TranslateAnimation translateAnimation;
+                if (mIsRightJumpLeft) {
+                    translateAnimation = new TranslateAnimation(Animation.RELATIVE_TO_SELF, -0.99f, Animation.RELATIVE_TO_SELF, 0,
+                            Animation.RELATIVE_TO_SELF, 0f, Animation.RELATIVE_TO_SELF, 0f);
+                } else {
+                    translateAnimation = new TranslateAnimation(Animation.RELATIVE_TO_SELF, 0.99f, Animation.RELATIVE_TO_SELF, 0f,
+                            Animation.RELATIVE_TO_SELF, 0f, Animation.RELATIVE_TO_SELF, 0f);
+                }
+                setDefaultConfig(translateAnimation, false);
+                return translateAnimation;
         }
-        setDefaultConfig(translateAnimation, false);
-        return translateAnimation;
     }
 
     @Override
     public Animation loadFinishAnimation(AnimParam animParam) {
         L.v(this.getClass().getSimpleName(), "loadFinishAnimation: ");
-        TranslateAnimation translateAnimation = new TranslateAnimation(Animation.RELATIVE_TO_SELF, 0, Animation.RELATIVE_TO_SELF, 1f,
-                Animation.RELATIVE_TO_SELF, 0f, Animation.RELATIVE_TO_SELF, 0f);
-        setDefaultConfig(translateAnimation, true);
-        return translateAnimation;
+        switch (mAnimationType) {
+            case ALPHA:
+                return AnimUtil.createAlphaExitAnim(0.2f);
+            case TRANSLATE_VERTICAL:
+                return AnimUtil.translateFinishAnimation();
+            default:
+                TranslateAnimation translateAnimation = new TranslateAnimation(Animation.RELATIVE_TO_SELF, 0, Animation.RELATIVE_TO_SELF, 1f,
+                        Animation.RELATIVE_TO_SELF, 0f, Animation.RELATIVE_TO_SELF, 0f);
+                setDefaultConfig(translateAnimation, true);
+                return translateAnimation;
+        }
     }
 
     @Override
@@ -475,25 +494,39 @@ public abstract class UIIViewImpl implements IView {
     @Override
     public Animation loadOtherExitAnimation(AnimParam animParam) {
         L.v(this.getClass().getSimpleName(), "loadOtherExitAnimation: ");
-        TranslateAnimation translateAnimation;
-        if (mIsRightJumpLeft) {
-            translateAnimation = new TranslateAnimation(Animation.RELATIVE_TO_SELF, 0, Animation.RELATIVE_TO_SELF, 1f,
-                    Animation.RELATIVE_TO_SELF, 0f, Animation.RELATIVE_TO_SELF, 0f);
-        } else {
-            translateAnimation = new TranslateAnimation(Animation.RELATIVE_TO_SELF, 0, Animation.RELATIVE_TO_SELF, -1f,
-                    Animation.RELATIVE_TO_SELF, 0f, Animation.RELATIVE_TO_SELF, 0f);
+        switch (mAnimationType) {
+            case ALPHA:
+                return AnimUtil.createAlphaExitAnim(0.8f);
+            case TRANSLATE_VERTICAL:
+                return AnimUtil.createAlphaExitAnim(0.8f);
+            default:
+                TranslateAnimation translateAnimation;
+                if (mIsRightJumpLeft) {
+                    translateAnimation = new TranslateAnimation(Animation.RELATIVE_TO_SELF, 0, Animation.RELATIVE_TO_SELF, 1f,
+                            Animation.RELATIVE_TO_SELF, 0f, Animation.RELATIVE_TO_SELF, 0f);
+                } else {
+                    translateAnimation = new TranslateAnimation(Animation.RELATIVE_TO_SELF, 0, Animation.RELATIVE_TO_SELF, -1f,
+                            Animation.RELATIVE_TO_SELF, 0f, Animation.RELATIVE_TO_SELF, 0f);
+                }
+                setDefaultConfig(translateAnimation, true);
+                return translateAnimation;
         }
-        setDefaultConfig(translateAnimation, true);
-        return translateAnimation;
     }
 
     @Override
     public Animation loadOtherEnterAnimation(AnimParam animParam) {
         L.v(this.getClass().getSimpleName(), "loadOtherEnterAnimation: ");
-        TranslateAnimation translateAnimation = new TranslateAnimation(Animation.RELATIVE_TO_SELF, -1f, Animation.RELATIVE_TO_SELF, 0,
-                Animation.RELATIVE_TO_SELF, 0f, Animation.RELATIVE_TO_SELF, 0f);
-        setDefaultConfig(translateAnimation, false);
-        return translateAnimation;
+        switch (mAnimationType) {
+            case ALPHA:
+                return AnimUtil.createAlphaEnterAnim(0.8f);
+            case TRANSLATE_VERTICAL:
+                return AnimUtil.createAlphaEnterAnim(0.8f);
+            default:
+                TranslateAnimation translateAnimation = new TranslateAnimation(Animation.RELATIVE_TO_SELF, -1f, Animation.RELATIVE_TO_SELF, 0,
+                        Animation.RELATIVE_TO_SELF, 0f, Animation.RELATIVE_TO_SELF, 0f);
+                setDefaultConfig(translateAnimation, false);
+                return translateAnimation;
+        }
     }
 
     @Override
@@ -1354,6 +1387,20 @@ public abstract class UIIViewImpl implements IView {
         removeCallbacks(countDownRunnable);
         mOnCountDown = null;
         maxCount = -1;
+    }
+
+    public UIIViewImpl setAnimationType(IViewAnimationType animationType) {
+        mAnimationType = animationType;
+        return this;
+    }
+
+    public boolean isShowInViewPager() {
+        return isShowInViewPager;
+    }
+
+    public UIIViewImpl setShowInViewPager(boolean showInViewPager) {
+        isShowInViewPager = showInViewPager;
+        return this;
     }
 
     public interface OnCountDown {
