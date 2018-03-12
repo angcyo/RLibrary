@@ -80,6 +80,9 @@ public class RExTextView extends RTextView {
      */
     public final static Pattern patternTel = Pattern.compile("^([0-9]{3,4}-)?[0-9]{4,8}$");
 
+//    public final static Pattern patternTel2 = Pattern.compile("(\\d{2,4}[-_－—]?)?\\d{3,8}([-_－—]?\\d{3,8})?([-_－—]?\\d{1,7})?|0?1[34578]\\d{9}");
+    public final static Pattern patternTel2 = Pattern.compile("\\d{3,4}[-_－—]\\d{3,4}[-_－—]\\d{3,8}");
+
     protected ImageTextSpan.OnImageSpanClick mOnImageSpanClick;
 
     private int maxShowLine = -1;//最大显示多少行, 当超过时, 会显示...全部
@@ -571,7 +574,7 @@ public class RExTextView extends RTextView {
      * 匹配座机
      */
     protected void patternTel(SpannableStringBuilder builder, CharSequence input) {
-        pattern(patternTel.matcher(input), builder, input);
+        pattern(patternTel2.matcher(input), builder, input);
     }
 
     /**
