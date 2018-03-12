@@ -925,7 +925,7 @@ public class RExTextView extends RTextView {
          * 单击事件
          */
         public void onClick(TextView view) {
-            L.e("call: onClick([view])-> " + mShowContent + " : " + url);
+            L.e("ImageTextSpan Click-> " + mShowContent + ":" + url);
             if (mOnImageSpanClick != null) {
                 if (!mOnImageSpanClick.onClick(view, mShowContent, url)) {
                     if (isWebUrl(url)) {
