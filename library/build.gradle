@@ -93,7 +93,7 @@ dependencies {
     /*https://github.com/orhanobut/hawk*/
     api 'com.orhanobut:hawk:2.0.1'
 
-    api 'com.android.support:multidex:1.0.1'
+    api 'com.android.support:multidex:1.0.3'
 
     //https://github.com/daimajia/AndroidViewAnimations
     api 'com.nineoldandroids:library:2.4.0'
