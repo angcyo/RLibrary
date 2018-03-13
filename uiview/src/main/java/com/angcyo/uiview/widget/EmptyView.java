@@ -22,26 +22,23 @@ import java.util.Random;
  * Created by angcyo on 2017-01-01 10:46.
  */
 public class EmptyView extends View {
+    public static final int SHOW_TYPE_1 = 1;
+    public static final int SHOW_TYPE_2 = 2;
     Paint mPaint;
-
     /**
      * 默认的颜色
      */
     @ColorInt
     int defaultColor = Color.parseColor("#80E3E3E3");
-
     /**
      * 多少个组,每一组由一个大的三个小的组成, 仅在AT_MOST时有效
      */
     int mGroupCount = 10;
-
     /**
      * 每个大的矩形, 对应多少个小的矩形
      */
     int mGroupLittleCount = 4;
-
     int mDefaultGroupHeight = 80;//
-
     /**
      * 横向空隙大小
      */
@@ -51,15 +48,12 @@ public class EmptyView extends View {
      */
     int mVSpace = 10;//
     int mLittleVSpace = 6;//
-
     int littlePaddingTop = 10;
     int littlePaddingBottom = 10;
-
     /**
      * 圆角大小
      */
     int mRoundRadius = 6;//
-
     RectF mRectF;
     RectF mRectFLittle;
     /**
@@ -69,6 +63,7 @@ public class EmptyView extends View {
     float factor = 1f;
     private Random mRandom;
     private ValueAnimator mObjectAnimator;
+    private int showType = SHOW_TYPE_1;
 
     public EmptyView(Context context) {
         this(context, null);
@@ -214,11 +209,36 @@ public class EmptyView extends View {
         super.onDraw(canvas);
         canvas.save();
         canvas.translate(getPaddingLeft(), getPaddingTop());
+
         mRectF.set(0, 0, mDefaultGroupHeight, mDefaultGroupHeight);
+
+        int translateY = 0;
         for (int i = 1; i <= mGroupCount; i++) {
+
+            if (showType == SHOW_TYPE_2) {
+                canvas.save();
+                canvas.translate(0, translateY);
+            }
             drawBigRect(canvas, i);
+
+            translateY = mDefaultGroupHeight * i;
+
+            if (showType == SHOW_TYPE_2) {
+                canvas.translate(0, translateY + mLittleVSpace * i);
+                drawLittleRect(canvas, 0, 2, (int) (3 * getDensity()));
+                canvas.restore();
+            }
         }
+
         canvas.restore();
+    }
+
+    public void setShowType(int showType) {
+        this.showType = showType;
+    }
+
+    public void setObjectAnimator(ValueAnimator objectAnimator) {
+        mObjectAnimator = objectAnimator;
     }
 
     /**
@@ -228,7 +248,7 @@ public class EmptyView extends View {
         canvas.save();
         canvas.translate(0, (i - 1) * mDefaultGroupHeight + (i - 1) * mVSpace);
         drawRect(canvas);
-        drawLittleRect(canvas);
+        drawLittleRect(canvas, mDefaultGroupHeight + mHSpace, mGroupLittleCount, mRoundRadius);
         canvas.restore();
     }
 
@@ -236,17 +256,15 @@ public class EmptyView extends View {
         canvas.drawRoundRect(mRectF, mRoundRadius, mRoundRadius, mPaint);
     }
 
-    private void drawLittleRect(Canvas canvas) {
+    private void drawLittleRect(Canvas canvas, int left, int drawableCount, int radius) {
 
         int height = (mDefaultGroupHeight - littlePaddingTop - littlePaddingBottom - (mGroupLittleCount - 1) * mLittleVSpace) / mGroupLittleCount;
         final int right = getMeasuredWidth() - getPaddingRight() - getPaddingLeft();
 
-        final int left = mDefaultGroupHeight + mHSpace;
-
         int top = littlePaddingTop;
-        for (int i = 0; i < mGroupLittleCount; i++) {
+        for (int i = 0; i < drawableCount; i++) {
             mRectFLittle.set(left, top, left + (right - left) * ratio(0.3f + 0.3f * mRandom.nextFloat()), top + height);
-            canvas.drawRoundRect(mRectFLittle, mRoundRadius, mRoundRadius, mPaint);
+            canvas.drawRoundRect(mRectFLittle, radius, radius, mPaint);
             top += height + mLittleVSpace;
             if ((top + littlePaddingBottom) > mDefaultGroupHeight) {
                 break;
