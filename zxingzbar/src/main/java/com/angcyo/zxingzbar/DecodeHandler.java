@@ -42,6 +42,9 @@ import net.sourceforge.zbar.SymbolSet;
 import java.io.ByteArrayOutputStream;
 import java.util.Map;
 
+/**
+ * https://github.com/XieZhiFa/ZxingZbar
+ */
 final class DecodeHandler extends Handler {
 
     private static final String TAG = DecodeHandler.class.getSimpleName();
