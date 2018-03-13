@@ -63,7 +63,7 @@ class TouchMoveView : View {
         }
 
     /**图片文本之间的间隙*/
-    var mTextSpace = 4f
+    var mTextSpace = 4f * density
         get() {
             if (mShowText.isNullOrEmpty()) {
                 return 0f
@@ -256,6 +256,12 @@ class TouchMoveView : View {
 
     var isTouchDown: Boolean = false
 
+    /**激活从非选择状态, 到选择状态时的动画*/
+    var enableFirstTouchScaleAnimation = true
+
+    /**激活touch时候的移动效果*/
+    var enableTouchMove = true
+
     override fun onTouchEvent(event: MotionEvent): Boolean {
         super.onTouchEvent(event)
         val eventX = event.x
@@ -265,7 +271,7 @@ class TouchMoveView : View {
             ACTION_DOWN -> {
                 //scaleAnimation.cancel()
                 isTouchDown = true
-                if (!mSelected) {
+                if (enableFirstTouchScaleAnimation && !mSelected) {
                     scaleAnimation.start()
                 }
             }
@@ -274,32 +280,34 @@ class TouchMoveView : View {
                 downY = eventY
                 isTouchDown = true
 
-                val dx = downX - imageCenterX
-                val dy = downY - imageCenterY
+                if (enableTouchMove) {
+                    val dx = downX - imageCenterX
+                    val dy = downY - imageCenterY
 
-                var atan = Math.atan((dy / dx).toDouble())
-                val degrees = Math.toDegrees(atan)
-                if (lastDegrees != null && Math.abs(lastDegrees!! - degrees) < 5) {
+                    var atan = Math.atan((dy / dx).toDouble())
+                    val degrees = Math.toDegrees(atan)
+                    if (lastDegrees != null && Math.abs(lastDegrees!! - degrees) < 5) {
 
-                } else {
-                    lastDegrees = degrees
+                    } else {
+                        lastDegrees = degrees
 
-                    if (dx < 0) {
-                        atan -= Math.PI
+                        if (dx < 0) {
+                            atan -= Math.PI
+                        }
+
+                        //mDrawOffsetX = Math.max(Math.min(moveX - downX, mMaxMoveOffset), -mMaxMoveOffset)
+                        //mDrawOffsetY = Math.max(Math.min(moveY - downY, mMaxMoveOffset), -mMaxMoveOffset)
+
+                        mDrawOffsetX = (mMaxMoveOffset * Math.cos(atan)).toFloat()
+                        mDrawOffsetY = (mMaxMoveOffset * Math.sin(atan)).toFloat()
+
+                        mSubDrawOffsetX = (mSubMaxMoveOffset * Math.cos(atan)).toFloat()
+                        mSubDrawOffsetY = (mSubMaxMoveOffset * Math.sin(atan)).toFloat()
+
+                        //L.e("距离X:$dx  距离Y:$dy  弧度:$atan  角度:$degrees cos:${Math.cos(atan)} x:$mDrawOffsetX  y:$mDrawOffsetY max:$mMaxMoveOffset")
+
+                        postInvalidate()
                     }
-
-                    //mDrawOffsetX = Math.max(Math.min(moveX - downX, mMaxMoveOffset), -mMaxMoveOffset)
-                    //mDrawOffsetY = Math.max(Math.min(moveY - downY, mMaxMoveOffset), -mMaxMoveOffset)
-
-                    mDrawOffsetX = (mMaxMoveOffset * Math.cos(atan)).toFloat()
-                    mDrawOffsetY = (mMaxMoveOffset * Math.sin(atan)).toFloat()
-
-                    mSubDrawOffsetX = (mSubMaxMoveOffset * Math.cos(atan)).toFloat()
-                    mSubDrawOffsetY = (mSubMaxMoveOffset * Math.sin(atan)).toFloat()
-
-                    //L.e("距离X:$dx  距离Y:$dy  弧度:$atan  角度:$degrees cos:${Math.cos(atan)} x:$mDrawOffsetX  y:$mDrawOffsetY max:$mMaxMoveOffset")
-
-                    postInvalidate()
                 }
             }
             ACTION_UP -> {

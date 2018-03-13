@@ -1,5 +1,9 @@
 package com.angcyo.uiview.base
 
+import com.angcyo.uiview.R
+import com.angcyo.uiview.RApplication
+import com.angcyo.uiview.skin.SkinHelper
+
 /**页面*/
 data class PageBean(
         val iview: UIBaseView,
@@ -15,12 +19,25 @@ data class PageBean(
     constructor(iview: UIBaseView,
                 textNormal: String? = null,
                 icoResNormal: Int? = null
-    ) : this(iview, textNormal, textNormal, null, null, icoResNormal, icoResNormal, null, null)
+    ) : this(iview, textNormal, icoResNormal, icoResNormal)
+
+    constructor(iview: UIBaseView,
+                textNormal: String? = null,
+                icoResNormal: Int? = null,
+                icoResSelected: Int? = null
+    ) : this(iview, textNormal, textNormal,
+            RApplication.getApp().resources.getColor(R.color.base_text_color),
+            SkinHelper.getSkin().themeSubColor,
+            icoResNormal, icoResSelected,
+            null, null)
 
     constructor(iview: UIBaseView,
                 textNormal: String? = null,
                 textColorNormal: Int? = null,
                 textColorSelected: Int? = null,
                 icoResNormal: Int? = null
-    ) : this(iview, textNormal, textNormal, textColorNormal, textColorSelected, icoResNormal, icoResNormal, null, null)
+    ) : this(iview, textNormal, textNormal,
+            textColorNormal, textColorSelected,
+            icoResNormal, icoResNormal,
+            null, null)
 }

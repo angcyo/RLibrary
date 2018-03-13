@@ -121,6 +121,9 @@ abstract class UINavigationView : UIIViewImpl() {
         view.textNormal = page.textNormal
         view.textSelected = page.textSelected
 
+        //文本与图标之间的间隙
+        view.mTextSpace = 4 * density()
+
         if (page.textColorNormal != null) {
             view.mTextColorNormal = page.textColorNormal
         }
