@@ -40,4 +40,15 @@ data class PageBean(
             textColorNormal, textColorSelected,
             icoResNormal, icoResNormal,
             null, null)
+
+    constructor(iview: UIBaseView,
+                textNormal: String? = null,
+                textColorNormal: Int? = null,
+                textColorSelected: Int? = null,
+                icoResNormal: Int? = null,
+                icoResSelected: Int? = null
+    ) : this(iview, textNormal, textNormal,
+            textColorNormal, textColorSelected,
+            icoResNormal, icoResSelected,
+            null, null)
 }
