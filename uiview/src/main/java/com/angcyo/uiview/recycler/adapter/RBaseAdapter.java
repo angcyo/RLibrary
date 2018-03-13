@@ -340,7 +340,7 @@ public abstract class RBaseAdapter<T> extends RecyclerView.Adapter<RBaseViewHold
         return position == getLastPosition();
     }
 
-    public boolean isDataLast(int posInData) {
+    public boolean isBaseDataLast(int posInData) {
         return posInData == getDataLastPosition();
     }
 
