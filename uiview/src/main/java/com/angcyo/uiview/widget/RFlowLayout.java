@@ -162,6 +162,10 @@ public class RFlowLayout extends LinearLayout {
     }
 
     public RTextCheckView addCheckTextView(String text) {
+        return addCheckTextView(text, SkinHelper.getSkin().getThemeTranColor(0x80), getColor(R.color.base_text_color));
+    }
+
+    public RTextCheckView addCheckTextView(String text, int pressBgColor, int pressTextColor) {
         RTextCheckView textView = new RTextCheckView(getContext());
         textView.setText(text);
         textView.setGravity(Gravity.CENTER);
@@ -179,8 +183,10 @@ public class RFlowLayout extends LinearLayout {
 
         textView.setBackground(ResUtil.selectorChecked(
                 ResUtil.createDrawable(getColor(R.color.default_base_line), Color.TRANSPARENT, lineSize, radius),
-                ResUtil.createDrawable(SkinHelper.getSkin().getThemeTranColor(0x80), radius)
+                ResUtil.createDrawable(pressBgColor, radius)
         ));
+
+        textView.setTextColor(ResUtil.generateTextColor(pressTextColor, pressTextColor, getColor(R.color.base_text_color)));
 
         addView(textView);
         return textView;

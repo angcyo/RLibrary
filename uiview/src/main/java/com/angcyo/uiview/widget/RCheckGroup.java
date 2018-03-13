@@ -139,6 +139,19 @@ public class RCheckGroup extends LinearLayout implements View.OnClickListener {
         notifyListener(oldView, checkView, notify);
     }
 
+    public void setCheckView(int index, boolean notify) {
+        if (index >= getChildCount()) {
+            return;
+        }
+
+        View oldView = this.checkView;
+
+        this.checkView = getChildAt(index);
+        this.checkId = checkView.getId();
+
+        notifyListener(oldView, checkView, notify);
+    }
+
     public void setOnCheckChangedListener(OnCheckChangedListener checkChangedListener) {
         mCheckChangedListener = checkChangedListener;
     }
