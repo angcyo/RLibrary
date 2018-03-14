@@ -182,29 +182,43 @@ public class UIDialog extends UIIDialogImpl {
 
         mBaseDialogOkView.setOnClickListener(new View.OnClickListener() {
             @Override
-            public void onClick(View v) {
-                if (okListener != null) {
-                    okListener.onClick(v);
-                }
-                if (okClick != null) {
-                    okClick.onDialogClick(UIDialog.this, v);
-                }
+            public void onClick(final View v) {
+                Runnable runnable = new Runnable() {
+                    @Override
+                    public void run() {
+                        if (okListener != null) {
+                            okListener.onClick(v);
+                        }
+                        if (okClick != null) {
+                            okClick.onDialogClick(UIDialog.this, v);
+                        }
+                    }
+                };
                 if (autoFinishDialog) {
-                    finishDialog();
+                    finishDialog(runnable);
+                } else {
+                    runnable.run();
                 }
             }
         });
         mBaseDialogCancelView.setOnClickListener(new View.OnClickListener() {
             @Override
-            public void onClick(View v) {
-                if (cancelListener != null) {
-                    cancelListener.onClick(v);
-                }
-                if (cancelClick != null) {
-                    cancelClick.onDialogClick(UIDialog.this, v);
-                }
+            public void onClick(final View v) {
+                Runnable runnable = new Runnable() {
+                    @Override
+                    public void run() {
+                        if (cancelListener != null) {
+                            cancelListener.onClick(v);
+                        }
+                        if (cancelClick != null) {
+                            cancelClick.onDialogClick(UIDialog.this, v);
+                        }
+                    }
+                };
                 if (autoFinishDialog) {
-                    finishDialog();
+                    finishDialog(runnable);
+                } else {
+                    runnable.run();
                 }
             }
         });
