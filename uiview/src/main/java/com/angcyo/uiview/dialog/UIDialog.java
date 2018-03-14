@@ -180,7 +180,7 @@ public class UIDialog extends UIIDialogImpl {
         //mBaseDialogOkView.setText(mActivity.getResources().getString(R.string.base_cancel));
         //mBaseDialogCancelView.setText(mActivity.getResources().getString(R.string.base_ok));
 
-        mBaseDialogOkView.setOnClickListener(new View.OnClickListener() {
+        click(mBaseDialogOkView, new View.OnClickListener() {
             @Override
             public void onClick(final View v) {
                 Runnable runnable = new Runnable() {
@@ -201,7 +201,7 @@ public class UIDialog extends UIIDialogImpl {
                 }
             }
         });
-        mBaseDialogCancelView.setOnClickListener(new View.OnClickListener() {
+        click(mBaseDialogCancelView, new View.OnClickListener() {
             @Override
             public void onClick(final View v) {
                 Runnable runnable = new Runnable() {
@@ -224,7 +224,7 @@ public class UIDialog extends UIIDialogImpl {
         });
 
         if (contentListener != null || contentClick != null) {
-            mBaseDialogContentView.setOnClickListener(new View.OnClickListener() {
+            click(click(mBaseDialogOkView, new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
                     if (contentListener != null) {

@@ -62,6 +62,10 @@ public class RTextView extends AppCompatTextView {
     public static final int SCROLL_TYPE_START = 2;
     protected boolean useSkinStyle = false;
     /**
+     * 宽高是否相等, 取其中最大值计算
+     */
+    protected boolean aeqWidth = false;
+    /**
      * 左边垂直矩形的颜色
      */
     Rect leftColorRect;
@@ -109,10 +113,6 @@ public class RTextView extends AppCompatTextView {
     private float noReadPaddingTop = 2 * density();
     private float noReadPaddingRight = 2 * density();
     private boolean autoFixTextSize = false;
-    /**
-     * 宽高是否相等, 取其中最大值计算
-     */
-    protected boolean aeqWidth = false;
     private boolean hideWithEmptyText = false;
     /**
      * 是否显示tip文本 (目前只支持右上角显示)
@@ -634,10 +634,10 @@ public class RTextView extends AppCompatTextView {
         setMaxLength(length, false);
     }
 
-    public void setMaxLength(int length, boolean addMoreStringLength) {
+    public void setMaxLength(int length, boolean exclusiveMoreStringLength /*不包含...的长度*/) {
         InputFilter[] filters = getFilters();
         boolean have = false;
-        InputFilter.LengthFilter lengthFilter = new InputFilter.LengthFilter(length + (addMoreStringLength ? getMoreString().length() : 0));
+        InputFilter.LengthFilter lengthFilter = new InputFilter.LengthFilter(length + (exclusiveMoreStringLength ? getMoreString().length() : 0));
         for (int i = 0; i < filters.length; i++) {
             InputFilter filter = filters[i];
             if (filter instanceof InputFilter.LengthFilter) {

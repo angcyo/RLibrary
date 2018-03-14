@@ -38,7 +38,7 @@ public class RRetrofit {
     /**
      * 默认超时时间
      */
-    public static final int DEFAULT_TIMEOUT = 20;
+    public static final int DEFAULT_TIMEOUT = 10;
     public static String DEBUG_URL = "http://192.168.1.35/";
     public static String RELEASE_URL = "http://api.klgwl.com/";
     public static String BASE_URL = RELEASE_URL;
