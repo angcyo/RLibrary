@@ -2,6 +2,8 @@ package com.angcyo.uiview.recycler.adapter;
 
 import android.content.Context;
 import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
+import android.support.v7.util.DiffUtil;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.text.TextUtils;
@@ -82,10 +84,7 @@ public abstract class RBaseAdapter<T> extends RecyclerView.Adapter<RBaseViewHold
     }
 
     public static int getListSize(List list) {
-        if (list == null) {
-            return 0;
-        }
-        return list.size();
+        return list == null ? 0 : list.size();
     }
 
     /**
@@ -119,13 +118,13 @@ public abstract class RBaseAdapter<T> extends RecyclerView.Adapter<RBaseViewHold
 //        L.w("onViewAttachedToWindow");
     }
 
+    //--------------标准的方法-------------//
+
     @Override
     public void onViewDetachedFromWindow(RBaseViewHolder holder) {
         super.onViewDetachedFromWindow(holder);
 //        L.w("onViewDetachedFromWindow");
     }
-
-    //--------------标准的方法-------------//
 
     /**
      * 返回是否激活加载更多
@@ -152,16 +151,16 @@ public abstract class RBaseAdapter<T> extends RecyclerView.Adapter<RBaseViewHold
         }
     }
 
-    //是否该显示状态布局
-    protected boolean isStateLayout() {
-        return mEnableShowState && mShowState != IShowState.NORMAL;
-    }
-
 //    /**用来实现...*/
 //    @NonNull
 //    protected RBaseViewHolder createItemViewHolder(ViewGroup parent, int viewType) {
 //        return null;
 //    }
+
+    //是否该显示状态布局
+    protected boolean isStateLayout() {
+        return mEnableShowState && mShowState != IShowState.NORMAL;
+    }
 
     @NonNull
     protected RBaseViewHolder createBaseViewHolder(int viewType, View itemView) {
@@ -353,6 +352,8 @@ public abstract class RBaseAdapter<T> extends RecyclerView.Adapter<RBaseViewHold
         return dataSize - 1;
     }
 
+    //--------------需要实现的方法------------//
+
     /**
      * 数据是否为空
      */
@@ -362,8 +363,6 @@ public abstract class RBaseAdapter<T> extends RecyclerView.Adapter<RBaseViewHold
         }
         return false;
     }
-
-    //--------------需要实现的方法------------//
 
     /**
      * 根据position返回Item的类型.
@@ -528,6 +527,16 @@ public abstract class RBaseAdapter<T> extends RecyclerView.Adapter<RBaseViewHold
         }
     }
 
+    public void resetData(List<T> datas, RDiffCallback<T> diffCallback) {
+        DiffUtil.DiffResult diffResult = DiffUtil.calculateDiff(new RDiffCallback<>(mAllDatas, datas, diffCallback));
+        if (datas == null) {
+            this.mAllDatas = new ArrayList<>();
+        } else {
+            this.mAllDatas = datas;
+        }
+        diffResult.dispatchUpdatesTo(this);
+    }
+
     /**
      * 追加数据
      */
@@ -674,4 +683,55 @@ public abstract class RBaseAdapter<T> extends RecyclerView.Adapter<RBaseViewHold
     public interface OnLocalRefresh {
         void onLocalRefresh(RBaseViewHolder viewHolder, int position);
     }
+
+    public static class RDiffCallback<T> extends DiffUtil.Callback {
+        List<T> oldDatas;
+        List<T> newDatas;
+        RDiffCallback<T> mDiffCallback;
+
+        public RDiffCallback(List<T> oldDatas, List<T> newDatas, RDiffCallback<T> diffCallback) {
+            this.oldDatas = oldDatas;
+            this.newDatas = newDatas;
+            mDiffCallback = diffCallback;
+        }
+
+        @Override
+        public int getOldListSize() {
+            return getListSize(oldDatas);
+        }
+
+        @Override
+        public int getNewListSize() {
+            return getListSize(newDatas);
+        }
+
+        @Nullable
+        @Override
+        public Object getChangePayload(int oldItemPosition, int newItemPosition) {
+            return super.getChangePayload(oldItemPosition, newItemPosition);
+        }
+
+        @Override
+        public boolean areItemsTheSame(int oldItemPosition, int newItemPosition) {
+            return mDiffCallback.areItemsTheSame(oldDatas.get(oldItemPosition), newDatas.get(newItemPosition));
+        }
+
+        /**
+         * 被DiffUtil调用，用来检查 两个item是否含有相同的数据
+         * 这个方法仅仅在areItemsTheSame()返回true时，才调用。
+         */
+        @Override
+        public boolean areContentsTheSame(int oldItemPosition, int newItemPosition) {
+            return mDiffCallback.areContentsTheSame(oldDatas.get(oldItemPosition), newDatas.get(newItemPosition));
+        }
+
+        public boolean areItemsTheSame(T oldData, T newData) {
+            return oldData == newData;
+        }
+
+        public boolean areContentsTheSame(T oldData, T newData) {
+            return areItemsTheSame(oldData, newData);
+        }
+    }
+
 }

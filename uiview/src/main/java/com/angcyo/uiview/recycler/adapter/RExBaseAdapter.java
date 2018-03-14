@@ -2,6 +2,7 @@ package com.angcyo.uiview.recycler.adapter;
 
 import android.content.Context;
 import android.support.annotation.NonNull;
+import android.support.v7.util.DiffUtil;
 
 import com.angcyo.uiview.recycler.RBaseViewHolder;
 
@@ -298,6 +299,16 @@ public abstract class RExBaseAdapter<H, T, F> extends RModelAdapter<T> {
         }
     }
 
+    public void resetHeaderData(List<H> headerDatas, RDiffCallback<H> diffCallback) {
+        DiffUtil.DiffResult diffResult = DiffUtil.calculateDiff(new RDiffCallback<>(mAllHeaderDatas, headerDatas, diffCallback));
+        if (headerDatas == null) {
+            this.mAllHeaderDatas = new ArrayList<>();
+        } else {
+            this.mAllHeaderDatas = headerDatas;
+        }
+        diffResult.dispatchUpdatesTo(this);
+    }
+
     /**
      * 追加头部数据
      */
@@ -338,6 +349,16 @@ public abstract class RExBaseAdapter<H, T, F> extends RModelAdapter<T> {
         } else {
             notifyDataSetChanged();
         }
+    }
+
+    public void resetFooterData(List<F> footerDatas, RDiffCallback<F> diffCallback) {
+        DiffUtil.DiffResult diffResult = DiffUtil.calculateDiff(new RDiffCallback<>(mAllFooterDatas, footerDatas, diffCallback));
+        if (footerDatas == null) {
+            this.mAllFooterDatas = new ArrayList<>();
+        } else {
+            this.mAllFooterDatas = footerDatas;
+        }
+        diffResult.dispatchUpdatesTo(this);
     }
 
     /**
