@@ -234,6 +234,16 @@ public class BmpUtil {
         return getRoundedCornerBitmap(context, bitmap, width, height, backgroundDrawable, roundPx, offset, offset);
     }
 
+    public static Bitmap scaleBitmap(Bitmap bitmap, int width, int height) {
+        Bitmap output = Bitmap.createBitmap(width, height, Bitmap.Config.ARGB_8888);
+        Canvas canvas = new Canvas(output);
+
+        Rect rect = new Rect(0, 0, width, height);
+
+        canvas.drawBitmap(bitmap, null, rect, null);
+        return output;
+    }
+
     public static Bitmap getRoundedCornerBitmap2(Context context, Bitmap bitmap /*需要圆角的图片*/,
                                                  int width /*输出图片宽度*/, int height/*输出图片高度*/,
                                                  @DrawableRes int backgroundDrawable /*背景*/,
