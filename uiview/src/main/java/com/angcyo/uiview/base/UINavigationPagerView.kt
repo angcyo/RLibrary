@@ -38,6 +38,7 @@ abstract class UINavigationPagerView : UINavigationView() {
 
     override fun onCreatePagesEnd() {
         uiViewPager?.let {
+            it.setParentUIView(this)
             it.offscreenPageLimit = pages.size
             it.adapter = object : UIPagerAdapter() {
                 override fun getIView(position: Int): IView = pages[position].iview.apply {
