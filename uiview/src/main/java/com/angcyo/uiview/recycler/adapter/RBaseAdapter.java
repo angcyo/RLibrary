@@ -725,6 +725,9 @@ public abstract class RBaseAdapter<T> extends RecyclerView.Adapter<RBaseViewHold
             return mDiffCallback.areContentsTheSame(oldDatas.get(oldItemPosition), newDatas.get(newItemPosition));
         }
 
+        /**
+         * 重写此方法, 判断数据是否相等
+         */
         public boolean areItemsTheSame(T oldData, T newData) {
             return oldData == newData;
         }
