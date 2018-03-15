@@ -111,7 +111,7 @@ public class Root {
         if (folder == null) {
             folder = "";
         }
-        File file = new File(RApplication.getApp().getCacheDir(), folder);
+        File file = new File(RApplication.getApp().getFilesDir()/*getCacheDir()*/, folder);
         if (!file.exists()) {
             file.mkdirs();
         }
