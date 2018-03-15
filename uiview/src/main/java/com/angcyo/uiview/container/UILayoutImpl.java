@@ -506,19 +506,19 @@ public class UILayoutImpl extends SwipeBackLayout implements ILayout<UIParam>, U
 
         switch (viewTask.taskType) {
             case ViewTask.TASK_TYPE_START:
-                startTaskType();
+                startTaskType(viewTask);
                 break;
             case ViewTask.TASK_TYPE_FINISH:
-                finishTaskType();
+                finishTaskType(viewTask);
                 break;
             case ViewTask.TASK_TYPE_SHOW:
-                showTaskType();
+                showTaskType(viewTask);
                 break;
             case ViewTask.TASK_TYPE_HIDE:
-                hideTaskType();
+                hideTaskType(viewTask);
                 break;
             case ViewTask.TASK_TYPE_REPLACE:
-                replaceTaskType();
+                replaceTaskType(viewTask);
                 break;
             default:
                 nextTask();
@@ -526,12 +526,12 @@ public class UILayoutImpl extends SwipeBackLayout implements ILayout<UIParam>, U
         }
     }
 
-    private void startTaskType() {
-        final IView iView = currentViewTask.iView;
-        final UIParam param = currentViewTask.param;
+    private void startTaskType(final ViewTask viewTask) {
+        final IView iView = viewTask.iView;
+        final UIParam param = viewTask.param;
         iView.onAttachedToILayout(this);
-        if (checkInterruptAndRemove(iView) || currentViewTask.iView.isInterruptTask()) {
-            currentViewTask.iView.setInterruptTask(false);
+        if (checkInterruptAndRemove(iView) || viewTask.iView.isInterruptTask()) {
+            viewTask.iView.setInterruptTask(false);
             //中断了当前的任务
             nextTask();
         } else {
@@ -543,14 +543,14 @@ public class UILayoutImpl extends SwipeBackLayout implements ILayout<UIParam>, U
                 //没有启动条件, 中断任务执行
                 setTaskSuspendWidth(lastViewPattern);
             } else {
-                currentViewTask.taskRun = 1;
+                viewTask.taskRun = 1;
                 if (param.mAsync) {
                     post(new Runnable() {
                         @Override
                         public void run() {
                             if (checkInterruptAndRemove(iView)) {
                                 //中断了当前的任务
-                                currentViewTask.taskRun = 0;
+                                viewTask.taskRun = 0;
                                 nextTask();
                             } else {
                                 startInner(iView, param);
@@ -564,9 +564,9 @@ public class UILayoutImpl extends SwipeBackLayout implements ILayout<UIParam>, U
         }
     }
 
-    private void finishTaskType() {
-        final IView iview = currentViewTask.iView;
-        final UIParam param = currentViewTask.param;
+    private void finishTaskType(final ViewTask viewTask) {
+        final IView iview = viewTask.iView;
+        final UIParam param = viewTask.param;
         final ViewPattern viewPattern = findViewPatternByIView(iview);
         if (viewPattern == null || viewPattern.mIView == null) {
             nextTask();
@@ -590,7 +590,7 @@ public class UILayoutImpl extends SwipeBackLayout implements ILayout<UIParam>, U
             }
         };
 
-        currentViewTask.taskRun = 1;
+        viewTask.taskRun = 1;
 
         //需要关闭的是最上层的界面
         if (param.mAsync) {
@@ -600,9 +600,9 @@ public class UILayoutImpl extends SwipeBackLayout implements ILayout<UIParam>, U
         endRunnable.run();
     }
 
-    private void showTaskType() {
-        final IView iview = currentViewTask.iView;
-        final UIParam param = currentViewTask.param;
+    private void showTaskType(final ViewTask viewTask) {
+        final IView iview = viewTask.iView;
+        final UIParam param = viewTask.param;
         final ViewPattern viewPattern = findViewPatternByIView(iview);
         final ViewPattern lastViewPattern = getLastViewPattern();
         //final ViewPattern lifecycleViewPattern = findLastLifecycleViewPattern(lastViewPattern);
@@ -637,7 +637,7 @@ public class UILayoutImpl extends SwipeBackLayout implements ILayout<UIParam>, U
                 startTask();
             } else {
                 if (viewPattern.isIViewHide) {
-                    currentViewTask.taskRun = 1;
+                    viewTask.taskRun = 1;
                     if (param.mAsync) {
                         post(showRunnable);
                     } else {
@@ -649,7 +649,7 @@ public class UILayoutImpl extends SwipeBackLayout implements ILayout<UIParam>, U
                         //最上层已经是它
                         viewPattern.mIView.onViewReShow(param.getBundle());
                     } else {
-                        currentViewTask.taskRun = 1;
+                        viewTask.taskRun = 1;
                         //没有在最上层
                         if (param.mAsync) {
                             post(showRunnable);
@@ -662,29 +662,29 @@ public class UILayoutImpl extends SwipeBackLayout implements ILayout<UIParam>, U
         }
     }
 
-    private void hideTaskType() {
-        final IView iview = currentViewTask.iView;
-        UIParam param = currentViewTask.param;
+    private void hideTaskType(final ViewTask viewTask) {
+        final IView iview = viewTask.iView;
+        UIParam param = viewTask.param;
         final ViewPattern viewPattern = findViewPatternByIView(iview);
         ViewPattern lifecycleViewPattern = findLastLifecycleViewPattern(viewPattern);
         ViewPattern lastViewPattern = getLastViewPattern();
 
         if (viewPattern == lastViewPattern || isTopAllDialog(viewPattern)) {
             //隐藏最上面的那个一个
-            currentViewTask.taskRun = 2;
+            viewTask.taskRun = 2;
             topViewFinish(lifecycleViewPattern, viewPattern, param, true);
             bottomViewStart(lifecycleViewPattern, viewPattern, param);
         } else {
             //viewHide(viewPattern, true);
             //viewPattern.isIViewHide = true;
-            currentViewTask.taskRun = 1;
+            viewTask.taskRun = 1;
             topViewFinish(lifecycleViewPattern, viewPattern, param, true);
         }
     }
 
-    private void replaceTaskType() {
-        final IView iView = currentViewTask.iView;
-        final UIParam param = currentViewTask.param;
+    private void replaceTaskType(final ViewTask viewTask) {
+        final IView iView = viewTask.iView;
+        final UIParam param = viewTask.param;
 
         iView.onAttachedToILayout(this);
 
@@ -708,7 +708,7 @@ public class UILayoutImpl extends SwipeBackLayout implements ILayout<UIParam>, U
                 removeViewPattern(fromViewPattern, param, new Runnable() {
                     @Override
                     public void run() {
-                        currentViewTask.taskRun--;
+                        viewTask.taskRun--;
                         isBottomAnimationEnd = true;
 
                         param.clear();
@@ -727,7 +727,7 @@ public class UILayoutImpl extends SwipeBackLayout implements ILayout<UIParam>, U
                     newViewPattern.mIView.onViewLoad();
 
                     isBottomAnimationEnd = false;
-                    currentViewTask.taskRun = 2;
+                    viewTask.taskRun = 2;
                     bottomViewRemove(fromViewPattern, newViewPattern, removeTargetViewPattern, true, param);
                     if (fromViewPattern.mIView.isDialog()) {
                         //将dialog替换成新的IView时, 保证dialog底下的IView具有可见性
@@ -749,7 +749,8 @@ public class UILayoutImpl extends SwipeBackLayout implements ILayout<UIParam>, U
             public void run() {
                 ViewPattern newViewPattern;
 
-                if (param.start_mode == UIParam.SINGLE_TOP) {
+                if (param.start_mode == UIParam.SINGLE_TOP ||
+                        param.start_mode == UIParam.SINGLE_TOP_OF_CLASS) {
                     param.mAnimParam.needBaseAnim = true;
                     if (targetViewPattern == null) {
                         //替换成一个新的IView
@@ -760,14 +761,14 @@ public class UILayoutImpl extends SwipeBackLayout implements ILayout<UIParam>, U
 
                         if (newViewPattern == topViewPattern) {
                             topViewPattern.mIView.onViewReShow(param.getBundle());
-                            currentViewTask.taskRun--;
+                            viewTask.taskRun--;
                             checkTaskOnIViewAnimationEnd();
                         } else {
                             mAttachViews.remove(newViewPattern);
                             mAttachViews.push(newViewPattern);
 
                             isBottomAnimationEnd = false;
-                            currentViewTask.taskRun = 2;
+                            viewTask.taskRun = 2;
                             bottomViewRemove(fromViewPattern, newViewPattern, removeTargetViewPattern, true, param);
                             topViewStart(newViewPattern, param);
                         }
@@ -777,7 +778,7 @@ public class UILayoutImpl extends SwipeBackLayout implements ILayout<UIParam>, U
                 }
             }
         };
-        currentViewTask.taskRun = 1;
+        viewTask.taskRun = 1;
         if (param.mAsync) {
             post(runnable);
         } else {
@@ -895,7 +896,8 @@ public class UILayoutImpl extends SwipeBackLayout implements ILayout<UIParam>, U
             }
         };
 
-        if (param.start_mode == UIParam.SINGLE_TOP) {
+        if (param.start_mode == UIParam.SINGLE_TOP ||
+                param.start_mode == UIParam.SINGLE_TOP_OF_CLASS) {
             if (topViewPattern != null && topViewPattern.mIView == iView) {
                 //如果已经是最前显示, 调用onViewShow方法
                 setIViewNeedLayout(topViewPattern.mView, true);
@@ -904,7 +906,12 @@ public class UILayoutImpl extends SwipeBackLayout implements ILayout<UIParam>, U
                 currentViewTask.taskRun--;
                 checkTaskOnIViewAnimationEnd();
             } else {
-                final ViewPattern startViewPattern = findViewPatternByIView(iView);
+                final ViewPattern startViewPattern;
+                if (param.start_mode == UIParam.SINGLE_TOP_OF_CLASS) {
+                    startViewPattern = findViewPatternByClass(iView.getClass());
+                } else {
+                    startViewPattern = findViewPatternByIView(iView);
+                }
                 if (startViewPattern == null) {
                     //这个IView 还不存在
                     startRunnable.run();

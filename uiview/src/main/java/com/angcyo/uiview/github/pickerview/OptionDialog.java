@@ -15,12 +15,12 @@ import java.util.List;
 /**
  * Copyright (C) 2016,深圳市红鸟网络科技股份有限公司 All rights reserved.
  * 项目名称：
- * 类的描述：
+ * 类的描述：滑动选项选择对话框
  * 创建人员：Robi
  * 创建时间：2018/03/07 14:56
  * 修改人员：Robi
  * 修改时间：2018/03/07 14:56
- * 修改备注：
+ * 修改备注：C
  * Version: 1.0.0
  */
 public class OptionDialog extends UIIDialogImpl {
@@ -29,6 +29,11 @@ public class OptionDialog extends UIIDialogImpl {
     OnItemOptionSelector mOnItemOptionSelector;
     WheelView optionWheelView;
     boolean isLoop = false;
+
+    /**
+     * 默认位置
+     */
+    int defaultIndex = -1;
 
     public OptionDialog(List<String> items, OnItemOptionSelector onItemOptionSelector) {
         this.items = items;
@@ -44,11 +49,16 @@ public class OptionDialog extends UIIDialogImpl {
         isLoop = loop;
     }
 
+    public void setDefaultIndex(int defaultIndex) {
+        this.defaultIndex = defaultIndex;
+    }
+
     @Override
     protected void initDialogContentView() {
         super.initDialogContentView();
         optionWheelView = mViewHolder.v(R.id.options1);
         optionWheelView.setCyclic(isLoop);
+        optionWheelView.setIsOptions(true);
         optionWheelView.setAdapter(new ArrayWheelAdapter<>(items));
         mViewHolder.v(R.id.btnSubmit).setOnClickListener(new View.OnClickListener() {
             @Override
@@ -56,7 +66,8 @@ public class OptionDialog extends UIIDialogImpl {
                 finishDialog(new Runnable() {
                     @Override
                     public void run() {
-                        mOnItemOptionSelector.onItemSelector(optionWheelView.getCurrentItem());
+                        int currentItem = optionWheelView.getCurrentItem();
+                        mOnItemOptionSelector.onItemSelector(currentItem, items.get(currentItem));
                     }
                 });
             }
@@ -68,9 +79,13 @@ public class OptionDialog extends UIIDialogImpl {
                 finishDialog();
             }
         });
+
+        if (defaultIndex > -1) {
+            optionWheelView.setCurrentItem(defaultIndex);
+        }
     }
 
     public interface OnItemOptionSelector {
-        void onItemSelector(int index);
+        void onItemSelector(int index, String item);
     }
 }

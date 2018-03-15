@@ -1121,6 +1121,15 @@ public class BmpUtil {
         } catch (Exception e) {
             e.printStackTrace();
             return null;
+        } finally {
+            if (stream != null) {
+                try {
+                    stream.flush();
+                    stream.close();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            }
         }
     }
 

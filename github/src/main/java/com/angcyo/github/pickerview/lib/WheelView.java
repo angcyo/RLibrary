@@ -82,6 +82,8 @@ public class WheelView extends View {
     int radius;
     long startTime = 0;
     int widthMeasureSpec;
+    int maxDrawOutContentStart = 0;
+    int maxDrawTextWidth = 0;
     private DividerType dividerType;//分隔线类型
     private GestureDetector gestureDetector;
     private boolean isOptions = false;
@@ -322,14 +324,11 @@ public class WheelView extends View {
         invalidate();
     }
 
-    protected final void onItemSelected() {
+    public final void onItemSelected() {
         if (onItemSelectedListener != null) {
             postDelayed(new OnItemSelectedRunnable(this), 200L);
         }
     }
-
-    int maxDrawOutContentStart = 0;
-    int maxDrawTextWidth = 0;
 
     @Override
     protected void onDraw(Canvas canvas) {
@@ -563,6 +562,8 @@ public class WheelView extends View {
     private String getContentText(Object item) {
         if (item == null) {
             return "";
+        } else if (item instanceof String) {
+            return (String) item;
         } else if (item instanceof IPickerViewData) {
             return ((IPickerViewData) item).getPickerViewText();
         } else if (item instanceof Integer) {

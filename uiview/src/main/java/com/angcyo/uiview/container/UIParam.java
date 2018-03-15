@@ -20,6 +20,7 @@ public class UIParam {
 
     public static final int NORMAL = 0;
     public static final int SINGLE_TOP = 1;//如果已经添加了IView, 则最前显示IView
+    public static final int SINGLE_TOP_OF_CLASS = 2;//用类名查找IVIew
 
     public boolean mAnim = true;
     public boolean mAsync = true;
