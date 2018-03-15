@@ -412,21 +412,18 @@ public class UILayoutImpl extends SwipeBackLayout implements ILayout<UIParam>, U
         }
         setFocusable(true);
         setFocusableInTouchMode(true);
-        post(new Runnable() {
-            @Override
-            public void run() {
-                isAttachedToWindow = true;
-                loadViewInternal();
-            }
-        });
+        isAttachedToWindow = true;
+        //loadViewInternal();
     }
 
     @Override
     protected void onDetachedFromWindow() {
         super.onDetachedFromWindow();
         mLayoutActivity.getApplication().unregisterActivityLifecycleCallbacks(mCallbacks);
-        isAttachedToWindow = false;
-        unloadViewInternal();
+        if (isAttachedToWindow) {
+            isAttachedToWindow = false;
+            unloadViewInternal();
+        }
 /*        if (mIWindowInsetsListeners != null) {
             mIWindowInsetsListeners.clear();
         }*/
