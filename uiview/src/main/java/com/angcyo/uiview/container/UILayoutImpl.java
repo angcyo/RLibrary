@@ -458,9 +458,11 @@ public class UILayoutImpl extends SwipeBackLayout implements ILayout<UIParam>, U
 
     private void logTaskList(String tag) {
         StringBuilder taskBuilder = new StringBuilder(tag + " -> \n");
-        for (ViewTask task : mViewTasks) {
-            taskBuilder.append(task);
-            taskBuilder.append("\n");
+        synchronized (mViewTasks) {
+            for (ViewTask task : mViewTasks) {
+                taskBuilder.append(task);
+                taskBuilder.append("\n");
+            }
         }
         L.w(taskBuilder.toString());
     }
@@ -500,8 +502,14 @@ public class UILayoutImpl extends SwipeBackLayout implements ILayout<UIParam>, U
     }
 
     private void startTaskInner(ViewTask viewTask) {
+
         currentViewTask = viewTask;
         //L.e("开始分发任务 -> " + viewTask);
+        if (viewTask == null) {
+            logTaskList("当前任务为null...'");
+            nextTask();
+            return;
+        }
         logTaskList("开始分发任务");
 
         switch (viewTask.taskType) {
@@ -791,10 +799,12 @@ public class UILayoutImpl extends SwipeBackLayout implements ILayout<UIParam>, U
         isTaskSuspend = true;
         if (viewPattern != null) {
             //中断任务的IView, 已经有关闭任务在任务列表
-            for (ViewTask task : mViewTasks) {
-                if (task.taskType == ViewTask.TASK_TYPE_FINISH) {
-                    if (task.iView == viewPattern.mIView) {
-                        checkTaskOnIViewAnimationEnd();
+            synchronized (mViewTasks) {
+                for (ViewTask task : mViewTasks) {
+                    if (task.taskType == ViewTask.TASK_TYPE_FINISH) {
+                        if (task.iView == viewPattern.mIView) {
+                            checkTaskOnIViewAnimationEnd();
+                        }
                     }
                 }
             }

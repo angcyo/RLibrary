@@ -331,7 +331,9 @@ public abstract class SwipeBackLayout extends TouchLayout {
      * Lock this sliding panel to ignore touch inputs.
      */
     public void lock() {
-        mDragHelper.abort();
+        if (mDragHelper != null) {
+            mDragHelper.abort();
+        }
         mIsLocked = true;
     }
 
