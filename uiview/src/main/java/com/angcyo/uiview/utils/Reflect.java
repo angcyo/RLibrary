@@ -4,6 +4,7 @@ import android.text.TextUtils;
 
 import com.angcyo.library.utils.L;
 
+import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 
@@ -164,5 +165,20 @@ public class Reflect {
             }
             clazz = clazz.getSuperclass();
         }
+    }
+
+    /**
+     * 通过类型, 创建实例
+     */
+    public static <T> T newObject(Class cls) {
+        T obj = null;
+        try {
+            Constructor constructor = cls.getDeclaredConstructor();
+            constructor.setAccessible(true);
+            obj = (T) constructor.newInstance();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return obj;
     }
 }

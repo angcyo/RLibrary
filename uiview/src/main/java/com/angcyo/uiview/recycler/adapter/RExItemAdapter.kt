@@ -1,6 +1,7 @@
 package com.angcyo.uiview.recycler.adapter
 
 import android.content.Context
+import com.angcyo.uiview.recycler.RBaseViewHolder
 
 /**
  * Copyright (C) 2016,深圳市红鸟网络科技股份有限公司 All rights reserved.
@@ -13,11 +14,32 @@ import android.content.Context
  * 修改备注：
  * Version: 1.0.0
  */
-class RExItemAdapter<T> : RExBaseAdapter<String, T, String> {
-    constructor(context: Context?) : super(context)
-    constructor(context: Context?, datas: List<T>?) : super(context, datas)
+class RExItemAdapter<ItemType, T> : RExBaseAdapter<String, T, String> {
+
+    var itemFactory: RExItemFactory<ItemType, T>
+
+    constructor(context: Context, itemFactory: RExItemFactory<ItemType, T>) : super(context) {
+        this.itemFactory = itemFactory
+    }
+
+    constructor(context: Context, datas: List<T>, itemFactory: RExItemFactory<ItemType, T>) : super(context, datas) {
+        this.itemFactory = itemFactory
+    }
 
     init {
 
     }
+
+    override fun getItemLayoutId(viewType: Int): Int {
+        return itemFactory.getItemLayoutId(viewType)
+    }
+
+    override fun getItemType(position: Int): Int {
+        return itemFactory.getItemType(mAllDatas[position])
+    }
+
+    override fun onBindDataView(holder: RBaseViewHolder, posInData: Int, dataBean: T) {
+        super.onBindDataView(holder, posInData, dataBean)
+    }
+
 }
