@@ -129,6 +129,7 @@ open class GlideImageView(context: Context, attributeSet: AttributeSet? = null) 
 
     /**重置所有属性, 方便在RecyclerView中使用*/
     fun reset() {
+        //loadSuccessUrl = "", 不需要设置,设置了会抖动
         checkGif = false
         showAsGifImage = false
         mShowGifTip = false
