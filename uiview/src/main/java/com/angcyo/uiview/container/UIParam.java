@@ -56,6 +56,10 @@ public class UIParam {
     public boolean clickOnTitleBack = false;
     public AnimParam mAnimParam = new AnimParam();
     /**
+     * 允许此次在对话框上显示
+     */
+    public boolean showOnDialog = false;
+    /**
      * 需要替换的iview, 只在replaceIView时使用, 用来判断目标的可行性
      */
     protected IView replaceIView;
@@ -64,6 +68,7 @@ public class UIParam {
      */
     protected Runnable unloadRunnable;
     protected Bundle mBundle;
+
 
     public UIParam(boolean anim, boolean async, Bundle bundle) {
         mAnim = anim;
@@ -90,6 +95,10 @@ public class UIParam {
         mAnim = anim;
         this.isSwipeBack = isSwipeBack;
         this.isQuiet = isQuiet;
+    }
+
+    public static UIParam get() {
+        return new UIParam();
     }
 
     public UIParam setAnim(boolean anim) {
@@ -205,6 +214,11 @@ public class UIParam {
 
     public UIParam setNeedTransitionExitAnim(boolean needTransitionExitAnim) {
         this.needTransitionExitAnim = needTransitionExitAnim;
+        return this;
+    }
+
+    public UIParam setShowOnDialog(boolean showOnDialog) {
+        this.showOnDialog = showOnDialog;
         return this;
     }
 }

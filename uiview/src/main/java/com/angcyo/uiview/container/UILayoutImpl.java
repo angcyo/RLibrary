@@ -534,6 +534,20 @@ public class UILayoutImpl extends SwipeBackLayout implements ILayout<UIParam>, U
         }
     }
 
+    private boolean needSuspendTask(ViewPattern lastViewPattern, IView taskIView, UIParam uiParam) {
+        if (taskIView.isDialog() || taskIView.showOnDialog() || uiParam.showOnDialog) {
+            //如果是对话框, 或者可以显示在对话框上, 允许进行任务
+            return false;
+        }
+        if (lastViewPattern == null) {
+            return false;
+        }
+        if (lastViewPattern.mIView.isDialog()) {
+            return true;
+        }
+        return false;
+    }
+
     private void startTaskType(final ViewTask viewTask) {
         final IView iView = viewTask.iView;
         final UIParam param = viewTask.param;
@@ -544,10 +558,7 @@ public class UILayoutImpl extends SwipeBackLayout implements ILayout<UIParam>, U
             nextTask();
         } else {
             ViewPattern lastViewPattern = getLastViewPattern();
-            if (lastViewPattern != null &&
-                    lastViewPattern.mIView.isDialog() &&
-                    (!iView.showOnDialog() ||
-                            !iView.isDialog())) {
+            if (needSuspendTask(lastViewPattern, iView, param)) {
                 //没有启动条件, 中断任务执行
                 setTaskSuspendWidth(lastViewPattern);
             } else {
@@ -633,9 +644,7 @@ public class UILayoutImpl extends SwipeBackLayout implements ILayout<UIParam>, U
             }
         };
 
-        if (lastViewPattern != null &&
-                lastViewPattern.mIView.isDialog() &&
-                !iview.showOnDialog()) {
+        if (needSuspendTask(lastViewPattern, iview, param)) {
             //没有启动条件, 中断任务执行
             setTaskSuspendWidth(lastViewPattern);
         } else {
@@ -798,15 +807,20 @@ public class UILayoutImpl extends SwipeBackLayout implements ILayout<UIParam>, U
     private void setTaskSuspendWidth(ViewPattern viewPattern /*被谁中断了*/) {
         isTaskSuspend = true;
         if (viewPattern != null) {
+            boolean haveTask = false;
             //中断任务的IView, 已经有关闭任务在任务列表
             synchronized (mViewTasks) {
                 for (ViewTask task : mViewTasks) {
                     if (task.taskType == ViewTask.TASK_TYPE_FINISH) {
                         if (task.iView == viewPattern.mIView) {
-                            checkTaskOnIViewAnimationEnd();
+                            haveTask = true;
+                            break;
                         }
                     }
                 }
+            }
+            if (haveTask) {
+                checkTaskOnIViewAnimationEnd();
             }
         }
     }
@@ -1327,6 +1341,27 @@ public class UILayoutImpl extends SwipeBackLayout implements ILayout<UIParam>, U
             return allVisibleIView.get(count - 1);
         }
         return null;
+    }
+
+    public ViewPattern getLastViewPattern(ViewPattern anchorPattern) {
+        ViewPattern result = null;
+        boolean isFindAnchor = anchorPattern == null;//先定位到锚点
+        int count = getIViewChildCount();
+
+        for (int i = count - 1; i >= 0; i--) {
+            ViewPattern pattern = allVisibleIView.get(i);
+
+            if (isFindAnchor) {
+                result = pattern;
+                break;
+            } else {
+                if (pattern == anchorPattern) {
+                    isFindAnchor = true;
+                    continue;
+                }
+            }
+        }
+        return result;
     }
 
     private void startIViewAnim(final ViewPattern oldViewPattern, final ViewPattern newViewPattern,
@@ -2970,7 +3005,7 @@ public class UILayoutImpl extends SwipeBackLayout implements ILayout<UIParam>, U
         isSwipeDrag = false;
         needDragClose = false;
         translation(0);
-        final ViewPattern viewPattern = findLastLifecycleViewPattern(getLastViewPattern());
+        final ViewPattern viewPattern = getLastViewPattern(getLastViewPattern());//findLastLifecycleViewPattern(getLastViewPattern());
         if (viewPattern != null) {
             setIViewNeedLayout(viewPattern.mView, false);
         }
@@ -3001,7 +3036,7 @@ public class UILayoutImpl extends SwipeBackLayout implements ILayout<UIParam>, U
         isSwipeDrag = true;
 
         //开始偏移时, 偏移的距离
-        final ViewPattern viewPattern = findLastLifecycleViewPattern(getLastViewPattern());
+        final ViewPattern viewPattern = getLastViewPattern(getLastViewPattern());//findLastLifecycleViewPattern(getLastViewPattern());
         if (viewPattern != null && !viewPattern.mIView.isDialog()) {
             mTranslationOffsetX = getMeasuredWidth() * 0.3f;
             if (viewPattern.mView.getVisibility() == View.GONE) {
@@ -3038,7 +3073,7 @@ public class UILayoutImpl extends SwipeBackLayout implements ILayout<UIParam>, U
     }
 
     private void translation(float percent /*如果为0, 表示滑动关闭了*/) {
-        final ViewPattern viewPattern = findLastLifecycleViewPattern(getLastViewPattern());
+        final ViewPattern viewPattern = getLastViewPattern(getLastViewPattern()); //findLastLifecycleViewPattern(getLastViewPattern());
         if (viewPattern != null && percent != 0f) {
             setIViewNeedLayout(viewPattern.mView, true);
         }
