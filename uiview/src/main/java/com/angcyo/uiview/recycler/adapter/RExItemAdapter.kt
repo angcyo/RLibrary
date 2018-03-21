@@ -14,7 +14,7 @@ import com.angcyo.uiview.recycler.RBaseViewHolder
  * 修改备注：
  * Version: 1.0.0
  */
-class RExItemAdapter<ItemType, T> : RExBaseAdapter<String, T, String> {
+open class RExItemAdapter<ItemType, T> : RExBaseAdapter<String, T, String> {
 
     var itemFactory: RExItemFactory<ItemType, T>
 
@@ -40,6 +40,8 @@ class RExItemAdapter<ItemType, T> : RExBaseAdapter<String, T, String> {
 
     override fun onBindDataView(holder: RBaseViewHolder, posInData: Int, dataBean: T) {
         super.onBindDataView(holder, posInData, dataBean)
+        val itemHolder = itemFactory.getItemLayoutHolder(holder.itemViewType)
+        itemHolder.onBindItemDataView(holder, posInData, dataBean)
     }
 
 }
