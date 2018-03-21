@@ -746,7 +746,7 @@ public class UILayoutImpl extends SwipeBackLayout implements ILayout<UIParam>, U
                     isBottomAnimationEnd = false;
                     viewTask.taskRun = 2;
                     bottomViewRemove(fromViewPattern, newViewPattern, removeTargetViewPattern, true, param);
-                    if (fromViewPattern.mIView.isDialog()) {
+                    if (fromViewPattern != null && fromViewPattern.mIView.isDialog()) {
                         //将dialog替换成新的IView时, 保证dialog底下的IView具有可见性
                         ViewPattern lifecycleViewPattern = findLastLifecycleViewPattern(fromViewPattern);
                         if (lifecycleViewPattern != null) {
