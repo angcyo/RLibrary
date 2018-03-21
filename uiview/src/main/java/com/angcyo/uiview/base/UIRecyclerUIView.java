@@ -342,10 +342,17 @@ public abstract class UIRecyclerUIView<H, T, F> extends UIContentView
         return datas != null && datas.size() > 20;
     }
 
+    /**
+     * 需要触发加载数据
+     */
+    protected boolean needLoadData() {
+        return getDefaultLayoutState() == LayoutState.LOAD;
+    }
+
     @Override
     public void onViewShowFirst(Bundle bundle) {
         super.onViewShowFirst(bundle);
-        if (getDefaultLayoutState() == LayoutState.LOAD && !isShowInViewPager()) {
+        if (needLoadData() && !isShowInViewPager()) {
             onBaseLoadData();
         }
     }
@@ -353,7 +360,7 @@ public abstract class UIRecyclerUIView<H, T, F> extends UIContentView
     @Override
     public void onShowInPager(UIViewPager viewPager) {
         super.onShowInPager(viewPager);
-        if (getDefaultLayoutState() == LayoutState.LOAD && isShowInViewPager()) {
+        if (needLoadData() && isShowInViewPager()) {
             onBaseLoadData();
         }
     }
