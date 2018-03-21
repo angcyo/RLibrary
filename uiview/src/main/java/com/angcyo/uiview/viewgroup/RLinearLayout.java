@@ -3,10 +3,12 @@ package com.angcyo.uiview.viewgroup;
 import android.content.Context;
 import android.content.res.TypedArray;
 import android.graphics.Canvas;
+import android.graphics.Paint;
 import android.graphics.drawable.ColorDrawable;
 import android.graphics.drawable.Drawable;
 import android.support.annotation.ColorInt;
 import android.support.annotation.Nullable;
+import android.support.v4.content.ContextCompat;
 import android.util.AttributeSet;
 import android.view.Gravity;
 import android.view.View;
@@ -53,6 +55,13 @@ public class RLinearLayout extends LinearLayout {
 
     private String widthHeightRatio;
 
+    private int drawLine = 0;//不绘制线
+    private int drawLineColor = 0;
+    private int drawLineOffsetLeft = 0;//左偏移
+    private int drawLineOffsetRight = 0;//右偏移
+    private float drawLineWidth = 1 * ScreenUtil.density();
+    private Paint linePaint;
+
     public RLinearLayout(Context context) {
         this(context, null);
     }
@@ -71,6 +80,13 @@ public class RLinearLayout extends LinearLayout {
         reverseLayout = typedArray.getBoolean(R.styleable.RLinearLayout_r_reverse_layout, reverseLayout);
         isInChatLayout = typedArray.getBoolean(R.styleable.RLinearLayout_r_is_in_chat_layout, isInChatLayout);
         widthHeightRatio = typedArray.getString(R.styleable.RLinearLayout_r_width_height_ratio);
+
+        drawLine = typedArray.getInt(R.styleable.RLinearLayout_r_draw_line, drawLine);
+        drawLineOffsetLeft = typedArray.getDimensionPixelOffset(R.styleable.RLinearLayout_r_draw_line_offset_left, drawLineOffsetLeft);
+        drawLineOffsetRight = typedArray.getDimensionPixelOffset(R.styleable.RLinearLayout_r_draw_line_offset_right, drawLineOffsetRight);
+        drawLineColor = typedArray.getColor(R.styleable.RLinearLayout_r_draw_line_color, ContextCompat.getColor(getContext(), R.color.base_chat_bg_color));
+        drawLineWidth = typedArray.getDimensionPixelOffset(R.styleable.RLinearLayout_r_draw_line_width, (int) drawLineWidth);
+
         typedArray.recycle();
         resetMaxHeight();
         initLayout();
@@ -174,6 +190,33 @@ public class RLinearLayout extends LinearLayout {
         if (mBackgroundDrawable != null) {
             mBackgroundDrawable.setBounds(canvas.getClipBounds());
             mBackgroundDrawable.draw(canvas);
+        }
+        if (drawLine > 0) {
+            if (linePaint == null) {
+                linePaint = new Paint(Paint.ANTI_ALIAS_FLAG);
+                linePaint.setStyle(Paint.Style.FILL_AND_STROKE);
+            }
+            linePaint.setStrokeWidth(drawLineWidth);
+            linePaint.setColor(drawLineColor);
+
+            switch (drawLine) {
+                case 1://L
+                    //暂不支持
+                    break;
+                case 2://T
+                    canvas.drawLine(drawLineOffsetLeft, drawLineWidth / 2,
+                            getMeasuredWidth() - drawLineOffsetRight, drawLineWidth / 2,
+                            linePaint);
+                    break;
+                case 3://R
+                    //暂不支持
+                    break;
+                case 4://B
+                    canvas.drawLine(drawLineOffsetLeft, getMeasuredHeight() - drawLineWidth / 2,
+                            getMeasuredWidth() - drawLineOffsetRight, getMeasuredHeight() - drawLineWidth / 2,
+                            linePaint);
+                    break;
+            }
         }
         super.draw(canvas);
     }

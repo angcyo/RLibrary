@@ -69,6 +69,19 @@
     <attr name="r_tip_text_left_offset" format="dimension"/>
     <attr name="r_tip_text_top_offset" format="dimension"/>
 
+    <attr name="r_draw_line" format="enum">
+        <enum name="NONE" value="0"/>
+        <enum name="LEFT" value="1"/>
+        <enum name="RIGHT" value="3"/>
+        <enum name="TOP" value="2"/>
+        <enum name="BOTTOM" value="4"/>
+    </attr>
+
+    <attr name="r_draw_line_offset_left" format="dimension"/>
+    <attr name="r_draw_line_offset_right" format="dimension"/>
+    <attr name="r_draw_line_color" format="color"/>
+    <attr name="r_draw_line_width" format="dimension"/>
+
     <declare-styleable name="RLinearLayout">
         <attr name="r_background"/>
         <attr name="r_max_height"/>
@@ -76,6 +89,11 @@
         <attr name="r_auto_fix_new_line" format="boolean"/>
         <attr name="r_reverse_layout" format="boolean"/>
         <attr name="r_is_in_chat_layout" format="boolean"/>
+        <attr name="r_draw_line"/>
+        <attr name="r_draw_line_color"/>
+        <attr name="r_draw_line_width"/>
+        <attr name="r_draw_line_offset_left"/>
+        <attr name="r_draw_line_offset_right"/>
     </declare-styleable>
 
     <declare-styleable name="RFrameLayout">
