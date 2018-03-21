@@ -13,6 +13,7 @@ import android.text.TextUtils;
 import android.text.format.Formatter;
 import android.util.Log;
 
+import com.angcyo.library.okhttp.Ok;
 import com.angcyo.library.utils.L;
 import com.angcyo.uiview.utils.RUtils;
 import com.angcyo.uiview.utils.file.FileUtil;
@@ -476,10 +477,10 @@ public class Luban {
         double scale = ((double) width / height);
 
         long fileLength = file.length();
-        if (RUtils.getImageType(file) == RUtils.ImageType.GIF //GIF 不压缩
+        if (RUtils.getImageType(file) == Ok.ImageType.GIF //GIF 不压缩
                 || fileLength <= 1024 * 300 /*300 kb 以下不压缩*/) {
             //GIF 图片, 不压缩直接重命名保存
-            return copyTo(file, thumb, width, height);
+            return copyTo(file, thumb, imageSize[0], imageSize[1]);
         }
 
         if (scale <= 1 && scale > 0.5625) {
