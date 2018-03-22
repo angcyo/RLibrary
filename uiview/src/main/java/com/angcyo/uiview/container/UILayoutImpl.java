@@ -1303,6 +1303,41 @@ public class UILayoutImpl extends SwipeBackLayout implements ILayout<UIParam>, U
     }
 
     /**
+     * 排除正在关闭的页面
+     */
+    public int getValidAttachViewSize() {
+        int count = 0;
+        for (int i = 0; i < mAttachViews.size(); i++) {
+            ViewPattern viewPattern = mAttachViews.get(i);
+
+            boolean needPass = false;
+            for (int j = 0; j < mViewTasks.size(); j++) {
+                ViewTask task = mViewTasks.get(j);
+                if (task.taskType == ViewTask.TASK_TYPE_FINISH
+                        || task.taskType == ViewTask.TASK_TYPE_HIDE) {
+                    if (task.iView == viewPattern.mIView) {
+                        needPass = true;
+                        break;
+                    }
+                }
+                if (task.taskType == ViewTask.TASK_TYPE_REPLACE) {
+                    if (task.param.replaceIView == viewPattern.mIView) {
+                        needPass = true;
+                        break;
+                    }
+                }
+            }
+
+            if (needPass) {
+                continue;
+            } else {
+                count++;
+            }
+        }
+        return count;
+    }
+
+    /**
      * 判断界面是否还在
      */
     private boolean isIViewExist(final IView iView) {

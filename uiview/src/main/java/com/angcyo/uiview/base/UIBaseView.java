@@ -365,7 +365,7 @@ public abstract class UIBaseView extends UIIViewImpl {
         return TitleBarPattern.build(getTitleResource() == View.NO_ID ?
                 getTitleString() : mActivity.getResources().getString(getTitleResource()))
                 .setTitleBarBGColor(getTitleBarBGColor())
-                .setShowBackImageView(!haveParentILayout() && ((UILayoutImpl) mILayout).getAttachViewSize() >= 1);
+                .setShowBackImageView(!haveParentILayout() && ((UILayoutImpl) mILayout).getValidAttachViewSize() >= 1);
     }
 
     protected int getTitleBarBGColor() {
