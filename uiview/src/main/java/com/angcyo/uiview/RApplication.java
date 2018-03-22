@@ -10,6 +10,7 @@ import android.text.TextUtils;
 
 import com.angcyo.github.utilcode.utils.Utils;
 import com.angcyo.library.utils.L;
+import com.angcyo.uiview.manager.RNotifier;
 import com.angcyo.uiview.skin.SkinHelper;
 import com.angcyo.uiview.utils.Debug;
 import com.angcyo.uiview.utils.T_;
@@ -221,7 +222,7 @@ public class RApplication extends Application {
      * 异步初始化
      */
     protected void onAsyncInit() {
-
+        RNotifier.instance().init(this);
     }
 
     /**
