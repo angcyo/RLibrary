@@ -36,7 +36,12 @@ abstract class RExItemFactory<ItemType, DataType> {
 
             val itemHolder = Reflect.newObject<RExItemHolder<DataType>>(rExItem.itemHolder)
             allItemHolder.put(index, itemHolder)
+            onCreateItemHolder(itemHolder)
         }
+    }
+
+    open fun onCreateItemHolder(itemHolder: RExItemHolder<DataType>) {
+        //在此可以初始化一些itemHolder成员变量
     }
 
     /**返回在Adapter中的item type*/

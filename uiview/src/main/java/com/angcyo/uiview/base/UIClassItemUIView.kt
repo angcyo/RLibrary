@@ -1,9 +1,6 @@
 package com.angcyo.uiview.base
 
-import com.angcyo.uiview.recycler.adapter.RExBaseAdapter
-import com.angcyo.uiview.recycler.adapter.RExItem
-import com.angcyo.uiview.recycler.adapter.RExItemAdapter
-import com.angcyo.uiview.recycler.adapter.RExItemFactory
+import com.angcyo.uiview.recycler.adapter.*
 
 /**
  * Copyright (C) 2016,深圳市红鸟网络科技股份有限公司 All rights reserved.
@@ -24,6 +21,11 @@ abstract class UIClassItemUIView<T> : UIRecyclerUIView<String, T, String>() {
 
     private fun createItemFactory(): RExItemFactory<Class<*>, T> {
         return object : RExItemFactory<Class<*>, T>() {
+            override fun onCreateItemHolder(itemHolder: RExItemHolder<T>) {
+                super.onCreateItemHolder(itemHolder)
+                itemHolder.iLayout = mParentILayout
+            }
+
             override fun registerItems(allRegItems: ArrayList<RExItem<Class<*>, T>>) {
                 this@UIClassItemUIView.registerItems(allRegItems)
             }
