@@ -434,6 +434,10 @@ public class RBaseViewHolder extends RecyclerView.ViewHolder {
         itemView.postDelayed(runnable, delayMillis);
     }
 
+    public void postDelay(long delayMillis, Runnable runnable) {
+        postDelay(runnable, delayMillis);
+    }
+
     public Context getContext() {
         return itemView.getContext();
     }

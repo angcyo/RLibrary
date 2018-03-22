@@ -10,6 +10,7 @@ import android.text.TextPaint
 import android.util.AttributeSet
 import android.view.View
 import com.angcyo.uiview.R
+import com.angcyo.uiview.kotlin.minValue
 import com.angcyo.uiview.kotlin.textHeight
 
 /**
@@ -29,18 +30,24 @@ open class NoReadNumView(context: Context, attributeSet: AttributeSet? = null) :
 
     val mPaint: TextPaint by lazy {
         TextPaint(Paint.ANTI_ALIAS_FLAG).apply {
-            style = Paint.Style.FILL_AND_STROKE
-            strokeWidth = 1 * density
+            style = Paint.Style.FILL
+            strokeWidth = 1f
         }
     }
 
     var showNoReadNum = true
 
+    var noReadTextSize = 8 * density
+
     /**未读消息数量, -1表示不显示, 0表示显示一个小红点, 1..99显示数字+小红点, 99+显示特殊*/
     var noReadNum = -1
         set(value) {
             field = value
-            postInvalidate()
+            if (needMeasure) {
+                requestLayout()
+            } else {
+                postInvalidate()
+            }
         }
 
     /**小红点*/
@@ -62,6 +69,7 @@ open class NoReadNumView(context: Context, attributeSet: AttributeSet? = null) :
         drawable
     }
 
+    protected var needMeasure = false
     override fun onMeasure(widthMeasureSpec: Int, heightMeasureSpec: Int) {
         var widthSize = MeasureSpec.getSize(widthMeasureSpec)
         var widthMode = MeasureSpec.getMode(widthMeasureSpec)
@@ -69,14 +77,34 @@ open class NoReadNumView(context: Context, attributeSet: AttributeSet? = null) :
         var heightMode = MeasureSpec.getMode(heightMeasureSpec)
 
         if (widthMode != MeasureSpec.EXACTLY && heightMode != MeasureSpec.EXACTLY) {
-            val width = ninetyNineDrawable.intrinsicWidth + paddingLeft + paddingRight
-            val height = Math.max(ninetyNineDrawable.intrinsicHeight.toFloat(), mPaint.textHeight()) + paddingTop + paddingBottom
-            setMeasuredDimension(width * 2, (height * 2).toInt())
+            needMeasure = true
+            var dW = 0
+            var dH = 0
+
+            when {
+                noReadNum == 0 -> {
+                    dW = redDotDrawable.intrinsicWidth
+                    dH = redDotDrawable.intrinsicHeight
+                }
+                noReadNum in 1..99 -> {
+                    resetNewMessageDrawable()
+
+                    dW = newMessageDrawable.bounds.width()
+                    dH = newMessageDrawable.bounds.height()
+                }
+                (noReadNum > 99) -> {
+                    dW = ninetyNineDrawable.intrinsicWidth
+                    dH = ninetyNineDrawable.intrinsicHeight
+                }
+            }
+
+            val width = dW + paddingLeft + paddingRight
+            val height = Math.max(dH.toFloat(), mPaint.textHeight()) + paddingTop + paddingBottom
+            setMeasuredDimension(width, height.toInt())
         } else {
+            needMeasure = false
             super.onMeasure(widthMeasureSpec, heightMeasureSpec)
         }
-
-
     }
 
     override fun onDraw(canvas: Canvas) {
@@ -86,25 +114,35 @@ open class NoReadNumView(context: Context, attributeSet: AttributeSet? = null) :
         }
     }
 
-    fun drawNoReadDrawable(canvas: Canvas) {
+    protected fun resetNewMessageDrawable() {
+        mPaint.textSize = noReadTextSize
+        val string = noReadNum.toString()
+        val topOffset = 2 * density
+        val leftOffset = 2 * topOffset
+
+        val height = (mPaint.textHeight() + topOffset).toInt()
+        val width = (mPaint.measureText(string, 0, string.length) + leftOffset).toInt().minValue(height)
+
+        newMessageDrawable.setBounds(0, 0, width, height)
+    }
+
+    open fun drawNoReadDrawable(canvas: Canvas) {
         //绘制未读消息
         canvas.save()
-        canvas.translate((measuredWidth / 2).toFloat(), paddingTop + 4 * density)//移动到中间位置
+        canvas.translate(paddingLeft.toFloat(), paddingTop.toFloat())
         when {
             noReadNum == 0 -> {
                 redDotDrawable.draw(canvas)
             }
             noReadNum in 1..99 -> {
-                mPaint.textSize = 9 * density
                 val string = noReadNum.toString()
-                val paddingTop = 2 * density
-                val paddingLeft = 2 * paddingTop
-                newMessageDrawable.setBounds(0, 0,
-                        (mPaint.measureText(string, 0, string.length) + 2 * paddingLeft).toInt(),
-                        (mPaint.descent() - mPaint.ascent() + 2 * paddingTop).toInt())
+                val topOffset = 2 * density
+
                 newMessageDrawable.draw(canvas)
                 mPaint.color = Color.WHITE
-                canvas.drawText(string, paddingLeft, paddingTop - mPaint.ascent(), mPaint)
+                val textWidth = mPaint.measureText(string, 0, string.length)
+                canvas.drawText(string, newMessageDrawable.bounds.width() / 2 - textWidth / 2,
+                        measuredHeight - paddingBottom - mPaint.descent() - topOffset / 2, mPaint)
             }
             (noReadNum > 99) -> {
                 ninetyNineDrawable.draw(canvas)

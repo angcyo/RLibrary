@@ -355,7 +355,30 @@ class TouchMoveView : NoReadNumView {
                     mPaint)
         }
 
-        drawNoReadDrawable(canvas)
+        //绘制未读消息
+        canvas.save()
+        canvas.translate((measuredWidth / 2).toFloat(), paddingTop + 4 * density)//移动到中间位置
+        when {
+            noReadNum == 0 -> {
+                redDotDrawable.draw(canvas)
+            }
+            noReadNum in 1..99 -> {
+                val string = noReadNum.toString()
+                val topOffset = 2 * density
+                val leftOffset = 2 * topOffset
+                resetNewMessageDrawable()
+
+                newMessageDrawable.draw(canvas)
+                mPaint.color = Color.WHITE
+                val textWidth = mPaint.measureText(string, 0, string.length)
+                canvas.drawText(string, newMessageDrawable.bounds.width() / 2 - textWidth / 2,
+                        newMessageDrawable.bounds.height() - paddingBottom - mPaint.descent() - topOffset / 2, mPaint)
+            }
+            (noReadNum > 99) -> {
+                ninetyNineDrawable.draw(canvas)
+            }
+        }
+        canvas.restore()
 
 //        //绘制贝塞尔取消
 //        canvas.save()
@@ -370,6 +393,10 @@ class TouchMoveView : NoReadNumView {
 //        mPaint.color = Color.RED
 //        canvas.drawPath(besselPath, mPaint)
 //        canvas.restore()
+    }
+
+    override fun drawNoReadDrawable(canvas: Canvas) {
+        //super.drawNoReadDrawable(canvas)
     }
 }
 
