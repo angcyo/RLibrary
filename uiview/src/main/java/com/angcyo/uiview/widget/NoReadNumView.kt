@@ -10,6 +10,7 @@ import android.text.TextPaint
 import android.util.AttributeSet
 import android.view.View
 import com.angcyo.uiview.R
+import com.angcyo.uiview.kotlin.textHeight
 
 /**
  * Copyright (C) 2016,深圳市红鸟网络科技股份有限公司 All rights reserved.
@@ -68,8 +69,9 @@ open class NoReadNumView(context: Context, attributeSet: AttributeSet? = null) :
         var heightMode = MeasureSpec.getMode(heightMeasureSpec)
 
         if (widthMode != MeasureSpec.EXACTLY && heightMode != MeasureSpec.EXACTLY) {
-            setMeasuredDimension(ninetyNineDrawable.intrinsicWidth + paddingLeft + paddingRight,
-                    ninetyNineDrawable.intrinsicHeight + paddingTop + paddingBottom)
+            val width = ninetyNineDrawable.intrinsicWidth + paddingLeft + paddingRight
+            val height = Math.max(ninetyNineDrawable.intrinsicHeight.toFloat(), mPaint.textHeight()) + paddingTop + paddingBottom
+            setMeasuredDimension(width * 2, (height * 2).toInt())
         } else {
             super.onMeasure(widthMeasureSpec, heightMeasureSpec)
         }
