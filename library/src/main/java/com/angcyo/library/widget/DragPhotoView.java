@@ -152,6 +152,8 @@ public class DragPhotoView extends PhotoView {
 
         if (isLargeBitmap) {
 //            setScaleType(ScaleType.CENTER_CROP);
+            //大图默认放大显示
+            setScale(getMaximumScale(), getMeasuredWidth() / 2, 0, false);
         } else {
             setScaleLevels(1f, 1.75f, 3f);
 //            setScaleType(ScaleType.FIT_CENTER);

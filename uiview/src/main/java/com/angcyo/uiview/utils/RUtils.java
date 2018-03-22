@@ -2100,6 +2100,24 @@ public class RUtils {
         final float TARGET_WIDTH = maxWidth;
         final float TARGET_HEIGHT = maxHeight;
 
+        float scale = getScaleWidthHeight(srcWidth, srcHeight, maxWidth, maxHeight);
+
+        if (scale < 0.1) {
+            size[0] = (int) TARGET_WIDTH;
+            size[1] = (int) TARGET_HEIGHT;
+        } else {
+            size[0] = (int) (srcWidth * scale);
+            size[1] = (int) (srcHeight * scale);
+        }
+
+        return size;
+    }
+
+    public static float getScaleWidthHeight(float srcWidth, float srcHeight /*目标原始宽高*/,
+                                            float maxWidth, float maxHeight /*束缚的最大宽高*/) {
+        final float TARGET_WIDTH = maxWidth;
+        final float TARGET_HEIGHT = maxHeight;
+
         float scale = 1f;
         if (srcWidth == srcHeight) {
             scale = Math.min(TARGET_HEIGHT, TARGET_WIDTH) / srcWidth;
@@ -2117,10 +2135,7 @@ public class RUtils {
             }
         }
 
-        size[0] = (int) (srcWidth * scale);
-        size[1] = (int) (srcHeight * scale);
-
-        return size;
+        return scale;
     }
 
     /**
