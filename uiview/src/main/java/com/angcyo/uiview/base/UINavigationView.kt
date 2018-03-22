@@ -177,4 +177,9 @@ abstract class UINavigationView : UIIViewImpl() {
             iview.onDoubleScrollToTop()
         }
     }
+
+    /**显示未读消息数*/
+    fun showNoReadNum(position: Int, num: Int) {
+        (touchMoveGroupLayout?.getChildAt(position) as TouchMoveView?)?.noReadNum = num
+    }
 }

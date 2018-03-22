@@ -6,12 +6,8 @@ import android.animation.ValueAnimator
 import android.content.Context
 import android.graphics.Canvas
 import android.graphics.Color
-import android.graphics.Paint
-import android.graphics.Path
 import android.graphics.drawable.Drawable
-import android.support.v4.content.ContextCompat
 import android.support.v4.view.MotionEventCompat
-import android.text.TextPaint
 import android.util.AttributeSet
 import android.view.MotionEvent
 import android.view.MotionEvent.*
@@ -33,13 +29,7 @@ import kotlin.reflect.KProperty
  * 修改备注：
  * Version: 1.0.0
  */
-class TouchMoveView : View {
-
-    val mPaint: TextPaint by lazy {
-        TextPaint(Paint.ANTI_ALIAS_FLAG).apply { textSize = mShowTextSize * density }
-    }
-
-    val density: Float by lazy { resources.displayMetrics.density }
+class TouchMoveView : NoReadNumView {
 
     /**需要绘制显示的文本*/
     var mShowText: String? = null
@@ -49,7 +39,7 @@ class TouchMoveView : View {
 
     var textNormal: String? = null
     var textSelected: String? = null
-    var mShowTextSize = 12f
+    var mShowTextSize = 12f * density
         set(value) {
             field = value
             mPaint.textSize = value
@@ -134,34 +124,8 @@ class TouchMoveView : View {
     var mStartSubDrawOffsetRatioX = 0f
     var mStartSubDrawOffsetRatioY = 0f
 
-    /**未读消息数量, -1表示不显示, 0表示显示一个小红点, 1..99显示数字+小红点, 99+显示特殊*/
-    var noReadNum = -1
-        set(value) {
-            field = value
-            postInvalidate()
-        }
-
-    /**小红点*/
-    val redDotDrawable: Drawable by lazy {
-        val drawable = ContextCompat.getDrawable(context, R.drawable.skin_tips_dot_png)!!
-        drawable.setBounds(0, 0, drawable.intrinsicWidth, drawable.intrinsicHeight)
-        drawable
-    }
-    /**.9格式的小红点*/
-    val newMessageDrawable: Drawable by lazy {
-        val drawable = ContextCompat.getDrawable(context, R.drawable.skin_tips_newmessage_9_png)!!
-        drawable.setBounds(0, 0, drawable.intrinsicWidth, drawable.intrinsicHeight)
-        drawable
-    }
-    /**99+*/
-    val ninetyNineDrawable: Drawable by lazy {
-        val drawable = ContextCompat.getDrawable(context, R.drawable.skin_tips_newmessage_ninetynine_png)!!
-        drawable.setBounds(0, 0, drawable.intrinsicWidth, drawable.intrinsicHeight)
-        drawable
-    }
-
     /**贝塞尔曲线的path*/
-    val besselPath = Path()
+    //val besselPath = Path()
 
     constructor(context: Context) : super(context) {
         initView(context, null)
@@ -175,7 +139,7 @@ class TouchMoveView : View {
         val typedArray = context.obtainStyledAttributes(attr, R.styleable.TouchMoveView)
         textSelected = typedArray.getString(R.styleable.TouchMoveView_r_text_selected)
         textNormal = typedArray.getString(R.styleable.TouchMoveView_r_text_normal)
-        mShowTextSize = typedArray.getDimension(R.styleable.TouchMoveView_r_show_text_size, mShowTextSize * density)
+        mShowTextSize = typedArray.getDimension(R.styleable.TouchMoveView_r_show_text_size, mShowTextSize)
 
         mTextColorNormal = typedArray.getColor(R.styleable.TouchMoveView_r_text_color_normal, mTextColorNormal)
         mTextColorSelected = typedArray.getColor(R.styleable.TouchMoveView_r_text_color_selected, mTextColorSelected)
@@ -190,6 +154,8 @@ class TouchMoveView : View {
         mMaxMoveOffset = typedArray.getDimension(R.styleable.TouchMoveView_r_max_draw_offset, mMaxMoveOffset)
 
         typedArray.recycle()
+
+        showNoReadNum = false
     }
 
     override fun onMeasure(widthMeasureSpec: Int, heightMeasureSpec: Int) {
@@ -351,6 +317,7 @@ class TouchMoveView : View {
     }
 
     override fun onDraw(canvas: Canvas) {
+        super.onDraw(canvas)
         canvas.save()
         mPaint.textSize = mShowTextSize
         //绘制图片
@@ -388,30 +355,7 @@ class TouchMoveView : View {
                     mPaint)
         }
 
-        //绘制未读消息
-        canvas.save()
-        canvas.translate((measuredWidth / 2).toFloat(), paddingTop + 4 * density)//移动到中间位置
-        when {
-            noReadNum == 0 -> {
-                redDotDrawable.draw(canvas)
-            }
-            noReadNum in 1..99 -> {
-                mPaint.textSize = 9 * density
-                val string = noReadNum.toString()
-                val paddingTop = 2 * density
-                val paddingLeft = 2 * paddingTop
-                newMessageDrawable.setBounds(0, 0,
-                        (mPaint.measureText(string, 0, string.length) + 2 * paddingLeft).toInt(),
-                        (mPaint.descent() - mPaint.ascent() + 2 * paddingTop).toInt())
-                newMessageDrawable.draw(canvas)
-                mPaint.color = Color.WHITE
-                canvas.drawText(string, paddingLeft, paddingTop - mPaint.ascent(), mPaint)
-            }
-            (noReadNum > 99) -> {
-                ninetyNineDrawable.draw(canvas)
-            }
-        }
-        canvas.restore()
+        drawNoReadDrawable(canvas)
 
 //        //绘制贝塞尔取消
 //        canvas.save()
