@@ -18,6 +18,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.angcyo.library.utils.L;
+import com.angcyo.uiview.utils.ScreenUtil;
 import com.angcyo.uiview.view.DelayClick;
 import com.angcyo.uiview.view.RClickListener;
 import com.angcyo.uiview.view.UIIViewImpl;
@@ -440,5 +441,20 @@ public class RBaseViewHolder extends RecyclerView.ViewHolder {
 
     public Context getContext() {
         return itemView.getContext();
+    }
+
+    /**
+     * ItemView是否在屏幕中显示
+     */
+    public boolean isItemShowInScreen() {
+        if (itemView == null) {
+            return false;
+        }
+
+        if (itemView.getLeft() >= 0 && itemView.getRight() <= ScreenUtil.getScreenWidth()
+                && itemView.getTop() >= 0 && itemView.getBottom() <= ScreenUtil.getScreenHeight()) {
+            return true;
+        }
+        return false;
     }
 }

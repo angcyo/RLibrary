@@ -3,6 +3,7 @@ package com.angcyo.uiview.dialog
 import android.graphics.Rect
 import android.view.LayoutInflater
 import android.view.View
+import android.view.ViewTreeObserver
 import android.widget.FrameLayout
 
 /**
@@ -27,6 +28,17 @@ open class UIGuideDialog : UIGuideDialogImpl {
             val rect = Rect()
             view.getGlobalVisibleRect(rect)
             list.add(rect)
+
+            if (view.measuredWidth == 0 || view.measuredHeight == 0) {
+                view.viewTreeObserver.addOnPreDrawListener(object : ViewTreeObserver.OnPreDrawListener {
+                    override fun onPreDraw(): Boolean {
+                        view.getGlobalVisibleRect(rect)
+                        view.viewTreeObserver.removeOnPreDrawListener(this)
+                        getGuideFrameLayout()?.requestLayout()
+                        return true
+                    }
+                })
+            }
         }
         anchorRectList.addAll(list)
     }
@@ -43,6 +55,4 @@ open class UIGuideDialog : UIGuideDialogImpl {
     override fun inflateDialogView(dialogRootLayout: FrameLayout, inflater: LayoutInflater): View {
         return inflate(layoutId)
     }
-
-
 }

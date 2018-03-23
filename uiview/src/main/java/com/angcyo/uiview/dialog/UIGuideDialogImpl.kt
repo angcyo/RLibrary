@@ -6,6 +6,8 @@ import android.view.View
 import android.view.animation.Animation
 import com.angcyo.uiview.R
 import com.angcyo.uiview.base.UIIDialogImpl
+import com.angcyo.uiview.container.ILayout
+import com.angcyo.uiview.container.UILayoutImpl
 import com.angcyo.uiview.model.AnimParam
 import com.angcyo.uiview.widget.group.GuideFrameLayout
 
@@ -58,6 +60,11 @@ open abstract class UIGuideDialogImpl : UIIDialogImpl() {
     open fun getGuideFrameLayout(): GuideFrameLayout? = v(R.id.base_guide_layout)
 
     open fun getFinishButton(): View? = v(R.id.base_finish_view)
+
+    override fun onAttachedToILayout(iLayout: ILayout<*>?) {
+        super.onAttachedToILayout(iLayout)
+        (iLayout as UILayoutImpl?)?.setInterceptTouchEvent(true)
+    }
 
     override fun onViewShow(bundle: Bundle?) {
         super.onViewShow(bundle)
