@@ -414,6 +414,7 @@ public class UILayoutImpl extends SwipeBackLayout implements ILayout<UIParam>, U
         setFocusableInTouchMode(true);
         isAttachedToWindow = true;
         //loadViewInternal();
+        checkStartTask();
     }
 
     @Override
@@ -478,8 +479,10 @@ public class UILayoutImpl extends SwipeBackLayout implements ILayout<UIParam>, U
             return;
         }
         boolean taskRunning = isTaskRunning();
-        logTaskList("请求执行任务 :" + taskRunning);
-        if (taskRunning) {
+
+        logTaskList("请求执行任务 running:" + taskRunning + " suspend:" + isTaskSuspend + " isAttachedToWindow:" + isAttachedToWindow);
+        if (taskRunning /*||
+                !isAttachedToWindow*/) {
             return;
         }
         startTask();
@@ -488,6 +491,7 @@ public class UILayoutImpl extends SwipeBackLayout implements ILayout<UIParam>, U
     private void startTask() {
         if (mViewTasks.isEmpty()) {
             currentViewTask = null;
+            isTaskSuspend = false;
             L.e("call: startTask([])-> 无任务需要执行");
         } else {
             if (isTaskSuspend) {
@@ -502,7 +506,6 @@ public class UILayoutImpl extends SwipeBackLayout implements ILayout<UIParam>, U
     }
 
     private void startTaskInner(ViewTask viewTask) {
-
         currentViewTask = viewTask;
         //L.e("开始分发任务 -> " + viewTask);
         if (viewTask == null) {
@@ -518,6 +521,9 @@ public class UILayoutImpl extends SwipeBackLayout implements ILayout<UIParam>, U
                 break;
             case ViewTask.TASK_TYPE_FINISH:
                 finishTaskType(viewTask);
+                break;
+            case ViewTask.TASK_TYPE_FINISH_INNER:
+                //finishTaskType(viewTask);
                 break;
             case ViewTask.TASK_TYPE_SHOW:
                 showTaskType(viewTask);
@@ -554,11 +560,13 @@ public class UILayoutImpl extends SwipeBackLayout implements ILayout<UIParam>, U
         iView.onAttachedToILayout(this);
         if (checkInterruptAndRemove(iView) || viewTask.iView.isInterruptTask()) {
             viewTask.iView.setInterruptTask(false);
+            L.w("startTaskType 任务跳过.");
             //中断了当前的任务
             nextTask();
         } else {
             ViewPattern lastViewPattern = getLastViewPattern();
             if (needSuspendTask(lastViewPattern, iView, param)) {
+                L.w("startTaskType 任务暂停.");
                 //没有启动条件, 中断任务执行
                 setTaskSuspendWidth(lastViewPattern);
             } else {
@@ -568,6 +576,8 @@ public class UILayoutImpl extends SwipeBackLayout implements ILayout<UIParam>, U
                         @Override
                         public void run() {
                             if (checkInterruptAndRemove(iView)) {
+                                L.w("startTaskType 任务中断跳过.");
+
                                 //中断了当前的任务
                                 viewTask.taskRun = 0;
                                 nextTask();
@@ -588,6 +598,8 @@ public class UILayoutImpl extends SwipeBackLayout implements ILayout<UIParam>, U
         final UIParam param = viewTask.param;
         final ViewPattern viewPattern = findViewPatternByIView(iview);
         if (viewPattern == null || viewPattern.mIView == null) {
+            L.w("finishTaskType 任务跳过.");
+
             nextTask();
             return;
         }
@@ -836,13 +848,21 @@ public class UILayoutImpl extends SwipeBackLayout implements ILayout<UIParam>, U
             if (currentViewTask != null && currentViewTask.taskRun > 0) {
                 //任务没有结束, 将任务重新进行
                 //checkStartTask();
-                L.e("call: nextTask([])-> " + currentViewTask + " 未结束");
+                L.e("nextTask-> " + currentViewTask + " 未结束");
             } else {
+                ViewTask oldTask = currentViewTask;
+
                 currentViewTask = null;
                 if (mViewTasks.isEmpty()) {
-                    L.e("call: nextTask([])-> 所有任务执行结束");
+                    L.e("nextTask-> 所有任务执行结束");
                 } else {
-                    mViewTasks.remove(0);
+                    ViewTask task = mViewTasks.get(0);
+
+                    //L.i("nextTask 检查任务-> \n当前:" + oldTask + "\n列表:" + task);
+
+                    if (oldTask == task) {
+                        mViewTasks.remove(0);
+                    }
                     checkStartTask();
                 }
             }
@@ -854,7 +874,9 @@ public class UILayoutImpl extends SwipeBackLayout implements ILayout<UIParam>, U
      */
     private void checkTaskOnIViewAnimationEnd() {
         if (currentViewTask == null || (isTopAnimationEnd &&
-                isBottomAnimationEnd)) {
+                isBottomAnimationEnd &&
+                currentViewTask.taskRun <= 0)) {
+            L.i("任务结束-> " + currentViewTask + " 请求下一个任务.Suspend:" + isTaskSuspend);
             nextTask();
         }
     }
@@ -968,6 +990,11 @@ public class UILayoutImpl extends SwipeBackLayout implements ILayout<UIParam>, U
     }
 
     private ViewPattern startIViewInternal(final IView iView, UIParam param) {
+
+        if (iView.isInterruptTask()) {
+            L.e("startIViewInternal()-> 需要中断:" + name(iView));
+            return null;
+        }
 
         hideSoftInput();
 
@@ -1116,6 +1143,7 @@ public class UILayoutImpl extends SwipeBackLayout implements ILayout<UIParam>, U
         if (lastViewPattern != null && lastViewPattern.mView != null) {
             setIViewNeedLayout(lastViewPattern.mView, true);
         }
+
         currentViewTask.taskRun = 2;
         topViewFinish(lastViewPattern, finishViewPattern, param);
         bottomViewStart(lastViewPattern, finishViewPattern, param);
@@ -1151,8 +1179,11 @@ public class UILayoutImpl extends SwipeBackLayout implements ILayout<UIParam>, U
             //finishEnd();
             return;
         }
+        iview.setInterruptTask(true);
         mViewTasks.add(new ViewTask(ViewTask.TASK_TYPE_FINISH, iview, param));
-        checkStartTask();
+        if (isAttachedToWindow) {
+            checkStartTask();
+        }
     }
 
     /**
@@ -1198,7 +1229,9 @@ public class UILayoutImpl extends SwipeBackLayout implements ILayout<UIParam>, U
     @Override
     public void showIView(final IView iview, final UIParam param) {
         mViewTasks.add(new ViewTask(ViewTask.TASK_TYPE_SHOW, iview, param));
-        checkStartTask();
+        if (isAttachedToWindow) {
+            checkStartTask();
+        }
     }
 
     @Override
@@ -1216,7 +1249,9 @@ public class UILayoutImpl extends SwipeBackLayout implements ILayout<UIParam>, U
             return;
         }
         mViewTasks.add(new ViewTask(ViewTask.TASK_TYPE_HIDE, viewPattern.mIView, param));
-        checkStartTask();
+        if (isAttachedToWindow) {
+            checkStartTask();
+        }
     }
 
     @Override
@@ -1231,7 +1266,9 @@ public class UILayoutImpl extends SwipeBackLayout implements ILayout<UIParam>, U
             return;
         }
         mViewTasks.add(new ViewTask(ViewTask.TASK_TYPE_HIDE, viewPattern.mIView, param));
-        checkStartTask();
+        if (isAttachedToWindow) {
+            checkStartTask();
+        }
     }
 
     @Override
@@ -1359,7 +1396,9 @@ public class UILayoutImpl extends SwipeBackLayout implements ILayout<UIParam>, U
             return;
         }
         mViewTasks.add(new ViewTask(ViewTask.TASK_TYPE_REPLACE, iView, param));
-        checkStartTask();
+        if (isAttachedToWindow) {
+            checkStartTask();
+        }
     }
 
     @Override
@@ -2851,8 +2890,9 @@ public class UILayoutImpl extends SwipeBackLayout implements ILayout<UIParam>, U
             return true;
         }
 
-        if (isTaskRunning() || interceptTouchEvent) {
-            L.i("拦截事件：" + actionMasked + " interceptTouchEvent:" + interceptTouchEvent);
+        boolean taskRunning = isTaskRunning();
+        if (taskRunning || interceptTouchEvent) {
+            L.i("isTaskRunning:" + taskRunning + " isTaskSuspend:" + isTaskSuspend + " 拦截事件：" + actionMasked + " interceptTouchEvent:" + interceptTouchEvent);
             return true;
         }
         return super.onInterceptTouchEvent(ev);
@@ -2919,6 +2959,8 @@ public class UILayoutImpl extends SwipeBackLayout implements ILayout<UIParam>, U
     @Override
     public void finishIView(Class<?> clz, boolean keepLast) {
         ArrayList<ViewPattern> patterns = findAllViewPatternByClass(clz);
+
+        boolean old = isTaskSuspend;
         for (ViewPattern pattern : patterns) {
             if (pattern != null) {
                 boolean isLast = pattern == getLastViewPattern();
@@ -2927,12 +2969,16 @@ public class UILayoutImpl extends SwipeBackLayout implements ILayout<UIParam>, U
                     pattern.interrupt = true;
                     UIParam uiParam = new UIParam(isLast, true, !isLast);
                     uiParam.isFinishBack = !isLast;
-
+                    isTaskSuspend = true;
                     currentViewTask = new ViewTask(ViewTask.TASK_TYPE_FINISH, pattern.mIView, uiParam);
-                    mViewTasks.add(currentViewTask);
+                    //mViewTasks.add(currentViewTask);
                     finishIViewInner(pattern, uiParam);
                 }
             }
+        }
+        if (old) {
+        } else {
+            isTaskSuspend = false;
         }
     }
 
@@ -2964,21 +3010,28 @@ public class UILayoutImpl extends SwipeBackLayout implements ILayout<UIParam>, U
             }
         }
 
+        boolean old = isTaskSuspend;
         for (ViewPattern pattern : needFinishPattern) {
             pattern.interrupt = true;
             if (pattern == getLastViewPattern() && lastFinishParam != null) {
                 //最后一个页面关闭时, 正常执行
                 //finishIViewInner(pattern, lastFinishParam);
-                currentViewTask = new ViewTask(ViewTask.TASK_TYPE_FINISH, pattern.mIView, lastFinishParam);
-                mViewTasks.add(currentViewTask);
+                ViewTask task = new ViewTask(ViewTask.TASK_TYPE_FINISH, pattern.mIView, lastFinishParam);
+                mViewTasks.add(task);
                 finishIView(pattern.mIView, lastFinishParam);
             } else {
+                isTaskSuspend = true;
                 //看不见的页面关闭时, 安静执行
                 UIParam uiParam = new UIParam(false, false, true);
-                currentViewTask = new ViewTask(ViewTask.TASK_TYPE_FINISH, pattern.mIView, uiParam);
-                mViewTasks.add(currentViewTask);
+                currentViewTask = new ViewTask(ViewTask.TASK_TYPE_FINISH_INNER, pattern.mIView, uiParam);
+//                mViewTasks.add(task);
                 finishIViewInner(pattern, uiParam);
+//                checkStartTask();
             }
+        }
+        if (old) {
+        } else {
+            isTaskSuspend = false;
         }
     }
 

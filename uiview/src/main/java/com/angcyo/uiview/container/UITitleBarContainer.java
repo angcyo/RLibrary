@@ -405,6 +405,10 @@ public class UITitleBarContainer extends FrameLayout {
                 view.setId(item.id);
             }
 
+            if (item.tag != null) {
+                view.setTag(item.tag);
+            }
+
             ViewExKt.setOnRClickListener(view, item.listener);
             view.setBackgroundResource(R.drawable.base_bg2_selector_v21);
 
@@ -509,30 +513,30 @@ public class UITitleBarContainer extends FrameLayout {
      */
     public void showRightItem(int index) {
         if (mRightControlLayout.getChildCount() > index) {
-            mRightControlLayout.getChildAt(index).setVisibility(VISIBLE);
+            visibleView(mRightControlLayout.getChildAt(index));
         }
     }
 
     public void showRightItemById(int id) {
-        mRightControlLayout.findViewById(id).setVisibility(VISIBLE);
+        visibleView(mRightControlLayout.findViewById(id));
     }
 
     public void hideRightItemById(int id) {
-        mRightControlLayout.findViewById(id).setVisibility(GONE);
+        goneView(mRightControlLayout.findViewById(id));
     }
 
     public void hideRightItem(int index) {
         if (mRightControlLayout.getChildCount() > index) {
-            mRightControlLayout.getChildAt(index).setVisibility(GONE);
+            goneView(mRightControlLayout.getChildAt(index));
         }
     }
 
     public void showLeftItemById(int id) {
-        mLeftControlLayout.findViewById(id).setVisibility(VISIBLE);
+        visibleView(mLeftControlLayout.findViewById(id));
     }
 
     public void hideLeftItemById(int id) {
-        mLeftControlLayout.findViewById(id).setVisibility(GONE);
+        goneView(mLeftControlLayout.findViewById(id));
     }
 
     /**
@@ -540,7 +544,7 @@ public class UITitleBarContainer extends FrameLayout {
      */
     public void showLeftItem(int index) {
         if (mLeftControlLayout.getChildCount() > index) {
-            mLeftControlLayout.getChildAt(index).setVisibility(VISIBLE);
+            visibleView(mLeftControlLayout.getChildAt(index));
         }
     }
 
@@ -549,9 +553,22 @@ public class UITitleBarContainer extends FrameLayout {
      */
     public void hideLeftItem(int index) {
         if (mLeftControlLayout.getChildCount() > index) {
-            mLeftControlLayout.getChildAt(index).setVisibility(GONE);
+            goneView(mLeftControlLayout.getChildAt(index));
         }
     }
+
+    private void goneView(View view) {
+        if (view != null) {
+            view.setVisibility(View.GONE);
+        }
+    }
+
+    private void visibleView(View view) {
+        if (view != null) {
+            view.setVisibility(View.VISIBLE);
+        }
+    }
+
 
     @Override
     public boolean onTouchEvent(MotionEvent event) {

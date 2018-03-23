@@ -22,6 +22,7 @@ public class ViewTask {
     public static final int TASK_TYPE_SHOW = TASK_TYPE_FINISH << 1;//显示
     public static final int TASK_TYPE_HIDE = TASK_TYPE_SHOW << 1;//隐藏
     public static final int TASK_TYPE_REPLACE = TASK_TYPE_HIDE << 1;//替换
+    public static final int TASK_TYPE_FINISH_INNER = TASK_TYPE_REPLACE << 1;//内部关闭IVIew使用
 
     public int taskType = 0;//启动的任务类型
 
@@ -74,7 +75,7 @@ public class ViewTask {
                 break;
         }
 
-        builder.append(type).append(" ").append(taskRun);
+        builder.append(type).append(" run:").append(taskRun);
         //builder.append("\n");
         builder.append(" iView:").append(iView);
         //builder.append("\n");

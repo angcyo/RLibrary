@@ -41,6 +41,11 @@ public class TitleBarItem {
     @IdRes
     public int id = -1;
 
+    /**
+     * View 的tag, 用来 findViewByTag
+     */
+    public String tag = null;
+
     public OnItemInitListener mOnItemInitListener;
 
     TitleBarItem() {
@@ -100,6 +105,11 @@ public class TitleBarItem {
 
     public TitleBarItem setId(int id) {
         this.id = id;
+        return this;
+    }
+
+    public TitleBarItem setTag(String tag) {
+        this.tag = tag;
         return this;
     }
 

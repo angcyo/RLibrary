@@ -1110,6 +1110,7 @@ public class RUtils {
 
         request.setTitle(fileName);      //设置下载中通知栏的提示消息, 并且也是系统下载界面的显示名
         request.setDescription(fileName + "文件正在下载...");//设置设置下载中通知栏提示的介绍, 部分机型无效
+        //request.setMimeType()
 
         long downLoadId = manager.enqueue(request);   //启动下载,该方法返回系统为当前下载请求分配的一个唯一的ID
 
