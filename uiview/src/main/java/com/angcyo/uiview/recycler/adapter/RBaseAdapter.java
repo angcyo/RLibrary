@@ -689,6 +689,9 @@ public abstract class RBaseAdapter<T> extends RecyclerView.Adapter<RBaseViewHold
         List<T> newDatas;
         RDiffCallback<T> mDiffCallback;
 
+        public RDiffCallback() {
+        }
+
         public RDiffCallback(List<T> oldDatas, List<T> newDatas, RDiffCallback<T> diffCallback) {
             this.oldDatas = oldDatas;
             this.newDatas = newDatas;
@@ -726,13 +729,17 @@ public abstract class RBaseAdapter<T> extends RecyclerView.Adapter<RBaseViewHold
         }
 
         /**
-         * 重写此方法, 判断数据是否相等
+         * 重写此方法, 判断数据是否相等,
+         * 如果item不相同, 会先调用 notifyItemRangeRemoved, 再调用 notifyItemRangeInserted
          */
-        public boolean areItemsTheSame(T oldData, T newData) {
-            return oldData == newData;
+        public boolean areItemsTheSame(@NonNull T oldData, @NonNull T newData) {
+            return oldData.equals(newData);
         }
 
-        public boolean areContentsTheSame(T oldData, T newData) {
+        /**
+         * 如果内容不相等, 会调用notifyItemRangeChanged
+         */
+        public boolean areContentsTheSame(@NonNull T oldData, @NonNull T newData) {
             return areItemsTheSame(oldData, newData);
         }
     }

@@ -355,6 +355,7 @@ public class RRecyclerView extends RecyclerView implements StickLayout.CanScroll
      * 取消默认动画
      */
     public void setItemNoAnim() {
+        supportsChangeAnimations = false;
         setItemAnim(false);
         this.setItemAnimator(null);
     }
@@ -365,8 +366,8 @@ public class RRecyclerView extends RecyclerView implements StickLayout.CanScroll
     public void setSupportsChangeAnimations(boolean supportsChangeAnimations) {
         this.supportsChangeAnimations = supportsChangeAnimations;
         ItemAnimator itemAnimator = getItemAnimator();
-        if (itemAnimator instanceof DefaultItemAnimator) {
-            ((DefaultItemAnimator) itemAnimator).setSupportsChangeAnimations(supportsChangeAnimations);
+        if (itemAnimator instanceof SimpleItemAnimator) {
+            ((SimpleItemAnimator) itemAnimator).setSupportsChangeAnimations(supportsChangeAnimations);
         }
     }
 
