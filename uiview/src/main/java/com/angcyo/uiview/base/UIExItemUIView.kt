@@ -17,6 +17,11 @@ abstract class UIExItemUIView<ItemType, DataType> : UIRecyclerUIView<String, Dat
             override fun onCreateItemHolder(itemHolder: RExItemHolder<DataType>) {
                 super.onCreateItemHolder(itemHolder)
                 itemHolder.iLayout = mParentILayout
+                itemHolder.exItemUIView = this@UIExItemUIView
+
+                post {
+                    itemHolder.exItemAdapter = mExBaseAdapter as RExItemAdapter<*, *>
+                }
 
                 this@UIExItemUIView.onCreateItemHolder(itemHolder)
             }
@@ -29,6 +34,10 @@ abstract class UIExItemUIView<ItemType, DataType> : UIRecyclerUIView<String, Dat
                 return this@UIExItemUIView.getItemTypeFromData(data)
             }
         }
+    }
+
+    override fun isShowInViewPager(): Boolean {
+        return super.isShowInViewPager()
     }
 
     open fun onCreateItemHolder(itemHolder: RExItemHolder<DataType>) {

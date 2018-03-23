@@ -45,6 +45,11 @@ public class RNotifier {
     protected Vibrator vibrator;
     Ringtone ringtone = null;
 
+    //需要震动
+    private boolean needVibrator = true;
+    //需要铃声
+    private boolean needRingtone = true;
+
     private RNotifier() {
     }
 
@@ -216,9 +221,11 @@ public class RNotifier {
                 return;
             }
 
-            //开始震动
-            long[] pattern = new long[]{0, 180, 80, 120};
-            vibrator.vibrate(pattern, -1);
+            if (needVibrator) {
+                //开始震动
+                long[] pattern = new long[]{0, 180, 80, 120};
+                vibrator.vibrate(pattern, -1);
+            }
 
             //播放铃声
             if (ringtone == null) {
@@ -231,7 +238,7 @@ public class RNotifier {
                 }
             }
 
-            if (!ringtone.isPlaying()) {
+            if (needRingtone && !ringtone.isPlaying()) {
                 String vendor = Build.MANUFACTURER;
 
                 ringtone.play();
@@ -257,6 +264,16 @@ public class RNotifier {
         } catch (Exception e) {
             e.printStackTrace();
         }
+    }
+
+    public RNotifier setNeedVibrator(boolean needVibrator) {
+        this.needVibrator = needVibrator;
+        return this;
+    }
+
+    public RNotifier setNeedRingtone(boolean needRingtone) {
+        this.needRingtone = needRingtone;
+        return this;
     }
 
     private static class Holder {

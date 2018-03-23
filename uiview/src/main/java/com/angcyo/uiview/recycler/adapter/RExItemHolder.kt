@@ -1,5 +1,6 @@
 package com.angcyo.uiview.recycler.adapter
 
+import com.angcyo.uiview.base.UIExItemUIView
 import com.angcyo.uiview.container.ILayout
 import com.angcyo.uiview.recycler.RBaseViewHolder
 import com.angcyo.uiview.view.IView
@@ -17,6 +18,8 @@ import com.angcyo.uiview.view.IView
  */
 abstract class RExItemHolder<DataType> {
     var iLayout: ILayout<*>? = null
+    var exItemUIView: UIExItemUIView<*, *>? = null
+    var exItemAdapter: RExItemAdapter<*, *>? = null
 
     open fun startIView(iView: IView) {
         iLayout?.startIView(iView)
