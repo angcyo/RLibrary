@@ -53,7 +53,9 @@ import android.view.WindowManager;
 
 import com.angcyo.github.utilcode.utils.CmdUtil;
 import com.angcyo.github.utilcode.utils.ImageUtils;
+import com.angcyo.github.utilcode.utils.NetworkUtils;
 import com.angcyo.github.utilcode.utils.PhoneUtils;
+import com.angcyo.github.utilcode.utils.ZipUtils;
 import com.angcyo.library.okhttp.Ok;
 import com.angcyo.library.utils.L;
 import com.angcyo.library.utils.RIo;
@@ -62,6 +64,8 @@ import com.angcyo.uiview.RCrashHandler;
 import com.angcyo.uiview.Root;
 import com.angcyo.uiview.accessibility.permission.SettingsCompat;
 import com.angcyo.uiview.net.rsa.Base64Utils;
+import com.angcyo.uiview.receiver.NetworkStateReceiver;
+import com.angcyo.uiview.utils.file.FileUtil;
 import com.angcyo.uiview.widget.ExEditText;
 import com.angcyo.uiview.widget.RExTextView;
 
@@ -2213,6 +2217,35 @@ public class RUtils {
             e.printStackTrace();
         }
         return result;
+    }
+
+    /**
+     * 是否是WIFI
+     */
+    public static boolean isWifi() {
+        return NetworkStateReceiver.getNetType() == NetworkUtils.NetworkType.NETWORK_WIFI;
+    }
+
+    /**
+     * 是否无网络
+     */
+    public static boolean isNoNetwork() {
+        return NetworkStateReceiver.getNetType() == NetworkUtils.NetworkType.NETWORK_NO;
+    }
+
+    /**
+     * 加压到当前文件夹
+     */
+    public static String unzip(String filePath) {
+        File file = new File(filePath);
+        String destDirPath = file.getPath() + File.separator + FileUtil.getFileNameNoEx(file.getName());
+        try {
+            ZipUtils.unzipFile(filePath, destDirPath);
+            return destDirPath;
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return null;
     }
 
     interface OnPutValue {

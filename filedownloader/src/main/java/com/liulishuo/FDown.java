@@ -2,7 +2,9 @@ package com.liulishuo;
 
 import android.app.Application;
 import android.content.Context;
+import android.net.Uri;
 import android.os.Environment;
+import android.text.TextUtils;
 
 import com.angcyo.library.utils.L;
 import com.liulishuo.filedownloader.BaseDownloadTask;
@@ -15,7 +17,9 @@ import com.liulishuo.filedownloader.util.FileDownloadUtils;
 
 import java.io.File;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
+import java.util.Set;
 import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
 
@@ -84,6 +88,126 @@ public class FDown {
 
     public static Builder build(String url) {
         return new Builder(url);
+    }
+
+
+    /**
+     * 获取文件名, 在url中
+     */
+    private static String getFileNameFromUrl(String url) {
+        String fileName = "unknown";
+        try {
+
+            String nameFrom = getFileNameFrom(url);
+            if (!TextUtils.isEmpty(nameFrom)) {
+                fileName = nameFrom;
+            }
+
+            Uri parse = Uri.parse(url);
+            Set<String> parameterNames = parse.getQueryParameterNames();
+            if (parameterNames.isEmpty()) {
+
+            } else {
+                String param = "";
+                for (String s : parameterNames) {
+                    param = parse.getQueryParameter(s);
+                    try {
+                        if (/*s.contains("name") ||*/ param.contains("name=")) {
+                            break;
+                        }
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                    }
+                }
+
+                try {
+                    fileName = param.split("name=")[1];
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return fileName;
+    }
+
+    private static String getFileNameFrom(String url) {
+        String result = "";
+        try {
+            url = url.split("\\?")[0];
+            int indexOf = url.lastIndexOf('/');
+            if (indexOf != -1) {
+                result = url.substring(indexOf + 1);
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return result;
+    }
+
+    public static void downloads(FDownListener listener, String folder /*需要下载到那个文件夹下(全路径), 文件名会从url中截取*/,
+                                 boolean isSerial /*串行下载*/, String... urls) {
+        downloads(listener, folder, isSerial, Arrays.asList(urls));
+    }
+
+    public static void downloads(FDownListener listener, String folder,
+                                 boolean isSerial, List<String> urls) {
+        for (String url : urls) {
+            FileDownloader.getImpl().create(url)
+                    .setTag(url)
+                    .setPath(folder + File.separator + getFileNameFromUrl(url), false)
+                    //由于是队列任务, 这里是我们假设了现在不需要每个任务都回调`FileDownloadListener#progress`, 我们只关系每个任务是否完成, 所以这里这样设置可以很有效的减少ipc.
+                    .setCallbackProgressTimes(0)//去掉进度回调, 只关心有没有下载成功
+                    .setListener(listener)
+                    .asInQueueTask()
+                    .enqueue();
+        }
+        FileDownloader.getImpl().start(listener, isSerial);
+    }
+
+    public static void downloadsQueue(FDownListener listener, String folder, boolean isSerial, String... urls) {
+        downloadsQueue(listener, folder, isSerial, Arrays.asList(urls));
+    }
+
+    public static void downloadsQueue(FDownListener listener, String folder, boolean isSerial /*串行下载*/, List<String> urls) {
+        final FileDownloadQueueSet queueSet = new FileDownloadQueueSet(listener);
+
+        final List<BaseDownloadTask> tasks = new ArrayList<>();
+        for (String url : urls) {
+            tasks.add(FileDownloader.getImpl()
+                    .create(url)
+                    .setTag(url)
+                    .setPath(folder + File.separator + getFileNameFromUrl(url), false));
+        }
+
+        // 由于是队列任务, 这里是我们假设了现在不需要每个任务都回调`FileDownloadListener#progress`, 我们只关系每个任务是否完成, 所以这里这样设置可以很有效的减少ipc.
+        queueSet.disableCallbackProgressTimes();
+
+        // 所有任务在下载失败的时候都自动重试一次
+        queueSet.setAutoRetryTimes(1);
+
+        if (isSerial) {
+            // 串行执行该任务队列
+            queueSet.downloadSequentially(tasks);
+            // 如果你的任务不是一个List，可以考虑使用下面的方式，可读性更强
+            //      queueSet.downloadSequentially(
+            //              FileDownloader.getImpl().create(url).setPath(...),
+            //              FileDownloader.getImpl().create(url).addHeader(...,...),
+            //              FileDownloader.getImpl().create(url).setPath(...)
+            //      );
+        } else {
+            // 并行执行该任务队列
+            queueSet.downloadTogether(tasks);
+            // 如果你的任务不是一个List，可以考虑使用下面的方式，可读性更强
+            //    queueSet.downloadTogether(
+            //            FileDownloader.getImpl().create(url).setPath(...),
+            //            FileDownloader.getImpl().create(url).setPath(...),
+            //            FileDownloader.getImpl().create(url).setSyncCallback(true)
+            //    );
+        }
+        // 最后你需要主动调用start方法来启动该Queue
+        queueSet.start();
     }
 
     /**
