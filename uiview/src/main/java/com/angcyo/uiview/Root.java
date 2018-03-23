@@ -94,6 +94,13 @@ public class Root {
         return Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES).getAbsolutePath() + "/Screenshots";
     }
 
+    public static void ensureFolder(String folder) {
+        File file = new File(folder);
+        if (!file.exists()) {
+            file.mkdirs();
+        }
+    }
+
     public static String getAppExternalFolder(String folder) {
         if (folder == null) {
             folder = "";

@@ -413,6 +413,14 @@ public class ZipUtils {
         return new ZipFile(zipFile).entries();
     }
 
+    public static void unzipFileSteam(String filePath, String outputPath)
+            throws Exception {
+        unzipSteam(new FileInputStream(new File(filePath)), outputPath);
+    }
+
+    /**
+     * 解压文件, robi
+     */
     public static void unzipSteam(InputStream is, String outputPath)
             throws Exception {
         ZipInputStream inputZip = new ZipInputStream(is);

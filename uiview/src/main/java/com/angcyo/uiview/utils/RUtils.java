@@ -2238,11 +2238,12 @@ public class RUtils {
      */
     public static String unzip(String filePath) {
         File file = new File(filePath);
-        String destDirPath = file.getPath() + File.separator + FileUtil.getFileNameNoEx(file.getName());
+        String destDirPath = file.getParent() + File.separator + FileUtil.getFileNameNoEx(file.getName());
         try {
-            ZipUtils.unzipFile(filePath, destDirPath);
+            Root.ensureFolder(destDirPath);
+            ZipUtils.unzipFileSteam(filePath, destDirPath);
             return destDirPath;
-        } catch (IOException e) {
+        } catch (Exception e) {
             e.printStackTrace();
         }
         return null;
