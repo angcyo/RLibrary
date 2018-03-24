@@ -18,8 +18,8 @@ import com.angcyo.uiview.view.IView
  */
 abstract class RExItemHolder<DataType> {
     var iLayout: ILayout<*>? = null
-    var exItemUIView: UIExItemUIView<*, *>? = null
-    var exItemAdapter: RExItemAdapter<*, *>? = null
+    var exItemUIView: UIExItemUIView<*, DataType>? = null
+    var exItemAdapter: RExItemAdapter<*, DataType>? = null
 
     open fun startIView(iView: IView) {
         iLayout?.startIView(iView)

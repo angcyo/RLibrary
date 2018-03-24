@@ -26,6 +26,8 @@ import com.brandongogetap.stickyheaders.exposed.StickyHeaderHandler;
 import java.util.ArrayList;
 import java.util.List;
 
+import rx.functions.Func2;
+
 /**
  * Created by angcyo on 16-01-18-018.
  */
@@ -666,6 +668,31 @@ public abstract class RBaseAdapter<T> extends RecyclerView.Adapter<RBaseViewHold
 
     public boolean isDataEqual(T prevData, T data) {
         return prevData == data;
+    }
+
+    public boolean isDataEqualPrev(int posInData, T bean, Func2<T, T, Boolean> equal) {
+        if (posInData <= 0) {
+            return false;
+        }
+        List<T> allDatas = getAllDatas();
+        if (RUtils.isListEmpty(allDatas)) {
+            return false;
+        }
+        T prevData = allDatas.get(posInData - 1);
+        return equal.call(prevData, bean);
+    }
+
+    /**
+     * 刷新某一个item
+     */
+    public void notifyItemChanged(T item) {
+        if (RUtils.isListEmpty(mAllDatas)) {
+            return;
+        }
+        int indexOf = mAllDatas.indexOf(item);
+        if (indexOf > -1) {
+            notifyItemChanged(indexOf);
+        }
     }
 
     /**

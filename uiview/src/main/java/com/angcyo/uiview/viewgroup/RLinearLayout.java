@@ -9,12 +9,15 @@ import android.graphics.drawable.Drawable;
 import android.support.annotation.ColorInt;
 import android.support.annotation.Nullable;
 import android.support.v4.content.ContextCompat;
+import android.text.TextUtils;
 import android.util.AttributeSet;
 import android.view.Gravity;
 import android.view.View;
+import android.widget.FrameLayout;
 import android.widget.LinearLayout;
 
 import com.angcyo.uiview.R;
+import com.angcyo.uiview.kotlin.ExKt;
 import com.angcyo.uiview.kotlin.ViewExKt;
 import com.angcyo.uiview.utils.ScreenUtil;
 
@@ -137,34 +140,50 @@ public class RLinearLayout extends LinearLayout {
             super.onMeasure(ViewExKt.exactlyMeasure(this, widthHeightRatio[0]),
                     ViewExKt.exactlyMeasure(this, widthHeightRatio[1]));
         }
+
+        if (isInChatLayout) {
+            View chatContentView = null;
+            int childsWidth = getPaddingLeft() + getPaddingRight();
+            for (int i = 0; i < getChildCount(); i++) {
+                View childAt = getChildAt(i);
+                final LinearLayout.LayoutParams lp = (LinearLayout.LayoutParams) childAt.getLayoutParams();
+
+                if (isChatContentLayout(childAt)) {
+                    chatContentView = childAt;
+                } else {
+                    childsWidth += childAt.getMeasuredWidth();
+                }
+                childsWidth += lp.leftMargin + lp.rightMargin;
+            }
+            if (chatContentView != null) {
+                int oldHeight = chatContentView.getMeasuredHeight();
+                chatContentView.measure(MeasureSpec.makeMeasureSpec(getMeasuredWidth() - childsWidth, MeasureSpec.AT_MOST), heightMeasureSpec);
+                int newHeight = chatContentView.getMeasuredHeight();
+
+                if (newHeight > oldHeight) {
+                    setMeasuredDimension(getMeasuredWidth(), getMeasuredHeight() + newHeight - oldHeight);
+                }
+            }
+        }
     }
 
     @Override
     protected void onLayout(boolean changed, int l, int t, int r, int b) {
         if (isInChatLayout) {
             if (reverseLayout && getOrientation() == HORIZONTAL) {
-                //目前只支持横向 反向布局
-                int rightOffset = getPaddingRight();
-                int topOffset = getPaddingTop();
-                for (int i = 0; i < getChildCount(); i++) {
-                    View childAt = getChildAt(i);
-                    if (childAt instanceof LinearLayout) {
-                        ((LinearLayout) childAt).setGravity(Gravity.END);
-                    }
-                    final LinearLayout.LayoutParams lp = (LinearLayout.LayoutParams) childAt.getLayoutParams();
-                    int top = topOffset + lp.topMargin;
-                    int right = getMeasuredWidth() - rightOffset;
-                    int viewWidth = childAt.getMeasuredWidth();
-                    int viewHeight = childAt.getMeasuredHeight();
-                    int left = right - viewWidth;
-                    childAt.layout(left, top, right, top + viewHeight);
-                    rightOffset += viewWidth + lp.leftMargin;
-                }
+                reverseLayout();
             } else {
                 for (int i = 0; i < getChildCount(); i++) {
                     View childAt = getChildAt(i);
                     if (childAt instanceof LinearLayout) {
                         ((LinearLayout) childAt).setGravity(Gravity.START);
+                    } else if (childAt instanceof FrameLayout) {
+                        for (int j = 0; j < ((FrameLayout) childAt).getChildCount(); j++) {
+                            View subChildView = ((FrameLayout) childAt).getChildAt(j);
+                            FrameLayout.LayoutParams layoutParams = (FrameLayout.LayoutParams) subChildView.getLayoutParams();
+                            layoutParams.gravity = Gravity.START;
+                            subChildView.setLayoutParams(layoutParams);
+                        }
                     }
                 }
                 super.onLayout(changed, l, t, r, b);
@@ -176,6 +195,53 @@ public class RLinearLayout extends LinearLayout {
                         getChildAt(0).getBottom(), getPaddingLeft() + getChildAt(1).getMeasuredWidth(),
                         getChildAt(0).getBottom() + getChildAt(1).getMeasuredHeight());
             }
+        }
+    }
+
+    /**
+     * 判断View, 是否是聊天界面中的内容布局, 如果是:那么布局的宽度会是除去其他view的宽度, 剩下宽度的最大允许值
+     */
+    private boolean isChatContentLayout(View view) {
+        if (view != null &&
+                view.getTag() != null &&
+                TextUtils.equals("is_chat_content_layout", view.getTag().toString())) {
+            return true;
+        }
+        return false;
+    }
+
+    /**
+     * 从右边向左边布局
+     */
+    private void reverseLayout() {
+        //目前只支持横向 反向布局
+        int rightOffset = getPaddingLeft();//getPaddingRight();
+        int topOffset = getPaddingTop();
+        for (int i = 0; i < getChildCount(); i++) {
+            View childAt = getChildAt(i);
+            if (childAt instanceof LinearLayout) {
+                ((LinearLayout) childAt).setGravity(Gravity.END);
+            } else if (childAt instanceof FrameLayout) {
+                for (int j = 0; j < ((FrameLayout) childAt).getChildCount(); j++) {
+                    View subChildView = ((FrameLayout) childAt).getChildAt(j);
+                    FrameLayout.LayoutParams layoutParams = (FrameLayout.LayoutParams) subChildView.getLayoutParams();
+                    layoutParams.gravity = Gravity.END;
+                    subChildView.setLayoutParams(layoutParams);
+                }
+            }
+            final LinearLayout.LayoutParams lp = (LinearLayout.LayoutParams) childAt.getLayoutParams();
+            int top = topOffset + lp.topMargin;
+            int right = getMeasuredWidth() - rightOffset - lp.leftMargin;
+            int viewWidth = childAt.getMeasuredWidth();
+            int viewHeight = childAt.getMeasuredHeight();
+            int left = right - viewWidth;
+            int bottom = top + viewHeight;
+            if (ExKt.have(lp.gravity, Gravity.BOTTOM)) {
+                bottom = getMeasuredHeight() - getPaddingBottom() - lp.bottomMargin;
+                top = bottom - viewHeight;
+            }
+            childAt.layout(left, top, right, bottom);
+            rightOffset += viewWidth + lp.leftMargin;
         }
     }
 
@@ -238,7 +304,8 @@ public class RLinearLayout extends LinearLayout {
         boolean old = this.reverseLayout;
         this.reverseLayout = reverseLayout;
         if (old != reverseLayout) {
-            requestLayout();
+            //requestLayout();
+            reverseLayout();
         }
     }
 

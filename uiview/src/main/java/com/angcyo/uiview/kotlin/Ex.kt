@@ -19,7 +19,9 @@ import com.angcyo.uiview.view.UIIViewImpl
  */
 
 /**整型数中, 是否包含另一个整数*/
-public fun Int.have(value: Int): Boolean = value != 0 && this and value == value
+public fun Int.have(value: Int): Boolean = if (this == 0 && value == 0) true else {
+    ((this > 0 && value > 0) || (this < 0 && value < 0)) && this and value == value
+}
 
 public fun Int.remove(value: Int): Int = this and value.inv()
 public fun Int.add(value: Int): Int = this or value

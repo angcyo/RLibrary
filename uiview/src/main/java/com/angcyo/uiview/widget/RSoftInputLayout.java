@@ -594,6 +594,7 @@ public class RSoftInputLayout extends FrameLayout implements ILifecycle {
         boolean softKeyboardShow = isSoftKeyboardShow();
         if (softKeyboardShow) {
             isEmojiShow = false;
+            return false;
         }
         checkEmojiLayout();
         return isEmojiShow;

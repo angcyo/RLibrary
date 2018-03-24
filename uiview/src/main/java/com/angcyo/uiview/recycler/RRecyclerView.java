@@ -6,6 +6,7 @@ import android.graphics.Canvas;
 import android.graphics.Paint;
 import android.graphics.Rect;
 import android.support.annotation.ColorInt;
+import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.view.MotionEventCompat;
 import android.support.v4.view.ViewCompat;
@@ -36,6 +37,7 @@ import com.angcyo.uiview.recycler.recyclerview.animators.FadeInDownAnimator;
 import com.angcyo.uiview.resources.AnimUtil;
 import com.angcyo.uiview.skin.SkinHelper;
 import com.angcyo.uiview.utils.Reflect;
+import com.angcyo.uiview.utils.ScreenUtil;
 import com.angcyo.uiview.utils.UI;
 import com.angcyo.uiview.view.UIIViewImpl;
 
@@ -101,7 +103,7 @@ public class RRecyclerView extends RecyclerView implements StickLayout.CanScroll
     OnFastTouchListener mOnFastTouchListener;
     OnFlingEndListener mOnFlingEndListener;
     boolean isAutoStart = false;
-    float fastDownX, fastDownY;
+    float fastDownX, fastDownY, lastMoveX, lastMoveY;
     long fastDownTime = 0L;
     private OnScrollListener mScrollListener = new OnScrollListener() {
         @Override
@@ -160,6 +162,7 @@ public class RRecyclerView extends RecyclerView implements StickLayout.CanScroll
         }
     });
     private OnSizeChangedListener mOnSizeChangedListener;
+    private OnTouchScrollListener mOnTouchScrollListener;
 
     public RRecyclerView(Context context) {
         this(context, null);
@@ -463,8 +466,8 @@ public class RRecyclerView extends RecyclerView implements StickLayout.CanScroll
         if (actionMasked == MotionEvent.ACTION_DOWN) {
             isFling = false;
 
-            fastDownX = ev.getX();
-            fastDownY = ev.getY();
+            lastMoveX = fastDownX = ev.getX();
+            lastMoveY = fastDownY = ev.getY();
             fastDownTime = ev.getDownTime();
 
             if (enableScroll && isEnabled()) {
@@ -473,16 +476,28 @@ public class RRecyclerView extends RecyclerView implements StickLayout.CanScroll
         } else if (actionMasked == MotionEvent.ACTION_UP ||
                 actionMasked == MotionEvent.ACTION_CANCEL) {
 
-            if (actionMasked == MotionEvent.ACTION_UP &&
-                    mOnFastTouchListener != null) {
+            if (actionMasked == MotionEvent.ACTION_UP) {
 
                 long eventTime = ev.getEventTime();
-                int dv = 10;
+                int dv = (int) (10 * ScreenUtil.density());
+
+                float x = ev.getX();
+                float y = ev.getY();
+
+
                 if (eventTime - fastDownTime <= OnFastTouchListener.FAST_TIME) {
-                    float x = ev.getX();
-                    float y = ev.getY();
-                    if (Math.abs(x - fastDownX) <= dv && Math.abs(y - fastDownY) <= dv) {
-                        mOnFastTouchListener.onFastClick();
+
+                    if (mOnFastTouchListener != null) {
+                        if (Math.abs(x - fastDownX) <= dv && Math.abs(y - fastDownY) <= dv) {
+                            mOnFastTouchListener.onFastClick();
+                        }
+                    }
+                }
+
+                if (eventTime - fastDownTime <= OnFastTouchListener.FAST_TIME * 2
+                        && mOnTouchScrollListener != null) {
+                    if (fastDownY - y > 3 * dv) {
+                        mOnTouchScrollListener.onFastScrollToTop(this);
                     }
                 }
             }
@@ -490,6 +505,19 @@ public class RRecyclerView extends RecyclerView implements StickLayout.CanScroll
             if (enableScroll && isEnabled()) {
                 startAutoScroll();
             }
+        } else if (actionMasked == MotionEvent.ACTION_MOVE) {
+            float x = ev.getX();
+            float y = ev.getY();
+
+            if (mOnTouchScrollListener != null) {
+                mOnTouchScrollListener.onTouchScroll(this,
+                        fastDownX, fastDownY,
+                        x, y,
+                        (int) (lastMoveX - x), (int) (lastMoveY - y));
+            }
+
+            lastMoveX = x;
+            lastMoveY = y;
         }
         return super.dispatchTouchEvent(ev);
     }
@@ -695,22 +723,27 @@ public class RRecyclerView extends RecyclerView implements StickLayout.CanScroll
         scrollToLastBottom(anim, true);
     }
 
-    public void scrollToLastBottom(boolean anim, boolean checkScroll) {
+    public void scrollToLastBottom(boolean anim,
+                                   boolean checkScroll /*是否检查已经滚动到底部, 或者已经不能滚动了*/) {
         int itemCount = -1;
 
         if (getAdapter() != null) {
             itemCount = getAdapter().getItemCount();
         }
 
-        if (itemCount > 0 && checkScroll && !ViewCompat.canScrollVertically(this, 1)) {
-            //已经是底部
-            return;
-        }
-
         final LayoutManager manager = getLayoutManager();
         if (manager == null) {
             return;
         }
+
+        if (itemCount > 0 && checkScroll
+                && !ViewCompat.canScrollVertically(this, 1)
+                && isLastItemVisible(true)) {
+            //已经是底部
+            L.w("已经在底部,无需滚动 ");
+            return;
+        }
+
         itemCount = manager.getItemCount();
         if (itemCount < 1) {
             return;
@@ -727,8 +760,9 @@ public class RRecyclerView extends RecyclerView implements StickLayout.CanScroll
                     public void run() {
                         View target = manager.findViewByPosition(position);//然后才能拿到这个View
                         if (target != null) {
-                            ((LinearLayoutManager) manager).scrollToPositionWithOffset(position,
-                                    getMeasuredHeight() - target.getMeasuredHeight());//滚动偏移到底部
+                            int offset = getMeasuredHeight() - target.getMeasuredHeight();
+                            ((LinearLayoutManager) manager).scrollToPositionWithOffset(position, offset);//滚动偏移到底部
+                            //L.i("滚动至:" + position + " offset:" + offset);
                         }
                     }
                 });
@@ -743,8 +777,10 @@ public class RRecyclerView extends RecyclerView implements StickLayout.CanScroll
                     public void run() {
                         View target = manager.findViewByPosition(position);//然后才能拿到这个View
                         if (target != null) {
+                            int offset = getMeasuredHeight() - target.getMeasuredHeight();
                             ((StaggeredGridLayoutManager) manager).scrollToPositionWithOffset(position,
-                                    getMeasuredHeight() - target.getMeasuredHeight());//滚动偏移到底部
+                                    offset);//滚动偏移到底部
+                            //L.i("滚动至:" + position + " offset:" + offset);
                         }
                     }
                 });
@@ -849,18 +885,32 @@ public class RRecyclerView extends RecyclerView implements StickLayout.CanScroll
     /**
      * 最后一个Item是否可见
      */
-    public boolean isLastItemVisible() {
+    public boolean isLastItemVisible(boolean completelyVisible) {
         boolean visible = false;
 
         Adapter adapter = getAdapter();
         if (adapter != null && adapter.getItemCount() > 0) {
             LayoutManager layoutManager = getLayoutManager();
             if (layoutManager instanceof LinearLayoutManager) {
-                int firstVisibleItemPosition = ((LinearLayoutManager) layoutManager).findLastVisibleItemPosition();
+                int firstVisibleItemPosition;
+                if (completelyVisible) {
+                    /**
+                     * 最后一个Item完全可见
+                     */
+                    firstVisibleItemPosition = ((LinearLayoutManager) layoutManager).findLastVisibleItemPosition();
+                } else {
+                    firstVisibleItemPosition = ((LinearLayoutManager) layoutManager).findLastCompletelyVisibleItemPosition();
+                }
                 visible = firstVisibleItemPosition == adapter.getItemCount() - 1;
+            } else if (layoutManager instanceof StaggeredGridLayoutManager) {
+
             }
         }
         return visible;
+    }
+
+    public boolean isLastItemVisible() {
+        return isLastItemVisible(false);
     }
 
     @Override
@@ -895,6 +945,10 @@ public class RRecyclerView extends RecyclerView implements StickLayout.CanScroll
         setOverScrollMode(OVER_SCROLL_NEVER);
     }
 
+    public void setOnTouchScrollListener(OnTouchScrollListener onTouchScrollListener) {
+        mOnTouchScrollListener = onTouchScrollListener;
+    }
+
     /**
      * RecyclerView滚动结束后的回调
      */
@@ -913,6 +967,29 @@ public class RRecyclerView extends RecyclerView implements StickLayout.CanScroll
          * 快速单击事件监听 (100毫秒内的DOWN UP)
          */
         void onFastClick();
+    }
+
+    /**
+     * Touch事件, 触发的Scrolll监听
+     */
+    public static class OnTouchScrollListener {
+
+        /**
+         * Touch事件触发的Scroll
+         */
+        public void onTouchScroll(@NonNull RRecyclerView recyclerView,
+                                  float downX, float downY,
+                                  float eventX, float eventY,
+                                  int dx, int dy) {
+
+        }
+
+        /**
+         * 快速手指向上滑动, 用来在聊天界面显示键盘
+         */
+        public void onFastScrollToTop(@NonNull RRecyclerView recyclerView) {
+
+        }
     }
 
     public interface OnSizeChangedListener {

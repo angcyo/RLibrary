@@ -203,10 +203,10 @@ public abstract class UIRecyclerUIView<H, T, F> extends UIContentView
     public void onRefresh(@RefreshLayout.Direction int direction) {
         if (direction == RefreshLayout.TOP) {
             //刷新事件
-            onBaseLoadData();
+            onBaseLoadData("onRefreshTop");
         } else if (direction == RefreshLayout.BOTTOM) {
             //加载更多事件
-            onBaseLoadMore();
+            onBaseLoadMore("onRefreshBottom");
         }
     }
 
@@ -346,14 +346,18 @@ public abstract class UIRecyclerUIView<H, T, F> extends UIContentView
      * 需要触发加载数据
      */
     protected boolean needLoadData() {
-        return getDefaultLayoutState() == LayoutState.LOAD;
+        boolean load = getDefaultLayoutState() == LayoutState.LOAD;
+        if (isShowInViewPager()) {
+            return showInPagerCount <= 1 && load;
+        }
+        return load;
     }
 
     @Override
     public void onViewShowFirst(Bundle bundle) {
         super.onViewShowFirst(bundle);
         if (needLoadData() && !isShowInViewPager()) {
-            onBaseLoadData();
+            onBaseLoadData("onViewShowFirst");
         }
     }
 
@@ -361,7 +365,7 @@ public abstract class UIRecyclerUIView<H, T, F> extends UIContentView
     public void onShowInPager(UIViewPager viewPager) {
         super.onShowInPager(viewPager);
         if (needLoadData() && isShowInViewPager()) {
-            onBaseLoadData();
+            onBaseLoadData("onShowInPager");
         }
     }
 
