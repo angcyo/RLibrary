@@ -257,7 +257,7 @@ public abstract class UIBaseView extends UIIViewImpl {
     /**
      * 请不要在此方法中初始化内容, 因为ButterKnife.bind(this, mBaseContentLayout);还么有执行
      */
-    protected abstract void inflateContentLayout(ContentLayout baseContentLayout, LayoutInflater inflater);
+    protected abstract void inflateContentLayout(@NonNull ContentLayout baseContentLayout, @NonNull LayoutInflater inflater);
 
     /**
      * 初始化内容, 当你的 默认布局状态不等于 {@link LayoutState#CONTENT} 时,请使用以下方法初始化View

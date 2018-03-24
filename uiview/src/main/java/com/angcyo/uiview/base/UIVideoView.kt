@@ -47,7 +47,7 @@ open class UIVideoView(var videoPath: String? = null /*需要播放的视频地�
         return Color.BLACK
     }
 
-    override fun inflateContentLayout(baseContentLayout: ContentLayout?, inflater: LayoutInflater?) {
+    override fun inflateContentLayout(baseContentLayout: ContentLayout, inflater: LayoutInflater) {
         inflate(R.layout.base_video_layout)
     }
 

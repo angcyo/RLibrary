@@ -79,7 +79,7 @@ abstract class UISlidingTabView : UIContentView(), UIBaseView.OnViewLoadListener
         mViewHolder.v<View>(R.id.base_tab_wrapper_layout)
     }
 
-    override fun inflateContentLayout(baseContentLayout: ContentLayout?, inflater: LayoutInflater?) {
+    override fun inflateContentLayout(baseContentLayout: ContentLayout, inflater: LayoutInflater) {
         inflate(R.layout.base_sliding_tab_view)
     }
 

@@ -55,7 +55,7 @@ public abstract class UIRecyclerUIView<H, T, F> extends UIContentView
     }
 
     @Override
-    final protected void inflateContentLayout(ContentLayout baseContentLayout, LayoutInflater inflater) {
+    final protected void inflateContentLayout(@NonNull ContentLayout baseContentLayout, @NonNull LayoutInflater inflater) {
         beforeInflateView(baseContentLayout);
 
         createRecyclerRootView(baseContentLayout, inflater);
@@ -68,7 +68,7 @@ public abstract class UIRecyclerUIView<H, T, F> extends UIContentView
     /**
      * 复写此方法, 重写根布局
      */
-    protected void createRecyclerRootView(ContentLayout baseContentLayout, LayoutInflater inflater) {
+    protected void createRecyclerRootView(@NonNull ContentLayout baseContentLayout, @NonNull LayoutInflater inflater) {
         int layoutId = getRecyclerRootLayoutId();
         if (layoutId == -1) {
             mRefreshLayout = new RefreshLayout(mActivity);
@@ -116,7 +116,7 @@ public abstract class UIRecyclerUIView<H, T, F> extends UIContentView
         }
     }
 
-    private void baseInitLayout() {
+    protected void baseInitLayout() {
         if (getUITitleBarContainer() != null) {
             //双击标题, 自动滚动到顶部
             RGestureDetector.onDoubleTap(getUITitleBarContainer(), new RGestureDetector.OnDoubleTapListener() {
@@ -142,14 +142,14 @@ public abstract class UIRecyclerUIView<H, T, F> extends UIContentView
     /**
      * 填充试图之前调用
      */
-    protected void beforeInflateView(ContentLayout baseContentLayout) {
+    protected void beforeInflateView(@NonNull ContentLayout baseContentLayout) {
 
     }
 
     /**
      * 内容试图填充之后调用
      */
-    protected void afterInflateView(ContentLayout baseContentLayout) {
+    protected void afterInflateView(@NonNull ContentLayout baseContentLayout) {
 
     }
 

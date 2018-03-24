@@ -145,17 +145,36 @@ public class RBaseViewHolder extends RecyclerView.ViewHolder {
     }
 
     public View visible(@IdRes int resId) {
-        View v = v(resId);
-        v.setVisibility(View.VISIBLE);
-        return v;
+        return visible(v(resId));
+    }
+
+    public View visible(View view) {
+        if (view != null) {
+            view.setVisibility(View.VISIBLE);
+        }
+        return view;
     }
 
     public void invisible(@IdRes int resId) {
-        v(resId).setVisibility(View.INVISIBLE);
+        invisible(v(resId));
+    }
+
+    public View invisible(View view) {
+        if (view != null) {
+            view.setVisibility(View.INVISIBLE);
+        }
+        return view;
     }
 
     public void gone(@IdRes int resId) {
-        v(resId).setVisibility(View.GONE);
+        gone(v(resId));
+    }
+
+    public View gone(View view) {
+        if (view != null) {
+            view.setVisibility(View.GONE);
+        }
+        return view;
     }
 
     public RRecyclerView reV(@IdRes int resId) {

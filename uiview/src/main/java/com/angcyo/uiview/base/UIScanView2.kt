@@ -163,7 +163,7 @@ open class UIScanView2 : UIContentView(), IActivity, SurfaceHolder.Callback {
                 .setTitleBarBGColor(Color.TRANSPARENT)
     }
 
-    override fun inflateContentLayout(baseContentLayout: ContentLayout?, inflater: LayoutInflater?) {
+    override fun inflateContentLayout(baseContentLayout: ContentLayout, inflater: LayoutInflater) {
         inflate(R.layout.base_view_rscan_layout2)
     }
 
