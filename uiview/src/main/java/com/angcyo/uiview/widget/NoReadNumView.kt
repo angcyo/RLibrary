@@ -69,6 +69,12 @@ open class NoReadNumView(context: Context, attributeSet: AttributeSet? = null) :
         drawable
     }
 
+    init {
+        if (isInEditMode && tag != null) {
+            noReadNum = 99
+        }
+    }
+
     protected var needMeasure = false
     override fun onMeasure(widthMeasureSpec: Int, heightMeasureSpec: Int) {
         var widthSize = MeasureSpec.getSize(widthMeasureSpec)
