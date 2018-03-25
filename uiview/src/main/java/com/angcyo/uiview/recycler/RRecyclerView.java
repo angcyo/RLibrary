@@ -892,16 +892,30 @@ public class RRecyclerView extends RecyclerView implements StickLayout.CanScroll
         if (adapter != null && adapter.getItemCount() > 0) {
             LayoutManager layoutManager = getLayoutManager();
             if (layoutManager instanceof LinearLayoutManager) {
-                int firstVisibleItemPosition;
+                int lastVisibleItemPosition;
+                LinearLayoutManager lm = (LinearLayoutManager) layoutManager;
+                int childCount = lm.getChildCount();
+                int count = lm.getItemCount();
                 if (completelyVisible) {
                     /**
-                     * 最后一个Item完全可见
+                     * 最后一个Item完全可见, 顶部和底部 都在屏幕内
                      */
-                    firstVisibleItemPosition = ((LinearLayoutManager) layoutManager).findLastCompletelyVisibleItemPosition();
+                    lastVisibleItemPosition = lm.findLastCompletelyVisibleItemPosition();
+
+                    if (lastVisibleItemPosition == NO_POSITION) {
+                        //没有找到
+                        ViewHolder viewHolder = findViewHolderForAdapterPosition(count - 1);
+                        if (viewHolder != null) {
+                            if (viewHolder.itemView.getBottom() <= getBottom()) {
+                                //最后一个Item的底部可见状态
+                                lastVisibleItemPosition = count - 1;
+                            }
+                        }
+                    }
                 } else {
-                    firstVisibleItemPosition = ((LinearLayoutManager) layoutManager).findLastVisibleItemPosition();
+                    lastVisibleItemPosition = lm.findLastVisibleItemPosition();
                 }
-                visible = firstVisibleItemPosition == adapter.getItemCount() - 1;
+                visible = lastVisibleItemPosition == adapter.getItemCount() - 1;
             } else if (layoutManager instanceof StaggeredGridLayoutManager) {
 
             }
