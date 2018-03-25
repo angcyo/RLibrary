@@ -2,6 +2,7 @@ package com.angcyo.uiview.recycler.adapter
 
 import android.util.SparseArray
 import android.util.SparseIntArray
+import com.angcyo.uiview.R
 import com.angcyo.uiview.utils.Reflect
 
 
@@ -18,6 +19,11 @@ import com.angcyo.uiview.utils.Reflect
  */
 abstract class RExItemFactory<ItemType, DataType> {
 
+    companion object {
+        //未注册的消息类型
+        const val NO_SUPPORT_ITEM_TYPE = -404
+    }
+
     //protected val allRegItems = ArrayMap<ItemType, ItemHolder>()
     /**所有注册的Item列表, 数据类型-数据布局-数据处理类*/
     protected val allRegItems = ArrayList<RExItem<ItemType, DataType>>()
@@ -27,6 +33,9 @@ abstract class RExItemFactory<ItemType, DataType> {
     protected val allItemHolder = SparseArray<RExItemHolder<DataType>>()
     /**Adapter的item类型, 对应的item 的布局id, 数据布局-Item布局类型*/
     protected val allItemLayout = SparseIntArray()
+
+    //不支持的消息类型处理
+    var noSupportTypeItem = RExItem(null, R.layout.base_no_support_item_type_layout, RNoSupportItemHolder<DataType>())
 
     init {
         registerItems(allRegItems)
@@ -45,6 +54,12 @@ abstract class RExItemFactory<ItemType, DataType> {
             allItemHolder.put(index, itemHolder)
             onCreateItemHolder(itemHolder)
         }
+
+        onItemFactoryInit()
+    }
+
+    open fun onItemFactoryInit() {
+        //初始化结束后
     }
 
     open fun onCreateItemHolder(itemHolder: RExItemHolder<DataType>) {
@@ -52,13 +67,31 @@ abstract class RExItemFactory<ItemType, DataType> {
     }
 
     /**返回在Adapter中的item type*/
-    fun getItemType(data: DataType): Int = allItemTypes.indexOfValue(getItemTypeFromData(data))
+    fun getItemType(data: DataType): Int {
+        val indexOfValue = allItemTypes.indexOfValue(getItemTypeFromData(data))
+        if (indexOfValue == -1) {
+            return NO_SUPPORT_ITEM_TYPE
+        }
+        return indexOfValue
+    }
 
     /**返回Item的布局*/
-    fun getItemLayoutId(viewType: Int): Int = allItemLayout[viewType]
+    fun getItemLayoutId(viewType: Int): Int {
+        return if (viewType == NO_SUPPORT_ITEM_TYPE) {
+            noSupportTypeItem.layoutId
+        } else {
+            allItemLayout[viewType]
+        }
+    }
 
     /**返回处理Item的Holder*/
-    fun getItemLayoutHolder(viewType: Int): RExItemHolder<DataType> = allItemHolder[viewType]
+    fun getItemLayoutHolder(viewType: Int): RExItemHolder<DataType> {
+        return if (viewType == NO_SUPPORT_ITEM_TYPE) {
+            noSupportTypeItem.itemHolderObj!!
+        } else {
+            allItemHolder[viewType]
+        }
+    }
 
     /**注册Items*/
     abstract fun registerItems(allRegItems: ArrayList<RExItem<ItemType, DataType>>)

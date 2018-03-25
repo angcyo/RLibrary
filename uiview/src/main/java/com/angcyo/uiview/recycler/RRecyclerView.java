@@ -897,9 +897,9 @@ public class RRecyclerView extends RecyclerView implements StickLayout.CanScroll
                     /**
                      * 最后一个Item完全可见
                      */
-                    firstVisibleItemPosition = ((LinearLayoutManager) layoutManager).findLastVisibleItemPosition();
-                } else {
                     firstVisibleItemPosition = ((LinearLayoutManager) layoutManager).findLastCompletelyVisibleItemPosition();
+                } else {
+                    firstVisibleItemPosition = ((LinearLayoutManager) layoutManager).findLastVisibleItemPosition();
                 }
                 visible = firstVisibleItemPosition == adapter.getItemCount() - 1;
             } else if (layoutManager instanceof StaggeredGridLayoutManager) {

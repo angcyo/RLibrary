@@ -14,6 +14,19 @@ abstract class UIExItemUIView<ItemType, DataType> : UIRecyclerUIView<String, Dat
     private fun createItemFactory(): RExItemFactory<ItemType, DataType> {
         return object : RExItemFactory<ItemType, DataType>() {
 
+            override fun onItemFactoryInit() {
+                super.onItemFactoryInit()
+                post {
+                    noSupportTypeItem?.let {
+                        it.itemHolderObj?.let {
+                            it.iLayout = mParentILayout
+                            it.exItemUIView = this@UIExItemUIView
+                            it.exItemAdapter = mExBaseAdapter as RExItemAdapter<*, DataType>
+                        }
+                    }
+                }
+            }
+
             override fun onCreateItemHolder(itemHolder: RExItemHolder<DataType>) {
                 super.onCreateItemHolder(itemHolder)
                 itemHolder.iLayout = mParentILayout
