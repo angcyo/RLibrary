@@ -1258,6 +1258,17 @@ public class RUtils {
     }
 
     /**
+     * 获取图片宽高
+     */
+    public static int[] getImageSize(String filePath) {
+        // 第一次解析将inJustDecodeBounds设置为true，来获取图片大小
+        final BitmapFactory.Options options = new BitmapFactory.Options();
+        options.inJustDecodeBounds = true;
+        BitmapFactory.decodeFile(filePath, options);
+        return new int[]{options.outWidth, options.outHeight};
+    }
+
+    /**
      * 00:00的格式输出, 如果有小时,01:00:00
      */
     public static String formatTime(long millisecond /*毫秒*/) {
