@@ -300,6 +300,19 @@ public class RBaseViewHolder extends RecyclerView.ViewHolder {
         click(id, UIIViewImpl.DEFAULT_CLICK_DELAY_TIME, listener);
     }
 
+    public void longClick(@IdRes int id, final View.OnClickListener listener) {
+        View view = v(id);
+        if (view != null) {
+            view.setOnLongClickListener(new View.OnLongClickListener() {
+                @Override
+                public boolean onLongClick(View v) {
+                    listener.onClick(v);
+                    return true;
+                }
+            });
+        }
+    }
+
     public void click(View view, final View.OnClickListener listener) {
         click(view, UIIViewImpl.DEFAULT_CLICK_DELAY_TIME, listener);
     }

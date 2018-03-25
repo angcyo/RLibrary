@@ -224,7 +224,7 @@ public class UIDialog extends UIIDialogImpl {
         });
 
         if (contentListener != null || contentClick != null) {
-            click(mBaseDialogOkView, new View.OnClickListener() {
+            click(mBaseDialogContentView, new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
                     if (contentListener != null) {
