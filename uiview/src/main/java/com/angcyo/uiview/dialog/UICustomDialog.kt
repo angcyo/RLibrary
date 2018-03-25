@@ -36,7 +36,7 @@ open class UICustomDialog : UIIDialogImpl {
         setGravity(Gravity.CENTER)
     }
 
-    fun show(iLayout: ILayout<*>): UICustomDialog {
+    fun show(iLayout: ILayout): UICustomDialog {
         iLayout.startIView(this)
         return this
     }

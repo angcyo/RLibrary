@@ -70,7 +70,7 @@ import static com.angcyo.uiview.view.UIIViewImpl.DEFAULT_DELAY_ANIM_TIME;
  * Created by angcyo on 2016-11-12.
  */
 @Deprecated
-public class UILayoutImpl_old extends SwipeBackLayout implements ILayout<UIParam>, UIViewPager.OnPagerShowListener {
+public class UILayoutImpl_old extends SwipeBackLayout implements ILayout, UIViewPager.OnPagerShowListener {
 
     public static final String TAG_MAIN = "main";
     private static final String TAG = "UILayoutImpl";

@@ -37,7 +37,7 @@ open class NoReadNumView(context: Context, attributeSet: AttributeSet? = null) :
 
     var showNoReadNum = true
 
-    var noReadTextSize = 8 * density
+    var noReadTextSize = 10 * density
 
     /**未读消息数量, -1表示不显示, 0表示显示一个小红点, 1..99显示数字+小红点, 99+显示特殊*/
     var noReadNum = -1
