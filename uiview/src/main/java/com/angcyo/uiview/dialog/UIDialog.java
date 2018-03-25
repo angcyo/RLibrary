@@ -186,14 +186,14 @@ public class UIDialog extends UIIDialogImpl {
                 Runnable runnable = new Runnable() {
                     @Override
                     public void run() {
-                        if (okListener != null) {
-                            okListener.onClick(v);
-                        }
                         if (okClick != null) {
                             okClick.onDialogClick(UIDialog.this, v);
                         }
                     }
                 };
+                if (okListener != null) {
+                    okListener.onClick(v);
+                }
                 if (autoFinishDialog) {
                     finishDialog(runnable);
                 } else {
@@ -207,14 +207,14 @@ public class UIDialog extends UIIDialogImpl {
                 Runnable runnable = new Runnable() {
                     @Override
                     public void run() {
-                        if (cancelListener != null) {
-                            cancelListener.onClick(v);
-                        }
                         if (cancelClick != null) {
                             cancelClick.onDialogClick(UIDialog.this, v);
                         }
                     }
                 };
+                if (cancelListener != null) {
+                    cancelListener.onClick(v);
+                }
                 if (autoFinishDialog) {
                     finishDialog(runnable);
                 } else {

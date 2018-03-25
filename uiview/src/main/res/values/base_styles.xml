@@ -332,6 +332,11 @@
         <item name="android:maxLines">1</item>
     </style>
 
+    <style name="BaseInputEditTextStyle" parent="BaseMainTextStyle">
+        <item name="android:padding">@dimen/base_ldpi</item>
+        <item name="android:minHeight">40dp</item>
+    </style>
+
     <style name="BaseWhiteMainTextStyle" parent="BaseMainTextStyle">
         <item name="android:textColor">@color/base_white</item>
     </style>

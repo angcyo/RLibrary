@@ -4,6 +4,7 @@ import android.graphics.Paint
 import android.graphics.Rect
 import android.text.TextUtils
 import android.view.View
+import com.angcyo.uiview.utils.RUtils
 import com.angcyo.uiview.view.UIIViewImpl
 
 /**
@@ -152,4 +153,8 @@ public fun List<String>.stringSize(checkExist: Boolean = false /*是否检查重
         list.add(s)
     }
     return list.size
+}
+
+public fun List<*>.toStringArray(): Array<String> {
+    return RUtils.toStringArray(this)
 }

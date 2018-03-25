@@ -34,7 +34,14 @@ abstract class RExItemFactory<ItemType, DataType> {
             allItemTypes.put(index, rExItem.itemType)
             allItemLayout.put(index, rExItem.layoutId)
 
-            val itemHolder = Reflect.newObject<RExItemHolder<DataType>>(rExItem.itemHolder)
+            if (rExItem.itemHolder == null && rExItem.itemHolderObj == null) {
+                throw NullPointerException("请检查对象成员")
+            }
+            val itemHolder = if (rExItem.itemHolder == null) {
+                rExItem.itemHolderObj!!
+            } else {
+                Reflect.newObject<RExItemHolder<DataType>>(rExItem.itemHolder)
+            }
             allItemHolder.put(index, itemHolder)
             onCreateItemHolder(itemHolder)
         }
@@ -60,6 +67,22 @@ abstract class RExItemFactory<ItemType, DataType> {
     abstract fun getItemTypeFromData(data: DataType): ItemType
 }
 
-data class RExItem<out ItemType, DataType>(
-        val itemType: ItemType, val layoutId: Int, val itemHolder: Class<out RExItemHolder<DataType>>)
+class RExItem<out ItemType, DataType> {
+    val itemType: ItemType
+    val layoutId: Int
+    var itemHolder: Class<out RExItemHolder<DataType>>? = null
+    var itemHolderObj: RExItemHolder<DataType>? = null
+
+    constructor(itemType: ItemType, layoutId: Int, itemHolder: Class<out RExItemHolder<DataType>>) {
+        this.itemType = itemType
+        this.layoutId = layoutId
+        this.itemHolder = itemHolder
+    }
+
+    constructor(itemType: ItemType, layoutId: Int, itemHolderObj: RExItemHolder<DataType>) {
+        this.itemType = itemType
+        this.layoutId = layoutId
+        this.itemHolderObj = itemHolderObj
+    }
+}
 

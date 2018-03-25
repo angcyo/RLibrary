@@ -521,6 +521,14 @@ public class UITitleBarContainer extends FrameLayout {
         visibleView(mRightControlLayout.findViewById(id));
     }
 
+    public void showRightItemByTag(String tag) {
+        visibleView(mRightControlLayout.findViewWithTag(tag));
+    }
+
+    public void showLeftItemByTag(String tag) {
+        visibleView(mLeftControlLayout.findViewWithTag(tag));
+    }
+
     public void hideRightItemById(int id) {
         goneView(mRightControlLayout.findViewById(id));
     }
@@ -537,6 +545,14 @@ public class UITitleBarContainer extends FrameLayout {
 
     public void hideLeftItemById(int id) {
         goneView(mLeftControlLayout.findViewById(id));
+    }
+
+    public void hideLeftItemByTag(String tag) {
+        goneView(mLeftControlLayout.findViewWithTag(tag));
+    }
+
+    public void hideRightItemByTag(String tag) {
+        goneView(mRightControlLayout.findViewWithTag(tag));
     }
 
     /**

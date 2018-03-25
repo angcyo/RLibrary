@@ -2249,6 +2249,20 @@ public class RUtils {
         return null;
     }
 
+    public static String[] toStringArray(List<Object> list) {
+        int size = list.size();
+        String[] result = new String[size];
+        for (int i = 0; i < size; i++) {
+            Object o = list.get(i);
+            if (o instanceof String) {
+                result[i] = (String) o;
+            } else {
+                result[i] = o.toString();
+            }
+        }
+        return result;
+    }
+
     interface OnPutValue {
         void onValue(String key, String value);
     }

@@ -350,7 +350,7 @@ public abstract class UIIDialogImpl extends UIIViewImpl {
         return this;
     }
 
-    public UIIDialogImpl addDismiss(Subscription subscription, boolean checkToken) {
+    public UIIDialogImpl addDismiss(Subscription subscription, boolean checkToken /*暂未使用*/) {
         if (mDismissSubscriptions == null) {
             mDismissSubscriptions = new CompositeSubscription();
         }
