@@ -253,6 +253,13 @@ public class UILayoutImpl extends SwipeBackLayout implements ILayout, UIViewPage
 //        }
     }
 
+    public void startIViewList(List<IView> iViewList) {
+        for (IView iView : iViewList) {
+            UIParam uiParam = new UIParam(false, false);
+            startIView(iView, uiParam);
+        }
+    }
+
     public UILayoutImpl(Context context, AttributeSet attrs) {
         super(context, attrs);
         initLayout();
@@ -1212,7 +1219,7 @@ public class UILayoutImpl extends SwipeBackLayout implements ILayout, UIViewPage
         }
         final ViewPattern viewPattern = findViewPatternByView(view);
         if (viewPattern != null) {
-            mViewTasks.add(new ViewTask(ViewTask.TASK_TYPE_SHOW, viewPattern.mIView, param));
+            showIView(viewPattern.mIView, param);
         }
     }
 

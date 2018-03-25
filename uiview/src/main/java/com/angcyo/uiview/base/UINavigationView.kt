@@ -65,7 +65,7 @@ abstract class UINavigationView : UIIViewImpl() {
             shadowView?.visibility = if (value) View.VISIBLE else View.GONE
         }
 
-    //    override fun inflateContentLayout(baseContentLayout: ContentLayout?, inflater: LayoutInflater?) {
+    //    override fun inflateContentLayout(baseContentLayout: ContentLayout, inflater: LayoutInflater) {
 //        inflate(R.layout.base_navigation_view)
 //    }
     override fun inflateBaseView(container: FrameLayout, inflater: LayoutInflater): View {
