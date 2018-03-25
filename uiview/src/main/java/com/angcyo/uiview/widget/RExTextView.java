@@ -9,6 +9,7 @@ import android.graphics.Rect;
 import android.graphics.drawable.ColorDrawable;
 import android.graphics.drawable.Drawable;
 import android.support.annotation.DrawableRes;
+import android.support.annotation.NonNull;
 import android.support.annotation.Px;
 import android.support.v4.content.ContextCompat;
 import android.text.Layout;
@@ -499,7 +500,7 @@ public class RExTextView extends RTextView {
     /**
      * 子类处理
      */
-    protected void afterPattern(SpannableStringBuilder spanBuilder, CharSequence text) {
+    protected void afterPattern(@NonNull SpannableStringBuilder spanBuilder, @NonNull CharSequence text) {
 
     }
 

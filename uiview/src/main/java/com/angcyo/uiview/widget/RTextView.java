@@ -669,7 +669,7 @@ public class RTextView extends AppCompatTextView {
         }
     }
 
-    private Drawable getDrawable(@DrawableRes int icoRes) {
+    public Drawable getDrawable(@DrawableRes int icoRes) {
         if (icoRes == -1) {
             return null;
         }
