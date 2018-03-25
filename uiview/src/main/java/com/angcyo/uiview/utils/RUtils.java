@@ -162,11 +162,13 @@ public class RUtils {
             {".tar", "application/x-tar"},
             {".tgz", "application/x-compressed"},
             {".txt", "text/plain"},
+            {".json", "text/plain"},
             {".wav", "audio/x-wav"},
             {".wma", "audio/x-ms-wma"},
             {".wmv", "audio/x-ms-wmv"},
             {".wps", "application/vnd.ms-works"},
             {".xml", "text/plain"},
+            {".ini", "text/plain"},
             {".z", "application/x-compress"},
             {".zip", "application/x-zip-compressed"},
             {"", "*/*"}
@@ -807,9 +809,13 @@ public class RUtils {
         if (dotIndex < 0) {
             return type;
         }
-    /* 获取文件的后缀名*/
+        /* 获取文件的后缀名*/
         String end = fName.substring(dotIndex, fName.length()).toLowerCase();
         if (end == "") return type;
+
+        //系统的方法
+        //String extension = MimeTypeMap.getSingleton().getMimeTypeFromExtension(end);
+
         //在MIME和文件类型的匹配表中找到对应的MIME类型。
         for (int i = 0; i < MIME_MapTable.length; i++) { //MIME_MapTable??在这里你一定有疑问，这个MIME_MapTable是什么？
             if (end.equals(MIME_MapTable[i][0]))

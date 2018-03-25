@@ -83,7 +83,7 @@ public abstract class UIIViewImpl implements IView {
     protected ILayout mILayout;
     protected ILayout mParentILayout;//上层ILayout, 用来管理上层IView的生命周期, 如果有值, 会等于mILayout
     protected ILayout mChildILayout;//
-    protected UILayoutActivity mActivity;
+    public UILayoutActivity mActivity;
     /**
      * 根布局
      */
