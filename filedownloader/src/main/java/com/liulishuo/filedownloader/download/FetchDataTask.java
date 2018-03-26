@@ -21,7 +21,7 @@ import android.os.SystemClock;
 import com.liulishuo.filedownloader.connection.FileDownloadConnection;
 import com.liulishuo.filedownloader.exception.FileDownloadGiveUpRetryException;
 import com.liulishuo.filedownloader.exception.FileDownloadNetworkPolicyException;
-import com.liulishuo.filedownloader.services.FileDownloadDatabase;
+import com.liulishuo.filedownloader.database.FileDownloadDatabase;
 import com.liulishuo.filedownloader.stream.FileDownloadOutputStream;
 import com.liulishuo.filedownloader.util.FileDownloadLog;
 import com.liulishuo.filedownloader.util.FileDownloadUtils;
@@ -82,23 +82,30 @@ public class FetchDataTask {
 
         if (paused) return;
 
-        final long contentLength = FileDownloadUtils.findContentLength(connectionIndex, connection);
+        long contentLength = FileDownloadUtils.findContentLength(connectionIndex, connection);
+        if (contentLength == TOTAL_VALUE_IN_CHUNKED_RESOURCE) {
+            contentLength = FileDownloadUtils.findContentLengthFromContentRange(connection);
+        }
         if (contentLength == 0) {
             throw new FileDownloadGiveUpRetryException(FileDownloadUtils.
-                    formatString("there isn't any content need to download on %d-%d with the content-length is 0", downloadId, connectionIndex));
+                    formatString(
+                            "there isn't any content need to download on %d-%d with the "
+                                    + "content-length is 0",
+                            downloadId, connectionIndex));
         }
 
         if (this.contentLength > 0 && contentLength != this.contentLength) {
             final String range;
-            if (endOffset == 0) {
+            if (endOffset == ConnectionProfile.RANGE_INFINITE) {
                 range = FileDownloadUtils.formatString("range[%d-)", currentOffset);
             } else {
                 range = FileDownloadUtils.formatString("range[%d-%d)", currentOffset, endOffset);
             }
             throw new FileDownloadGiveUpRetryException(FileDownloadUtils.
-                    formatString("require %s with contentLength(%d), but the " +
-                                    "backend response contentLength is %d on downloadId[%d]-connectionIndex[%d]," +
-                                    " please ask your backend dev to fix such problem.",
+                    formatString("require %s with contentLength(%d), but the "
+                                    + "backend response contentLength is %d on "
+                                    + "downloadId[%d]-connectionIndex[%d], please ask your backend "
+                                    + "dev to fix such problem.",
                             range, this.contentLength, contentLength, downloadId, connectionIndex));
         }
 
@@ -110,7 +117,8 @@ public class FetchDataTask {
         try {
             final boolean isSupportSeek = CustomComponentHolder.getImpl().isSupportSeek();
             if (hostRunnable != null && !isSupportSeek) {
-                throw new IllegalAccessException("can't using multi-download when the output stream can't support seek");
+                throw new IllegalAccessException(
+                        "can't using multi-download when the output stream can't support seek");
             }
 
             this.outputStream = outputStream = FileDownloadUtils.createOutputStream(path);
@@ -155,23 +163,24 @@ public class FetchDataTask {
 
         } finally {
 
-            if (inputStream != null)
+            if (inputStream != null) {
                 try {
                     inputStream.close();
                 } catch (IOException e) {
                     e.printStackTrace();
                 }
+            }
 
             try {
-                if (outputStream != null)
-                    sync();
+                if (outputStream != null) sync();
             } finally {
-                if (outputStream != null)
+                if (outputStream != null) {
                     try {
                         outputStream.close();
                     } catch (IOException e) {
                         e.printStackTrace();
                     }
+                }
             }
 
         }
@@ -179,8 +188,8 @@ public class FetchDataTask {
         final long fetchedLength = currentOffset - fetchBeginOffset;
         if (contentLength != TOTAL_VALUE_IN_CHUNKED_RESOURCE && contentLength != fetchedLength) {
             throw new FileDownloadGiveUpRetryException(
-                    FileDownloadUtils.formatString("fetched length[%d] != content length[%d]," +
-                                    " range[%d, %d) offset[%d] fetch begin offset",
+                    FileDownloadUtils.formatString("fetched length[%d] != content length[%d],"
+                                    + " range[%d, %d) offset[%d] fetch begin offset[%d]",
                             fetchedLength, contentLength,
                             startOffset, endOffset, currentOffset, fetchBeginOffset));
         }
@@ -216,14 +225,14 @@ public class FetchDataTask {
         } catch (IOException e) {
             bufferPersistToDevice = false;
             if (FileDownloadLog.NEED_LOG) {
-                FileDownloadLog.d(this, "Because of the system cannot guarantee that all " +
-                        "the buffers have been synchronized with physical media, or write to file " +
-                        "failed, we just not flushAndSync process to database too %s", e);
+                FileDownloadLog.d(this, "Because of the system cannot guarantee that all "
+                        + "the buffers have been synchronized with physical media, or write to file"
+                        + "failed, we just not flushAndSync process to database too %s", e);
             }
         }
 
         if (bufferPersistToDevice) {
-            final boolean isBelongMultiConnection = hostRunnable != null;
+            final boolean isBelongMultiConnection = connectionIndex >= 0;
             if (isBelongMultiConnection) {
                 // only need update the connection table.
                 database.updateConnectionModel(downloadId, connectionIndex, currentOffset);
@@ -233,8 +242,10 @@ public class FetchDataTask {
             }
 
             if (FileDownloadLog.NEED_LOG) {
-                FileDownloadLog.d(this, "require flushAndSync id[%d] index[%d] offset[%d], consume[%d]",
-                        downloadId, connectionIndex, currentOffset, SystemClock.uptimeMillis() - startTimestamp);
+                FileDownloadLog
+                        .d(this, "require flushAndSync id[%d] index[%d] offset[%d], consume[%d]",
+                                downloadId, connectionIndex, currentOffset,
+                                SystemClock.uptimeMillis() - startTimestamp);
             }
         }
     }
@@ -291,8 +302,10 @@ public class FetchDataTask {
 
         public FetchDataTask build() throws IllegalArgumentException {
             if (isWifiRequired == null || connection == null || connectionProfile == null
-                    || callback == null || path == null || downloadId == null || connectionIndex == null)
+                    || callback == null || path == null || downloadId == null
+                    || connectionIndex == null) {
                 throw new IllegalArgumentException();
+            }
 
             return new FetchDataTask(connection, connectionProfile, downloadRunnable,
                     downloadId, connectionIndex,

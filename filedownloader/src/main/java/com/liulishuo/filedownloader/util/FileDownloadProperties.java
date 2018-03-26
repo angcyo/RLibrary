@@ -102,53 +102,67 @@ import java.util.Properties;
  * Such as: broadcast.completed=false
  * Description:
  * Whether need to post an broadcast when downloading is completed.
- * This option is very useful when you download something silent on the background on the filedownloader
- * process, and the main process is killed, but you want to do something on the main process when tasks
- * are completed downloading on the filedownloader process, so you can set this one to `true`, then
- * when a task is completed task, you will receive the broadcast, and the main process will be relaunched
- * to handle the broadcast.
+ * This option is very useful when you download something silent on the background on the
+ * filedownloader process, and the main process is killed, but you want to do something on the main
+ * process when tasks are completed downloading on the filedownloader process, so you can set this
+ * one to `true`, then when a task is completed task, you will receive the broadcast, and the main
+ * process will be relaunched to handle the broadcast.
  * <p>
  * If you want to receive such broadcast, you also need to register receiver with
  * 'filedownloader.intent.action.completed' action name on 'AndroidManifest.xml'.
  * <p>
  * You can use {@link FileDownloadBroadcastHandler} class to parse the received intent.
+ * <p/>
+ * Key {code download.trial-connection-head-method}
+ * Value: {@code true} or {@code false}
+ * Default: {@code false}.
+ * Such as download.trial-connection-head-method=false
+ * Description:
+ * Whether you want the first trial connection with HEAD method to request to backend or not, if
+ * this value is true, the first trial connection will with HEAD method instead of GET method and
+ * then you will reduce 1 byte cost on the response body, but if the backend can't support HEAD
+ * method you will receive 405 response code and failed to download.
  */
 public class FileDownloadProperties {
 
-    private final static String KEY_HTTP_LENIENT = "http.lenient";
-    private final static String KEY_PROCESS_NON_SEPARATE = "process.non-separate";
-    private final static String KEY_DOWNLOAD_MIN_PROGRESS_STEP = "download.min-progress-step";
-    private final static String KEY_DOWNLOAD_MIN_PROGRESS_TIME = "download.min-progress-time";
-    private final static String KEY_DOWNLOAD_MAX_NETWORK_THREAD_COUNT = "download.max-network-thread-count";
-    private final static String KEY_FILE_NON_PRE_ALLOCATION = "file.non-pre-allocation";
-    private final static String KEY_BROADCAST_COMPLETED = "broadcast.completed";
+    private static final String KEY_HTTP_LENIENT = "http.lenient";
+    private static final String KEY_PROCESS_NON_SEPARATE = "process.non-separate";
+    private static final String KEY_DOWNLOAD_MIN_PROGRESS_STEP = "download.min-progress-step";
+    private static final String KEY_DOWNLOAD_MIN_PROGRESS_TIME = "download.min-progress-time";
+    private static final String KEY_DOWNLOAD_MAX_NETWORK_THREAD_COUNT =
+            "download.max-network-thread-count";
+    private static final String KEY_FILE_NON_PRE_ALLOCATION = "file.non-pre-allocation";
+    private static final String KEY_BROADCAST_COMPLETED = "broadcast.completed";
+    private static final String KEY_TRIAL_CONNECTION_HEAD_METHOD
+            = "download.trial-connection-head-method";
 
-    public final int DOWNLOAD_MIN_PROGRESS_STEP;
-    public final long DOWNLOAD_MIN_PROGRESS_TIME;
-    public final boolean HTTP_LENIENT;
-    public final boolean PROCESS_NON_SEPARATE;
-    public final int DOWNLOAD_MAX_NETWORK_THREAD_COUNT;
-    public final boolean FILE_NON_PRE_ALLOCATION;
-    public final boolean BROADCAST_COMPLETED;
+    public final int downloadMinProgressStep;
+    public final long downloadMinProgressTime;
+    public final boolean httpLenient;
+    public final boolean processNonSeparate;
+    public final int downloadMaxNetworkThreadCount;
+    public final boolean fileNonPreAllocation;
+    public final boolean broadcastCompleted;
+    public final boolean trialConnectionHeadMethod;
 
     public static class HolderClass {
-        private final static FileDownloadProperties INSTANCE = new FileDownloadProperties();
+        private static final FileDownloadProperties INSTANCE = new FileDownloadProperties();
     }
 
     public static FileDownloadProperties getImpl() {
         return HolderClass.INSTANCE;
     }
 
-    private final static String TRUE_STRING = "true";
-    private final static String FALSE_STRING = "false";
+    private static final String TRUE_STRING = "true";
+    private static final String FALSE_STRING = "false";
 
     // init properties, normally consume <= 2ms
     private FileDownloadProperties() {
         if (FileDownloadHelper.getAppContext() == null) {
-            throw new IllegalStateException("Please invoke the 'FileDownloader#setup' before using " +
-                    "FileDownloader. If you want to register some components on FileDownloader " +
-                    "please invoke the 'FileDownloader#setupOnApplicationOnCreate' on the " +
-                    "'Application#onCreate' first.");
+            throw new IllegalStateException("Please invoke the 'FileDownloader#setup' before using "
+                    + "FileDownloader. If you want to register some components on FileDownloader "
+                    + "please invoke the 'FileDownloader#setupOnApplicationOnCreate' on the "
+                    + "'Application#onCreate' first.");
         }
 
         final long start = System.currentTimeMillis();
@@ -159,6 +173,7 @@ public class FileDownloadProperties {
         String downloadMaxNetworkThreadCount = null;
         String fileNonPreAllocation = null;
         String broadcastCompleted = null;
+        String downloadTrialConnectionHeadMethod = null;
 
         Properties p = new Properties();
         InputStream inputStream = null;
@@ -172,14 +187,17 @@ public class FileDownloadProperties {
                 processNonSeparate = p.getProperty(KEY_PROCESS_NON_SEPARATE);
                 downloadMinProgressStep = p.getProperty(KEY_DOWNLOAD_MIN_PROGRESS_STEP);
                 downloadMinProgressTime = p.getProperty(KEY_DOWNLOAD_MIN_PROGRESS_TIME);
-                downloadMaxNetworkThreadCount = p.getProperty(KEY_DOWNLOAD_MAX_NETWORK_THREAD_COUNT);
+                downloadMaxNetworkThreadCount = p
+                        .getProperty(KEY_DOWNLOAD_MAX_NETWORK_THREAD_COUNT);
                 fileNonPreAllocation = p.getProperty(KEY_FILE_NON_PRE_ALLOCATION);
                 broadcastCompleted = p.getProperty(KEY_BROADCAST_COMPLETED);
+                downloadTrialConnectionHeadMethod = p.getProperty(KEY_TRIAL_CONNECTION_HEAD_METHOD);
             }
         } catch (IOException e) {
             if (e instanceof FileNotFoundException) {
                 if (FileDownloadLog.NEED_LOG) {
-                    FileDownloadLog.d(FileDownloadProperties.class, "not found filedownloader.properties");
+                    FileDownloadLog.d(FileDownloadProperties.class,
+                            "not found filedownloader.properties");
                 }
             } else {
                 e.printStackTrace();
@@ -202,102 +220,121 @@ public class FileDownloadProperties {
                         FileDownloadUtils.formatString("the value of '%s' must be '%s' or '%s'",
                                 KEY_HTTP_LENIENT, TRUE_STRING, FALSE_STRING));
             }
-            HTTP_LENIENT = httpLenient.equals(TRUE_STRING);
+            this.httpLenient = httpLenient.equals(TRUE_STRING);
         } else {
-            HTTP_LENIENT = false;
+            this.httpLenient = false;
         }
 
         //process.non-separate
         if (processNonSeparate != null) {
-            if (!processNonSeparate.equals(TRUE_STRING) &&
-                    !processNonSeparate.equals(FALSE_STRING)) {
+            if (!processNonSeparate.equals(TRUE_STRING)
+                    && !processNonSeparate.equals(FALSE_STRING)) {
                 throw new IllegalStateException(
                         FileDownloadUtils.formatString("the value of '%s' must be '%s' or '%s'",
                                 KEY_PROCESS_NON_SEPARATE, TRUE_STRING, FALSE_STRING));
             }
-            PROCESS_NON_SEPARATE = processNonSeparate.equals(TRUE_STRING);
+            this.processNonSeparate = processNonSeparate.equals(TRUE_STRING);
         } else {
-            PROCESS_NON_SEPARATE = false;
+            this.processNonSeparate = false;
         }
 
         //download.min-progress-step
         if (downloadMinProgressStep != null) {
             int processDownloadMinProgressStep = Integer.valueOf(downloadMinProgressStep);
             processDownloadMinProgressStep = Math.max(0, processDownloadMinProgressStep);
-            DOWNLOAD_MIN_PROGRESS_STEP = processDownloadMinProgressStep;
+            this.downloadMinProgressStep = processDownloadMinProgressStep;
         } else {
-            DOWNLOAD_MIN_PROGRESS_STEP = 65536;
+            this.downloadMinProgressStep = 65536;
         }
 
         //download.min-progress-time
         if (downloadMinProgressTime != null) {
             long processDownloadMinProgressTime = Long.valueOf(downloadMinProgressTime);
             processDownloadMinProgressTime = Math.max(0, processDownloadMinProgressTime);
-            DOWNLOAD_MIN_PROGRESS_TIME = processDownloadMinProgressTime;
+            this.downloadMinProgressTime = processDownloadMinProgressTime;
         } else {
-            DOWNLOAD_MIN_PROGRESS_TIME = 2000L;
+            this.downloadMinProgressTime = 2000L;
         }
 
         //download.max-network-thread-count
         if (downloadMaxNetworkThreadCount != null) {
-            DOWNLOAD_MAX_NETWORK_THREAD_COUNT = getValidNetworkThreadCount(
+            this.downloadMaxNetworkThreadCount = getValidNetworkThreadCount(
                     Integer.valueOf(downloadMaxNetworkThreadCount));
         } else {
-            DOWNLOAD_MAX_NETWORK_THREAD_COUNT = 3;
+            this.downloadMaxNetworkThreadCount = 3;
         }
 
         // file.non-pre-allocation
         if (fileNonPreAllocation != null) {
-            if (!fileNonPreAllocation.equals(TRUE_STRING) &&
-                    !fileNonPreAllocation.equals(FALSE_STRING)) {
+            if (!fileNonPreAllocation.equals(TRUE_STRING)
+                    && !fileNonPreAllocation.equals(FALSE_STRING)) {
                 throw new IllegalStateException(
                         FileDownloadUtils.formatString("the value of '%s' must be '%s' or '%s'",
                                 KEY_FILE_NON_PRE_ALLOCATION, TRUE_STRING, FALSE_STRING));
             }
-            FILE_NON_PRE_ALLOCATION = fileNonPreAllocation.equals(TRUE_STRING);
+            this.fileNonPreAllocation = fileNonPreAllocation.equals(TRUE_STRING);
         } else {
-            FILE_NON_PRE_ALLOCATION = false;
+            this.fileNonPreAllocation = false;
         }
 
+        // broadcast.completed
         if (broadcastCompleted != null) {
-            if (!broadcastCompleted.equals(TRUE_STRING) &&
-                    !broadcastCompleted.equals(FALSE_STRING)) {
+            if (!broadcastCompleted.equals(TRUE_STRING)
+                    && !broadcastCompleted.equals(FALSE_STRING)) {
                 throw new IllegalStateException(
                         FileDownloadUtils.formatString("the value of '%s' must be '%s' or '%s'",
                                 KEY_BROADCAST_COMPLETED, TRUE_STRING, FALSE_STRING));
             }
-            BROADCAST_COMPLETED = broadcastCompleted.equals(TRUE_STRING);
+            this.broadcastCompleted = broadcastCompleted.equals(TRUE_STRING);
 
         } else {
-            BROADCAST_COMPLETED = false;
+            this.broadcastCompleted = false;
+        }
+
+        // download.trial-connection-head-method
+        if (downloadTrialConnectionHeadMethod != null) {
+            if (!downloadTrialConnectionHeadMethod.equals(TRUE_STRING)
+                    && !downloadTrialConnectionHeadMethod.equals(FALSE_STRING)) {
+                throw new IllegalStateException(
+                        FileDownloadUtils.formatString("the value of '%s' must be '%s' or '%s'",
+                                KEY_TRIAL_CONNECTION_HEAD_METHOD, TRUE_STRING, FALSE_STRING));
+            }
+            this.trialConnectionHeadMethod = downloadTrialConnectionHeadMethod.equals(TRUE_STRING);
+        } else {
+            this.trialConnectionHeadMethod = false;
         }
 
         if (FileDownloadLog.NEED_LOG) {
-            FileDownloadLog.i(FileDownloadProperties.class, "init properties %d\n load properties:" +
-                            " %s=%B; %s=%B; %s=%d; %s=%d; %s=%d",
+            FileDownloadLog.i(FileDownloadProperties.class, "init properties %d\n load properties:"
+                            + " %s=%B; %s=%B; %s=%d; %s=%d; %s=%d; %s=%B; %s=%B; %s=%B",
                     System.currentTimeMillis() - start,
-                    KEY_HTTP_LENIENT, HTTP_LENIENT,
-                    KEY_PROCESS_NON_SEPARATE, PROCESS_NON_SEPARATE,
-                    KEY_DOWNLOAD_MIN_PROGRESS_STEP, DOWNLOAD_MIN_PROGRESS_STEP,
-                    KEY_DOWNLOAD_MIN_PROGRESS_TIME, DOWNLOAD_MIN_PROGRESS_TIME,
-                    KEY_DOWNLOAD_MAX_NETWORK_THREAD_COUNT, DOWNLOAD_MAX_NETWORK_THREAD_COUNT);
+                    KEY_HTTP_LENIENT, this.httpLenient,
+                    KEY_PROCESS_NON_SEPARATE, this.processNonSeparate,
+                    KEY_DOWNLOAD_MIN_PROGRESS_STEP, this.downloadMinProgressStep,
+                    KEY_DOWNLOAD_MIN_PROGRESS_TIME, this.downloadMinProgressTime,
+                    KEY_DOWNLOAD_MAX_NETWORK_THREAD_COUNT, this.downloadMaxNetworkThreadCount,
+                    KEY_FILE_NON_PRE_ALLOCATION, this.fileNonPreAllocation,
+                    KEY_BROADCAST_COMPLETED, this.broadcastCompleted,
+                    KEY_TRIAL_CONNECTION_HEAD_METHOD, this.trialConnectionHeadMethod);
         }
     }
 
     public static int getValidNetworkThreadCount(int requireCount) {
-        int MAX_VALID_NETWORK_THREAD_COUNT = 12;
-        int MIN_VALID_NETWORK_THREAD_COUNT = 1;
+        int maxValidNetworkThreadCount = 12;
+        int minValidNetworkThreadCount = 1;
 
-        if (requireCount > MAX_VALID_NETWORK_THREAD_COUNT) {
-            FileDownloadLog.w(FileDownloadProperties.class, "require the count of network thread  " +
-                            "is %d, what is more than the max valid count(%d), so adjust to %d auto",
-                    requireCount, MAX_VALID_NETWORK_THREAD_COUNT, MAX_VALID_NETWORK_THREAD_COUNT);
-            return MAX_VALID_NETWORK_THREAD_COUNT;
-        } else if (requireCount < MIN_VALID_NETWORK_THREAD_COUNT) {
-            FileDownloadLog.w(FileDownloadProperties.class, "require the count of network thread  " +
-                            "is %d, what is less than the min valid count(%d), so adjust to %d auto",
-                    requireCount, MIN_VALID_NETWORK_THREAD_COUNT, MIN_VALID_NETWORK_THREAD_COUNT);
-            return MIN_VALID_NETWORK_THREAD_COUNT;
+        if (requireCount > maxValidNetworkThreadCount) {
+            FileDownloadLog.w(FileDownloadProperties.class, "require the count of network thread  "
+                            + "is %d, what is more than the max valid count(%d), so adjust to %d "
+                            + "auto",
+                    requireCount, maxValidNetworkThreadCount, maxValidNetworkThreadCount);
+            return maxValidNetworkThreadCount;
+        } else if (requireCount < minValidNetworkThreadCount) {
+            FileDownloadLog.w(FileDownloadProperties.class, "require the count of network thread  "
+                            + "is %d, what is less than the min valid count(%d), so adjust to %d"
+                            + " auto",
+                    requireCount, minValidNetworkThreadCount, minValidNetworkThreadCount);
+            return minValidNetworkThreadCount;
         }
 
         return requireCount;

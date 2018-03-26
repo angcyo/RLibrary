@@ -36,6 +36,9 @@ import java.util.concurrent.ConcurrentHashMap;
  * 修改时间：by angcyo:2017-10-23 9:17:11
  * 修改备注：更新至 1.6.8
  * Version: 1.0.0
+ *
+ * 2018-3-26
+ * 更新至 1.7.2
  */
 public class FDown {
 

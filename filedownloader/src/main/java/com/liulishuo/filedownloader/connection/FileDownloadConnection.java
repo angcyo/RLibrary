@@ -18,6 +18,7 @@ package com.liulishuo.filedownloader.connection;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.net.ProtocolException;
 import java.net.URLConnection;
 import java.util.List;
 import java.util.Map;
@@ -34,7 +35,8 @@ public interface FileDownloadConnection {
     /**
      * Sets the header named {@code name} to {@code value}.
      * <p>
-     * The capacity of this method is similar to the {@link URLConnection#addRequestProperty(String, String)}
+     * The capacity of this method is similar to the
+     * {@link URLConnection#addRequestProperty(String, String)}
      */
     void addHeader(String name, String value);
 
@@ -44,7 +46,8 @@ public interface FileDownloadConnection {
      *
      * @param etag   the etag is stored by the past downloaded.
      * @param offset the offset length has already been downloaded.
-     * @return {@code true} if adding resume offset was dispatched, so we can't handle that by internal.
+     * @return {@code true} if adding resume offset was dispatched, so we can't handle that by
+     * internal.
      */
     @SuppressWarnings("UnusedParameters")
     boolean dispatchAddResumeOffset(String etag, long offset);
@@ -91,6 +94,30 @@ public interface FileDownloadConnection {
      * if there is no such field in the header.
      */
     String getResponseHeaderField(String name);
+
+    /**
+     * Set the method for the request, one of:
+     * <UL>
+     *  <LI>GET
+     *  <LI>POST
+     *  <LI>HEAD
+     *  <LI>OPTIONS
+     *  <LI>PUT
+     *  <LI>DELETE
+     *  <LI>TRACE
+     * </UL> are legal, subject to protocol restrictions.  The default
+     * method is GET.
+     *
+     * @param method the HTTP method
+     * @exception ProtocolException if the method cannot be reset or if
+     *              the requested method isn't valid for HTTP.
+     * @exception SecurityException if a security manager is set and the
+     *              method is "TRACE", but the "allowHttpTrace"
+     *              NetPermission is not granted.
+     *
+     * @return {@code true} if set effect, otherwise {@code false}.
+     */
+    boolean setRequestMethod(String method) throws ProtocolException;
 
     /**
      * Invokes the request immediately, and blocks until the response can be processed or is in

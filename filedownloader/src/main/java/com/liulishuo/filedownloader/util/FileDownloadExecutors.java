@@ -17,6 +17,7 @@
 package com.liulishuo.filedownloader.util;
 
 import java.util.concurrent.LinkedBlockingQueue;
+import java.util.concurrent.SynchronousQueue;
 import java.util.concurrent.ThreadFactory;
 import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
@@ -33,7 +34,13 @@ import java.util.concurrent.atomic.AtomicInteger;
  * second, the thread will be terminate to reduce the cost of resources.
  */
 public class FileDownloadExecutors {
-    private final static int DEFAULT_IDLE_SECOND = 5;
+    private static final int DEFAULT_IDLE_SECOND = 15;
+
+    public static ThreadPoolExecutor newFixedThreadPool(String prefix) {
+        return new ThreadPoolExecutor(0, Integer.MAX_VALUE,
+                DEFAULT_IDLE_SECOND, TimeUnit.SECONDS,
+                new SynchronousQueue<Runnable>(), new FileDownloadThreadFactory(prefix));
+    }
 
     public static ThreadPoolExecutor newDefaultThreadPool(int nThreads, String prefix) {
         return newDefaultThreadPool(nThreads, new LinkedBlockingQueue<Runnable>(), prefix);
@@ -43,13 +50,14 @@ public class FileDownloadExecutors {
                                                           LinkedBlockingQueue<Runnable> queue,
                                                           String prefix) {
         final ThreadPoolExecutor executor = new ThreadPoolExecutor(nThreads, nThreads,
-                DEFAULT_IDLE_SECOND, TimeUnit.SECONDS, queue, new FileDownloadThreadFactory(prefix));
+                DEFAULT_IDLE_SECOND, TimeUnit.SECONDS, queue,
+                new FileDownloadThreadFactory(prefix));
         executor.allowCoreThreadTimeOut(true);
         return executor;
     }
 
     static class FileDownloadThreadFactory implements ThreadFactory {
-        private static final AtomicInteger poolNumber = new AtomicInteger(1);
+        private static final AtomicInteger POOL_NUMBER = new AtomicInteger(1);
         private final String namePrefix;
         private final ThreadGroup group;
         private final AtomicInteger threadNumber = new AtomicInteger(1);
@@ -63,10 +71,8 @@ public class FileDownloadExecutors {
         public Thread newThread(Runnable r) {
             Thread t = new Thread(group, r, namePrefix + threadNumber.getAndIncrement(), 0);
 
-            if (t.isDaemon())
-                t.setDaemon(false);
-            if (t.getPriority() != Thread.NORM_PRIORITY)
-                t.setPriority(Thread.NORM_PRIORITY);
+            if (t.isDaemon()) t.setDaemon(false);
+            if (t.getPriority() != Thread.NORM_PRIORITY) t.setPriority(Thread.NORM_PRIORITY);
             return t;
         }
     }

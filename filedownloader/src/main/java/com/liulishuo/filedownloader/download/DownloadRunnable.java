@@ -19,14 +19,18 @@ package com.liulishuo.filedownloader.download;
 import android.os.Process;
 
 import com.liulishuo.filedownloader.connection.FileDownloadConnection;
+import com.liulishuo.filedownloader.database.FileDownloadDatabase;
 import com.liulishuo.filedownloader.exception.FileDownloadGiveUpRetryException;
+import com.liulishuo.filedownloader.model.ConnectionModel;
 import com.liulishuo.filedownloader.model.FileDownloadHeader;
+import com.liulishuo.filedownloader.model.FileDownloadModel;
 import com.liulishuo.filedownloader.util.FileDownloadLog;
 import com.liulishuo.filedownloader.util.FileDownloadUtils;
 
 import java.io.IOException;
 import java.net.HttpURLConnection;
 import java.net.SocketException;
+import java.util.List;
 
 /**
  * The single download runnable used for establish one connection and fetch data from it.
@@ -83,15 +87,19 @@ public class DownloadRunnable implements Runnable {
                 final int code = connection.getResponseCode();
 
                 if (FileDownloadLog.NEED_LOG) {
-                    FileDownloadLog.d(this, "the connection[%d] for %d, is connected %s with code[%d]",
-                            connectionIndex, downloadId, connectTask.getProfile(), code);
+                    FileDownloadLog
+                            .d(this, "the connection[%d] for %d, is connected %s with code[%d]",
+                                    connectionIndex, downloadId, connectTask.getProfile(), code);
                 }
 
                 if (code != HttpURLConnection.HTTP_PARTIAL && code != HttpURLConnection.HTTP_OK) {
                     throw new SocketException(FileDownloadUtils.
-                            formatString("Connection failed with request[%s] response[%s] http-state[%d] on task[%d-%d], " +
-                                            "which is changed after verify connection, so please try again.",
-                                    connectTask.getRequestHeader(), connection.getResponseHeaderFields(),
+                            formatString(
+                                    "Connection failed with request[%s] response[%s] "
+                                            + "http-state[%d] on task[%d-%d], which is changed"
+                                            + " after verify connection, so please try again.",
+                                    connectTask.getRequestHeader(),
+                                    connection.getResponseHeaderFields(),
                                     code, downloadId, connectionIndex));
                 }
 
@@ -110,28 +118,30 @@ public class DownloadRunnable implements Runnable {
                         .setPath(path)
                         .build();
 
-
                 fetchDataTask.run();
-                if (paused){
-                    fetchDataTask.pause();
-                }
+
+                if (paused) fetchDataTask.pause();
                 break;
-            } catch (IllegalAccessException | IOException | FileDownloadGiveUpRetryException | IllegalArgumentException e) {
+
+            } catch (IllegalAccessException | IOException | FileDownloadGiveUpRetryException
+                    | IllegalArgumentException e) {
                 if (callback.isRetry(e)) {
-                    if (!isConnected) {
-                        callback.onRetry(e, 0);
-                    } else if (fetchDataTask != null) {
-                        // connected
-                        final long invalidIncreaseBytes = fetchDataTask.currentOffset - beginOffset;
-                        callback.onRetry(e, invalidIncreaseBytes);
-                    } else {
+                    if (isConnected && fetchDataTask == null) {
                         // connected but create fetch data task failed, give up directly.
-                        FileDownloadLog.w(this, "it is valid to retry and connection is valid but" +
-                                " create fetch-data-task failed, so give up directly with %s", e);
+                        FileDownloadLog.w(this, "it is valid to retry and connection is valid but"
+                                + " create fetch-data-task failed, so give up directly with %s", e);
                         callback.onError(e);
                         break;
+                    } else {
+                        if (fetchDataTask != null) {
+                            //update currentOffset in ConnectionProfile
+                            final long downloadedOffset = getDownloadedOffset();
+                            if (downloadedOffset > 0) {
+                                connectTask.updateConnectionProfile(downloadedOffset);
+                            }
+                        }
+                        callback.onRetry(e);
                     }
-
                 } else {
                     callback.onError(e);
                     break;
@@ -142,6 +152,24 @@ public class DownloadRunnable implements Runnable {
             }
         } while (true);
 
+    }
+
+    private long getDownloadedOffset() {
+        final FileDownloadDatabase database = CustomComponentHolder.getImpl().getDatabaseInstance();
+        if (connectionIndex >= 0) {
+            // is multi connection
+            List<ConnectionModel> connectionModels = database.findConnectionModel(downloadId);
+            for (ConnectionModel connectionModel : connectionModels) {
+                if (connectionModel.getIndex() == connectionIndex) {
+                    return connectionModel.getCurrentOffset();
+                }
+            }
+        } else {
+            // is single connection
+            FileDownloadModel downloadModel = database.find(downloadId);
+            return downloadModel.getSoFar();
+        }
+        return 0;
     }
 
     public static class Builder {
@@ -198,9 +226,11 @@ public class DownloadRunnable implements Runnable {
         }
 
         public DownloadRunnable build() {
-            if (callback == null || path == null || isWifiRequired == null || connectionIndex == null)
-                throw new IllegalArgumentException(FileDownloadUtils.formatString("%s %s %B"
-                        , callback, path, isWifiRequired));
+            if (callback == null || path == null || isWifiRequired == null
+                    || connectionIndex == null) {
+                throw new IllegalArgumentException(FileDownloadUtils.formatString("%s %s %B",
+                        callback, path, isWifiRequired));
+            }
 
             final ConnectTask connectTask = connectTaskBuilder.build();
             return new DownloadRunnable(connectTask.downloadId, connectionIndex, connectTask,

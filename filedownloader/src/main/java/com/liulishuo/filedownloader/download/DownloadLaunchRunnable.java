@@ -22,6 +22,7 @@ import android.os.Process;
 import com.liulishuo.filedownloader.DownloadTask;
 import com.liulishuo.filedownloader.IThreadPoolMonitor;
 import com.liulishuo.filedownloader.connection.FileDownloadConnection;
+import com.liulishuo.filedownloader.database.FileDownloadDatabase;
 import com.liulishuo.filedownloader.exception.FileDownloadGiveUpRetryException;
 import com.liulishuo.filedownloader.exception.FileDownloadHttpException;
 import com.liulishuo.filedownloader.exception.FileDownloadNetworkPolicyException;
@@ -30,7 +31,6 @@ import com.liulishuo.filedownloader.model.ConnectionModel;
 import com.liulishuo.filedownloader.model.FileDownloadHeader;
 import com.liulishuo.filedownloader.model.FileDownloadModel;
 import com.liulishuo.filedownloader.model.FileDownloadStatus;
-import com.liulishuo.filedownloader.services.FileDownloadDatabase;
 import com.liulishuo.filedownloader.stream.FileDownloadOutputStream;
 import com.liulishuo.filedownloader.util.FileDownloadExecutors;
 import com.liulishuo.filedownloader.util.FileDownloadHelper;
@@ -54,24 +54,27 @@ import java.util.concurrent.atomic.AtomicBoolean;
  * You can use this to launch downloading, on here the download will be launched separate following
  * steps:
  * <p/>
- * step 1. create the first connection
- *          ( this first connection is used for:
+ * step 1. create the trial connection
+ *          ( this trial connection is used for:
  *                  1. checkup the saved etag is overdue
  *                  2. checkup whether the partial-accept is supported
  *                  3. checkup whether the current connection is chunked. )
  *
- * step 2. if the saved etag is overdue -> jump to step 1 to checkup whether the partial-accept is supported.
+ * step 2. if the saved etag is overdue -> jump to step 1 to checkup whether the partial-accept is
+ * supported.
  * step 3. if (NOT chunked) & partial-accept & output stream support-seek:
  *              create multiple {@link DownloadTask} to download.
  *         else:
- *              reuse the first connection and use {@link FetchDataTask} to fetch data from the connection.
+ *              create single first connection and use {@link FetchDataTask} to fetch data from the
+ *              connection.
  * <p/>
- * We use {@link DownloadStatusCallback} to handle all events sync to DB/filesystem and callback to user.
+ * We use {@link DownloadStatusCallback} to handle all events sync to DB/filesystem and callback to
+ * user.
  */
 public class DownloadLaunchRunnable implements Runnable, ProcessCallback {
 
     private final DownloadStatusCallback statusCallback;
-    private final int DEFAULT_CONNECTION_COUNT = 5;
+    private final int defaultConnectionCount = 5;
     private final FileDownloadModel model;
     private final FileDownloadHeader userRequestHeader;
     private final boolean isForceReDownload;
@@ -82,7 +85,7 @@ public class DownloadLaunchRunnable implements Runnable, ProcessCallback {
 
     private boolean isTriedFixRangeNotSatisfiable;
 
-    private int validRetryTimes;
+    int validRetryTimes;
 
     /**
      * None of the ranges in the request's Range header field overlap the current extent of the
@@ -92,15 +95,17 @@ public class DownloadLaunchRunnable implements Runnable, ProcessCallback {
     private static final int HTTP_REQUESTED_RANGE_NOT_SATISFIABLE = 416;
     private static final int TOTAL_VALUE_IN_CHUNKED_RESOURCE = -1;
 
+    private boolean isNeedForceDiscardRange = false;
 
     private final boolean supportSeek;
 
-    private final ArrayList<DownloadRunnable> downloadRunnableList = new ArrayList<>(DEFAULT_CONNECTION_COUNT);
-    private FetchDataTask singleFetchDataTask;
+    private final ArrayList<DownloadRunnable> downloadRunnableList = new ArrayList<>(
+            defaultConnectionCount);
+    private DownloadRunnable singleDownloadRunnable;
     private boolean isSingleConnection;
 
-    private final static ThreadPoolExecutor DOWNLOAD_EXECUTOR = FileDownloadExecutors
-            .newDefaultThreadPool(Integer.MAX_VALUE, "download-executor");
+    private static final ThreadPoolExecutor DOWNLOAD_EXECUTOR = FileDownloadExecutors
+            .newFixedThreadPool("ConnectionBlock");
 
     private boolean isResumeAvailableOnDB;
     private boolean acceptPartial;
@@ -116,7 +121,8 @@ public class DownloadLaunchRunnable implements Runnable, ProcessCallback {
     private DownloadLaunchRunnable(FileDownloadModel model, FileDownloadHeader header,
                                    IThreadPoolMonitor threadPoolMonitor,
                                    final int minIntervalMillis, int callbackProgressMaxCount,
-                                   boolean isForceReDownload, boolean isWifiRequired, int maxRetryTimes) {
+                                   boolean isForceReDownload, boolean isWifiRequired,
+                                   int maxRetryTimes) {
         this.alive = new AtomicBoolean(true);
         this.paused = false;
         this.isTriedFixRangeNotSatisfiable = false;
@@ -134,10 +140,12 @@ public class DownloadLaunchRunnable implements Runnable, ProcessCallback {
                 maxRetryTimes, minIntervalMillis, callbackProgressMaxCount);
     }
 
-    private DownloadLaunchRunnable(DownloadStatusCallback callback, FileDownloadModel model, FileDownloadHeader header,
+    private DownloadLaunchRunnable(DownloadStatusCallback callback, FileDownloadModel model,
+                                   FileDownloadHeader header,
                                    IThreadPoolMonitor threadPoolMonitor,
                                    final int minIntervalMillis, int callbackProgressMaxCount,
-                                   boolean isForceReDownload, boolean isWifiRequired, int maxRetryTimes) {
+                                   boolean isForceReDownload, boolean isWifiRequired,
+                                   int maxRetryTimes) {
         this.alive = new AtomicBoolean(true);
         this.paused = false;
         this.isTriedFixRangeNotSatisfiable = false;
@@ -157,8 +165,10 @@ public class DownloadLaunchRunnable implements Runnable, ProcessCallback {
     static DownloadLaunchRunnable createForTest(DownloadStatusCallback callback,
                                                 FileDownloadModel model, FileDownloadHeader header,
                                                 IThreadPoolMonitor threadPoolMonitor,
-                                                final int minIntervalMillis, int callbackProgressMaxCount,
-                                                boolean isForceReDownload, boolean isWifiRequired, int maxRetryTimes) {
+                                                final int minIntervalMillis,
+                                                int callbackProgressMaxCount,
+                                                boolean isForceReDownload, boolean isWifiRequired,
+                                                int maxRetryTimes) {
         return new DownloadLaunchRunnable(callback, model, header, threadPoolMonitor,
                 minIntervalMillis, callbackProgressMaxCount, isForceReDownload, isWifiRequired,
                 maxRetryTimes);
@@ -167,7 +177,7 @@ public class DownloadLaunchRunnable implements Runnable, ProcessCallback {
     public void pause() {
         this.paused = true;
 
-        if (singleFetchDataTask != null) singleFetchDataTask.pause();
+        if (singleDownloadRunnable != null) singleDownloadRunnable.pause();
         @SuppressWarnings("unchecked") ArrayList<DownloadRunnable> pauseList =
                 (ArrayList<DownloadRunnable>) downloadRunnableList.clone();
         for (DownloadRunnable runnable : pauseList) {
@@ -179,17 +189,10 @@ public class DownloadLaunchRunnable implements Runnable, ProcessCallback {
     }
 
     public void pending() {
-        if (model.getConnectionCount() > 1) {
-            final List<ConnectionModel> connectionOnDBList = database.findConnectionModel(model.getId());
-            if (model.getConnectionCount() == connectionOnDBList.size()) {
-                model.setSoFar(ConnectionModel.getTotalOffset(connectionOnDBList));
-            } else {
-                // dirty
-                model.setSoFar(0);
-                database.removeConnections(model.getId());
-            }
-        }
-
+        final List<ConnectionModel> connectionOnDBList = database
+                .findConnectionModel(model.getId());
+        //inspect model can be resumed or not, if false, the previous sofar cannot be used
+        inspectTaskModelResumeAvailableOnDB(connectionOnDBList);
         statusCallback.onPending();
     }
 
@@ -204,19 +207,19 @@ public class DownloadLaunchRunnable implements Runnable, ProcessCallback {
                     if (FileDownloadLog.NEED_LOG) {
                         /**
                          * @see FileDownloadThreadPool#cancel(int), the invoking simultaneously
-                         * with here. And this area is invoking before there, so, {@code cancel(int)}
-                         * is fail.
+                         * with here. And this area is invoking before there, so,
+                         * {@code cancel(int)} is fail.
                          *
                          * High concurrent cause.
                          */
-                        FileDownloadLog.d(this, "High concurrent cause, start runnable but " +
-                                "already paused %d", model.getId());
+                        FileDownloadLog.d(this, "High concurrent cause, start runnable but "
+                                + "already paused %d", model.getId());
                     }
 
                 } else {
                     onError(new RuntimeException(
-                            FileDownloadUtils.formatString("Task[%d] can't start the download" +
-                                            " runnable, because its status is %d not %d",
+                            FileDownloadUtils.formatString("Task[%d] can't start the download"
+                                            + " runnable, because its status is %d not %d",
                                     model.getId(), model.getStatus(), FileDownloadStatus.pending)));
                 }
                 return;
@@ -231,67 +234,52 @@ public class DownloadLaunchRunnable implements Runnable, ProcessCallback {
                     if (FileDownloadLog.NEED_LOG) {
                         /**
                          * @see FileDownloadThreadPool#cancel(int), the invoking simultaneously
-                         * with here. And this area is invoking before there, so, {@code cancel(int)}
-                         * is fail.
+                         * with here. And this area is invoking before there, so,
+                         * {@code cancel(int)} is fail.
                          *
                          * High concurrent cause.
                          */
-                        FileDownloadLog.d(this, "High concurrent cause, start runnable but " +
-                                "already paused %d", model.getId());
+                        FileDownloadLog.d(this, "High concurrent cause, start runnable but "
+                                + "already paused %d", model.getId());
                     }
                     return;
                 }
 
-                FileDownloadConnection connection = null;
                 try {
-
-
-                    // 1. connect
+                    // 1. check env state
                     checkupBeforeConnect();
 
-                    // the first connection is for: 1. etag verify; 2. first connect.
-                    final List<ConnectionModel> connectionOnDBList = database.findConnectionModel(model.getId());
-                    final ConnectionProfile connectionProfile = buildFirstConnectProfile(connectionOnDBList);
-                    final ConnectTask.Builder build = new ConnectTask.Builder();
-                    final ConnectTask firstConnectionTask = build.setDownloadId(model.getId())
-                            .setUrl(model.getUrl())
-                            .setEtag(model.getETag())
-                            .setHeader(userRequestHeader)
-                            .setConnectionProfile(connectionProfile)
-                            .build();
+                    // 2. trial connect
+                    trialConnect();
 
-                    connection = firstConnectionTask.connect();
-                    handleFirstConnected(firstConnectionTask.getRequestHeader(),
-                            firstConnectionTask, connection);
+                    // 3. reuse same task
+                    checkupAfterGetFilename();
+
+                    // 4. check local resume model
+                    final List<ConnectionModel> connectionOnDBList = database
+                            .findConnectionModel(model.getId());
+                    inspectTaskModelResumeAvailableOnDB(connectionOnDBList);
 
                     if (paused) {
                         model.setStatus(FileDownloadStatus.paused);
                         return;
                     }
 
-                    // 2. fetch
-                    checkupBeforeFetch();
                     final long totalLength = model.getTotal();
-                    // pre-allocate if need.
+
+                    // 5. pre-allocate if need.
                     handlePreAllocate(totalLength, model.getTempFilePath());
 
-                    final int connectionCount;
-                    // start fetching
-                    if (isMultiConnectionAvailable()) {
-                        if (isResumeAvailableOnDB) {
-                            connectionCount = model.getConnectionCount();
-                        } else {
-                            connectionCount = CustomComponentHolder.getImpl()
-                                    .determineConnectionCount(model.getId(), model.getUrl(), model.getPath(), totalLength);
-                        }
-                    } else {
-                        connectionCount = 1;
-                    }
-
+                    // 6. calculate block count
+                    final int connectionCount = calcConnectionCount(totalLength);
                     if (connectionCount <= 0) {
                         throw new IllegalAccessException(FileDownloadUtils
-                                .formatString("invalid connection count %d, the connection count" +
-                                        " must be larger than 0", connection));
+                                .formatString("invalid connection count %d, the connection count"
+                                        + " must be larger than 0", connectionCount));
+                    }
+
+                    if (totalLength == 0) {
+                        return;
                     }
 
                     if (paused) {
@@ -299,27 +287,28 @@ public class DownloadLaunchRunnable implements Runnable, ProcessCallback {
                         return;
                     }
 
+                    // 7. start real connect and fetch to local filesystem
                     isSingleConnection = connectionCount == 1;
                     if (isSingleConnection) {
                         // single connection
-                        fetchWithSingleConnection(firstConnectionTask.getProfile(), connection);
+                        realDownloadWithSingleConnection(totalLength);
                     } else {
-                        if (connection != null) {
-                            connection.ending();
-                            connection = null;
-                        }
                         // multiple connection
                         statusCallback.onMultiConnection();
                         if (isResumeAvailableOnDB) {
-                            fetchWithMultipleConnectionFromResume(connectionCount, connectionOnDBList);
+                            realDownloadWithMultiConnectionFromResume(connectionCount,
+                                    connectionOnDBList);
                         } else {
-                            fetchWithMultipleConnectionFromBeginning(totalLength, connectionCount);
+                            realDownloadWithMultiConnectionFromBeginning(totalLength,
+                                    connectionCount);
                         }
                     }
 
-                } catch (IOException | IllegalAccessException | InterruptedException | IllegalArgumentException | FileDownloadGiveUpRetryException e) {
+                } catch (IOException | IllegalAccessException
+                        | InterruptedException | IllegalArgumentException
+                        | FileDownloadGiveUpRetryException e) {
                     if (isRetry(e)) {
-                        onRetry(e, 0);
+                        onRetry(e);
                         continue;
                     } else {
                         onError(e);
@@ -329,8 +318,6 @@ public class DownloadLaunchRunnable implements Runnable, ProcessCallback {
                 } catch (RetryDirectly retryDirectly) {
                     model.setStatus(FileDownloadStatus.retry);
                     continue;
-                } finally {
-                    if (connection != null) connection.ending();
                 }
 
                 break;
@@ -354,6 +341,48 @@ public class DownloadLaunchRunnable implements Runnable, ProcessCallback {
         }
     }
 
+    private int calcConnectionCount(long totalLength) {
+        if (isMultiConnectionAvailable()) {
+            if (isResumeAvailableOnDB) {
+                return model.getConnectionCount();
+            } else {
+                return CustomComponentHolder.getImpl()
+                        .determineConnectionCount(model.getId(), model.getUrl(),
+                                model.getPath(), totalLength);
+            }
+        } else {
+            return 1;
+        }
+    }
+
+    // the trial connection is for: 1. etag verify; 2. partial support verify.
+    private void trialConnect() throws IOException, RetryDirectly, IllegalAccessException {
+        FileDownloadConnection trialConnection = null;
+        try {
+            final ConnectionProfile trialConnectionProfile;
+            if (isNeedForceDiscardRange) {
+                trialConnectionProfile = ConnectionProfile.ConnectionProfileBuild
+                        .buildTrialConnectionProfileNoRange();
+            } else {
+                trialConnectionProfile = ConnectionProfile.ConnectionProfileBuild
+                        .buildTrialConnectionProfile();
+            }
+            final ConnectTask trialConnectTask = new ConnectTask.Builder()
+                    .setDownloadId(model.getId())
+                    .setUrl(model.getUrl())
+                    .setEtag(model.getETag())
+                    .setHeader(userRequestHeader)
+                    .setConnectionProfile(trialConnectionProfile)
+                    .build();
+            trialConnection = trialConnectTask.connect();
+            handleTrialConnectResult(trialConnectTask.getRequestHeader(),
+                    trialConnectTask, trialConnection);
+
+        } finally {
+            if (trialConnection != null) trialConnection.ending();
+        }
+    }
+
     private boolean isMultiConnectionAvailable() {
         //noinspection SimplifiableIfStatement
         if (isResumeAvailableOnDB && model.getConnectionCount() <= 1) {
@@ -364,27 +393,31 @@ public class DownloadLaunchRunnable implements Runnable, ProcessCallback {
     }
 
     private int determineConnectionCount() {
-        return DEFAULT_CONNECTION_COUNT;
+        return defaultConnectionCount;
     }
 
-    private ConnectionProfile buildFirstConnectProfile(List<ConnectionModel> connectionOnDBList) {
+    void inspectTaskModelResumeAvailableOnDB(List<ConnectionModel> connectionOnDBList) {
         // check resume available
         final long offset;
         final int connectionCount = model.getConnectionCount();
         final String tempFilePath = model.getTempFilePath();
         final String targetFilePath = model.getTargetFilePath();
         final boolean isMultiConnection = connectionCount > 1;
-        if (isMultiConnection && !supportSeek) {
+        if (isNeedForceDiscardRange) {
+            offset = 0;
+        } else if (isMultiConnection && !supportSeek) {
             // can't support seek for multi-connection is fatal problem, so discard resume.
             offset = 0;
         } else {
-            final boolean resumeAvailable = FileDownloadUtils.isBreakpointAvailable(model.getId(), model);
+            final boolean resumeAvailable = FileDownloadUtils
+                    .isBreakpointAvailable(model.getId(), model);
             if (resumeAvailable) {
                 if (!supportSeek) {
                     offset = new File(tempFilePath).length();
                 } else {
                     if (isMultiConnection) {
-                        // when it is multi connections, the offset would be 0, because it only store on the connection table.
+                        // when it is multi connections, the offset would be 0,
+                        // because it only store on the connection table.
                         if (connectionCount != connectionOnDBList.size()) {
                             // dirty data
                             offset = 0;
@@ -394,7 +427,6 @@ public class DownloadLaunchRunnable implements Runnable, ProcessCallback {
                     } else {
                         offset = model.getSoFar();
                     }
-
                 }
             } else {
                 offset = 0;
@@ -407,20 +439,16 @@ public class DownloadLaunchRunnable implements Runnable, ProcessCallback {
             database.removeConnections(model.getId());
             FileDownloadUtils.deleteTaskFiles(targetFilePath, tempFilePath);
         }
-
-        return new ConnectionProfile(0, offset, 0, model.getTotal() - offset);
     }
 
-    private void handleFirstConnected(Map<String, List<String>> requestHeader,
-                                      ConnectTask connectTask, FileDownloadConnection connection)
+    private void handleTrialConnectResult(Map<String, List<String>> requestHeader,
+                                          ConnectTask connectTask,
+                                          FileDownloadConnection connection)
             throws IOException, RetryDirectly, IllegalArgumentException {
         final int id = model.getId();
         final int code = connection.getResponseCode();
 
-        // if the response status code isn't point to PARTIAL/OFFSET, isSucceedResume will
-        // be assigned to false, so filedownloader will download the file from very beginning.
-        acceptPartial = (code == HttpURLConnection.HTTP_PARTIAL
-                || code == FileDownloadConnection.RESPONSE_CODE_FROM_OFFSET);
+        acceptPartial = FileDownloadUtils.isAcceptRange(code, connection);
         final boolean onlyFromBeginning = (code == HttpURLConnection.HTTP_OK
                 || code == HttpURLConnection.HTTP_CREATED
                 || code == FileDownloadConnection.NO_RESPONSE_CODE);
@@ -446,19 +474,30 @@ public class DownloadLaunchRunnable implements Runnable, ProcessCallback {
             }
 
             if (code == HttpURLConnection.HTTP_CREATED && connectTask.isRangeNotFromBeginning()) {
-                // The request has been fulfilled and has resulted in one or more new resources being created.
-                // mark this case is precondition failed for
+                // The request has been fulfilled and has resulted in one or more new resources
+                // being created. mark this case is precondition failed for
                 // 1. checkout whether accept partial
-                // 2. 201 means new resources so range must be from beginning otherwise it can't match
-                // local range.
+                // 2. 201 means new resources so range must be from beginning otherwise it can't
+                // match local range.
                 isPreconditionFailed = true;
                 break;
             }
 
-            if (code == HTTP_REQUESTED_RANGE_NOT_SATISFIABLE && model.getSoFar() > 0) {
-                // On the first connection range not satisfiable, there must something wrong, so have to retry.
-                isPreconditionFailed = true;
-                break;
+            if (code == HTTP_REQUESTED_RANGE_NOT_SATISFIABLE) {
+                if (model.getSoFar() > 0) {
+                    // On the first connection range not satisfiable, there must something wrong,
+                    // so have to retry.
+                    isPreconditionFailed = true;
+                    break;
+                } else {
+                    // range is right, but get 416
+                    if (!isNeedForceDiscardRange) {
+                        // if range is still added, but range is right with 416 response, so we
+                        // discard range on header and try again
+                        isNeedForceDiscardRange = true;
+                        isPreconditionFailed = true;
+                    }
+                }
             }
 
         } while (false);
@@ -467,8 +506,8 @@ public class DownloadLaunchRunnable implements Runnable, ProcessCallback {
         if (isPreconditionFailed) {
             // the file on remote is changed
             if (isResumeAvailableOnDB) {
-                FileDownloadLog.w(this, "there is precondition failed on this request[%d] " +
-                                "with old etag[%s]、new etag[%s]、response code is %d",
+                FileDownloadLog.w(this, "there is precondition failed on this request[%d] "
+                                + "with old etag[%s]、new etag[%s]、response code is %d",
                         id, oldEtag, newEtag, code);
             }
 
@@ -477,9 +516,9 @@ public class DownloadLaunchRunnable implements Runnable, ProcessCallback {
             isResumeAvailableOnDB = false;
 
             if (oldEtag != null && oldEtag.equals(newEtag)) {
-                FileDownloadLog.w(this, "the old etag[%s] is the same to the new etag[%s], " +
-                                "but the response status code is %d not Partial(206), so wo have to " +
-                                "start this task from very beginning for task[%d]!",
+                FileDownloadLog.w(this, "the old etag[%s] is the same to the new etag[%s], "
+                                + "but the response status code is %d not Partial(206), so wo have"
+                                + " to start this task from very beginning for task[%d]!",
                         oldEtag, newEtag, code, id);
                 newEtag = null;
             }
@@ -489,7 +528,8 @@ public class DownloadLaunchRunnable implements Runnable, ProcessCallback {
             model.setETag(newEtag);
             model.resetConnectionCount();
 
-            database.updateOldEtagOverdue(id, model.getETag(), model.getSoFar(), model.getTotal(), model.getConnectionCount());
+            database.updateOldEtagOverdue(id, model.getETag(), model.getSoFar(), model.getTotal(),
+                    model.getConnectionCount());
 
             // retry to check whether support partial or not.
             throw new RetryDirectly();
@@ -497,7 +537,7 @@ public class DownloadLaunchRunnable implements Runnable, ProcessCallback {
 
         redirectedUrl = connectTask.getFinalRedirectedUrl();
         if (acceptPartial || onlyFromBeginning) {
-            final long contentLength = FileDownloadUtils.findContentLength(id, connection);
+            final long totalLength = FileDownloadUtils.findInstanceLengthForTrial(connection);
 
             // update model
             String fileName = null;
@@ -505,13 +545,7 @@ public class DownloadLaunchRunnable implements Runnable, ProcessCallback {
                 // filename
                 fileName = FileDownloadUtils.findFilename(connection, model.getUrl());
             }
-            isChunked = (contentLength == TOTAL_VALUE_IN_CHUNKED_RESOURCE);
-            final long totalLength;
-            if (!isChunked) {
-                totalLength = model.getSoFar() + contentLength;
-            } else {
-                totalLength = contentLength;
-            }
+            isChunked = (totalLength == TOTAL_VALUE_IN_CHUNKED_RESOURCE);
 
             // callback
             statusCallback.onConnected(isResumeAvailableOnDB && acceptPartial,
@@ -523,48 +557,56 @@ public class DownloadLaunchRunnable implements Runnable, ProcessCallback {
         }
     }
 
-    private void fetchWithSingleConnection(final ConnectionProfile firstConnectionProfile,
-                                           FileDownloadConnection connection)
+    private void realDownloadWithSingleConnection(final long totalLength)
             throws IOException, IllegalAccessException {
-        
+
+        // connect
         final ConnectionProfile profile;
         if (!acceptPartial) {
             model.setSoFar(0);
-
-            profile = new ConnectionProfile(0, 0,
-                    firstConnectionProfile.endOffset, firstConnectionProfile.contentLength);
+            profile = ConnectionProfile.ConnectionProfileBuild
+                    .buildBeginToEndConnectionProfile(totalLength);
         } else {
-            profile = firstConnectionProfile;
+            profile = ConnectionProfile.ConnectionProfileBuild
+                    .buildToEndConnectionProfile(model.getSoFar(), model.getSoFar(),
+                            totalLength - model.getSoFar());
         }
 
-        final FetchDataTask.Builder builder = new FetchDataTask.Builder();
-        builder.setCallback(this)
-                .setDownloadId(model.getId())
+        singleDownloadRunnable = new DownloadRunnable.Builder()
+                .setId(model.getId())
                 .setConnectionIndex(-1)
+                .setCallback(this)
+                .setUrl(model.getUrl())
+                .setEtag(model.getETag())
+                .setHeader(userRequestHeader)
                 .setWifiRequired(isWifiRequired)
-                .setConnection(connection)
-                .setConnectionProfile(profile)
-                .setPath(model.getTempFilePath());
+                .setConnectionModel(profile)
+                .setPath(model.getTempFilePath())
+                .build();
 
         model.setConnectionCount(1);
         database.updateConnectionCount(model.getId(), 1);
-        singleFetchDataTask = builder.build();
         if (paused) {
             model.setStatus(FileDownloadStatus.paused);
-            singleFetchDataTask.pause();
+            singleDownloadRunnable.pause();
         } else {
-            singleFetchDataTask.run();
+            singleDownloadRunnable.run();
         }
     }
 
-    private void fetchWithMultipleConnectionFromResume(final int connectionCount, final List<ConnectionModel> connectionModelList) throws InterruptedException {
-        if (connectionCount <= 1 || connectionModelList.size() != connectionCount)
+    private void realDownloadWithMultiConnectionFromResume(final int connectionCount,
+                                                           List<ConnectionModel> modelList)
+            throws InterruptedException {
+        if (connectionCount <= 1 || modelList.size() != connectionCount) {
             throw new IllegalArgumentException();
+        }
 
-        fetchWithMultipleConnection(connectionModelList, model.getTotal());
+        fetchWithMultipleConnection(modelList, model.getTotal());
     }
 
-    private void fetchWithMultipleConnectionFromBeginning(final long totalLength, final int connectionCount) throws InterruptedException {
+    private void realDownloadWithMultiConnectionFromBeginning(final long totalLength,
+                                                              final int connectionCount)
+            throws InterruptedException {
         long startOffset = 0;
         final long eachRegion = totalLength / connectionCount;
         final int id = model.getId();
@@ -576,7 +618,7 @@ public class DownloadLaunchRunnable implements Runnable, ProcessCallback {
             final long endOffset;
             if (i == connectionCount - 1) {
                 // avoid float precision error
-                endOffset = 0;
+                endOffset = ConnectionProfile.RANGE_INFINITE;
             } else {
                 // [startOffset, endOffset)
                 endOffset = startOffset + eachRegion - 1;
@@ -601,14 +643,16 @@ public class DownloadLaunchRunnable implements Runnable, ProcessCallback {
     }
 
 
-    private void fetchWithMultipleConnection(final List<ConnectionModel> connectionModelList, final long totalLength) throws InterruptedException {
+    private void fetchWithMultipleConnection(final List<ConnectionModel> connectionModelList,
+                                             final long totalLength) throws InterruptedException {
         final int id = model.getId();
         final String etag = model.getETag();
         final String url = redirectedUrl != null ? redirectedUrl : model.getUrl();
         final String path = model.getTempFilePath();
 
         if (FileDownloadLog.NEED_LOG) {
-            FileDownloadLog.d(this, "fetch data with multiple connection(count: [%d]) for task[%d] totalLength[%d]",
+            FileDownloadLog.d(this,
+                    "fetch data with multiple connection(count: [%d]) for task[%d] totalLength[%d]",
                     connectionModelList.size(), id, totalLength);
         }
 
@@ -619,11 +663,12 @@ public class DownloadLaunchRunnable implements Runnable, ProcessCallback {
         final boolean withEtag = isResumeAvailableOnDB;
         for (ConnectionModel connectionModel : connectionModelList) {
             final long contentLength;
-            if (connectionModel.getEndOffset() == 0) {
+            if (connectionModel.getEndOffset() == ConnectionProfile.RANGE_INFINITE) {
                 // must be the last one
                 contentLength = totalLength - connectionModel.getCurrentOffset();
             } else {
-                contentLength = connectionModel.getEndOffset() - connectionModel.getCurrentOffset() + 1;
+                contentLength = connectionModel.getEndOffset() - connectionModel
+                        .getCurrentOffset() + 1;
             }
 
             totalOffset += (connectionModel.getCurrentOffset() - connectionModel.getStartOffset());
@@ -640,9 +685,10 @@ public class DownloadLaunchRunnable implements Runnable, ProcessCallback {
 
             final DownloadRunnable.Builder builder = new DownloadRunnable.Builder();
 
-            final ConnectionProfile connectionProfile = new ConnectionProfile(
-                    connectionModel.getStartOffset(), connectionModel.getCurrentOffset(),
-                    connectionModel.getEndOffset(), contentLength);
+            final ConnectionProfile connectionProfile = ConnectionProfile.ConnectionProfileBuild
+                    .buildConnectionProfile(
+                            connectionModel.getStartOffset(), connectionModel.getCurrentOffset(),
+                            connectionModel.getEndOffset(), contentLength);
 
             final DownloadRunnable runnable = builder
                     .setId(id)
@@ -660,8 +706,9 @@ public class DownloadLaunchRunnable implements Runnable, ProcessCallback {
                 FileDownloadLog.d(this, "enable multiple connection: %s", connectionModel);
             }
 
-            if (runnable == null)
+            if (runnable == null) {
                 throw new IllegalArgumentException("the download runnable must not be null!");
+            }
 
             downloadRunnableList.add(runnable);
         }
@@ -694,16 +741,16 @@ public class DownloadLaunchRunnable implements Runnable, ProcessCallback {
         }
     }
 
-    private void handlePreAllocate(long contentLength, String path)
+    private void handlePreAllocate(long totalLength, String path)
             throws IOException, IllegalAccessException {
 
         FileDownloadOutputStream outputStream = null;
         try {
 
-            if (contentLength != TOTAL_VALUE_IN_CHUNKED_RESOURCE) {
+            if (totalLength != TOTAL_VALUE_IN_CHUNKED_RESOURCE) {
                 outputStream = FileDownloadUtils.createOutputStream(model.getTempFilePath());
                 final long breakpointBytes = new File(path).length();
-                final long requiredSpaceBytes = contentLength - breakpointBytes;
+                final long requiredSpaceBytes = totalLength - breakpointBytes;
 
                 final long freeSpaceBytes = FileDownloadUtils.getFreeSpaceBytes(path);
 
@@ -711,14 +758,13 @@ public class DownloadLaunchRunnable implements Runnable, ProcessCallback {
                     // throw a out of space exception.
                     throw new FileDownloadOutOfSpaceException(freeSpaceBytes,
                             requiredSpaceBytes, breakpointBytes);
-                } else if (!FileDownloadProperties.getImpl().FILE_NON_PRE_ALLOCATION) {
+                } else if (!FileDownloadProperties.getImpl().fileNonPreAllocation) {
                     // pre allocate.
-                    outputStream.setLength(contentLength);
+                    outputStream.setLength(totalLength);
                 }
             }
         } finally {
-            if (outputStream != null)
-                outputStream.close();
+            if (outputStream != null) outputStream.close();
         }
     }
 
@@ -739,13 +785,13 @@ public class DownloadLaunchRunnable implements Runnable, ProcessCallback {
     public void onCompleted(DownloadRunnable doneRunnable, long startOffset, long endOffset) {
         if (paused) {
             if (FileDownloadLog.NEED_LOG) {
-                FileDownloadLog.d(this, "the task[%d] has already been paused, so pass the" +
-                        " completed callback", model.getId());
+                FileDownloadLog.d(this, "the task[%d] has already been paused, so pass the"
+                        + " completed callback", model.getId());
             }
             return;
         }
 
-        final int doneConnectionIndex = doneRunnable == null ? -1 : doneRunnable.connectionIndex;
+        final int doneConnectionIndex = doneRunnable.connectionIndex;
         if (FileDownloadLog.NEED_LOG) {
             FileDownloadLog.d(this, "the connection has been completed(%d): [%d, %d)  %d",
                     doneConnectionIndex, startOffset, endOffset, model.getTotal());
@@ -753,8 +799,8 @@ public class DownloadLaunchRunnable implements Runnable, ProcessCallback {
 
         if (isSingleConnection) {
             if (startOffset != 0 && endOffset != model.getTotal()) {
-                FileDownloadLog.e(this, "the single task not completed corrected(%d, %d != %d) " +
-                        "for task(%d)", startOffset, endOffset, model.getTotal(), model.getId());
+                FileDownloadLog.e(this, "the single task not completed corrected(%d, %d != %d) "
+                        + "for task(%d)", startOffset, endOffset, model.getTotal(), model.getId());
             }
         } else {
             synchronized (downloadRunnableList) {
@@ -772,7 +818,8 @@ public class DownloadLaunchRunnable implements Runnable, ProcessCallback {
 
             if (isSingleConnection && code == HTTP_REQUESTED_RANGE_NOT_SATISFIABLE) {
                 if (!isTriedFixRangeNotSatisfiable) {
-                    FileDownloadUtils.deleteTaskFiles(model.getTargetFilePath(), model.getTempFilePath());
+                    FileDownloadUtils
+                            .deleteTaskFiles(model.getTargetFilePath(), model.getTempFilePath());
                     isTriedFixRangeNotSatisfiable = true;
                     return true;
                 }
@@ -789,8 +836,8 @@ public class DownloadLaunchRunnable implements Runnable, ProcessCallback {
 
         if (paused) {
             if (FileDownloadLog.NEED_LOG) {
-                FileDownloadLog.d(this, "the task[%d] has already been paused, so pass the" +
-                        " error callback", model.getId());
+                FileDownloadLog.d(this, "the task[%d] has already been paused, so pass the"
+                        + " error callback", model.getId());
             }
             return;
         }
@@ -807,11 +854,11 @@ public class DownloadLaunchRunnable implements Runnable, ProcessCallback {
     }
 
     @Override
-    public void onRetry(Exception exception, long invalidIncreaseBytes) {
+    public void onRetry(Exception exception) {
         if (paused) {
             if (FileDownloadLog.NEED_LOG) {
-                FileDownloadLog.d(this, "the task[%d] has already been paused, so pass the" +
-                        " retry callback", model.getId());
+                FileDownloadLog.d(this, "the task[%d] has already been paused, so pass the"
+                        + " retry callback", model.getId());
             }
             return;
         }
@@ -821,7 +868,7 @@ public class DownloadLaunchRunnable implements Runnable, ProcessCallback {
                     validRetryTimes, model.getId());
         }
 
-        statusCallback.onRetry(exception, validRetryTimes--, invalidIncreaseBytes);
+        statusCallback.onRetry(exception, validRetryTimes);
     }
 
     @Override
@@ -833,13 +880,13 @@ public class DownloadLaunchRunnable implements Runnable, ProcessCallback {
             throws FileDownloadGiveUpRetryException {
 
         // 1. check whether need access-network-state permission?
-        if (isWifiRequired &&
-                !FileDownloadUtils.checkPermission(Manifest.permission.ACCESS_NETWORK_STATE)) {
+        if (isWifiRequired
+                && !FileDownloadUtils.checkPermission(Manifest.permission.ACCESS_NETWORK_STATE)) {
             throw new FileDownloadGiveUpRetryException(
-                    FileDownloadUtils.formatString("Task[%d] can't start the download runnable," +
-                                    " because this task require wifi, but user application " +
-                                    "nor current process has %s, so we can't check whether " +
-                                    "the network type connection.", model.getId(),
+                    FileDownloadUtils.formatString("Task[%d] can't start the download runnable,"
+                                    + " because this task require wifi, but user application "
+                                    + "nor current process has %s, so we can't check whether "
+                                    + "the network type connection.", model.getId(),
                             Manifest.permission.ACCESS_NETWORK_STATE));
         }
 
@@ -849,7 +896,7 @@ public class DownloadLaunchRunnable implements Runnable, ProcessCallback {
         }
     }
 
-    private void checkupBeforeFetch() throws RetryDirectly, DiscardSafely {
+    private void checkupAfterGetFilename() throws RetryDirectly, DiscardSafely {
         final int id = model.getId();
 
         if (model.isPathAsDirectory()) {
@@ -885,7 +932,8 @@ public class DownloadLaunchRunnable implements Runnable, ProcessCallback {
                     throw new DiscardSafely();
                 }
 
-                final List<ConnectionModel> connectionModelList = database.findConnectionModel(fileCaseId);
+                final List<ConnectionModel> connectionModelList = database
+                        .findConnectionModel(fileCaseId);
 
                 // the another task with the same file name and url is paused
                 database.remove(fileCaseId);
@@ -994,10 +1042,12 @@ public class DownloadLaunchRunnable implements Runnable, ProcessCallback {
         }
 
         public DownloadLaunchRunnable build() {
-            if (model == null || threadPoolMonitor == null ||
-                    minIntervalMillis == null || callbackProgressMaxCount == null ||
-                    isForceReDownload == null || isWifiRequired == null || maxRetryTimes == null)
+            if (model == null || threadPoolMonitor == null
+                    || minIntervalMillis == null || callbackProgressMaxCount == null
+                    || isForceReDownload == null || isWifiRequired == null
+                    || maxRetryTimes == null) {
                 throw new IllegalArgumentException();
+            }
 
             return new DownloadLaunchRunnable(model, header, threadPoolMonitor,
                     minIntervalMillis, callbackProgressMaxCount,

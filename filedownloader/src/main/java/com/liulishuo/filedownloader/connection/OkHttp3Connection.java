@@ -16,11 +16,11 @@
 
 package com.liulishuo.filedownloader.connection;
 
-import com.liulishuo.filedownloader.connection.FileDownloadConnection;
 import com.liulishuo.filedownloader.util.FileDownloadHelper;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.net.ProtocolException;
 import java.util.List;
 import java.util.Map;
 
@@ -83,6 +83,11 @@ public class OkHttp3Connection implements FileDownloadConnection {
     @Override
     public String getResponseHeaderField(String name) {
         return mResponse == null ? null : mResponse.header(name);
+    }
+
+    @Override
+    public boolean setRequestMethod(String method) throws ProtocolException {
+        return false;
     }
 
     @Override
