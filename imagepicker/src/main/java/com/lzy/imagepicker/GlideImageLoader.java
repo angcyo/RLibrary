@@ -7,6 +7,7 @@ import android.support.v4.content.ContextCompat;
 import android.text.TextUtils;
 import android.widget.ImageView;
 
+import com.angcyo.github.utilcode.utils.ImageUtils;
 import com.angcyo.library.okhttp.Ok;
 import com.angcyo.library.utils.L;
 import com.bumptech.glide.Glide;

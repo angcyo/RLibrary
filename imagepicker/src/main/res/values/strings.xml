@@ -13,4 +13,8 @@
     <string name="photo_crop">图片裁剪</string>
     <string name="origin">原图</string>
     <string name="origin_size">原图(%1$s)</string>
+
+    <string name="save_to_phone_format">保存至:%1$s</string>
+    <string name="save_image">保存图片</string>
+    <string name="save_error">保存失败</string>
 </resources>

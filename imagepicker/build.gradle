@@ -1,7 +1,7 @@
 apply from: '../lib.gradle'
 
 dependencies {
-    api project(':RLibrary:library')
+    api project(':RLibrary:uiview')
 }
 
 //apply from: '../bintray.gradle'

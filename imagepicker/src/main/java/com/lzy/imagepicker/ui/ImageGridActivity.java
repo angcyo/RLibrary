@@ -14,7 +14,6 @@ import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.ActivityCompat;
 import android.support.v7.widget.GridLayoutManager;
-import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.text.TextPaint;
 import android.util.Log;
@@ -24,6 +23,7 @@ import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.TextView;
 
+import com.angcyo.uiview.recycler.RExItemDecoration;
 import com.lzy.imagepicker.ImageDataSource;
 import com.lzy.imagepicker.ImagePicker;
 import com.lzy.imagepicker.R;
@@ -127,8 +127,9 @@ public class ImageGridActivity extends ImageBaseActivity implements ImageDataSou
         mRecyclerView = (RecyclerView) findViewById(R.id.recycler_view);
         mRecyclerView.setLayoutManager(new GridLayoutManager(this, 3));
         mRecyclerView.addItemDecoration(new RExItemDecoration(new RExItemDecoration.ItemDecorationCallback() {
+
             @Override
-            public Rect getItemOffsets(LinearLayoutManager layoutManager, int position) {
+            public Rect getItemOffsets(RecyclerView.LayoutManager layoutManager, int position, int edge) {
                 Rect rect = new Rect(0, 0, 0, 0);
                 int offset = (int) (getResources().getDisplayMetrics().density * 2);
                 if (position % 3 != 2) {

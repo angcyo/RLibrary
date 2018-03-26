@@ -484,6 +484,7 @@ open class UIScanView2 : UIContentView(), IActivity, SurfaceHolder.Callback {
             }
         }
 
+        /**调用三层扫码方法*/
         fun scanPictureFun(context: Context, bitmapPath: String): String {
             return scanPictureFun1(createBitmap(context, bitmapPath))
         }
