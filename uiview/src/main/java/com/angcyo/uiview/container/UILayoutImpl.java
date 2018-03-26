@@ -253,13 +253,6 @@ public class UILayoutImpl extends SwipeBackLayout implements ILayout, UIViewPage
 //        }
     }
 
-    public void startIViewList(List<IView> iViewList) {
-        for (IView iView : iViewList) {
-            UIParam uiParam = new UIParam(false, false);
-            startIView(iView, uiParam);
-        }
-    }
-
     public UILayoutImpl(Context context, AttributeSet attrs) {
         super(context, attrs);
         initLayout();
@@ -319,6 +312,13 @@ public class UILayoutImpl extends SwipeBackLayout implements ILayout, UIViewPage
             return "String:" + obj;
         }
         return obj.getClass().getSimpleName();
+    }
+
+    public void startIViewList(List<IView> iViewList) {
+        for (IView iView : iViewList) {
+            UIParam uiParam = new UIParam(false, false);
+            startIView(iView, uiParam);
+        }
     }
 
     @Override
@@ -775,7 +775,8 @@ public class UILayoutImpl extends SwipeBackLayout implements ILayout, UIViewPage
                     }
                     topViewStart(newViewPattern, param);
                 } else {
-                    nextTask();
+                    currentViewTask.taskRun--;
+                    checkTaskOnIViewAnimationEnd();
                 }
             }
         };
@@ -841,6 +842,15 @@ public class UILayoutImpl extends SwipeBackLayout implements ILayout, UIViewPage
             if (haveTask) {
                 checkTaskOnIViewAnimationEnd();
             }
+        }
+    }
+
+    /**
+     * 移除当前任务
+     */
+    private void removeCurrentTask() {
+        if (currentViewTask != null) {
+            mViewTasks.remove(currentViewTask);
         }
     }
 
@@ -944,7 +954,8 @@ public class UILayoutImpl extends SwipeBackLayout implements ILayout, UIViewPage
                 if (newViewPattern != null) {
                     startIViewAnim(topViewPattern, newViewPattern, param, false);
                 } else {
-                    nextTask();
+                    currentViewTask.taskRun--;
+                    checkTaskOnIViewAnimationEnd();
                 }
             }
         };

@@ -11,6 +11,7 @@ import java.util.List;
 
 /**
  * 当Item数量不足一页时, 使用空的View填充, 以达到ViewPager的效果
+ * 配合 {@link RecyclerViewPager} 使用
  */
 public abstract class RecyclerViewPagerAdapter<T> extends RBaseAdapter<T> {
 
