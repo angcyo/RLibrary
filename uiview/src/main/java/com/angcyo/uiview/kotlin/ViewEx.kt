@@ -15,6 +15,7 @@ import android.widget.TextView
 import com.angcyo.github.utilcode.utils.SingleTextWatcher
 import com.angcyo.library.utils.Anim
 import com.angcyo.uiview.recycler.RRecyclerView
+import com.angcyo.uiview.rsen.RGestureDetector
 import com.angcyo.uiview.utils.ScreenUtil
 import com.angcyo.uiview.utils.ScreenUtil.density
 import com.angcyo.uiview.view.RClickListener
@@ -329,4 +330,11 @@ public fun View.showShadowViewDrawable(shadowRadius: Int = 6) {
     val sd = ShadowViewDrawable(sp, Color.RED, 0f, 0f)
     ViewCompat.setLayerType(this, ViewCompat.LAYER_TYPE_SOFTWARE, null)
     ViewCompat.setBackground(this, sd)
+}
+
+/**双击控件回调*/
+public fun View.onDoubleTap(listener: () -> Unit) {
+    RGestureDetector.onDoubleTap(this) {
+        listener.invoke()
+    }
 }
