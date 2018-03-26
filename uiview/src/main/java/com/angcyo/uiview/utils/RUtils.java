@@ -69,13 +69,17 @@ import com.angcyo.uiview.utils.file.FileUtil;
 import com.angcyo.uiview.widget.ExEditText;
 import com.angcyo.uiview.widget.RExTextView;
 
+import java.io.BufferedOutputStream;
 import java.io.BufferedWriter;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.FileOutputStream;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
 import java.io.PrintWriter;
 import java.lang.reflect.Field;
 import java.text.DateFormat;
@@ -84,12 +88,15 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Random;
 import java.util.Set;
+import java.util.zip.ZipEntry;
+import java.util.zip.ZipFile;
 
 /**
  * Created by angcyo on 15-12-16 016 15:41 下午.
@@ -2259,6 +2266,7 @@ public class RUtils {
         try {
             Root.ensureFolder(destDirPath);
             ZipUtils.unzipFileSteam(filePath, destDirPath);
+//            unzip(filePath, destDirPath);
             return destDirPath;
         } catch (Exception e) {
             e.printStackTrace();
@@ -2278,6 +2286,72 @@ public class RUtils {
             }
         }
         return result;
+    }
+
+    /**
+     * 不支持中文
+     */
+    public static void unzip(String zipFilePath, String targetPath)
+            throws Exception {
+
+        OutputStream os = null;
+        InputStream is = null;
+        ZipFile zipFile = null;
+        try {
+            zipFile = new ZipFile(zipFilePath);
+            String directoryPath = zipFilePath.substring(0,
+                    zipFilePath.lastIndexOf("."));
+            new File(directoryPath).mkdir();
+            Enumeration entryEnum = zipFile.entries();
+            if (null != entryEnum) {
+                ZipEntry zipEntry = null;
+                while (entryEnum.hasMoreElements()) {
+                    zipEntry = (ZipEntry) entryEnum.nextElement();
+                    if (!zipEntry.isDirectory()) {
+                        File targetFile = new File(directoryPath
+                                + File.separator + zipEntry.getName());
+                        os = new BufferedOutputStream(new FileOutputStream(
+                                targetFile));
+                        is = zipFile.getInputStream(zipEntry);
+                        byte[] buffer = new byte[4096];
+                        int readLen = 0;
+                        while ((readLen = is.read(buffer, 0, 4096)) >= 0) {
+                            os.write(buffer, 0, readLen);
+                        }
+                        os.flush();
+                        os.close();
+                        os = null;
+                        is.close();
+                        is = null;
+                    }
+                }
+            }
+        } catch (Exception e) {
+
+        } finally {
+            if (null != is) {
+                try {
+                    is.close();
+                } catch (Exception e2) {
+                    // TODO: handle exception
+                }
+            }
+            if (null != os) {
+                try {
+                    os.close();
+                } catch (Exception e2) {
+                    // TODO: handle exception
+                }
+            }
+            if (null != zipFile) {
+                try {
+                    zipFile.close();
+                    zipFile = null;
+                } catch (Exception e2) {
+                    // TODO: handle exception
+                }
+            }
+        }
     }
 
     interface OnPutValue {

@@ -419,7 +419,7 @@ public class ZipUtils {
     }
 
     /**
-     * 解压文件, robi
+     * 解压文件, robi, 不支持中文
      */
     public static void unzipSteam(InputStream is, String outputPath)
             throws Exception {
