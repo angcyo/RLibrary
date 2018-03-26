@@ -181,7 +181,6 @@ open class GlideImageView(context: Context, attributeSet: AttributeSet? = null) 
                 L.d("startLoadUrl 重复加载url -> $url")
             } else if (measuredHeight == 0 ||
                     measuredWidth == 0) {
-
             } else {
                 L.d("startLoadUrl 加载url -> $url")
 
@@ -196,11 +195,14 @@ open class GlideImageView(context: Context, attributeSet: AttributeSet? = null) 
     }
 
     @SuppressLint("CheckResult")
-    private fun defaultConfig(isGif: Boolean): RequestOptions {
-        val requestOptions = RequestOptions
-                .placeholderOf(placeholderRes)
-                .error(placeholderRes)
-                .skipMemoryCache(skipMemoryCache)
+    protected open fun defaultConfig(isGif: Boolean): RequestOptions {
+        val requestOptions = if (noPlaceholderDrawable) {
+            RequestOptions()
+        } else {
+            RequestOptions.placeholderOf(placeholderRes)
+                    .error(placeholderRes)
+        }
+        requestOptions.skipMemoryCache(skipMemoryCache)
 
         /**DiskCacheStrategy.SOURCE：缓存原始数据，
          * DiskCacheStrategy.RESULT：缓存变换(如缩放、裁剪等)后的资源数据，
@@ -214,18 +216,24 @@ open class GlideImageView(context: Context, attributeSet: AttributeSet? = null) 
             requestOptions.diskCacheStrategy(DiskCacheStrategy.ALL).priority(Priority.NORMAL)
         }
 
-        if (scaleType == ScaleType.CENTER_CROP) {
-            requestOptions.centerCrop()
+        if (bitmapTransform != null) {
+            requestOptions.transform(bitmapTransform!!)
+        } else {
+            requestOptions.dontTransform()
+        }
+
+        when (scaleType) {
+            ScaleType.CENTER_CROP -> requestOptions.centerCrop()
+            ScaleType.CENTER_INSIDE -> requestOptions.centerInside()
+            ScaleType.CENTER -> requestOptions.centerInside()
+            ScaleType.FIT_CENTER -> requestOptions.fitCenter()
         }
 
         when (animType) {
             AnimType.NONE, AnimType.TRANSITION -> requestOptions.dontAnimate()
             AnimType.CROSS_FADE -> {
+                //requestOptions //默认就是这个动画
             }
-        }
-
-        if (bitmapTransform != null) {
-            requestOptions.transform(bitmapTransform!!)
         }
 
         return requestOptions
@@ -246,7 +254,9 @@ open class GlideImageView(context: Context, attributeSet: AttributeSet? = null) 
         initListener(request)
 
         intoConfig {
-            requestOptions.override(measuredWidth, measuredHeight)
+            if (override) {
+                requestOptions.override(measuredWidth, measuredHeight)
+            }
             request.apply(requestOptions)
             if (animType == AnimType.TRANSITION) {
                 request.into(object : SimpleTarget<File>() {
@@ -267,7 +277,9 @@ open class GlideImageView(context: Context, attributeSet: AttributeSet? = null) 
         initListener(request)
 
         intoConfig {
-            requestOptions.override(measuredWidth, measuredHeight)
+            if (override) {
+                requestOptions.override(measuredWidth, measuredHeight)
+            }
             request.apply(requestOptions)
             if (animType == AnimType.TRANSITION) {
                 request.into(object : SimpleTarget<GifDrawable>() {
@@ -289,7 +301,9 @@ open class GlideImageView(context: Context, attributeSet: AttributeSet? = null) 
         initListener(request)
 
         intoConfig {
-            requestOptions.override(measuredWidth, measuredHeight)
+            if (override) {
+                requestOptions.override(measuredWidth, measuredHeight)
+            }
             request.apply(requestOptions)
             if (animType == AnimType.TRANSITION) {
                 request.into(object : SimpleTarget<Drawable>() {
@@ -310,7 +324,9 @@ open class GlideImageView(context: Context, attributeSet: AttributeSet? = null) 
         initListener(request)
 
         intoConfig {
-            requestOptions.override(measuredWidth, measuredHeight)
+            if (override) {
+                requestOptions.override(measuredWidth, measuredHeight)
+            }
             request.apply(requestOptions)
             if (animType == AnimType.TRANSITION) {
                 request.into(object : SimpleTarget<Bitmap>() {

@@ -4,6 +4,7 @@ import android.content.Context
 import android.util.AttributeSet
 import android.view.View
 import com.angcyo.uiview.R
+import com.bumptech.glide.request.RequestOptions
 
 /**
  * Copyright (C) 2016,深圳市红鸟网络科技股份有限公司 All rights reserved.
@@ -25,27 +26,32 @@ abstract class BaseFramesImageView<T>(context: Context, attributeSet: AttributeS
     var switchInterval = 160
 
     private var dataIndex = 0
-        set(value) {
-            field = if (value >= dataList.size) {
-                0
-            } else {
-                value
-            }
-        }
+
+    /**循环播放*/
+    var loopSwitch = true
+
+    /**循环了第几圈*/
+    protected var frameCount = 0
 
     init {
-        animType = AnimType.CROSS_FADE
+        animType = AnimType.NONE
         defaultPlaceholderDrawableRes = -1
+
+        skipMemoryCache = false
+        noPlaceholderDrawable = true
+        override = false
+        mShowGifTip = false
 
         val array = context.obtainStyledAttributes(R.styleable.BaseFramesImageView)
         switchInterval = array.getInteger(R.styleable.BaseFramesImageView_r_frame_switch_interval, switchInterval)
         array.recycle()
     }
 
-    fun resetDataList(photos: List<T>) {
+    open fun resetDataList(photos: List<T>) {
         dataList.clear()
         dataList.addAll(photos)
         dataIndex = 0
+        frameCount = 0
         checkStart()
     }
 
@@ -54,11 +60,31 @@ abstract class BaseFramesImageView<T>(context: Context, attributeSet: AttributeS
                 measuredHeight != 0 &&
                 measuredWidth != 0 &&
                 dataList.isNotEmpty()) {
-            onDataIndex(dataList[dataIndex], dataIndex)
-            postDelayed(switchRunnable, switchInterval.toLong())
+
+            if (dataIndex >= dataList.size) {
+                frameCount++
+                onFrameEnd(frameCount)
+                //结束了
+                if (loopSwitch) {
+                    dataIndex = 0
+
+                    onDataIndex(dataList[dataIndex], dataIndex)
+                    postDelayed(switchRunnable, switchInterval.toLong())
+                } else {
+                    //需要停留在最后一帧?
+                }
+            } else {
+                onDataIndex(dataList[dataIndex], dataIndex)
+                postDelayed(switchRunnable, switchInterval.toLong())
+            }
         } else {
             removeCallbacks(switchRunnable)
         }
+    }
+
+    /**循环结束*/
+    open fun onFrameEnd(frameCount: Int /*第几圈*/) {
+
     }
 
     private val switchRunnable = Runnable {
@@ -84,6 +110,10 @@ abstract class BaseFramesImageView<T>(context: Context, attributeSet: AttributeS
     override fun onDetachedFromWindow() {
         super.onDetachedFromWindow()
         checkStart()
+    }
+
+    override fun defaultConfig(isGif: Boolean): RequestOptions {
+        return super.defaultConfig(isGif).placeholder(drawable).error(drawable)
     }
 
     abstract fun onDataIndex(data: T?, index: Int)

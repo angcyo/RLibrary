@@ -393,8 +393,9 @@ public class RImageView extends CircleImageView {
     }
 
     public void setShowGifTip(boolean showGifTip) {
+        boolean old = mShowGifTip;
         mShowGifTip = showGifTip;
-        if (isAttachedToWindow) {
+        if (isAttachedToWindow && old != showGifTip) {
             postInvalidate();
         }
     }

@@ -87,6 +87,7 @@ import java.text.DecimalFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Collections;
 import java.util.Date;
 import java.util.Enumeration;
 import java.util.HashMap;
@@ -2377,6 +2378,21 @@ public class RUtils {
                 }
             }
         }
+    }
+
+    /**
+     * 从文件夹中获取排好序(自然升序)的所有可读文件
+     */
+    public static List<String> getAllFileFromFolder(String folder) {
+        List<File> files = FileUtils.listFilesInDir(folder, true);
+        List<String> paths = new ArrayList<>();
+        for (File f : files) {
+            if (f.isFile() && !f.isHidden() && f.canRead()) {
+                paths.add(f.getAbsolutePath());
+            }
+        }
+        Collections.sort(paths);
+        return paths;
     }
 
     interface OnPutValue {
