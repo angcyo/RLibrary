@@ -12,11 +12,11 @@ import android.view.MotionEvent
 import android.view.View
 import android.widget.EditText
 import android.widget.TextView
+import com.angcyo.github.utilcode.utils.SingleTextWatcher
 import com.angcyo.library.utils.Anim
 import com.angcyo.uiview.recycler.RRecyclerView
 import com.angcyo.uiview.utils.ScreenUtil
 import com.angcyo.uiview.utils.ScreenUtil.density
-import com.angcyo.uiview.utils.string.SingleTextWatcher
 import com.angcyo.uiview.view.RClickListener
 import com.angcyo.uiview.view.UIIViewImpl
 import com.wangjie.shadowviewhelper.ShadowProperty

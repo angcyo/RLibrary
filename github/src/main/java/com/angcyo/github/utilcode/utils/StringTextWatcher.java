@@ -1,4 +1,4 @@
-package com.angcyo.uiview.utils.string;
+package com.angcyo.github.utilcode.utils;
 
 import android.text.Editable;
 import android.text.TextWatcher;
@@ -31,7 +31,7 @@ public class StringTextWatcher implements TextWatcher {
     public void afterTextChanged(Editable s) {
         int editEnd = editText.getSelectionEnd();
         editText.removeTextChangedListener(this);
-        while (StringUtil.counterChars(s.toString()) > length && editEnd > 0) {
+        while (StringUtils.counterChars(s.toString()) > length && editEnd > 0) {
             s.delete(editEnd - 1, editEnd);
             editEnd--;
         }

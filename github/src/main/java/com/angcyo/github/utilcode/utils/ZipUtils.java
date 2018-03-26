@@ -413,14 +413,14 @@ public class ZipUtils {
         return new ZipFile(zipFile).entries();
     }
 
+    /**
+     * 解压文件, 支持标准格式的zip压缩包, 其他格式未测
+     */
     public static void unzipFileSteam(String filePath, String outputPath)
             throws Exception {
         unzipSteam(new FileInputStream(new File(filePath)), outputPath);
     }
 
-    /**
-     * 解压文件, robi, 不支持中文
-     */
     public static void unzipSteam(InputStream is, String outputPath)
             throws Exception {
         ZipInputStream inputZip = new ZipInputStream(is);

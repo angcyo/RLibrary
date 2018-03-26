@@ -11,14 +11,14 @@ import android.graphics.drawable.Drawable;
 import android.media.ExifInterface;
 import android.text.TextUtils;
 
+import com.angcyo.github.utilcode.utils.FileUtils;
+import com.angcyo.github.utilcode.utils.StringUtils;
 import com.angcyo.uiview.R;
 import com.angcyo.uiview.RApplication;
 import com.angcyo.uiview.utils.ScreenUtil;
 import com.angcyo.uiview.utils.file.AttachmentStore;
-import com.angcyo.uiview.utils.file.FileUtil;
 import com.angcyo.uiview.utils.storage.StorageType;
 import com.angcyo.uiview.utils.storage.StorageUtil;
-import com.angcyo.uiview.utils.string.StringUtil;
 
 import java.io.BufferedOutputStream;
 import java.io.File;
@@ -283,7 +283,7 @@ public class ImageUtil {
             return null;
         }
 
-        String tempFilePath = getTempFilePath(FileUtil.getExtensionName(filePath));
+        String tempFilePath = getTempFilePath(FileUtils.getExtensionName(filePath));
         File tempImageFile = AttachmentStore.create(tempFilePath);
         if (tempImageFile == null) {
             return null;
@@ -304,7 +304,7 @@ public class ImageUtil {
     private static String getTempFilePath(String extension) {
         return StorageUtil.getWritePath(
                 RApplication.getApp(),
-                "temp_image_" + StringUtil.get36UUID() + "." + extension,
+                "temp_image_" + StringUtils.get36UUID() + "." + extension,
                 StorageType.TYPE_TEMP);
     }
 

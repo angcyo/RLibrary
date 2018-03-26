@@ -52,6 +52,7 @@ import android.view.View;
 import android.view.WindowManager;
 
 import com.angcyo.github.utilcode.utils.CmdUtil;
+import com.angcyo.github.utilcode.utils.FileUtils;
 import com.angcyo.github.utilcode.utils.ImageUtils;
 import com.angcyo.github.utilcode.utils.NetworkUtils;
 import com.angcyo.github.utilcode.utils.PhoneUtils;
@@ -65,7 +66,6 @@ import com.angcyo.uiview.Root;
 import com.angcyo.uiview.accessibility.permission.SettingsCompat;
 import com.angcyo.uiview.net.rsa.Base64Utils;
 import com.angcyo.uiview.receiver.NetworkStateReceiver;
-import com.angcyo.uiview.utils.file.FileUtil;
 import com.angcyo.uiview.widget.ExEditText;
 import com.angcyo.uiview.widget.RExTextView;
 
@@ -2261,17 +2261,42 @@ public class RUtils {
      * 加压到当前文件夹
      */
     public static String unzip(String filePath) {
+        return unzip(filePath, false, true);
+    }
+
+    public static String unzip(String filePath,
+                               boolean deleteOld, /*先清空目前文件夹*/
+                               boolean checkExist /*如果目标文件夹有文件, 则不解压*/) {
         File file = new File(filePath);
-        String destDirPath = file.getParent() + File.separator + FileUtil.getFileNameNoEx(file.getName());
+        String destDirPath = file.getParent() + File.separator + FileUtils.getFileNameNoEx(file.getName());
         try {
             Root.ensureFolder(destDirPath);
-            ZipUtils.unzipFileSteam(filePath, destDirPath);
+            File folder = new File(destDirPath);
+
+            if (checkExist) {
+                if (folder.exists() && folder.isDirectory()) {
+                    if (folder.listFiles().length > 0) {
+                        //目标文件夹有文件
+                        L.w(filePath + " 跳过解压");
+                    } else {
+                        if (deleteOld) {
+                            FileUtils.deleteDir(folder);
+                        }
+                        ZipUtils.unzipFileSteam(filePath, destDirPath);
+                    }
+                }
+            } else {
+                if (deleteOld) {
+                    FileUtils.deleteDir(folder);
+                }
+                ZipUtils.unzipFileSteam(filePath, destDirPath);
+            }
 //            unzip(filePath, destDirPath);
             return destDirPath;
         } catch (Exception e) {
             e.printStackTrace();
+            return "unzip error:" + e.getMessage();
         }
-        return null;
     }
 
     public static String[] toStringArray(List<Object> list) {

@@ -13,10 +13,9 @@ import android.support.v4.app.ActivityCompat;
 import android.text.TextUtils;
 import android.text.format.Formatter;
 
-import com.angcyo.github.utilcode.utils.PhoneUtils;
 import com.angcyo.github.utilcode.utils.RegexUtils;
+import com.angcyo.github.utilcode.utils.StringUtils;
 import com.angcyo.library.utils.L;
-import com.angcyo.uiview.utils.string.StringUtil;
 import com.github.promeg.pinyinhelper.Pinyin;
 
 import java.util.ArrayList;
@@ -101,13 +100,13 @@ public class ContactsPickerHelper {
                             //相同联系人的不同手机号码视为不同的联系人
                             for (String phone : phones) {
                                 // 去除非手机号
-                                if (!RegexUtils.isMobileExact(StringUtil.removeBlanks(phone))) {
+                                if (!RegexUtils.isMobileExact(StringUtils.removeBlanks(phone))) {
                                     continue;
                                 }
                                 ContactsInfo io = new ContactsInfo();
                                 io.contactId = contactId;
                                 io.name = name;
-                                io.phone = StringUtil.removeBlanks(phone);
+                                io.phone = StringUtils.removeBlanks(phone);
                                 io.letter = String.valueOf(Pinyin.toPinyin(name.charAt(0)).toUpperCase().charAt(0));
                                 contactsInfos.add(io);
                             }

@@ -1,4 +1,4 @@
-package com.angcyo.uiview.utils.string;
+package com.angcyo.github.utilcode.utils;
 
 import java.io.IOException;
 import java.io.StringReader;

@@ -8,7 +8,6 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 
 import com.angcyo.uiview.R;
-import com.angcyo.uiview.utils.string.StringUtil;
 import com.angcyo.uiview.widget.RTextView;
 
 import java.util.ArrayList;

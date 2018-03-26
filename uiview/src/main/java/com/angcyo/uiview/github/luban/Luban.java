@@ -13,10 +13,10 @@ import android.text.TextUtils;
 import android.text.format.Formatter;
 import android.util.Log;
 
+import com.angcyo.github.utilcode.utils.FileUtils;
 import com.angcyo.library.okhttp.Ok;
 import com.angcyo.library.utils.L;
 import com.angcyo.uiview.utils.RUtils;
-import com.angcyo.uiview.utils.file.FileUtil;
 
 import java.io.BufferedInputStream;
 import java.io.BufferedOutputStream;
@@ -459,7 +459,7 @@ public class Luban {
     private File thirdCompress(@NonNull File file) {
         String thumb = mCacheDir.getAbsolutePath() + File.separator +
                 (TextUtils.isEmpty(filename) ? UUID.randomUUID().toString()/*System.currentTimeMillis()*/ : filename) +
-                "." + FileUtil.getExtensionName(file.getName(), "jpg");
+                "." + FileUtils.getExtensionName(file.getName(), "jpg");
 
         double size;
         String filePath = file.getAbsolutePath();
@@ -699,7 +699,7 @@ public class Luban {
         String filePath = toPath;
         File targetFile = file;
         try {
-            filePath += "_s_" + width + "x" + height + "." + FileUtil.getExtensionName(file.getName(), "jpg");
+            filePath += "_s_" + width + "x" + height + "." + FileUtils.getExtensionName(file.getName(), "jpg");
 
             FileInputStream input = new FileInputStream(file);
             BufferedInputStream inBuff = new BufferedInputStream(input);

@@ -9,6 +9,7 @@ import android.view.View
 import android.widget.FrameLayout
 import android.widget.HorizontalScrollView
 import com.angcyo.github.utilcode.utils.FileUtils
+import com.angcyo.github.utilcode.utils.MD5
 import com.angcyo.library.okhttp.Ok
 import com.angcyo.uiview.R
 import com.angcyo.uiview.Root
@@ -22,7 +23,6 @@ import com.angcyo.uiview.recycler.adapter.RBaseAdapter
 import com.angcyo.uiview.recycler.widget.IShowState
 import com.angcyo.uiview.skin.SkinHelper
 import com.angcyo.uiview.utils.RUtils
-import com.angcyo.uiview.utils.string.MD5
 import com.angcyo.uiview.viewgroup.RLinearLayout
 import java.io.File
 import java.text.SimpleDateFormat
