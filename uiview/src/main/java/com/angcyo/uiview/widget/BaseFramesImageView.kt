@@ -33,6 +33,9 @@ abstract class BaseFramesImageView<T>(context: Context, attributeSet: AttributeS
     /**循环了第几圈*/
     protected var frameCount = 0
 
+    /**循环结束回调*/
+    var onFrameEndCallback: ((Int) -> Unit)? = null
+
     init {
         animType = AnimType.NONE
         defaultPlaceholderDrawableRes = -1
@@ -84,7 +87,7 @@ abstract class BaseFramesImageView<T>(context: Context, attributeSet: AttributeS
 
     /**循环结束*/
     open fun onFrameEnd(frameCount: Int /*第几圈*/) {
-
+        onFrameEndCallback?.invoke(frameCount)
     }
 
     private val switchRunnable = Runnable {

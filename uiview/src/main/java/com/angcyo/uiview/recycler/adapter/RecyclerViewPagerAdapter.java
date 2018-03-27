@@ -1,5 +1,6 @@
 package com.angcyo.uiview.recycler.adapter;
 
+import android.support.annotation.NonNull;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -64,5 +65,5 @@ public abstract class RecyclerViewPagerAdapter<T> extends RBaseAdapter<T> {
         }
     }
 
-    protected abstract void onBindRawView(RBaseViewHolder holder, int position, T bean);
+    protected abstract void onBindRawView(@NonNull RBaseViewHolder holder, int position, T bean);
 }

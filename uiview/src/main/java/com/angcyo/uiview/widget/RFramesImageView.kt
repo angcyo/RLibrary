@@ -50,4 +50,8 @@ open class RFramesImageView(context: Context, attributeSet: AttributeSet? = null
             url = it
         }
     }
+
+    override fun onFrameEnd(frameCount: Int) {
+        super.onFrameEnd(frameCount)
+    }
 }

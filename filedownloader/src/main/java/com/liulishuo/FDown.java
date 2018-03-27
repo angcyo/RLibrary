@@ -161,17 +161,18 @@ public class FDown {
 
     public static void downloads(FDownListener listener, String folder,
                                  boolean isSerial, List<String> urls) {
+        FListener fListener = new FListener().addListener(listener);
         for (String url : urls) {
             FileDownloader.getImpl().create(url)
                     .setTag(url)
                     .setPath(folder + File.separator + getFileNameFromUrl(url), false)
                     //由于是队列任务, 这里是我们假设了现在不需要每个任务都回调`FileDownloadListener#progress`, 我们只关系每个任务是否完成, 所以这里这样设置可以很有效的减少ipc.
                     .setCallbackProgressTimes(0)//去掉进度回调, 只关心有没有下载成功
-                    //.setListener(listener)
+                    .setListener(fListener)
                     .asInQueueTask()
                     .enqueue();
         }
-        FileDownloader.getImpl().start(new FListener().addListener(listener), isSerial);
+        FileDownloader.getImpl().start(fListener, isSerial);
     }
 
     public static void downloadsQueue(FDownListener listener, String folder, boolean isSerial, String... urls) {

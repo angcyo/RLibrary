@@ -31,7 +31,7 @@ public class Button extends RTextView {
      */
     public static final int DEFAULT = 1;
     /**
-     * 圆角矩形填充样式
+     * 圆角矩形填充样式, 通过 roundRadii 修改圆角大小
      */
     public static final int ROUND = 2;
     /**
@@ -67,20 +67,27 @@ public class Button extends RTextView {
         TypedArray typedArray = context.obtainStyledAttributes(attrs, R.styleable.Button);
         mButtonStyle = typedArray.getInt(R.styleable.Button_r_button_style, DEFAULT);
 
+        int defaultValue = (int) (3 * density());
+        if (mButtonStyle == ROUND) {
+            defaultValue = RADII;
+        }
+
         if (isInEditMode()) {
             themeSubColor = ViewExKt.getColor(this, R.color.theme_color_accent);
             themeDarkColor = ViewExKt.getColor(this, R.color.theme_color_primary_dark);
             disableColor = Color.GRAY;
 
-            borderWidth = typedArray.getDimensionPixelOffset(R.styleable.Button_r_button_border_width, 2);
-            roundRadii = typedArray.getDimensionPixelOffset(R.styleable.Button_r_button_round_radii, 6);
+            borderWidth = typedArray.getDimensionPixelOffset(R.styleable.Button_r_button_border_width, (int) (2 * density()));
+
+            roundRadii = typedArray.getDimensionPixelOffset(R.styleable.Button_r_button_round_radii, defaultValue);
         } else {
             themeSubColor = typedArray.getInt(R.styleable.Button_r_button_theme_color, SkinHelper.getSkin().getThemeSubColor());
             themeDarkColor = typedArray.getInt(R.styleable.Button_r_button_theme_dark_color, SkinHelper.getSkin().getThemeDarkColor());
             disableColor = ContextCompat.getColor(getContext(), R.color.base_color_disable);
 
             borderWidth = typedArray.getDimensionPixelOffset(R.styleable.Button_r_button_border_width, (int) (1 * density()));
-            roundRadii = typedArray.getDimensionPixelOffset(R.styleable.Button_r_button_round_radii, (int) (3 * density()));
+
+            roundRadii = typedArray.getDimensionPixelOffset(R.styleable.Button_r_button_round_radii, defaultValue);
         }
         typedArray.recycle();
 
@@ -95,17 +102,17 @@ public class Button extends RTextView {
                 case ROUND:
                     setBackground(ResUtil.ripple(themeSubColor,
                             ResUtil.selector(
-                                    ResUtil.createDrawable(themeSubColor, RADII),
-                                    ResUtil.createDrawable(themeDarkColor, RADII),
-                                    ResUtil.createDrawable(disableColor, RADII)
+                                    ResUtil.createDrawable(themeSubColor, roundRadii),
+                                    ResUtil.createDrawable(themeDarkColor, roundRadii),
+                                    ResUtil.createDrawable(disableColor, roundRadii)
                             )));
                     break;
                 case ROUND_BORDER:
                     setBackground(ResUtil.ripple(themeSubColor,
                             ResUtil.selector(
-                                    ResUtil.createDrawable(themeSubColor, Color.TRANSPARENT, borderWidth, RADII),
-                                    ResUtil.createDrawable(themeDarkColor, Color.TRANSPARENT, borderWidth, RADII),
-                                    ResUtil.createDrawable(disableColor, Color.TRANSPARENT, borderWidth, RADII)
+                                    ResUtil.createDrawable(themeSubColor, Color.TRANSPARENT, borderWidth, roundRadii),
+                                    ResUtil.createDrawable(themeDarkColor, Color.TRANSPARENT, borderWidth, roundRadii),
+                                    ResUtil.createDrawable(disableColor, Color.TRANSPARENT, borderWidth, roundRadii)
                             )));
                     break;
                 case ROUND_BORDER_FILL:

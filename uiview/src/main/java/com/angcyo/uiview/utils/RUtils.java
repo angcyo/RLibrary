@@ -2395,6 +2395,13 @@ public class RUtils {
         return paths;
     }
 
+    /**
+     * 读取文件所有内容
+     */
+    public static String readFile(String filePath) {
+        return FileUtils.readFile2String(filePath, "utf8");
+    }
+
     interface OnPutValue {
         void onValue(String key, String value);
     }
