@@ -79,11 +79,10 @@ public abstract class UIIViewImpl implements IView {
     public static final int DEFAULT_FINISH_ANIM_TIME = 200;//完成动画,尽量比启动动画快一点(相差最好是一帧的时间)
     public static final int DEFAULT_DIALOG_FINISH_ANIM_TIME = 150;
     public static int DEFAULT_CLICK_DELAY_TIME = RClickListener.Companion.getDEFAULT_DELAY_CLICK_TIME();
-
+    public UILayoutActivity mActivity;
     protected ILayout mILayout;
     protected ILayout mParentILayout;//上层ILayout, 用来管理上层IView的生命周期, 如果有值, 会等于mILayout
     protected ILayout mChildILayout;//
-    public UILayoutActivity mActivity;
     /**
      * 根布局
      */
@@ -445,10 +444,15 @@ public abstract class UIIViewImpl implements IView {
     public Animation loadStartAnimation(AnimParam animParam) {
         L.v(this.getClass().getSimpleName(), "loadStartAnimation: " + mIViewStatus);
         switch (mAnimationType) {
+            case NONE:
+                return null;
             case ALPHA:
                 return AnimUtil.createAlphaEnterAnim(0.8f);
             case TRANSLATE_VERTICAL:
                 return AnimUtil.translateStartAnimation();
+            case SCALE_TO_MAX:
+                return AnimUtil.scaleMaxAlphaStartAnimation(0.8f);
+            case TRANSLATE_HORIZONTAL:
             default:
                 TranslateAnimation translateAnimation;
                 if (mIsRightJumpLeft) {
@@ -467,10 +471,14 @@ public abstract class UIIViewImpl implements IView {
     public Animation loadFinishAnimation(AnimParam animParam) {
         L.v(this.getClass().getSimpleName(), "loadFinishAnimation: ");
         switch (mAnimationType) {
+            case NONE:
+                return null;
             case ALPHA:
                 return AnimUtil.createAlphaExitAnim(0.2f);
             case TRANSLATE_VERTICAL:
                 return AnimUtil.translateFinishAnimation();
+            case SCALE_TO_MAX:
+            case TRANSLATE_HORIZONTAL:
             default:
                 TranslateAnimation translateAnimation = new TranslateAnimation(Animation.RELATIVE_TO_SELF, 0, Animation.RELATIVE_TO_SELF, 1f,
                         Animation.RELATIVE_TO_SELF, 0f, Animation.RELATIVE_TO_SELF, 0f);
@@ -495,10 +503,15 @@ public abstract class UIIViewImpl implements IView {
     public Animation loadOtherExitAnimation(AnimParam animParam) {
         L.v(this.getClass().getSimpleName(), "loadOtherExitAnimation: ");
         switch (mAnimationType) {
+            case NONE:
+                return null;
             case ALPHA:
                 return AnimUtil.createAlphaExitAnim(0.8f);
             case TRANSLATE_VERTICAL:
                 return AnimUtil.createAlphaExitAnim(0.8f);
+            case SCALE_TO_MAX:
+                return AnimUtil.scaleMaxAlphaFinishAnimation(0.5f);
+            case TRANSLATE_HORIZONTAL:
             default:
                 TranslateAnimation translateAnimation;
                 if (mIsRightJumpLeft) {
@@ -517,10 +530,14 @@ public abstract class UIIViewImpl implements IView {
     public Animation loadOtherEnterAnimation(AnimParam animParam) {
         L.v(this.getClass().getSimpleName(), "loadOtherEnterAnimation: ");
         switch (mAnimationType) {
+            case NONE:
+                return null;
             case ALPHA:
                 return AnimUtil.createAlphaEnterAnim(0.8f);
             case TRANSLATE_VERTICAL:
                 return AnimUtil.createAlphaEnterAnim(0.8f);
+            case SCALE_TO_MAX:
+            case TRANSLATE_HORIZONTAL:
             default:
                 TranslateAnimation translateAnimation = new TranslateAnimation(Animation.RELATIVE_TO_SELF, -1f, Animation.RELATIVE_TO_SELF, 0,
                         Animation.RELATIVE_TO_SELF, 0f, Animation.RELATIVE_TO_SELF, 0f);

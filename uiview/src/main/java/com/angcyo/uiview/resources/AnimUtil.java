@@ -603,6 +603,43 @@ public class AnimUtil {
     }
 
     /**
+     * 启动时的动画  scale放大+透明
+     */
+    public static Animation scaleMaxAlphaStartAnimation(float fromValue) {
+        ScaleAnimation animation = new ScaleAnimation(fromValue, 1f, fromValue, 1f,
+                Animation.RELATIVE_TO_SELF, 0.5f, Animation.RELATIVE_TO_SELF, 0.5f);
+
+        AlphaAnimation alphaAnimation = new AlphaAnimation(0, 1);
+        setDefaultConfig(animation, false);
+        setDefaultConfig(alphaAnimation, false);
+
+        AnimationSet animationSet = new AnimationSet(false);
+        animationSet.addAnimation(alphaAnimation);
+        animationSet.addAnimation(animation);
+        return animationSet;
+    }
+
+    /**
+     * 结束时的动画 scale缩小+透明
+     */
+    public static Animation scaleMaxAlphaFinishAnimation(float toValue) {
+        ScaleAnimation animation = new ScaleAnimation(1f, toValue, 1f, toValue,
+                Animation.RELATIVE_TO_SELF, 0.5f, Animation.RELATIVE_TO_SELF, 0.5f);
+
+        AlphaAnimation alphaAnimation = new AlphaAnimation(1, 0);
+        setDefaultConfig(animation, true);
+        setDefaultConfig(alphaAnimation, true);
+
+        animation.setDuration(DEFAULT_DIALOG_FINISH_ANIM_TIME);
+        alphaAnimation.setDuration(DEFAULT_DIALOG_FINISH_ANIM_TIME);
+
+        AnimationSet animationSet = new AnimationSet(false);
+        animationSet.addAnimation(alphaAnimation);
+        animationSet.addAnimation(animation);
+        return animationSet;
+    }
+
+    /**
      * 启动时的动画  从底部平移到顶部
      */
     public static Animation translateAlphaStartAnimation() {

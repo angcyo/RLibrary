@@ -12,7 +12,9 @@ package com.angcyo.uiview.view;
  * Version: 1.0.0
  */
 public enum IViewAnimationType {
+    NONE /*无动画*/,
     ALPHA /*透明渐变动画*/,
     TRANSLATE_HORIZONTAL /*左右平移动画*/,
-    TRANSLATE_VERTICAL /*垂直平移启动退出动画, 其他透明动画*/
+    TRANSLATE_VERTICAL /*垂直平移启动退出动画, 其他透明动画*/,
+    SCALE_TO_MAX /*从0.8放大, 其他从1到0.5缩小*/
 }
