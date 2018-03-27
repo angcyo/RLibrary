@@ -409,6 +409,10 @@ public class FDown {
                             public void over(BaseDownloadTask task) {
                                 //任务被暂停, 警告, 错误, 完成.会回调
                                 //FileDownloadStatus.isOver(task.getStatus())
+                                FileDownloadListener downloadListener = task.getListener();
+                                if (downloadListener instanceof FListener) {
+                                    ((FListener) downloadListener).clearListener();
+                                }
                                 taskMap.remove(task.getUrl());
                             }
                         })
