@@ -73,20 +73,18 @@ public class Button extends RTextView {
         }
 
         if (isInEditMode()) {
-            themeSubColor = ViewExKt.getColor(this, R.color.theme_color_accent);
-            themeDarkColor = ViewExKt.getColor(this, R.color.theme_color_primary_dark);
-            disableColor = Color.GRAY;
+            themeSubColor = typedArray.getInt(R.styleable.Button_r_button_theme_color, ViewExKt.getColor(this, R.color.theme_color_accent));
+            themeDarkColor = typedArray.getInt(R.styleable.Button_r_button_theme_dark_color, ViewExKt.getColor(this, R.color.theme_color_primary_dark));
+            disableColor = typedArray.getInt(R.styleable.Button_r_button_disable_color, Color.GRAY);
 
             borderWidth = typedArray.getDimensionPixelOffset(R.styleable.Button_r_button_border_width, (int) (2 * density()));
-
             roundRadii = typedArray.getDimensionPixelOffset(R.styleable.Button_r_button_round_radii, defaultValue);
         } else {
             themeSubColor = typedArray.getInt(R.styleable.Button_r_button_theme_color, SkinHelper.getSkin().getThemeSubColor());
             themeDarkColor = typedArray.getInt(R.styleable.Button_r_button_theme_dark_color, SkinHelper.getSkin().getThemeDarkColor());
-            disableColor = ContextCompat.getColor(getContext(), R.color.base_color_disable);
+            disableColor = typedArray.getInt(R.styleable.Button_r_button_disable_color, ContextCompat.getColor(getContext(), R.color.base_color_disable));
 
             borderWidth = typedArray.getDimensionPixelOffset(R.styleable.Button_r_button_border_width, (int) (1 * density()));
-
             roundRadii = typedArray.getDimensionPixelOffset(R.styleable.Button_r_button_round_radii, defaultValue);
         }
         typedArray.recycle();
