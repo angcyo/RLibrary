@@ -2079,7 +2079,6 @@ public class UILayoutImpl extends SwipeBackLayout implements ILayout, UIViewPage
 
 //                    isFinishing = false;
 //                    isBackPress = false;
-                    viewPattern.mIView.release();
                     removeInterrupt(viewPattern.mIView);
 
                     onFinishIViewEnd(viewPattern);
@@ -2087,6 +2086,7 @@ public class UILayoutImpl extends SwipeBackLayout implements ILayout, UIViewPage
                     try {
                         viewPattern.mIView.onViewUnload();
                         viewPattern.mIView.onViewUnload(param);
+                        viewPattern.mIView.release();
                     } catch (Exception e) {
                         e.printStackTrace();
                     }

@@ -916,6 +916,11 @@ public class RUtils {
                     map.put(key, value);
                 }
             }
+
+            @Override
+            public void onRemove(String key) {
+                map.remove(key);
+            }
         }, args);
         return map;
     }
@@ -2402,8 +2407,37 @@ public class RUtils {
         return FileUtils.readFile2String(filePath, "utf8");
     }
 
+    /**
+     * 组装成Json对象字符创
+     */
+    public static String toJson(String... args) {
+        final StringBuilder stringBuilder = new StringBuilder("{");
+        foreach(new OnPutValue() {
+            @Override
+            public void onValue(String key, String value) {
+                if (!TextUtils.isEmpty(key) && !TextUtils.isEmpty(value)) {
+                    stringBuilder.append("\"").append(key).append("\"").append(":");
+                    stringBuilder.append("\"").append(key).append("\"").append(",");
+                }
+            }
+
+            @Override
+            public void onRemove(String key) {
+                //map.remove(key);
+            }
+        }, args);
+        if (stringBuilder.length() > 1) {
+            String safe = safe(stringBuilder);
+            return safe + "}";
+        }
+        stringBuilder.append("}");
+        return stringBuilder.toString();
+    }
+
     interface OnPutValue {
         void onValue(String key, String value);
+
+        void onRemove(String key);
     }
 
     public static class QueryAppBean {
