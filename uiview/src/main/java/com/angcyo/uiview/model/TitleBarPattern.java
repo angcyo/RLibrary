@@ -83,7 +83,13 @@ public class TitleBarPattern {
      * 标题
      */
     public String mTitleString;
+    /**
+     * 标题文本的最大长度
+     */
     public int mTitleStringLength = -1;
+    /**
+     * 标题文本的大小
+     */
     public float mTitleSize = -1;//px
     /**
      * 左边的按钮

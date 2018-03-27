@@ -9,9 +9,12 @@ import android.text.TextUtils;
 import com.angcyo.library.utils.L;
 import com.liulishuo.filedownloader.BaseDownloadTask;
 import com.liulishuo.filedownloader.FileDownloadList;
+import com.liulishuo.filedownloader.FileDownloadListener;
 import com.liulishuo.filedownloader.FileDownloadQueueSet;
 import com.liulishuo.filedownloader.FileDownloader;
 import com.liulishuo.filedownloader.connection.OkHttp3Connection;
+import com.liulishuo.filedownloader.model.FileDownloadStatus;
+import com.liulishuo.filedownloader.util.FileDownloadHelper;
 import com.liulishuo.filedownloader.util.FileDownloadLog;
 import com.liulishuo.filedownloader.util.FileDownloadUtils;
 
@@ -20,7 +23,6 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Set;
-import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
 
 /**
@@ -36,7 +38,7 @@ import java.util.concurrent.ConcurrentHashMap;
  * 修改时间：by angcyo:2017-10-23 9:17:11
  * 修改备注：更新至 1.6.8
  * Version: 1.0.0
- *
+ * <p>
  * 2018-3-26
  * 更新至 1.7.2
  */
@@ -47,6 +49,10 @@ public class FDown {
 
     private FDown() {
 
+    }
+
+    public static Context getApp() {
+        return FileDownloadHelper.getAppContext();
     }
 
     public static void unInit() {
@@ -92,7 +98,6 @@ public class FDown {
     public static Builder build(String url) {
         return new Builder(url);
     }
-
 
     /**
      * 获取文件名, 在url中
@@ -162,11 +167,11 @@ public class FDown {
                     .setPath(folder + File.separator + getFileNameFromUrl(url), false)
                     //由于是队列任务, 这里是我们假设了现在不需要每个任务都回调`FileDownloadListener#progress`, 我们只关系每个任务是否完成, 所以这里这样设置可以很有效的减少ipc.
                     .setCallbackProgressTimes(0)//去掉进度回调, 只关心有没有下载成功
-                    .setListener(listener)
+                    //.setListener(listener)
                     .asInQueueTask()
                     .enqueue();
         }
-        FileDownloader.getImpl().start(listener, isSerial);
+        FileDownloader.getImpl().start(new FListener().addListener(listener), isSerial);
     }
 
     public static void downloadsQueue(FDownListener listener, String folder, boolean isSerial, String... urls) {
@@ -174,7 +179,7 @@ public class FDown {
     }
 
     public static void downloadsQueue(FDownListener listener, String folder, boolean isSerial /*串行下载*/, List<String> urls) {
-        final FileDownloadQueueSet queueSet = new FileDownloadQueueSet(listener);
+        final FileDownloadQueueSet queueSet = new FileDownloadQueueSet(new FListener().addListener(listener));
 
         final List<BaseDownloadTask> tasks = new ArrayList<>();
         for (String url : urls) {
@@ -231,7 +236,6 @@ public class FDown {
         return FileDownloadUtils.generateId(url, path);
     }
 
-
     /**
      * @see com.liulishuo.filedownloader.model.FileDownloadStatus#INVALID_STATUS    0
      * @see com.liulishuo.filedownloader.model.FileDownloadStatus#pending           1
@@ -262,7 +266,7 @@ public class FDown {
      * 批量任务下载
      */
     public static void downloads(FDownListener listener, List<FTask> tasks) {
-        final FileDownloadQueueSet queueSet = new FileDownloadQueueSet(listener);
+        final FileDownloadQueueSet queueSet = new FileDownloadQueueSet(new FListener().addListener(listener));
 
         final List<BaseDownloadTask> baseDownloadTasks = new ArrayList<>();
         for (FTask task : tasks) {
@@ -312,7 +316,12 @@ public class FDown {
     public static void cancelListener(int id) {
         BaseDownloadTask.IRunningTask runningTask = FileDownloadList.getImpl().get(id);
         if (runningTask != null) {
-            runningTask.getOrigin().setListener(null);
+            BaseDownloadTask origin = runningTask.getOrigin();
+            FileDownloadListener listener = origin.getListener();
+            if (listener instanceof FListener) {
+                ((FListener) listener).clearListener();
+            }
+            origin.setListener(null);
         }
     }
 
@@ -332,8 +341,10 @@ public class FDown {
         private Builder(String url) {
             this.url = url;
             tag = url;
+//            fullPath = Environment.getExternalStorageDirectory().getAbsolutePath()
+//                    + File.separator + UUID.randomUUID().toString();
             fullPath = Environment.getExternalStorageDirectory().getAbsolutePath()
-                    + File.separator + UUID.randomUUID().toString();
+                    + File.separator + getApp().getPackageName() + "/FDown/" + getFileNameFromUrl(url);
         }
 
         public Builder setTag(Object tag) {
@@ -352,20 +363,35 @@ public class FDown {
         }
 
         /**
-         * @return 返回任务id, 可以用来取消下载
+         * @return 返回任务id, 可以用来取消下载, id 会是负值
          */
         public int download(FDownListener listener) {
             int id = -1;
             Integer integer = taskMap.get(url);
-            if (integer != null && integer > 0) {
-                id = integer;
+
+            FListener downListener;
+
+            if (integer != null && integer != 0) {
                 BaseDownloadTask.IRunningTask runningTask = FileDownloadList.getImpl().get(integer);
                 if (runningTask != null) {
                     L.e("已经在下载中 " + integer + " 重置下载监听-> " + url);
-                    runningTask.getOrigin().setListener(listener);
+                    BaseDownloadTask origin = runningTask.getOrigin();
+                    if (FileDownloadStatus.isIng(origin.getStatus())) {
+                        //任务正在进行,
+                        id = integer;
+                    }
+                    if (origin.getListener() instanceof FListener) {
+                        downListener = ((FListener) origin.getListener()).addListener(listener);
+                    } else {
+                        downListener = new FListener().addListener(listener);
+                        origin.setListener(downListener);
+                    }
                 } else {
                     id = -1;
+                    downListener = new FListener().addListener(listener);
                 }
+            } else {
+                downListener = new FListener().addListener(listener);
             }
 
             if (id == -1) {
@@ -381,10 +407,12 @@ public class FDown {
                         .addFinishListener(new BaseDownloadTask.FinishListener() {
                             @Override
                             public void over(BaseDownloadTask task) {
+                                //任务被暂停, 警告, 错误, 完成.会回调
+                                //FileDownloadStatus.isOver(task.getStatus())
                                 taskMap.remove(task.getUrl());
                             }
                         })
-                        .setListener(listener)
+                        .setListener(downListener)
                         .start();
                 taskMap.put(url, id);
             }

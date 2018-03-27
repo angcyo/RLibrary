@@ -9,6 +9,7 @@ import android.view.View
 import android.view.animation.LinearInterpolator
 import com.angcyo.uiview.R
 import com.angcyo.uiview.kotlin.density
+import com.angcyo.uiview.kotlin.exactlyMeasure
 import com.angcyo.uiview.kotlin.maxValue
 import com.angcyo.uiview.skin.SkinHelper
 
@@ -88,7 +89,20 @@ open class RProgressBar(context: Context, attributeSet: AttributeSet? = null) : 
     }
 
     override fun onMeasure(widthMeasureSpec: Int, heightMeasureSpec: Int) {
-        super.onMeasure(widthMeasureSpec, heightMeasureSpec)
+        var widthSize = View.MeasureSpec.getSize(widthMeasureSpec)
+        val widthMode = View.MeasureSpec.getMode(widthMeasureSpec)
+        var heightSize = View.MeasureSpec.getSize(heightMeasureSpec)
+        val heightMode = View.MeasureSpec.getMode(heightMeasureSpec)
+
+        if (widthMode != MeasureSpec.EXACTLY) {
+            widthSize = (100 * density).toInt() + paddingLeft + paddingRight
+        }
+
+        if (heightMode != MeasureSpec.EXACTLY) {
+            heightSize = (10 * density).toInt() + paddingTop + paddingBottom
+        }
+
+        super.onMeasure(exactlyMeasure(widthSize), exactlyMeasure(heightSize))
     }
 
     //视图允许的绘制区域
