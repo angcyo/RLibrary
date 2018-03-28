@@ -471,7 +471,10 @@ public abstract class RModelAdapter<T> extends RBaseAdapter<T> {
         ArrayList<T> datas = new ArrayList<>();
         final Iterator<Integer> iterator = mSelector.iterator();
         while (iterator.hasNext()) {
-            datas.add(mAllDatas.get(iterator.next()));
+            Integer next = iterator.next();
+            if (mAllDatas.size() > next) {
+                datas.add(mAllDatas.get(next));
+            }
         }
         return datas;
     }

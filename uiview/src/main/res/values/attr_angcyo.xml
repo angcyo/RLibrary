@@ -173,6 +173,13 @@
         <!--是否加粗-->
         <attr name="r_left_text_bold" format="boolean"/>
         <attr name="r_left_drawable" format="reference"/>
+        <attr name="r_left_drawable_gravity" format="enum">
+            <enum name="TOP" value="1"/>
+            <enum name="CENTER_VERTICAL" value="2"/>
+        </attr>
+        <attr name="r_left_drawable_offset_x" format="dimension"/>
+        <attr name="r_left_drawable_offset_y" format="dimension"/>
+
         <attr name="r_left_text_color"/>
         <attr name="r_left_text_offset"/>
         <attr name="r_left_text_size" format="dimension"/>

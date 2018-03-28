@@ -52,6 +52,9 @@ import java.util.regex.Pattern;
 
 public class RTextView extends AppCompatTextView {
 
+    public static final int LEFT_DRAWABLE_GRAVITY_TOP = 1;
+    public static final int LEFT_DRAWABLE_GRAVITY_CENTER_VERTICAL = 2;
+
     /**
      * 滚动文本的方式, 从视图外, 缓缓的向左滚动
      */
@@ -81,6 +84,9 @@ public class RTextView extends AppCompatTextView {
      * 由于系统的drawableLeft, 并不会显示在居中文本的左边, 所以自定义此属性
      */
     Drawable textLeftDrawable;
+    int leftDrawableGravity = LEFT_DRAWABLE_GRAVITY_CENTER_VERTICAL;
+    int leftDrawableOffsetX = 0;
+    int leftDrawableOffsetY = 0;
     /**
      * 将textLeftDrawable和TextView的文本居中都居中显示. (默认情况 文本会居中显示, 然后leftDrawable在文本的左边绘制)
      */
@@ -180,6 +186,10 @@ public class RTextView extends AppCompatTextView {
         if (textLeftDrawable != null) {
             textLeftDrawable.setBounds(0, 0, textLeftDrawable.getIntrinsicWidth(), textLeftDrawable.getIntrinsicHeight());
         }
+
+        leftDrawableGravity = typedArray.getInt(R.styleable.RTextView_r_left_drawable_gravity, leftDrawableGravity);
+        leftDrawableOffsetX = typedArray.getDimensionPixelOffset(R.styleable.RTextView_r_left_drawable_offset_x, leftDrawableOffsetX);
+        leftDrawableOffsetY = typedArray.getDimensionPixelOffset(R.styleable.RTextView_r_left_drawable_offset_y, leftDrawableOffsetY);
 
         noReadRadius = typedArray.getDimensionPixelOffset(R.styleable.RTextView_r_noread_radius, (int) noReadRadius);
         noReadPaddingRight = typedArray.getDimensionPixelOffset(R.styleable.RTextView_r_noread_padding_right, (int) noReadPaddingRight);
@@ -433,21 +443,28 @@ public class RTextView extends AppCompatTextView {
         }
 
         if (textLeftDrawable != null) {
-            canvas.save();
+            if (leftDrawableGravity == LEFT_DRAWABLE_GRAVITY_TOP) {
+                canvas.save();
+                canvas.translate(leftDrawableOffsetX, leftDrawableOffsetY);
+                textLeftDrawable.draw(canvas);
+                canvas.restore();
+            } else if (leftDrawableGravity == LEFT_DRAWABLE_GRAVITY_CENTER_VERTICAL) {
+                canvas.save();
 //            Layout layout = getLayout();
-            //layout.getLineStart()
+                //layout.getLineStart()
 
 //            canvas.translate(rawPaddingLeft + (viewDrawWith - drawWidth) / 2, paddingTop.toFloat() + (viewDrawHeight - drawHeight) / 2)
 
-            canvas.translate(getMeasuredWidth() / 2 -
-                            ViewExKt.textWidth(this, String.valueOf(getText())) / 2 -
-                            textLeftDrawable.getIntrinsicWidth() -
-                            getCompoundDrawablePadding(),
-                    getMeasuredHeight() / 2 - textLeftDrawable.getIntrinsicHeight() / 2);
+                canvas.translate(getMeasuredWidth() / 2 -
+                                ViewExKt.textWidth(this, String.valueOf(getText())) / 2 -
+                                textLeftDrawable.getIntrinsicWidth() -
+                                getCompoundDrawablePadding(),
+                        getMeasuredHeight() / 2 - textLeftDrawable.getIntrinsicHeight() / 2);
 
-            textLeftDrawable.draw(canvas);
+                textLeftDrawable.draw(canvas);
 
-            canvas.restore();
+                canvas.restore();
+            }
         }
 
         if (showNoRead /*|| isInEditMode()*/) {
