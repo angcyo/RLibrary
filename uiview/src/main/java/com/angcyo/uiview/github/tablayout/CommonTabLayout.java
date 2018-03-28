@@ -100,7 +100,6 @@ public class CommonTabLayout extends FrameLayout implements ValueAnimator.Animat
     private int mTextUnselectColor;
     private int mTextBold;
     private boolean mTextAllCaps;
-
     /**
      * icon
      */
@@ -109,15 +108,12 @@ public class CommonTabLayout extends FrameLayout implements ValueAnimator.Animat
     private float mIconWidth;
     private float mIconHeight;
     private float mIconMargin;
-
     private int mHeight;
-
     /**
      * anim
      */
     private ValueAnimator mValueAnimator;
     private OvershootInterpolator mInterpolator = new OvershootInterpolator(1.5f);
-
     private FragmentChangeManager mFragmentChangeManager;
     private boolean mIsFirstDraw = true;
     // show MsgTipView
@@ -167,6 +163,10 @@ public class CommonTabLayout extends FrameLayout implements ValueAnimator.Animat
 
         mValueAnimator = ValueAnimator.ofObject(new PointEvaluator(), mLastP, mCurrentP);
         mValueAnimator.addUpdateListener(this);
+    }
+
+    public LinearLayout getTabsContainer() {
+        return mTabsContainer;
     }
 
     public void setDefaultCurrentTab(int defaultCurrentTab) {
@@ -634,6 +634,7 @@ public class CommonTabLayout extends FrameLayout implements ValueAnimator.Animat
 
     //setter and getter
     public void setCurrentTab(int currentTab, boolean notify) {
+
         if (notify) {
             if (mCurrentTab != currentTab) {
                 if (mListener != null) {
@@ -654,6 +655,7 @@ public class CommonTabLayout extends FrameLayout implements ValueAnimator.Animat
 
         mLastTab = this.mCurrentTab == -1 ? 0 : this.mCurrentTab;
         this.mCurrentTab = currentTab;
+
         updateTabSelection(currentTab);
         if (mFragmentChangeManager != null) {
             mFragmentChangeManager.setFragments(currentTab);

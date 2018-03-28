@@ -20,6 +20,8 @@ public class TabEntity implements CustomTabEntity {
     public int marginLeft = 0;
     public int marginRight = 0;
 
+    private String object;
+
     public TabEntity(String title) {
         this.title = title;
     }
@@ -52,6 +54,14 @@ public class TabEntity implements CustomTabEntity {
         this.showArrow = showArrow;
         this.isHomeNavigation = isHomeNavigation;
         this.isShowBackground = isShowBackground;
+    }
+
+    public String getObject() {
+        return object;
+    }
+
+    public void setObject(String object) {
+        this.object = object;
     }
 
     @Override

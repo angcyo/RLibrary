@@ -735,7 +735,7 @@ public class UILayoutImpl extends SwipeBackLayout implements ILayout, UIViewPage
 
         L.i(name(param.replaceIView +
                         " 请求替换 " + name(iView)
-                    /*" LastIs:" + name(mLastShowViewPattern.mIView)*/));
+                /*" LastIs:" + name(mLastShowViewPattern.mIView)*/));
 
         final Runnable removeTargetViewPattern = new Runnable() {
             @Override
@@ -1902,7 +1902,7 @@ public class UILayoutImpl extends SwipeBackLayout implements ILayout, UIViewPage
      * 销毁对话框的动画
      */
     private void finishDialogAnim(final ViewPattern dialogPattern, final Animation animation, final Runnable end) {
-          /*是否变暗*/
+        /*是否变暗*/
         if (dialogPattern.mIView.isDimBehind()) {
             AnimUtil.startArgb(dialogPattern.mIView.getDialogDimView(),
                     dialogPattern.mIView.getDimColor(), Color.TRANSPARENT, DEFAULT_ANIM_TIME);
@@ -2700,7 +2700,7 @@ public class UILayoutImpl extends SwipeBackLayout implements ILayout, UIViewPage
     }
 
     private void notifyListener() {
-         /*键盘弹出监听事件*/
+        /*键盘弹出监听事件*/
         if (mIWindowInsetsListeners != null) {
             for (IWindowInsetsListener listener : mIWindowInsetsListeners) {
                 listener.onWindowInsets(mInsets[0], mInsets[1], mInsets[2], mInsets[3]);
