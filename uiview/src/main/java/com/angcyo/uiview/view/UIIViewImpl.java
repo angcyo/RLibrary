@@ -478,6 +478,7 @@ public abstract class UIIViewImpl implements IView {
             case TRANSLATE_VERTICAL:
                 return AnimUtil.translateFinishAnimation();
             case SCALE_TO_MAX:
+                return AnimUtil.scaleMaxAlphaFinishAnimation(0.7f);
             case TRANSLATE_HORIZONTAL:
             default:
                 TranslateAnimation translateAnimation = new TranslateAnimation(Animation.RELATIVE_TO_SELF, 0, Animation.RELATIVE_TO_SELF, 1f,
@@ -542,6 +543,11 @@ public abstract class UIIViewImpl implements IView {
             case TRANSLATE_VERTICAL:
                 return AnimUtil.createAlphaEnterAnim(0.8f);
             case SCALE_TO_MAX:
+                if (isDialog()) {
+                    return AnimUtil.scaleMaxAlphaStartAnimation(0.7f);
+                } else {
+                    return AnimUtil.createOtherEnterNoAnim();
+                }
             case TRANSLATE_HORIZONTAL:
             default:
                 TranslateAnimation translateAnimation = new TranslateAnimation(Animation.RELATIVE_TO_SELF, -1f, Animation.RELATIVE_TO_SELF, 0,
