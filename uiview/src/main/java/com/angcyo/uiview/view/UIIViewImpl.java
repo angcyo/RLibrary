@@ -451,6 +451,7 @@ public abstract class UIIViewImpl implements IView {
             case TRANSLATE_VERTICAL:
                 return AnimUtil.translateStartAnimation();
             case SCALE_TO_MAX:
+            case SCALE_TO_MAX_AND_END:
                 return AnimUtil.scaleMaxAlphaStartAnimation(0.7f);
             case TRANSLATE_HORIZONTAL:
             default:
@@ -477,8 +478,9 @@ public abstract class UIIViewImpl implements IView {
                 return AnimUtil.createAlphaExitAnim(0.2f);
             case TRANSLATE_VERTICAL:
                 return AnimUtil.translateFinishAnimation();
-            case SCALE_TO_MAX:
+            case SCALE_TO_MAX_AND_END:
                 return AnimUtil.scaleMaxAlphaFinishAnimation(0.7f);
+            case SCALE_TO_MAX:
             case TRANSLATE_HORIZONTAL:
             default:
                 TranslateAnimation translateAnimation = new TranslateAnimation(Animation.RELATIVE_TO_SELF, 0, Animation.RELATIVE_TO_SELF, 1f,
@@ -510,6 +512,7 @@ public abstract class UIIViewImpl implements IView {
                 return AnimUtil.createAlphaExitAnim(0.8f);
             case TRANSLATE_VERTICAL:
                 return AnimUtil.createAlphaExitAnim(0.8f);
+            case SCALE_TO_MAX_AND_END:
             case SCALE_TO_MAX:
                 if (isDialog()) {
                     return AnimUtil.scaleMaxAlphaFinishAnimation(0.5f);
@@ -542,12 +545,13 @@ public abstract class UIIViewImpl implements IView {
                 return AnimUtil.createAlphaEnterAnim(0.8f);
             case TRANSLATE_VERTICAL:
                 return AnimUtil.createAlphaEnterAnim(0.8f);
-            case SCALE_TO_MAX:
+            case SCALE_TO_MAX_AND_END:
                 if (isDialog()) {
                     return AnimUtil.scaleMaxAlphaStartAnimation(0.7f);
                 } else {
                     return AnimUtil.createOtherEnterNoAnim();
                 }
+            case SCALE_TO_MAX:
             case TRANSLATE_HORIZONTAL:
             default:
                 TranslateAnimation translateAnimation = new TranslateAnimation(Animation.RELATIVE_TO_SELF, -1f, Animation.RELATIVE_TO_SELF, 0,

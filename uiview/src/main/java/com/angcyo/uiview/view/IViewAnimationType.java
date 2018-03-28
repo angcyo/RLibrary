@@ -16,5 +16,6 @@ public enum IViewAnimationType {
     ALPHA /*透明渐变动画*/,
     TRANSLATE_HORIZONTAL /*左右平移动画*/,
     TRANSLATE_VERTICAL /*垂直平移启动退出动画, 其他透明动画*/,
-    SCALE_TO_MAX /*从0.8放大, 其他从1到0.5缩小*/
+    SCALE_TO_MAX /*从0.8放大, 其他从1到0.5缩小*/,
+    SCALE_TO_MAX_AND_END /*与SCALE_TO_MAX不同的是, 退出时, 也采用Scale动画*/
 }
