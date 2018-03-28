@@ -196,6 +196,12 @@ public abstract class UIItemUIView<T extends Item> extends UIRecyclerUIView<Stri
         }
     }
 
+    public void notifyItemChanged(int position, int count) {
+        if (mExBaseAdapter != null) {
+            mExBaseAdapter.notifyItemRangeChanged(position, count);
+        }
+    }
+
     /**
      * 返回布局
      */

@@ -272,6 +272,18 @@ public fun View.error() {
     Anim.band(this)
 }
 
+public fun View.visible() {
+    visibility = View.VISIBLE
+}
+
+public fun View.gone() {
+    visibility = View.GONE
+}
+
+public fun View.invisible() {
+    visibility = View.INVISIBLE
+}
+
 public fun TextView.isEmpty(): Boolean {
     return TextUtils.isEmpty(string())
 }
