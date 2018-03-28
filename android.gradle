@@ -44,12 +44,12 @@ android {
     }
 
     dexOptions {
-        incremental false
+        //incremental false
         preDexLibraries false
         jumboMode true
         javaMaxHeapSize "4096m"
         maxProcessCount 8
-//        threadCount 8
+        threadCount 8
     }
 
     aaptOptions {
