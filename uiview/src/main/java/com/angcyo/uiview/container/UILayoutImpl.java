@@ -233,6 +233,10 @@ public class UILayoutImpl extends SwipeBackLayout implements ILayout, UIViewPage
      */
     private ViewTask currentViewTask = null;
     private boolean isTaskSuspend = false;
+
+    /**
+     * 所有具有可见性的IView
+     */
     private ArrayList<ViewPattern> allVisibleIView = new ArrayList<>();
 
     public UILayoutImpl(Context context) {
@@ -903,7 +907,7 @@ public class UILayoutImpl extends SwipeBackLayout implements ILayout, UIViewPage
         String log = name(this) + " 请求启动:" + name(iView);
         L.i(log);
         saveToSDCard(log);
-
+        checkLastDialog(param);
         mViewTasks.add(new ViewTask(ViewTask.TASK_TYPE_START, iView, param));
         checkStartTask();
     }
@@ -1198,9 +1202,25 @@ public class UILayoutImpl extends SwipeBackLayout implements ILayout, UIViewPage
             return;
         }
         iview.setInterruptTask(true);
+        checkLastDialog(param);
         mViewTasks.add(new ViewTask(ViewTask.TASK_TYPE_FINISH, iview, param));
         if (isAttachedToWindow) {
             checkStartTask();
+        }
+    }
+
+    /**
+     * 检查是否需要关闭最后一个对话框
+     */
+    private void checkLastDialog(final UIParam param) {
+        if (param != null && param.closeLastDialog) {
+            ViewPattern lastViewPattern = getLastViewPattern();
+            if (lastViewPattern != null) {
+                if (lastViewPattern.mIView.isDialog()) {
+                    mViewTasks.add(new ViewTask(ViewTask.TASK_TYPE_FINISH, lastViewPattern.mIView,
+                            UIParam.get().setAnim(param.mAnim).setQuiet(param.isQuiet).setSwipeBack(true)));
+                }
+            }
         }
     }
 
@@ -1246,6 +1266,7 @@ public class UILayoutImpl extends SwipeBackLayout implements ILayout, UIViewPage
 
     @Override
     public void showIView(final IView iview, final UIParam param) {
+        checkLastDialog(param);
         mViewTasks.add(new ViewTask(ViewTask.TASK_TYPE_SHOW, iview, param));
         if (isAttachedToWindow) {
             checkStartTask();
@@ -1266,6 +1287,7 @@ public class UILayoutImpl extends SwipeBackLayout implements ILayout, UIViewPage
         if (viewPattern == null) {
             return;
         }
+        checkLastDialog(param);
         mViewTasks.add(new ViewTask(ViewTask.TASK_TYPE_HIDE, viewPattern.mIView, param));
         if (isAttachedToWindow) {
             checkStartTask();
@@ -1283,6 +1305,7 @@ public class UILayoutImpl extends SwipeBackLayout implements ILayout, UIViewPage
         if (viewPattern == null) {
             return;
         }
+        checkLastDialog(param);
         mViewTasks.add(new ViewTask(ViewTask.TASK_TYPE_HIDE, viewPattern.mIView, param));
         if (isAttachedToWindow) {
             checkStartTask();
@@ -1413,6 +1436,7 @@ public class UILayoutImpl extends SwipeBackLayout implements ILayout, UIViewPage
         if (iView == null) {
             return;
         }
+        checkLastDialog(param);
         mViewTasks.add(new ViewTask(ViewTask.TASK_TYPE_REPLACE, iView, param));
         if (isAttachedToWindow) {
             checkStartTask();

@@ -60,6 +60,10 @@ public class UIParam {
      */
     public boolean showOnDialog = false;
     /**
+     * 如果最后一个是对话框, 可以用这个参数, 优先关闭对话框
+     */
+    public boolean closeLastDialog = false;
+    /**
      * 需要替换的iview, 只在replaceIView时使用, 用来判断目标的可行性
      */
     protected IView replaceIView;
@@ -68,7 +72,6 @@ public class UIParam {
      */
     protected Runnable unloadRunnable;
     protected Bundle mBundle;
-
 
     public UIParam(boolean anim, boolean async, Bundle bundle) {
         mAnim = anim;
@@ -205,6 +208,11 @@ public class UIParam {
             mBundle.clear();
         }
         mBundle = null;
+    }
+
+    public UIParam setCloseLastDialog(boolean closeLastDialog) {
+        this.closeLastDialog = closeLastDialog;
+        return this;
     }
 
     public UIParam setNeedTransitionStartAnim(boolean needTransitionStartAnim) {

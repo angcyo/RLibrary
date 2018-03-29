@@ -86,12 +86,11 @@ public abstract class UIIDialogImpl extends UIIViewImpl {
     protected boolean autoFinishDialog = true;
 
     protected int dimColor = super.getDimColor();
-    private OnInitDialogContent mOnInitDialogContent;
-
     /**
      * 对话框消失后, 取消请求
      */
     protected CompositeSubscription mDismissSubscriptions;
+    private OnInitDialogContent mOnInitDialogContent;
 
     @Override
     protected View inflateBaseView(FrameLayout container, LayoutInflater inflater) {
@@ -215,11 +214,16 @@ public abstract class UIIDialogImpl extends UIIViewImpl {
         return this;
     }
 
+    @Override
+    protected UIParam createUIParam() {
+        return super.createUIParam().setAnim(true).setSwipeBack(true).setQuiet(false);
+    }
+
     /**
      * 结束对话框
      */
     public void finishDialog() {
-        finishIView(this, new UIParam(true, true, false));
+        finishIView(this, createUIParam());
     }
 
     public void finishDialog(UIParam param) {
@@ -228,8 +232,8 @@ public abstract class UIIDialogImpl extends UIIViewImpl {
         mILayout.finishIView(this, param);
     }
 
-    public void finishDialog(Runnable endRunnale) {
-        mILayout.finishIView(this, new UIParam(true, true, false).setUnloadRunnable(endRunnale));
+    public void finishDialog(Runnable endRunnable) {
+        mILayout.finishIView(this, createUIParam().setUnloadRunnable(endRunnable));
     }
 
     @Override
@@ -267,7 +271,7 @@ public abstract class UIIDialogImpl extends UIIViewImpl {
      * 对话框启动时的动画
      */
     @Override
-    public Animation loadStartAnimation(AnimParam animParam) {
+    protected Animation defaultLoadStartAnimation(AnimParam animParam) {
         TranslateAnimation translateAnimation = new TranslateAnimation(Animation.RELATIVE_TO_SELF, 0f, Animation.RELATIVE_TO_SELF, 0,
                 Animation.RELATIVE_TO_SELF, 1f, Animation.RELATIVE_TO_SELF, 0f);
         AlphaAnimation alphaAnimation = new AlphaAnimation(0, 1);
@@ -284,7 +288,7 @@ public abstract class UIIDialogImpl extends UIIViewImpl {
      * 对话框结束时的动画
      */
     @Override
-    public Animation loadFinishAnimation(AnimParam animParam) {
+    protected Animation defaultLoadFinishAnimation(AnimParam animParam) {
         TranslateAnimation translateAnimation = new TranslateAnimation(Animation.RELATIVE_TO_SELF, 0, Animation.RELATIVE_TO_SELF, 0f,
                 Animation.RELATIVE_TO_SELF, 0f, Animation.RELATIVE_TO_SELF, 1f);
         AlphaAnimation alphaAnimation = new AlphaAnimation(1, 0);

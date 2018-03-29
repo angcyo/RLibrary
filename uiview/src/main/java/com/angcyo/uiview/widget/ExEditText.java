@@ -86,6 +86,7 @@ public class ExEditText extends AppCompatEditText {
      * 用来限制输入的最大值, 需要inputType  包含 EditorInfo.TYPE_CLASS_NUMBER
      */
     float mMaxNumber = Float.MAX_VALUE;
+    float mMinNumber = Float.MIN_VALUE;
     /**
      * 小数点后几位, 需要inputType  包含 EditorInfo.TYPE_NUMBER_FLAG_DECIMAL
      */
@@ -262,6 +263,10 @@ public class ExEditText extends AppCompatEditText {
         this.mMaxNumber = mMaxNumber;
     }
 
+    public void setMinNumber(float minNumber) {
+        mMinNumber = minNumber;
+    }
+
     public void setDecimalCount(int mDecimalCount) {
         this.mDecimalCount = mDecimalCount;
     }
@@ -299,6 +304,7 @@ public class ExEditText extends AppCompatEditText {
         mRHintText = typedArray.getString(R.styleable.ExEditText_r_hint_text);
 
         mMaxNumber = typedArray.getFloat(R.styleable.ExEditText_r_max_number, mMaxNumber);
+        mMinNumber = typedArray.getFloat(R.styleable.ExEditText_r_max_number, mMinNumber);
         mDecimalCount = typedArray.getInteger(R.styleable.ExEditText_r_decimal_count, mDecimalCount);
 
         showClear = typedArray.getBoolean(R.styleable.ExEditText_r_show_clear, showClear);
@@ -482,7 +488,9 @@ public class ExEditText extends AppCompatEditText {
     /***/
     public void setInputText(String text) {
         setText(text);
-        setSelection(TextUtils.isEmpty(text) ? 0 : text.length());
+        int textLength = getTextLength();//修改文本之后的长度
+        int length = TextUtils.isEmpty(text) ? 0 : text.length();//需要请求的长度
+        setSelection(Math.min(length, textLength));
         //checkEdit(true);
     }
 
@@ -733,6 +741,17 @@ public class ExEditText extends AppCompatEditText {
                     resetSelectionText(maxValue, 0);
                     setSelection(maxValue.length());
                 }
+                //限制最小值
+                if (value < mMinNumber) {
+                    String minValue;
+                    if (isInputTypeDecimal()) {
+                        minValue = Float.valueOf(mMinNumber).toString();
+                    } else {
+                        minValue = String.valueOf(Float.valueOf(mMinNumber).intValue());
+                    }
+                    resetSelectionText(minValue, 0);
+                    setSelection(minValue.length());
+                }
 
                 if (isInputTypeDecimal()) {
                     //显示小数点后几位
@@ -913,7 +932,22 @@ public class ExEditText extends AppCompatEditText {
     }
 
     /**
-     * 长度
+     * 一个汉字等于2个英文, 一个emoji表情等于2个汉字
+     */
+    public int getCharLength() {
+        return RUtils.getCharLength(string(false));
+    }
+
+    public int getTextLength() {
+        if (isEmpty()) {
+            return 0;
+        } else {
+            return getText().length();
+        }
+    }
+
+    /**
+     * 长度, 剔除了左右的空格
      */
     public int length() {
         return string().length();
@@ -1545,12 +1579,6 @@ public class ExEditText extends AppCompatEditText {
         }
     }
 
-    /**
-     * 一个汉字等于2个英文, 一个emoji表情等于2个汉字
-     */
-    public int getCharLength() {
-        return RUtils.getCharLength(string(false));
-    }
 
     public interface getIdFromUserName {
         String userId(String userName);

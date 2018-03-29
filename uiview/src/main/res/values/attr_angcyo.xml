@@ -234,6 +234,7 @@
 
         <!--允许输入最大的数字-->
         <attr name="r_max_number" format="float"/>
+        <attr name="r_min_number" format="float"/>
         <!--允许小数点后几位-->
         <attr name="r_decimal_count" format="integer"/>
 

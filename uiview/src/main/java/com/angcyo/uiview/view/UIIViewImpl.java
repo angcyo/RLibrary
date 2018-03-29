@@ -455,17 +455,21 @@ public abstract class UIIViewImpl implements IView {
                 return AnimUtil.scaleMaxAlphaStartAnimation(0.7f);
             case TRANSLATE_HORIZONTAL:
             default:
-                TranslateAnimation translateAnimation;
-                if (mIsRightJumpLeft) {
-                    translateAnimation = new TranslateAnimation(Animation.RELATIVE_TO_SELF, -0.99f, Animation.RELATIVE_TO_SELF, 0,
-                            Animation.RELATIVE_TO_SELF, 0f, Animation.RELATIVE_TO_SELF, 0f);
-                } else {
-                    translateAnimation = new TranslateAnimation(Animation.RELATIVE_TO_SELF, 0.99f, Animation.RELATIVE_TO_SELF, 0f,
-                            Animation.RELATIVE_TO_SELF, 0f, Animation.RELATIVE_TO_SELF, 0f);
-                }
-                setDefaultConfig(translateAnimation, false);
-                return translateAnimation;
+                return defaultLoadStartAnimation(animParam);
         }
+    }
+
+    protected Animation defaultLoadStartAnimation(AnimParam animParam) {
+        TranslateAnimation translateAnimation;
+        if (mIsRightJumpLeft) {
+            translateAnimation = new TranslateAnimation(Animation.RELATIVE_TO_SELF, -0.99f, Animation.RELATIVE_TO_SELF, 0,
+                    Animation.RELATIVE_TO_SELF, 0f, Animation.RELATIVE_TO_SELF, 0f);
+        } else {
+            translateAnimation = new TranslateAnimation(Animation.RELATIVE_TO_SELF, 0.99f, Animation.RELATIVE_TO_SELF, 0f,
+                    Animation.RELATIVE_TO_SELF, 0f, Animation.RELATIVE_TO_SELF, 0f);
+        }
+        setDefaultConfig(translateAnimation, false);
+        return translateAnimation;
     }
 
     @Override
@@ -483,11 +487,15 @@ public abstract class UIIViewImpl implements IView {
             case SCALE_TO_MAX:
             case TRANSLATE_HORIZONTAL:
             default:
-                TranslateAnimation translateAnimation = new TranslateAnimation(Animation.RELATIVE_TO_SELF, 0, Animation.RELATIVE_TO_SELF, 1f,
-                        Animation.RELATIVE_TO_SELF, 0f, Animation.RELATIVE_TO_SELF, 0f);
-                setDefaultConfig(translateAnimation, true);
-                return translateAnimation;
+                return defaultLoadFinishAnimation(animParam);
         }
+    }
+
+    protected Animation defaultLoadFinishAnimation(AnimParam animParam) {
+        TranslateAnimation translateAnimation = new TranslateAnimation(Animation.RELATIVE_TO_SELF, 0, Animation.RELATIVE_TO_SELF, 1f,
+                Animation.RELATIVE_TO_SELF, 0f, Animation.RELATIVE_TO_SELF, 0f);
+        setDefaultConfig(translateAnimation, true);
+        return translateAnimation;
     }
 
     @Override
@@ -522,17 +530,28 @@ public abstract class UIIViewImpl implements IView {
                 }
             case TRANSLATE_HORIZONTAL:
             default:
-                TranslateAnimation translateAnimation;
-                if (mIsRightJumpLeft) {
-                    translateAnimation = new TranslateAnimation(Animation.RELATIVE_TO_SELF, 0, Animation.RELATIVE_TO_SELF, 1f,
-                            Animation.RELATIVE_TO_SELF, 0f, Animation.RELATIVE_TO_SELF, 0f);
-                } else {
-                    translateAnimation = new TranslateAnimation(Animation.RELATIVE_TO_SELF, 0, Animation.RELATIVE_TO_SELF, -1f,
-                            Animation.RELATIVE_TO_SELF, 0f, Animation.RELATIVE_TO_SELF, 0f);
-                }
-                setDefaultConfig(translateAnimation, true);
-                return translateAnimation;
+                return defaultLoadOtherExitAnimation(animParam);
         }
+    }
+
+    public Animation defaultLoadOtherExitAnimation(AnimParam animParam) {
+        TranslateAnimation translateAnimation;
+        if (mIsRightJumpLeft) {
+            translateAnimation = new TranslateAnimation(Animation.RELATIVE_TO_SELF, 0, Animation.RELATIVE_TO_SELF, 1f,
+                    Animation.RELATIVE_TO_SELF, 0f, Animation.RELATIVE_TO_SELF, 0f);
+        } else {
+            translateAnimation = new TranslateAnimation(Animation.RELATIVE_TO_SELF, 0, Animation.RELATIVE_TO_SELF, -1f,
+                    Animation.RELATIVE_TO_SELF, 0f, Animation.RELATIVE_TO_SELF, 0f);
+        }
+        setDefaultConfig(translateAnimation, true);
+        return translateAnimation;
+    }
+
+    public Animation defaultLoadOtherEnterAnimation(AnimParam animParam) {
+        TranslateAnimation translateAnimation = new TranslateAnimation(Animation.RELATIVE_TO_SELF, -1f, Animation.RELATIVE_TO_SELF, 0,
+                Animation.RELATIVE_TO_SELF, 0f, Animation.RELATIVE_TO_SELF, 0f);
+        setDefaultConfig(translateAnimation, false);
+        return translateAnimation;
     }
 
     @Override
@@ -554,10 +573,7 @@ public abstract class UIIViewImpl implements IView {
             case SCALE_TO_MAX:
             case TRANSLATE_HORIZONTAL:
             default:
-                TranslateAnimation translateAnimation = new TranslateAnimation(Animation.RELATIVE_TO_SELF, -1f, Animation.RELATIVE_TO_SELF, 0,
-                        Animation.RELATIVE_TO_SELF, 0f, Animation.RELATIVE_TO_SELF, 0f);
-                setDefaultConfig(translateAnimation, false);
-                return translateAnimation;
+                return defaultLoadOtherEnterAnimation(animParam);
         }
     }
 
@@ -656,7 +672,7 @@ public abstract class UIIViewImpl implements IView {
     }
 
     public void startIView(final IView iView, boolean anim) {
-        startIView(iView, new UIParam(anim));
+        startIView(iView, createUIParam().setAnim(anim));
     }
 
     public void startIView(final IView iView, final UIParam param) {
@@ -695,7 +711,11 @@ public abstract class UIIViewImpl implements IView {
     }
 
     public void finishIView(final Runnable unloadRunnable) {
-        finishIView(new UIParam(unloadRunnable));
+        finishIView(createUIParam().setUnloadRunnable(unloadRunnable));
+    }
+
+    public void finishIView(boolean closeLastDialog, final Runnable unloadRunnable) {
+        finishIView(createUIParam().setUnloadRunnable(unloadRunnable).setCloseLastDialog(closeLastDialog));
     }
 
     public void finishIView(final IView iView, boolean anim) {
@@ -703,7 +723,11 @@ public abstract class UIIViewImpl implements IView {
     }
 
     public void finishIView(final IView iView, boolean anim, boolean quiet) {
-        finishIView(iView, new UIParam(anim).setQuiet(quiet));
+        finishIView(iView, createUIParam().setAnim(anim).setQuiet(quiet));
+    }
+
+    protected UIParam createUIParam() {
+        return UIParam.get();
     }
 
     public void showIView(final View view) {
@@ -721,7 +745,7 @@ public abstract class UIIViewImpl implements IView {
         if (mParentILayout == null) {
             throw new IllegalArgumentException("mParentILayout 还未初始化");
         }
-        mParentILayout.showIView(view, new UIParam(needAnim).setBundle(bundle));
+        mParentILayout.showIView(view, createUIParam().setAnim(needAnim).setBundle(bundle));
     }
 
     public void showIView(IView iview, boolean needAnim) {
@@ -740,7 +764,7 @@ public abstract class UIIViewImpl implements IView {
         if (mParentILayout == null) {
             throw new IllegalArgumentException("mParentILayout 还未初始化");
         }
-        mParentILayout.showIView(iview, new UIParam(needAnim).setBundle(bundle));
+        mParentILayout.showIView(iview, createUIParam().setAnim(needAnim).setBundle(bundle));
     }
 
     public void hideIView(final View view) {
@@ -758,7 +782,7 @@ public abstract class UIIViewImpl implements IView {
         if (mParentILayout == null) {
             throw new IllegalArgumentException("mParentILayout 还未初始化");
         }
-        mParentILayout.hideIView(view, new UIParam(needAnim).setBundle(bundle));
+        mParentILayout.hideIView(view, createUIParam().setAnim(needAnim).setBundle(bundle));
     }
 
     public void hideIView(IView iview, boolean needAnim) {
@@ -776,11 +800,11 @@ public abstract class UIIViewImpl implements IView {
         if (mParentILayout == null) {
             throw new IllegalArgumentException("mParentILayout 还未初始化");
         }
-        mParentILayout.hideIView(iview, new UIParam(needAnim).setBundle(bundle));
+        mParentILayout.hideIView(iview, createUIParam().setAnim(needAnim).setBundle(bundle));
     }
 
     public void replaceIView(IView iView, boolean needAnim) {
-        replaceIView(iView, new UIParam(needAnim));
+        replaceIView(iView, createUIParam().setAnim(needAnim));
     }
 
     public void replaceIView(IView iView) {
