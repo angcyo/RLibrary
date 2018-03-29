@@ -30,7 +30,7 @@ public class ImageItem implements Parcelable {
     public long addTime = -1;      //创建时间 秒
 
     //星期二 2017-6-13 支持扫描视频文件
-    public long videoDuration = -1;//视频时长
+    public long videoDuration = -1;//视频时长, 毫秒
     public String videoThumbPath = "";//
     public String resolution;// width x height or height x width
     public int videoRotation = 0;//视频的宽高,已通过旋转方向自动调整了

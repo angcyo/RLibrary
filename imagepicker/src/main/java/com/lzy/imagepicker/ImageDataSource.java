@@ -39,9 +39,9 @@ public class ImageDataSource implements LoaderManager.LoaderCallbacks<Cursor> {
 
     public static final int LOADER_VIDEO_ALL = 2;
     public static final int LOADER_VIDEO_CATEGORY = 3;
-    public static final int IMAGE = 1;
-    public static final int VIDEO = 2;
-    public static final int FILE = 3;
+    public static final int IMAGE = 1;//加载类型图片
+    public static final int VIDEO = 2;//加载类型视频
+    public static final int FILE = 3;//加载类型文件
     private final String[] IMAGE_PROJECTION = {     //查询图片需要的数据列
             MediaStore.Images.Media.DISPLAY_NAME,   //图片的显示名称  aaa.jpg
             MediaStore.Images.Media.DATA,           //图片的真实路径  /storage/emulated/0/pp/downloader/wallpaper/aaa.jpg
@@ -316,7 +316,7 @@ public class ImageDataSource implements LoaderManager.LoaderCallbacks<Cursor> {
         String videoId = data.getString(data.getColumnIndexOrThrow(VIDEO_PROJECTION[10]));
         String thumbPath = getVideoThumb(activity.getContentResolver(), videoId);
 
-        if (videoDuration < 3 * 1000) {
+        if (videoDuration < 1000) {
             //小于3秒的视频过滤
             return;
         }

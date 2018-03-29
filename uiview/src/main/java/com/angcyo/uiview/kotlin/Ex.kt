@@ -6,6 +6,7 @@ import android.text.TextUtils
 import android.view.View
 import com.angcyo.uiview.utils.RUtils
 import com.angcyo.uiview.view.UIIViewImpl
+import java.io.File
 
 /**
  * Copyright (C) 2016,深圳市红鸟网络科技股份有限公司 All rights reserved.
@@ -157,4 +158,9 @@ public fun List<String>.stringSize(checkExist: Boolean = false /*是否检查重
 
 public fun List<*>.toStringArray(): Array<String> {
     return RUtils.toStringArray(this)
+}
+
+/**文件是否存在*/
+public fun String.isFileExists(): Boolean {
+    return File(this).exists()
 }

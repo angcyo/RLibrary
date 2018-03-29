@@ -41,6 +41,7 @@ open class UIVideoView(var videoPath: String? = null /*需要播放的视频地�
                 .setFloating(true)
                 .setShowBackImageView(true)
                 .setTitleString("")
+                .setTitleBarBGColor(Color.TRANSPARENT)
     }
 
     override fun getDefaultBackgroundColor(): Int {
@@ -140,6 +141,10 @@ open class UIVideoView(var videoPath: String? = null /*需要播放的视频地�
                     if (!autoPlay) {
                         videoView.pause()
                     }
+                }
+
+                if (autoPlay) {
+                    playVideo()
                 }
             }
 
