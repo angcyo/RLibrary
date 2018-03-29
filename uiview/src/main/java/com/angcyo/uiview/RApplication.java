@@ -199,9 +199,6 @@ public class RApplication extends Application {
     protected void onAsyncInit() {
         RNotifier.instance().init(this);
 
-        isLowDevice = UIIViewImpl.isLowDevice();
-        isHighDevice = UIIViewImpl.isHighDevice();
-
         /*Realm数据库初始化*/
         //RRealm.init(this, "r_jcenter.realm", true);
 
@@ -237,6 +234,9 @@ public class RApplication extends Application {
 
         /*崩溃异常处理*/
         RCrashHandler.init(this);
+
+        isLowDevice = UIIViewImpl.isLowDevice();
+        isHighDevice = UIIViewImpl.isHighDevice();
     }
 
     @Override
