@@ -423,9 +423,12 @@ public class UILayoutImpl extends SwipeBackLayout implements ILayout, UIViewPage
         }
         setFocusable(true);
         setFocusableInTouchMode(true);
-        isAttachedToWindow = true;
+        boolean old = this.isAttachedToWindow;
+        this.isAttachedToWindow = true;
         //loadViewInternal();
-        checkStartTask();
+        if (!old) {
+            checkStartTask();
+        }
     }
 
     @Override

@@ -8,9 +8,11 @@ import android.support.multidex.MultiDex;
 import android.telephony.TelephonyManager;
 import android.text.TextUtils;
 
+import com.angcyo.github.utilcode.utils.AppUtils;
 import com.angcyo.github.utilcode.utils.Utils;
 import com.angcyo.library.utils.L;
 import com.angcyo.uiview.manager.RNotifier;
+import com.angcyo.uiview.net.Rx;
 import com.angcyo.uiview.skin.SkinHelper;
 import com.angcyo.uiview.utils.Debug;
 import com.angcyo.uiview.utils.T_;
@@ -23,6 +25,8 @@ import java.io.FileReader;
 import java.io.IOException;
 import java.util.Iterator;
 import java.util.List;
+
+import rx.functions.Func1;
 
 /**
  * Created by robi on 2016-06-21 11:24.
@@ -176,46 +180,17 @@ public class RApplication extends Application {
     }
 
     protected void onBaseInit() {
-        isLowDevice = UIIViewImpl.isLowDevice();
-        isHighDevice = UIIViewImpl.isHighDevice();
-
-        try {
-            ActivityManager manager = (ActivityManager) getSystemService(Context.ACTIVITY_SERVICE);
-            memoryClass = manager.getMemoryClass();
-            largeMemoryClass = manager.getLargeMemoryClass();
-        } catch (Exception e) {
-
-        }
-        //96 256
-        L.e("RApplication -> memoryClass:" + memoryClass + "MB largeMemoryClass:" + largeMemoryClass + "MB");
-
-        Utils.init(this);
-
-             /*sp持久化库*/
-        Hawk.init(this)
-                .build();
-
-            /*崩溃异常处理*/
-        RCrashHandler.init(this);
-
-        SkinHelper.init(this);
-
-            /*Realm数据库初始化*/
-        //RRealm.init(this, "r_jcenter.realm", true);
-
-            /*Facebook图片加载库, 必须*/
-        //Fresco.initialize(this);
-
         onInit();
 
-        new Thread() {
+        Rx.base(new Func1<String, String>() {
             @Override
-            public void run() {
+            public String call(String s) {
                 Debug.logTimeStart("RApplication 异步初始化:onAsyncInit()");
                 onAsyncInit();
                 Debug.logTimeEnd("RApplication 异步初始化结束:onAsyncInit()");
+                return null;
             }
-        }.start();
+        });
     }
 
     /**
@@ -223,6 +198,41 @@ public class RApplication extends Application {
      */
     protected void onAsyncInit() {
         RNotifier.instance().init(this);
+
+        isLowDevice = UIIViewImpl.isLowDevice();
+        isHighDevice = UIIViewImpl.isHighDevice();
+
+        Utils.init(this);
+
+        /*sp持久化库*/
+        Hawk.init(this)
+                .build();
+
+        /*崩溃异常处理*/
+        RCrashHandler.init(this);
+
+        SkinHelper.init(this);
+
+        /*Realm数据库初始化*/
+        //RRealm.init(this, "r_jcenter.realm", true);
+
+        /*Facebook图片加载库, 必须*/
+        //Fresco.initialize(this);
+
+        if (BuildConfig.DEBUG) {
+            try {
+                ActivityManager manager = (ActivityManager) getSystemService(Context.ACTIVITY_SERVICE);
+                memoryClass = manager.getMemoryClass();
+                largeMemoryClass = manager.getLargeMemoryClass();
+            } catch (Exception e) {
+
+            }
+            //96 256
+            L.e("RApplication -> memoryClass:" + memoryClass + "MB largeMemoryClass:" + largeMemoryClass + "MB");
+
+            L.e("onAsyncInit([])-> 签名MD5:" + AppUtils.getAppSignatureMD5(this));
+            L.e("onAsyncInit([])-> 签名SHA1:" + AppUtils.getAppSignatureSHA1(this));
+        }
     }
 
     /**
