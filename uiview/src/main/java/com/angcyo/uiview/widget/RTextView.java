@@ -890,6 +890,7 @@ public class RTextView extends AppCompatTextView {
         } else {
             paint.setFlags(paint.getFlags() & ~flat);
         }
+        postInvalidate();
     }
 
     /**
