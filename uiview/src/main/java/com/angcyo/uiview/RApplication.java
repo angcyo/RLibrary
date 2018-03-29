@@ -202,17 +202,6 @@ public class RApplication extends Application {
         isLowDevice = UIIViewImpl.isLowDevice();
         isHighDevice = UIIViewImpl.isHighDevice();
 
-        Utils.init(this);
-
-        /*sp持久化库*/
-        Hawk.init(this)
-                .build();
-
-        /*崩溃异常处理*/
-        RCrashHandler.init(this);
-
-        SkinHelper.init(this);
-
         /*Realm数据库初始化*/
         //RRealm.init(this, "r_jcenter.realm", true);
 
@@ -239,7 +228,15 @@ public class RApplication extends Application {
      * 同步初始化
      */
     protected void onInit() {
+        SkinHelper.init(this);
+        Utils.init(this);
 
+        /*sp持久化库*/
+        Hawk.init(this)
+                .build();
+
+        /*崩溃异常处理*/
+        RCrashHandler.init(this);
     }
 
     @Override
