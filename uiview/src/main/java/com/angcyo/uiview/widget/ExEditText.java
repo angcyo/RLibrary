@@ -213,7 +213,7 @@ public class ExEditText extends AppCompatEditText {
             return false;
         }
         final String phone = string.trim();
-        return !TextUtils.isEmpty(phone) && phone.matches("^1[3-8]\\d{9}$");
+        return !TextUtils.isEmpty(phone) && phone.matches("^1[3-9]\\d{9}$");
     }
 
     /**
