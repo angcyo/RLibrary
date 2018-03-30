@@ -38,10 +38,10 @@ abstract class UISlidingTabView : UIContentView(), UIBaseView.OnViewLoadListener
             tabLayout.indicatorStyle = SlidingTabLayout.STYLE_NORMAL
             tabLayout.indicatorCornerRadius = 3 * density //指示器的圆角
             tabLayout.indicatorMarginLeft = 0f //指示器左偏移的距离
-            tabLayout.tabPadding = 5 * density
             tabLayout.setTextSizePx(SkinHelper.getSkin().mainTextSize)
             tabLayout.setItemNoBackground(false) //item 是否禁用点击效果
 
+            tabLayout.tabPadding = 5 * density //如果用了平分TabLayout, 那么此项可以为0
             tabLayout.setIndicatorWidthEqualTitle(true)
             //tabLayout.indicatorWidth = 100 //px单位, 自动换算
             tabLayout.isTabSpaceEqual = false //tab 是否平分 TabLayout的宽度
@@ -92,6 +92,12 @@ abstract class UISlidingTabView : UIContentView(), UIBaseView.OnViewLoadListener
 
         mViewPager.adapter = createAdapter()
         mSlidingTab.setViewPager(mViewPager)
+    }
+
+    open fun setCurrentIndex(index: Int, smoothScroll: Boolean = true) {
+        if (index >= 0 && index < pages.size) {
+            mSlidingTab.setCurrentTab(index, smoothScroll)
+        }
     }
 
     open fun getCurrentIndex(): Int {

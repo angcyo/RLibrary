@@ -6,6 +6,7 @@ import android.graphics.Color
 import android.graphics.Paint
 import android.graphics.Rect
 import android.graphics.drawable.Drawable
+import android.support.v4.content.ContextCompat
 import android.support.v4.view.ViewCompat
 import android.util.AttributeSet
 import android.view.GestureDetector
@@ -49,7 +50,6 @@ open class RFrameLayout(context: Context, attributeSet: AttributeSet? = null) : 
     var showInnerBorder = false
         set(value) {
             field = value
-            setWillNotDraw(!field)
         }
 
     var innerBorderWidth = 0
@@ -66,6 +66,12 @@ open class RFrameLayout(context: Context, attributeSet: AttributeSet? = null) : 
         p
     }
 
+    private var drawLine = 0//不绘制线
+    private var drawLineColor = 0
+    private var drawLineOffsetLeft = 0//左偏移
+    private var drawLineOffsetRight = 0//右偏移
+    private var drawLineWidth = 1 * ScreenUtil.density()
+    private var linePaint: Paint? = null
 
     init {
         val typedArray = context.obtainStyledAttributes(attributeSet, R.styleable.RFrameLayout)
@@ -85,6 +91,14 @@ open class RFrameLayout(context: Context, attributeSet: AttributeSet? = null) : 
         rBackgroundDrawable = typedArray.getDrawable(R.styleable.RFrameLayout_r_background)
         resetMaxHeight(typedArray.getDimension(R.styleable.RFrameLayout_r_max_height, 0f))
         //maxHeight = typedArray.getDimension(R.styleable.RFrameLayout_r_max_height, maxHeight)
+
+        drawLine = typedArray.getInt(R.styleable.RFrameLayout_r_draw_line, drawLine)
+        drawLineOffsetLeft = typedArray.getDimensionPixelOffset(R.styleable.RFrameLayout_r_draw_line_offset_left, drawLineOffsetLeft)
+        drawLineOffsetRight = typedArray.getDimensionPixelOffset(R.styleable.RFrameLayout_r_draw_line_offset_right, drawLineOffsetRight)
+        drawLineColor = typedArray.getColor(R.styleable.RFrameLayout_r_draw_line_color, ContextCompat.getColor(getContext(), R.color.base_chat_bg_color))
+        drawLineWidth = typedArray.getDimensionPixelOffset(R.styleable.RFrameLayout_r_draw_line_width, drawLineWidth.toInt()).toFloat()
+
+        setWillNotDraw(false)
 
         typedArray.recycle()
 
@@ -120,6 +134,32 @@ open class RFrameLayout(context: Context, attributeSet: AttributeSet? = null) : 
         rBackgroundDrawable?.let {
             it.bounds = canvas.clipBounds
             it.draw(canvas)
+        }
+        if (drawLine > 0) {
+            if (linePaint == null) {
+                linePaint = Paint(Paint.ANTI_ALIAS_FLAG)
+                linePaint!!.style = Paint.Style.FILL_AND_STROKE
+            }
+            linePaint!!.strokeWidth = drawLineWidth
+            linePaint!!.color = drawLineColor
+
+            when (drawLine) {
+                1//L
+                -> {
+                }
+                2//T
+                -> canvas.drawLine(drawLineOffsetLeft.toFloat(), drawLineWidth / 2,
+                        (measuredWidth - drawLineOffsetRight).toFloat(), drawLineWidth / 2,
+                        linePaint)
+                3//R
+                -> {
+                }
+                4//B
+                -> canvas.drawLine(drawLineOffsetLeft.toFloat(), measuredHeight - drawLineWidth / 2,
+                        (measuredWidth - drawLineOffsetRight).toFloat(), measuredHeight - drawLineWidth / 2,
+                        linePaint)
+            }//暂不支持
+            //暂不支持
         }
         super.draw(canvas)
     }
@@ -390,6 +430,5 @@ open class RFrameLayout(context: Context, attributeSet: AttributeSet? = null) : 
         constructor(width: Int, height: Int, gravity: Int) : super(width, height, gravity)
         constructor(source: ViewGroup.LayoutParams?) : super(source)
         constructor(source: MarginLayoutParams?) : super(source)
-        constructor(source: FrameLayout.LayoutParams?) : super(source)
     }
 }

@@ -112,6 +112,12 @@
         <attr name="r_inner_border_width"/>
         <attr name="r_inner_border_offset"/>
         <attr name="r_show_inner_border"/>
+
+        <attr name="r_draw_line"/>
+        <attr name="r_draw_line_color"/>
+        <attr name="r_draw_line_width"/>
+        <attr name="r_draw_line_offset_left"/>
+        <attr name="r_draw_line_offset_right"/>
     </declare-styleable>
 
     <declare-styleable name="RRelativeLayout">
