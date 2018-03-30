@@ -737,13 +737,15 @@ public class UILayoutImpl extends SwipeBackLayout implements ILayout, UIViewPage
                 param.setReplaceIView(topViewPattern.mIView);
             }
         }
+        final ViewPattern targetViewPattern = findViewPatternByIView(iView);
         final ViewPattern fromViewPattern = findViewPatternByIView(param.replaceIView);
-        final ViewPattern targetViewPattern = findViewPatternByClass(iView.getClass());
+        final ViewPattern targetViewPatternByClass = findViewPatternByClass(iView.getClass());
 
         L.i(name(param.replaceIView +
                         " 请求替换 " + name(iView)
                 /*" LastIs:" + name(mLastShowViewPattern.mIView)*/));
 
+        //移除需要被替换的目标
         final Runnable removeTargetViewPattern = new Runnable() {
             @Override
             public void run() {
@@ -761,6 +763,7 @@ public class UILayoutImpl extends SwipeBackLayout implements ILayout, UIViewPage
             }
         };
 
+        //启动需要显示的目标
         final Runnable newViewPatternRunnable = new Runnable() {
             @Override
             public void run() {
@@ -788,6 +791,7 @@ public class UILayoutImpl extends SwipeBackLayout implements ILayout, UIViewPage
             }
         };
 
+        //run
         final Runnable runnable = new Runnable() {
             @Override
             public void run() {
@@ -795,12 +799,13 @@ public class UILayoutImpl extends SwipeBackLayout implements ILayout, UIViewPage
 
                 if (param.start_mode == UIParam.SINGLE_TOP ||
                         param.start_mode == UIParam.SINGLE_TOP_OF_CLASS) {
+
                     param.mAnimParam.needBaseAnim = true;
-                    if (targetViewPattern == null) {
+                    if (targetViewPatternByClass == null) {
                         //替换成一个新的IView
                         newViewPatternRunnable.run();
                     } else {
-                        newViewPattern = targetViewPattern;
+                        newViewPattern = targetViewPatternByClass;
                         //替换成已经存在的IVew
 
                         if (newViewPattern == topViewPattern) {
@@ -969,13 +974,22 @@ public class UILayoutImpl extends SwipeBackLayout implements ILayout, UIViewPage
 
         if (param.start_mode == UIParam.SINGLE_TOP ||
                 param.start_mode == UIParam.SINGLE_TOP_OF_CLASS) {
+
+            //已经是顶部显示的IView
+            final Runnable isOnTopRunnable = new Runnable() {
+                @Override
+                public void run() {
+                    setIViewNeedLayout(topViewPattern.mView, true);
+                    topViewPattern.mIView.onViewShow(param.getBundle());
+                    topViewPattern.mIView.onViewReShow(param.getBundle());
+                    currentViewTask.taskRun--;
+                    checkTaskOnIViewAnimationEnd();
+                }
+            };
+
             if (topViewPattern != null && topViewPattern.mIView == iView) {
                 //如果已经是最前显示, 调用onViewShow方法
-                setIViewNeedLayout(topViewPattern.mView, true);
-                topViewPattern.mIView.onViewShow(param.getBundle());
-                topViewPattern.mIView.onViewReShow(param.getBundle());
-                currentViewTask.taskRun--;
-                checkTaskOnIViewAnimationEnd();
+                isOnTopRunnable.run();
             } else {
                 final ViewPattern startViewPattern;
                 if (param.start_mode == UIParam.SINGLE_TOP_OF_CLASS) {
@@ -987,20 +1001,24 @@ public class UILayoutImpl extends SwipeBackLayout implements ILayout, UIViewPage
                     //这个IView 还不存在
                     startRunnable.run();
                 } else {
-                    //这个IView 存在, 但是不在最前显示
-                    mAttachViews.remove(startViewPattern);
-                    mAttachViews.push(startViewPattern);
+                    if (topViewPattern != null && topViewPattern.mIView == startViewPattern.mIView) {
+                        isOnTopRunnable.run();
+                    } else {
+                        //这个IView 存在, 但是不在最前显示
+                        mAttachViews.remove(startViewPattern);
+                        mAttachViews.push(startViewPattern);
 
-                    param.mAnimParam.needBaseAnim = true;
+                        param.mAnimParam.needBaseAnim = true;
 
-                    startIViewAnim(topViewPattern, startViewPattern, param, true);
+                        startIViewAnim(topViewPattern, startViewPattern, param, true);
 
-                    postDelayed(new Runnable() {
-                        @Override
-                        public void run() {
-                            startViewPattern.mIView.onViewReShow(param.getBundle());
-                        }
-                    }, DEFAULT_DELAY_ANIM_TIME);
+                        postDelayed(new Runnable() {
+                            @Override
+                            public void run() {
+                                startViewPattern.mIView.onViewReShow(param.getBundle());
+                            }
+                        }, DEFAULT_DELAY_ANIM_TIME);
+                    }
                 }
             }
         } else {

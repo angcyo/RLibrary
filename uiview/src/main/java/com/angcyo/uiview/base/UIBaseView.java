@@ -323,7 +323,7 @@ public abstract class UIBaseView extends UIIViewImpl {
 
     protected Drawable getTipButtonSelector() {
         int borderColor = getColor(R.color.default_base_border);
-        int borderSize = getDimensionPixelOffset(R.dimen.base_border_size);
+        int borderSize = getDimensionPixelOffset(R.dimen.base_line);
         int radii = getDimensionPixelOffset(R.dimen.base_40dpi);
         return ResUtil.selector(
                 ResUtil.createDrawable(borderColor, borderSize, radii),
