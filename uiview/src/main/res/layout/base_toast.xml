@@ -15,7 +15,8 @@
         android:layout_marginStart="@dimen/base_xhdpi"
         android:gravity="center"
         android:minHeight="@dimen/action_bar_height"
-        android:orientation="horizontal">
+        android:orientation="horizontal"
+        android:paddingBottom="@dimen/base_ldpi">
 
         <ImageView
             android:id="@+id/base_toast_image_view"
@@ -32,7 +33,7 @@
             android:layout_height="wrap_content"
             android:layout_marginStart="@dimen/base_ldpi"
             android:textSize="@dimen/default_text_size"
-            tools:text="测试内容"/>
+            tools:text="测试内容测试内容测试内容测试内容测试内容测试内容"/>
     </LinearLayout>
 
 </com.angcyo.uiview.widget.ToastLayout>

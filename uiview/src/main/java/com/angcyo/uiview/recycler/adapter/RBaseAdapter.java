@@ -192,6 +192,16 @@ public abstract class RBaseAdapter<T> extends RecyclerView.Adapter<RBaseViewHold
         RBaseViewHolder viewHolder = null;
         int itemLayoutId = -1;
         try {
+
+            if (mContext == null) {
+                L.w("RBaseViewHolder onCreateViewHolder:注意 mContext=null, 已使用parent.getContext()替换");
+                mContext = parent.getContext();
+            }
+
+            if (mContext == null) {
+                throw new NullPointerException("RBaseViewHolder onCreateViewHolder:错误 mContext=null");
+            }
+
             if (mEnableShowState && viewType == ITEM_TYPE_SHOW_STATE) {
                 itemView = LayoutInflater.from(mContext)
                         .inflate(R.layout.base_item_show_state_layout, parent, false);
