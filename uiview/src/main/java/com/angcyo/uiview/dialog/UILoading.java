@@ -5,12 +5,14 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.FrameLayout;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.angcyo.uiview.R;
 import com.angcyo.uiview.base.UIIDialogImpl;
 import com.angcyo.uiview.container.ILayout;
 import com.angcyo.uiview.container.UIParam;
+import com.angcyo.uiview.view.IViewAnimationType;
 
 /**
  * Copyright (C) 2016,深圳市红鸟网络科技股份有限公司 All rights reserved.
@@ -30,6 +32,7 @@ public class UILoading extends UIIDialogImpl {
      */
     public static final int DIALOG_TYPE_DEFAULT = 1; //默认的横条样式
     public static final int DIALOG_TYPE_PROGRESS = 2;//居中的进度圈圈提示
+    public static final int DIALOG_TYPE_FLOW = 3;//模仿QQ支付验证对话框
     protected static boolean isShowing = false;
     private static UILoading mUILoading;
     protected ViewGroup mBaseLoadingRootLayout;
@@ -37,6 +40,8 @@ public class UILoading extends UIIDialogImpl {
     protected TextView mBaseLoadingTipView;
     String mLoadingTipText = "别怕, 马上就好...";
     private int dialogType = DIALOG_TYPE_DEFAULT;
+
+    private int flowImageRes = -1;
 
     protected UILoading() {
         setGravity(Gravity.TOP);
@@ -99,6 +104,23 @@ public class UILoading extends UIIDialogImpl {
         return mUILoading;
     }
 
+    public static UILoading flow(ILayout layout) {
+        if (isShowing) {
+            mUILoading.initLoadingUI();
+        } else {
+            if (mUILoading == null) {
+                mUILoading = new UILoading();
+                mUILoading.mLoadingTipText = "请稍等...";
+                mUILoading.setGravity(Gravity.CENTER);
+                mUILoading.dialogType = DIALOG_TYPE_FLOW;
+            }
+            mUILoading.setAnimationType(IViewAnimationType.SCALE_TO_MAX_AND_END);
+            layout.startIView(mUILoading);
+            isShowing = true;
+        }
+        return mUILoading;
+    }
+
     /**
      * 显示
      */
@@ -122,10 +144,25 @@ public class UILoading extends UIIDialogImpl {
         return this;
     }
 
+    public UILoading setFlowImageRes(int flowImageRes) {
+        this.flowImageRes = flowImageRes;
+        if (flowImageRes != -1 && dialogType == DIALOG_TYPE_FLOW) {
+            if (mViewHolder != null) {
+                ImageView imageView = mViewHolder.imageView(R.id.base_load_image_view);
+                if (imageView != null) {
+                    imageView.setImageResource(flowImageRes);
+                }
+            }
+        }
+        return this;
+    }
+
     @Override
     protected View inflateDialogView(FrameLayout dialogRootLayout, LayoutInflater inflater) {
         if (dialogType == DIALOG_TYPE_PROGRESS) {
             return inflate(R.layout.base_progress_loading_layout);
+        } else if (dialogType == DIALOG_TYPE_FLOW) {
+            return inflate(R.layout.base_flow_loading_layout);
         } else {
             return inflate(R.layout.base_loading_layout);
         }
@@ -144,6 +181,7 @@ public class UILoading extends UIIDialogImpl {
         if (mBaseLoadingTipView != null) {
             mBaseLoadingTipView.setText(mLoadingTipText);
         }
+        setFlowImageRes(flowImageRes);
     }
 
     @Override

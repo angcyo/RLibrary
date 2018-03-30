@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tolls="http://schemas.android.com/tools"
+    android:id="@+id/base_progress_root_layout"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:layout_gravity="center"
+    android:background="@drawable/base_dark2_solid_round_shape"
+    android:gravity="center"
+    android:minWidth="100dp"
+    android:orientation="vertical"
+    android:padding="@dimen/base_xhdpi">
+
+    <ImageView
+        android:id="@+id/base_load_image_view"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:padding="@dimen/base_ldpi"
+        android:src="@drawable/base_ico_load_fail"/>
+
+    <com.angcyo.uiview.widget.RTextView
+        android:id="@+id/base_load_tip_view"
+        style="@style/BaseMainTextStyle"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center_horizontal"
+        android:paddingTop="@dimen/base_ldpi"
+        android:textColor="@color/base_white"
+        android:textSize="@dimen/default_text_size9"
+        tolls:text="请稍等..."/>
+
+    <com.angcyo.uiview.widget.QQFlowProgressView
+        android:layout_width="40dp"
+        android:layout_height="4dp"
+        android:layout_marginTop="@dimen/base_ldpi"
+        android:tag="60"/>
+
+</LinearLayout>

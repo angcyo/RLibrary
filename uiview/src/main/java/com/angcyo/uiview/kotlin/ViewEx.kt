@@ -1,6 +1,7 @@
 package com.angcyo.uiview.kotlin
 
 
+import android.animation.ValueAnimator
 import android.graphics.Color
 import android.graphics.Paint
 import android.graphics.Rect
@@ -10,6 +11,7 @@ import android.support.v4.view.ViewCompat
 import android.text.TextUtils
 import android.view.MotionEvent
 import android.view.View
+import android.view.animation.LinearInterpolator
 import android.widget.EditText
 import android.widget.TextView
 import com.angcyo.github.utilcode.utils.SingleTextWatcher
@@ -348,5 +350,15 @@ public fun View.showShadowViewDrawable(shadowRadius: Int = 6) {
 public fun View.onDoubleTap(listener: () -> Unit) {
     RGestureDetector.onDoubleTap(this) {
         listener.invoke()
+    }
+}
+
+/**无限循环, 每秒60帧的速度*/
+public val View.valueAnimator: ValueAnimator by lazy {
+    ValueAnimator.ofInt(0, 100).apply {
+        interpolator = LinearInterpolator()
+        repeatMode = ValueAnimator.RESTART
+        repeatCount = ValueAnimator.INFINITE
+        duration = 1000
     }
 }
