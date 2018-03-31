@@ -1,14 +1,48 @@
-//apply from: 'key.gradle'
+//apply from: '../RLibrary/key.gradle'
 
 apply plugin: 'com.android.application'
+
+String key_alias = 'angcyo'
+String key_password = 'angcyo'
+String key_file = '../RLibrary/angcyo.jks'
+String password = 'angcyo'
+
+//读取key文件
+Properties props = new Properties()
+if (project.hasProperty("key_file")) {
+    String keyFileString = project.property("key_file")
+    File keyFile = new File(keyFileString)
+    if (keyFile.exists()) {
+        println("读取的配置文件:" + keyFile.getAbsolutePath())
+
+        props.load(new FileInputStream(keyFile))
+        key_alias = props['key.alias']
+        key_password = props['key.password']
+        key_file = props['key.file']
+        password = props['password']
+    } else {
+        println("指定的配置文件:" + keyFile.getAbsolutePath() + "不存在, 将采用默认签名进行.")
+    }
+} else {
+    println("未声明key_file属性, 将采用默认签名进行.")
+}
+
+File keyFile = new File(key_file)
+
+println(
+        "\nkey.alias:" + key_alias +
+                "\nkey.password:" + key_password +
+                "\nkey.file:" + key_file + " ->" + keyFile.getAbsolutePath() +
+                "\npassword:" + password + "\n"
+)
 
 android {
     signingConfigs {
         angcyo {
-            keyAlias 'angcyo'
-            keyPassword 'angcyo'
-            storeFile file('../RLibrary/angcyo.jks')
-            storePassword 'angcyo'
+            keyAlias key_alias
+            keyPassword key_password
+            storeFile file(key_file)
+            storePassword password
         }
     }
 }

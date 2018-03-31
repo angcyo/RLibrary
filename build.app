@@ -1,30 +1,54 @@
 
 
 
+# 2018-3-31 使用方法
+在app.build中
+
+apply from: '../RLibrary/key.gradle'
+
+复制 RLibrary 文件夹下的
+gradle.properties 文件 (配置相关属性)
+
+和
+
+key.properties 文件 (配置相关key信息)
+
+即可.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 #2018-2-8 使用方法
-请在 key.gradle 文件中编写签名key, 并且复制到 app 模型的根目录,
+请在 key.gradle 文件中编写签名key, 并且将文件复制到 app 模型的根目录,
 之后
 apply from: 'key.gradle'
 即可
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 
 
