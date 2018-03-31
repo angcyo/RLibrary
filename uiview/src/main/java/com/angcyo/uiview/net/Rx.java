@@ -169,6 +169,24 @@ public class Rx<Rx> extends Observable<Rx> {
                 });
     }
 
+    public static Subscription base(final Runnable onMain) {
+        return base(
+                new RFunc<String>() {
+                    @Override
+                    public String onFuncCall() {
+                        return "";
+                    }
+                },
+                new RSubscriber<String>() {
+                    @Override
+                    public void onSucceed(String bean) {
+                        super.onSucceed(bean);
+                        onMain.run();
+                    }
+                });
+    }
+
+
     public static <T, R> Subscription base(T t, Func1<? super T, ? extends R> func, Scheduler scheduler) {
         return scheduler == Schedulers.newThread() ?
                 Observable.just(t).map(func).compose(applyNewThreadSchedulers()).subscribe(new RSubscriber<Object>() {

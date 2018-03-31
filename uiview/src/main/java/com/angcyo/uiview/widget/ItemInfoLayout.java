@@ -116,6 +116,13 @@ public class ItemInfoLayout extends RRelativeLayout {
         if (isInEditMode()) {
             if (TextUtils.isEmpty(itemText)) {
                 setItemText("一条Item测试数据");
+            } else {
+                setItemText(itemText);
+            }
+            if (TextUtils.isEmpty(itemDarkText)) {
+                setItemDarkText("Dark");
+            } else {
+                setItemDarkText(itemDarkText);
             }
             //setRightDrawableRes(R.drawable.base_next);
             //setRedDotMode(true);
