@@ -23,6 +23,8 @@ class UIItemSelectorDialog<T>(val items: List<T>) : UIRecyclerDialog<String, T, 
 
     var onInitItemLayout: ((holder: RBaseViewHolder, posInData: Int, dataBean: T) -> Unit)? = null
 
+    var itemLayoutId = R.layout.base_text_item_selector_layout
+
     override fun getGravity(): Int {
         return Gravity.BOTTOM
     }
@@ -45,7 +47,7 @@ class UIItemSelectorDialog<T>(val items: List<T>) : UIRecyclerDialog<String, T, 
         }
 
         override fun getItemLayoutId(viewType: Int): Int {
-            return R.layout.base_text_item_selector_layout
+            return itemLayoutId
         }
     }
 
