@@ -36,18 +36,17 @@ public class NotifyUtil {
 
     public NotifyUtil(Context context, int ID) {
         this.NOTIFICATION_ID = ID;
+        String channelID = String.valueOf(ID);
+
         mContext = context;
         // 获取系统服务来初始化对象
         nm = (NotificationManager) mContext.getSystemService(Activity.NOTIFICATION_SERVICE);
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            String channelID = String.valueOf(ID);
-            String channelName = "channel_name";
+            String channelName = mContext.getPackageName() + "_NotifyUtil";
             NotificationChannel notificationChannel = new NotificationChannel(channelID, channelName, NotificationManager.IMPORTANCE_HIGH);
             nm.createNotificationChannel(notificationChannel);
-            cBuilder = new NotificationCompat.Builder(mContext, channelID);
-        } else {
-            cBuilder = new NotificationCompat.Builder(mContext);
         }
+        cBuilder = new NotificationCompat.Builder(mContext, channelID);
     }
 
     /**
@@ -79,6 +78,7 @@ public class NotifyUtil {
 
         cBuilder.setContentIntent(pendingIntent);// 该通知要启动的Intent
         cBuilder.setSmallIcon(smallIcon);// 设置顶部状态栏的小图标
+        //cBuilder.setLargeIcon(BitmapFactory.decodeResource(resources, R.mipmap.demo_logo));// 右边的图标
         cBuilder.setTicker(ticker);// 在顶部状态栏中的提示信息
 
         cBuilder.setContentTitle(title);// 设置通知中心的标题

@@ -12,6 +12,7 @@
         android:id="@+id/image_view"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:padding="@dimen/base_xhdpi"
         android:src="@drawable/default_image"/>
 
     <LinearLayout
@@ -24,10 +25,9 @@
 
         <TextView
             android:id="@+id/text_view"
+            style="@style/BaseMainTextStyle"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:paddingBottom="@dimen/base_xhdpi"
-            android:paddingTop="@dimen/base_xhdpi"
             android:text="标题"
             android:textColor="@color/base_text_color"/>
 
@@ -42,6 +42,7 @@
             style="?android:attr/progressBarStyleHorizontal"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/base_hdpi"
             android:progressTint="@color/base_text_color"/>
 
     </LinearLayout>

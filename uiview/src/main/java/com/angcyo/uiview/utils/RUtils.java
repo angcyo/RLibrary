@@ -214,6 +214,10 @@ public class RUtils {
         mFileTypes.put("", "");
     }
 
+    public static int sdk() {
+        return Build.VERSION.SDK_INT;
+    }
+
     /**
      * 获取文件类型
      */
