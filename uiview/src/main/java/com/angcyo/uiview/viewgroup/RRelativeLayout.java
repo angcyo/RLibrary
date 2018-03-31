@@ -32,6 +32,9 @@ public class RRelativeLayout extends RelativeLayout {
     private Drawable mBackgroundDrawable;
     private GestureDetectorCompat mGestureDetectorCompat;
 
+    private RDrawLine mDrawLine;
+    private boolean showNoEnableMark = false;
+
     public RRelativeLayout(Context context) {
         this(context, null);
     }
@@ -44,6 +47,15 @@ public class RRelativeLayout extends RelativeLayout {
         super(context, attrs, defStyleAttr);
         TypedArray typedArray = context.obtainStyledAttributes(attrs, R.styleable.RRelativeLayout);
         mBackgroundDrawable = typedArray.getDrawable(R.styleable.RRelativeLayout_r_background);
+
+        mDrawLine = new RDrawLine(this);
+
+        mDrawLine.drawLine = typedArray.getInt(R.styleable.RRelativeLayout_r_draw_line, mDrawLine.drawLine);
+        mDrawLine.drawLineOffsetLeft = typedArray.getDimensionPixelOffset(R.styleable.RRelativeLayout_r_draw_line_offset_left, mDrawLine.drawLineOffsetLeft);
+        mDrawLine.drawLineOffsetRight = typedArray.getDimensionPixelOffset(R.styleable.RRelativeLayout_r_draw_line_offset_right, mDrawLine.drawLineOffsetRight);
+        mDrawLine.drawLineColor = typedArray.getColor(R.styleable.RRelativeLayout_r_draw_line_color, ContextCompat.getColor(getContext(), R.color.base_chat_bg_color));
+        mDrawLine.drawLineWidth = typedArray.getDimensionPixelOffset(R.styleable.RRelativeLayout_r_draw_line_width, (int) mDrawLine.drawLineWidth);
+
         typedArray.recycle();
         initLayout();
     }
@@ -69,7 +81,8 @@ public class RRelativeLayout extends RelativeLayout {
             mBackgroundDrawable.draw(canvas);
         }
         super.draw(canvas);
-        if (!isEnabled()) {
+        mDrawLine.draw(canvas);
+        if (!isEnabled() && showNoEnableMark) {
             canvas.drawColor(ContextCompat.getColor(getContext(), R.color.default_base_tran_dark2));
         }
     }
