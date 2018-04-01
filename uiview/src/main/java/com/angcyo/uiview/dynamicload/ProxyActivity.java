@@ -12,6 +12,7 @@ import com.angcyo.uiview.dynamicload.internal.DLPluginPackage;
 public class ProxyActivity extends AppCompatActivity {
 
     protected DLPluginPackage pluginPackage;
+    protected Resources.Theme pluginTheme;
 
     @Override
     public ClassLoader getClassLoader() {
@@ -39,6 +40,9 @@ public class ProxyActivity extends AppCompatActivity {
 
     @Override
     public Resources.Theme getTheme() {
+        if (pluginTheme != null) {
+            return pluginTheme;
+        }
         return super.getTheme();
     }
 
@@ -48,5 +52,16 @@ public class ProxyActivity extends AppCompatActivity {
 
     public void setPluginPackage(DLPluginPackage pluginPackage) {
         this.pluginPackage = pluginPackage;
+        if (pluginPackage == null) {
+            pluginTheme = null;
+        } else {
+            if (pluginPackage.resources == null) {
+                pluginTheme = null;
+            } else {
+                pluginTheme = pluginPackage.resources.newTheme();
+                pluginTheme.setTo(super.getTheme());
+                //pluginTheme.applyStyle();
+            }
+        }
     }
 }
