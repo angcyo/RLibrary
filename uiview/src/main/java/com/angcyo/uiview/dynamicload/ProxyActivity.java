@@ -58,8 +58,9 @@ public class ProxyActivity extends AppCompatActivity {
             if (pluginPackage.resources == null) {
                 pluginTheme = null;
             } else {
+                //theme用来在xml中,创建view
                 pluginTheme = pluginPackage.resources.newTheme();
-                pluginTheme.setTo(super.getTheme());
+//                pluginTheme.setTo(super.getTheme());
                 //pluginTheme.applyStyle();
             }
         }
