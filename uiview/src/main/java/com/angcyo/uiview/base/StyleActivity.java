@@ -6,20 +6,20 @@ import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v7.app.ActionBar;
-import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
 
 import com.angcyo.library.utils.L;
 import com.angcyo.uiview.R;
+import com.angcyo.uiview.dynamicload.ProxyActivity;
 import com.angcyo.uiview.kotlin.ExKt;
 
 /**
  * Created by angcyo on 2016-11-12.
  */
 
-public abstract class StyleActivity extends AppCompatActivity {
+public abstract class StyleActivity extends ProxyActivity {
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {

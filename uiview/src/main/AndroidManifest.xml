@@ -78,7 +78,7 @@
 
         <!--插件加载配置-->
         <activity
-            android:name=".dynamicload.ProxyActivity"
+            android:name=".dynamicload.ProxyStartActivity"
             android:allowTaskReparenting="true"
             android:clearTaskOnLaunch="true"
             android:configChanges="orientation|keyboardHidden|screenSize|fontScale|smallestScreenSize|density|screenLayout"
