@@ -1,6 +1,7 @@
 package com.angcyo.uiview;
 
 import android.app.Activity;
+import android.content.Context;
 import android.os.Build;
 import android.os.Environment;
 import android.text.TextUtils;
@@ -114,11 +115,28 @@ public class Root {
         return file.getAbsolutePath();
     }
 
+    /**
+     * /data/user/0/com.angcyo.mainhost/files
+     */
     public static String getAppInternalFolder(String folder) {
         if (folder == null) {
             folder = "";
         }
         File file = new File(RApplication.getApp().getFilesDir()/*getCacheDir()*/, folder);
+        if (!file.exists()) {
+            file.mkdirs();
+        }
+        return file.getAbsolutePath();
+    }
+
+    /**
+     * /data/user/0/com.angcyo.mainhost/app_dddddddddddd
+     */
+    public static String getAppInternalDir(String folder) {
+        if (folder == null) {
+            folder = "";
+        }
+        File file = RApplication.getApp().getDir(folder, Context.MODE_PRIVATE);
         if (!file.exists()) {
             file.mkdirs();
         }
