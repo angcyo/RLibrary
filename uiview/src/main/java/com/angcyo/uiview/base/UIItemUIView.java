@@ -110,7 +110,11 @@ public abstract class UIItemUIView<T extends Item> extends UIRecyclerUIView<Stri
             @Nullable
             @Override
             protected View createItemView(@NotNull ViewGroup parent, int viewType) {
-                return UIItemUIView.this.createItemView(parent, viewType);
+                View itemView = UIItemUIView.this.createItemView(parent, viewType);
+                if (itemView == null) {
+                    itemView = super.createItemView(parent, viewType);
+                }
+                return itemView;
             }
 
             @Override
