@@ -78,10 +78,12 @@ object RPlugin {
         })
     }
 
+    /**通过包名, 获取已经load过的信息*/
     fun getPluginPackage(packageName: String): DLPluginPackage? {
         return DLPluginManager.getInstance(RApplication.getApp()).getPackage(packageName)
     }
 
+    /**使用指定的ClassLoader加载类*/
     fun loadPluginClass(classLoader: ClassLoader, className: String): Class<*>? {
         var clazz: Class<*>? = null
         try {
@@ -90,5 +92,17 @@ object RPlugin {
             e.printStackTrace()
         }
         return clazz
+    }
+
+    /**返回一个IView*/
+    fun getIView(pluginPackage: DLPluginPackage, className: String): IView? {
+        val pluginClass = loadPluginClass(pluginPackage.classLoader, className)
+        return if (pluginClass == null) {
+            null
+        } else {
+            val iView: IView = pluginClass.newInstance() as IView
+            iView.setPluginPackage(pluginPackage)
+            iView
+        }
     }
 }
