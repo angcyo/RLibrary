@@ -37,6 +37,9 @@ import android.support.annotation.StringRes;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.content.pm.PackageInfo;
+import android.content.res.AssetManager;
+import android.content.res.Resources;
 
 import dalvik.system.DexClassLoader;
 
