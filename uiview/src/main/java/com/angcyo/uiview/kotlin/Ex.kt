@@ -5,6 +5,7 @@ import android.graphics.Rect
 import android.text.TextUtils
 import android.view.View
 import com.angcyo.uiview.utils.RUtils
+import com.angcyo.uiview.utils.Reflect
 import com.angcyo.uiview.view.UIIViewImpl
 import java.io.File
 
@@ -163,4 +164,9 @@ public fun List<*>.toStringArray(): Array<String> {
 /**文件是否存在*/
 public fun String.isFileExists(): Boolean {
     return File(this).exists()
+}
+
+/**通过类, 调用无参构造方法, 创建一个对象 */
+public fun <T> Class<T>.newObject(): T {
+    return Reflect.newObject<T>(this)
 }

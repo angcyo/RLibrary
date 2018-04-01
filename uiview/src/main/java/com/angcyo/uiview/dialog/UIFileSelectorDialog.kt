@@ -67,8 +67,11 @@ open class UIFileSelectorDialog : UIIDialogImpl {
         set(value) {
 
             if (value.isNotEmpty() && value.startsWith(storageDirectory)) {
-                if (File(value).isDirectory) {
+                val file = File(value)
+                if (file.isDirectory) {
                     field = value
+                } else if (file.isFile) {
+                    field = file.parent
                 }
             } else {
                 field = storageDirectory

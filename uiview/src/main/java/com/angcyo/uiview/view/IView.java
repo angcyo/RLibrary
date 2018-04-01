@@ -12,6 +12,7 @@ import com.angcyo.uiview.base.UIBaseView;
 import com.angcyo.uiview.base.UILayoutActivity;
 import com.angcyo.uiview.container.ILayout;
 import com.angcyo.uiview.container.UIParam;
+import com.angcyo.uiview.dynamicload.internal.DLPluginPackage;
 import com.angcyo.uiview.model.AnimParam;
 import com.angcyo.uiview.model.TitleBarPattern;
 import com.angcyo.uiview.model.ViewPattern;
@@ -320,6 +321,10 @@ public interface IView {
     boolean isInterruptTask();//2018-3-6
 
     void setInterruptTask(boolean interruptTask);//2018-3-6
+
+    void setPluginPackage(DLPluginPackage pluginPackage);//2018-4-1 插件加载的支持
+
+    boolean isInPlugin();//是否是在插件中加载
 
     enum IViewShowState {
         STATE_NORMAL,

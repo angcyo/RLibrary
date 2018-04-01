@@ -43,6 +43,7 @@ import com.angcyo.uiview.base.UILayoutActivity;
 import com.angcyo.uiview.container.ILayout;
 import com.angcyo.uiview.container.UILayoutImpl;
 import com.angcyo.uiview.container.UIParam;
+import com.angcyo.uiview.dynamicload.internal.DLPluginPackage;
 import com.angcyo.uiview.kotlin.ExKt;
 import com.angcyo.uiview.model.AnimParam;
 import com.angcyo.uiview.model.TitleBarPattern;
@@ -1457,6 +1458,18 @@ public abstract class UIIViewImpl implements IView {
     public UIIViewImpl setShowInViewPager(boolean showInViewPager) {
         isShowInViewPager = showInViewPager;
         return this;
+    }
+
+    protected DLPluginPackage mPluginPackage;
+
+    @Override
+    public void setPluginPackage(DLPluginPackage pluginPackage) {
+        mPluginPackage = pluginPackage;
+    }
+
+    @Override
+    public boolean isInPlugin() {
+        return mPluginPackage != null;
     }
 
     public interface OnCountDown {
