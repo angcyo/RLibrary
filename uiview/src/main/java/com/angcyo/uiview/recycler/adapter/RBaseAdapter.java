@@ -211,10 +211,9 @@ public abstract class RBaseAdapter<T> extends RecyclerView.Adapter<RBaseViewHold
                         .inflate(R.layout.base_item_load_more_layout, parent, false);
                 mLoadMoreView = (ILoadMore) itemView;
             } else {
-                itemLayoutId = getItemLayoutId(viewType);
-                if (itemLayoutId == 0) {
-                    itemView = createItemView(parent, viewType);
-                } else {
+                itemView = createItemView(parent, viewType);
+                if (itemView == null) {
+                    itemLayoutId = getItemLayoutId(viewType);
                     try {
                         itemView = LayoutInflater.from(mContext).inflate(itemLayoutId, parent, false);
                     } catch (Exception e) {

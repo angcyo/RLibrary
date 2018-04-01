@@ -44,10 +44,9 @@ public abstract class RecyclerViewPagerAdapter<T> extends RBaseAdapter<T> {
     public RBaseViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         View item;
         if (viewType == 200) {
-            int itemLayoutId = getItemLayoutId(viewType);
-            if (itemLayoutId == 0) {
-                item = createItemView(parent, viewType);
-            } else {
+            item = createItemView(parent, viewType);
+            if (item == null) {
+                int itemLayoutId = getItemLayoutId(viewType);
                 item = LayoutInflater.from(mContext).inflate(itemLayoutId, parent, false);
             }
         } else {

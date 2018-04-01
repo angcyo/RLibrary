@@ -31,9 +31,9 @@ abstract class RItemAdapter<T : Item> : RExBaseAdapter<String, T, String> {
     }
 
     final override fun getItemLayoutId(viewType: Int): Int {
-        val t = mAllDatas[viewType]
-        val itemLayoutId = t.itemLayoutId
+        val item = mAllDatas[viewType]
 
+        val itemLayoutId = item.itemLayoutId
         return if (itemLayoutId == -1) {
             getItemLayoutIdNeed(viewType)
         } else {
@@ -45,5 +45,8 @@ abstract class RItemAdapter<T : Item> : RExBaseAdapter<String, T, String> {
     open fun getItemLayoutIdNeed(posInData: Int) = -1
 
     /**当 getItemLayoutIdNeed 返回-1是, 回调此方法用来 new出布局*/
-    override fun createItemView(parent: ViewGroup, viewType: Int): View? = null
+    override fun createItemView(parent: ViewGroup, viewType: Int): View? {
+        val item = mAllDatas[viewType]
+        return item.createItemView(parent, viewType)
+    }
 }

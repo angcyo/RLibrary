@@ -5,6 +5,7 @@ import android.graphics.Rect;
 import android.support.annotation.NonNull;
 import android.text.TextPaint;
 import android.view.View;
+import android.view.ViewGroup;
 
 import com.angcyo.uiview.recycler.RBaseViewHolder;
 
@@ -27,4 +28,6 @@ public interface Item {
      * Item对应的布局id, -1表示默认
      */
     int getItemLayoutId();
+
+    View createItemView(ViewGroup parent, int viewType);
 }

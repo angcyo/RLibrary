@@ -6,6 +6,7 @@ import android.graphics.Color;
 import android.graphics.Rect;
 import android.text.TextPaint;
 import android.view.View;
+import android.view.ViewGroup;
 
 import com.angcyo.uiview.R;
 import com.angcyo.uiview.RApplication;
@@ -96,6 +97,11 @@ public abstract class SingleItem implements Item {
     @Override
     public int getItemLayoutId() {
         return -1;
+    }
+
+    @Override
+    public View createItemView(ViewGroup parent, int viewType) {
+        return null;
     }
 
     public enum Type {
