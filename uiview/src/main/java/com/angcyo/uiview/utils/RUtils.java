@@ -1025,6 +1025,10 @@ public class RUtils {
         return getShortString(number, suffix, needDecimal, false);
     }
 
+    public static String getShortString(String number, boolean needDecimal) {
+        return getShortString(number, "", needDecimal, false);
+    }
+
     public static String getShortString(String number, String suffix, boolean needDecimal, boolean isEnglish) {
         if (TextUtils.isEmpty(number)) {
             return "";

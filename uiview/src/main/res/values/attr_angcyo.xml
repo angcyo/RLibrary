@@ -17,6 +17,7 @@
     <!--计算时, 需要排除的距离-->
     <attr name="r_layout_width_exclude" format="dimension"/>
     <attr name="r_layout_height_exclude" format="dimension"/>
+    <attr name="r_max_length" format="integer"/>
 
     <!--View-->
     <attr name="r_show_text" format="string"/>
@@ -228,6 +229,8 @@
         <attr name="r_scroll_text_offset" format="dimension"/>
 
         <attr name="r_use_skin_style"/>
+        <attr name="r_max_length"/>
+        <attr name="r_use_chat_length_filter" format="boolean"/>
     </declare-styleable>
 
     <declare-styleable name="RExTextView">
@@ -259,7 +262,7 @@
         <!--检查输入的数字的有效性, 需要inputType的支持-->
         <attr name="r_check_input_number" format="boolean"/>
         <attr name="r_use_char_length_filter" format="boolean"/>
-        <attr name="r_max_length" format="integer"/>
+        <attr name="r_max_length"/>
     </declare-styleable>
 
     <declare-styleable name="JumpAdProgressBar">

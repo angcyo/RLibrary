@@ -1637,9 +1637,12 @@ public class ExEditText extends AppCompatEditText {
         }
     }
 
+    /**
+     * 使用英文字符数过滤, 一个汉字等于2个英文, 一个emoji表情等于2个汉字
+     */
     public static class CharLengthFilter implements InputFilter {
         public static final int MAX_CHAR = 255;
-        private final int maxLen;
+        private int maxLen;
 
         public CharLengthFilter(int maxLen) {
             this.maxLen = maxLen;
@@ -1678,6 +1681,10 @@ public class ExEditText extends AppCompatEditText {
             }
 
             return source.subSequence(0, sindex);
+        }
+
+        public void setMaxLen(int maxLen) {
+            this.maxLen = maxLen;
         }
     }
 

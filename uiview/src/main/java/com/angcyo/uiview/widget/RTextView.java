@@ -10,6 +10,7 @@ import android.graphics.RectF;
 import android.graphics.Typeface;
 import android.graphics.drawable.ColorDrawable;
 import android.graphics.drawable.Drawable;
+import android.os.Build;
 import android.support.annotation.ColorInt;
 import android.support.annotation.DrawableRes;
 import android.support.annotation.NonNull;
@@ -148,6 +149,11 @@ public class RTextView extends AppCompatTextView {
     private int scrollTextCircleOffset = 0;
     private int scrollType = SCROLL_TYPE_DEFAULT;
 
+    /**
+     * 使用英文字符数过滤, 一个汉字等于2个英文, 一个emoji表情等于2个汉字
+     */
+    private boolean useCharLengthFilter = false;
+
     public RTextView(Context context) {
         this(context, null);
     }
@@ -225,6 +231,20 @@ public class RTextView extends AppCompatTextView {
         scrollTextCircleOffset = typedArray.getDimensionPixelOffset(R.styleable.RTextView_r_scroll_text_offset, scrollTextCircleOffset);
 
         useSkinStyle = typedArray.getBoolean(R.styleable.RTextView_r_use_skin_style, useSkinStyle);
+
+        useCharLengthFilter = typedArray.getBoolean(R.styleable.RTextView_r_use_chat_length_filter, useCharLengthFilter);
+
+        int maxLength = -1;
+//        int maxLength = typedArray.getInt(com.android.internal.R.styleable.TextView_maxLength, -1);
+//        if (maxLength > 0) {
+//            //暂时不替换
+//        }
+        maxLength = typedArray.getInt(R.styleable.RTextView_r_max_length, -1);
+        if (maxLength > 0) {
+            //暂时不替换
+            setMaxLength(maxLength);
+        }
+
         typedArray.recycle();
 
         initView();
@@ -654,23 +674,51 @@ public class RTextView extends AppCompatTextView {
     public void setMaxLength(int length, boolean exclusiveMoreStringLength /*不包含...的长度*/) {
         InputFilter[] filters = getFilters();
         boolean have = false;
-        InputFilter.LengthFilter lengthFilter = new InputFilter.LengthFilter(length + (exclusiveMoreStringLength ? getMoreString().length() : 0));
+
+        InputFilter inputFilter;
+        if (useCharLengthFilter) {
+            inputFilter = new ExEditText.CharLengthFilter(length + (exclusiveMoreStringLength ? getMoreString().length() : 0));
+        } else {
+            inputFilter = new InputFilter.LengthFilter(length + (exclusiveMoreStringLength ? getMoreString().length() : 0));
+        }
+
         for (int i = 0; i < filters.length; i++) {
             InputFilter filter = filters[i];
-            if (filter instanceof InputFilter.LengthFilter) {
+            if (filter instanceof InputFilter.LengthFilter ||
+                    filter instanceof ExEditText.CharLengthFilter) {
                 have = true;
-                filters[i] = lengthFilter;
+                filters[i] = inputFilter;
                 setFilters(filters);
                 break;
             }
         }
         if (!have) {
-            addFilter(lengthFilter);
+            addFilter(inputFilter);
         }
 
         setMaxLines(1);
-        //setSingleLine();
+        //setSingleLine();//去掉系统的...处理
         setEllipsize(TextUtils.TruncateAt.END);
+    }
+
+    /**
+     * 获取已经设置的最大长度
+     */
+    private int haveMaxLength() {
+        int maxLength = -1;
+        InputFilter[] filters = getFilters();
+        for (int i = 0; i < filters.length; i++) {
+            InputFilter filter = filters[i];
+            if (filter instanceof InputFilter.LengthFilter) {
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+                    maxLength = ((InputFilter.LengthFilter) filters[i]).getMax();
+                } else {
+                    maxLength = (int) Reflect.getFieldValue(filters[i], "mMax");
+                }
+                break;
+            }
+        }
+        return maxLength;
     }
 
     public void setText(Object... args) {
