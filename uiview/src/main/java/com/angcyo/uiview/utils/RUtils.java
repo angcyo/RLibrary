@@ -2442,6 +2442,11 @@ public class RUtils {
         return stringBuilder.toString();
     }
 
+    public static int size(int size, float designDpi /*设计图纸时的dpi*/) {
+        float v = size * 1f / designDpi;
+        return (int) (v * ScreenUtil.density);
+    }
+
     interface OnPutValue {
         void onValue(String key, String value);
 

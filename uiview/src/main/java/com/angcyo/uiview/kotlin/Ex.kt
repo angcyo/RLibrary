@@ -28,6 +28,7 @@ public fun Int.have(value: Int): Boolean = if (this == 0 && value == 0) true els
 
 public fun Int.remove(value: Int): Int = this and value.inv()
 public fun Int.add(value: Int): Int = this or value
+public fun Int.dpi(designDpi: Float): Int = RUtils.size(this, designDpi)
 
 /**文本的高度*/
 public fun Paint.textHeight(): Float = descent() - ascent()
