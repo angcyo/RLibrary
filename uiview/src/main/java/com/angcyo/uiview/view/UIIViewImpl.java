@@ -112,6 +112,7 @@ public abstract class UIIViewImpl implements IView {
      * 启动IView的动画类型
      */
     protected IViewAnimationType mAnimationType = IViewAnimationType.TRANSLATE_HORIZONTAL;
+    protected DLPluginPackage mPluginPackage;
     OnCountDown mOnCountDown;
     int maxCount;
     int currentCount;
@@ -684,6 +685,9 @@ public abstract class UIIViewImpl implements IView {
         if (mParentILayout == null) {
             throw new IllegalArgumentException("mParentILayout 还未初始化");
         }
+        if (isInPlugin()) {
+            iView.setPluginPackage(mPluginPackage);
+        }
         mParentILayout.startIView(iView, param);
     }
 
@@ -765,6 +769,9 @@ public abstract class UIIViewImpl implements IView {
         if (mParentILayout == null) {
             throw new IllegalArgumentException("mParentILayout 还未初始化");
         }
+        if (isInPlugin()) {
+            iview.setPluginPackage(mPluginPackage);
+        }
         mParentILayout.showIView(iview, createUIParam().setAnim(needAnim).setBundle(bundle));
     }
 
@@ -819,6 +826,9 @@ public abstract class UIIViewImpl implements IView {
         iView.setInterruptTask(false);
         if (mParentILayout == null) {
             throw new IllegalArgumentException("mParentILayout 还未初始化");
+        }
+        if (isInPlugin()) {
+            iView.setPluginPackage(mPluginPackage);
         }
         param.setReplaceIView(this);
         mParentILayout.replaceIView(iView, param);
@@ -1459,8 +1469,6 @@ public abstract class UIIViewImpl implements IView {
         isShowInViewPager = showInViewPager;
         return this;
     }
-
-    protected DLPluginPackage mPluginPackage;
 
     @Override
     public void setPluginPackage(DLPluginPackage pluginPackage) {
