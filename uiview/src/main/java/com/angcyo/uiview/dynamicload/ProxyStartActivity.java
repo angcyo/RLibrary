@@ -2,10 +2,17 @@ package com.angcyo.uiview.dynamicload;
 
 import android.app.Activity;
 import android.content.Intent;
+import android.content.res.Resources;
+import android.os.Bundle;
+import android.support.annotation.Nullable;
 
+import com.angcyo.library.utils.L;
 import com.angcyo.uiview.base.UILayoutActivity;
+import com.angcyo.uiview.dynamicload.internal.DLPluginPackage;
+import com.angcyo.uiview.dynamicload.utils.DLConfigs;
 import com.angcyo.uiview.utils.Reflect;
 import com.angcyo.uiview.utils.T_;
+import com.angcyo.uiview.utils.Tip;
 import com.angcyo.uiview.view.IView;
 
 /**
@@ -22,6 +29,14 @@ public class ProxyStartActivity extends UILayoutActivity {
      * 启动的类名
      */
     public static final String START_CLASS_NAME = "start_class_name";
+    /**
+     * 需要启动的插件包名
+     */
+    String pluginPackageName;
+    /**
+     * 需要启动的插件类名
+     */
+    String pluginClassName;
 
     public static void start(Activity activity, String packageName, String className) {
         Intent intent = new Intent(activity, ProxyStartActivity.class);
@@ -31,24 +46,58 @@ public class ProxyStartActivity extends UILayoutActivity {
     }
 
     @Override
-    protected void onLoadView(Intent intent) {
-        String packageName = intent.getStringExtra(START_PACKAGE_NAME);
-        String className = intent.getStringExtra(START_CLASS_NAME);
+    protected void onCreate(@Nullable Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+    }
 
-        pluginPackage = RPlugin.INSTANCE.getPluginPackage(packageName);
+    @Override
+    protected void onProxyCreate(@Nullable Bundle savedInstanceState) {
+        super.onProxyCreate(savedInstanceState);
+        onProxyCreate(getIntent());
+    }
+
+    @Override
+    public Resources.Theme getTheme() {
+        pluginTheme = null;
+        return super.getTheme();
+    }
+
+    public void onProxyCreate(Intent intent) {
+        pluginPackageName = intent.getStringExtra(START_PACKAGE_NAME);
+        pluginClassName = intent.getStringExtra(START_CLASS_NAME);
+
+        // set the extra's class loader
+        intent.setExtrasClassLoader(DLConfigs.sPluginClassloader);
+
+        L.w("ProxyStartActivity", "mClass=" + pluginClassName + " mPackageName=" + pluginPackageName);
+
+        DLPluginPackage pluginPackage = RPlugin.INSTANCE.getPluginPackage(pluginPackageName);
         if (pluginPackage == null) {
             T_.error("插件启动失败.");
-            finishSelf();
+            finish();
         } else {
-            Class<?> pluginClass = RPlugin.INSTANCE.loadPluginClass(pluginPackage.classLoader, className);
+            setPluginPackage(pluginPackage);
+        }
+        //setTheme(R.style.BaseWhiteAppTheme);
+    }
+
+    @Override
+    protected void onLoadView(Intent intent) {
+        if (pluginPackage != null) {
+            Class<?> pluginClass = RPlugin.INSTANCE.loadPluginClass(pluginPackage.classLoader, pluginClassName);
             if (pluginClass == null) {
                 T_.error("插件类启动失败.");
-                finishSelf();
+                finish();
             } else {
                 IView iView = Reflect.newObject(pluginClass);
-                iView.setPluginPackage(pluginPackage);
+////                iView.setPluginPackage(pluginPackage);
+//                setPluginPackage(pluginPackage);
                 startIView(iView);
+//                //startIView(new DynamicLoadUIView());
             }
+        } else {
+            Tip.tip("插件加载失败!");
         }
+
     }
 }

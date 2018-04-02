@@ -243,7 +243,7 @@ public class RTextView extends AppCompatTextView {
         maxLength = typedArray.getInt(R.styleable.RTextView_r_max_length, -1);
         if (maxLength > 0) {
             //暂时不替换
-            setMaxLength(maxLength);
+            setMaxLength(maxLength, true);
         }
 
         typedArray.recycle();
@@ -631,13 +631,16 @@ public class RTextView extends AppCompatTextView {
             int textLength = text.length();
             if (lastIndex >= 0) {
                 if (useCharLengthFilter) {
-                    if (getCharLength() > lastIndex) {
+                    if (getCharLength(text) > lastIndex) {
 //                    if (EmojiFilter.isEmojiCharacter(spanBuilder.charAt(lastIndex))) {
 //                        offset = 4;/*兼容末尾是emoji表情*/
 //                    }
-                        spanBuilder.setSpan(new RExTextView.ImageTextSpan(getContext(), getTextSize(),
-                                        getCurrentTextColor(), more),
-                                maxLength - offset, textLength, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
+                        int charLengthIndex = getCharLengthIndex(text, maxLength);
+                        if (charLengthIndex > 0 && textLength > charLengthIndex - offset) {
+                            spanBuilder.setSpan(new RExTextView.ImageTextSpan(getContext(), getTextSize(),
+                                            getCurrentTextColor(), more),
+                                    charLengthIndex - offset, textLength, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
+                        }
                     }
                 } else {
                     if (textLength > lastIndex) {
@@ -646,7 +649,7 @@ public class RTextView extends AppCompatTextView {
 //                    }
                         spanBuilder.setSpan(new RExTextView.ImageTextSpan(getContext(), getTextSize(),
                                         getCurrentTextColor(), more),
-                                maxLength - offset, textLength, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
+                                lastIndex, textLength, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
                     }
                 }
             }
@@ -659,7 +662,34 @@ public class RTextView extends AppCompatTextView {
      * 一个汉字等于2个英文, 一个emoji表情等于2个汉字
      */
     public int getCharLength() {
-        return RUtils.getCharLength(getText().toString());
+        return getCharLength(getText());
+    }
+
+    public int getCharLength(CharSequence text) {
+        return RUtils.getCharLength(text.toString());
+    }
+
+    /**
+     * 在Char过滤情况下, 返回真实对应的index, 用来设置span
+     */
+    public int getCharLengthIndex(CharSequence text, int maxCharLength) {
+        if (TextUtils.isEmpty(text)) {
+            return 0;
+        }
+        int count = 0;
+        int index = -1;
+        for (int i = 0; i < text.length(); i++) {
+            if (text.charAt(i) <= (char) ExEditText.CharLengthFilter.MAX_CHAR) {
+                count = count + 1;
+            } else {
+                count = count + 2;
+            }
+            index++;
+            if (count > maxCharLength) {
+                break;
+            }
+        }
+        return index;
     }
 
 
@@ -695,7 +725,7 @@ public class RTextView extends AppCompatTextView {
         setMaxLength(length, false);
     }
 
-    public void setMaxLength(int length, boolean exclusiveMoreStringLength /*不包含...的长度*/) {
+    public void setMaxLength(int length, boolean exclusiveMoreStringLength /*需要加上...的长度?*/) {
         InputFilter[] filters = getFilters();
         boolean have = false;
 

@@ -2,6 +2,8 @@ package com.angcyo.uiview.dynamicload;
 
 import android.content.res.AssetManager;
 import android.content.res.Resources;
+import android.os.Bundle;
+import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
 
 import com.angcyo.uiview.dynamicload.internal.DLPluginPackage;
@@ -13,6 +15,19 @@ public class ProxyActivity extends AppCompatActivity {
 
     protected DLPluginPackage pluginPackage;
     protected Resources.Theme pluginTheme;
+
+    @Override
+    protected void onCreate(@Nullable Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        onProxyCreate(savedInstanceState);
+    }
+
+    /**
+     * 代理创建回调
+     */
+    protected void onProxyCreate(@Nullable Bundle savedInstanceState) {
+
+    }
 
     @Override
     public ClassLoader getClassLoader() {
