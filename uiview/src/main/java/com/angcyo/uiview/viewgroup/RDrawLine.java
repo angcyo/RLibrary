@@ -11,6 +11,12 @@ import com.angcyo.uiview.utils.ScreenUtil;
  */
 public class RDrawLine {
 
+    public static final int DRAW_LINE_LEFT = 1;
+    public static final int DRAW_LINE_TOP = 2;
+    public static final int DRAW_LINE_RIGHT = 3;
+    public static final int DRAW_LINE_BOTTOM = 4;
+    public static final int DRAW_LINE_BOTTOM_TOP = 5;
+
     public int drawLine = 0;//不绘制线
     public int drawLineColor = 0;
     public int drawLineOffsetLeft = 0;//左偏移
@@ -33,23 +39,23 @@ public class RDrawLine {
             linePaint.setColor(drawLineColor);
 
             switch (drawLine) {
-                case 1://L
+                case DRAW_LINE_LEFT://L
                     //暂不支持
                     break;
-                case 2://T
+                case DRAW_LINE_TOP://T
                     canvas.drawLine(drawLineOffsetLeft, drawLineWidth / 2,
                             mView.getMeasuredWidth() - drawLineOffsetRight, drawLineWidth / 2,
                             linePaint);
                     break;
-                case 3://R
+                case DRAW_LINE_RIGHT://R
                     //暂不支持
                     break;
-                case 4://B
+                case DRAW_LINE_BOTTOM://B
                     canvas.drawLine(drawLineOffsetLeft, mView.getMeasuredHeight() - drawLineWidth / 2,
                             mView.getMeasuredWidth() - drawLineOffsetRight, mView.getMeasuredHeight() - drawLineWidth / 2,
                             linePaint);
                     break;
-                case 5://B+T
+                case DRAW_LINE_BOTTOM_TOP://B+T
                     canvas.drawLine(drawLineOffsetLeft, drawLineWidth / 2,
                             mView.getMeasuredWidth() - drawLineOffsetRight, drawLineWidth / 2,
                             linePaint);

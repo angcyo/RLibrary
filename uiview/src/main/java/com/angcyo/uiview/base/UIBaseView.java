@@ -100,6 +100,7 @@ public abstract class UIBaseView extends UIIViewImpl {
 
     protected boolean haveTitleBar = true;
     protected TitleBarPattern titleBarPattern;
+    protected String titleShowString = null;
     private Animation mLoadingAnimation;
     private ClipMode mClipMode;
     private boolean mEnableClip = false;
@@ -123,7 +124,6 @@ public abstract class UIBaseView extends UIIViewImpl {
             }
         }
     }
-
 
     @Override
     protected View inflateBaseView(FrameLayout container, LayoutInflater inflater) {
@@ -375,16 +375,29 @@ public abstract class UIBaseView extends UIIViewImpl {
     }
 
     protected String getTitleString() {
-        return mActivity.getTitle().toString();
+        if (getTitleShowString() == null) {
+            return mActivity.getTitle().toString();
+        } else {
+            return getTitleShowString();
+        }
     }
 
     /**
      * 设置标题文本
      */
     public void setTitleString(String title) {
+        setTitleShowString(title);
         if (mUITitleBarContainer != null) {
             mUITitleBarContainer.getTitleView().setText(title);
         }
+    }
+
+    public String getTitleShowString() {
+        return titleShowString;
+    }
+
+    public void setTitleShowString(String titleShowString) {
+        this.titleShowString = titleShowString;
     }
 
     protected int getTitleResource() {

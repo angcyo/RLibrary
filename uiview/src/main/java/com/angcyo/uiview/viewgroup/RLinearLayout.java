@@ -295,4 +295,9 @@ public class RLinearLayout extends LinearLayout {
             requestLayout();
         }
     }
+
+    public void setDrawLine(int gravity) {
+        mDrawLine.drawLine = gravity;
+        postInvalidate();
+    }
 }

@@ -22,7 +22,7 @@ public abstract class UIContentView extends UIBaseRxView {
     }
 
     @Override
-    protected String getTitleString() {
+    public String getTitleShowString() {
         return this.getClass().getSimpleName();
     }
 }
