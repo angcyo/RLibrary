@@ -86,7 +86,7 @@ public class ExEditText extends AppCompatEditText {
      * 用来限制输入的最大值, 需要inputType  包含 EditorInfo.TYPE_CLASS_NUMBER
      */
     float mMaxNumber = Float.MAX_VALUE;
-    float mMinNumber = Float.MIN_VALUE;
+    float mMinNumber = -Float.MAX_VALUE;
     /**
      * 小数点后几位, 需要inputType  包含 EditorInfo.TYPE_NUMBER_FLAG_DECIMAL
      */
