@@ -617,6 +617,8 @@ public class RTextView extends AppCompatTextView {
             for (InputFilter filter : filters) {
                 if (filter instanceof InputFilter.LengthFilter) {
                     maxLength = (int) Reflect.getMember(InputFilter.LengthFilter.class, filter, "mMax");
+                } else if (filter instanceof ExEditText.CharLengthFilter) {
+                    maxLength = ((ExEditText.CharLengthFilter) filter).getMaxLen();
                 }
             }
 

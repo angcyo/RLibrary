@@ -1683,6 +1683,10 @@ public class ExEditText extends AppCompatEditText {
             return source.subSequence(0, sindex);
         }
 
+        public int getMaxLen() {
+            return maxLen;
+        }
+
         public void setMaxLen(int maxLen) {
             this.maxLen = maxLen;
         }
