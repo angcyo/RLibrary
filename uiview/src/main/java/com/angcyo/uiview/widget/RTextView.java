@@ -37,6 +37,7 @@ import com.angcyo.uiview.kotlin.ExKt;
 import com.angcyo.uiview.kotlin.ViewExKt;
 import com.angcyo.uiview.skin.SkinHelper;
 import com.angcyo.uiview.utils.RTextPaint;
+import com.angcyo.uiview.utils.RUtils;
 import com.angcyo.uiview.utils.Reflect;
 import com.angcyo.uiview.utils.ScreenUtil;
 
@@ -626,20 +627,41 @@ public class RTextView extends AppCompatTextView {
             String more = getMoreString();
             int offset = more.length();
             int lastIndex = maxLength - offset;
+
+            int textLength = text.length();
             if (lastIndex >= 0) {
-                if (text.length() > lastIndex) {
+                if (useCharLengthFilter) {
+                    if (getCharLength() > lastIndex) {
 //                    if (EmojiFilter.isEmojiCharacter(spanBuilder.charAt(lastIndex))) {
 //                        offset = 4;/*兼容末尾是emoji表情*/
 //                    }
-                    spanBuilder.setSpan(new RExTextView.ImageTextSpan(getContext(), getTextSize(),
-                                    getCurrentTextColor(), more),
-                            maxLength - offset, text.length(), Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
+                        spanBuilder.setSpan(new RExTextView.ImageTextSpan(getContext(), getTextSize(),
+                                        getCurrentTextColor(), more),
+                                maxLength - offset, textLength, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
+                    }
+                } else {
+                    if (textLength > lastIndex) {
+//                    if (EmojiFilter.isEmojiCharacter(spanBuilder.charAt(lastIndex))) {
+//                        offset = 4;/*兼容末尾是emoji表情*/
+//                    }
+                        spanBuilder.setSpan(new RExTextView.ImageTextSpan(getContext(), getTextSize(),
+                                        getCurrentTextColor(), more),
+                                maxLength - offset, textLength, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
+                    }
                 }
             }
         }
 
         setSuperText(spanBuilder, type);
     }
+
+    /**
+     * 一个汉字等于2个英文, 一个emoji表情等于2个汉字
+     */
+    public int getCharLength() {
+        return RUtils.getCharLength(getText().toString());
+    }
+
 
     @NonNull
     private String getMoreString() {
