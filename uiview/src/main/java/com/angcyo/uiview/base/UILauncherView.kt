@@ -50,7 +50,7 @@ abstract class UILauncherView : UIContentView() {
             }
 
         }
-        baseContentLayout?.addView(mViewPager, ViewGroup.LayoutParams(-1, -1))
+        baseContentLayout.addView(mViewPager, ViewGroup.LayoutParams(-1, -1))
         mViewPager.setOnPagerEndListener {
             onPagerEnd()
         }
