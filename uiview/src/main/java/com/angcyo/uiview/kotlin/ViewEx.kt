@@ -144,8 +144,12 @@ public fun View.getDimensionPixelOffset(id: Int): Int = resources.getDimensionPi
 /**Match_Parent*/
 public fun View.exactlyMeasure(size: Int): Int = View.MeasureSpec.makeMeasureSpec(size, View.MeasureSpec.EXACTLY)
 
+public fun View.exactlyMeasure(size: Float): Int = this.exactlyMeasure(size.toInt())
+
 /**Wrap_Content*/
 public fun View.atmostMeasure(size: Int): Int = View.MeasureSpec.makeMeasureSpec(size, View.MeasureSpec.AT_MOST)
+
+public fun View.atmostMeasure(size: Float): Int = this.atmostMeasure(size.toInt())
 
 public fun View.setOnRClickListener(listener: View.OnClickListener?) {
     if (listener == null) {
