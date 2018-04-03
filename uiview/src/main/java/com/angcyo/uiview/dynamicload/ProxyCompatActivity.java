@@ -1,35 +1,24 @@
 package com.angcyo.uiview.dynamicload;
 
-import android.app.Activity;
 import android.content.res.AssetManager;
 import android.content.res.Resources;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
+import android.support.v7.app.AppCompatActivity;
 
-import com.angcyo.uiview.container.UILayoutImpl;
 import com.angcyo.uiview.dynamicload.internal.DLPluginPackage;
 
 /**
- * Copyright (C) 2016,深圳市红鸟网络科技股份有限公司 All rights reserved.
- * 项目名称：
- * 类的描述：
- * 创建人员：Robi
- * 创建时间：2018/04/02 18:49
- * 修改人员：Robi
- * 修改时间：2018/04/02 18:49
- * 修改备注：
- * Version: 1.0.0
+ * Created by angcyo on 2018/04/01 21:37
  */
-public class PActivity extends Activity {
+public class ProxyCompatActivity extends AppCompatActivity {
+
     protected DLPluginPackage pluginPackage;
     protected Resources.Theme pluginTheme;
-    protected UILayoutImpl mUILayout;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        mUILayout = new UILayoutImpl(this);
-        setContentView(mUILayout);
         onProxyCreate(savedInstanceState);
     }
 

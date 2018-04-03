@@ -38,7 +38,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
-import com.angcyo.uiview.dynamicload.ProxyActivity;
+import com.angcyo.uiview.dynamicload.ProxyCompatActivity;
 
 import dalvik.system.DexClassLoader;
 
@@ -84,16 +84,16 @@ public class DLPluginPackage {
     }
 
     public View inflate(Context context, @LayoutRes int resource, @Nullable ViewGroup root, boolean attachToRoot) {
-        if (context instanceof ProxyActivity) {
-            ((ProxyActivity) context).setPluginPackage(this);
+        if (context instanceof ProxyCompatActivity) {
+            ((ProxyCompatActivity) context).setPluginPackage(this);
         }
         final XmlResourceParser parser = resources.getLayout(resource);
         try {
             return LayoutInflater.from(context).inflate(parser, root, attachToRoot);
         } finally {
             parser.close();
-            if (context instanceof ProxyActivity) {
-                ((ProxyActivity) context).setPluginPackage(null);
+            if (context instanceof ProxyCompatActivity) {
+                ((ProxyCompatActivity) context).setPluginPackage(null);
             }
         }
     }

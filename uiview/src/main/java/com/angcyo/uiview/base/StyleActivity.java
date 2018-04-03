@@ -12,14 +12,14 @@ import android.view.WindowManager;
 
 import com.angcyo.library.utils.L;
 import com.angcyo.uiview.R;
-import com.angcyo.uiview.dynamicload.ProxyActivity;
+import com.angcyo.uiview.dynamicload.ProxyCompatActivity;
 import com.angcyo.uiview.kotlin.ExKt;
 
 /**
  * Created by angcyo on 2016-11-12.
  */
 
-public abstract class StyleActivity extends ProxyActivity {
+public abstract class StyleActivity extends ProxyCompatActivity {
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {

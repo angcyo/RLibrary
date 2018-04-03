@@ -15,7 +15,7 @@ import com.angcyo.uiview.view.IView;
 /**
  * Created by angcyo on 2018/04/01 17:36
  */
-public class ProxyStartActivity extends PActivity {
+public class ProxyStartActivity extends ProxyActivity {
 
     /**
      * 需要启动那个包
@@ -73,8 +73,8 @@ public class ProxyStartActivity extends PActivity {
             T_.error("插件启动失败.");
             finish();
         } else {
-            //this.pluginPackage = pluginPackage;
-            setPluginPackage(pluginPackage);
+            this.pluginPackage = pluginPackage;
+//            setPluginPackage(pluginPackage);
             //getTheme().setTo(pluginPackage.resources.newTheme());
             Class<?> pluginClass = RPlugin.INSTANCE.loadPluginClass(pluginPackage.classLoader, pluginClassName);
 
