@@ -78,6 +78,14 @@
             android:layout_height="wrap_content"
             android:layout_margin="@dimen/base_ldpi"
             android:text="预设5"/>
+
+        <com.angcyo.uiview.widget.Button
+            android:id="@+id/button6"
+            style="@style/BaseSkinButtonStyle2"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_margin="@dimen/base_ldpi"
+            android:text="预设6"/>
     </com.angcyo.uiview.widget.RFlowLayout>
 
     <com.angcyo.uiview.widget.Button

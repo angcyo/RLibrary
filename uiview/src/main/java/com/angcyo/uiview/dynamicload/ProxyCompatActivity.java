@@ -12,9 +12,8 @@ import com.angcyo.uiview.dynamicload.internal.DLPluginPackage;
  * Created by angcyo on 2018/04/01 21:37
  */
 public class ProxyCompatActivity extends AppCompatActivity {
-
-    protected DLPluginPackage pluginPackage;
-    protected Resources.Theme pluginTheme;
+    protected DLPluginPackage mPluginPackage;
+    protected Resources.Theme mPluginTheme;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -26,57 +25,56 @@ public class ProxyCompatActivity extends AppCompatActivity {
      * 代理创建回调
      */
     protected void onProxyCreate(@Nullable Bundle savedInstanceState) {
-
     }
 
     @Override
     public ClassLoader getClassLoader() {
-        if (pluginPackage != null && pluginPackage.classLoader != null) {
-            return pluginPackage.classLoader;
+        if (mPluginPackage != null && mPluginPackage.classLoader != null) {
+            return mPluginPackage.classLoader;
         }
         return super.getClassLoader();
     }
 
     @Override
     public AssetManager getAssets() {
-        if (pluginPackage != null && pluginPackage.assetManager != null) {
-            return pluginPackage.assetManager;
+        if (mPluginPackage != null && mPluginPackage.assetManager != null) {
+            return mPluginPackage.assetManager;
         }
         return super.getAssets();
     }
 
     @Override
     public Resources getResources() {
-        if (pluginPackage != null && pluginPackage.resources != null) {
-            return pluginPackage.resources;
+        if (mPluginPackage != null && mPluginPackage.resources != null) {
+            return mPluginPackage.resources;
         }
         return super.getResources();
     }
 
     @Override
     public Resources.Theme getTheme() {
-        if (pluginTheme != null) {
-            return pluginTheme;
+        if (mPluginTheme != null) {
+            return mPluginTheme;
         }
         return super.getTheme();
     }
 
     public DLPluginPackage getPluginPackage() {
-        return pluginPackage;
+        return mPluginPackage;
     }
 
     public void setPluginPackage(DLPluginPackage pluginPackage) {
-        this.pluginPackage = pluginPackage;
+        this.mPluginPackage = pluginPackage;
         if (pluginPackage == null) {
-            pluginTheme = null;
+            mPluginTheme = null;
         } else {
             if (pluginPackage.resources == null) {
-                pluginTheme = null;
+                mPluginTheme = null;
             } else {
                 //theme用来在xml中,创建view
-                pluginTheme = pluginPackage.resources.newTheme();
-//                pluginTheme.setTo(super.getTheme());
-                //pluginTheme.applyStyle();
+                mPluginTheme = pluginPackage.resources.newTheme();
+//                mPluginTheme.setTo(super.getTheme());
+                //mPluginTheme.applyStyle();
             }
         }
     }

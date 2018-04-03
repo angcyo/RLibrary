@@ -81,6 +81,9 @@ class DynamicLoadUIView : UIItemUIView<SingleItem>() {
                 holder.click(R.id.button5) {
                     holder.eV(R.id.class_input_view).setInputText("com.angcyo.uidemo.layout.DemoListUIView2")
                 }
+                holder.click(R.id.button6) {
+                    holder.eV(R.id.class_input_view).setInputText("com.angcyo.uidemo.layout.PluginTestUIView")
+                }
             }
 
             override fun getItemLayoutId(): Int {
