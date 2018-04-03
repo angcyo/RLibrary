@@ -45,6 +45,7 @@ import com.angcyo.uiview.container.ILayout;
 import com.angcyo.uiview.container.UILayoutImpl;
 import com.angcyo.uiview.container.UIParam;
 import com.angcyo.uiview.dynamicload.ProxyActivity;
+import com.angcyo.uiview.dynamicload.ProxyCompatActivity;
 import com.angcyo.uiview.dynamicload.internal.DLPluginPackage;
 import com.angcyo.uiview.kotlin.ExKt;
 import com.angcyo.uiview.model.AnimParam;
@@ -1500,6 +1501,8 @@ public abstract class UIIViewImpl implements IView {
         if (mActivity != null) {
             if (mActivity instanceof ProxyActivity) {
                 ((ProxyActivity) mActivity).setPluginPackage(pluginPackage);
+            } else if (mActivity instanceof ProxyCompatActivity) {
+                ((ProxyCompatActivity) mActivity).setPluginPackage(pluginPackage);
             }
         }
     }
