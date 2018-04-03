@@ -68,7 +68,7 @@ public class SkinHelper {
     /**
      * 返回一个颜色的透明颜色,
      *
-     * @param alpha [0..255]
+     * @param alpha [0..255] 值越小,越透明
      */
     public static int getTranColor(@ColorInt int color, int alpha) {
         return Color.argb(alpha, Color.red(color), Color.green(color), Color.blue(color));

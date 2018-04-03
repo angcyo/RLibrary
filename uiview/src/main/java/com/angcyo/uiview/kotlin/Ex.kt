@@ -3,7 +3,9 @@ package com.angcyo.uiview.kotlin
 import android.graphics.Paint
 import android.graphics.Rect
 import android.text.TextUtils
+import android.view.MotionEvent
 import android.view.View
+import com.angcyo.uiview.skin.SkinHelper
 import com.angcyo.uiview.utils.RUtils
 import com.angcyo.uiview.utils.Reflect
 import com.angcyo.uiview.view.UIIViewImpl
@@ -175,4 +177,21 @@ public fun <T> Class<T>.newObject(): T {
 /**缩短显示*/
 public fun String.shortString(): String {
     return RUtils.getShortString(this, "", true)
+}
+
+/**
+ * 获取Int对应颜色的透明颜色
+ * @param alpha [0..255] 值越小,越透明
+ * */
+public fun Int.tranColor(alpha: Int): Int {
+    return SkinHelper.getTranColor(this, alpha)
+}
+
+
+public fun MotionEvent.isDown(): Boolean {
+    return this.actionMasked == MotionEvent.ACTION_DOWN
+}
+
+public fun MotionEvent.isFinish(): Boolean {
+    return this.actionMasked == MotionEvent.ACTION_UP || this.actionMasked == MotionEvent.ACTION_CANCEL
 }

@@ -101,6 +101,7 @@ open class TouchLayout(context: Context, attributeSet: AttributeSet? = null) : F
         if (handleTouchType == HANDLE_TOUCH_TYPE_DISPATCH) {
             orientationGestureDetector.onTouchEvent(ev)
         }
+        handleCommonTouchEvent(ev)
         return super.dispatchTouchEvent(ev)
     }
 
@@ -109,13 +110,19 @@ open class TouchLayout(context: Context, attributeSet: AttributeSet? = null) : F
         if (handleTouchType == HANDLE_TOUCH_TYPE_INTERCEPT) {
             orientationGestureDetector.onTouchEvent(ev)
         }
+        handleCommonTouchEvent(ev)
         return super.onInterceptTouchEvent(ev)
     }
 
     override fun onTouchEvent(event: MotionEvent): Boolean {
         orientationGestureDetector.onTouchEvent(event)
         super.onTouchEvent(event) //防止onClickListener无效
+        handleCommonTouchEvent(event)
         return true
+    }
+
+    open fun handleCommonTouchEvent(event: MotionEvent) {
+
     }
 
     override fun computeScroll() {
@@ -135,6 +142,12 @@ open class TouchLayout(context: Context, attributeSet: AttributeSet? = null) : F
 
     open fun startScroll(dx: Int, dy: Int) {
         overScroller.startScroll(scrollX, scrollY, dx, dy, 300)
+        postInvalidate()
+    }
+
+    /**开始滚动到某个位置*/
+    open fun startScrollTo(startX: Int, toX: Int) {
+        overScroller.startScroll(startX, scrollY, toX - startX, 0, 300)
         postInvalidate()
     }
 
