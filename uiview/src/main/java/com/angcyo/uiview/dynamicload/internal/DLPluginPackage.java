@@ -57,13 +57,16 @@ public class DLPluginPackage {
     public Resources resources;
     public PackageInfo packageInfo;
 
+    public String dexPath;
+
     public DLPluginPackage(DexClassLoader loader, Resources resources,
-                           PackageInfo packageInfo) {
+                           PackageInfo packageInfo, String dexPath) {
         this.packageName = packageInfo.packageName;
         this.classLoader = loader;
         this.assetManager = resources.getAssets();
         this.resources = resources;
         this.packageInfo = packageInfo;
+        this.dexPath = dexPath;
 
         defaultActivity = parseDefaultActivityName();
     }

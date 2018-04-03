@@ -35,24 +35,20 @@ import dalvik.system.DexClassLoader;
 
 public class DLPluginManager {
 
-    private static final String TAG = "DLPluginManager";
-
     public static final int START_RESULT_SUCCESS = 0;
     public static final int START_RESULT_NO_PKG = 1;
-
     public static final int START_RESULT_NO_CLASS = 2;
-
     public static final int START_RESULT_TYPE_ERROR = 3;
-
+    private static final String TAG = "DLPluginManager";
     private static DLPluginManager sInstance;
-    private Context mContext;
     private final HashMap<String, DLPluginPackage> mPackagesHolder = new HashMap<>();
-
+    private Context mContext;
     private int mFrom = DLConstants.FROM_INTERNAL;
 
     private String mNativeLibDir = null;
 
     private int mResult;
+    private String dexOutputPath;
 
     private DLPluginManager(Context context) {
         mContext = context.getApplicationContext();
@@ -69,6 +65,15 @@ public class DLPluginManager {
         }
 
         return sInstance;
+    }
+
+    public static final void addAssetPath(AssetManager assetManager, String dexPath) {
+        try {
+            Method addAssetPath = assetManager.getClass().getMethod("addAssetPath", String.class);
+            addAssetPath.invoke(assetManager, dexPath);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 
     /**
@@ -122,12 +127,10 @@ public class DLPluginManager {
         AssetManager assetManager = createAssetManager(dexPath);
         Resources resources = createResources(assetManager);
         // create pluginPackage
-        pluginPackage = new DLPluginPackage(dexClassLoader, resources, packageInfo);
+        pluginPackage = new DLPluginPackage(dexClassLoader, resources, packageInfo, dexPath);
         mPackagesHolder.put(packageInfo.packageName, pluginPackage);
         return pluginPackage;
     }
-
-    private String dexOutputPath;
 
     private DexClassLoader createDexClassLoader(String packageName, String dexPath) {
         File dexOutputDir = mContext.getDir("plugin_dex_" + packageName, Context.MODE_PRIVATE);
@@ -148,7 +151,6 @@ public class DLPluginManager {
             e.printStackTrace();
             return null;
         }
-
     }
 
     /**

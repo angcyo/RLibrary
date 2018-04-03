@@ -2,12 +2,12 @@ package com.angcyo.uiview.dynamicload;
 
 import android.app.Activity;
 import android.content.Intent;
+import android.graphics.Color;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 
 import com.angcyo.library.utils.L;
 import com.angcyo.uiview.dynamicload.internal.DLPluginPackage;
-import com.angcyo.uiview.dynamicload.utils.DLConfigs;
 import com.angcyo.uiview.utils.Reflect;
 import com.angcyo.uiview.utils.T_;
 import com.angcyo.uiview.view.IView;
@@ -35,6 +35,8 @@ public class ProxyStartActivity extends ProxyActivity {
      */
     String pluginClassName;
 
+    private DLPluginPackage mDLPluginPackage;
+
     public static void start(Activity activity, String packageName, String className) {
         Intent intent = new Intent(activity, ProxyStartActivity.class);
         intent.putExtra(START_PACKAGE_NAME, packageName);
@@ -44,13 +46,35 @@ public class ProxyStartActivity extends ProxyActivity {
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
+        Intent intent = getIntent();
+        pluginPackageName = intent.getStringExtra(START_PACKAGE_NAME);
+        pluginClassName = intent.getStringExtra(START_CLASS_NAME);
+
+        // set the extra's class loader
+
+        L.w("ProxyStartActivity", "mClass=" + pluginClassName + " mPackageName=" + pluginPackageName);
+
+        mDLPluginPackage = RPlugin.INSTANCE.getPluginPackage(pluginPackageName);
+        //intent.setExtrasClassLoader(DLConfigs.sPluginClassloader);
+//        intent.setExtrasClassLoader(pluginPackage.classLoader);
+
+//        setPluginPackage(pluginPackage);
+//        this.pluginPackage = pluginPackage;
+
+//        DLPluginManager.addAssetPath(getAssets(), pluginPackage.dexPath);
+
         super.onCreate(savedInstanceState);
     }
 
     @Override
     protected void onProxyCreate(@Nullable Bundle savedInstanceState) {
         super.onProxyCreate(savedInstanceState);
-        onProxyCreate(getIntent());
+        mUILayout.setBackgroundColor(Color.RED);
+//        setPluginPackage(pluginPackage);
+        //onProxyCreate();
+
+        T_.info("启动完成.");
+        mUILayout.startIView(new DynamicLoadUIView());
     }
 
 //    @Override
@@ -59,30 +83,22 @@ public class ProxyStartActivity extends ProxyActivity {
 //        return super.getTheme();
 //    }
 
-    public void onProxyCreate(Intent intent) {
-        pluginPackageName = intent.getStringExtra(START_PACKAGE_NAME);
-        pluginClassName = intent.getStringExtra(START_CLASS_NAME);
-
-        // set the extra's class loader
-        intent.setExtrasClassLoader(DLConfigs.sPluginClassloader);
-
-        L.w("ProxyStartActivity", "mClass=" + pluginClassName + " mPackageName=" + pluginPackageName);
-
-        DLPluginPackage pluginPackage = RPlugin.INSTANCE.getPluginPackage(pluginPackageName);
-        if (pluginPackage == null) {
+    public void onProxyCreate() {
+        if (mDLPluginPackage == null) {
             T_.error("插件启动失败.");
             finish();
         } else {
-            this.pluginPackage = pluginPackage;
-//            setPluginPackage(pluginPackage);
+//            this.pluginPackage = pluginPackage;
+            //setPluginPackage(pluginPackage);
             //getTheme().setTo(pluginPackage.resources.newTheme());
-            Class<?> pluginClass = RPlugin.INSTANCE.loadPluginClass(pluginPackage.classLoader, pluginClassName);
+            Class<?> pluginClass = RPlugin.INSTANCE.loadPluginClass(mDLPluginPackage.classLoader, pluginClassName);
 
             if (pluginClass == null) {
                 T_.error("插件类启动失败.");
                 finish();
             } else {
                 IView iView = Reflect.newObject(pluginClass);
+                iView.setPluginPackage(mDLPluginPackage);
 ////                iView.setPluginPackage(pluginPackage);
 //                setPluginPackage(pluginPackage);
                 mUILayout.startIView(iView);
