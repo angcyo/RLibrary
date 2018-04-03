@@ -1127,6 +1127,10 @@ public abstract class UIIViewImpl implements IView {
         return mViewHolder.vg(id);
     }
 
+    public RBaseViewHolder getViewHolder() {
+        return mViewHolder;
+    }
+
     public void click(@IdRes int id, final View.OnClickListener listener) {
         click(v(id), listener);
     }

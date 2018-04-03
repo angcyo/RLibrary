@@ -171,3 +171,8 @@ public fun String.isFileExists(): Boolean {
 public fun <T> Class<T>.newObject(): T {
     return Reflect.newObject<T>(this)
 }
+
+/**缩短显示*/
+public fun String.shortString(): String {
+    return RUtils.getShortString(this, "", true)
+}

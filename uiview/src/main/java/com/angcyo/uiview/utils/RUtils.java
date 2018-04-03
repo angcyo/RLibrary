@@ -1034,6 +1034,23 @@ public class RUtils {
             return "";
         }
 
+        String lastDStr = "";
+        int lastD = number.lastIndexOf('.');
+        if (lastD == -1) {
+            //不是小数
+        } else {
+
+            String value = number;
+            int oldLength = number.length();
+            //是小数, 取出小数前面的数值
+            number = number.substring(0, lastD);
+
+            //取出原来的小数
+            if (lastD + 1 <= oldLength) {
+                lastDStr = value.substring(lastD + 1, oldLength);
+            }
+        }
+
         String unit;
         String num;
         int decimal = 0;
@@ -1106,8 +1123,25 @@ public class RUtils {
 //        }
 
         StringBuilder builder = new StringBuilder();
-        if (needDecimal && decimal > 0) {
-            num = num + "." + decimal;
+        if (needDecimal) {
+            if (decimal > 0) {
+                /*计算出来的小数*/
+                if (decimal > 10) {
+                    num = num + "." + decimal;
+                } else {
+                    num = num + "." + decimal + lastDStr;
+                }
+            } else {
+                if (TextUtils.isEmpty(lastDStr)) {
+
+                } else {
+                    //原来的小数
+                    int oldNum = Integer.parseInt(lastDStr);
+                    if (oldNum > 0) {
+                        num = num + "." + oldNum;
+                    }
+                }
+            }
         }
         builder.append(num);
         builder.append(unit);
