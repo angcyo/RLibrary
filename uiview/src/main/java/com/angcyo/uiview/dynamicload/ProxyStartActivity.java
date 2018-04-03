@@ -2,23 +2,20 @@ package com.angcyo.uiview.dynamicload;
 
 import android.app.Activity;
 import android.content.Intent;
-import android.content.res.Resources;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 
 import com.angcyo.library.utils.L;
-import com.angcyo.uiview.base.UILayoutActivity;
 import com.angcyo.uiview.dynamicload.internal.DLPluginPackage;
 import com.angcyo.uiview.dynamicload.utils.DLConfigs;
 import com.angcyo.uiview.utils.Reflect;
 import com.angcyo.uiview.utils.T_;
-import com.angcyo.uiview.utils.Tip;
 import com.angcyo.uiview.view.IView;
 
 /**
  * Created by angcyo on 2018/04/01 17:36
  */
-public class ProxyStartActivity extends UILayoutActivity {
+public class ProxyStartActivity extends PActivity {
 
     /**
      * 需要启动那个包
@@ -56,11 +53,11 @@ public class ProxyStartActivity extends UILayoutActivity {
         onProxyCreate(getIntent());
     }
 
-    @Override
-    public Resources.Theme getTheme() {
-        pluginTheme = null;
-        return super.getTheme();
-    }
+//    @Override
+//    public Resources.Theme getTheme() {
+//        pluginTheme = null;
+//        return super.getTheme();
+//    }
 
     public void onProxyCreate(Intent intent) {
         pluginPackageName = intent.getStringExtra(START_PACKAGE_NAME);
@@ -76,15 +73,11 @@ public class ProxyStartActivity extends UILayoutActivity {
             T_.error("插件启动失败.");
             finish();
         } else {
+            //this.pluginPackage = pluginPackage;
             setPluginPackage(pluginPackage);
-        }
-        //setTheme(R.style.BaseWhiteAppTheme);
-    }
-
-    @Override
-    protected void onLoadView(Intent intent) {
-        if (pluginPackage != null) {
+            //getTheme().setTo(pluginPackage.resources.newTheme());
             Class<?> pluginClass = RPlugin.INSTANCE.loadPluginClass(pluginPackage.classLoader, pluginClassName);
+
             if (pluginClass == null) {
                 T_.error("插件类启动失败.");
                 finish();
@@ -92,12 +85,31 @@ public class ProxyStartActivity extends UILayoutActivity {
                 IView iView = Reflect.newObject(pluginClass);
 ////                iView.setPluginPackage(pluginPackage);
 //                setPluginPackage(pluginPackage);
-                startIView(iView);
+                mUILayout.startIView(iView);
 //                //startIView(new DynamicLoadUIView());
             }
-        } else {
-            Tip.tip("插件加载失败!");
-        }
 
+        }
+        //setTheme(R.style.BaseWhiteAppTheme);
     }
+
+//    @Override
+//    protected void onLoadView(Intent intent) {
+//        if (pluginPackage != null) {
+//            Class<?> pluginClass = RPlugin.INSTANCE.loadPluginClass(pluginPackage.classLoader, pluginClassName);
+//            if (pluginClass == null) {
+//                T_.error("插件类启动失败.");
+//                finish();
+//            } else {
+//                IView iView = Reflect.newObject(pluginClass);
+//////                iView.setPluginPackage(pluginPackage);
+////                setPluginPackage(pluginPackage);
+//                //startIView(iView);
+////                //startIView(new DynamicLoadUIView());
+//            }
+//        } else {
+//            Tip.tip("插件加载失败!");
+//        }
+//
+//    }
 }

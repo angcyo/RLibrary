@@ -1,5 +1,6 @@
 package com.angcyo.uiview.view;
 
+import android.app.Activity;
 import android.app.ActivityManager;
 import android.content.Context;
 import android.content.Intent;
@@ -60,9 +61,15 @@ import com.angcyo.uiview.viewgroup.TouchLayout;
 import com.angcyo.uiview.widget.EmptyView;
 import com.angcyo.uiview.widget.RSoftInputLayout;
 import com.angcyo.uiview.widget.viewpager.UIViewPager;
+import com.tbruyelle.rxpermissions.Permission;
+import com.tbruyelle.rxpermissions.RxPermissions;
 
 import java.util.ArrayList;
 import java.util.List;
+
+import rx.functions.Action1;
+import rx.functions.Func1;
+import rx.functions.Func2;
 
 import static com.angcyo.uiview.RCrashHandler.getMemoryInfo;
 
@@ -80,7 +87,7 @@ public abstract class UIIViewImpl implements IView {
     public static final int DEFAULT_FINISH_ANIM_TIME = 200;//完成动画,尽量比启动动画快一点(相差最好是一帧的时间)
     public static final int DEFAULT_DIALOG_FINISH_ANIM_TIME = 150;
     public static int DEFAULT_CLICK_DELAY_TIME = RClickListener.Companion.getDEFAULT_DELAY_CLICK_TIME();
-    public UILayoutActivity mActivity;
+    public Activity mActivity;
     protected ILayout mILayout;
     protected ILayout mParentILayout;//上层ILayout, 用来管理上层IView的生命周期, 如果有值, 会等于mILayout
     protected ILayout mChildILayout;//
@@ -113,6 +120,7 @@ public abstract class UIIViewImpl implements IView {
      */
     protected IViewAnimationType mAnimationType = IViewAnimationType.TRANSLATE_HORIZONTAL;
     protected DLPluginPackage mPluginPackage;
+    protected RxPermissions mRxPermissions;
     OnCountDown mOnCountDown;
     int maxCount;
     int currentCount;
@@ -208,7 +216,7 @@ public abstract class UIIViewImpl implements IView {
     }
 
     @Override
-    public View inflateContentView(UILayoutActivity activity, ILayout iLayout, FrameLayout container, LayoutInflater inflater) {
+    public View inflateContentView(Activity activity, ILayout iLayout, FrameLayout container, LayoutInflater inflater) {
         L.d(this.getClass().getSimpleName(), "inflateContentView: ");
         mActivity = activity;
         View baseView;
@@ -1478,6 +1486,92 @@ public abstract class UIIViewImpl implements IView {
     @Override
     public boolean isInPlugin() {
         return mPluginPackage != null;
+    }
+
+    /**
+     * @see UILayoutImpl#finishActivity()
+     */
+    public void finishActivity() {
+        if (mActivity != null) {
+            if (mActivity instanceof UILayoutActivity) {
+                ((UILayoutActivity) mActivity).finishSelf();
+            } else {
+                mActivity.finish();
+            }
+        }
+    }
+
+    /**
+     * @see UILayoutActivity#checkPermissions(String[], Action1)
+     */
+    public void checkPermissions(String[] permissions, final Action1<Boolean> onResult) {
+        if (mActivity != null) {
+            if (mActivity instanceof UILayoutActivity) {
+                ((UILayoutActivity) mActivity).checkPermissions(permissions, onResult);
+            } else {
+                if (mActivity.isDestroyed()) {
+                    return;
+                }
+
+                checkPermissionsResult(permissions, new Action1<String>() {
+                    @Override
+                    public void call(String s) {
+                        if (s.contains("0")) {
+                            //有权限被拒绝
+                            onResult.call(false);
+                        } else {
+                            //所欲权限通过
+                            onResult.call(true);
+                        }
+                    }
+                });
+            }
+        }
+    }
+
+    /**
+     * @see UILayoutActivity#checkPermissionsResult(String[], Action1)
+     */
+    public void checkPermissionsResult(String[] permissions, final Action1<String> onResult) {
+        if (mRxPermissions == null) {
+            mRxPermissions = new RxPermissions(mActivity);
+        }
+        mRxPermissions.requestEach(permissions)
+                .map(new Func1<Permission, String>() {
+                    @Override
+                    public String call(Permission permission) {
+                        if (permission.granted) {
+                            return permission.name + "1";
+                        }
+                        return permission.name + "0";
+                    }
+                })
+                .scan(new Func2<String, String, String>() {
+                    @Override
+                    public String call(String s, String s2) {
+                        return s + ":" + s2;
+                    }
+                })
+                .last()
+                .subscribe(new Action1<String>() {
+                    @Override
+                    public void call(String s) {
+                        L.e("\n" + this.getClass().getSimpleName() + " 权限状态-->\n"
+                                + s.replaceAll("1", " 允许").replaceAll("0", " 拒绝").replaceAll(":", "\n"));
+                        onResult.call(s);
+                    }
+                });
+//                .subscribe(new Action1<Permission>() {
+//                    @Override
+//                    public void call(Permission permission) {
+//                        if (permission.granted) {
+//                            T.show(UILayoutActivity.this, "权限允许");
+//                        } else {
+//                            notifyAppDetailView();
+//                            T.show(UILayoutActivity.this, "权限被拒绝");
+//                        }
+//                    }
+//                });
     }
 
     public interface OnCountDown {

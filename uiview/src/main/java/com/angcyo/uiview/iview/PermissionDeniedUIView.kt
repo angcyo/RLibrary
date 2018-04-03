@@ -194,14 +194,14 @@ class PermissionDeniedUIView(val permission: String) : UIItemUIView<SingleItem>(
     }
 
     override fun onBackPressed(): Boolean {
-        mActivity.finishSelf()
+        finishActivity()
         return false
         //return super.onBackPressed()
     }
 
     override fun onViewShowNotFirst(bundle: Bundle?) {
         super.onViewShowNotFirst(bundle)
-        mActivity.finishSelf()
+        finishActivity()
         RCrashHandler.resetStartActivity(mActivity)
     }
 

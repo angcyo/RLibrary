@@ -1,5 +1,6 @@
 package com.angcyo.uiview.view;
 
+import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
@@ -35,7 +36,7 @@ public interface IView {
      * 生命周期顺序: 1
      * 请在此方法中, 进行xml的inflate操作, 如果使用了ButterKnife, 请在loadContentView方法之后初始化view的相应操作.
      */
-    View inflateContentView(UILayoutActivity activity, ILayout iLayout, FrameLayout container, LayoutInflater inflater);
+    View inflateContentView(Activity activity, ILayout iLayout, FrameLayout container, LayoutInflater inflater);
 
     /**
      * 生命周期顺序: 2

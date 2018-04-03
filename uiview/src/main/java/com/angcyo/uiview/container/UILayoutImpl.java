@@ -91,7 +91,7 @@ public class UILayoutImpl extends SwipeBackLayout implements ILayout, UIViewPage
      */
     protected Stack<ViewTask> mViewTasks = new Stack<>();
     protected boolean isAttachedToWindow = false;
-    protected UILayoutActivity mLayoutActivity;
+    protected Activity mLayoutActivity;
     int hSpace = (int) (30 * getResources().getDisplayMetrics().density);
     int vSpace = (int) (30 * getResources().getDisplayMetrics().density);
     int viewMaxHeight = 0; //debug模式下的成员变量
@@ -408,7 +408,7 @@ public class UILayoutImpl extends SwipeBackLayout implements ILayout, UIViewPage
 
     private void initLayout() {
         if (!isInEditMode()) {
-            mLayoutActivity = (UILayoutActivity) getContext();
+            mLayoutActivity = (Activity) getContext();
         }
         interruptSet = new HashSet<>();
         setTag(TAG);
@@ -1370,7 +1370,7 @@ public class UILayoutImpl extends SwipeBackLayout implements ILayout, UIViewPage
                 boolean backPressed = lastViewPattern.mIView.onBackPressed();
                 if (param.clickOnTitleBack) {
                     if (backPressed) {
-                        mLayoutActivity.finishSelf();
+                        finishActivity();
                     }
                 }
                 return backPressed;
@@ -3512,6 +3512,16 @@ public class UILayoutImpl extends SwipeBackLayout implements ILayout, UIViewPage
     private void logTimeEnd(String log) {
         if (SHOW_DEBUG_TIME) {
             Debug.logTimeEndI(log);
+        }
+    }
+
+    public void finishActivity() {
+        if (mLayoutActivity != null) {
+            if (mLayoutActivity instanceof UILayoutActivity) {
+                ((UILayoutActivity) mLayoutActivity).finishSelf();
+            } else {
+                mLayoutActivity.finish();
+            }
         }
     }
 
