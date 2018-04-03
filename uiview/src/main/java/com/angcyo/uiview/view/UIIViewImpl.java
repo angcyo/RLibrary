@@ -1494,6 +1494,10 @@ public abstract class UIIViewImpl implements IView {
         injectPluginPackage(mPluginPackage);
     }
 
+    public void injectCancelPluginPackage() {
+        injectPluginPackage(null);
+    }
+
     /**
      * 注入插件, 那么接下来的所有资源操作, 都会被接管
      */
