@@ -75,16 +75,16 @@ public class ProxyActivity extends Activity {
         return mPluginPackage;
     }
 
-    public void setPluginPackage(DLPluginPackage mPluginPackage) {
-        this.mPluginPackage = mPluginPackage;
-        if (mPluginPackage == null) {
+    public void setPluginPackage(DLPluginPackage pluginPackage) {
+        this.mPluginPackage = pluginPackage;
+        if (pluginPackage == null) {
             mPluginTheme = null;
         } else {
-            if (mPluginPackage.resources == null) {
+            if (pluginPackage.resources == null) {
                 mPluginTheme = null;
             } else {
                 //theme用来在xml中,创建view
-                mPluginTheme = mPluginPackage.resources.newTheme();
+                mPluginTheme = pluginPackage.resources.newTheme();
 //                mPluginTheme.setTo(super.getTheme());
                 //mPluginTheme.applyStyle();
             }
