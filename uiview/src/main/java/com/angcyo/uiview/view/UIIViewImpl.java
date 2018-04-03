@@ -1351,7 +1351,7 @@ public abstract class UIIViewImpl implements IView {
     /**
      * 请求横屏
      */
-    public void requestedLanscape() {
+    public void requestedLandscape() {
         requestedOrientation(ActivityInfo.SCREEN_ORIENTATION_USER_LANDSCAPE);
     }
 
