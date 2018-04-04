@@ -6,9 +6,7 @@ import android.view.View;
 
 import com.angcyo.github.utilcode.utils.FileUtils;
 import com.angcyo.library.utils.L;
-import com.angcyo.uiview.RApplication;
 import com.angcyo.uiview.Root;
-import com.angcyo.uiview.base.UIScanView2;
 import com.angcyo.uiview.container.ILayout;
 import com.angcyo.uiview.dialog.UIBottomItemDialog;
 import com.angcyo.uiview.dialog.UIItemDialog;
@@ -53,7 +51,8 @@ public class SavePhotoLongClickListener implements ImagePageAdapter.PhotoViewLon
                     if (!TextUtils.isEmpty(item.path) && new File(item.path).exists()) {
                         //需要扫描的文件存在
                         //return QRCodeDecoder.syncDecodeQRCode(item.path);
-                        return UIScanView2.Companion.scanPictureFun(RApplication.getApp(), item.path);
+                        //需要依赖Rcode库
+                        //return UIScanView2.Companion.scanPictureFun(RApplication.getApp(), item.path);
                     }
                     return "";
                 }
