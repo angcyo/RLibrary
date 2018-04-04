@@ -7,8 +7,6 @@ import android.graphics.Paint
 import android.graphics.Rect
 import android.util.AttributeSet
 import android.view.MotionEvent
-import android.view.View
-import android.view.ViewGroup
 import com.angcyo.uiview.R
 import com.angcyo.uiview.kotlin.*
 
@@ -42,7 +40,7 @@ class SliderMenuLayout(context: Context, attributeSet: AttributeSet? = null)
     private var needInterceptTouchEvent = false
     private var isTouchDown = false
     private var isTouchDownInContentWithMenuOpen = false //菜单打开的状态下, 点击在内容区域
-    private var isOldMenuOpen = false //事件触发之前,菜单的打开状态
+    var isOldMenuOpen = false //事件触发之前,菜单的打开状态
 
     /*是否激活滑动菜单*/
     private fun canSlider(): Boolean {
@@ -76,6 +74,9 @@ class SliderMenuLayout(context: Context, attributeSet: AttributeSet? = null)
         if (event.isDown()) {
             isTouchDown = true
             isTouchDownInContentWithMenuOpen = false
+            touchDownX = event.x
+            touchDownY = event.y
+
             isOldMenuOpen = isMenuOpen()
             overScroller.abortAnimation()
 
@@ -86,15 +87,22 @@ class SliderMenuLayout(context: Context, attributeSet: AttributeSet? = null)
                     isTouchDownInContentWithMenuOpen = true
                     needInterceptTouchEvent = true
                 }
+            } else {
+                if (contentLayoutLeft in 1..(maxMenuWidth - 1)) {
+                    //当菜单滑动到一半, 突然被终止, 又再次点击时
+                    needInterceptTouchEvent = true
+                }
             }
         } else if (event.isFinish()) {
             isTouchDown = false
             parent.requestDisallowInterceptTouchEvent(false)
 
             if (needInterceptTouchEvent) {
-                if (isTouchDownInContentWithMenuOpen) {
+                if (isTouchDownInContentWithMenuOpen &&
+                        ((touchEventX - touchDownX) == 0f) ||
+                        (touchEventY - touchDownY).abs() > (touchEventX - touchDownX).abs()) {
                     if (event.x >= maxMenuWidth) {
-                        //在菜单打开的情况下,点击了内容区域
+                        //在菜单打开的情况下,点击了内容区域, 并且没有触发横向滚动
                         closeMenu()
                     } else {
                         resetLayout()
@@ -125,9 +133,14 @@ class SliderMenuLayout(context: Context, attributeSet: AttributeSet? = null)
 
             if (widthMode == MeasureSpec.EXACTLY && heightMode == MeasureSpec.EXACTLY) {
                 //测量菜单, 和内容的宽度
-                getChildAt(0).measure(exactlyMeasure(menuMaxWidthRatio * widthSize), heightMeasureSpec)
-                getChildAt(1).measure(exactlyMeasure(widthSize), heightMeasureSpec)
-
+                for (i in 0 until childCount) {
+                    val childAt = getChildAt(i)
+                    when (i) {
+                        0 -> childAt.measure(exactlyMeasure(menuMaxWidthRatio * widthSize), heightMeasureSpec)
+                        1 -> childAt.measure(exactlyMeasure(widthSize), heightMeasureSpec)
+                        else -> measureChildWithMargins(childAt, widthMeasureSpec, 0, heightMeasureSpec, 0)
+                    }
+                }
                 setMeasuredDimension(widthSize, heightSize)
             } else {
                 super.onMeasure(widthMeasureSpec, heightMeasureSpec)
@@ -135,12 +148,12 @@ class SliderMenuLayout(context: Context, attributeSet: AttributeSet? = null)
         }
     }
 
-    override fun addView(child: View?, index: Int, params: ViewGroup.LayoutParams?) {
-        super.addView(child, index, params)
-        if (childCount > 2) {
-            throw IllegalStateException("不支持2个以上的子布局")
-        }
-    }
+//    override fun addView(child: View?, index: Int, params: ViewGroup.LayoutParams?) {
+//        super.addView(child, index, params)
+//        if (childCount > 2) {
+//            throw IllegalStateException("不支持2个以上的子布局")
+//        }
+//    }
 
     override fun onLayout(changed: Boolean, left: Int, top: Int, right: Int, bottom: Int) {
         super.onLayout(changed, left, top, right, bottom)
@@ -226,12 +239,26 @@ class SliderMenuLayout(context: Context, attributeSet: AttributeSet? = null)
 
     /**关闭菜单*/
     fun closeMenu() {
-        startScrollTo(contentLayoutLeft, 0)
+        if (contentLayoutLeft == 0) {
+            if (isOldMenuOpen) {
+                sliderCallback?.onMenuSlider(this, 0f, isTouchDown)
+            } else {
+            }
+        } else {
+            startScrollTo(contentLayoutLeft, 0)
+        }
     }
 
     /**打开菜单*/
     fun openMenu() {
-        startScrollTo(contentLayoutLeft, maxMenuWidth)
+        if (contentLayoutLeft == maxMenuWidth) {
+            if (isOldMenuOpen) {
+            } else {
+                sliderCallback?.onMenuSlider(this, 1f, isTouchDown)
+            }
+        } else {
+            startScrollTo(contentLayoutLeft, maxMenuWidth)
+        }
     }
 
     /**刷新布局位置*/
@@ -242,11 +269,11 @@ class SliderMenuLayout(context: Context, attributeSet: AttributeSet? = null)
 
     //
     private fun refreshContentLayout(left: Int) {
-        if (childCount == 2) {
+        if (childCount >= 2) {
             getChildAt(1).apply {
                 layout(left, 0, left + this.measuredWidth, this.measuredHeight)
                 lastContentLayoutLeft = left
-                sliderCallback?.onMenuSlider(left.toFloat() / maxMenuWidth)
+                sliderCallback?.onMenuSlider(this@SliderMenuLayout, left.toFloat() / maxMenuWidth, isTouchDown)
             }
             refreshMenuLayout()
         }
@@ -255,7 +282,10 @@ class SliderMenuLayout(context: Context, attributeSet: AttributeSet? = null)
     override fun computeScroll() {
         if (overScroller.computeScrollOffset()) {
             //scrollTo(overScroller.currX, overScroller.currY)
-            refreshContentLayout(overScroller.currX)
+            val currX = overScroller.currX
+            if (contentLayoutLeft != currX) {
+                refreshContentLayout(currX)
+            }
             postInvalidate()
         }
     }
@@ -336,10 +366,10 @@ class SliderMenuLayout(context: Context, attributeSet: AttributeSet? = null)
          * 菜单打开的完成度
          * @param ratio [0-1]
          * */
-        fun onMenuSlider(ratio: Float)
+        fun onMenuSlider(menuLayout: SliderMenuLayout, ratio: Float, isTouchDown: Boolean /*手指是否还在触摸*/)
     }
 
-    open class SimpleSliderCallback : SliderMenuLayout.SliderCallback {
+    open class SimpleSliderCallback : SliderCallback {
         override fun canSlider(): Boolean {
             return true
         }
@@ -347,7 +377,7 @@ class SliderMenuLayout(context: Context, attributeSet: AttributeSet? = null)
         override fun onSizeChanged(menuLayout: SliderMenuLayout) {
         }
 
-        override fun onMenuSlider(ratio: Float) {
+        override fun onMenuSlider(menuLayout: SliderMenuLayout, ratio: Float, isTouchDown: Boolean) {
         }
     }
 }

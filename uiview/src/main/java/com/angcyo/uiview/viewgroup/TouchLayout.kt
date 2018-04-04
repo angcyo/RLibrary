@@ -8,6 +8,7 @@ import android.view.GestureDetector
 import android.view.MotionEvent
 import android.widget.FrameLayout
 import android.widget.OverScroller
+import com.angcyo.uiview.kotlin.isDown
 
 /**
  * Copyright (C) 2016,深圳市红鸟网络科技股份有限公司 All rights reserved.
@@ -45,6 +46,12 @@ open class TouchLayout(context: Context, attributeSet: AttributeSet? = null) : F
 
     protected var firstMotionEvent: MotionEvent? = null
     protected var secondMotionEvent: MotionEvent? = null
+
+    protected var touchDownX = 0f
+    protected var touchDownY = 0f
+
+    protected var touchEventX = 0f
+    protected var touchEventY = 0f
 
     /*用来检测手指滑动方向*/
     protected val orientationGestureDetector = GestureDetectorCompat(context, object : GestureDetector.SimpleOnGestureListener() {
@@ -116,13 +123,18 @@ open class TouchLayout(context: Context, attributeSet: AttributeSet? = null) : F
 
     override fun onTouchEvent(event: MotionEvent): Boolean {
         orientationGestureDetector.onTouchEvent(event)
-        super.onTouchEvent(event) //防止onClickListener无效
         handleCommonTouchEvent(event)
+        super.onTouchEvent(event) //防止onClickListener无效
         return true
     }
 
     open fun handleCommonTouchEvent(event: MotionEvent) {
-
+        if (event.isDown()) {
+            touchDownX = event.x
+            touchDownY = event.y
+        }
+        touchEventX = event.x
+        touchEventY = event.y
     }
 
     override fun computeScroll() {
