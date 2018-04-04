@@ -7,11 +7,11 @@
 apply from: '../RLibrary/key.gradle'
 
 复制 RLibrary 文件夹下的
-gradle.properties 文件 (配置相关属性)
+gradle.properties 文件 (配置相关属性, 必须)
 
 和
 
-key.properties 文件 (配置相关key信息)
+key.properties 文件 (配置相关key信息, 可选)
 
 即可.
 
