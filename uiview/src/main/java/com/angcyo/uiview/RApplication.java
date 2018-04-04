@@ -76,10 +76,10 @@ public class RApplication extends Application {
             imei = ((TelephonyManager) getApp()
                     .getSystemService(Context.TELEPHONY_SERVICE))
                     .getDeviceId();
-            L.w("call: getIMEI([])-> " + imei);
+            //L.w("call: getIMEI([])-> " + imei);
         } catch (Exception e) {
             e.printStackTrace();
-            L.e("call: getIMEI([])-> " + imei + " " + e.getMessage());
+            //L.e("call: getIMEI([])-> " + imei + " " + e.getMessage());
         }
         return imei;
     }
@@ -218,6 +218,7 @@ public class RApplication extends Application {
 
             L.e("onAsyncInit([])-> 签名MD5:" + AppUtils.getAppSignatureMD5(this));
             L.e("onAsyncInit([])-> 签名SHA1:" + AppUtils.getAppSignatureSHA1(this));
+            L.e("onAsyncInit([])-> IMEI:" + getIMEI());
         }
     }
 

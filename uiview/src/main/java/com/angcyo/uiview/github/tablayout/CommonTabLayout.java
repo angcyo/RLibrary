@@ -31,6 +31,9 @@ import com.angcyo.uiview.R;
 import com.angcyo.uiview.github.tablayout.listener.CustomTabEntity;
 import com.angcyo.uiview.github.tablayout.listener.OnTabSelectListener;
 import com.angcyo.uiview.github.tablayout.listener.SimpleTabSelectListener;
+import com.angcyo.uiview.view.RClickListener;
+
+import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -311,10 +314,10 @@ public class CommonTabLayout extends FrameLayout implements ValueAnimator.Animat
                 iv_tab_icon.setVisibility(View.VISIBLE);
             }
 
-            tabView.setOnClickListener(new OnClickListener() {
+            tabView.setOnClickListener(new RClickListener() {
                 @Override
-                public void onClick(View v) {
-                    int position = (Integer) v.getTag();
+                public void onRClick(@Nullable View view) {
+                    int position = (Integer) view.getTag();
                     setCurrentTab(position);
                 }
             });

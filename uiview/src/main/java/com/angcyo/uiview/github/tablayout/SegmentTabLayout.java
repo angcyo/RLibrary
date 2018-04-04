@@ -25,13 +25,15 @@ import android.widget.TextView;
 
 import com.angcyo.uiview.R;
 import com.angcyo.uiview.github.tablayout.listener.OnTabSelectListener;
+import com.angcyo.uiview.view.RClickListener;
+
+import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
 
 /**
- *
  * 分段式 tab 切换
- *
+ * <p>
  * https://github.com/H07000223/FlycoTabLayout
  */
 public class SegmentTabLayout extends FrameLayout implements ValueAnimator.AnimatorUpdateListener {
@@ -224,10 +226,11 @@ public class SegmentTabLayout extends FrameLayout implements ValueAnimator.Anima
         TextView tv_tab_title = (TextView) tabView.findViewById(R.id.tv_tab_title);
         tv_tab_title.setText(mTitles[position]);
 
-        tabView.setOnClickListener(new OnClickListener() {
+        tabView.setOnClickListener(new RClickListener() {
+
             @Override
-            public void onClick(View v) {
-                int position = (Integer) v.getTag();
+            public void onRClick(@Nullable View view) {
+                int position = (Integer) view.getTag();
                 if (mCurrentTab != position) {
                     setCurrentTab(position);
                     if (mListener != null) {
