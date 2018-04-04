@@ -33,6 +33,9 @@ public class RBaseItemDecoration extends RecyclerView.ItemDecoration {
     boolean drawLastVLine = false;//LinearLayoutManager.VERTICAL 时使用
     boolean drawLastHLine = false;//LinearLayoutManager.HORIZONTAL 时使用
 
+    boolean drawFirstVLine = false;//
+    boolean drawFirstHLine = false;//
+
     public RBaseItemDecoration() {
         this(1);
     }
@@ -67,6 +70,11 @@ public class RBaseItemDecoration extends RecyclerView.ItemDecoration {
         return this;
     }
 
+    public RBaseItemDecoration setDrawFirstLine(boolean drawFirstLine) {
+        this.drawFirstVLine = drawFirstLine;
+        this.drawFirstHLine = drawFirstLine;
+        return this;
+    }
 
     public RBaseItemDecoration setDrawLastVLine(boolean drawLastVLine) {
         this.drawLastVLine = drawLastVLine;
@@ -76,6 +84,16 @@ public class RBaseItemDecoration extends RecyclerView.ItemDecoration {
 
     public RBaseItemDecoration setDrawLastHLine(boolean drawLastHLine) {
         this.drawLastHLine = drawLastHLine;
+        return this;
+    }
+
+    public RBaseItemDecoration setDrawFirstVLine(boolean drawFirstVLine) {
+        this.drawFirstVLine = drawFirstVLine;
+        return this;
+    }
+
+    public RBaseItemDecoration setDrawFirstHLine(boolean drawFirstHLine) {
+        this.drawFirstHLine = drawFirstHLine;
         return this;
     }
 
@@ -114,9 +132,15 @@ public class RBaseItemDecoration extends RecyclerView.ItemDecoration {
                 if (view != null) {
                     if (layoutManager.getOrientation() == LinearLayoutManager.HORIZONTAL) {
                         //水平
+                        if (adapterPosition == 0 && drawFirstHLine) {
+                            drawDrawableVFirst(c, view);
+                        }
                         drawDrawableV(c, view);
                     } else {
                         //垂直
+                        if (adapterPosition == 0 && drawFirstVLine) {
+                            drawDrawableHFirst(c, view);
+                        }
                         drawDrawableH(c, view);
                     }
                 }
@@ -154,43 +178,50 @@ public class RBaseItemDecoration extends RecyclerView.ItemDecoration {
             LinearLayoutManager linearLayoutManager = ((LinearLayoutManager) layoutManager);
             final int itemCount = layoutManager.getItemCount();
             if (linearLayoutManager.getOrientation() == LinearLayoutManager.HORIZONTAL) {
+                int leftSize = 0;
+                int rightSize = 0;
+
+                if (viewLayoutPosition == 0 && drawFirstHLine) {
+                    leftSize = (int) mDividerSize;
+                }
+
                 //水平方向
                 if (itemCount == 1 || viewLayoutPosition == itemCount - 1) {
                     //这里可以决定,第一个item的分割线
                     if (drawLastHLine) {
-                        outRect.set(0, 0, (int) mDividerSize, 0);//默认只有右边有分割线, 你也可以把左边的分割线添加出来}
+                        rightSize = (int) mDividerSize;//默认只有右边有分割线, 你也可以把左边的分割线添加出来}
                     } else {
-                        outRect.set(0, 0, 0, 0);//默认只有右边有分割线, 你也可以把左边的分割线添加出来}
+                        //outRect.set(0, 0, 0, 0);//默认只有右边有分割线, 你也可以把左边的分割线添加出来}
                     }
-//                    //这里可以决定, 最后一个item的分割线
-//                    if (drawLastLine) {
-//                        outRect.set(0, 0, (int) mDividerSize, 0);
-//                    } else {
-//                        outRect.set(0, 0, 0, 0);//默认, 最后一个item不需要分割线
-//                    }
                 } else {
                     //中间的item,默认只有右边的分割线
-                    outRect.set(0, 0, (int) mDividerSize, 0);
+                    rightSize = (int) mDividerSize;
                 }
+
+                outRect.set(leftSize, 0, rightSize, 0);
             } else {
+                int topSize = 0;
+                int bottomSize = 0;
+
+                if (viewLayoutPosition == 0 && drawFirstVLine) {
+                    topSize = (int) mDividerSize;
+                }
+
                 //垂直方向
                 if (itemCount == 1 || viewLayoutPosition == itemCount - 1) {
                     //这里可以决定,第一个item的分割线
                     if (drawLastVLine) {
-                        outRect.set(0, 0, 0, (int) mDividerSize);//默认只有右边有分割线, 你也可以把左边的分割线添加出来
+                        bottomSize = (int) mDividerSize; //默认只有右边有分割线, 你也可以把左边的分割线添加出来
                     } else {
-                        outRect.set(0, 0, 0, 0);
+                        //outRect.set(0, 0, 0, 0);
                     }
-//                    //这里可以决定, 最后一个item的分割线
-//                    if (drawLastLine) {
-//                        outRect.set(0, 0, 0, (int) mDividerSize);//默认, 最后一个item不需要分割线
-//                    } else {
-//                        outRect.set(0, 0, 0, 0);//默认, 最后一个item不需要分割线
-//                    }
                 } else {
                     //中间的item,默认只有右边的分割线
-                    outRect.set(0, 0, 0, (int) mDividerSize);
+                    bottomSize = (int) mDividerSize;
                 }
+
+                outRect.set(0, topSize, 0, bottomSize);
+
             }
         }
     }
@@ -230,11 +261,23 @@ public class RBaseItemDecoration extends RecyclerView.ItemDecoration {
         final int spanCount = layoutManager.getSpanCount();
         int itemCount = layoutManager.getItemCount();
 
-        int right = 0, bottom = 0;
+        int right = 0, bottom = 0, left = 0, top = 0;
         if (layoutManager.getOrientation() == LinearLayoutManager.VERTICAL) {
             //垂直方向
             bottom = (int) mDividerSize;
             right = (int) mDividerSize;
+
+            if (viewLayoutPosition < spanCount) {
+                if (drawFirstHLine) {
+                    top = (int) mDividerSize;
+                }
+            }
+
+            if (viewLayoutPosition % spanCount == 0) {
+                if (drawFirstVLine) {
+                    left = (int) mDividerSize;
+                }
+            }
 
             if (isLastOfGrid(itemCount, viewLayoutPosition, spanCount)/*判断是否是最后一排*/) {
                 if (drawLastHLine) {
@@ -253,6 +296,18 @@ public class RBaseItemDecoration extends RecyclerView.ItemDecoration {
             bottom = (int) mDividerSize;
             right = (int) mDividerSize;
 
+            if (viewLayoutPosition < spanCount) {
+                if (drawFirstVLine) {
+                    left = (int) mDividerSize;
+                }
+            }
+
+            if (viewLayoutPosition % spanCount == 0) {
+                if (drawFirstHLine) {
+                    top = (int) mDividerSize;
+                }
+            }
+
             if (isLastOfGrid(itemCount, viewLayoutPosition, spanCount)/*判断是否是最后一排*/) {
                 if (drawLastVLine) {
                 } else {
@@ -267,7 +322,7 @@ public class RBaseItemDecoration extends RecyclerView.ItemDecoration {
             }
         }
 
-        outRect.set(0, 0, right, bottom);
+        outRect.set(left, top, right, bottom);
     }
 
     /**
@@ -302,6 +357,19 @@ public class RBaseItemDecoration extends RecyclerView.ItemDecoration {
                 final int viewLayoutPosition = layoutParams.getViewLayoutPosition();//布局时当前View的位置
 
                 if (layoutManager.getOrientation() == LinearLayoutManager.VERTICAL) {
+
+                    if (viewLayoutPosition < spanCount) {
+                        if (drawFirstHLine) {
+                            drawDrawableHFirst(c, view);
+                        }
+                    }
+
+                    if (viewLayoutPosition % spanCount == 0) {
+                        if (drawFirstVLine) {
+                            drawDrawableVFirst(c, view);
+                        }
+                    }
+
                     //垂直方向
                     if (isLastOfGrid(itemCount, viewLayoutPosition, spanCount)/*判断是否是最后一排*/) {
                         if (viewLayoutPosition == itemCount - 1 /*最后一个*/) {
@@ -312,6 +380,9 @@ public class RBaseItemDecoration extends RecyclerView.ItemDecoration {
                                 drawDrawableH(c, view);
                             }
                         } else {
+                            if (drawLastHLine) {
+                                drawDrawableH(c, view);
+                            }
                             drawDrawableV(c, view);
                         }
                     } else {
@@ -327,6 +398,18 @@ public class RBaseItemDecoration extends RecyclerView.ItemDecoration {
                         }
                     }
                 } else {
+                    if (viewLayoutPosition < spanCount) {
+                        if (drawFirstVLine) {
+                            drawDrawableVFirst(c, view);
+                        }
+                    }
+
+                    if (viewLayoutPosition % spanCount == 0) {
+                        if (drawFirstHLine) {
+                            drawDrawableHFirst(c, view);
+                        }
+                    }
+
                     //水平方向
                     if (isLastOfGrid(itemCount, viewLayoutPosition, spanCount)) {
                         if (viewLayoutPosition == itemCount - 1 /*最后一个*/) {
@@ -337,6 +420,9 @@ public class RBaseItemDecoration extends RecyclerView.ItemDecoration {
                                 drawDrawableH(c, view);
                             }
                         } else {
+                            if (drawLastVLine) {
+                                drawDrawableV(c, view);
+                            }
                             drawDrawableH(c, view);
                         }
                     } else {
@@ -380,6 +466,26 @@ public class RBaseItemDecoration extends RecyclerView.ItemDecoration {
                 view.getRight() - mMarginEnd,
                 (int) (view.getBottom() + p.bottomMargin + mDividerSize));
         drawDrawable(c, mDividerDrawableH);
+    }
+
+    private void drawDrawableHFirst(Canvas c, View view) {
+        //final RecyclerView.LayoutParams p = (RecyclerView.LayoutParams) view.getLayoutParams();
+        mDividerDrawableH.setBounds(
+                (int) (view.getLeft() + mMarginStart - mDividerSize),
+                (int) (view.getTop() - mDividerSize),
+                (int) (view.getRight() - mMarginEnd + mDividerSize),
+                view.getTop());
+        drawDrawable(c, mDividerDrawableH);
+    }
+
+    private void drawDrawableVFirst(Canvas c, View view) {
+        //final RecyclerView.LayoutParams p = (RecyclerView.LayoutParams) view.getLayoutParams();
+        mDividerDrawableV.setBounds(
+                (int) (view.getLeft() - mDividerSize),
+                view.getTop() + mMarginStart,
+                view.getLeft(),
+                (int) (view.getBottom() - mMarginEnd + mDividerSize));
+        drawDrawable(c, mDividerDrawableV);
     }
 
     protected void drawDrawable(Canvas c, Drawable drawable) {
