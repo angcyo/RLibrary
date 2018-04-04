@@ -10,6 +10,7 @@ import android.graphics.Matrix;
 import android.graphics.Paint;
 import android.graphics.PorterDuff;
 import android.graphics.Rect;
+import android.graphics.Region;
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
 import android.graphics.drawable.LayerDrawable;
@@ -334,7 +335,7 @@ public class RImageView extends CircleImageView {
                     break;
             }
             canvas.save();
-            //canvas.clipRect(0, 0, getMeasuredWidth(), getMeasuredHeight(), Region.Op.INTERSECT);
+            canvas.clipRect(0, 0, getMeasuredWidth(), getMeasuredHeight(), Region.Op.INTERSECT);
             mMaskDrawable.setBounds(maskRect);
             mMaskDrawable.draw(canvas);
             canvas.restore();
@@ -460,6 +461,7 @@ public class RImageView extends CircleImageView {
 
     public void setMaskDrawable(Drawable maskDrawable) {
         mMaskDrawable = maskDrawable;
+        postInvalidate();
     }
 
     public void setMaskGravity(int maskGravity) {
