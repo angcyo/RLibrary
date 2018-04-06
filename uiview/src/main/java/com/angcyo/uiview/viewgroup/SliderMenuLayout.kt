@@ -43,17 +43,17 @@ class SliderMenuLayout(context: Context, attributeSet: AttributeSet? = null)
     var isOldMenuOpen = false //事件触发之前,菜单的打开状态
 
     /*是否激活滑动菜单*/
-    private fun canSlider(): Boolean {
-        if (sliderCallback == null) {
+    private fun canSlider(event: MotionEvent): Boolean {
+        if (sliderCallback == null || isOldMenuOpen) {
             return true
         }
-        return sliderCallback!!.canSlider()
+        return sliderCallback!!.canSlider(this, event)
     }
 
     override fun onInterceptTouchEvent(ev: MotionEvent): Boolean {
         val intercept = needInterceptTouchEvent
         super.onInterceptTouchEvent(ev)
-        return if (canSlider()) {
+        return if (canSlider(ev)) {
             intercept
         } else {
             false
@@ -62,7 +62,10 @@ class SliderMenuLayout(context: Context, attributeSet: AttributeSet? = null)
 
     override fun handleCommonTouchEvent(event: MotionEvent) {
         super.handleCommonTouchEvent(event)
-        if (canSlider()) {
+        if (event.isDown()) {
+            isOldMenuOpen = isMenuOpen()
+        }
+        if (canSlider(event)) {
 
         } else {
             return
@@ -76,8 +79,6 @@ class SliderMenuLayout(context: Context, attributeSet: AttributeSet? = null)
             isTouchDownInContentWithMenuOpen = false
             touchDownX = event.x
             touchDownY = event.y
-
-            isOldMenuOpen = isMenuOpen()
             overScroller.abortAnimation()
 
             if (isOldMenuOpen) {
@@ -169,27 +170,29 @@ class SliderMenuLayout(context: Context, attributeSet: AttributeSet? = null)
     override fun onScrollChange(orientation: ORIENTATION, distance: Float /*瞬时值*/) {
         super.onScrollChange(orientation, distance)
         //refreshMenuLayout(((secondMotionEvent?.x ?: 0f) - (firstMotionEvent?.x ?: 0f)).toInt())
-        if (isHorizontal(orientation)) {
-            if (!needInterceptTouchEvent) {
-                if (distance > 0) {
-                    //左滑动
-                    if (isMenuClose()) {
+        if (canSlider(firstMotionEvent!!)) {
+            if (isHorizontal(orientation)) {
+                if (!needInterceptTouchEvent) {
+                    if (distance > 0) {
+                        //左滑动
+                        if (isMenuClose()) {
 
+                        } else {
+                            needInterceptTouchEvent = true
+                        }
                     } else {
-                        needInterceptTouchEvent = true
-                    }
-                } else {
-                    //又滑动
-                    if (isMenuOpen()) {
+                        //又滑动
+                        if (isMenuOpen()) {
 
-                    } else {
-                        needInterceptTouchEvent = true
+                        } else {
+                            needInterceptTouchEvent = true
+                        }
                     }
                 }
-            }
 
-            if (needInterceptTouchEvent) {
-                refreshLayout(distance.toInt())
+                if (needInterceptTouchEvent) {
+                    refreshLayout(distance.toInt())
+                }
             }
         }
     }
@@ -197,13 +200,15 @@ class SliderMenuLayout(context: Context, attributeSet: AttributeSet? = null)
     override fun onFlingChange(orientation: ORIENTATION, velocity: Float /*瞬时值*/) {
         super.onFlingChange(orientation, velocity)
         //L.e("call: onFlingChange -> $velocity")
-        if (isHorizontal(orientation)) {
-            if (velocity < -2000) {
-                //快速向左
-                closeMenu()
-            } else if (velocity > 2000) {
-                //快速向右
-                openMenu()
+        if (canSlider(firstMotionEvent!!)) {
+            if (isHorizontal(orientation)) {
+                if (velocity < -2000) {
+                    //快速向左
+                    closeMenu()
+                } else if (velocity > 2000) {
+                    //快速向右
+                    openMenu()
+                }
             }
         }
     }
@@ -358,7 +363,7 @@ class SliderMenuLayout(context: Context, attributeSet: AttributeSet? = null)
     interface SliderCallback {
 
         /**当前是否可以操作*/
-        fun canSlider(): Boolean
+        fun canSlider(menuLayout: SliderMenuLayout, event: MotionEvent): Boolean
 
         fun onSizeChanged(menuLayout: SliderMenuLayout)
 
@@ -370,7 +375,7 @@ class SliderMenuLayout(context: Context, attributeSet: AttributeSet? = null)
     }
 
     open class SimpleSliderCallback : SliderCallback {
-        override fun canSlider(): Boolean {
+        override fun canSlider(menuLayout: SliderMenuLayout, event: MotionEvent): Boolean {
             return true
         }
 

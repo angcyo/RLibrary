@@ -1,6 +1,9 @@
 package com.angcyo.uiview.base
 
 import android.graphics.Color
+import android.graphics.drawable.ColorDrawable
+import android.graphics.drawable.Drawable
+import android.support.annotation.ColorInt
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -10,7 +13,9 @@ import com.angcyo.uiview.R
 import com.angcyo.uiview.container.UILayoutImpl
 import com.angcyo.uiview.container.UIParam
 import com.angcyo.uiview.rsen.RGestureDetector
+import com.angcyo.uiview.utils.UI
 import com.angcyo.uiview.view.UIIViewImpl
+import com.angcyo.uiview.viewgroup.SliderMenuLayout
 import com.angcyo.uiview.widget.TouchMoveGroupLayout
 import com.angcyo.uiview.widget.TouchMoveView
 
@@ -65,19 +70,49 @@ abstract class UINavigationView : UIIViewImpl() {
             shadowView?.visibility = if (value) View.VISIBLE else View.GONE
         }
 
+    var sliderMenuLayout: SliderMenuLayout? = null
+
     //    override fun inflateContentLayout(baseContentLayout: ContentLayout, inflater: LayoutInflater) {
 //        inflate(R.layout.base_navigation_view)
 //    }
+    @ColorInt
+    fun getDefaultBackgroundColor(): Int {
+        return Color.WHITE
+    }
+
+    fun getDefaultBackgroundDrawable(): Drawable {
+        return ColorDrawable(getDefaultBackgroundColor())
+    }
+
     override fun inflateBaseView(container: FrameLayout, inflater: LayoutInflater): View {
         //inflate(R.layout.base_navigation_view)
-        val view = inflater.inflate(R.layout.base_navigation_view, container, false)
+        val view: View
+        if (haveSliderMenu()) {
+            sliderMenuLayout = SliderMenuLayout(mActivity).apply {
+                initSliderMenu(this, inflater)
+                inflater.inflate(R.layout.base_navigation_view, this)
+                UI.setBackgroundDrawable(this.getChildAt(this.childCount - 1), getDefaultBackgroundDrawable())
+            }
+            view = sliderMenuLayout!!
+        } else {
+            view = inflater.inflate(R.layout.base_navigation_view, container, false)
+        }
+
         initAfterInflateView(view)
         container.addView(view, ViewGroup.LayoutParams(-1, -1))
         return view
     }
 
+    /**是否需要滑动菜单*/
+    open fun haveSliderMenu() = false
+
+    /**请将菜单add到 sliderMenuLayout*/
+    open fun initSliderMenu(sliderMenuLayout: SliderMenuLayout, inflater: LayoutInflater) {
+
+    }
+
     open fun initAfterInflateView(rootView: View) {
-        rootView.setBackgroundColor(Color.WHITE)
+        UI.setBackgroundDrawable(rootView, getDefaultBackgroundDrawable())
     }
 
     override fun onViewLoad() {
