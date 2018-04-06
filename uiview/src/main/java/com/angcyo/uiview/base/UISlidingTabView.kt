@@ -11,6 +11,7 @@ import com.angcyo.uiview.model.TitleBarPattern
 import com.angcyo.uiview.skin.SkinHelper
 import com.angcyo.uiview.utils.UI
 import com.angcyo.uiview.view.IView
+import com.angcyo.uiview.view.UIIViewImpl
 import com.angcyo.uiview.widget.viewpager.UIPagerAdapter
 import com.angcyo.uiview.widget.viewpager.UIViewPager
 
@@ -53,10 +54,12 @@ abstract class UISlidingTabView : UIContentView(), UIBaseView.OnViewLoadListener
         return super.getTitleBar()
     }
 
+    /**子IView类的回调*/
     override fun onShowLoadView() {
         showLoadView()
     }
 
+    /**子IView类的回调*/
     override fun onHideLoadView() {
         hideLoadView()
     }
@@ -85,6 +88,10 @@ abstract class UISlidingTabView : UIContentView(), UIBaseView.OnViewLoadListener
 
     override fun onViewLoad() {
         super.onViewLoad()
+    }
+
+    override fun initOnShowContentLayout() {
+        super.initOnShowContentLayout()
 
         createPages(pages)
         initTabLayout(mSlidingTab)
@@ -117,6 +124,7 @@ abstract class UISlidingTabView : UIContentView(), UIBaseView.OnViewLoadListener
     }
 
     open fun initTabLayout(tabLayout: SlidingTabLayout) {
+        UIViewPager.ensureGlow(tabLayout, SkinHelper.getSkin().themeSubColor)
         baseInitTabLayout(tabLayout)
     }
 
@@ -140,16 +148,25 @@ abstract class UISlidingTabView : UIContentView(), UIBaseView.OnViewLoadListener
     open fun getPageCount(): Int = pages.size
 
     /**对应页面*/
-    open fun getPageIView(position: Int): IView = pages[position].iView
+    open fun getPageIView(position: Int): IView {
+        val iView = pages[position].iView
+
+        if (iView is UIIViewImpl) {
+            iView.isShowInViewPager = true
+            iView.bindParentILayout(mILayout)
+        }
+        if (iView is UIBaseView) {
+            iView.haveTitleBar = false
+            iView.setOnViewLoadListener(this@UISlidingTabView)
+        }
+        return iView
+    }
 
     /**页面标题*/
     open fun getPageTitle(position: Int): String? = pages[position].title
 
     open fun createAdapter() = object : UIPagerAdapter() {
-        override fun getIView(position: Int): IView = (getPageIView(position) as UIBaseView).apply {
-            this.bindParentILayout(mILayout)
-            this.setOnViewLoadListener(this@UISlidingTabView)
-        }
+        override fun getIView(position: Int): IView = getPageIView(position)
 
         override fun getCount(): Int = getPageCount()
 

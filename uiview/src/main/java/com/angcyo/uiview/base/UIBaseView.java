@@ -39,6 +39,7 @@ import com.angcyo.uiview.skin.SkinHelper;
 import com.angcyo.uiview.utils.ClipHelper;
 import com.angcyo.uiview.utils.ScreenUtil;
 import com.angcyo.uiview.view.UIIViewImpl;
+import com.angcyo.uiview.viewgroup.SliderMenuLayout;
 import com.angcyo.uiview.widget.EmptyView;
 import com.angcyo.uiview.widget.SoftRelativeLayout;
 
@@ -86,6 +87,12 @@ public abstract class UIBaseView extends UIIViewImpl {
     protected View mBaseLoadLayout;
 
     protected View mBaseErrorLayout;
+
+    /**
+     * 滑动菜单布局, 如果有.{@link #haveSliderMenu()}
+     */
+    protected SliderMenuLayout mSliderMenuLayout;
+    protected SoftRelativeLayout mSliderMenuContentLayout;//在没有菜单的情况下, 会是 mBaseRootLayout
     /**
      * 内容布局
      */
@@ -137,12 +144,26 @@ public abstract class UIBaseView extends UIIViewImpl {
         //mBaseRootLayout.setBackgroundColor(getDefaultBackgroundColor());
         mBaseRootLayout.setBackground(getDefaultBackgroundDrawable());
 
+        //初始化菜单布局
+        boolean haveSliderMenu = haveSliderMenu();
+        if (haveSliderMenu) {
+            mSliderMenuLayout = new SliderMenuLayout(mActivity, null);
+            initSliderMenu(mSliderMenuLayout, inflater);
+
+            mSliderMenuContentLayout = new SoftRelativeLayout(mActivity);
+            mSliderMenuContentLayout.setBackground(getDefaultBackgroundDrawable());
+        } else {
+            mSliderMenuContentLayout = mBaseRootLayout;
+        }
+
+        //初始化标题栏
         titleBarPattern = getTitleBar();
         if (titleBarPattern != null && isHaveTitleBar()) {
             if (mOnUIViewListener != null) {
                 mOnUIViewListener.onCreateTitleBar(titleBarPattern);
             }
 
+            //标题栏控件
             mUITitleBarContainer = new UITitleBarContainer(mActivity);
             mUITitleBarId = R.id.base_root_title_id;//View.generateViewId();
             mUITitleBarContainer.setId(mUITitleBarId);
@@ -158,7 +179,7 @@ public abstract class UIBaseView extends UIIViewImpl {
             //标题栏底部横线
             mUITitleBarContainer.setShowBottomLine(titleBarPattern.showTitleBarBottomLine);
             //标题栏底部渐变阴影
-            mBaseRootLayout.setShowBottomShadow(titleBarPattern.showBottomShadow);
+            mSliderMenuContentLayout.setShowBottomShadow(titleBarPattern.showBottomShadow);
             if (titleBarPattern.bottomTitleBarLineHeight >= 0) {
                 mUITitleBarContainer.setBottomLineHeight(titleBarPattern.bottomTitleBarLineHeight);
             }
@@ -174,7 +195,7 @@ public abstract class UIBaseView extends UIIViewImpl {
             mBaseContentRootLayout.addView(mBaseContentLayout, new ViewGroup.LayoutParams(-1, -1));
 
             FrameLayout.LayoutParams params = new FrameLayout.LayoutParams(-1, -1);
-            mBaseRootLayout.addView(mBaseContentRootLayout, params);
+            mSliderMenuContentLayout.addView(mBaseContentRootLayout, params);
 
             if (!titleBarPattern.isFixStatusHeight) {
                 mUITitleBarContainer.setPadding(0, 0, 0, 0);
@@ -186,9 +207,14 @@ public abstract class UIBaseView extends UIIViewImpl {
                         mUITitleBarContainer.getPaddingRight(), mUITitleBarContainer.getPaddingBottom());
             }
 
-            mBaseRootLayout.addView(mUITitleBarContainer, new ViewGroup.LayoutParams(-1, -2));
+            mSliderMenuContentLayout.addView(mUITitleBarContainer, new ViewGroup.LayoutParams(-1, -2));
+            mSliderMenuContentLayout.setFloatingTitleView(titleBarPattern.isFloating);
 
-            mBaseRootLayout.setFloatingTitleView(titleBarPattern.isFloating);
+            //滑动菜单的支持
+            if (haveSliderMenu) {
+                mSliderMenuLayout.addView(mSliderMenuContentLayout, new ViewGroup.LayoutParams(-1, -1));
+                mBaseRootLayout.addView(mSliderMenuLayout, new ViewGroup.LayoutParams(-1, -1));
+            }
 
             if (titleBarPattern.isFloating) {
                 if (titleBarPattern.isFixContentHeight) {
@@ -206,13 +232,19 @@ public abstract class UIBaseView extends UIIViewImpl {
             }
         } else {
             //没有标题的情况, 减少布局层级 星期二 2017-7-11
-            mBaseContentRootLayout = mBaseRootLayout;
+            mBaseContentRootLayout = mSliderMenuContentLayout;
 
             mBaseContentLayout = new ContentLayout(mActivity);
             mBaseContentRootId = R.id.base_root_content_id;//View.generateViewId();
             mBaseContentLayout.setId(mBaseContentRootId);
 
             mBaseContentRootLayout.addView(mBaseContentLayout, new ViewGroup.LayoutParams(-1, -1));
+
+            //滑动菜单的支持
+            if (haveSliderMenu) {
+                mSliderMenuLayout.addView(mBaseContentRootLayout, new ViewGroup.LayoutParams(-1, -1));
+                mBaseRootLayout.addView(mSliderMenuLayout, new ViewGroup.LayoutParams(-1, -1));
+            }
         }
 
         // 2016-12-18 使用懒加载的方式 加载.
@@ -227,7 +259,6 @@ public abstract class UIBaseView extends UIIViewImpl {
 //        safeSetView(mBaseEmptyLayout);
 //        safeSetView(mBaseNonetLayout);
 //        safeSetView(mBaseLoadLayout);
-
 
         container.addView(mBaseRootLayout, new ViewGroup.LayoutParams(-1, -1));
         return mBaseRootLayout;
@@ -872,6 +903,13 @@ public abstract class UIBaseView extends UIIViewImpl {
 
     @Override
     public boolean onBackPressed() {
+        if (haveSliderMenu()) {
+            if (mSliderMenuLayout.isMenuOpen()) {
+                mSliderMenuLayout.closeMenu();
+                return false;
+            }
+        }
+
         if (mEnableClip) {
             return onTitleBackListener();
         }
@@ -1061,6 +1099,20 @@ public abstract class UIBaseView extends UIIViewImpl {
         return this;
     }
 
+    /**
+     * 是否需要Slider滑动菜单
+     */
+    public boolean haveSliderMenu() {
+        return false;
+    }
+
+    /**
+     * {@link #haveSliderMenu()} 返回true时, 会被调用
+     * 请将菜单布局add到sliderMenuLayout
+     */
+    public void initSliderMenu(@NonNull SliderMenuLayout sliderMenuLayout, @NonNull LayoutInflater inflater) {
+
+    }
 
     /**
      * 指示当前布局的显示状态, 当前那个布局在显示

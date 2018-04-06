@@ -202,7 +202,8 @@ public abstract class UIRecyclerUIView<H, T, F> extends UIContentView
     @Override
     public void onRefresh(@RefreshLayout.Direction int direction) {
         if (direction == RefreshLayout.TOP) {
-            //刷新事件
+            //刷新事件, 清空缓存
+            mBaseDataObject = null;
             onBaseLoadData("onRefreshTop");
         } else if (direction == RefreshLayout.BOTTOM) {
             //加载更多事件
@@ -225,7 +226,11 @@ public abstract class UIRecyclerUIView<H, T, F> extends UIContentView
     }
 
     public void onBaseLoadData(String extend) {
-        page = 1;
+        if (mBaseDataObject == null) {
+            page = 1;
+        } else {
+            //有缓存的时候, page 维持不变
+        }
         onUILoadData(page);
         onUILoadData(page, extend);
     }
@@ -284,7 +289,8 @@ public abstract class UIRecyclerUIView<H, T, F> extends UIContentView
                     mExBaseAdapter.appendAllData(datas);
                 }
 
-                if (mExBaseAdapter.isEnableLoadMore()) {
+                if (mExBaseAdapter.isEnableLoadMore() ||
+                        mExBaseAdapter.isAutoEnableLoadMore()) {
                     if (isUIHaveLoadMore(datas)) {
                         mExBaseAdapter.setLoadMoreEnd();
                     } else {
@@ -339,7 +345,7 @@ public abstract class UIRecyclerUIView<H, T, F> extends UIContentView
     }
 
     public boolean isUIHaveLoadMore(List<T> datas) {
-        return datas != null && datas.size() > 20;
+        return datas != null && datas.size() >= 20;
     }
 
     /**

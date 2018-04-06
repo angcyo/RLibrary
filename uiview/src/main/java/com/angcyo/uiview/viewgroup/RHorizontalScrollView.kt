@@ -10,7 +10,7 @@ import android.widget.HorizontalScrollView
 /**
  * Copyright (C) 2016,深圳市红鸟网络科技股份有限公司 All rights reserved.
  * 项目名称：
- * 类的描述：
+ * 类的描述：支持点击事件的 HorizontalScrollView
  * 创建人员：Robi
  * 创建时间：2017/10/25 13:51
  * 修改人员：Robi

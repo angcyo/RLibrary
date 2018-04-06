@@ -641,6 +641,7 @@ public class RExTextView extends RTextView {
         this.needPatternUrl = needPattern;
         this.needPatternMention = needPattern;
         this.needPatternPhone = needPattern;
+        this.needPatternTel = needPattern;
         this.needPatternNumberAccount = needPattern;
         setMovementMethod(getDefaultMovementMethod());
         return this;

@@ -19,6 +19,11 @@ public abstract class UIBaseDataView extends UIBaseView {
      */
     protected long mLastLoadTime = 0;
 
+    /**
+     * 用来保存界面数据
+     */
+    protected Object mBaseDataObject = null;
+
     @NonNull
     @Override
     protected LayoutState getDefaultLayoutState() {

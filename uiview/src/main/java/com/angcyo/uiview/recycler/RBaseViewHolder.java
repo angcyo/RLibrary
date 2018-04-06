@@ -26,6 +26,7 @@ import com.angcyo.uiview.widget.ExEditText;
 import com.angcyo.uiview.widget.GlideImageView;
 import com.angcyo.uiview.widget.ItemInfoLayout;
 import com.angcyo.uiview.widget.ItemSubInfoLayout;
+import com.angcyo.uiview.widget.RExTextView;
 import com.angcyo.uiview.widget.RImageView;
 import com.angcyo.uiview.widget.RTextView;
 import com.angcyo.uiview.widget.TimeTextView;
@@ -214,6 +215,10 @@ public class RBaseViewHolder extends RecyclerView.ViewHolder {
 
     public RTextView rtv(@IdRes int resId) {
         return (RTextView) v(resId);
+    }
+
+    public RExTextView rxtv(@IdRes int resId) {
+        return (RExTextView) v(resId);
     }
 
     public TextView tV(String idName) {

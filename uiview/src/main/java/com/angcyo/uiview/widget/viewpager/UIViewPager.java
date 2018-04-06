@@ -10,6 +10,7 @@ import android.util.AttributeSet;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.HorizontalScrollView;
 
 import com.angcyo.library.utils.L;
 import com.angcyo.uiview.container.ILayout;
@@ -66,6 +67,23 @@ public class UIViewPager extends ViewPager implements Runnable, StickLayout.CanS
             Object mGlow = Reflect.getMember(ViewPager.class, viewPager, "mLeftEdge");
             setEdgetEffect(mGlow, color);
             mGlow = Reflect.getMember(ViewPager.class, viewPager, "mRightEdge");
+            setEdgetEffect(mGlow, color);
+        } catch (Exception e) {
+            L.e(e.getMessage());
+        }
+    }
+
+    public static void ensureGlow(HorizontalScrollView horizontalScrollView, int color) {
+        if (!UIIViewImpl.isLollipop()) {
+            if (horizontalScrollView != null) {
+                horizontalScrollView.setOverScrollMode(OVER_SCROLL_NEVER);
+            }
+            return;
+        }
+        try {
+            Object mGlow = Reflect.getMember(HorizontalScrollView.class, horizontalScrollView, "mEdgeGlowLeft");
+            setEdgetEffect(mGlow, color);
+            mGlow = Reflect.getMember(HorizontalScrollView.class, horizontalScrollView, "mEdgeGlowRight");
             setEdgetEffect(mGlow, color);
         } catch (Exception e) {
             L.e(e.getMessage());
