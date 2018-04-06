@@ -72,6 +72,16 @@ abstract class UINavigationView : UIIViewImpl() {
 
     var sliderMenuLayout: SliderMenuLayout? = null
 
+    override fun onBackPressed(): Boolean {
+        if (haveSliderMenu()) {
+            if (sliderMenuLayout?.isMenuOpen() == true) {
+                sliderMenuLayout?.closeMenu()
+                return false
+            }
+        }
+        return super.onBackPressed()
+    }
+
     //    override fun inflateContentLayout(baseContentLayout: ContentLayout, inflater: LayoutInflater) {
 //        inflate(R.layout.base_navigation_view)
 //    }
