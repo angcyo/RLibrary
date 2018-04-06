@@ -55,6 +55,7 @@ public class RRelativeLayout extends RelativeLayout {
         mDrawLine.drawLineOffsetRight = typedArray.getDimensionPixelOffset(R.styleable.RRelativeLayout_r_draw_line_offset_right, mDrawLine.drawLineOffsetRight);
         mDrawLine.drawLineColor = typedArray.getColor(R.styleable.RRelativeLayout_r_draw_line_color, ContextCompat.getColor(getContext(), R.color.base_chat_bg_color));
         mDrawLine.drawLineWidth = typedArray.getDimensionPixelOffset(R.styleable.RRelativeLayout_r_draw_line_width, (int) mDrawLine.drawLineWidth);
+        mDrawLine.isDashLine = typedArray.getBoolean(R.styleable.RRelativeLayout_r_draw_dash_line, mDrawLine.isDashLine);
 
         typedArray.recycle();
         initLayout();

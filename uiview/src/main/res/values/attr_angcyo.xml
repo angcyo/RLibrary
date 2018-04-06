@@ -4,341 +4,346 @@
     <!--View Group-->
 
     <!--不影响原来背景的背景-->
-    <attr name="r_background" format="reference"/>
+    <attr name="r_background" format="reference" />
     <!--不影响原来measure的padding属性-->
-    <attr name="r_paddingLeft" format="dimension"/>
-    <attr name="r_paddingRight" format="dimension"/>
-    <attr name="r_paddingBottom" format="dimension"/>
-    <attr name="r_paddingTop" format="dimension"/>
+    <attr name="r_paddingLeft" format="dimension" />
+    <attr name="r_paddingRight" format="dimension" />
+    <attr name="r_paddingBottom" format="dimension" />
+    <attr name="r_paddingTop" format="dimension" />
     <!--2sw 2倍的屏幕宽度, 0.5sw屏幕宽度的一半-->
-    <attr name="r_layout_width" format="string"/>
+    <attr name="r_layout_width" format="string" />
     <!--2sh 2倍的屏幕高度, 0.5sh屏幕高度的一半-->
-    <attr name="r_layout_height" format="string"/>
+    <attr name="r_layout_height" format="string" />
     <!--计算时, 需要排除的距离-->
-    <attr name="r_layout_width_exclude" format="dimension"/>
-    <attr name="r_layout_height_exclude" format="dimension"/>
-    <attr name="r_max_length" format="integer"/>
+    <attr name="r_layout_width_exclude" format="dimension" />
+    <attr name="r_layout_height_exclude" format="dimension" />
+    <attr name="r_max_length" format="integer" />
 
     <!--View-->
-    <attr name="r_show_text" format="string"/>
-    <attr name="r_show_text_size" format="dimension"/>
-    <attr name="r_show_text_color" format="color"/>
-    <attr name="r_text_offset" format="dimension"/>
-    <attr name="r_max_height" format="dimension"/>
-    <attr name="r_min_height" format="dimension"/>
-    <attr name="r_show_content_menu" format="boolean"/>
+    <attr name="r_show_text" format="string" />
+    <attr name="r_show_text_size" format="dimension" />
+    <attr name="r_show_text_color" format="color" />
+    <attr name="r_text_offset" format="dimension" />
+    <attr name="r_max_height" format="dimension" />
+    <attr name="r_min_height" format="dimension" />
+    <attr name="r_show_content_menu" format="boolean" />
     <!--是否使用皮肤样式, 比如颜色啊, 字体啊等-->
-    <attr name="r_use_skin_style" format="boolean"/>
+    <attr name="r_use_skin_style" format="boolean" />
     <!--宽高是否相等-->
-    <attr name="r_is_aeq_width" format="boolean"/>
+    <attr name="r_is_aeq_width" format="boolean" />
 
     <!--是否显示内部边框, 用来实现选中后的边框展示-->
-    <attr name="r_show_inner_border" format="boolean"/>
+    <attr name="r_show_inner_border" format="boolean" />
     <!--默认2dp-->
-    <attr name="r_inner_border_width" format="dimension"/>
+    <attr name="r_inner_border_width" format="dimension" />
     <!--默认主题颜色-->
-    <attr name="r_inner_border_color" format="color"/>
+    <attr name="r_inner_border_color" format="color" />
     <!--允许偏移的距离(与边框的距离)-->
-    <attr name="r_inner_border_offset" format="dimension"/>
+    <attr name="r_inner_border_offset" format="dimension" />
 
     <!--progress bar-->
     <!--进度颜色-->
-    <attr name="r_progress_color" format="color"/>
-    <attr name="r_second_progress_color" format="color"/>
-    <attr name="r_progress_bg_color" format="color"/>
+    <attr name="r_progress_color" format="color" />
+    <attr name="r_second_progress_color" format="color" />
+    <attr name="r_progress_bg_color" format="color" />
 
-    <attr name="r_max_progress" format="integer"/>
-    <attr name="r_cur_progress" format="integer"/>
-    <attr name="r_second_progress" format="integer"/>
+    <attr name="r_max_progress" format="integer" />
+    <attr name="r_cur_progress" format="integer" />
+    <attr name="r_second_progress" format="integer" />
 
     <!--进度背景颜色-->
-    <attr name="r_back_color" format="color"/>
+    <attr name="r_back_color" format="color" />
     <!--进度宽度-->
-    <attr name="r_progress_width" format="dimension"/>
+    <attr name="r_progress_width" format="dimension" />
 
     <!--高度等于宽度-->
-    <attr name="r_equ_width" format="boolean"/>
+    <attr name="r_equ_width" format="boolean" />
     <!--宽度等于高度-->
-    <attr name="r_equ_height" format="boolean"/>
+    <attr name="r_equ_height" format="boolean" />
     <!--固定比例如(1.5w 表示 高度是宽度的1.5倍, 0.5h 表示宽度是高度的0.5倍)-->
-    <attr name="r_width_height_ratio" format="string"/>
+    <attr name="r_width_height_ratio" format="string" />
 
-    <attr name="r_tip_text" format="string"/>
-    <attr name="r_tip_text_size" format="dimension"/>
-    <attr name="r_tip_text_color" format="color"/>
-    <attr name="r_tip_text_bg" format="boolean"/>
-    <attr name="r_tip_text_left_offset" format="dimension"/>
-    <attr name="r_tip_text_top_offset" format="dimension"/>
+    <attr name="r_tip_text" format="string" />
+    <attr name="r_tip_text_size" format="dimension" />
+    <attr name="r_tip_text_color" format="color" />
+    <attr name="r_tip_text_bg" format="boolean" />
+    <attr name="r_tip_text_left_offset" format="dimension" />
+    <attr name="r_tip_text_top_offset" format="dimension" />
 
     <attr name="r_draw_line" format="enum">
-        <enum name="NONE" value="0"/>
-        <enum name="LEFT" value="1"/>
-        <enum name="RIGHT" value="3"/>
-        <enum name="TOP" value="2"/>
-        <enum name="BOTTOM" value="4"/>
-        <enum name="BOTTOM_TOP" value="5"/>
+        <enum name="NONE" value="0" />
+        <enum name="LEFT" value="1" />
+        <enum name="RIGHT" value="3" />
+        <enum name="TOP" value="2" />
+        <enum name="BOTTOM" value="4" />
+        <enum name="BOTTOM_TOP" value="5" />
     </attr>
 
-    <attr name="r_draw_line_offset_left" format="dimension"/>
-    <attr name="r_draw_line_offset_right" format="dimension"/>
-    <attr name="r_draw_line_color" format="color"/>
-    <attr name="r_draw_line_width" format="dimension"/>
+    <attr name="r_draw_line_offset_left" format="dimension" />
+    <attr name="r_draw_line_offset_right" format="dimension" />
+    <attr name="r_draw_line_color" format="color" />
+    <attr name="r_draw_line_width" format="dimension" />
+    <!--绘制虚线-->
+    <attr name="r_draw_dash_line" format="boolean" />
 
     <declare-styleable name="RLinearLayout">
-        <attr name="r_background"/>
-        <attr name="r_max_height"/>
-        <attr name="r_width_height_ratio"/>
-        <attr name="r_auto_fix_new_line" format="boolean"/>
-        <attr name="r_reverse_layout" format="boolean"/>
-        <attr name="r_is_in_chat_layout" format="boolean"/>
-        <attr name="r_draw_line"/>
-        <attr name="r_draw_line_color"/>
-        <attr name="r_draw_line_width"/>
-        <attr name="r_draw_line_offset_left"/>
-        <attr name="r_draw_line_offset_right"/>
+        <attr name="r_background" />
+        <attr name="r_max_height" />
+        <attr name="r_width_height_ratio" />
+        <attr name="r_auto_fix_new_line" format="boolean" />
+        <attr name="r_reverse_layout" format="boolean" />
+        <attr name="r_is_in_chat_layout" format="boolean" />
+        <attr name="r_draw_line" />
+        <attr name="r_draw_dash_line" />
+        <attr name="r_draw_line_color" />
+        <attr name="r_draw_line_width" />
+        <attr name="r_draw_line_offset_left" />
+        <attr name="r_draw_line_offset_right" />
     </declare-styleable>
 
     <declare-styleable name="RFrameLayout">
-        <attr name="r_background"/>
-        <attr name="r_max_height"/>
-        <attr name="r_width_height_ratio"/>
-        <attr name="r_is_aeq_width"/>
+        <attr name="r_background" />
+        <attr name="r_max_height" />
+        <attr name="r_width_height_ratio" />
+        <attr name="r_is_aeq_width" />
         <!--是否开启浮动-->
-        <attr name="r_is_float_view" format="boolean"/>
+        <attr name="r_is_float_view" format="boolean" />
         <!--是否自动吸附-->
-        <attr name="r_float_auto_adsorb" format="boolean"/>
+        <attr name="r_float_auto_adsorb" format="boolean" />
         <!--是否限制浮动rect-->
-        <attr name="r_float_fix_rect" format="boolean"/>
+        <attr name="r_float_fix_rect" format="boolean" />
 
-        <attr name="r_inner_border_color"/>
-        <attr name="r_inner_border_width"/>
-        <attr name="r_inner_border_offset"/>
-        <attr name="r_show_inner_border"/>
+        <attr name="r_inner_border_color" />
+        <attr name="r_inner_border_width" />
+        <attr name="r_inner_border_offset" />
+        <attr name="r_show_inner_border" />
 
-        <attr name="r_draw_line"/>
-        <attr name="r_draw_line_color"/>
-        <attr name="r_draw_line_width"/>
-        <attr name="r_draw_line_offset_left"/>
-        <attr name="r_draw_line_offset_right"/>
+        <attr name="r_draw_line" />
+        <attr name="r_draw_dash_line" />
+        <attr name="r_draw_line_color" />
+        <attr name="r_draw_line_width" />
+        <attr name="r_draw_line_offset_left" />
+        <attr name="r_draw_line_offset_right" />
     </declare-styleable>
 
     <declare-styleable name="RRelativeLayout">
-        <attr name="r_background"/>
-        <attr name="r_max_height"/>
+        <attr name="r_background" />
+        <attr name="r_max_height" />
 
-        <attr name="r_draw_line"/>
-        <attr name="r_draw_line_color"/>
-        <attr name="r_draw_line_width"/>
-        <attr name="r_draw_line_offset_left"/>
-        <attr name="r_draw_line_offset_right"/>
+        <attr name="r_draw_line" />
+        <attr name="r_draw_dash_line" />
+        <attr name="r_draw_line_color" />
+        <attr name="r_draw_line_width" />
+        <attr name="r_draw_line_offset_left" />
+        <attr name="r_draw_line_offset_right" />
     </declare-styleable>
 
     <declare-styleable name="RGalleryLayout">
-        <attr name="r_animator_to_first" format="boolean"/>
-        <attr name="r_item_offset_space" format="dimension"/>
+        <attr name="r_animator_to_first" format="boolean" />
+        <attr name="r_item_offset_space" format="dimension" />
     </declare-styleable>
 
     <declare-styleable name="RRecyclerView">
         <!--是否激活自动滚动-->
-        <attr name="r_enable_auto_start_scroll" format="boolean"/>
-        <attr name="r_enable_scroll" format="boolean"/>
-        <attr name="r_auto_scroll_to_last_position" format="boolean"/>
-        <attr name="r_auto_scroll_time_interval" format="integer"/>
-        <attr name="r_width_height_ratio"/>
-        <attr name="r_is_aeq_width"/>
+        <attr name="r_enable_auto_start_scroll" format="boolean" />
+        <attr name="r_enable_scroll" format="boolean" />
+        <attr name="r_auto_scroll_to_last_position" format="boolean" />
+        <attr name="r_auto_scroll_time_interval" format="integer" />
+        <attr name="r_width_height_ratio" />
+        <attr name="r_is_aeq_width" />
 
-        <attr name="r_supports_change_animations" format="boolean"/>
+        <attr name="r_supports_change_animations" format="boolean" />
     </declare-styleable>
 
     <declare-styleable name="RefreshLayout">
-        <attr name="r_notify_listener" format="boolean"/>
+        <attr name="r_notify_listener" format="boolean" />
         <!--刷新房方向-->
         <attr name="r_refresh_direction" format="enum">
-            <enum name="NONE" value="-1"/>
-            <enum name="BOTH" value="3"/>
-            <enum name="BOTTOM" value="2"/>
-            <enum name="TOP" value="1"/>
+            <enum name="NONE" value="-1" />
+            <enum name="BOTH" value="3" />
+            <enum name="BOTTOM" value="2" />
+            <enum name="TOP" value="1" />
         </attr>
     </declare-styleable>
 
     <!--View-->
-    <attr name="r_left_text" format="string"/>
-    <attr name="r_hint_text" format="string"/>
-    <attr name="r_left_text_color" format="color"/>
-    <attr name="r_left_text_offset" format="dimension"/>
-    <attr name="r_top_text_offset" format="dimension"/>
-    <attr name="r_bottom_text_offset" format="dimension"/>
+    <attr name="r_left_text" format="string" />
+    <attr name="r_hint_text" format="string" />
+    <attr name="r_left_text_color" format="color" />
+    <attr name="r_left_text_offset" format="dimension" />
+    <attr name="r_top_text_offset" format="dimension" />
+    <attr name="r_bottom_text_offset" format="dimension" />
 
     <declare-styleable name="RTextView">
         <!--左边竖线的颜色-->
-        <attr name="r_left_color" format="color"/>
+        <attr name="r_left_color" format="color" />
         <!--左边竖线的宽度-->
-        <attr name="r_left_width" format="dimension"/>
+        <attr name="r_left_width" format="dimension" />
         <!--距离view左边的距离-->
-        <attr name="r_left_margin" format="dimension"/>
-        <attr name="r_top_margin" format="dimension"/>
-        <attr name="r_bottom_margin" format="dimension"/>
+        <attr name="r_left_margin" format="dimension" />
+        <attr name="r_top_margin" format="dimension" />
+        <attr name="r_bottom_margin" format="dimension" />
         <!--是否有下划线-->
-        <attr name="r_has_underline" format="boolean"/>
+        <attr name="r_has_underline" format="boolean" />
 
-        <attr name="r_background"/>
+        <attr name="r_background" />
 
-        <attr name="r_left_text"/>
+        <attr name="r_left_text" />
         <!--是否加粗-->
-        <attr name="r_left_text_bold" format="boolean"/>
-        <attr name="r_left_drawable" format="reference"/>
+        <attr name="r_left_text_bold" format="boolean" />
+        <attr name="r_left_drawable" format="reference" />
         <attr name="r_left_drawable_gravity" format="enum">
-            <enum name="TOP" value="1"/>
-            <enum name="CENTER_VERTICAL" value="2"/>
+            <enum name="TOP" value="1" />
+            <enum name="CENTER_VERTICAL" value="2" />
         </attr>
-        <attr name="r_left_drawable_offset_x" format="dimension"/>
-        <attr name="r_left_drawable_offset_y" format="dimension"/>
+        <attr name="r_left_drawable_offset_x" format="dimension" />
+        <attr name="r_left_drawable_offset_y" format="dimension" />
 
-        <attr name="r_left_text_color"/>
-        <attr name="r_left_text_offset"/>
-        <attr name="r_left_text_size" format="dimension"/>
-        <attr name="r_top_text_offset"/>
-        <attr name="r_bottom_text_offset"/>
-        <attr name="r_show_content_menu"/>
+        <attr name="r_left_text_color" />
+        <attr name="r_left_text_offset" />
+        <attr name="r_left_text_size" format="dimension" />
+        <attr name="r_top_text_offset" />
+        <attr name="r_bottom_text_offset" />
+        <attr name="r_show_content_menu" />
 
-        <attr name="r_noread_radius" format="dimension"/>
-        <attr name="r_noread_padding_top" format="dimension"/>
-        <attr name="r_noread_padding_right" format="dimension"/>
-        <attr name="r_center_left_drawable" format="boolean"/>
+        <attr name="r_noread_radius" format="dimension" />
+        <attr name="r_noread_padding_top" format="dimension" />
+        <attr name="r_noread_padding_right" format="dimension" />
+        <attr name="r_center_left_drawable" format="boolean" />
         <!--需要singleLine=true 或 maxLines=1的支持-->
-        <attr name="r_auto_fix_text_size" format="boolean"/>
+        <attr name="r_auto_fix_text_size" format="boolean" />
 
         <!--宽高是否相等-->
-        <attr name="r_is_aeq_width"/>
+        <attr name="r_is_aeq_width" />
         <!--当设置文本为空时, 是否自动隐藏-->
-        <attr name="r_hide_with_empty_text" format="boolean"/>
-        <attr name="r_is_show_tip_text" format="boolean"/>
-        <attr name="r_tip_text"/>
-        <attr name="r_tip_text_size"/>
-        <attr name="r_tip_text_color"/>
-        <attr name="r_tip_text_bg"/>
-        <attr name="r_tip_text_left_offset"/>
-        <attr name="r_tip_text_top_offset"/>
-        <attr name="r_is_scroll_text" format="boolean"/>
-        <attr name="r_is_scroll_text_circle" format="boolean"/>
+        <attr name="r_hide_with_empty_text" format="boolean" />
+        <attr name="r_is_show_tip_text" format="boolean" />
+        <attr name="r_tip_text" />
+        <attr name="r_tip_text_size" />
+        <attr name="r_tip_text_color" />
+        <attr name="r_tip_text_bg" />
+        <attr name="r_tip_text_left_offset" />
+        <attr name="r_tip_text_top_offset" />
+        <attr name="r_is_scroll_text" format="boolean" />
+        <attr name="r_is_scroll_text_circle" format="boolean" />
         <attr name="r_scroll_type" format="enum">
-            <enum name="SCROLL_TYPE_DEFAULT" value="1"/>
-            <enum name="SCROLL_TYPE_START" value="2"/>
+            <enum name="SCROLL_TYPE_DEFAULT" value="1" />
+            <enum name="SCROLL_TYPE_START" value="2" />
         </attr>
-        <attr name="r_scroll_step" format="integer"/>
-        <attr name="r_scroll_text_offset" format="dimension"/>
+        <attr name="r_scroll_step" format="integer" />
+        <attr name="r_scroll_text_offset" format="dimension" />
 
-        <attr name="r_use_skin_style"/>
-        <attr name="r_max_length"/>
-        <attr name="r_use_chat_length_filter" format="boolean"/>
+        <attr name="r_use_skin_style" />
+        <attr name="r_max_length" />
+        <attr name="r_use_chat_length_filter" format="boolean" />
     </declare-styleable>
 
     <declare-styleable name="RExTextView">
         <!--最多显示多少行-->
-        <attr name="r_max_show_line" format="integer"/>
+        <attr name="r_max_show_line" format="integer" />
         <!--当折叠时, 默认显示三个点...-->
-        <attr name="r_show_more_text" format="string"/>
+        <attr name="r_show_more_text" format="string" />
         <!--可以通过此属性, 设置额外的其他文本, 如果:查看全部 全文等-->
-        <attr name="r_show_fold_text" format="string"/>
+        <attr name="r_show_fold_text" format="string" />
     </declare-styleable>
 
     <declare-styleable name="ExEditText">
-        <attr name="r_left_text"/>
-        <attr name="r_hint_text"/>
-        <attr name="r_left_text_color"/>
-        <attr name="r_left_text_offset"/>
+        <attr name="r_left_text" />
+        <attr name="r_hint_text" />
+        <attr name="r_left_text_color" />
+        <attr name="r_left_text_offset" />
 
         <!--允许输入最大的数字-->
-        <attr name="r_max_number" format="float"/>
-        <attr name="r_min_number" format="float"/>
+        <attr name="r_max_number" format="float" />
+        <attr name="r_min_number" format="float" />
         <!--允许小数点后几位-->
-        <attr name="r_decimal_count" format="integer"/>
+        <attr name="r_decimal_count" format="integer" />
 
-        <attr name="r_show_content_menu"/>
+        <attr name="r_show_content_menu" />
         <!--是否过滤Emoji表情-->
-        <attr name="r_filter_emoji" format="boolean"/>
+        <attr name="r_filter_emoji" format="boolean" />
         <!--是否显示删除按钮-->
-        <attr name="r_show_clear" format="boolean"/>
+        <attr name="r_show_clear" format="boolean" />
         <!--检查输入的数字的有效性, 需要inputType的支持-->
-        <attr name="r_check_input_number" format="boolean"/>
-        <attr name="r_use_char_length_filter" format="boolean"/>
-        <attr name="r_max_length"/>
+        <attr name="r_check_input_number" format="boolean" />
+        <attr name="r_use_char_length_filter" format="boolean" />
+        <attr name="r_max_length" />
     </declare-styleable>
 
     <declare-styleable name="JumpAdProgressBar">
-        <attr name="r_progress_color"/>
-        <attr name="r_back_color"/>
-        <attr name="r_text_color" format="color"/>
-        <attr name="r_progress_width"/>
-        <attr name="r_show_text"/>
-        <attr name="r_jump_time" format="integer"/>
+        <attr name="r_progress_color" />
+        <attr name="r_back_color" />
+        <attr name="r_text_color" format="color" />
+        <attr name="r_progress_width" />
+        <attr name="r_show_text" />
+        <attr name="r_jump_time" format="integer" />
     </declare-styleable>
 
     <declare-styleable name="SimpleProgressBar">
-        <attr name="r_progress_bg_color"/>
-        <attr name="r_progress_text_color" format="color"/>
-        <attr name="r_progress_text_size" format="dimension"/>
-        <attr name="r_progress_width"/>
-        <attr name="r_incertitude_progress" format="boolean"/>
+        <attr name="r_progress_bg_color" />
+        <attr name="r_progress_text_color" format="color" />
+        <attr name="r_progress_text_size" format="dimension" />
+        <attr name="r_progress_width" />
+        <attr name="r_incertitude_progress" format="boolean" />
         <attr name="r_progress_style" format="enum">
-            <enum name="RECT" value="1"/>
-            <enum name="CIRCLE" value="2"/>
+            <enum name="RECT" value="1" />
+            <enum name="CIRCLE" value="2" />
         </attr>
     </declare-styleable>
 
     <declare-styleable name="RNineImageLayout">
-        <attr name="r_paddingLeft"/>
-        <attr name="r_paddingRight"/>
-        <attr name="r_paddingBottom"/>
-        <attr name="r_paddingTop"/>
-        <attr name="r_line_image_count" format="integer"/>
+        <attr name="r_paddingLeft" />
+        <attr name="r_paddingRight" />
+        <attr name="r_paddingBottom" />
+        <attr name="r_paddingTop" />
+        <attr name="r_line_image_count" format="integer" />
     </declare-styleable>
 
     <declare-styleable name="ContentLayout">
-        <attr name="r_max_height"/>
-        <attr name="r_min_height"/>
+        <attr name="r_max_height" />
+        <attr name="r_min_height" />
     </declare-styleable>
 
     <declare-styleable name="TitleBarLayout">
-        <attr name="r_max_height"/>
-        <attr name="r_fit_action_bar_height" format="boolean"/>
-        <attr name="r_fit_status_bar_height" format="boolean"/>
+        <attr name="r_max_height" />
+        <attr name="r_fit_action_bar_height" format="boolean" />
+        <attr name="r_fit_status_bar_height" format="boolean" />
         <!--是否是屏幕高度, 如果是, 那么在测量child的时候, 会减去topHeight-->
-        <attr name="r_is_screen_height" format="boolean"/>
+        <attr name="r_is_screen_height" format="boolean" />
     </declare-styleable>
 
     <declare-styleable name="Button">
         <attr name="r_button_style" format="enum">
-            <enum name="DEFAULT" value="1"/>
+            <enum name="DEFAULT" value="1" />
             <!--圆角填充-->
-            <enum name="ROUND" value="2"/>
+            <enum name="ROUND" value="2" />
             <!--圆角边框-->
-            <enum name="ROUND_BORDER" value="3"/>
-            <enum name="ROUND_BORDER_FILL" value="4"/>
-            <enum name="ROUND_GRADIENT_RECT" value="5"/>
+            <enum name="ROUND_BORDER" value="3" />
+            <enum name="ROUND_BORDER_FILL" value="4" />
+            <enum name="ROUND_GRADIENT_RECT" value="5" />
         </attr>
-        <attr name="r_button_left_drawable" format="reference"/>
+        <attr name="r_button_left_drawable" format="reference" />
         <!--用来覆盖主题颜色-->
-        <attr name="r_button_theme_color" format="color"/>
-        <attr name="r_button_theme_dark_color" format="color"/>
-        <attr name="r_button_disable_color" format="color"/>
+        <attr name="r_button_theme_color" format="color" />
+        <attr name="r_button_theme_dark_color" format="color" />
+        <attr name="r_button_disable_color" format="color" />
         <!--边框模式下, 边框的宽度-->
-        <attr name="r_button_border_width" format="dimension"/>
+        <attr name="r_button_border_width" format="dimension" />
         <!--圆角模式下, 圆角的半径 (圆形不受影响)-->
-        <attr name="r_button_round_radii" format="dimension"/>
+        <attr name="r_button_round_radii" format="dimension" />
     </declare-styleable>
 
     <declare-styleable name="RRangeBar">
-        <attr name="r_max_value" format="integer"/>
-        <attr name="r_min_value" format="integer"/>
-        <attr name="r_current_min_value" format="integer"/>
-        <attr name="r_current_max_value" format="integer"/>
-        <attr name="r_min_range" format="integer"/>
+        <attr name="r_max_value" format="integer" />
+        <attr name="r_min_value" format="integer" />
+        <attr name="r_current_min_value" format="integer" />
+        <attr name="r_current_max_value" format="integer" />
+        <attr name="r_min_range" format="integer" />
     </declare-styleable>
 
     <declare-styleable name="TimeTextView">
-        <attr name="r_time_pattern" format="string"/>
-        <attr name="r_time" format="string"/>
-        <attr name="r_show_shot_time" format="boolean"/>
+        <attr name="r_time_pattern" format="string" />
+        <attr name="r_time" format="string" />
+        <attr name="r_show_shot_time" format="boolean" />
     </declare-styleable>
 </resources>

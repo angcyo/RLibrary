@@ -179,6 +179,31 @@ public fun String.shortString(): String {
     return RUtils.getShortString(this, "", true)
 }
 
+public fun String.http(): String {
+    return if (this.startsWith("http")) {
+        this
+    } else {
+        if (this.startsWith("//")) {
+            "http:$this"
+        } else {
+            "http://$this"
+        }
+    }
+}
+
+public fun String.https(): String {
+    return if (this.startsWith("http")) {
+        this
+    } else {
+        if (this.startsWith("//")) {
+            "https:$this"
+        } else {
+            "https://$this"
+        }
+    }
+}
+
+
 /**
  * 获取Int对应颜色的透明颜色
  * @param alpha [0..255] 值越小,越透明

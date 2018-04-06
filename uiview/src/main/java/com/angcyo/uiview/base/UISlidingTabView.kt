@@ -153,7 +153,7 @@ abstract class UISlidingTabView : UIContentView(), UIBaseView.OnViewLoadListener
 
         if (iView is UIIViewImpl) {
             iView.isShowInViewPager = true
-            iView.bindParentILayout(mILayout)
+            iView.bindParentILayout(mParentILayout)
         }
         if (iView is UIBaseView) {
             iView.haveTitleBar = false

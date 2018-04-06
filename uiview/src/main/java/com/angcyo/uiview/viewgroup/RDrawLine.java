@@ -1,6 +1,7 @@
 package com.angcyo.uiview.viewgroup;
 
 import android.graphics.Canvas;
+import android.graphics.DashPathEffect;
 import android.graphics.Paint;
 import android.view.View;
 
@@ -25,6 +26,11 @@ public class RDrawLine {
     private Paint linePaint;
     private View mView;
 
+    /**
+     * 是否是虚线, 蚂蚁线
+     */
+    public boolean isDashLine = false;
+
     public RDrawLine(View view) {
         mView = view;
     }
@@ -34,7 +40,13 @@ public class RDrawLine {
             if (linePaint == null) {
                 linePaint = new Paint(Paint.ANTI_ALIAS_FLAG);
                 linePaint.setStyle(Paint.Style.FILL_AND_STROKE);
+
+                if (isDashLine) {
+                    mView.setLayerType(View.LAYER_TYPE_SOFTWARE, linePaint);
+                    linePaint.setPathEffect(new DashPathEffect(new float[]{4 * ScreenUtil.density, 5 * ScreenUtil.density}, 0));
+                }
             }
+
             linePaint.setStrokeWidth(drawLineWidth);
             linePaint.setColor(drawLineColor);
 

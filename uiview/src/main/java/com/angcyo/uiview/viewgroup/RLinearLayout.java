@@ -87,6 +87,7 @@ public class RLinearLayout extends LinearLayout {
         mDrawLine.drawLineOffsetRight = typedArray.getDimensionPixelOffset(R.styleable.RLinearLayout_r_draw_line_offset_right, mDrawLine.drawLineOffsetRight);
         mDrawLine.drawLineColor = typedArray.getColor(R.styleable.RLinearLayout_r_draw_line_color, ContextCompat.getColor(getContext(), R.color.base_chat_bg_color));
         mDrawLine.drawLineWidth = typedArray.getDimensionPixelOffset(R.styleable.RLinearLayout_r_draw_line_width, (int) mDrawLine.drawLineWidth);
+        mDrawLine.isDashLine = typedArray.getBoolean(R.styleable.RLinearLayout_r_draw_dash_line, mDrawLine.isDashLine);
 
         typedArray.recycle();
         resetMaxHeight();

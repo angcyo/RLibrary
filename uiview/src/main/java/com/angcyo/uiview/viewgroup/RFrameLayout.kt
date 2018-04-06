@@ -96,6 +96,7 @@ open class RFrameLayout(context: Context, attributeSet: AttributeSet? = null) : 
         mDrawLine.drawLineOffsetRight = typedArray.getDimensionPixelOffset(R.styleable.RFrameLayout_r_draw_line_offset_right, mDrawLine.drawLineOffsetRight)
         mDrawLine.drawLineColor = typedArray.getColor(R.styleable.RFrameLayout_r_draw_line_color, ContextCompat.getColor(getContext(), R.color.base_chat_bg_color))
         mDrawLine.drawLineWidth = typedArray.getDimensionPixelOffset(R.styleable.RFrameLayout_r_draw_line_width, mDrawLine.drawLineWidth.toInt()).toFloat()
+        mDrawLine.isDashLine = typedArray.getBoolean(R.styleable.RFrameLayout_r_draw_dash_line, mDrawLine.isDashLine)
 
         setWillNotDraw(false)
 
