@@ -17,6 +17,9 @@ import java.util.UUID;
  * Version: 1.0.0
  */
 public class ViewTask {
+    public static final int TASK_RUN_DEFAULT = -10_000; //默认状态
+    public static final int TASK_RUN_SUSPEND = -10_001; //任务被暂停
+
     public static final int TASK_TYPE_START = 0b1;//启动
     public static final int TASK_TYPE_FINISH = TASK_TYPE_START << 1;//关闭
     public static final int TASK_TYPE_SHOW = TASK_TYPE_FINISH << 1;//显示
@@ -24,16 +27,16 @@ public class ViewTask {
     public static final int TASK_TYPE_REPLACE = TASK_TYPE_HIDE << 1;//替换
     public static final int TASK_TYPE_FINISH_INNER = TASK_TYPE_REPLACE << 1;//内部关闭IVIew使用
 
-    public int taskType = 0;//启动的任务类型
+    public int taskType;//启动的任务类型
 
     public IView iView;//需要操作的IView
     public UIParam param;//参数
 
-    public String uuid = "";
+    public String uuid;
     public long createTime;
 
-    /*这个值小于等于0时, 表示任务执行结束*/
-    public int taskRun = 0;
+    /*这个值小于等于0时, 表示任务执行结束, 等于负1w时,表示刚创建任务*/
+    public int taskRun = TASK_RUN_DEFAULT;
 
     public ViewTask(int taskType, IView iView, UIParam param) {
         this.taskType = taskType;
@@ -41,6 +44,21 @@ public class ViewTask {
         this.param = param;
         uuid = UUID.randomUUID().toString();
         createTime = System.currentTimeMillis();
+    }
+
+    /**
+     * 任务是否开始执行了
+     */
+    public boolean isTaskStartRun() {
+        return taskRun != TASK_RUN_DEFAULT &&
+                taskRun != TASK_RUN_SUSPEND;
+    }
+
+    /**
+     * 任务执行结束
+     */
+    public boolean isTaskRunEnd() {
+        return taskRun <= 0;
     }
 
     @Override

@@ -25,9 +25,6 @@ import android.widget.TextView;
 
 import com.angcyo.uiview.R;
 import com.angcyo.uiview.github.tablayout.listener.OnTabSelectListener;
-import com.angcyo.uiview.view.RClickListener;
-
-import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
 
@@ -223,13 +220,12 @@ public class SegmentTabLayout extends FrameLayout implements ValueAnimator.Anima
      * 创建并添加tab
      */
     private void addTab(final int position, final View tabView) {
-        TextView tv_tab_title = (TextView) tabView.findViewById(R.id.tv_tab_title);
+        TextView tv_tab_title = tabView.findViewById(R.id.tv_tab_title);
         tv_tab_title.setText(mTitles[position]);
 
-        tabView.setOnClickListener(new RClickListener() {
-
+        tabView.setOnClickListener(new OnClickListener() {
             @Override
-            public void onRClick(@Nullable View view) {
+            public void onClick(View view) {
                 int position = (Integer) view.getTag();
                 if (mCurrentTab != position) {
                     setCurrentTab(position);
@@ -265,7 +261,7 @@ public class SegmentTabLayout extends FrameLayout implements ValueAnimator.Anima
         for (int i = 0; i < mTabCount; i++) {
             View tabView = mTabsContainer.getChildAt(i);
             tabView.setPadding((int) mTabPadding, 0, (int) mTabPadding, 0);
-            TextView tv_tab_title = (TextView) tabView.findViewById(R.id.tv_tab_title);
+            TextView tv_tab_title = tabView.findViewById(R.id.tv_tab_title);
             tv_tab_title.setTextColor(i == mCurrentTab ? mTextSelectColor : mTextUnselectColor);
             tv_tab_title.setTextSize(TypedValue.COMPLEX_UNIT_PX, mTextsize);
 //            tv_tab_title.setPadding((int) mTabPadding, 0, (int) mTabPadding, 0);

@@ -170,6 +170,10 @@ public class Rx<Rx> extends Observable<Rx> {
     }
 
     public static Subscription base(final Runnable onMain) {
+        return main(onMain);
+    }
+
+    public static Subscription main(final Runnable onMain) {
         return base(
                 new RFunc<String>() {
                     @Override
@@ -182,6 +186,23 @@ public class Rx<Rx> extends Observable<Rx> {
                     public void onSucceed(String bean) {
                         super.onSucceed(bean);
                         onMain.run();
+                    }
+                });
+    }
+
+    public static Subscription back(final Runnable onBack) {
+        return base(
+                new RFunc<String>() {
+                    @Override
+                    public String onFuncCall() {
+                        onBack.run();
+                        return "";
+                    }
+                },
+                new RSubscriber<String>() {
+                    @Override
+                    public void onSucceed(String bean) {
+                        super.onSucceed(bean);
                     }
                 });
     }
