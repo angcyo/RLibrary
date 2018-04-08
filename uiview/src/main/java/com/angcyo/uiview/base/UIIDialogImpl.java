@@ -17,9 +17,6 @@ import com.angcyo.uiview.container.ILayout;
 import com.angcyo.uiview.container.UILayoutImpl;
 import com.angcyo.uiview.container.UIParam;
 import com.angcyo.uiview.model.AnimParam;
-import com.angcyo.uiview.net.NonetException;
-import com.angcyo.uiview.net.RSubscriber;
-import com.angcyo.uiview.receiver.NetworkStateReceiver;
 import com.angcyo.uiview.recycler.RBaseViewHolder;
 import com.angcyo.uiview.view.UIIViewImpl;
 import com.angcyo.uiview.widget.SoftRelativeLayout;
@@ -27,7 +24,6 @@ import com.angcyo.uiview.widget.SoftRelativeLayout;
 import java.util.ArrayList;
 
 import rx.Subscription;
-import rx.observers.SafeSubscriber;
 import rx.subscriptions.CompositeSubscription;
 
 /**
@@ -358,20 +354,12 @@ public abstract class UIIDialogImpl extends UIIViewImpl {
         if (mDismissSubscriptions == null) {
             mDismissSubscriptions = new CompositeSubscription();
         }
-        mDismissSubscriptions.add(subscription);
-        if (NetworkStateReceiver.getNetType().value() < 2) {
-            //2G网络以下, 取消网络请求
-            onCancelDismiss();
-            try {
-                if (subscription instanceof SafeSubscriber) {
-                    if (((SafeSubscriber) subscription).getActual() instanceof RSubscriber) {
-                        ((SafeSubscriber) subscription).getActual().onError(new NonetException());
-                    }
-                }
-            } catch (Exception e) {
-
+        UIBaseRxView.add(mDismissSubscriptions, subscription, checkToken, new Runnable() {
+            @Override
+            public void run() {
+                onCancelDismiss();
             }
-        }
+        });
         return this;
     }
 

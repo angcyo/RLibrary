@@ -26,6 +26,27 @@ import rx.subscriptions.CompositeSubscription;
 public abstract class UIBaseRxView extends UIBaseDataView {
     protected CompositeSubscription mSubscriptions;
 
+    public static void add(CompositeSubscription subscriptions, Subscription subscription, boolean checkToken, Runnable onCancel) {
+        if (subscriptions != null) {
+            subscriptions.add(subscription);
+        }
+        if (NetworkStateReceiver.getNetType().value() < 2) {
+            //2G网络以下, 取消网络请求
+            if (onCancel != null) {
+                onCancel.run();
+            }
+            try {
+                if (subscription instanceof SafeSubscriber) {
+                    if (((SafeSubscriber) subscription).getActual() instanceof RSubscriber) {
+                        ((SafeSubscriber) subscription).getActual().onError(new NonetException());
+                    }
+                }
+            } catch (Exception e) {
+
+            }
+        }
+    }
+
     @CallSuper
     @Override
     public void onViewCreate(View rootView) {
@@ -64,21 +85,11 @@ public abstract class UIBaseRxView extends UIBaseDataView {
     }
 
     public void add(Subscription subscription, boolean checkToken) {
-        if (mSubscriptions != null) {
-            mSubscriptions.add(subscription);
-        }
-        if (NetworkStateReceiver.getNetType().value() < 2) {
-            //2G网络以下, 取消网络请求
-            onCancel();
-            try {
-                if (subscription instanceof SafeSubscriber) {
-                    if (((SafeSubscriber) subscription).getActual() instanceof RSubscriber) {
-                        ((SafeSubscriber) subscription).getActual().onError(new NonetException());
-                    }
-                }
-            } catch (Exception e) {
-
+        add(mSubscriptions, subscription, checkToken, new Runnable() {
+            @Override
+            public void run() {
+                onCancel();
             }
-        }
+        });
     }
 }
