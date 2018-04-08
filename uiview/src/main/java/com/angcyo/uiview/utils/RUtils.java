@@ -2459,7 +2459,7 @@ public class RUtils {
             public void onValue(String key, String value) {
                 if (!TextUtils.isEmpty(key) && !TextUtils.isEmpty(value)) {
                     stringBuilder.append("\"").append(key).append("\"").append(":");
-                    stringBuilder.append("\"").append(key).append("\"").append(",");
+                    stringBuilder.append("\"").append(value).append("\"").append(",");
                 }
             }
 
