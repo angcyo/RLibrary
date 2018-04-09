@@ -571,7 +571,7 @@ public class UILayoutImpl extends SwipeBackLayout implements ILayout, UIViewPage
                 replaceTaskType(viewTask);
                 break;
             default:
-                viewTask.taskRun = ViewTask.TASK_RUN_DEFAULT;
+                viewTask.taskRun = ViewTask.TASK_RUN_SKIP;
                 nextTask(viewTask);
                 break;
         }
@@ -2648,11 +2648,32 @@ public class UILayoutImpl extends SwipeBackLayout implements ILayout, UIViewPage
 
         //-----------------只有部分界面需要测量, 优化性能---------
 
+        boolean isLastAllDialog = false;//界面上面全是对话框
+        IView iView = viewPatternByView.mIView;
+        for (int j = mAttachViews.size() - 1; j >= 0; j--) {
+            ViewPattern viewPattern = mAttachViews.get(j);
+            if (viewPattern.mIView.isDialog() ||
+                    viewPattern.mIView.showOnDialog() ||
+                    viewPattern.isAnimToEnd ||
+                    viewPattern.mIView.needTransitionExitAnim() ||
+                    viewPattern.mIView.needTransitionStartAnim()) {
+                //界面上面全是对话框
+                //needMeasure = true;
+                isLastAllDialog = true;
+                if (viewPattern.mIView == iView) {
+                    break;
+                }
+            } else if (viewPattern.mIView == iView) {
+                break;
+            } else {
+                isLastAllDialog = false;
+                break;
+            }
+        }
 
-//                if (i == count - 1) {
-//                    //needMeasure = true;
-//                    needVisible = true;
-//                }
+        if (isLastAllDialog) {
+            needReMeasure = true;
+        }
 
         if ("true".equalsIgnoreCase(String.valueOf(childAt.getTag(R.id.tag_need_layout)))) {
             //如果还没有layout过
@@ -2681,38 +2702,9 @@ public class UILayoutImpl extends SwipeBackLayout implements ILayout, UIViewPage
                     viewPatternByView.mIView.needForceVisible()) {
                 needVisible = true;
             } else {
-//            if (viewPatternByView.mIView.needForceMeasure() ||
-//                    viewPatternByView.mIView.haveParentILayout() /*||
-//                        viewPatternByView.mIView.haveChildILayout()*/) {
-//                //需要强制测量
-//                needMeasure = true;
-//            } else {
-                boolean isLastAllDialog = false;//界面上面全是对话框
-                IView iView = viewPatternByView.mIView;
-                for (int j = mAttachViews.size() - 1; j >= 0; j--) {
-                    ViewPattern viewPattern = mAttachViews.get(j);
-                    if (viewPattern.mIView.isDialog() ||
-                            viewPattern.mIView.showOnDialog() ||
-                            viewPattern.isAnimToEnd ||
-                            viewPattern.mIView.needTransitionExitAnim() ||
-                            viewPattern.mIView.needTransitionStartAnim()) {
-                        //界面上面全是对话框
-                        //needMeasure = true;
-                        isLastAllDialog = true;
-                        if (viewPattern.mIView == iView) {
-                            break;
-                        }
-                    } else if (viewPattern.mIView == iView) {
-                        break;
-                    } else {
-                        isLastAllDialog = false;
-                        break;
-                    }
-                }
                 if (isLastAllDialog) {
                     needVisible = true;
                 }
-//            }
             }
         }
 

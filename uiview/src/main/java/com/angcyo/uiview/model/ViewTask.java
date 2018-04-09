@@ -20,6 +20,7 @@ public class ViewTask {
     public static final int TASK_RUN_DEFAULT = -10_000; //默认状态
     public static final int TASK_RUN_SUSPEND = -10_001; //任务被暂停
     public static final int TASK_RUN_INTERRUPT = -10_002; //任务被中断
+    public static final int TASK_RUN_SKIP = -10_003; //任务被跳过
 
     public static final int TASK_TYPE_START = 0b1;//启动
     public static final int TASK_TYPE_FINISH = TASK_TYPE_START << 1;//关闭
@@ -51,9 +52,10 @@ public class ViewTask {
      * 任务是否开始执行了
      */
     public boolean isTaskStartRun() {
-//        return taskRun != TASK_RUN_DEFAULT &&
-//                taskRun != TASK_RUN_SUSPEND;
-        return taskRun > 0;
+        return taskRun != TASK_RUN_DEFAULT &&
+                taskRun != TASK_RUN_SUSPEND;
+//        return taskRun > 0;
+//        return taskRun != TASK_RUN_DEFAULT;
     }
 
     /**
