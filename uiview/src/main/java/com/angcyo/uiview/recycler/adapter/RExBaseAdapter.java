@@ -94,15 +94,18 @@ public abstract class RExBaseAdapter<H, T, F> extends RModelAdapter<T> {
      * 判断当前的位置,是否在头部范围之内
      */
     public boolean isInHeader(int position) {
-        return position < getHeaderCount();
+        return position >= 0 &&
+                position < getHeaderCount();
     }
 
     public boolean isInFooter(int position) {
-        return position < getHeaderCount() + getDataCount() + getFooterCount();
+        return position >= getHeaderCount() + getDataCount() &&
+                position < getHeaderCount() + getDataCount() + getFooterCount();
     }
 
     public boolean isInData(int position) {
-        return position < getHeaderCount() + getDataCount();
+        return position >= getHeaderCount() &&
+                position < getHeaderCount() + getDataCount();
     }
 
     public boolean isHeaderItemType(int viewType) {

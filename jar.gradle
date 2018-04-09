@@ -1,0 +1,109 @@
+//apply plugin: 'com.android.library'
+//
+android {
+    compileSdkVersion Integer.parseInt(rootProject.C_SDK)
+}
+
+//task deleteOldJar(type: Delete) {
+//    //删除存在的
+//    delete 'build/libs/CImageLoader.jar'
+//    delete '../app/libs/classes.jar'
+//    delete 'build/outputs/aar/library-debug.aar'
+//    delete 'build/outputs/aar/library-release.aar'
+//}
+//
+//task makeJar(type: Jar) {
+//    //指定生成的jar名
+////    baseName 'CImageLoader'
+//
+//    //从哪里打包class文件
+//    //com/c_imageloader为包名目录
+//    from('build/intermediates/classes/debug/com/angcyo/', 'src/main/java/com/angcyo/')
+//
+////    exclude('Api2.java')
+//
+//    //jar包的目录结构(文件处于com/c_imageloader目录下)
+//    //生成的jar包没有包名
+//    into('com/angcyo')
+//
+////    exclude('Api1.class','R.class')
+//
+//    include {
+//        println "include " + it.name
+//        it.name.startsWith('l') || it.name == 'Api1.class' || it.name == 'Api2.java'
+//    }
+//    exclude {
+//        println "exclude " + it.name
+//    }
+//
+//    //去掉不需要打包的目录和文件
+//    //exclude('BuildConfig.class', 'R.class', 'Api1.class')
+//
+//    //去掉R$开头的文件
+////    exclude { it.name.startsWith('R$'); }
+//}
+//
+//makeJar.dependsOn(deleteOldJar, build)
+//jar包默认生成在build/libs下
+
+//task sourcesJar(type: Jar) {
+//    classifier = 'sources'
+//    from sourceSets.main.allSource
+//}
+//
+//task javadocJar(type: Jar, dependsOn: javadoc) {
+//    classifier = 'javadoc'
+//    from javadoc.destinationDir
+//}
+//
+//artifacts {
+//    archives sourcesJar
+//    archives javadocJar
+//}
+//
+//sourcesJar.dependsOn(build)
+
+/**将指定的.java文件打包进jar*/
+task sourcesJar(type: Jar) {
+    from android.sourceSets.main.java.srcDirs
+////    from('src/main/java/com/angcyo/library/src')
+////    into('com/angcyo/library/src')
+    include {
+        //println " include path:" + it.file.absolutePath + " name:" + it.name + " " + it.isDirectory() + " " + it.file.absolutePath.contains('des')
+//        if (it.isDirectory()) {
+//            true
+//        } else {
+//            it.file.absolutePath.contains('des')
+//        }
+        def src = "com\\angcyo\\library\\src"
+        if (src.contains(it.name) || it.file.absolutePath.contains(src)) {
+            true
+        } else {
+            false
+        }
+    }
+
+//    from('src/main/java/com/angcyo/library/src')
+//    into('com/angcyo/library/src')
+
+    classifier = 'sources'
+}
+
+/**在build/docs目录下生成API文档*/
+task javadoc(type: Javadoc) {
+    source = android.sourceSets.main.java.srcDirs
+    classpath += project.files(android.getBootClasspath().join(File.pathSeparator))
+    javadoc.options.encoding = 'UTF-8'
+}
+
+/**将api文档打包进jar*/
+task javadocJar(type: Jar, dependsOn: javadoc) {
+    classifier = 'javadoc'
+    from javadoc.destinationDir
+    javadoc.options.encoding = 'UTF-8'
+}
+/**不知道干啥用, */
+artifacts {
+    archives javadocJar
+    archives sourcesJar
+}
