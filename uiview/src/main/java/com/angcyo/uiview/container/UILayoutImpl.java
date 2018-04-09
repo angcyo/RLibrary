@@ -547,7 +547,7 @@ public class UILayoutImpl extends SwipeBackLayout implements ILayout, UIViewPage
             return;
         }
 
-        viewTask.taskRun = 0;//任务准备执行
+        viewTask.taskRun = 1;//任务准备执行
 
         logTaskList("开始分发任务");
 
@@ -2371,6 +2371,7 @@ public class UILayoutImpl extends SwipeBackLayout implements ILayout, UIViewPage
 
                 boolean needMeasure = childState[0];//是否需要测量
                 boolean needVisible = childState[1];//是否需要显示
+                boolean needReMeasure = childState[2];//是否需要重新测量, 如果不需要:那么当宽高没有变化时, 不重新测量
 
                 boolean isTransition = isTransition();
 
@@ -2381,7 +2382,16 @@ public class UILayoutImpl extends SwipeBackLayout implements ILayout, UIViewPage
                     } else {
                         childAt.setVisibility(INVISIBLE);
                     }
-                    childAt.measure(exactlyMeasure(widthSize), exactlyMeasure(heightSize));
+                    if (needReMeasure) {
+                        childAt.measure(exactlyMeasure(widthSize), exactlyMeasure(heightSize));
+                    } else {
+                        if (childAt.getMeasuredWidth() == widthSize &&
+                                childAt.getMeasuredHeight() == heightSize) {
+
+                        } else {
+                            childAt.measure(exactlyMeasure(widthSize), exactlyMeasure(heightSize));
+                        }
+                    }
                     //L.d("测量 needVisible " + needVisible + ": " + viewPatternByView.mIView.getClass().getSimpleName());
                     measureLogBuilder.append("\n测量->");
                     measureLogBuilder.append(name(viewPatternByView.mIView));
@@ -2621,18 +2631,21 @@ public class UILayoutImpl extends SwipeBackLayout implements ILayout, UIViewPage
             return null;
         }
 
+        boolean needMeasure = false;//是否需要测量
+        boolean needVisible = false;//是否需要显示
+        boolean needReMeasure = childIndex == childCount - 1;//是否需要重新测量 (在宽高都相等的情况下)
+
         if (viewPatternByView.isIViewHide) {
-            return new boolean[]{false, false};
+            return new boolean[]{false, false, needReMeasure};
         } else if (viewPatternByView.isAnimToEnd || viewPatternByView.isAnimToStart) {
-            return new boolean[]{true, true};
+            return new boolean[]{true, true, needReMeasure};
         }
 
         int indexFromIViews = getIndexFromIViews(viewPatternByView);
         int lifecycleLastIndex = getLifecycleLastIndex(viewPatternByView);
 
         //-----------------只有部分界面需要测量, 优化性能---------
-        boolean needMeasure = false;//是否需要测量
-        boolean needVisible = false;//是否需要显示
+
 
 //                if (i == count - 1) {
 //                    //needMeasure = true;
@@ -2707,7 +2720,7 @@ public class UILayoutImpl extends SwipeBackLayout implements ILayout, UIViewPage
             needMeasure = true;
         }
 
-        return new boolean[]{needMeasure, needVisible};
+        return new boolean[]{needMeasure, needVisible, needReMeasure};
     }
 
     /**
@@ -3007,7 +3020,6 @@ public class UILayoutImpl extends SwipeBackLayout implements ILayout, UIViewPage
         if (isInDebugLayout) {
             return true;
         }
-
 
         if (needInterceptTouchEvent()) {
             return true;

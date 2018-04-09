@@ -50,8 +50,9 @@ public class ViewTask {
      * 任务是否开始执行了
      */
     public boolean isTaskStartRun() {
-        return taskRun != TASK_RUN_DEFAULT &&
-                taskRun != TASK_RUN_SUSPEND;
+//        return taskRun != TASK_RUN_DEFAULT &&
+//                taskRun != TASK_RUN_SUSPEND;
+        return taskRun > 0;
     }
 
     /**

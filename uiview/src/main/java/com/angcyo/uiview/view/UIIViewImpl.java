@@ -368,7 +368,7 @@ public abstract class UIIViewImpl implements IView {
     }
 
     //星期五 2017-2-17
-    public void onViewShow(long viewShowCount) {
+    public void onViewShow(long viewShowCount /*从1开始的调用次数*/) {
         L.v(this.getClass().getSimpleName(), "onViewShowCount " + viewShowCount);
     }
 
