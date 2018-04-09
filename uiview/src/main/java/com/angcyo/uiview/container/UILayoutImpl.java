@@ -571,6 +571,7 @@ public class UILayoutImpl extends SwipeBackLayout implements ILayout, UIViewPage
                 replaceTaskType(viewTask);
                 break;
             default:
+                viewTask.taskRun = ViewTask.TASK_RUN_DEFAULT;
                 nextTask(viewTask);
                 break;
         }
@@ -598,6 +599,7 @@ public class UILayoutImpl extends SwipeBackLayout implements ILayout, UIViewPage
             viewTask.iView.setInterruptTask(false);
             L.w(TASK_TAG, "startTaskType 任务跳过.");
             //中断了当前的任务
+            viewTask.taskRun = ViewTask.TASK_RUN_INTERRUPT;
             nextTask(viewTask);
         } else {
             ViewPattern lastViewPattern = getLastViewPattern();
@@ -615,7 +617,7 @@ public class UILayoutImpl extends SwipeBackLayout implements ILayout, UIViewPage
                                 L.w(TASK_TAG, "startTaskType 任务中断跳过.");
 
                                 //中断了当前的任务
-                                viewTask.taskRun = 0;
+                                viewTask.taskRun = ViewTask.TASK_RUN_INTERRUPT;
                                 nextTask(viewTask);
                             } else {
                                 startInner(viewTask, iView, param);
@@ -635,7 +637,7 @@ public class UILayoutImpl extends SwipeBackLayout implements ILayout, UIViewPage
         final ViewPattern viewPattern = findViewPatternByIView(iview);
         if (viewPattern == null || viewPattern.mIView == null) {
             L.w(TASK_TAG, "finishTaskType 任务跳过.");
-
+            viewTask.taskRun = ViewTask.TASK_RUN_INTERRUPT;
             nextTask(viewTask);
             return;
         }
