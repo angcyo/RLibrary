@@ -46,6 +46,16 @@ android {
 //makeJar.dependsOn(deleteOldJar, build)
 //jar包默认生成在build/libs下
 
+/**将jar包, 同时打包进jar*/
+task makeJar(type: Jar) {
+    archiveName = 'domob_android_sdk.jar'
+    from('build/intermediates/classes/debug/')
+    from(project.zipTree('libs/mi.jar'))
+    destinationDir = file('build/lib')
+    //into('com/angcyo')
+    exclude { it.name.startsWith('android') }
+}
+
 //task sourcesJar(type: Jar) {
 //    classifier = 'sources'
 //    from sourceSets.main.allSource
