@@ -773,10 +773,11 @@ public abstract class RBaseAdapter<T> extends RecyclerView.Adapter<RBaseViewHold
         }
 
         /**
+         * 重写此方法, 判断内容是否相等,
          * 如果内容不相等, 会调用notifyItemRangeChanged
          */
         public boolean areContentsTheSame(@NonNull T oldData, @NonNull T newData) {
-            return areItemsTheSame(oldData, newData);
+            return oldData.equals(newData);
         }
     }
 
