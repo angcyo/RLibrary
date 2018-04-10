@@ -52,6 +52,7 @@
     <color name="default_base_black">#000000</color>
     <color name="default_base_line">#E0E0E0</color>
     <color name="base_line_color">#494949</color>
+    <color name="base_line_color2">#B9B9B9</color>
     <color name="default_base_border">#bfbfbf</color>
 
     <color name="base_text_color">#333333</color>

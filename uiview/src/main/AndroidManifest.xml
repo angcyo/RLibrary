@@ -44,6 +44,8 @@
 
     <application
         android:allowBackup="true"
+        android:resizeableActivity="false"
+        android:supportsPictureInPicture="false"
         android:supportsRtl="true">
 
         <!--MainActivity配置-->

@@ -117,7 +117,7 @@ public abstract class RModelAdapter<T> extends RBaseAdapter<T> {
     protected abstract void onBindCommonView(@NonNull RBaseViewHolder holder, int position, T bean);
 
     /**
-     * 只在选择模式下,会执行
+     * 只在选择模式下(单选, 多选),会执行
      */
     protected void onBindModelView(int model, boolean isSelector, @NonNull RBaseViewHolder holder, int position, T bean) {
 
@@ -297,7 +297,7 @@ public abstract class RModelAdapter<T> extends RBaseAdapter<T> {
         }
     }
 
-    protected void onSelectorChange(List<Integer> allSelectorList) {
+    protected void onSelectorChange(@NonNull List<Integer> allSelectorList) {
 
     }
 
@@ -560,14 +560,20 @@ public abstract class RModelAdapter<T> extends RBaseAdapter<T> {
     }
 
     /**
-     * 添加选中位置, 不做任何其他操作
+     * 添加选中位置, 不做任何其他操作, (默认会触发回调)
      */
     public void addSelectorPosition(int position) {
+        addSelectorPosition(position, true);
+    }
+
+    public void addSelectorPosition(int position, boolean notify) {
         if (mModel == MODEL_SINGLE) {
             mSelector.clear();
         }
         mSelector.add(position);
-        notifySelectorChange();
+        if (notify) {
+            notifySelectorChange();
+        }
     }
 
     public void removeSelectorPosition(int position) {

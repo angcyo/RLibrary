@@ -50,13 +50,26 @@ open class RFrameLayout(context: Context, attributeSet: AttributeSet? = null) : 
     var showInnerBorder = false
         set(value) {
             field = value
+            postInvalidate()
         }
 
     private val showNoEnableMark = false
 
     var innerBorderWidth = 0
+        set(value) {
+            field = value
+            postInvalidate()
+        }
     var innerBorderOffset = 0
+        set(value) {
+            field = value
+            postInvalidate()
+        }
     var innerBorderColor = Color.WHITE
+        set(value) {
+            field = value
+            postInvalidate()
+        }
 
     private val innerBorderPaint: Paint by lazy {
         val p = Paint(Paint.ANTI_ALIAS_FLAG)
