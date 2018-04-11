@@ -204,43 +204,65 @@ public abstract class UIRecyclerUIView<H, T, F> extends UIContentView
         if (direction == RefreshLayout.TOP) {
             //刷新事件, 清空缓存
             mBaseDataObject = null;
-            onBaseLoadData("onRefreshTop");
+            onBaseLoadData("onRefreshTop", true);
         } else if (direction == RefreshLayout.BOTTOM) {
             //加载更多事件
-            onBaseLoadMore("onRefreshBottom");
+            onBaseLoadMore("onRefreshBottom", true);
         }
     }
 
+    /**
+     * 会显示LoadView
+     */
     public void onBaseLoadMore() {
-        onBaseLoadMore("");
+        onBaseLoadMore("", true);
     }
 
+    /**
+     * 会显示LoadView
+     */
     public void onBaseLoadData() {
-        onBaseLoadData("");
+        onBaseLoadData("", true);
     }
 
-    public void onBaseLoadMore(String extend) {
+    public void onBaseLoadMore(String extend, boolean showLoadView) {
         page++;
+        if (showLoadView) {
+            showLoadView();
+        }
         onUILoadData(page);
         onUILoadData(page, extend);
     }
 
-    public void onBaseLoadData(String extend) {
+    public void onBaseLoadData(String extend, boolean showLoadView) {
         if (mBaseDataObject == null) {
             page = 1;
         } else {
             //有缓存的时候, page 维持不变
         }
+        if (showLoadView) {
+            showLoadView();
+        }
         onUILoadData(page);
         onUILoadData(page, extend);
     }
 
+    /**
+     * 不显示LoadView
+     */
     public void loadData() {
-        onBaseLoadData();
+        loadData("loadData", false);
     }
 
-    public void loadData(String extend) {
-        onBaseLoadData(extend);
+    /**
+     * 不显示LoadView
+     */
+    public void loadMore() {
+        onBaseLoadMore("loadMore", false);
+    }
+
+    public void loadData(String extend, boolean showLoadView) {
+        onBaseLoadData(extend, showLoadView);
     }
 
     @Deprecated
@@ -249,7 +271,7 @@ public abstract class UIRecyclerUIView<H, T, F> extends UIContentView
     }
 
     public void onUILoadData(int page, String extend) {
-        showLoadView();
+
     }
 
     /**
@@ -363,7 +385,7 @@ public abstract class UIRecyclerUIView<H, T, F> extends UIContentView
     public void onViewShowFirst(Bundle bundle) {
         super.onViewShowFirst(bundle);
         if (needLoadData() && !isShowInViewPager()) {
-            onBaseLoadData("onViewShowFirst");
+            onBaseLoadData("onViewShowFirst", true);
         }
     }
 
@@ -371,7 +393,7 @@ public abstract class UIRecyclerUIView<H, T, F> extends UIContentView
     public void onShowInPager(UIViewPager viewPager) {
         super.onShowInPager(viewPager);
         if (needLoadData() && isShowInViewPager()) {
-            onBaseLoadData("onShowInPager");
+            onBaseLoadData("onShowInPager", true);
         }
     }
 

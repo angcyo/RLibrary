@@ -233,7 +233,7 @@ public abstract class UIItemUIView<T extends Item> extends UIRecyclerUIView<Stri
 
     @Override
     public void onUILoadData(int page, String extend) {
-        //super.onUILoadData(page, extend);
+        super.onUILoadData(page, extend);
     }
 
     /**
