@@ -1,6 +1,7 @@
 package com.liulishuo;
 
 import android.support.annotation.NonNull;
+import android.text.TextUtils;
 
 import com.angcyo.library.utils.L;
 import com.liulishuo.filedownloader.BaseDownloadTask;
@@ -19,32 +20,31 @@ import java.util.ArrayList;
  * 修改备注：
  * Version: 1.0.0
  */
-public class FListener extends FileDownloadSampleListener {
+class FListener extends FileDownloadSampleListener {
 
     /**
      * 监听哪个下载地址
      */
-    private String listenerUrl = "";
+    private String listenerUrl = null;
+    private ArrayList<FListener> mListeners = new ArrayList<>();
 
-//    @Override
+    //    @Override
 //    public int hashCode() {
 //        return listenerUrl.hashCode();
 //    }
 //
-//    @Override
-//    public boolean equals(Object obj) {
-//        if (TextUtils.isEmpty(listenerUrl)) {
-//            return false;
-//        }
-//
-//        if (TextUtils.isEmpty(((FListener) obj).listenerUrl)) {
-//            return false;
-//        }
-//
-//        return TextUtils.equals(listenerUrl, ((FListener) obj).listenerUrl);
-//    }
+    @Override
+    public boolean equals(Object obj) {
+        if (TextUtils.isEmpty(listenerUrl)) {
+            return super.equals(obj);
+        }
 
-    private ArrayList<FListener> mListeners = new ArrayList<>();
+        if (TextUtils.isEmpty(((FListener) obj).listenerUrl)) {
+            return super.equals(obj);
+        }
+
+        return TextUtils.equals(listenerUrl, ((FListener) obj).listenerUrl);
+    }
 
     public String getListenerUrl() {
         return listenerUrl;

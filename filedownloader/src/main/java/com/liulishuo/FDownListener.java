@@ -38,4 +38,14 @@ public class FDownListener extends FListener {
     public void onError(@NonNull BaseDownloadTask task, Throwable e) {
         //super.onError(task, e);
     }
+
+    @Override
+    final public void onProgress(@NonNull BaseDownloadTask task, int soFarBytes, int totalBytes, float progress) {
+        super.onProgress(task, soFarBytes, totalBytes, progress);
+    }
+
+    @Override
+    final public void onProgress(@NonNull BaseDownloadTask task, int soFarBytes, int totalBytes, String scale) {
+        super.onProgress(task, soFarBytes, totalBytes, scale);
+    }
 }

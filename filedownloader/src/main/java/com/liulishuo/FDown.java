@@ -264,6 +264,20 @@ public class FDown {
     }
 
     /**
+     * 任务开始了, 但是未完成
+     */
+    public static boolean isStatusStarting(byte status) {
+        return FileDownloadStatus.isIng(status);
+    }
+
+    /**
+     * 任务执行结束, 包括暂停, 错误, 完成, 警告
+     */
+    public static boolean isStatusOver(byte status) {
+        return FileDownloadStatus.isOver(status);
+    }
+
+    /**
      * 批量任务下载
      */
     public static void downloads(FDownListener listener, List<FTask> tasks) {
