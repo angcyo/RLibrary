@@ -304,7 +304,7 @@ public class ExEditText extends AppCompatEditText {
         mRHintText = typedArray.getString(R.styleable.ExEditText_r_hint_text);
 
         mMaxNumber = typedArray.getFloat(R.styleable.ExEditText_r_max_number, mMaxNumber);
-        mMinNumber = typedArray.getFloat(R.styleable.ExEditText_r_max_number, mMinNumber);
+        mMinNumber = typedArray.getFloat(R.styleable.ExEditText_r_min_number, mMinNumber);
         mDecimalCount = typedArray.getInteger(R.styleable.ExEditText_r_decimal_count, mDecimalCount);
 
         showClear = typedArray.getBoolean(R.styleable.ExEditText_r_show_clear, showClear);
