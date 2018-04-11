@@ -1918,7 +1918,8 @@ public class UILayoutImpl extends SwipeBackLayout implements ILayout, UIViewPage
     private void viewShow(final ViewPattern viewPattern, final Bundle bundle, Class<?> fromClz /*哪个类关闭了*/) {
         if (viewPattern == null ||
                 viewPattern.mIView == null ||
-                viewPattern.mIView.getIViewShowState() == IView.IViewShowState.STATE_VIEW_SHOW) {
+                viewPattern.mIView.getIViewShowState() == IView.IViewShowState.STATE_VIEW_SHOW ||
+                viewPattern.mIView.isInterruptTask() /*中断task*/) {
             return;
         }
         saveToSDCard(name(viewPattern.mIView) + " onViewShow()" + bundle);
@@ -2679,6 +2680,7 @@ public class UILayoutImpl extends SwipeBackLayout implements ILayout, UIViewPage
             //如果还没有layout过
             //needMeasure = true;
             needVisible = true;
+            //needReMeasure = true;//todo 2018-4-11
         } else if (viewPatternByView == getLastViewPattern()) {
             //最后一个页面
             //needMeasure = true;
