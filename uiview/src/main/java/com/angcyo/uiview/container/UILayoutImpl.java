@@ -2034,7 +2034,7 @@ public class UILayoutImpl extends SwipeBackLayout implements ILayout, UIViewPage
 
     private boolean safeStartAnim(final View view, final Animation animation,
                                   final Runnable endRunnable, boolean isFinish) {
-        if (view == null) {
+        if (view == null || view.getParent() == null) {
             if (endRunnable != null) {
                 endRunnable.run();
             }
@@ -3171,7 +3171,9 @@ public class UILayoutImpl extends SwipeBackLayout implements ILayout, UIViewPage
             } else {
                 isTaskSuspend = true;
                 //看不见的页面关闭时, 安静执行
-                UIParam uiParam = new UIParam(false, false, true);
+                UIParam uiParam = new UIParam(false, true, true);
+                uiParam.isFinishBack = true;
+
                 currentViewTask = new ViewTask(ViewTask.TASK_TYPE_FINISH_INNER, pattern.mIView, uiParam);
 //                addTask(task);
                 finishIViewInner(currentViewTask, pattern, uiParam);
