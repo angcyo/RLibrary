@@ -136,6 +136,13 @@ public fun View.textWidth(paint: Paint?, text: String?): Float = paint?.measureT
         ?: 0F
 
 public fun TextView.textWidth(text: String?): Float = paint.measureText(text ?: "")
+public fun TextView.drawPadding(padding: Int) {
+    compoundDrawablePadding = padding
+}
+
+public fun TextView.drawPadding(padding: Float) {
+    drawPadding(padding.toInt())
+}
 
 public fun View.getColor(id: Int): Int = ContextCompat.getColor(context, id)
 
