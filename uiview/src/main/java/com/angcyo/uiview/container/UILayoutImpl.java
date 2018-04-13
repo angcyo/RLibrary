@@ -2577,9 +2577,19 @@ public class UILayoutImpl extends SwipeBackLayout implements ILayout, UIViewPage
      * 清除已经布局的flag
      */
     public void setIViewNeedLayout(View view, boolean layout) {
+        if (view == null) {
+            return;
+        }
         view.setTag(R.id.tag_need_layout, layout ? "true" : "false");
         if (layout) {
             view.forceLayout();
+        }
+    }
+
+    public void setIViewNeedLayout(IView iView, boolean layout) {
+        ViewPattern viewPattern = findViewPatternByIView(iView);
+        if (viewPattern != null) {
+            setIViewNeedLayout(viewPattern.mView, layout);
         }
     }
 
@@ -2680,6 +2690,7 @@ public class UILayoutImpl extends SwipeBackLayout implements ILayout, UIViewPage
             //如果还没有layout过
             //needMeasure = true;
             needVisible = true;
+            needReMeasure = true;
             //needReMeasure = true;//todo 2018-4-11
         } else if (viewPatternByView == getLastViewPattern()) {
             //最后一个页面
