@@ -11,4 +11,7 @@
     <item name="base_r_layout_left" type="id"/>
     <item name="base_r_layout_top" type="id"/>
     <item name="base_r_layout_is_move" type="id"/>
+
+    <!--刷新布局, 菜单视图id-->
+    <item name="base_refresh_menu" type="id"/>
 </resources>

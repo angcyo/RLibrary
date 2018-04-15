@@ -1,5 +1,6 @@
 package com.angcyo.uiview.base;
 
+import android.content.res.Configuration;
 import android.graphics.Color;
 import android.graphics.PixelFormat;
 import android.os.Build;
@@ -14,6 +15,7 @@ import com.angcyo.library.utils.L;
 import com.angcyo.uiview.R;
 import com.angcyo.uiview.dynamicload.ProxyCompatActivity;
 import com.angcyo.uiview.kotlin.ExKt;
+import com.angcyo.uiview.utils.ScreenUtil;
 
 /**
  * Created by angcyo on 2016-11-12.
@@ -136,5 +138,12 @@ public abstract class StyleActivity extends ProxyCompatActivity {
                                 systemUiVisibility & ~View.SYSTEM_UI_FLAG_LIGHT_STATUS_BAR);
             }
         }
+    }
+
+    @Override
+    public void onConfigurationChanged(Configuration newConfig) {
+        super.onConfigurationChanged(newConfig);
+        /*当屏幕尺寸发生变化的时候, 重新读取屏幕宽高度*/
+        ScreenUtil.init(getApplicationContext());
     }
 }

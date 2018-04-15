@@ -2,18 +2,12 @@ package com.angcyo.github.utilcode.utils;
 
 import android.app.ActivityManager;
 import android.app.ActivityManager.RunningServiceInfo;
-import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
 import android.content.ServiceConnection;
-import android.content.pm.ResolveInfo;
-import android.os.Bundle;
+import android.os.Build;
 
-import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.HashSet;
-import java.util.Hashtable;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
 
@@ -70,7 +64,11 @@ public class ServiceUtils {
      */
     public static void startService(Context context, Class<?> cls) {
         Intent intent = new Intent(context, cls);
-        context.startService(intent);
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            context.startForegroundService(intent);
+        } else {
+            context.startService(intent);
+        }
     }
 
     /**

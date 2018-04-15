@@ -21,6 +21,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.ServiceConnection;
 import android.os.Binder;
+import android.os.Build;
 import android.os.IBinder;
 import android.os.IInterface;
 import android.os.RemoteException;
@@ -155,7 +156,11 @@ public abstract class BaseFileServiceUIGuard<CALLBACK extends Binder, INTERFACE 
         }
 
         context.bindService(i, this, Context.BIND_AUTO_CREATE);
-        context.startService(i);
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            context.startForegroundService(i);
+        } else {
+            context.startService(i);
+        }
     }
 
     @Override
@@ -183,7 +188,11 @@ public abstract class BaseFileServiceUIGuard<CALLBACK extends Binder, INTERFACE 
     public void startService(final Context context) {
 
         Intent i = new Intent(context, serviceClass);
-        context.startService(i);
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            context.startForegroundService(i);
+        } else {
+            context.startService(i);
+        }
     }
 
     protected abstract INTERFACE asInterface(IBinder service);

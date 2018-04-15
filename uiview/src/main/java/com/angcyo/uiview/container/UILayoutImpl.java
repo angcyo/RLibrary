@@ -549,7 +549,7 @@ public class UILayoutImpl extends SwipeBackLayout implements ILayout, UIViewPage
 
         viewTask.taskRun = 1;//任务准备执行
 
-        logTaskList("开始分发任务");
+        logTaskList("开始分发任务: " + viewTask);
 
         switch (viewTask.taskType) {
             case ViewTask.TASK_TYPE_START:
@@ -715,6 +715,8 @@ public class UILayoutImpl extends SwipeBackLayout implements ILayout, UIViewPage
                     if (viewPattern == lastViewPattern) {
                         //最上层已经是它
                         viewPattern.mIView.onViewReShow(param.getBundle());
+                        viewTask.taskRun--;
+                        checkTaskOnIViewAnimationEnd(viewTask);
                     } else {
                         viewTask.taskRun = 1;
                         //没有在最上层
@@ -861,6 +863,8 @@ public class UILayoutImpl extends SwipeBackLayout implements ILayout, UIViewPage
 
     //设置任务被那个IView中断了
     private void setTaskSuspendWidth(final ViewTask viewTask, ViewPattern viewPattern /*被谁中断了*/) {
+        L.w(TASK_TAG, "任务:" + viewTask + " 被暂停.");
+
         isTaskSuspend = true;
         viewTask.taskRun = ViewTask.TASK_RUN_SUSPEND;
         if (viewPattern != null) {

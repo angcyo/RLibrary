@@ -5,6 +5,8 @@ import android.graphics.Rect
 import android.text.TextUtils
 import android.view.MotionEvent
 import android.view.View
+import android.view.ViewConfiguration
+import com.angcyo.uiview.RApplication
 import com.angcyo.uiview.skin.SkinHelper
 import com.angcyo.uiview.utils.RUtils
 import com.angcyo.uiview.utils.Reflect
@@ -213,4 +215,11 @@ public fun MotionEvent.isDown(): Boolean {
 
 public fun MotionEvent.isFinish(): Boolean {
     return this.actionMasked == MotionEvent.ACTION_UP || this.actionMasked == MotionEvent.ACTION_CANCEL
+}
+
+/*是否可以当做点击事件*/
+public fun MotionEvent.isClickEvent(downX: Float, downY: Float): Boolean {
+    val touchSlop = ViewConfiguration.get(RApplication.getApp()).scaledTouchSlop
+    return this.actionMasked == MotionEvent.ACTION_UP &&
+            (Math.abs(this.x - downX) <= touchSlop && Math.abs(this.y - downY) <= touchSlop)
 }

@@ -29,7 +29,6 @@ import com.angcyo.uiview.utils.Reflect;
 
 public class StickLayout2 extends RelativeLayout {
 
-
     View mFloatView;
     int floatTopOffset = 0;
     int floatTop = 0;//
@@ -101,6 +100,10 @@ public class StickLayout2 extends RelativeLayout {
     }
 
     private void fling(float velocityY) {
+        if (!isEnabled()) {
+            return;
+        }
+
         isFling = true;
         int maxY = viewMaxHeight;
         final RecyclerView recyclerView = mScrollTarget.getRecyclerView();
@@ -143,7 +146,7 @@ public class StickLayout2 extends RelativeLayout {
 
     @Override
     public void computeScroll() {
-        if (mOverScroller.computeScrollOffset()) {
+        if (mOverScroller.computeScrollOffset() && isEnabled()) {
             int currY = mOverScroller.getCurrY();
             if (currY - maxScrollY >= 0) {
                 if (isFling) {
@@ -296,6 +299,11 @@ public class StickLayout2 extends RelativeLayout {
     @Override
     public boolean onInterceptTouchEvent(MotionEvent ev) {
 //        L.e("call: onInterceptTouchEvent([ev])-> " + ev.getAction());
+
+        if (!isEnabled()) {
+            return super.onInterceptTouchEvent(ev);
+        }
+
         int action = MotionEventCompat.getActionMasked(ev);
         if (action == MotionEvent.ACTION_UP || action == MotionEvent.ACTION_CANCEL) {
             onTouchUp();
@@ -320,6 +328,10 @@ public class StickLayout2 extends RelativeLayout {
 //        if (getChildAt(0) instanceof IWebView) {
 //            return super.dispatchTouchEvent(ev);
 //        }
+
+        if (!isEnabled()) {
+            return super.dispatchTouchEvent(ev);
+        }
 
         boolean event = mGestureDetectorCompat.onTouchEvent(ev);
         if (event) {
@@ -347,10 +359,10 @@ public class StickLayout2 extends RelativeLayout {
                 int touchSlop = ViewConfiguration.get(getContext()).getScaledTouchSlop();
 
                 if (Math.abs(offsetX) - Math.abs(offsetY) > 0
-                        /*ViewConfiguration.get(getContext()).getScaledTouchSlop()*/) {
+                    /*ViewConfiguration.get(getContext()).getScaledTouchSlop()*/) {
                     mWantV = false;
                 } else if (Math.abs(offsetY) - Math.abs(offsetX) > 0
-                        /*ViewConfiguration.get(getContext()).getScaledTouchSlop()*/) {
+                    /*ViewConfiguration.get(getContext()).getScaledTouchSlop()*/) {
                     mWantV = true;
                 } else {
                     if (isFirst) {
@@ -499,7 +511,7 @@ public class StickLayout2 extends RelativeLayout {
 
     @Override
     public boolean onStartNestedScroll(View child, View target, int nestedScrollAxes) {
-        return true;
+        return isEnabled();
     }
 
     @Override

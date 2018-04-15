@@ -17,6 +17,7 @@ import com.angcyo.uiview.manager.RNotifier;
 import com.angcyo.uiview.net.Rx;
 import com.angcyo.uiview.skin.SkinHelper;
 import com.angcyo.uiview.utils.Debug;
+import com.angcyo.uiview.utils.ScreenUtil;
 import com.angcyo.uiview.utils.T_;
 import com.angcyo.uiview.view.UIIViewImpl;
 import com.bumptech.glide.Glide;
@@ -171,6 +172,7 @@ public class RApplication extends Application {
     protected void onInit() {
         SkinHelper.init(this);
         Utils.init(this);
+        ScreenUtil.init(this);
 
         /*sp持久化库*/
         Hawk.init(this)

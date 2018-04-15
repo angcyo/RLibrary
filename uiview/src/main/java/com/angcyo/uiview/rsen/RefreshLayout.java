@@ -27,13 +27,16 @@ import android.view.animation.Animation;
 import android.view.animation.DecelerateInterpolator;
 import android.view.animation.LinearInterpolator;
 import android.view.animation.ScaleAnimation;
+import android.widget.FrameLayout;
 import android.widget.OverScroller;
 import android.widget.TextView;
 
 import com.angcyo.uiview.R;
 import com.angcyo.uiview.design.StickTopLayout;
+import com.angcyo.uiview.kotlin.ExKt;
 import com.angcyo.uiview.kotlin.ViewGroupExKt;
 import com.angcyo.uiview.skin.SkinHelper;
+import com.angcyo.uiview.utils.ScreenUtil;
 import com.angcyo.uiview.utils.T_;
 import com.angcyo.uiview.utils.UI;
 import com.angcyo.uiview.widget.RTextView;
@@ -78,6 +81,10 @@ public class RefreshLayout extends ViewGroup {
      * 刷新,上拉 完成, 但是手指还在拖动
      */
     public static final int FINISH = 5;
+    /**
+     * 当前状态, 显示菜单模式
+     */
+    public static final int MENU_LAYOUT = 6;
     /**
      * 正常
      */
@@ -144,6 +151,14 @@ public class RefreshLayout extends ViewGroup {
     private ArrayList<OnTopViewMoveListener> mTopViewMoveListeners = new ArrayList<>();
     private ArrayList<OnBottomViewMoveListener> mBottomViewMoveListeners = new ArrayList<>();
     private ArrayList<OnRefreshListener> mRefreshListeners = new ArrayList<>();
+
+    /**
+     * 模仿微信小程序菜单, 用来包裹菜单的布局, 当菜单显示了1/5, 表示需要开启菜单显示
+     */
+    private FrameLayout menuLayout;
+
+    /*当滚动Y值>=topView高度+menuOpenThreshold时, 开始出现menuLayout*/
+    private int menuOpenThreshold = (int) (20 * ScreenUtil.density);
 
     public RefreshLayout(Context context) {
         this(context, null);
@@ -221,6 +236,9 @@ public class RefreshLayout extends ViewGroup {
             mTipView.measure(MeasureSpec.makeMeasureSpec(widthSize, MeasureSpec.EXACTLY),
                     MeasureSpec.makeMeasureSpec(heightSize, MeasureSpec.AT_MOST));
         }
+        if (menuLayout != null) {
+            measureChild(menuLayout, widthMeasureSpec, heightMeasureSpec);
+        }
     }
 
     @Override
@@ -245,6 +263,8 @@ public class RefreshLayout extends ViewGroup {
                     (r - l) / 2 + mBottomView.getMeasuredWidth() / 2, b + mBottomView.getMeasuredHeight());
         }
 
+        layoutMenuView(lastTranslationTo);
+
         layoutTipView();
     }
 
@@ -259,6 +279,23 @@ public class RefreshLayout extends ViewGroup {
         }
     }
 
+    private int lastTranslationTo = 0;
+
+    /*菜单底部开始, 不要露出的高度*/
+    private void layoutMenuView(int translationTo /*当菜单显示到Y坐标, 不受scroll影响的坐标*/) {
+        if (menuLayout != null) {
+            if (scrollNeedShowMenuLayout) {
+                lastTranslationTo = translationTo;
+                int top = getScrollY() + Math.min(translationTo, menuLayout.getMeasuredHeight());
+                menuLayout.layout(0, top - menuLayout.getMeasuredHeight(), menuLayout.getMeasuredWidth(), top);
+            } else {
+                lastTranslationTo = 0;
+                menuLayout.layout(0, 0, 0, 0);
+            }
+        }
+    }
+
+
     @Override
     protected void onSizeChanged(int w, int h, int oldw, int oldh) {
         super.onSizeChanged(w, h, oldw, oldh);
@@ -266,6 +303,8 @@ public class RefreshLayout extends ViewGroup {
             scrollToTop(false);
         } else if (mCurState == BOTTOM) {
             scrollToBottom(false);
+        } else if (mCurState == MENU_LAYOUT) {
+            scrollToMenu(false);
         } else {
             resetScroll(false);
         }
@@ -401,6 +440,17 @@ public class RefreshLayout extends ViewGroup {
     }
 
     @Override
+    public boolean dispatchTouchEvent(MotionEvent ev) {
+        //int actionMasked = ev.getActionMasked();
+        if (ExKt.isFinish(ev)) {
+            if (scrollShowMenuLayout && getScrollY() == 0) {
+                resetMenuLayout(false);
+            }
+        }
+        return super.dispatchTouchEvent(ev);
+    }
+
+    @Override
     public boolean onInterceptTouchEvent(MotionEvent event) {
         if (!isEnabled()) {
             return super.onInterceptTouchEvent(event);
@@ -421,7 +471,12 @@ public class RefreshLayout extends ViewGroup {
 
             if ((Math.abs(dy) > Math.abs(dx)) && Math.abs(dy) > mTouchSlop) {
                 int scrollY = getScrollY();
-                if (mCurState == TOP && dy < 0 && scrollY < 0) {
+                if (mCurState == MENU_LAYOUT && dy < 0 && scrollY < 0) {
+                    scrollTo(0, (int) Math.min(0, (scrollY - dy)));
+                    downY = event.getY();
+                    downX = event.getX();
+                    return super.onInterceptTouchEvent(event);
+                } else if (mCurState == TOP && dy < 0 && scrollY < 0) {
                     //如果已经处理加载状态, 通过滚动, View 隐藏, 使得内容全屏显示
                     scrollTo(0, (int) Math.min(0, (scrollY - dy)));
                     downY = event.getY();
@@ -436,13 +491,17 @@ public class RefreshLayout extends ViewGroup {
                     return super.onInterceptTouchEvent(event);
                 } else {
                     if (dy > 0 && canScrollDown() &&
-                            !innerCanChildScrollVertically(mTargetView, -1, event.getRawX(), event.getRawY(), event.getX(), event.getY())) {
+                            !innerCanChildScrollVertically(mTargetView, -1,
+                                    event.getRawX(), event.getRawY(),
+                                    event.getX(), event.getY())) {
                         order = TOP;
                         //L.e("call: onInterceptTouchEvent([event])-> 3");
                         return super.onInterceptTouchEvent(event) || touchIntercept;
 
                     } else if (dy < 0 && canScrollUp() &&
-                            !innerCanChildScrollVertically(mTargetView, 1, event.getRawX(), event.getRawY(), event.getX(), event.getY())) {
+                            !innerCanChildScrollVertically(mTargetView, 1,
+                                    event.getRawX(), event.getRawY(),
+                                    event.getX(), event.getY())) {
                         order = BOTTOM;
                         //L.e("call: onInterceptTouchEvent([event])-> 4");
                         //return true;//this 星期六 2017-9-30
@@ -469,7 +528,7 @@ public class RefreshLayout extends ViewGroup {
 
             boolean interceptTouchEvent = super.onInterceptTouchEvent(event);
             if (!interceptTouchEvent) {
-                handleTouchUp();
+                handleTouchUp(event, true);
                 //L.e("call: onInterceptTouchEvent([event])-> 5 " + interceptTouchEvent);
                 return interceptTouchEvent;
             }
@@ -488,7 +547,7 @@ public class RefreshLayout extends ViewGroup {
             if (count == 1) {
                 isTouchDown = false;
             }
-            handleTouchUp();
+            handleTouchUp(event, false);
         } else if (action == MotionEvent.ACTION_MOVE) {
             float y = event.getY();
             float dy = lastY - y;
@@ -528,9 +587,9 @@ public class RefreshLayout extends ViewGroup {
         return true;
     }
 
-    private void handleTouchDown(MotionEvent event) {
-        downY = event.getY();
-        downX = event.getX();
+    private void handleTouchDown(MotionEvent downEvent) {
+        downY = downEvent.getY();
+        downX = downEvent.getX();
         downRawX = downX;
         downRawY = downY;
 
@@ -541,16 +600,22 @@ public class RefreshLayout extends ViewGroup {
     /**
      * 释放手指之后的处理
      */
-    private void handleTouchUp() {
+    private void handleTouchUp(MotionEvent upEvent, boolean fromIntercept) {
         int scrollY = getScrollY();
-        int rawY = Math.abs(scrollY);
+        int absScrollY = Math.abs(scrollY);
 
         int topHeight = mTopView.getMeasuredHeight();
         int bottomHeight = mBottomView.getMeasuredHeight();
 
         if (order == NONE) {
             if (scrollY != 0) {
-                if (mCurState == FINISH || mCurState == NORMAL) {
+                if (mCurState == MENU_LAYOUT) {
+                    if (fromIntercept && ExKt.isClickEvent(upEvent, downRawX, downRawY)) {
+
+                    } else {
+                        resetScroll();
+                    }
+                } else if (mCurState == FINISH || mCurState == NORMAL) {
                     resetScroll();
                 } else if (mCurState == TOP && scrollY > -topHeight) {
                     resetScroll();
@@ -569,13 +634,20 @@ public class RefreshLayout extends ViewGroup {
 //        }
 
         if (scrollY < 0) {
+
+            if (isNeedToMenuLayout()) {
+                scrollShowMenuLayout = true;
+                scrollToMenu(true);
+                return;
+            }
+
             //处理刷新
             if (mTopView == null || mCurState == FINISH) {
                 resetScroll();
                 return;
             }
 
-            if (rawY >= topHeight) {
+            if (absScrollY >= topHeight) {
                 if (mNotifyListener == TOP || mNotifyListener == BOTH) {
                     refreshTop();
                 } else {
@@ -601,7 +673,7 @@ public class RefreshLayout extends ViewGroup {
                 return;
             }
 
-            if (rawY >= bottomHeight) {
+            if (absScrollY >= bottomHeight) {
                 if (mNotifyListener == BOTTOM || mNotifyListener == BOTH) {
                     refreshBottom();
                 } else {
@@ -715,6 +787,28 @@ public class RefreshLayout extends ViewGroup {
         }
     }
 
+    private int startScrollMenuY = 0;//需要从这个值,开始滚动
+    private int startScrollToMenuY = 0;//滚动到目标值, 用来计算比率
+    private int startScrollMenuHeight = 0;//菜单已经滚动了多少值
+
+    private void scrollToMenu(boolean anim) {
+        if (menuLayout != null) {
+            mCurState = MENU_LAYOUT;
+
+            int menuLayoutHeight = getMenuLayoutHeight();
+
+            startScrollMenuY = Math.abs(getScrollY());
+            startScrollToMenuY = menuLayoutHeight;
+            startScrollMenuHeight = lastTranslationTo;
+
+            if (anim) {
+                startScroll(-menuLayoutHeight);
+            } else {
+                scrollTo(0, -menuLayoutHeight);
+            }
+        }
+    }
+
     private void scrollToTop(boolean anim) {
         if (mTopView != null) {
             if (anim) {
@@ -787,10 +881,40 @@ public class RefreshLayout extends ViewGroup {
         if (mCurState != TOP && mCurState != BOTTOM /*&& mCurState != FINISH*/) {
             mCurState = NORMAL;
         }
+
+        resetMenuLayout(anim);
+
         if (anim) {
             startScroll(0);
         } else {
             scrollTo(0, 0);
+        }
+    }
+
+    /*将菜单等状态恢复*/
+    private void resetMenuLayout(boolean anim) {
+        if (scrollShowMenuLayout) {
+            scrollShowMenuLayout = false;
+            if (anim) {
+                postDelayed(new Runnable() {
+                    @Override
+                    public void run() {
+                        scrollNeedShowMenuLayout = false;
+                        mTopView.setAlpha(1f);
+                        layoutMenuView(0);
+
+                        startScrollMenuY = 0;
+                        startScrollToMenuY = 0;
+                    }
+                }, 160);
+            } else {
+                scrollNeedShowMenuLayout = false;
+                mTopView.setAlpha(1f);
+                layoutMenuView(0);
+
+                startScrollMenuY = 0;
+                startScrollToMenuY = 0;
+            }
         }
     }
 
@@ -815,6 +939,28 @@ public class RefreshLayout extends ViewGroup {
             }
         }
         super.scrollBy(x, y);
+    }
+
+    /*滚动到了,需要显示菜单的条件*/
+    private boolean scrollNeedShowMenuLayout = false;
+    /*进入菜单模式*/
+    private boolean scrollShowMenuLayout = false;
+
+    /*是否满足进入菜单模式的条件*/
+    private boolean isNeedToMenuLayout() {
+        int scrollY = getScrollY();
+        //菜单滚动处理
+        int menuLayoutHeight = getMenuLayoutHeight();
+        if (menuLayoutHeight > 0) {
+            //激活了菜单
+            int topHeight = mTopView.getMeasuredHeight();
+            int translationTo = (-scrollY - topHeight - menuOpenThreshold) * 2;
+
+            if (translationTo >= menuLayoutHeight / 3 /*菜单显示了三分之一, 进入菜单模式*/) {
+                return true;
+            }
+        }
+        return false;
     }
 
     @Override
@@ -854,22 +1000,61 @@ public class RefreshLayout extends ViewGroup {
 
         super.scrollTo(0, y);
 
+        int scrollY = getScrollY();
+        int absScrollY = Math.abs(scrollY);
+
         layoutTipView();
 
-        int scrollY = getScrollY();
-        int rawY = Math.abs(scrollY);
+        //菜单滚动处理
+        if (scrollShowMenuLayout) {
+            //菜单模式
+            if (startScrollToMenuY > startScrollMenuY) {
+                int translationTo = (int) (startScrollMenuHeight +
+                        (startScrollToMenuY - startScrollMenuHeight) * (
+                                (absScrollY - startScrollMenuY) * 1f / (startScrollToMenuY - startScrollMenuY)));
+                layoutMenuView(translationTo);
+                mTopView.setAlpha(0f);
+            } else {
+                int translationTo = -y;
+                layoutMenuView(translationTo);
+                mTopView.setAlpha(0f);
+                //Log.e("angcyo", translationTo + "");
+            }
+        } else {
+            int menuLayoutHeight = getMenuLayoutHeight();
+            if (menuLayoutHeight > 0) {
+                //激活了菜单
+                int topHeight = mTopView.getMeasuredHeight();
+                //int bottomHeight = mBottomView.getMeasuredHeight();
+                scrollNeedShowMenuLayout = -y > topHeight + menuOpenThreshold;
+                if (scrollNeedShowMenuLayout) {
+                    int translationTo = (-y - topHeight - menuOpenThreshold) * 2;
+                    layoutMenuView(translationTo);
+
+//                if (translationTo > menuLayoutHeight / 2 /*菜单显示了三分之一, 进入菜单模式*/) {
+//                    scrollShowMenuLayout = true;
+//                }
+
+                    if (scrollShowMenuLayout) {
+                    } else {
+                        float alpha = 1 - translationTo * 1f / (menuLayoutHeight / 2);
+                        mTopView.setAlpha(alpha);
+                    }
+                }
+            }
+        }
 
         if (scrollY < 0) {
             //刷新
-            notifyTopListener(rawY);
+            notifyTopListener(absScrollY);
         } else if (scrollY > 0) {
             //加载
-            notifyBottomListener(rawY);
+            notifyBottomListener(absScrollY);
         } else {
             if (mCurState == FINISH || mCurState == NORMAL) {
                 mCurState = NORMAL;
-                notifyTopListener(rawY);
-                notifyBottomListener(rawY);
+                notifyTopListener(absScrollY);
+                notifyBottomListener(absScrollY);
             }
         }
     }
@@ -1071,6 +1256,42 @@ public class RefreshLayout extends ViewGroup {
         mTargetView = null;
         mBottomView = null;
         mTopView = null;
+    }
+
+    /*菜单需要占用的高度*/
+    private int getMenuLayoutHeight() {
+        if (menuLayout == null) {
+            return 0;
+        }
+        return menuLayout.getMeasuredHeight();
+    }
+
+    public FrameLayout getMenuLayout() {
+        return menuLayout;
+    }
+
+    /**
+     * 启动菜单, 并且设置菜单布局
+     */
+    public void addMenuLayout(View menuView) {
+        if (menuLayout == null) {
+            menuLayout = new FrameLayout(getContext());
+            menuLayout.setId(R.id.base_refresh_menu);
+        } else {
+            if (menuLayout.getChildCount() > 0) {
+                menuLayout.removeAllViews();
+            }
+        }
+
+        LayoutParams layoutParams = menuView.getLayoutParams();
+        if (layoutParams == null) {
+            layoutParams = new FrameLayout.LayoutParams(-2, -2, Gravity.CENTER);
+        }
+        menuLayout.addView(menuView, layoutParams);
+
+        if (menuLayout.getParent() == null) {
+            addView(menuLayout, new LayoutParams(-1, -2));
+        }
     }
 
     /**
