@@ -453,7 +453,7 @@ public abstract class UIIViewImpl implements IView {
     }
 
     @Override
-    public Animation loadStartAnimation(AnimParam animParam) {
+    public Animation loadStartAnimation(@NonNull AnimParam animParam) {
         L.v(this.getClass().getSimpleName(), "loadStartAnimation: " + mIViewStatus);
         switch (mAnimationType) {
             case NONE:
@@ -471,7 +471,7 @@ public abstract class UIIViewImpl implements IView {
         }
     }
 
-    protected Animation defaultLoadStartAnimation(AnimParam animParam) {
+    protected Animation defaultLoadStartAnimation(@NonNull AnimParam animParam) {
         TranslateAnimation translateAnimation;
         if (mIsRightJumpLeft) {
             translateAnimation = new TranslateAnimation(Animation.RELATIVE_TO_SELF, -0.99f, Animation.RELATIVE_TO_SELF, 0,
@@ -485,7 +485,7 @@ public abstract class UIIViewImpl implements IView {
     }
 
     @Override
-    public Animation loadFinishAnimation(AnimParam animParam) {
+    public Animation loadFinishAnimation(@NonNull AnimParam animParam) {
         L.v(this.getClass().getSimpleName(), "loadFinishAnimation: ");
         switch (mAnimationType) {
             case NONE:
@@ -503,7 +503,7 @@ public abstract class UIIViewImpl implements IView {
         }
     }
 
-    protected Animation defaultLoadFinishAnimation(AnimParam animParam) {
+    protected Animation defaultLoadFinishAnimation(@NonNull AnimParam animParam) {
         TranslateAnimation translateAnimation = new TranslateAnimation(Animation.RELATIVE_TO_SELF, 0, Animation.RELATIVE_TO_SELF, 1f,
                 Animation.RELATIVE_TO_SELF, 0f, Animation.RELATIVE_TO_SELF, 0f);
         setDefaultConfig(translateAnimation, true);
@@ -511,19 +511,19 @@ public abstract class UIIViewImpl implements IView {
     }
 
     @Override
-    public Animation loadShowAnimation(AnimParam animParam) {
+    public Animation loadShowAnimation(@NonNull AnimParam animParam) {
         L.v(this.getClass().getSimpleName(), "loadShowAnimation: ");
         return loadStartAnimation(animParam);
     }
 
     @Override
-    public Animation loadHideAnimation(AnimParam animParam) {
+    public Animation loadHideAnimation(@NonNull AnimParam animParam) {
         L.v(this.getClass().getSimpleName(), "loadHideAnimation: ");
         return loadFinishAnimation(animParam);
     }
 
     @Override
-    public Animation loadOtherExitAnimation(AnimParam animParam) {
+    public Animation loadOtherExitAnimation(@NonNull AnimParam animParam) {
         L.v(this.getClass().getSimpleName(), "loadOtherExitAnimation: ");
         switch (mAnimationType) {
             case NONE:
@@ -546,7 +546,7 @@ public abstract class UIIViewImpl implements IView {
         }
     }
 
-    public Animation defaultLoadOtherExitAnimation(AnimParam animParam) {
+    public Animation defaultLoadOtherExitAnimation(@NonNull AnimParam animParam) {
         TranslateAnimation translateAnimation;
         if (mIsRightJumpLeft) {
             translateAnimation = new TranslateAnimation(Animation.RELATIVE_TO_SELF, 0, Animation.RELATIVE_TO_SELF, 1f,
@@ -559,7 +559,7 @@ public abstract class UIIViewImpl implements IView {
         return translateAnimation;
     }
 
-    public Animation defaultLoadOtherEnterAnimation(AnimParam animParam) {
+    public Animation defaultLoadOtherEnterAnimation(@NonNull AnimParam animParam) {
         TranslateAnimation translateAnimation = new TranslateAnimation(Animation.RELATIVE_TO_SELF, -1f, Animation.RELATIVE_TO_SELF, 0,
                 Animation.RELATIVE_TO_SELF, 0f, Animation.RELATIVE_TO_SELF, 0f);
         setDefaultConfig(translateAnimation, false);
@@ -567,7 +567,7 @@ public abstract class UIIViewImpl implements IView {
     }
 
     @Override
-    public Animation loadOtherEnterAnimation(AnimParam animParam) {
+    public Animation loadOtherEnterAnimation(@NonNull AnimParam animParam) {
         L.v(this.getClass().getSimpleName(), "loadOtherEnterAnimation: ");
         switch (mAnimationType) {
             case NONE:
@@ -590,17 +590,17 @@ public abstract class UIIViewImpl implements IView {
     }
 
     @Override
-    public Animation loadOtherHideAnimation(AnimParam animParam) {
+    public Animation loadOtherHideAnimation(@NonNull AnimParam animParam) {
         return loadOtherExitAnimation(animParam);
     }
 
     @Override
-    public Animation loadOtherShowAnimation(AnimParam animParam) {
+    public Animation loadOtherShowAnimation(@NonNull AnimParam animParam) {
         return loadOtherEnterAnimation(animParam);
     }
 
     @Override
-    public Animation loadLayoutAnimation(AnimParam animParam) {
+    public Animation loadLayoutAnimation(@NonNull AnimParam animParam) {
         L.v(this.getClass().getSimpleName(), "loadLayoutAnimation: ");
 //        if (mIsRightJumpLeft) {
 //
@@ -664,7 +664,7 @@ public abstract class UIIViewImpl implements IView {
      * 此方法只在UIVIewPager中会调用, 当前IView显示时
      */
     @Override
-    public void onShowInPager(UIViewPager viewPager) {
+    public void onShowInPager(@NonNull UIViewPager viewPager) {
         showInPagerCount++;
         L.i(this.getClass().getSimpleName(), "onShowInPager: " + showInPagerCount);
         notifyLifeViewShow();
@@ -674,7 +674,7 @@ public abstract class UIIViewImpl implements IView {
      * 此方法只在UIVIewPager中会调, 当前IView隐藏时
      */
     @Override
-    public void onHideInPager(UIViewPager viewPager) {
+    public void onHideInPager(@NonNull UIViewPager viewPager) {
         L.i(this.getClass().getSimpleName(), "onHideInPager: ");
         notifyLifeViewHide();
     }

@@ -790,7 +790,7 @@ public abstract class UIBaseView extends UIIViewImpl {
     }
 
     @Override
-    public void onSkinChanged(ISkin skin) {
+    public void onSkinChanged(@NonNull ISkin skin) {
         super.onSkinChanged(skin);
         if (mUITitleBarContainer != null) {
             mUITitleBarContainer.onSkinChanged(skin);
@@ -799,7 +799,7 @@ public abstract class UIBaseView extends UIIViewImpl {
     }
 
     @Override
-    public Animation loadStartAnimation(AnimParam animParam) {
+    public Animation loadStartAnimation(@NonNull AnimParam animParam) {
         if (animParam.needBaseAnim) {
             return super.loadStartAnimation(animParam);
         }
@@ -813,7 +813,7 @@ public abstract class UIBaseView extends UIIViewImpl {
     }
 
     @Override
-    public Animation loadFinishAnimation(AnimParam animParam) {
+    public Animation loadFinishAnimation(@NonNull AnimParam animParam) {
         if (animParam.needBaseAnim) {
             return super.loadFinishAnimation(animParam);
         }

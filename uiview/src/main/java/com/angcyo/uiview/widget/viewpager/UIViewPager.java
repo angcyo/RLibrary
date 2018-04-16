@@ -17,7 +17,9 @@ import com.angcyo.uiview.container.ILayout;
 import com.angcyo.uiview.container.UILayoutImpl;
 import com.angcyo.uiview.design.StickLayout;
 import com.angcyo.uiview.skin.SkinHelper;
+import com.angcyo.uiview.utils.RUtils;
 import com.angcyo.uiview.utils.Reflect;
+import com.angcyo.uiview.utils.SafeRunnable;
 import com.angcyo.uiview.utils.UI;
 import com.angcyo.uiview.view.UIIViewImpl;
 
@@ -201,11 +203,11 @@ public class UIViewPager extends ViewPager implements Runnable, StickLayout.CanS
 
     @SuppressWarnings("Unchecked")
     private void checkPageChanged() {
-        final ArrayList<Object> mItems = (ArrayList<Object>) Reflect.getMember(
+        final ArrayList mItems = (ArrayList) Reflect.getMember(
                 getSuperclass(),
                 this,
                 "mItems");
-        if (mItems == null || mItems.size() == 0) {
+        if (RUtils.isListEmpty(mItems)) {
             return;
         }
 
@@ -218,16 +220,17 @@ public class UIViewPager extends ViewPager implements Runnable, StickLayout.CanS
 
             } else if (lastItem == position) {
                 if (obj != null) {
-//                    if (mParentUIView != null && available instanceof UILayoutImpl) {
-//                        mParentUIView.setChildILayout(null);
-//                    }
+                    if (mParentUIView != null && available instanceof UILayoutImpl) {
+                        mParentUIView.setChildILayout(null);
+                    }
                     if (available instanceof OnPagerShowListener) {
-//                        post(new SafeRunnable() {
-//                            @Override
-//                            public void onRun() {
-                        ((OnPagerShowListener) available).onHideInPager(UIViewPager.this);
-//                            }
-//                        });
+                        //延迟一下加载, 防止页面太卡
+                        post(new SafeRunnable() {
+                            @Override
+                            public void onRun() {
+                                ((OnPagerShowListener) available).onHideInPager(UIViewPager.this);
+                            }
+                        });
                     }
                 }
             } else if (currentItem == position) {
@@ -235,14 +238,13 @@ public class UIViewPager extends ViewPager implements Runnable, StickLayout.CanS
                     if (mParentUIView != null && available instanceof UILayoutImpl) {
                         mParentUIView.setChildILayout((ILayout) available);
                     }
-
                     if (available instanceof OnPagerShowListener) {
-//                        post(new SafeRunnable() {
-//                        @Override
-//                            public void onRun() {
-                        ((OnPagerShowListener) available).onShowInPager(UIViewPager.this);
-//                            }
-//                        });
+                        post(new SafeRunnable() {
+                            @Override
+                            public void onRun() {
+                                ((OnPagerShowListener) available).onShowInPager(UIViewPager.this);
+                            }
+                        });
                     }
                 }
             }
@@ -304,6 +306,9 @@ public class UIViewPager extends ViewPager implements Runnable, StickLayout.CanS
         return null;
     }
 
+    /**
+     * 生命周期接管
+     */
     public UIViewPager setParentUIView(UIIViewImpl parentUIView) {
         mParentUIView = parentUIView;
         return this;
