@@ -60,8 +60,9 @@ android {
         release {
             //applicationIdSuffix ".release"
             zipAlignEnabled true
-            shrinkResources false
-            minifyEnabled false
+            shrinkResources true
+            minifyEnabled true
+            useProguard false
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
             signingConfig signingConfigs.angcyo
         }
@@ -69,6 +70,8 @@ android {
             //applicationIdSuffix ".debug"
             zipAlignEnabled true
             shrinkResources false
+            minifyEnabled false
+            useProguard false
             signingConfig signingConfigs.angcyo
         }
     }

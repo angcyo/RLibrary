@@ -15,3 +15,22 @@
 #-keepclassmembers class fqcn.of.javascript.interface.for.webview {
 #   public *;
 #}
+
+-ignorewarnings
+
+-dontwarn com.angcyo.uiview.**
+-dontwarn com.hn.d.valley.**
+
+-dontwarn com.jcodeing.**
+-dontwarn com.fasterxml.jackson.**
+-dontwarn com.alipay.**
+-dontwarn com.netease.nimlib.**
+-dontwarn com.hwangjr.rxbus.**
+-dontwarn com.umeng.**
+-dontwarn okio.**
+-dontwarn com.alipayzhima.**
+-dontwarn retrofit2.**
+-dontwarn com.xiaomi.push.**
+-dontwarn com.tencent.**
+-dontwarn com.amap.**
+-dontwarn rx.internal.util.**
