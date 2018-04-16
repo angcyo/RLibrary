@@ -1,4 +1,4 @@
-package com.angcyo.uiview.github.tablayout;
+package com.flyco.tablayout.widget;
 
 import android.content.Context;
 import android.content.res.TypedArray;
@@ -6,15 +6,16 @@ import android.graphics.Color;
 import android.graphics.drawable.GradientDrawable;
 import android.graphics.drawable.StateListDrawable;
 import android.os.Build;
+import android.support.v7.widget.AppCompatTextView;
 import android.util.AttributeSet;
-import android.widget.TextView;
 
-import com.angcyo.uiview.R;
+import com.angcyo.github.R;
+
 
 /**
  * 用于需要圆角矩形框背景的TextView的情况,减少直接使用TextView时引入的shape资源文件
  */
-public class MsgView extends TextView {
+public class MsgView extends AppCompatTextView {
     private Context context;
     private GradientDrawable gd_background = new GradientDrawable();
     private int backgroundColor;

@@ -1,10 +1,12 @@
-package com.angcyo.uiview.github.tablayout;
+package com.flyco.tablayout.utils;
 
 
 import android.util.DisplayMetrics;
 import android.view.View;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
+
+import com.flyco.tablayout.widget.MsgView;
 
 /**
  * 未读消息提示View,显示小红点或者带有数字的红点:
@@ -13,7 +15,6 @@ import android.widget.RelativeLayout;
  * 数字超过两位,显示99+
  */
 public class UnreadMsgUtils {
-
     public static void show(MsgView msgView, int num) {
         if (msgView == null) {
             return;

@@ -91,7 +91,8 @@ public class RApplication extends Application {
             }
             //L.w("call: getIMEI([])-> " + imei);
         } catch (Exception e) {
-            e.printStackTrace();
+            L.e("IMEI获取失败, 请检查权限:" + e.getMessage());
+            //e.printStackTrace();
             //L.e("call: getIMEI([])-> " + imei + " " + e.getMessage());
         }
         return imei;

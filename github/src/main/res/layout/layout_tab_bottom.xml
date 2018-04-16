@@ -3,7 +3,6 @@
     xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@drawable/base_main_color_bg_selector"
     android:clipChildren="false"
     android:clipToPadding="false">
 
@@ -19,7 +18,7 @@
             android:id="@+id/iv_tab_icon2"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginBottom="@dimen/base_ldpi"
+            android:layout_marginBottom="4dp"
             android:visibility="gone"/>
 
         <TextView
@@ -28,16 +27,16 @@
             android:layout_height="wrap_content"
             android:maxLines="1"
             android:singleLine="true"
-            android:textSize="@dimen/default_text_little_size"/>
+            android:textSize="16dp"/>
 
-        <com.angcyo.uiview.github.tablayout.ScaleAnimImageView
+        <com.flyco.tablayout.widget.ScaleAnimImageView
             android:id="@+id/iv_tab_icon"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"/>
 
     </LinearLayout>
 
-    <com.angcyo.uiview.github.tablayout.MsgView
+    <com.flyco.tablayout.widget.MsgView
         xmlns:mv="http://schemas.android.com/apk/res-auto"
         android:id="@+id/rtv_msg_tip"
         android:layout_width="wrap_content"

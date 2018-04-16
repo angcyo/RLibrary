@@ -1,10 +1,9 @@
-package com.angcyo.uiview.github.tablayout.listener;
+package com.flyco.tablayout.listener;
 
 import android.view.View;
 
-import com.angcyo.uiview.github.tablayout.SegmentTabLayout;
-
-public abstract class SimpleTabSelectListener extends SegmentTabLayout.OnTabSelectListenerEx {
+//angcyo
+public abstract class SimpleTabSelectListener extends OnTabSelectListenerEx {
 
     @Override
     public void onTabSelect(int position) {

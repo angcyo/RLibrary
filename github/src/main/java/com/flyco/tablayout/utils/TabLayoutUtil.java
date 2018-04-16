@@ -1,4 +1,4 @@
-package com.angcyo.uiview.github.tablayout;
+package com.flyco.tablayout.utils;
 
 import android.graphics.Paint;
 import android.graphics.drawable.ShapeDrawable;
@@ -7,17 +7,20 @@ import android.support.annotation.ColorInt;
 import android.support.v4.view.ViewPager;
 import android.widget.LinearLayout;
 
-import com.angcyo.uiview.github.tablayout.listener.CustomTabEntity;
-import com.angcyo.uiview.github.tablayout.listener.OnTabSelectListener;
+import com.flyco.tablayout.CommonTabLayout;
+import com.flyco.tablayout.SegmentTabLayout;
+import com.flyco.tablayout.SlidingTabLayout;
+import com.flyco.tablayout.listener.CustomTabEntity;
+import com.flyco.tablayout.listener.OnTabSelectListener;
 
-import java.util.List;
+import java.util.ArrayList;
 
 /**
  * Created by angcyo on 2017-03-12.
  */
 
 public class TabLayoutUtil {
-    public static void initCommonTab(CommonTabLayout tabLayout, List<CustomTabEntity> entities, OnTabSelectListener listener) {
+    public static void initCommonTab(CommonTabLayout tabLayout, ArrayList<CustomTabEntity> entities, OnTabSelectListener listener) {
         tabLayout.setTabData(entities);
         tabLayout.setOnTabSelectListener(listener);
     }

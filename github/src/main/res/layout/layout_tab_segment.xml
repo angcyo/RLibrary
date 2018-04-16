@@ -1,29 +1,34 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools"
-    android:layout_width="wrap_content"
-    android:layout_height="wrap_content"
-    android:background="@drawable/base_bg_selector"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
     android:clipChildren="false"
     android:clipToPadding="false">
 
-    <TextView
-        android:id="@+id/tv_tab_title"
+    <LinearLayout
+        android:id="@+id/ll_tap"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_centerInParent="true"
         android:gravity="center"
-        android:maxLines="1"
-        android:textSize="@dimen/default_text_size"
-        android:singleLine="true"
-        tools:text="测试"/>
+        android:orientation="horizontal">
 
-    <com.angcyo.uiview.github.tablayout.MsgView
+        <TextView
+            android:id="@+id/tv_tab_title"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:maxLines="1"
+            android:textSize="16dp"
+            android:singleLine="true"/>
+    </LinearLayout>
+
+    <com.flyco.tablayout.widget.MsgView
         xmlns:mv="http://schemas.android.com/apk/res-auto"
         android:id="@+id/rtv_msg_tip"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_toRightOf="@+id/ll_tap"
         android:gravity="center"
         android:textColor="#ffffff"
         android:textSize="11.5dp"

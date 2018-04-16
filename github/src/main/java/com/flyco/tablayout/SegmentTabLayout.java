@@ -1,4 +1,4 @@
-package com.angcyo.uiview.github.tablayout;
+package com.flyco.tablayout;
 
 import android.animation.TypeEvaluator;
 import android.animation.ValueAnimator;
@@ -23,14 +23,17 @@ import android.widget.FrameLayout;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
-import com.angcyo.uiview.R;
-import com.angcyo.uiview.github.tablayout.listener.OnTabSelectListener;
+import com.angcyo.github.R;
+import com.flyco.tablayout.listener.OnTabSelectListener;
+import com.flyco.tablayout.listener.OnTabSelectListenerEx;
+import com.flyco.tablayout.utils.FragmentChangeManager;
+import com.flyco.tablayout.utils.UnreadMsgUtils;
+import com.flyco.tablayout.widget.MsgView;
 
 import java.util.ArrayList;
 
 /**
- * 分段式 tab 切换
- * <p>
+ * 2018-4-16 2.0.2
  * https://github.com/H07000223/FlycoTabLayout
  */
 public class SegmentTabLayout extends FrameLayout implements ValueAnimator.AnimatorUpdateListener {
@@ -144,7 +147,7 @@ public class SegmentTabLayout extends FrameLayout implements ValueAnimator.Anima
     private void obtainAttributes(Context context, AttributeSet attrs) {
         TypedArray ta = context.obtainStyledAttributes(attrs, R.styleable.SegmentTabLayout);
 
-        mIndicatorColor = ta.getColor(R.styleable.SegmentTabLayout_tl_indicator_color, Color.parseColor("#2C97DE"));
+        mIndicatorColor = ta.getColor(R.styleable.SegmentTabLayout_tl_indicator_color, Color.parseColor("#222831"));
         mIndicatorHeight = ta.getDimension(R.styleable.SegmentTabLayout_tl_indicator_height, -1);
         mIndicatorCornerRadius = ta.getDimension(R.styleable.SegmentTabLayout_tl_indicator_corner_radius, -1);
         mIndicatorMarginLeft = ta.getDimension(R.styleable.SegmentTabLayout_tl_indicator_margin_left, dp2px(0));
@@ -167,7 +170,7 @@ public class SegmentTabLayout extends FrameLayout implements ValueAnimator.Anima
 
         mTabSpaceEqual = ta.getBoolean(R.styleable.SegmentTabLayout_tl_tab_space_equal, true);
         mTabWidth = ta.getDimension(R.styleable.SegmentTabLayout_tl_tab_width, dp2px(-1));
-        mTabPadding = ta.getDimension(R.styleable.SegmentTabLayout_tl_tab_padding, mTabSpaceEqual || mTabWidth > 0 ? dp2px(10) : dp2px(10));
+        mTabPadding = ta.getDimension(R.styleable.SegmentTabLayout_tl_tab_padding, mTabSpaceEqual || mTabWidth > 0 ? dp2px(0) : dp2px(10));
 
         mBarColor = ta.getColor(R.styleable.SegmentTabLayout_tl_bar_color, Color.TRANSPARENT);
         mBarStrokeColor = ta.getColor(R.styleable.SegmentTabLayout_tl_bar_stroke_color, mIndicatorColor);
@@ -206,27 +209,21 @@ public class SegmentTabLayout extends FrameLayout implements ValueAnimator.Anima
             tabView.setTag(i);
             addTab(i, tabView);
         }
-        updateTabStyles();
-    }
 
-    public View getTabView(int position) {
-        if (mTabCount > position) {
-            return mTabsContainer.getChildAt(position);
-        }
-        return null;
+        updateTabStyles();
     }
 
     /**
      * 创建并添加tab
      */
     private void addTab(final int position, final View tabView) {
-        TextView tv_tab_title = tabView.findViewById(R.id.tv_tab_title);
+        TextView tv_tab_title = (TextView) tabView.findViewById(R.id.tv_tab_title);
         tv_tab_title.setText(mTitles[position]);
 
         tabView.setOnClickListener(new OnClickListener() {
             @Override
-            public void onClick(View view) {
-                int position = (Integer) view.getTag();
+            public void onClick(View v) {
+                int position = (Integer) v.getTag();
                 if (mCurrentTab != position) {
                     setCurrentTab(position);
                     if (mListener != null) {
@@ -235,6 +232,7 @@ public class SegmentTabLayout extends FrameLayout implements ValueAnimator.Anima
                 } else {
                     if (mListener != null) {
                         mListener.onTabReselect(position);
+
                         if (mListener instanceof OnTabSelectListenerEx) {
                             ((OnTabSelectListenerEx) mListener).onTabReselect(position, tabView);
                         }
@@ -261,7 +259,7 @@ public class SegmentTabLayout extends FrameLayout implements ValueAnimator.Anima
         for (int i = 0; i < mTabCount; i++) {
             View tabView = mTabsContainer.getChildAt(i);
             tabView.setPadding((int) mTabPadding, 0, (int) mTabPadding, 0);
-            TextView tv_tab_title = tabView.findViewById(R.id.tv_tab_title);
+            TextView tv_tab_title = (TextView) tabView.findViewById(R.id.tv_tab_title);
             tv_tab_title.setTextColor(i == mCurrentTab ? mTextSelectColor : mTextUnselectColor);
             tv_tab_title.setTextSize(TypedValue.COMPLEX_UNIT_PX, mTextsize);
 //            tv_tab_title.setPadding((int) mTabPadding, 0, (int) mTabPadding, 0);
@@ -463,6 +461,7 @@ public class SegmentTabLayout extends FrameLayout implements ValueAnimator.Anima
         setCurrentTab(currentTab, false);
     }
 
+    //angcyo
     public void setCurrentTab(int currentTab, boolean notify) {
         mLastTab = this.mCurrentTab;
         this.mCurrentTab = currentTab;
@@ -482,6 +481,7 @@ public class SegmentTabLayout extends FrameLayout implements ValueAnimator.Anima
             }
         }
     }
+
 
     public float getTabPadding() {
         return mTabPadding;
@@ -777,18 +777,12 @@ public class SegmentTabLayout extends FrameLayout implements ValueAnimator.Anima
         return (int) (sp * scale + 0.5f);
     }
 
-    public static abstract class OnTabSelectListenerEx implements OnTabSelectListener {
-
-        @Override
-        public void onTabReselect(int position) {
-
+    //angcyo
+    public View getTabView(int position) {
+        if (mTabCount > position) {
+            return mTabsContainer.getChildAt(position);
         }
-
-        public abstract void onTabAdd(int position, View tabView);
-
-        public abstract void onTabReselect(int position, View tabView);
-
-        public abstract void onUpdateTabStyles(int position, boolean isSelector, View tabView);
+        return null;
     }
 
     class IndicatorPoint {

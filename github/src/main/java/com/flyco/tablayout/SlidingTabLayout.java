@@ -1,4 +1,4 @@
-package com.angcyo.uiview.github.tablayout;
+package com.flyco.tablayout;
 
 import android.content.Context;
 import android.content.res.TypedArray;
@@ -26,8 +26,10 @@ import android.widget.HorizontalScrollView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
-import com.angcyo.uiview.R;
-import com.angcyo.uiview.github.tablayout.listener.OnTabSelectListener;
+import com.angcyo.github.R;
+import com.flyco.tablayout.listener.OnTabSelectListener;
+import com.flyco.tablayout.utils.UnreadMsgUtils;
+import com.flyco.tablayout.widget.MsgView;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -35,6 +37,7 @@ import java.util.Collections;
 /**
  * 滑动TabLayout,对于ViewPager的依赖性强
  * <p>
+ * 2018-4-16 2.0.2
  * https://github.com/H07000223/FlycoTabLayout
  */
 public class SlidingTabLayout extends HorizontalScrollView implements ViewPager.OnPageChangeListener {
@@ -47,8 +50,7 @@ public class SlidingTabLayout extends HorizontalScrollView implements ViewPager.
     private static final int TEXT_BOLD_NONE = 0;
     private static final int TEXT_BOLD_WHEN_SELECT = 1;
     private static final int TEXT_BOLD_BOTH = 2;
-    boolean itemNoBackground = false;
-    OnConfigListener mOnConfigListener;
+    private boolean itemNoBackground = false;
     private Context mContext;
     private ViewPager mViewPager;
     private ArrayList<String> mTitles;
@@ -262,13 +264,6 @@ public class SlidingTabLayout extends HorizontalScrollView implements ViewPager.
         updateTabStyles();
     }
 
-    /**
-     * 去除Item的背景
-     */
-    public void setItemNoBackground(boolean itemNoBackground) {
-        this.itemNoBackground = itemNoBackground;
-    }
-
     public void addNewTab(String title) {
         View tabView = View.inflate(mContext, R.layout.layout_tab, null);
         if (mTitles != null) {
@@ -286,7 +281,7 @@ public class SlidingTabLayout extends HorizontalScrollView implements ViewPager.
      * 创建并添加tab
      */
     private void addTab(final int position, String title, View tabView) {
-        TextView tv_tab_title = tabView.findViewById(R.id.tv_tab_title);
+        TextView tv_tab_title = (TextView) tabView.findViewById(R.id.tv_tab_title);
         if (tv_tab_title != null) {
             if (title != null) tv_tab_title.setText(title);
         }
@@ -319,38 +314,11 @@ public class SlidingTabLayout extends HorizontalScrollView implements ViewPager.
         LinearLayout.LayoutParams lp_tab = mTabSpaceEqual ?
                 new LinearLayout.LayoutParams(0, LayoutParams.MATCH_PARENT, 1.0f) :
                 new LinearLayout.LayoutParams(LayoutParams.WRAP_CONTENT, LayoutParams.MATCH_PARENT);
-
         if (mTabWidth > 0) {
             lp_tab = new LinearLayout.LayoutParams((int) mTabWidth, LayoutParams.MATCH_PARENT);
         }
 
-        if (mOnConfigListener != null) {
-            LinearLayout.LayoutParams params = mOnConfigListener.onCreateTabLayoutParams(position, tabView, lp_tab);
-            if (params != null) {
-                lp_tab = params;
-            }
-        }
-
         mTabsContainer.addView(tabView, position, lp_tab);
-    }
-
-    /**
-     * 更新标题
-     */
-    public void updateTabTitle() {
-        for (int i = 0; i < mTabCount; i++) {
-            View v = mTabsContainer.getChildAt(i);
-            TextView tv_tab_title = (TextView) v.findViewById(R.id.tv_tab_title);
-            if (tv_tab_title != null) {
-                CharSequence pageTitle = tv_tab_title.getText();
-                if (mTitles != null) {
-                    pageTitle = mTitles.get(i);
-                } else if (mViewPager != null) {
-                    pageTitle = mViewPager.getAdapter().getPageTitle(i);
-                }
-                tv_tab_title.setText(pageTitle);
-            }
-        }
     }
 
     private void updateTabStyles() {
@@ -498,12 +466,6 @@ public class SlidingTabLayout extends HorizontalScrollView implements ViewPager.
     }
 
     @Override
-    public void draw(Canvas canvas) {
-        //canvas.clipRect(0, 0, getMeasuredWidth(), getMeasuredHeight());
-        super.draw(canvas);
-    }
-
-    @Override
     protected void onDraw(Canvas canvas) {
         super.onDraw(canvas);
 
@@ -511,7 +473,7 @@ public class SlidingTabLayout extends HorizontalScrollView implements ViewPager.
             return;
         }
 
-        int height = getHeight() - getPaddingBottom();
+        int height = getHeight();
         int paddingLeft = getPaddingLeft();
         // draw divider
         if (mDividerWidth > 0) {
@@ -715,6 +677,7 @@ public class SlidingTabLayout extends HorizontalScrollView implements ViewPager.
         return mIndicatorMarginLeft;
     }
 
+    //angcyo
     public void setIndicatorMarginLeft(float indicatorMarginLeft) {
         mIndicatorMarginLeft = indicatorMarginLeft;
     }
@@ -723,6 +686,7 @@ public class SlidingTabLayout extends HorizontalScrollView implements ViewPager.
         return mIndicatorMarginTop;
     }
 
+    //angcyo
     public void setIndicatorMarginTop(float indicatorMarginTop) {
         mIndicatorMarginTop = indicatorMarginTop;
     }
@@ -731,6 +695,7 @@ public class SlidingTabLayout extends HorizontalScrollView implements ViewPager.
         return mIndicatorMarginRight;
     }
 
+    //angcyo
     public void setIndicatorMarginRight(float indicatorMarginRight) {
         mIndicatorMarginRight = indicatorMarginRight;
     }
@@ -739,6 +704,7 @@ public class SlidingTabLayout extends HorizontalScrollView implements ViewPager.
         return mIndicatorMarginBottom;
     }
 
+    //angcyo
     public void setIndicatorMarginBottom(float indicatorMarginBottom) {
         mIndicatorMarginBottom = indicatorMarginBottom;
     }
@@ -797,6 +763,7 @@ public class SlidingTabLayout extends HorizontalScrollView implements ViewPager.
         updateTabStyles();
     }
 
+    //angcyo
     public void setTextSizePx(float textsize) {
         this.mTextsize = textsize;
         updateTabStyles();
@@ -805,6 +772,8 @@ public class SlidingTabLayout extends HorizontalScrollView implements ViewPager.
     public int getTextSelectColor() {
         return mTextSelectColor;
     }
+
+    //setter and getter
 
     public void setTextSelectColor(int textSelectColor) {
         this.mTextSelectColor = textSelectColor;
@@ -828,8 +797,6 @@ public class SlidingTabLayout extends HorizontalScrollView implements ViewPager.
         this.mTextBold = textBold;
         updateTabStyles();
     }
-
-    //setter and getter
 
     public boolean isTextAllCaps() {
         return mTextAllCaps;
@@ -967,13 +934,30 @@ public class SlidingTabLayout extends HorizontalScrollView implements ViewPager.
         return (int) (sp * scale + 0.5f);
     }
 
-    public void setOnConfigListener(OnConfigListener onConfigListener) {
-        mOnConfigListener = onConfigListener;
+    /**
+     * angcyo 去除Item的背景
+     */
+    public void setItemNoBackground(boolean itemNoBackground) {
+        this.itemNoBackground = itemNoBackground;
     }
 
-    public interface OnConfigListener {
-
-        LinearLayout.LayoutParams onCreateTabLayoutParams(int position, View tabView, LinearLayout.LayoutParams defaultParams);
+    /**
+     * angcyo 更新标题
+     */
+    public void updateTabTitle() {
+        for (int i = 0; i < mTabCount; i++) {
+            View v = mTabsContainer.getChildAt(i);
+            TextView tv_tab_title = (TextView) v.findViewById(R.id.tv_tab_title);
+            if (tv_tab_title != null) {
+                CharSequence pageTitle = tv_tab_title.getText();
+                if (mTitles != null) {
+                    pageTitle = mTitles.get(i);
+                } else if (mViewPager != null) {
+                    pageTitle = mViewPager.getAdapter().getPageTitle(i);
+                }
+                tv_tab_title.setText(pageTitle);
+            }
+        }
     }
 
     class InnerPagerAdapter extends FragmentPagerAdapter {

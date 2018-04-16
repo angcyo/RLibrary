@@ -301,7 +301,8 @@ public class UILayoutImpl extends SwipeBackLayout implements ILayout, UIViewPage
             pw.println();
             pw.close();
         } catch (Exception e) {
-            e.printStackTrace();
+            //e.printStackTrace();
+            L.e("写入数据失败, 请检查权限:" + e.getMessage());
         }
     }
 

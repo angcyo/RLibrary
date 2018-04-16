@@ -6,7 +6,6 @@ import android.view.LayoutInflater
 import android.view.View
 import com.angcyo.uiview.R
 import com.angcyo.uiview.container.ContentLayout
-import com.angcyo.uiview.github.tablayout.SlidingTabLayout
 import com.angcyo.uiview.model.TitleBarPattern
 import com.angcyo.uiview.skin.SkinHelper
 import com.angcyo.uiview.utils.UI
@@ -14,6 +13,7 @@ import com.angcyo.uiview.view.IView
 import com.angcyo.uiview.view.UIIViewImpl
 import com.angcyo.uiview.widget.viewpager.UIPagerAdapter
 import com.angcyo.uiview.widget.viewpager.UIViewPager
+import com.flyco.tablayout.SlidingTabLayout
 
 /**
  * Copyright (C) 2016,深圳市红鸟网络科技股份有限公司 All rights reserved.
