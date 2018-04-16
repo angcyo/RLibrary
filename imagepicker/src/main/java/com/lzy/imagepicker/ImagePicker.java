@@ -29,6 +29,8 @@ import java.util.Locale;
  * 创建日期：2016/5/19
  * 描    述：图片选择的入口类
  * 修订历史：2016-12-03
+ * <p>
+ * https://github.com/jeasonlzy/ImagePicker
  * ================================================
  */
 public class ImagePicker {
