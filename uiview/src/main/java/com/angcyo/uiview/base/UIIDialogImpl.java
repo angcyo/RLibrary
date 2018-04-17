@@ -401,6 +401,12 @@ public abstract class UIIDialogImpl extends UIIViewImpl {
         return this;
     }
 
+    @Override
+    public UIIDialogImpl setDelayFinish(long delayFinish) {
+        super.setDelayFinish(delayFinish);
+        return this;
+    }
+
     public OnInitDialogContent getOnInitDialogContent() {
         return mOnInitDialogContent;
     }

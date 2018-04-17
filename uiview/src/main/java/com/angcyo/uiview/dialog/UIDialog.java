@@ -1,5 +1,6 @@
 package com.angcyo.uiview.dialog;
 
+import android.support.annotation.LayoutRes;
 import android.text.TextUtils;
 import android.view.Gravity;
 import android.view.LayoutInflater;
@@ -60,6 +61,12 @@ public class UIDialog extends UIIDialogImpl {
     UIViewConfig mViewConfig;
     private SimpleProgressBar mBaseProgressBar;
 
+    /**
+     * 可以自定义对话框布局, 但是注意, 控件id要和默认的一致
+     */
+    @LayoutRes
+    private int layoutId = -1;
+
     private UIDialog() {
         cancelText = RApplication.getApp().getString(R.string.base_cancel);
         okText = RApplication.getApp().getString(R.string.base_ok);
@@ -72,6 +79,10 @@ public class UIDialog extends UIIDialogImpl {
     @Override
     protected View inflateDialogView(FrameLayout dialogRootLayout, LayoutInflater inflater) {
         setGravity(Gravity.CENTER_VERTICAL);
+        if (layoutId != -1) {
+            return inflater.inflate(layoutId, dialogRootLayout);
+        }
+
         if (isX5Style) {
             return inflater.inflate(R.layout.base_dialog_layout_5x, dialogRootLayout);
         } else {
@@ -151,6 +162,11 @@ public class UIDialog extends UIIDialogImpl {
 
     public UIDialog setViewConfig(UIViewConfig viewConfig) {
         mViewConfig = viewConfig;
+        return this;
+    }
+
+    public UIDialog setLayoutId(int layoutId) {
+        this.layoutId = layoutId;
         return this;
     }
 

@@ -143,6 +143,10 @@ public abstract class UIIViewImpl implements IView {
     private boolean mIsRightJumpLeft = false;
     private boolean interruptTask = false;
 
+    //当界面首次显示时, 多少毫秒后, 自动关闭
+    private long delayFinish = -1;
+    private Runnable delayFinishRunnable;
+
     public static void setDefaultConfig(Animation animation, boolean isFinish) {
         if (isFinish) {
             animation.setDuration(DEFAULT_FINISH_ANIM_TIME);
@@ -338,6 +342,17 @@ public abstract class UIIViewImpl implements IView {
         notifyLifeViewShow();
 
         if (lastShowTime == 0) {
+            if (delayFinish > 0) {
+                if (delayFinishRunnable == null) {
+                    delayFinishRunnable = new Runnable() {
+                        @Override
+                        public void run() {
+                            finishIView();
+                        }
+                    };
+                }
+                postDelayed(delayFinish, delayFinishRunnable);
+            }
             onViewShowFirst(bundle);
         } else {
             onViewShowNotFirst(bundle);
@@ -433,7 +448,7 @@ public abstract class UIIViewImpl implements IView {
 
     @Override
     public void onViewUnload(UIParam uiParam) {
-
+        removeCallbacks(delayFinishRunnable);
     }
 
     @Override
@@ -1599,6 +1614,11 @@ public abstract class UIIViewImpl implements IView {
 //                        }
 //                    }
 //                });
+    }
+
+    public UIIViewImpl setDelayFinish(long delayFinish) {
+        this.delayFinish = delayFinish;
+        return this;
     }
 
     public interface OnCountDown {

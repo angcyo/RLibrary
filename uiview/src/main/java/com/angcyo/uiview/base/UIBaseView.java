@@ -41,6 +41,7 @@ import com.angcyo.uiview.utils.ScreenUtil;
 import com.angcyo.uiview.view.UIIViewImpl;
 import com.angcyo.uiview.viewgroup.SliderMenuLayout;
 import com.angcyo.uiview.widget.EmptyView;
+import com.angcyo.uiview.widget.ImageTextView2;
 import com.angcyo.uiview.widget.SoftRelativeLayout;
 
 import static android.view.View.GONE;
@@ -1112,6 +1113,37 @@ public abstract class UIBaseView extends UIIViewImpl {
      */
     public void initSliderMenu(@NonNull SliderMenuLayout sliderMenuLayout, @NonNull LayoutInflater inflater) {
 
+    }
+
+    @Override
+    public void startCountDown(int maxCount, OnCountDown onCountDown) {
+        super.startCountDown(maxCount, onCountDown);
+    }
+
+    public void startCountDown(int from, final Runnable onEnd) {
+        startCountDown(from, new OnCountDown() {
+            @Override
+            public void onCountDown(int count) {
+                UITitleBarContainer uiTitleBarContainer = getUITitleBarContainer();
+                if (uiTitleBarContainer != null) {
+                    ImageTextView2 backImageView = uiTitleBarContainer.getBackImageView();
+
+                    if (backImageView != null) {
+
+                        backImageView.setImageBitmap(null);
+                        backImageView.setShowText(String.valueOf(count));
+
+                        if (count <= 0) {
+                            backImageView.setShowText("");
+                            backImageView.setImageResource(R.drawable.base_back);
+                        }
+                    }
+                }
+                if (count <= 0) {
+                    onEnd.run();
+                }
+            }
+        });
     }
 
     /**
