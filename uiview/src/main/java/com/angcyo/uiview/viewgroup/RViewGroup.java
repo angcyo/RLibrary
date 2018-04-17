@@ -116,6 +116,15 @@ public class RViewGroup extends ViewGroup {
 
                 final LayoutParams lp = (LayoutParams) child.getLayoutParams();
 
+                if (!layoutRule.equals(lp.firstLayoutRule)) {
+                    childWidth = child.getMeasuredWidth();
+                    childHeight = child.getMeasuredHeight();
+
+                    lineWidth += childWidth + lp.leftMargin + lp.rightMargin;
+                    lineHeight += childHeight + lp.topMargin + lp.bottomMargin;
+                    continue;
+                }
+
                 //Child宽高测量, 这里做了百分比sw, sh, pw, ph的百分比支持
                 int childWidthMeasureSpec;
                 int childHeightMeasureSpec;
@@ -177,7 +186,7 @@ public class RViewGroup extends ViewGroup {
                 }
             }
 
-            //计算剩余空间分配
+            //水平, 计算剩余空间分配
             int subLineWidth = 0;
             int subLineHeight = 0;
             if (!RUtils.isListEmpty(mWeightViewsH)) {
@@ -194,10 +203,12 @@ public class RViewGroup extends ViewGroup {
 
                     int childWidthMeasureSpec;
                     int childHeightMeasureSpec;
+
                     int[] calcLayoutWidthHeight = ViewExKt.calcLayoutWidthHeight(child, lp.layoutWidth, lp.layoutHeight,
                             widthSize, heightSize,
                             paddingLeft + paddingRight, paddingTop + paddingBottom);
-                    childWidthMeasureSpec = MeasureSpec.makeMeasureSpec((int) (widthSize * scale), MeasureSpec.EXACTLY);
+                    childWidthMeasureSpec = MeasureSpec.makeMeasureSpec((int) ((widthSize - lineWidth - widthPadding - lp.leftMargin - lp.rightMargin) * scale), MeasureSpec.EXACTLY);
+
                     if (lp.layoutHeight != null) {
                         childHeightMeasureSpec = MeasureSpec.makeMeasureSpec(calcLayoutWidthHeight[1], MeasureSpec.EXACTLY);
                     } else {
@@ -215,6 +226,7 @@ public class RViewGroup extends ViewGroup {
                 }
             }
 
+            //垂直, 剩余控件宽高计算
             if (!RUtils.isListEmpty(mWeightViewsV)) {
                 for (int i = 0; i < mWeightViewsV.size(); i++) {
                     View child = mWeightViewsV.get(i);
@@ -229,10 +241,12 @@ public class RViewGroup extends ViewGroup {
 
                     int childWidthMeasureSpec;
                     int childHeightMeasureSpec;
+
                     int[] calcLayoutWidthHeight = ViewExKt.calcLayoutWidthHeight(child, lp.layoutWidth, lp.layoutHeight,
                             widthSize, heightSize,
                             paddingLeft + paddingRight, paddingTop + paddingBottom);
-                    childHeightMeasureSpec = MeasureSpec.makeMeasureSpec((int) (heightSize * scale), MeasureSpec.EXACTLY);
+
+                    childHeightMeasureSpec = MeasureSpec.makeMeasureSpec((int) ((heightSize - lineHeight - heightPadding - lp.topMargin - lp.bottomMargin) * scale), MeasureSpec.EXACTLY);
                     if (lp.layoutWidth != null) {
                         childWidthMeasureSpec = MeasureSpec.makeMeasureSpec(calcLayoutWidthHeight[0], MeasureSpec.EXACTLY);
                     } else {
@@ -240,6 +254,7 @@ public class RViewGroup extends ViewGroup {
                                 paddingLeft + paddingRight + lp.leftMargin + lp.rightMargin
                                         + widthUsed, lp.width);
                     }
+
                     child.measure(childWidthMeasureSpec, childHeightMeasureSpec);
 
                     childWidth = child.getMeasuredWidth();
@@ -297,7 +312,11 @@ public class RViewGroup extends ViewGroup {
                 mRuleMap.put("f" + i, views);
             } else if (layoutParams.layoutRule.contains("l")) {
                 String[] split = layoutParams.layoutRule.split(" ");
-                for (String sp : split) {
+                for (int j = 0; j < split.length; j++) {
+                    String sp = split[j];
+                    if (j == 0) {
+                        layoutParams.firstLayoutRule = sp;
+                    }
                     ArrayList<View> views = mRuleMap.get(sp);
                     if (RUtils.isListEmpty(views)) {
                         views = new ArrayList<>();
@@ -462,6 +481,8 @@ public class RViewGroup extends ViewGroup {
 
         public String layoutWidth;
         public String layoutHeight;
+
+        String firstLayoutRule; //在测量时赋值, 当有多个规则时, 某些属性只能作用在第一个规则上
 
         public LayoutParams(Context c, AttributeSet attrs) {
             super(c, attrs);
