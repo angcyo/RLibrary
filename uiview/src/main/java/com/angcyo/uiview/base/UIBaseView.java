@@ -1120,7 +1120,7 @@ public abstract class UIBaseView extends UIIViewImpl {
         super.startCountDown(maxCount, onCountDown);
     }
 
-    public void startCountDown(int from, final Runnable onEnd) {
+    public void startCountDownEnd(int from, final Runnable onEnd) {
         startCountDown(from, new OnCountDown() {
             @Override
             public void onCountDown(int count) {

@@ -193,14 +193,14 @@ class GuideFrameLayout(context: Context, attributeSet: AttributeSet? = null) : F
         var isAnchor = false
 
         constructor(c: Context, attrs: AttributeSet?) : super(c, attrs) {
-            val a = c.obtainStyledAttributes(attrs, R.styleable.GuideFrameLayout)
-            anchorIndex = a.getInt(R.styleable.GuideFrameLayout_r_guide_show_in_anchor, anchorIndex)
-            guideGravity = a.getInt(R.styleable.GuideFrameLayout_r_guide_gravity, guideGravity)
-            offsetX = a.getDimensionPixelOffset(R.styleable.GuideFrameLayout_r_guide_offset_x, offsetX)
-            offsetY = a.getDimensionPixelOffset(R.styleable.GuideFrameLayout_r_guide_offset_y, offsetY)
-            offsetWidth = a.getDimensionPixelOffset(R.styleable.GuideFrameLayout_r_guide_offset_width, offsetWidth)
-            offsetHeight = a.getDimensionPixelOffset(R.styleable.GuideFrameLayout_r_guide_offset_height, offsetHeight)
-            isAnchor = a.getBoolean(R.styleable.GuideFrameLayout_r_guide_is_anchor, isAnchor)
+            val a = c.obtainStyledAttributes(attrs, R.styleable.GuideFrameLayout_Layout)
+            anchorIndex = a.getInt(R.styleable.GuideFrameLayout_Layout_r_guide_show_in_anchor, anchorIndex)
+            guideGravity = a.getInt(R.styleable.GuideFrameLayout_Layout_r_guide_gravity, guideGravity)
+            offsetX = a.getDimensionPixelOffset(R.styleable.GuideFrameLayout_Layout_r_guide_offset_x, offsetX)
+            offsetY = a.getDimensionPixelOffset(R.styleable.GuideFrameLayout_Layout_r_guide_offset_y, offsetY)
+            offsetWidth = a.getDimensionPixelOffset(R.styleable.GuideFrameLayout_Layout_r_guide_offset_width, offsetWidth)
+            offsetHeight = a.getDimensionPixelOffset(R.styleable.GuideFrameLayout_Layout_r_guide_offset_height, offsetHeight)
+            isAnchor = a.getBoolean(R.styleable.GuideFrameLayout_Layout_r_guide_is_anchor, isAnchor)
             a.recycle()
         }
 

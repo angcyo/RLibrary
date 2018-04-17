@@ -200,6 +200,12 @@ public fun View.calcWidthHeightRatio(widthHeightRatio: String?): IntArray? {
 
 /**用屏幕宽高, 计算View的宽高*/
 public fun View.calcLayoutWidthHeight(rLayoutWidth: String?, rLayoutHeight: String?, rLayoutWidthExclude: Int = 0, rLayoutHeightExclude: Int = 0): IntArray {
+    return calcLayoutWidthHeight(rLayoutWidth, rLayoutHeight, 0, 0, rLayoutWidthExclude, rLayoutHeightExclude)
+}
+
+public fun View.calcLayoutWidthHeight(rLayoutWidth: String?, rLayoutHeight: String?,
+                                      parentWidth: Int, parentHeight: Int,
+                                      rLayoutWidthExclude: Int = 0, rLayoutHeightExclude: Int = 0): IntArray {
     val size = intArrayOf(-1, -1)
     if (TextUtils.isEmpty(rLayoutWidth) && TextUtils.isEmpty(rLayoutHeight)) {
         return size
@@ -210,6 +216,11 @@ public fun View.calcLayoutWidthHeight(rLayoutWidth: String?, rLayoutHeight: Stri
             ratio?.let {
                 size[0] = (ratio * (ScreenUtil.screenWidth - rLayoutWidthExclude)).toInt()
             }
+        } else if (rLayoutWidth!!.contains("pw", true)) {
+            val ratio = rLayoutWidth.replace("pw", "", true).toFloatOrNull()
+            ratio?.let {
+                size[0] = (ratio * (parentWidth - rLayoutWidthExclude)).toInt()
+            }
         }
     }
     if (!TextUtils.isEmpty(rLayoutHeight)) {
@@ -217,6 +228,11 @@ public fun View.calcLayoutWidthHeight(rLayoutWidth: String?, rLayoutHeight: Stri
             val ratio = rLayoutHeight.replace("sh", "", true).toFloatOrNull()
             ratio?.let {
                 size[1] = (ratio * (ScreenUtil.screenHeight - rLayoutHeightExclude)).toInt()
+            }
+        } else if (rLayoutHeight!!.contains("ph", true)) {
+            val ratio = rLayoutHeight.replace("ph", "", true).toFloatOrNull()
+            ratio?.let {
+                size[1] = (ratio * (parentHeight - rLayoutHeightExclude)).toInt()
             }
         }
     }

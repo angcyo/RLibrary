@@ -18,6 +18,9 @@ import com.leochuan.ViewPagerLayoutManager;
 public class RExLoopRecyclerView extends RRecyclerView {
 
     private LoopLayoutManager mLoopLayoutManager;
+    /**
+     * 无限循环
+     */
     private boolean mInfinite = true;
     private RPagerSnapHelper.OnPageListener mOnPageListener;
 
@@ -51,7 +54,7 @@ public class RExLoopRecyclerView extends RRecyclerView {
         };
 
         mLoopLayoutManager = new LoopLayoutManager(getContext(), ViewPagerLayoutManager.HORIZONTAL, false);
-        setInfinite(true);
+        setInfinite(mInfinite);
         setLayoutManager(mLoopLayoutManager);
 
         new RExLoopRecyclerView.LoopSnapHelper().setOnPageListener(new RPagerSnapHelper.OnPageListener() {

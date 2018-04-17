@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <declare-styleable name="RViewGroup_Layout">
+
+        <!--
+        相当重要的属性, 决定你采用哪一种布局规则:比如Linear, Relative(放弃支持), Frame
+        lh:表示线性横向,l默认就是lh
+        lv:表示线性纵向
+
+        当有多组rule相同时, 请在后面加上数字:比如 lh1 lv2 r3 f4 等; 那么相同的rule数字也相同, 就会被认为是一组
+        同一个child, 相同方向(h或者v)有且只能存在一个, 多个规则之间用空格隔开, (此View避免太复杂)
+        具有相同规则lh和lv, gravity取决于第一个child, 并且match_parent会受到第一个child的约束,可以用过
+        r_layout_width/r_layout_height属性, 解除约束, 强制宽高.
+
+        f:会按照xml中的顺序分层布局, f加数字无意义, f不能和l并存, 如果并存会忽略l规则
+
+        默认采用帧布局规则,即:f1
+
+        请使用小写字符
+        -->
+        <attr name="r_layout_rule" format="string"/>
+
+        <attr name="r_layout_gravity">
+            <flag name="LEFT" value="0x01"/>
+            <flag name="TOP" value="0x02"/>
+            <flag name="RIGHT" value="0x04"/>
+            <flag name="BOTTOM" value="0x08"/>
+            <flag name="CENTER_VERTICAL" value="0x10"/>
+            <flag name="CENTER_HORIZONTAL" value="0x20"/>
+            <flag name="CENTER" value="0x30"/>
+        </attr>
+
+        <!--2sw:2倍的屏幕宽度,0.5sw屏幕宽度的一半,
+        2sp:2倍的parent宽度, 0.2sp:0.2倍的parent宽度, 当使用sp时, parent尽量不要用wrap_content-->
+        <attr name="r_layout_width"/>
+        <attr name="r_layout_height"/>
+
+        <!--l规则时, 用来决定剩余空间占比, 取值范围[0-1], parent尽量不要用wrap_content-->
+        <attr name="r_layout_weight" format="float"/>
+
+    </declare-styleable>
+</resources>
