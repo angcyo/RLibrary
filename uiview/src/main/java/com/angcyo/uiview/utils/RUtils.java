@@ -1152,7 +1152,7 @@ public class RUtils {
     /**
      * 该方法是调用了系统的下载管理器
      */
-    public static long downLoadFile(Context context, String url) {
+    public static long downLoadFile(Context context, String url, String fileName) {
         if (TextUtils.isEmpty(url)) {
             return -1;
         }
@@ -1166,7 +1166,9 @@ public class RUtils {
         DownloadManager.Request request = new DownloadManager.Request(uri);  //得到连接请求对象
         request.setAllowedNetworkTypes(DownloadManager.Request.NETWORK_WIFI);   //指定在什么网络下进行下载，这里我指定了WIFI网络
 
-        String fileName = getFileNameFromUrl(url);
+        if (TextUtils.isEmpty(fileName)) {
+            fileName = getFileNameFromUrl(url);
+        }
 
         request.setDestinationInExternalPublicDir(context.getPackageName() + "/download", fileName);  //制定下载文件的保存路径，我这里保存到根目录
         request.setVisibleInDownloadsUi(true);  //设置是否显示在系统的下载界面
