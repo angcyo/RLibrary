@@ -9,6 +9,7 @@ def rxandroid_version = "1.2.1"
 def gson_version = "2.8.2"
 
 dependencies {
+    //http://jcenter.bintray.com
     //api fileTree(dir: 'libs', include: ['*.jar'])
     api 'com.android.support:appcompat-v7:' + rootProject.S_VER
     api 'com.android.support:design:' + rootProject.S_VER
@@ -124,4 +125,6 @@ dependencies {
     //compile 'cn.bingoogolapple:bga-qrcodecore:1.1.7@aar'
 //    compile 'cn.bingoogolapple:bga-zxing:1.1.7@aar'
 
+    //https://developer.android.google.cn/reference/android/support/constraint/ConstraintLayout.html
+    api 'com.android.support.constraint:constraint-layout:1.1.0'
 }
