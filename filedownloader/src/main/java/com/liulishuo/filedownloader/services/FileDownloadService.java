@@ -63,11 +63,11 @@ public class FileDownloadService extends Service {
             handler = new FDServiceSeparateHandler(new WeakReference<>(this), manager);
         }
 
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            int NOTIFICATION_ID = (int) (System.currentTimeMillis() % 10000);
-            startForeground(NOTIFICATION_ID, new Notification.Builder(this, this.getPackageName()).build());
-            stopForeground(true);
-        }
+//        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+//            int NOTIFICATION_ID = (int) (System.currentTimeMillis() % 10000);
+//            startForeground(NOTIFICATION_ID, new Notification.Builder(this, this.getPackageName()).build());
+//            stopForeground(true);
+//        }
     }
 
     @Override

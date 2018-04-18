@@ -144,7 +144,8 @@ class FileDownloadServiceSharedTransmit implements
         }
         Intent intent = new Intent(context, SERVICE_CLASS);
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            context.startForegroundService(intent);
+            //context.startForegroundService(intent);
+            context.startService(intent);
         } else {
             context.startService(intent);
         }

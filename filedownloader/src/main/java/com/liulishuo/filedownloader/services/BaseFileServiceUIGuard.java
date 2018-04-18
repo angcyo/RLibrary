@@ -21,7 +21,6 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.ServiceConnection;
 import android.os.Binder;
-import android.os.Build;
 import android.os.IBinder;
 import android.os.IInterface;
 import android.os.RemoteException;
@@ -44,10 +43,16 @@ public abstract class BaseFileServiceUIGuard<CALLBACK extends Binder, INTERFACE 
         implements IFileDownloadServiceProxy, ServiceConnection {
 
     private final CALLBACK callback;
-    private volatile INTERFACE service;
     private final Class<?> serviceClass;
-
     private final HashMap<String, Object> uiCacheMap = new HashMap<>();
+    private final List<Context> bindContexts = new ArrayList<>();
+    private final ArrayList<Runnable> connectedRunnableList = new ArrayList<>();
+    private volatile INTERFACE service;
+
+    protected BaseFileServiceUIGuard(Class<?> serviceClass) {
+        this.serviceClass = serviceClass;
+        this.callback = createCallback();
+    }
 
     protected CALLBACK getCallback() {
         return this.callback;
@@ -55,11 +60,6 @@ public abstract class BaseFileServiceUIGuard<CALLBACK extends Binder, INTERFACE 
 
     protected INTERFACE getService() {
         return this.service;
-    }
-
-    protected BaseFileServiceUIGuard(Class<?> serviceClass) {
-        this.serviceClass = serviceClass;
-        this.callback = createCallback();
     }
 
     protected abstract CALLBACK createCallback();
@@ -119,9 +119,6 @@ public abstract class BaseFileServiceUIGuard<CALLBACK extends Binder, INTERFACE 
                         serviceClass));
     }
 
-    private final List<Context> bindContexts = new ArrayList<>();
-    private final ArrayList<Runnable> connectedRunnableList = new ArrayList<>();
-
     @Override
     public void bindStartByContext(final Context context) {
         bindStartByContext(context, null);
@@ -156,11 +153,12 @@ public abstract class BaseFileServiceUIGuard<CALLBACK extends Binder, INTERFACE 
         }
 
         context.bindService(i, this, Context.BIND_AUTO_CREATE);
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            context.startForegroundService(i);
-        } else {
-            context.startService(i);
-        }
+//        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+//            context.startForegroundService(i);
+//        } else {
+//            context.startService(i);
+//        }
+        context.startService(i);
     }
 
     @Override
@@ -188,11 +186,12 @@ public abstract class BaseFileServiceUIGuard<CALLBACK extends Binder, INTERFACE 
     public void startService(final Context context) {
 
         Intent i = new Intent(context, serviceClass);
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            context.startForegroundService(i);
-        } else {
-            context.startService(i);
-        }
+//        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+//            context.startForegroundService(i);
+//        } else {
+//            context.startService(i);
+//        }
+        context.startService(i);
     }
 
     protected abstract INTERFACE asInterface(IBinder service);
