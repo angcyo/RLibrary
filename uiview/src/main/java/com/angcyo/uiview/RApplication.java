@@ -3,6 +3,9 @@ package com.angcyo.uiview;
 import android.annotation.SuppressLint;
 import android.app.ActivityManager;
 import android.app.Application;
+import android.app.Notification;
+import android.app.NotificationChannel;
+import android.app.NotificationManager;
 import android.content.Context;
 import android.content.pm.PackageManager;
 import android.os.Build;
@@ -171,6 +174,8 @@ public class RApplication extends Application {
      * 同步初始化
      */
     protected void onInit() {
+        initDefaultNotificationChannel();
+
         SkinHelper.init(this);
         Utils.init(this);
         ScreenUtil.init(this);
@@ -218,6 +223,22 @@ public class RApplication extends Application {
 //            Fresco.getImagePipeline().clearMemoryCaches();
 //        }
         super.onTrimMemory(level);
+    }
+
+    /*用包名创建一个默认的通知通道*/
+    protected void initDefaultNotificationChannel() {
+        //NotificationManagerCompat compat = NotificationManagerCompat.from(this);
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            NotificationManager manager = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
+            if (manager != null) {
+                String packageName = this.getPackageName();
+                NotificationChannel notificationChannel = new NotificationChannel(packageName,
+                        packageName,
+                        NotificationManager.IMPORTANCE_NONE);
+                notificationChannel.setLockscreenVisibility(Notification.VISIBILITY_PRIVATE);
+                manager.createNotificationChannel(notificationChannel);
+            }
+        }
     }
 
     public static class Util {

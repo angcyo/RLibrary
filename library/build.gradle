@@ -126,5 +126,5 @@ dependencies {
 //    compile 'cn.bingoogolapple:bga-zxing:1.1.7@aar'
 
     //https://developer.android.google.cn/reference/android/support/constraint/ConstraintLayout.html
-    api 'com.android.support.constraint:constraint-layout:1.1.0'
+    api 'com.android.support.constraint:constraint-layout:1.0.2'
 }

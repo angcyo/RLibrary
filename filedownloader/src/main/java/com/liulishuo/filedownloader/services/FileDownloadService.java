@@ -66,6 +66,7 @@ public class FileDownloadService extends Service {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             int NOTIFICATION_ID = (int) (System.currentTimeMillis() % 10000);
             startForeground(NOTIFICATION_ID, new Notification.Builder(this, this.getPackageName()).build());
+            stopForeground(true);
         }
     }
 

@@ -58,7 +58,7 @@ public class ProgressNotify {
             progressChannelId = String.valueOf(NOTIFICATION_ID);
             NotificationChannel channelProgress = new NotificationChannel(progressChannelId,
                     "ProgressNotify_channelProgress",
-                    NotificationManager.IMPORTANCE_HIGH);
+                    NotificationManager.IMPORTANCE_LOW);
 
             channelProgress.enableLights(false);
             channelProgress.enableVibration(false);
