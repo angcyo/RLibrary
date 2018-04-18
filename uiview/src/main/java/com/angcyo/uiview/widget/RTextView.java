@@ -425,7 +425,7 @@ public class RTextView extends AppCompatTextView {
 //                            getPaddingTop() + mTextPaint.getTextHeight() / 2
 //            );
             TextPaint textPaint = mTextPaint.getTextPaint();
-            addPaintFlags(textPaint, leftStringBold, Paint.FAKE_BOLD_TEXT_FLAG);
+            addPaintFlags(textPaint, leftStringBold, Paint.FAKE_BOLD_TEXT_FLAG, false);
             //textPaint.setFakeBoldText(leftStringBold);
             Paint.FontMetrics fontMetrics = textPaint.getFontMetrics();
 //            canvas.drawText(mLeftString,
@@ -985,14 +985,19 @@ public class RTextView extends AppCompatTextView {
         addPaintFlags(paint, add, flat);
     }
 
-
     public void addPaintFlags(TextPaint paint, boolean add, int flat) {
+        addPaintFlags(paint, add, flat, true);
+    }
+
+    public void addPaintFlags(TextPaint paint, boolean add, int flat, boolean invalidate) {
         if (add) {
             paint.setFlags(paint.getFlags() | flat);
         } else {
             paint.setFlags(paint.getFlags() & ~flat);
         }
-        postInvalidate();
+        if (invalidate) {
+            postInvalidate();
+        }
     }
 
     /**
