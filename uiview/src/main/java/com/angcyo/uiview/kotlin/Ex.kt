@@ -20,8 +20,11 @@ import java.io.File
  */
 
 /**整型数中, 是否包含另一个整数*/
-public fun Int.have(value: Int): Boolean = if (this == 0 && value == 0) true else {
-    ((this > 0 && value > 0) || (this < 0 && value < 0)) && this and value == value
+public fun Int.have(value: Int): Boolean = if (this == 0 || value == 0) false
+else if (this == 0 && value == 0) true
+else {
+    ((this > 0 && value > 0) || (this < 0 && value < 0)) &&
+            this and value == value
 }
 
 public fun Int.remove(value: Int): Int = this and value.inv()

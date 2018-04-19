@@ -11,6 +11,7 @@ import android.widget.LinearLayout;
 
 import com.angcyo.uiview.R;
 import com.angcyo.uiview.container.ILayout;
+import com.angcyo.uiview.kotlin.ExKt;
 import com.angcyo.uiview.recycler.RBaseViewHolder;
 
 /**
@@ -32,16 +33,25 @@ public class UIWindow extends UIIDialogImpl {
     /**
      * 锚点View
      */
-    View anchorView;
-    OnInitWindow mOnInitWindow;
+    protected View anchorView;
+    protected OnInitWindow mOnInitWindow;
     /**
      * 显示三角指示图标
      */
-    private boolean showTriangle = true;
-    private int layoutId = -1;
-    private int offsetY = 0;
+    protected boolean showTriangle = true;
+    protected int layoutId = -1;
+    protected int offsetY = 0;
 
-    private UIWindow(View anchorView) {
+    //检查是否在屏幕上/下部分
+    protected boolean checkVertical = true;
+
+    //检查是否在屏幕左/右部分
+    protected boolean checkHorizontal = true;
+
+    //在锚点的上方 or 下方
+    protected int anchorGravity = Gravity.NO_GRAVITY;
+
+    protected UIWindow(View anchorView) {
         this.anchorView = anchorView;
     }
 
@@ -86,7 +96,7 @@ public class UIWindow extends UIIDialogImpl {
     }
 
     @Override
-    protected View inflateDialogView(FrameLayout dialogRootLayout, LayoutInflater inflater) {
+    final protected View inflateDialogView(FrameLayout dialogRootLayout, LayoutInflater inflater) {
         LinearLayout containLayout = new LinearLayout(mActivity);
         containLayout.setOrientation(LinearLayout.VERTICAL);
 
@@ -121,34 +131,62 @@ public class UIWindow extends UIIDialogImpl {
         int anchorWidth = anchorView.getMeasuredWidth();
         int anchorHeight = anchorView.getMeasuredHeight();
 
-        if (screenLocation[0] + anchorWidth / 2 < displayFrame.width() / 2) {
-            //左半屏
+        if (checkHorizontal) {
+            if (screenLocation[0] + anchorWidth / 2 < displayFrame.width() / 2) {
+                //左半屏
+                triangleParams.gravity = Gravity.START;
+                triangleParams.leftMargin = screenLocation[0] + anchorWidth / 2 - triangleView.getMeasuredWidth() / 2;
+            } else {
+                //右半屏
+                triangleParams.gravity = Gravity.END;
+                triangleParams.rightMargin = displayFrame.right - screenLocation[0] - anchorWidth / 2 - triangleView.getMeasuredWidth() / 2;
+            }
+        } else {
+            //左半屏, 默认在左边
             triangleParams.gravity = Gravity.START;
             triangleParams.leftMargin = screenLocation[0] + anchorWidth / 2 - triangleView.getMeasuredWidth() / 2;
-        } else {
-            //右半屏
-            triangleParams.gravity = Gravity.END;
-            triangleParams.rightMargin = displayFrame.right - screenLocation[0] - anchorWidth / 2 - triangleView.getMeasuredWidth() / 2;
         }
 
-        if (screenLocation[1] + anchorHeight / 2 < displayFrame.height() / 2) {
-            //在屏幕上半部
-            params.topMargin = screenLocation[1] + anchorHeight + offsetY;
-            if (showTriangle) {
-                containLayout.addView(triangleView, triangleParams);
+        if (checkVertical) {
+            if (screenLocation[1] + anchorHeight / 2 < displayFrame.height() / 2) {
+                //在屏幕上半部
+                params.topMargin = screenLocation[1] + anchorHeight + offsetY;
+                if (showTriangle) {
+                    containLayout.addView(triangleView, triangleParams);
+                }
+                inflateWindowContent(containLayout);
+                gravity = Gravity.TOP;
+            } else {
+                //在屏幕下半部
+                inflateWindowContent(containLayout);
+                if (showTriangle) {
+                    triangleView.setRotation(180);
+                    containLayout.addView(triangleView, triangleParams);
+                }
+                params.bottomMargin = displayFrame.bottom - screenLocation[1] + offsetY;
+                params.gravity = Gravity.BOTTOM;
+                gravity = Gravity.BOTTOM;
             }
-            LayoutInflater.from(mActivity).inflate(layoutId, containLayout);
-            gravity = Gravity.TOP;
         } else {
-            //在屏幕下半部
-            LayoutInflater.from(mActivity).inflate(layoutId, containLayout);
-            if (showTriangle) {
-                triangleView.setRotation(180);
-                containLayout.addView(triangleView, triangleParams);
+            //默认在屏幕上半部
+            if (ExKt.have(anchorGravity, Gravity.TOP)) {
+                //在锚点的上方
+                inflateWindowContent(containLayout);
+                if (showTriangle) {
+                    triangleView.setRotation(180);
+                    containLayout.addView(triangleView, triangleParams);
+                }
+                params.bottomMargin = displayFrame.bottom - screenLocation[1] + offsetY;
+                params.gravity = Gravity.BOTTOM;
+                gravity = Gravity.BOTTOM;
+            } else {
+                params.topMargin = screenLocation[1] + anchorHeight + offsetY;
+                if (showTriangle) {
+                    containLayout.addView(triangleView, triangleParams);
+                }
+                inflateWindowContent(containLayout);
+                gravity = Gravity.TOP;
             }
-            params.bottomMargin = displayFrame.bottom - screenLocation[1] + offsetY;
-            params.gravity = Gravity.BOTTOM;
-            gravity = Gravity.BOTTOM;
         }
 
         dialogRootLayout.addView(containLayout, params);
@@ -158,6 +196,10 @@ public class UIWindow extends UIIDialogImpl {
             mOnInitWindow.onInitWindow(this, new RBaseViewHolder(containLayout));
         }
         return containLayout;
+    }
+
+    protected void inflateWindowContent(LinearLayout containLayout) {
+        LayoutInflater.from(mActivity).inflate(layoutId, containLayout);
     }
 
     public interface OnInitWindow {
