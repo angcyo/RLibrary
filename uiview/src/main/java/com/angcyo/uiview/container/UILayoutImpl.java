@@ -768,9 +768,9 @@ public class UILayoutImpl extends SwipeBackLayout implements ILayout, UIViewPage
         final ViewPattern fromViewPattern = findViewPatternByIView(param.replaceIView);
         final ViewPattern targetViewPatternByClass = findViewPatternByClass(iView.getClass());
 
-        L.i(name(param.replaceIView +
-                        " 请求替换 " + name(iView)
-                /*" LastIs:" + name(mLastShowViewPattern.mIView)*/));
+        L.i(name(param.replaceIView)
+                        + " 请求替换 " + name(iView)
+                /*" LastIs:" + name(mLastShowViewPattern.mIView)*/);
 
         //移除需要被替换的目标
         final Runnable removeTargetViewPattern = new Runnable() {
@@ -1783,6 +1783,7 @@ public class UILayoutImpl extends SwipeBackLayout implements ILayout, UIViewPage
 
         if (bottomViewPattern == null) {
             viewTask.taskRun--;
+            isBottomAnimationEnd = true;
             checkTaskOnIViewAnimationEnd(viewTask);
             return;
         }
@@ -1856,6 +1857,7 @@ public class UILayoutImpl extends SwipeBackLayout implements ILayout, UIViewPage
                                   final UIParam param) {
         if (bottomViewPattern == null) {
             viewTask.taskRun--;
+            isBottomAnimationEnd = true;
             checkTaskOnIViewAnimationEnd(viewTask);
             return;
         }
