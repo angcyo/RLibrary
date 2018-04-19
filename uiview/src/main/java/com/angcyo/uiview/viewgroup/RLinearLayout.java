@@ -16,6 +16,7 @@ import android.widget.FrameLayout;
 import android.widget.LinearLayout;
 
 import com.angcyo.uiview.R;
+import com.angcyo.uiview.draw.RDrawLine;
 import com.angcyo.uiview.kotlin.ExKt;
 import com.angcyo.uiview.kotlin.ViewExKt;
 import com.angcyo.uiview.utils.ScreenUtil;
@@ -80,14 +81,7 @@ public class RLinearLayout extends LinearLayout {
         isInChatLayout = typedArray.getBoolean(R.styleable.RLinearLayout_r_is_in_chat_layout, isInChatLayout);
         widthHeightRatio = typedArray.getString(R.styleable.RLinearLayout_r_width_height_ratio);
 
-        mDrawLine = new RDrawLine(this);
-
-        mDrawLine.drawLine = typedArray.getInt(R.styleable.RLinearLayout_r_draw_line, mDrawLine.drawLine);
-        mDrawLine.drawLineOffsetLeft = typedArray.getDimensionPixelOffset(R.styleable.RLinearLayout_r_draw_line_offset_left, mDrawLine.drawLineOffsetLeft);
-        mDrawLine.drawLineOffsetRight = typedArray.getDimensionPixelOffset(R.styleable.RLinearLayout_r_draw_line_offset_right, mDrawLine.drawLineOffsetRight);
-        mDrawLine.drawLineColor = typedArray.getColor(R.styleable.RLinearLayout_r_draw_line_color, ContextCompat.getColor(getContext(), R.color.base_chat_bg_color));
-        mDrawLine.drawLineWidth = typedArray.getDimensionPixelOffset(R.styleable.RLinearLayout_r_draw_line_width, (int) mDrawLine.drawLineWidth);
-        mDrawLine.isDashLine = typedArray.getBoolean(R.styleable.RLinearLayout_r_draw_dash_line, mDrawLine.isDashLine);
+        mDrawLine = new RDrawLine(this, attrs);
 
         typedArray.recycle();
         resetMaxHeight();

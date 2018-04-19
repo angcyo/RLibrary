@@ -14,6 +14,7 @@ import android.view.MotionEvent;
 import android.widget.RelativeLayout;
 
 import com.angcyo.uiview.R;
+import com.angcyo.uiview.draw.RDrawLine;
 
 /**
  * Copyright (C) 2016,深圳市红鸟网络科技股份有限公司 All rights reserved.
@@ -48,14 +49,7 @@ public class RRelativeLayout extends RelativeLayout {
         TypedArray typedArray = context.obtainStyledAttributes(attrs, R.styleable.RRelativeLayout);
         mBackgroundDrawable = typedArray.getDrawable(R.styleable.RRelativeLayout_r_background);
 
-        mDrawLine = new RDrawLine(this);
-
-        mDrawLine.drawLine = typedArray.getInt(R.styleable.RRelativeLayout_r_draw_line, mDrawLine.drawLine);
-        mDrawLine.drawLineOffsetLeft = typedArray.getDimensionPixelOffset(R.styleable.RRelativeLayout_r_draw_line_offset_left, mDrawLine.drawLineOffsetLeft);
-        mDrawLine.drawLineOffsetRight = typedArray.getDimensionPixelOffset(R.styleable.RRelativeLayout_r_draw_line_offset_right, mDrawLine.drawLineOffsetRight);
-        mDrawLine.drawLineColor = typedArray.getColor(R.styleable.RRelativeLayout_r_draw_line_color, ContextCompat.getColor(getContext(), R.color.base_chat_bg_color));
-        mDrawLine.drawLineWidth = typedArray.getDimensionPixelOffset(R.styleable.RRelativeLayout_r_draw_line_width, (int) mDrawLine.drawLineWidth);
-        mDrawLine.isDashLine = typedArray.getBoolean(R.styleable.RRelativeLayout_r_draw_dash_line, mDrawLine.isDashLine);
+        mDrawLine = new RDrawLine(this, attrs);
 
         typedArray.recycle();
         initLayout();

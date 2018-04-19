@@ -15,6 +15,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.FrameLayout
 import com.angcyo.uiview.R
+import com.angcyo.uiview.draw.RDrawLine
 import com.angcyo.uiview.kotlin.calcWidthHeightRatio
 import com.angcyo.uiview.kotlin.centerX
 import com.angcyo.uiview.kotlin.density
@@ -102,14 +103,7 @@ open class RFrameLayout(context: Context, attributeSet: AttributeSet? = null) : 
         resetMaxHeight(typedArray.getDimension(R.styleable.RFrameLayout_r_max_height, 0f))
         //maxHeight = typedArray.getDimension(R.styleable.RFrameLayout_r_max_height, maxHeight)
 
-        mDrawLine = RDrawLine(this)
-
-        mDrawLine.drawLine = typedArray.getInt(R.styleable.RFrameLayout_r_draw_line, mDrawLine.drawLine)
-        mDrawLine.drawLineOffsetLeft = typedArray.getDimensionPixelOffset(R.styleable.RFrameLayout_r_draw_line_offset_left, mDrawLine.drawLineOffsetLeft)
-        mDrawLine.drawLineOffsetRight = typedArray.getDimensionPixelOffset(R.styleable.RFrameLayout_r_draw_line_offset_right, mDrawLine.drawLineOffsetRight)
-        mDrawLine.drawLineColor = typedArray.getColor(R.styleable.RFrameLayout_r_draw_line_color, ContextCompat.getColor(getContext(), R.color.base_chat_bg_color))
-        mDrawLine.drawLineWidth = typedArray.getDimensionPixelOffset(R.styleable.RFrameLayout_r_draw_line_width, mDrawLine.drawLineWidth.toInt()).toFloat()
-        mDrawLine.isDashLine = typedArray.getBoolean(R.styleable.RFrameLayout_r_draw_dash_line, mDrawLine.isDashLine)
+        mDrawLine = RDrawLine(this, attributeSet)
 
         setWillNotDraw(false)
 

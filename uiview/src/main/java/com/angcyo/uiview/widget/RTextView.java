@@ -33,6 +33,7 @@ import android.view.inputmethod.EditorInfo;
 import android.widget.TextView;
 
 import com.angcyo.uiview.R;
+import com.angcyo.uiview.draw.RDrawNoRead;
 import com.angcyo.uiview.kotlin.ExKt;
 import com.angcyo.uiview.kotlin.ViewExKt;
 import com.angcyo.uiview.skin.SkinHelper;
@@ -102,6 +103,7 @@ public class RTextView extends AppCompatTextView {
      * 暂停滚动
      */
     boolean pauseScroll = false;
+    RDrawNoRead mDrawNoRead;
     private Drawable mBackgroundDrawable;
     private CharSequence mRawText;
     private int mPaddingLeft;
@@ -110,16 +112,6 @@ public class RTextView extends AppCompatTextView {
     private int mLeftOffset = 0, mTopOffset = 0, mBottomOffset = 0, textLeftOffset = (int) (2 * density());
     private String mLeftString;
     private boolean leftStringBold = false;
-    /**
-     * 是否显示 未读小红点
-     */
-    private boolean showNoRead = false;
-    /**
-     * 小红点半径
-     */
-    private float noReadRadius = 4 * density();
-    private float noReadPaddingTop = 2 * density();
-    private float noReadPaddingRight = 2 * density();
     private boolean autoFixTextSize = false;
     private boolean hideWithEmptyText = false;
     /**
@@ -149,7 +141,6 @@ public class RTextView extends AppCompatTextView {
      */
     private int scrollTextCircleOffset = 0;
     private int scrollType = SCROLL_TYPE_DEFAULT;
-
     /**
      * 使用英文字符数过滤, 一个汉字等于2个英文, 一个emoji表情等于2个汉字
      */
@@ -198,9 +189,7 @@ public class RTextView extends AppCompatTextView {
         leftDrawableOffsetX = typedArray.getDimensionPixelOffset(R.styleable.RTextView_r_left_drawable_offset_x, leftDrawableOffsetX);
         leftDrawableOffsetY = typedArray.getDimensionPixelOffset(R.styleable.RTextView_r_left_drawable_offset_y, leftDrawableOffsetY);
 
-        noReadRadius = typedArray.getDimensionPixelOffset(R.styleable.RTextView_r_noread_radius, (int) noReadRadius);
-        noReadPaddingRight = typedArray.getDimensionPixelOffset(R.styleable.RTextView_r_noread_padding_right, (int) noReadPaddingRight);
-        noReadPaddingTop = typedArray.getDimensionPixelOffset(R.styleable.RTextView_r_noread_padding_top, (int) noReadPaddingTop);
+        mDrawNoRead = new RDrawNoRead(this, attrs);
 
         autoFixTextSize = typedArray.getBoolean(R.styleable.RTextView_r_auto_fix_text_size, autoFixTextSize);
 
@@ -488,14 +477,7 @@ public class RTextView extends AppCompatTextView {
             }
         }
 
-        if (showNoRead /*|| isInEditMode()*/) {
-            //未读小红点
-            TextPaint textPaint = mTextPaint.getTextPaint();
-            textPaint.setStyle(Paint.Style.FILL);
-            textPaint.setColor(Color.RED);
-            //默认位置在右上角
-            canvas.drawCircle(getMeasuredWidth() - noReadPaddingRight - noReadRadius, noReadPaddingTop + noReadRadius, noReadRadius, textPaint);
-        }
+        mDrawNoRead.draw(canvas);
 
         if (centerSaveCount != -1) {
             canvas.restoreToCount(centerSaveCount);
@@ -1004,23 +986,13 @@ public class RTextView extends AppCompatTextView {
      * 是否显示未读小红点
      */
     public void setShowNoRead(boolean showNoRead) {
-        this.showNoRead = showNoRead;
-    }
-
-    /**
-     * 设置小红点半径
-     */
-    public void setNoReadRadius(float noReadRadius) {
-        this.noReadRadius = noReadRadius;
-    }
-
-    public void setNoReadPaddingTop(float noReadPaddingTop) {
-        this.noReadPaddingTop = noReadPaddingTop;
+        mDrawNoRead.setShowNoRead(showNoRead);
     }
 
     public void setNoReadPaddingRight(float noReadPaddingRight) {
-        this.noReadPaddingRight = noReadPaddingRight;
+        mDrawNoRead.setNoReadPaddingRight(noReadPaddingRight);
     }
+
 
     public void setAutoFixTextSize(boolean autoFixTextSize) {
         this.autoFixTextSize = autoFixTextSize;

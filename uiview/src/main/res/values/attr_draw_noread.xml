@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <attr name="r_show_noread" format="boolean"/>
+    <attr name="r_noread_radius" format="dimension"/>
+    <attr name="r_noread_padding_top" format="dimension"/>
+    <attr name="r_noread_padding_right" format="dimension"/>
+    <attr name="r_noread_color" format="color"/>
+
+    <declare-styleable name="RDrawNoread">
+        <attr name="r_show_noread"/>
+        <attr name="r_noread_radius"/>
+        <attr name="r_noread_padding_top"/>
+        <attr name="r_noread_padding_right"/>
+        <attr name="r_noread_color"/>
+    </declare-styleable>
+</resources>

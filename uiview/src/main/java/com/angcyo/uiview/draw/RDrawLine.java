@@ -1,16 +1,20 @@
-package com.angcyo.uiview.viewgroup;
+package com.angcyo.uiview.draw;
 
+import android.content.res.TypedArray;
 import android.graphics.Canvas;
 import android.graphics.DashPathEffect;
 import android.graphics.Paint;
+import android.support.v4.content.ContextCompat;
+import android.util.AttributeSet;
 import android.view.View;
 
+import com.angcyo.uiview.R;
 import com.angcyo.uiview.utils.ScreenUtil;
 
 /**
  * Created by angcyo on 2018/03/31 08:39
  */
-public class RDrawLine {
+public class RDrawLine extends BaseDraw {
 
     public static final int DRAW_LINE_LEFT = 1;
     public static final int DRAW_LINE_TOP = 2;
@@ -23,18 +27,31 @@ public class RDrawLine {
     public int drawLineOffsetLeft = 0;//左偏移
     public int drawLineOffsetRight = 0;//右偏移
     public float drawLineWidth = 1 * ScreenUtil.density();
-    private Paint linePaint;
-    private View mView;
-
     /**
      * 是否是虚线, 蚂蚁线
      */
     public boolean isDashLine = false;
+    private Paint linePaint;
 
-    public RDrawLine(View view) {
-        mView = view;
+    public RDrawLine(View view, AttributeSet attr) {
+        super(view, attr);
     }
 
+    @Override
+    protected void initAttribute(AttributeSet attr) {
+        TypedArray typedArray = getContext().obtainStyledAttributes(attr, R.styleable.RDrawLine);
+
+        drawLine = typedArray.getInt(R.styleable.RDrawLine_r_draw_line, drawLine);
+        drawLineOffsetLeft = typedArray.getDimensionPixelOffset(R.styleable.RDrawLine_r_draw_line_offset_left, drawLineOffsetLeft);
+        drawLineOffsetRight = typedArray.getDimensionPixelOffset(R.styleable.RDrawLine_r_draw_line_offset_right, drawLineOffsetRight);
+        drawLineColor = typedArray.getColor(R.styleable.RDrawLine_r_draw_line_color, ContextCompat.getColor(getContext(), R.color.base_chat_bg_color));
+        drawLineWidth = typedArray.getDimensionPixelOffset(R.styleable.RDrawLine_r_draw_line_width, (int) drawLineWidth);
+        isDashLine = typedArray.getBoolean(R.styleable.RDrawLine_r_draw_dash_line, isDashLine);
+
+        typedArray.recycle();
+    }
+
+    @Override
     public void draw(Canvas canvas) {
         if (drawLine > 0) {
             if (linePaint == null) {
