@@ -1,6 +1,5 @@
 package com.angcyo.library.glide;
 
-import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.BitmapShader;
 import android.graphics.Canvas;
@@ -15,9 +14,6 @@ import java.security.MessageDigest;
  * Created by angcyo on 2017-01-08.
  */
 public class GlideCircleTransform extends BitmapTransformation {
-    public GlideCircleTransform(Context context) {
-        super(context);
-    }
 
     private static Bitmap circleCrop(BitmapPool pool, Bitmap source) {
         if (source == null) return null;
