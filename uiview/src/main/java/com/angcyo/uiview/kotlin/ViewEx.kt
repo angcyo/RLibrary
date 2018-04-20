@@ -7,8 +7,10 @@ import android.graphics.Paint
 import android.graphics.Rect
 import android.graphics.drawable.Drawable
 import android.support.v4.content.ContextCompat
+import android.support.v4.view.GestureDetectorCompat
 import android.support.v4.view.ViewCompat
 import android.text.TextUtils
+import android.view.GestureDetector
 import android.view.MotionEvent
 import android.view.View
 import android.view.animation.LinearInterpolator
@@ -281,9 +283,16 @@ public fun EditText.onEmptyText(listener: (Boolean) -> Unit) {
 
 public fun EditText.onTextChanage(listener: (String) -> Unit) {
     this.addTextChangedListener(object : SingleTextWatcher() {
+        var lastText: String? = null
+
         override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
             super.onTextChanged(s, start, before, count)
-            listener.invoke(s?.toString() ?: "")
+            val text = s?.toString() ?: ""
+            if (TextUtils.equals(lastText, text)) {
+            } else {
+                listener.invoke(text)
+                lastText = text
+            }
         }
     })
 }
@@ -378,6 +387,20 @@ public fun View.onDoubleTap(listener: () -> Unit) {
     RGestureDetector.onDoubleTap(this) {
         listener.invoke()
     }
+}
+
+/**自己监听控件的单击事件, 防止系统的不回调*/
+public fun View.onSingleTapConfirmed(listener: () -> Boolean) {
+    val gestureDetectorCompat = GestureDetectorCompat(context,
+            object : GestureDetector.SimpleOnGestureListener() {
+                override fun onSingleTapConfirmed(e: MotionEvent?): Boolean {
+                    return listener.invoke()
+                }
+            })
+    setOnTouchListener({ _, event ->
+        gestureDetectorCompat.onTouchEvent(event)
+        false
+    })
 }
 
 /**无限循环, 每秒60帧的速度*/

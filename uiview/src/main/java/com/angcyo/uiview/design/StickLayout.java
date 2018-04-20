@@ -92,6 +92,22 @@ public class StickLayout extends RelativeLayout {
         postInvalidate();
     }
 
+    /**
+     * 关闭头部
+     */
+    public void scrollToClose() {
+        mOverScroller.startScroll(0, getScrollY(), 0, maxScrollY - getScrollY());
+        postInvalidate();
+    }
+
+    /**
+     * 打开头部
+     */
+    public void scrollToOpen() {
+        mOverScroller.startScroll(0, getScrollY(), 0, -getScrollY());
+        postInvalidate();
+    }
+
     @Override
     public void computeScroll() {
         //L.e("call: scrollTo([x, y])-> " + mOverScroller.getCurrVelocity() + "       :" + mOverScroller.getCurrY());

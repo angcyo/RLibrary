@@ -15,6 +15,7 @@ import android.widget.OverScroller;
 import android.widget.RelativeLayout;
 
 import com.angcyo.uiview.R;
+import com.angcyo.uiview.kotlin.ViewExKt;
 import com.angcyo.uiview.recycler.RRecyclerView;
 import com.angcyo.uiview.utils.Reflect;
 
@@ -218,7 +219,11 @@ public class StickLayout2 extends RelativeLayout {
         }
 
         if (mFloatView != null) {
-            measureChild(mFloatView, widthMeasureSpec, heightMeasureSpec);
+            if (mFloatView.getVisibility() == View.GONE) {
+                measureChild(mFloatView, ViewExKt.exactlyMeasure(this, 0), ViewExKt.exactlyMeasure(this, 0));
+            } else {
+                measureChild(mFloatView, widthMeasureSpec, heightMeasureSpec);
+            }
         }
         measureChild(scrollView, widthMeasureSpec,
                 MeasureSpec.makeMeasureSpec(heightSize - floatViewHeight() - floatTopOffset, MeasureSpec.EXACTLY));
@@ -554,6 +559,22 @@ public class StickLayout2 extends RelativeLayout {
 //        fling(velocityY);
 //        return super.onNestedPreFling(target, velocityX, velocityY);
 //    }
+
+    /**
+     * 关闭头部
+     */
+    public void scrollToClose() {
+        mOverScroller.startScroll(0, getScrollY(), 0, maxScrollY - getScrollY());
+        postInvalidate();
+    }
+
+    /**
+     * 打开头部
+     */
+    public void scrollToOpen() {
+        mOverScroller.startScroll(0, getScrollY(), 0, -getScrollY());
+        postInvalidate();
+    }
 
     public void setOnScrollListener(StickLayout.OnScrollListener onScrollListener) {
         mOnScrollListener = onScrollListener;
