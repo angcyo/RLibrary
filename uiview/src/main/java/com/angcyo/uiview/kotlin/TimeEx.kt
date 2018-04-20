@@ -13,6 +13,11 @@ fun Long.toDay(): Int {
     return (this / (24 * 60 * 60 * 1000)).toInt()
 }
 
+/**当前时间和现在时间对比, 还剩多少天*/
+fun Long.toNowDay(): Int {
+    return (this - nowTime()).toDay()
+}
+
 fun Int.toDay(): Int {
     return this.toLong().toDay()
 }
