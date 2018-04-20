@@ -321,7 +321,8 @@ public class SlidingTabLayout extends HorizontalScrollView implements ViewPager.
         mTabsContainer.addView(tabView, position, lp_tab);
     }
 
-    private void updateTabStyles() {
+    //angcyo
+    public void updateTabStyles() {
         for (int i = 0; i < mTabCount; i++) {
             View v = mTabsContainer.getChildAt(i);
 //            v.setPadding((int) mTabPadding, v.getPaddingTop(), (int) mTabPadding, v.getPaddingBottom());
@@ -366,8 +367,9 @@ public class SlidingTabLayout extends HorizontalScrollView implements ViewPager.
 
     /**
      * HorizontalScrollView滚到当前tab,并且居中显示
+     * angcyo
      */
-    private void scrollToCurrentTab() {
+    public void scrollToCurrentTab() {
         if (mTabCount <= 0) {
             return;
         }
@@ -958,6 +960,10 @@ public class SlidingTabLayout extends HorizontalScrollView implements ViewPager.
                 tv_tab_title.setText(pageTitle);
             }
         }
+    }
+
+    public LinearLayout getTabsContainer() {
+        return mTabsContainer;
     }
 
     class InnerPagerAdapter extends FragmentPagerAdapter {

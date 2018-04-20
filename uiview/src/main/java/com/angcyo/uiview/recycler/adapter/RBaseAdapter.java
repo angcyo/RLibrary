@@ -234,16 +234,35 @@ public abstract class RBaseAdapter<T> extends RecyclerView.Adapter<RBaseViewHold
     }
 
     @Override
+    public void onViewRecycled(@NonNull RBaseViewHolder holder) {
+        super.onViewRecycled(holder);
+        if (holder.getItemViewType() == ITEM_TYPE_LOAD_MORE) {
+            mLoadMoreView = null;
+        }
+        if (holder.getItemViewType() == ITEM_TYPE_SHOW_STATE) {
+            mIShowState = null;
+        }
+    }
+
+    @Override
     public void onBindViewHolder(RBaseViewHolder holder, int position) {
         //L.e("call: onBindViewHolder([holder, position])-> " + position);
         try {
             if (isStateLayout()) {
+                if (holder.getItemViewType() == ITEM_TYPE_SHOW_STATE) {
+                    mIShowState = (IShowState) holder.itemView;
+                }
+
                 if (mIShowState != null) {
                     mIShowState.setShowState(mShowState);
                     onBindShowStateView((ItemShowStateLayout) mIShowState, mShowState);
                 }
             } else if (mEnableLoadMore && isLast(position)) {
                 /**如果第一个就是加载更多的布局, 需要调用加载更多么?*/
+                if (holder.getItemViewType() == ITEM_TYPE_LOAD_MORE) {
+                    mLoadMoreView = (ILoadMore) holder.itemView;
+                }
+
                 onBindLoadMore(position);
                 onBindLoadMoreView(holder, position);
             } else {
@@ -303,6 +322,11 @@ public abstract class RBaseAdapter<T> extends RecyclerView.Adapter<RBaseViewHold
     private void updateLoadMoreView() {
         if (mLoadMoreView != null) {
             mLoadMoreView.setLoadState(mLoadState);
+
+            if (mLoadState == ILoadMore.NORMAL) {
+                //当前布局已经在界面中, 又重新出发了加载更多
+                notifyItemChanged(getLastPosition());
+            }
         }
     }
 
