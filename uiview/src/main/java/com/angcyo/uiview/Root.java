@@ -31,7 +31,7 @@ import kotlin.jvm.functions.Function2;
 public class Root {
     public static String APP_FOLDER = RApplication.getApp().getPackageName();
 
-    public static String device_info(Activity activity) {
+    public static String device_info(Context activity) {
         StringBuilder builder = new StringBuilder();
         builder.append(AppUtils.getAppVersionName(RApplication.getApp()));
         builder.append(" by ");
@@ -39,28 +39,24 @@ public class Root {
         builder.append(" on ");
         builder.append(ResUtil.getThemeString(RApplication.getApp(), "os_name"));
         builder.append(" ");
-        builder.append(ScreenUtil.screenWidth);
-        builder.append("×");
-        builder.append(ScreenUtil.screenHeight);
+        builder.append(ScreenUtil.screenWidth).append("×").append(ScreenUtil.screenHeight);
         builder.append(" ");
-        builder.append(activity.getWindow().getDecorView().getMeasuredHeight());
-        builder.append(" ");
+        if (activity instanceof Activity) {
+            builder.append(((Activity) activity).getWindow().getDecorView().getMeasuredHeight());
+            builder.append(" ");
+        }
         builder.append(ScreenUtil.densityDpi);
         builder.append(" ");
         builder.append(ScreenUtil.density);
         builder.append(" \n");
-        builder.append("v:");
-        builder.append(Build.MANUFACTURER);
-        builder.append(" ");
-        builder.append("m:");
-        builder.append(Build.MODEL);
-        builder.append(" ");
-        builder.append("d:");
-        builder.append(Build.DEVICE);
-        builder.append(" ");
-        builder.append("h:");
-        builder.append(Build.HARDWARE);
-        builder.append(" ");
+        builder.append("v:").append(Build.MANUFACTURER).append(" ");
+        builder.append("m:").append(Build.MODEL).append(" ");
+        builder.append("d:").append(Build.DEVICE).append(" ");
+        builder.append("h:").append(Build.HARDWARE).append(" ");
+
+        builder.append(Build.VERSION.RELEASE).append(" ");
+        builder.append(Build.VERSION.SDK_INT).append(" ");
+
         return builder.toString();
     }
 

@@ -619,7 +619,7 @@ public class RCrashHandler implements Thread.UncaughtExceptionHandler {
         }
 
 //        if (!isShow) {
-            /*注意下面的代码, 不能少哦*/
+        /*注意下面的代码, 不能少哦*/
 //            if (defaultUncaughtExceptionHandler != null) {
 //                defaultUncaughtExceptionHandler.uncaughtException(thread, ex);
 //            } else {
@@ -657,6 +657,8 @@ public class RCrashHandler implements Thread.UncaughtExceptionHandler {
         // 导出发生异常的时间
         pw.println(dataTime);
         pw.println(UILayoutImpl.LAYOUT_INFO);
+        pw.println(Root.device_info(RApplication.getApp()));
+        pw.println();
         // 导出手机信息
         dumpPhoneInfo(pw);
 
@@ -670,32 +672,32 @@ public class RCrashHandler implements Thread.UncaughtExceptionHandler {
         // 应用的版本名称和版本号
         PackageManager pm = context.getPackageManager();
         PackageInfo pi = pm.getPackageInfo(context.getPackageName(), PackageManager.GET_ACTIVITIES);
-        pw.print("App VersionName: ");
-        pw.print(pi.versionName);
-        pw.print(" VersionCode: ");
-        pw.println(pi.versionCode);
+//        pw.print("App VersionName: ");
+//        pw.print(pi.versionName);
+//        pw.print(" VersionCode: ");
+//        pw.println(pi.versionCode);
 //        pw.println();
 
         // android版本号
-        pw.print("OS Version: ");
-        pw.print(Build.VERSION.RELEASE);
-        pw.print(" ");
-        pw.println(Build.VERSION.SDK_INT);
-        pw.println();
+//        pw.print("OS Version: ");
+//        pw.print(Build.VERSION.RELEASE);
+//        pw.print(" ");
+//        pw.println(Build.VERSION.SDK_INT);
+//        pw.println();
 
         // 手机制造商
-        pw.print("Vendor: ");
-        pw.println(Build.MANUFACTURER);
+//        pw.print("Vendor: ");
+//        pw.println(Build.MANUFACTURER);
 //        pw.println();
 
         // 手机型号
-        pw.print("Model: ");
-        pw.println(Build.MODEL);
-        pw.print("Device: ");
-        pw.println(Build.DEVICE);
-        pw.print("Hardware: ");
-        pw.println(Build.HARDWARE);
-        pw.println();
+//        pw.print("Model: ");
+//        pw.println(Build.MODEL);
+//        pw.print("Device: ");
+//        pw.println(Build.DEVICE);
+//        pw.print("Hardware: ");
+//        pw.println(Build.HARDWARE);
+//        pw.println();
         pw.print("IMEI: ");
         pw.println(RApplication.getIMEI());
         pw.println();
