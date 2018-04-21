@@ -52,7 +52,7 @@ public class RDrawLine extends BaseDraw {
     }
 
     @Override
-    public void draw(Canvas canvas) {
+    public void onDraw(Canvas canvas) {
         if (drawLine > 0) {
             if (linePaint == null) {
                 linePaint = new Paint(Paint.ANTI_ALIAS_FLAG);

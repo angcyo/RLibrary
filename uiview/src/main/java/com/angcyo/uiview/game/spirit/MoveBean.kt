@@ -60,10 +60,10 @@ open class MoveBean(drawables: Array<Drawable>,
                 val x1 = endPoint.x - startPoint.x
                 val x2 = drawPoint.x - startPoint.x
                 val fl = 1 - Math.abs(x2) * 1f / Math.abs(x1)
-                //L.e("call: draw -> $fl")
+                //L.e("call: onDraw -> $fl")
                 drawableAlpha = (255 * fl).toInt()
             }
-            //L.i("call: draw -> ${maxMoveTime} $time $drawPoint $startPoint $endPoint ${aX()} ${aY()}")
+            //L.i("call: onDraw -> ${maxMoveTime} $time $drawPoint $startPoint $endPoint ${aX()} ${aY()}")
             super.draw(canvas, gameStartTime, lastRenderTime, nowRenderTime, onDrawEnd)
             //L.w("${drawDrawable.bounds}")
         }

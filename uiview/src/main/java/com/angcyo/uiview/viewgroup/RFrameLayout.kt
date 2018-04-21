@@ -143,7 +143,7 @@ open class RFrameLayout(context: Context, attributeSet: AttributeSet? = null) : 
             it.draw(canvas)
         }
         super.draw(canvas)
-        mDrawLine.draw(canvas)
+        mDrawLine.onDraw(canvas)
         if (!isEnabled && showNoEnableMark) {
             canvas.drawColor(ContextCompat.getColor(context, R.color.default_base_tran_dark2))
         }

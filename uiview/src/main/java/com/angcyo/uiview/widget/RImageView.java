@@ -137,7 +137,7 @@ public class RImageView extends CircleImageView {
 //        canvas.concat(matrix);
 //        BitmapDrawable bitmapDrawable = new BitmapDrawable(res, bitmap);
 //        bitmapDrawable.setBounds(0, 0, dwidth, dheight);
-//        bitmapDrawable.draw(canvas);
+//        bitmapDrawable.onDraw(canvas);
 
         Canvas canvas = new Canvas(result);
         Paint paint = new Paint(Paint.DITHER_FLAG | Paint.FILTER_BITMAP_FLAG);

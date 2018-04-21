@@ -53,8 +53,8 @@ public class RDrawNoRead extends BaseDraw {
     }
 
     @Override
-    public void draw(Canvas canvas) {
-        super.draw(canvas);
+    public void onDraw(Canvas canvas) {
+        super.onDraw(canvas);
 
         if (showNoRead /*|| isInEditMode()*/) {
             //未读小红点

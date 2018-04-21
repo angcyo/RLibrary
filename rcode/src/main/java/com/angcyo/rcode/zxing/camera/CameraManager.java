@@ -67,7 +67,7 @@ public final class CameraManager {
     /**
      * Opens the camera driver and initializes the hardware parameters.
      *
-     * @param holder The surface object which the camera will draw preview frames
+     * @param holder The surface object which the camera will onDraw preview frames
      *               into.
      * @throws IOException Indicates the camera driver failed to open.
      */
@@ -202,12 +202,12 @@ public final class CameraManager {
     }
 
     /**
-     * Calculates the framing rect which the UI should draw to show the user
+     * Calculates the framing rect which the UI should onDraw to show the user
      * where to place the barcode. This target helps with alignment as well as
      * forces the user to hold the device far enough away to ensure the image
      * will be in focus.
      *
-     * @return The rectangle to draw on screen in window coordinates.
+     * @return The rectangle to onDraw on screen in window coordinates.
      */
     public synchronized Rect getFramingRect() {
         if (framingRect == null) {

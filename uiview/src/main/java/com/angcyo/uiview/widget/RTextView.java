@@ -477,7 +477,7 @@ public class RTextView extends AppCompatTextView {
             }
         }
 
-        mDrawNoRead.draw(canvas);
+        mDrawNoRead.onDraw(canvas);
 
         if (centerSaveCount != -1) {
             canvas.restoreToCount(centerSaveCount);

@@ -251,7 +251,7 @@ public class RLinearLayout extends LinearLayout {
             mBackgroundDrawable.draw(canvas);
         }
         super.draw(canvas);
-        mDrawLine.draw(canvas);
+        mDrawLine.onDraw(canvas);
         if (!isEnabled() && showNoEnableMark) {
             canvas.drawColor(ContextCompat.getColor(getContext(), R.color.default_base_tran_dark2));
         }

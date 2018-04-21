@@ -32,7 +32,7 @@ public abstract class BaseDraw {
         return mView.getContext();
     }
 
-    public void draw(Canvas canvas) {
+    public void onDraw(Canvas canvas) {
 
     }
 

@@ -799,7 +799,7 @@ public class RRecyclerView extends RecyclerView implements StickLayout.CanScroll
 //        canvas.save();
 //        try {
 //            canvas.translate(getScrollX(), getScrollY());
-//            (((ViewGroup) getChildAt(0))).getChildAt(0).draw(canvas);
+//            (((ViewGroup) getChildAt(0))).getChildAt(0).onDraw(canvas);
 //        } catch (Exception e) {
 //            e.printStackTrace();
 //        }

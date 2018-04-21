@@ -186,7 +186,7 @@ public final class ViewfinderView extends View {
                 // 设置渐变图填充边界
                 // mDrawable.setBounds(mRect);
                 // 画出渐变线条
-                // mDrawable.draw(canvas);
+                // mDrawable.onDraw(canvas);
 
 				/* 以下为图片作为扫描线 */
                 mRect.set(frame.left - 6, frame.top + i - 6, frame.right + 6,
