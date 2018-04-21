@@ -59,6 +59,9 @@ public class FDown {
         FileDownloader.getImpl().unBindServiceIfIdle();
     }
 
+    /**
+     * Android O 上, 不允许在后台启动service
+     */
     public static void init(Application context, boolean debug) {
         /**
          * just for cache Application's Context, and ':filedownloader' progress will NOT be launched
