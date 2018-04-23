@@ -1151,6 +1151,7 @@ public class RUtils {
 
     /**
      * 该方法是调用了系统的下载管理器
+     * 参考更多: https://github.com/simplepeng/Updater
      */
     public static long downLoadFile(Context context, String url, String fileName) {
         if (TextUtils.isEmpty(url)) {

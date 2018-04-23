@@ -252,6 +252,13 @@ public class ImageDataSource implements LoaderManager.LoaderCallbacks<Cursor> {
         //回调接口，通知图片数据准备完成
         ImagePicker.getInstance().setImageFolders(imageFolders);
         loadedListener.onImagesLoaded(imageFolders);
+
+        //销毁(onLoadFinished, 会在屏幕灭屏亮屏后再次回调, 然后数据没了)
+        LoaderManager loaderManager = activity.getSupportLoaderManager();
+        loaderManager.destroyLoader(LOADER_VIDEO_CATEGORY);
+        loaderManager.destroyLoader(LOADER_VIDEO_ALL);
+        loaderManager.destroyLoader(LOADER_CATEGORY);
+        loaderManager.destroyLoader(LOADER_ALL);
     }
 
     private void loadImage(Cursor data, ArrayList<ImageItem> allImages) {
