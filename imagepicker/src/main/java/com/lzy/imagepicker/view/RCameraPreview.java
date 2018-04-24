@@ -178,7 +178,11 @@ public class RCameraPreview extends TextureView {
         }
         if (mCamera != null) {
             mCamera.setPreviewCallback(null);
-            mCamera.stopPreview();
+            try {
+                mCamera.stopPreview();
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
             mCamera.release();
             mCamera = null;
         }
