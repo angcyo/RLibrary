@@ -162,6 +162,8 @@ public abstract class UIRecyclerUIView<H, T, F> extends UIContentView
             recyclerView.addItemDecoration(itemDecoration);
         }
         mExBaseAdapter = createAdapter();
+        initAdapter(mExBaseAdapter);
+
         recyclerView.setAdapter(mExBaseAdapter);
 
         if (mExBaseAdapter != null) {
@@ -177,7 +179,12 @@ public abstract class UIRecyclerUIView<H, T, F> extends UIContentView
         }
     }
 
+    @NonNull
     protected abstract RExBaseAdapter<H, T, F> createAdapter();
+
+    protected void initAdapter(@NonNull RExBaseAdapter<H, T, F> baseAdapter) {
+
+    }
 
     protected RecyclerView.ItemDecoration createItemDecoration() {
         return null;
@@ -311,8 +318,13 @@ public abstract class UIRecyclerUIView<H, T, F> extends UIContentView
                     mExBaseAdapter.appendAllData(datas);
                 }
 
-                if (mExBaseAdapter.isEnableLoadMore() ||
-                        mExBaseAdapter.isAutoEnableLoadMore()) {
+                if (mExBaseAdapter.isAutoEnableLoadMore()) {
+                    if (isUIHaveLoadMore(datas)) {
+                        mExBaseAdapter.setEnableLoadMore(true);
+                    }
+                }
+
+                if (mExBaseAdapter.isEnableLoadMore()) {
                     if (isUIHaveLoadMore(datas)) {
                         mExBaseAdapter.setLoadMoreEnd();
                     } else {
