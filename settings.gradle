@@ -1,3 +1,5 @@
+//apply from: './RLibrary/settings.gradle'
+
 //必选
 include ':RLibrary:uiview'
 include ':RLibrary:library'
@@ -5,21 +7,21 @@ include ':RLibrary:github'
 include ':RLibrary:rcode'
 include ':RLibrary:zxingzbar'
 
-//可选
-include ':RLibrary:imagepicker'
-include ':RLibrary:filedownloader'
-include ':RLibrary:websocket'
-
-allprojects {
-    repositories {
-        jcenter()
-        google()
-
-        maven { url "https://jitpack.io" }
-
-        maven { url "https://maven.google.com" }
-    }
-}
+////可选
+//include ':RLibrary:imagepicker'
+//include ':RLibrary:filedownloader'
+//include ':RLibrary:websocket'
+//
+//allprojects {
+//    repositories {
+//        jcenter()
+//        google()
+//
+//        maven { url "https://jitpack.io" }
+//
+//        maven { url "https://maven.google.com" }
+//    }
+//}
 
 //<activity
 //android:name=".activity.HnUIMainActivity"
