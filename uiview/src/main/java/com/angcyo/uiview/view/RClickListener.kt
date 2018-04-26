@@ -72,5 +72,4 @@ abstract class RClickListener : View.OnClickListener {
     open fun onNetPoor() {
         T_.error(RApplication.getApp().getString(R.string.base_net_poor_tip))
     }
-
 }

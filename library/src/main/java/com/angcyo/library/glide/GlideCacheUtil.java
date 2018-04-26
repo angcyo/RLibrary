@@ -13,8 +13,9 @@ import java.io.File;
 import java.math.BigDecimal;
 
 import rx.Observable;
-import rx.Subscriber;
+import rx.Observer;
 import rx.android.schedulers.AndroidSchedulers;
+import rx.observables.SyncOnSubscribe;
 import rx.schedulers.Schedulers;
 
 /**
@@ -110,12 +111,20 @@ public class GlideCacheUtil {
      */
     public Observable<Boolean> clearCacheFolder(final Context context) {
         return Observable
-                .create(new Observable.OnSubscribe<Boolean>() {
+                .create(new SyncOnSubscribe<Integer, Boolean>() {
                     @Override
-                    public void call(Subscriber<? super Boolean> subscriber) {
-                        subscriber.onStart();
-                        subscriber.onNext(deleteFolderFile(context.getCacheDir(), false));
-                        subscriber.onCompleted();
+                    protected Integer generateState() {
+                        return 1;
+                    }
+
+                    @Override
+                    protected Integer next(Integer state, Observer<? super Boolean> observer) {
+                        if (state <= 0) {
+                            observer.onCompleted();
+                        } else {
+                            observer.onNext(deleteFolderFile(context.getCacheDir(), false));
+                        }
+                        return 0;
                     }
                 })
                 .subscribeOn(Schedulers.io())

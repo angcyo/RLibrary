@@ -21,12 +21,15 @@ public class UnreadMsgUtils {
         }
         RelativeLayout.LayoutParams lp = (RelativeLayout.LayoutParams) msgView.getLayoutParams();
         DisplayMetrics dm = msgView.getResources().getDisplayMetrics();
+        int margin = (int) (4 * dm.density);
+        lp.setMargins(margin, margin, margin, margin);
+
         msgView.setVisibility(View.VISIBLE);
         if (num <= 0) {//圆点,设置默认宽高
             msgView.setStrokeWidth(0);
             msgView.setText("");
-            lp.width = (int) (5 * dm.density);
-            lp.height = (int) (5 * dm.density);
+            lp.width = (int) (8 * dm.density);
+            lp.height = (int) (8 * dm.density);
             msgView.setLayoutParams(lp);
         } else {
             lp.height = (int) (18 * dm.density);

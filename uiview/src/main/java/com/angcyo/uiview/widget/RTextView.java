@@ -987,6 +987,7 @@ public class RTextView extends AppCompatTextView {
      */
     public void setShowNoRead(boolean showNoRead) {
         mDrawNoRead.setShowNoRead(showNoRead);
+        postInvalidate();
     }
 
     public void setNoReadPaddingRight(float noReadPaddingRight) {

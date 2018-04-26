@@ -661,21 +661,21 @@ public class Rx<Rx> extends Observable<Rx> {
     }
 
     public static <T> Observable<T> create(final Func<T> doFunc) {
-        return create(new SyncOnSubscribe<String, T>() {
+        return create(new SyncOnSubscribe<Integer, T>() {
             @Override
-            protected String generateState() {
-                return "can do";
+            protected Integer generateState() {
+                return 1;
             }
 
             @Override
-            protected String next(String state, Observer<? super T> observer) {
+            protected Integer next(Integer state, Observer<? super T> observer) {
                 //L.e("next-----() -> " + state);
-                if (TextUtils.isEmpty(state)) {
+                if (state <= 0) {
                     observer.onCompleted();
                 } else {
                     observer.onNext(doFunc.call(observer));
                 }
-                return "";
+                return 0;
             }
         }).compose(com.angcyo.uiview.net.Rx.<T>transformer());
     }
