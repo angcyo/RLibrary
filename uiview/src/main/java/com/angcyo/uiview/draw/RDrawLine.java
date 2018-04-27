@@ -35,6 +35,7 @@ public class RDrawLine extends BaseDraw {
 
     public RDrawLine(View view, AttributeSet attr) {
         super(view, attr);
+        initAttribute(attr);
     }
 
     @Override

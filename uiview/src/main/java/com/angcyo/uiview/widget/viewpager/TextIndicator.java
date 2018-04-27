@@ -44,7 +44,7 @@ public class TextIndicator extends AppCompatTextView implements ViewPager.OnPage
         public void afterTextChanged(Editable s) {
             if (mExEditText != null) {
                 if (mExEditText.isUseCharLengthFilter()) {
-                    initIndicator(mExEditText.getCharLength(), maxCount);
+                    initIndicator(mExEditText.getCharLength() / 2, maxCount);
                 } else {
                     setCurrentCount(s.length());
                 }
@@ -66,6 +66,14 @@ public class TextIndicator extends AppCompatTextView implements ViewPager.OnPage
         super(context, attrs, defStyleAttr);
     }
 
+    @Override
+    protected void onAttachedToWindow() {
+        super.onAttachedToWindow();
+        if (isInEditMode() && TextUtils.isEmpty(getText())) {
+            initIndicator(1, 10);
+        }
+    }
+
     public void setupViewPager(ViewPager viewPager) {
         mViewPager = viewPager;
         mViewPager.addOnPageChangeListener(this);
@@ -75,7 +83,7 @@ public class TextIndicator extends AppCompatTextView implements ViewPager.OnPage
     public void setupEditText(EditText editText) {
         int max = 0;
         if (editText instanceof ExEditText && ((ExEditText) editText).isUseCharLengthFilter()) {
-            initIndicator(((ExEditText) editText).getMaxCharLength(), editText);
+            initIndicator(((ExEditText) editText).getMaxCharLength() / 2, editText);
         } else {
             InputFilter[] filters = editText.getFilters();
             for (int i = 0; i < filters.length; i++) {
@@ -125,11 +133,12 @@ public class TextIndicator extends AppCompatTextView implements ViewPager.OnPage
         if (editText instanceof ExEditText) {
             mExEditText = (ExEditText) editText;
             if (mExEditText.isUseCharLengthFilter()) {
-                initIndicator(mExEditText.getCharLength(), maxCount);
+                initIndicator(mExEditText.getCharLength() / 2, maxCount);
             } else {
                 initIndicator(TextUtils.isEmpty(editText.getText()) ? 0 : editText.length(), maxCount);
             }
         } else {
+            mExEditText = null;
             initIndicator(TextUtils.isEmpty(editText.getText()) ? 0 : editText.length(), maxCount);
         }
         editText.removeTextChangedListener(mTextWatcher);

@@ -21,7 +21,8 @@ public abstract class BaseDraw {
 
     public BaseDraw(View view, AttributeSet attr) {
         mView = view;
-        initAttribute(attr);
+        //initAttribute(attr);//父类当中调用此方法初始化子类的成员, 会导致被覆盖的BUG
+        //所以此方法, 请在子类当中触发
     }
 
     protected float density() {

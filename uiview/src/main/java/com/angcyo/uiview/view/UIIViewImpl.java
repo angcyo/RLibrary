@@ -90,6 +90,7 @@ public abstract class UIIViewImpl implements IView {
     public static final int DEFAULT_DIALOG_FINISH_ANIM_TIME = 150;
     public static int DEFAULT_CLICK_DELAY_TIME = RClickListener.Companion.getDEFAULT_DELAY_CLICK_TIME();
     public Activity mActivity;
+    public Runnable onIViewUnload;
     protected ILayout mILayout;
     protected ILayout mParentILayout;//上层ILayout, 用来管理上层IView的生命周期, 如果有值, 会等于mILayout
     protected ILayout mChildILayout;//
@@ -97,7 +98,6 @@ public abstract class UIIViewImpl implements IView {
      * 根布局
      */
     protected View mRootView;
-
     /**
      * 用来管理rootView, onViewCreate 中创建了
      */
@@ -449,6 +449,9 @@ public abstract class UIIViewImpl implements IView {
     @Override
     public void onViewUnload(UIParam uiParam) {
         removeCallbacks(delayFinishRunnable);
+        if (onIViewUnload != null) {
+            onIViewUnload.run();
+        }
     }
 
     @Override
@@ -1619,6 +1622,17 @@ public abstract class UIIViewImpl implements IView {
     public UIIViewImpl setDelayFinish(long delayFinish) {
         this.delayFinish = delayFinish;
         return this;
+    }
+
+
+    @Override
+    public boolean needHideSoftInputForStart() {
+        return true;
+    }
+
+    @Override
+    public boolean needHideSoftInputForFinish() {
+        return true;
     }
 
     public interface OnCountDown {

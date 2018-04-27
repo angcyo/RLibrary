@@ -1265,7 +1265,10 @@ public class RUtils {
         if (TextUtils.isEmpty(name)) {
             return result;
         }
-        String all = name.replaceAll("\\+", "").replaceAll("=", "").replaceAll("/", "").replaceAll("&", "");
+        String all = name.replaceAll("\\+", "")
+                .replaceAll("=", "")
+                .replaceAll("/", "")
+                .replaceAll("&", "");
         if (TextUtils.isEmpty(all)) {
             return result;
         }

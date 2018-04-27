@@ -10,7 +10,6 @@ import android.view.animation.Animation;
 import android.widget.FrameLayout;
 
 import com.angcyo.uiview.base.UIBaseView;
-import com.angcyo.uiview.base.UILayoutActivity;
 import com.angcyo.uiview.container.ILayout;
 import com.angcyo.uiview.container.UIParam;
 import com.angcyo.uiview.dynamicload.internal.DLPluginPackage;
@@ -326,6 +325,16 @@ public interface IView {
     void setPluginPackage(DLPluginPackage pluginPackage);//2018-4-1 插件加载的支持
 
     boolean isInPlugin();//是否是在插件中加载
+
+    /**
+     * 启动当前IVIew的时候, 是否需要调用隐藏键盘
+     */
+    boolean needHideSoftInputForStart();
+
+    /**
+     * 关闭当前IVIew的时候, 是否需要调用隐藏键盘
+     */
+    boolean needHideSoftInputForFinish();
 
     enum IViewShowState {
         STATE_NORMAL,

@@ -1095,7 +1095,9 @@ public class UILayoutImpl extends SwipeBackLayout implements ILayout, UIViewPage
             return null;
         }
 
-        hideSoftInput();
+        if (iView.needHideSoftInputForStart()) {
+            hideSoftInput();
+        }
 
         iView.onAttachedToILayout(this);
 
@@ -1216,7 +1218,13 @@ public class UILayoutImpl extends SwipeBackLayout implements ILayout, UIViewPage
         L.i(log);
         saveToSDCard(log);
 
-        ViewPattern lastViewPattern = findLastLifecycleViewPattern(finishViewPattern);
+        ViewPattern lastViewPattern;
+        if (param.isFinishBack) {
+            //后台关闭的界面, 只操作当前需要finish的IView, 不操作其他IView
+            lastViewPattern = null;
+        } else {
+            lastViewPattern = findLastLifecycleViewPattern(finishViewPattern);
+        }
 
         if (param.isSwipeBack) {
 
@@ -2167,7 +2175,9 @@ public class UILayoutImpl extends SwipeBackLayout implements ILayout, UIViewPage
     }
 
     public void removeViewPattern(final ViewPattern viewPattern, final UIParam param, final Runnable runnable) {
-        hideSoftInput();
+        if (viewPattern.mIView.needHideSoftInputForFinish()) {
+            hideSoftInput();
+        }
         final View view = viewPattern.mView;
         //ViewCompat.setAlpha(view, 0);
 

@@ -259,7 +259,7 @@ public class RSoftInputLayout extends FrameLayout implements ILifecycle {
         int contentLayoutHeight, emojiLayoutHeight, keyboardHeight;
         keyboardHeight = getSoftKeyboardHeight();
 
-        //L.e("call: -> softKeyboardShow:" + softKeyboardShow + " needShowEmojiLayout:" + needShowEmojiLayout + " needHideSoftInput:" + needHideSoftInput);
+        //L.e("call: -> softKeyboardShow:" + softKeyboardShow + " needShowEmojiLayout:" + needShowEmojiLayout + " needHideSoftInputForStart:" + needHideSoftInputForStart);
 
         //如果键盘显示了, 那么内容的高度=总高度-键盘的高度
         if (softKeyboardShow) {

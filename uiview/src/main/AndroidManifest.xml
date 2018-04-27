@@ -48,6 +48,11 @@
         android:supportsPictureInPicture="false"
         android:supportsRtl="true">
 
+        <!-- 全面屏配置 -->
+        <meta-data
+            android:name="android.max_aspect"
+            android:value="2.1"/>
+
         <!--MainActivity配置-->
         <!--<activity-->
         <!--android:name=".MainActivity"-->

@@ -155,5 +155,9 @@ open class UIInputExDialog : UIIDialogImpl {
             it.setInputText(string)
         }
     }
+
+    override fun needHideSoftInputForStart(): Boolean {
+        return !autoShowSoftInput
+    }
 }
 

@@ -22,7 +22,7 @@ public class UnreadMsgUtils {
         RelativeLayout.LayoutParams lp = (RelativeLayout.LayoutParams) msgView.getLayoutParams();
         DisplayMetrics dm = msgView.getResources().getDisplayMetrics();
         int margin = (int) (4 * dm.density);
-        lp.setMargins(margin, margin, margin, margin);
+        lp.setMargins(0, margin, 0, 0);
 
         msgView.setVisibility(View.VISIBLE);
         if (num <= 0) {//圆点,设置默认宽高

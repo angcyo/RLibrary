@@ -38,6 +38,7 @@ public class RDrawNoRead extends BaseDraw {
 
     public RDrawNoRead(View view, AttributeSet attr) {
         super(view, attr);
+        initAttribute(attr);
     }
 
     @Override
