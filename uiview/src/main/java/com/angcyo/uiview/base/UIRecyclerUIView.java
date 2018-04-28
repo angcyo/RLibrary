@@ -405,6 +405,8 @@ public abstract class UIRecyclerUIView<H, T, F> extends UIContentView
     public void onShowInPager(UIViewPager viewPager) {
         super.onShowInPager(viewPager);
         if (needLoadData() && isShowInViewPager()) {
+//            (getLayoutState() == LayoutState.LOAD
+//                    && mBaseDataObject == null)
             onBaseLoadData("onShowInPager", true);
         }
     }
