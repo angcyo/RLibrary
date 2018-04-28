@@ -1337,19 +1337,19 @@ public class RUtils {
 
         long min = mill / 60;
         long hour = min / 60;
-        long second = mill % 60;
 
-        min %= 60;
-        hour %= 24;
+        long h = hour % 24;
+        long m = min % 60;
+        long s = mill % 60;
 
         StringBuilder builder = new StringBuilder();
         if (hour > 0) {
-            builder.append(hour >= 10 ? hour : ("0" + hour));
+            builder.append(h >= 10 ? h : ("0" + h));
             builder.append(":");
         }
-        builder.append(min >= 10 ? min : ("0" + min));
+        builder.append(m >= 10 ? m : ("0" + m));
         builder.append(":");
-        builder.append(second >= 10 ? second : ("0" + second));
+        builder.append(s >= 10 ? s : ("0" + s));
 
         return builder.toString();
     }

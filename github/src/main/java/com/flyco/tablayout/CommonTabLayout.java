@@ -911,12 +911,12 @@ public class CommonTabLayout extends FrameLayout implements ValueAnimator.Animat
                 return;
             }
 
-            if (!mIconVisible) {
-                setMsgMargin(position, 2, 2);
-            } else {
-                setMsgMargin(position, 0,
-                        mIconGravity == Gravity.LEFT || mIconGravity == Gravity.RIGHT ? 4 : 0);
-            }
+//            if (!mIconVisible) {
+//                setMsgMargin(position, 2, 2);
+//            } else {
+//                setMsgMargin(position, 0,
+//                        mIconGravity == Gravity.LEFT || mIconGravity == Gravity.RIGHT ? 4 : 0);
+//            }
 
             mInitSetMap.put(position, true);
         }

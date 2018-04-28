@@ -2121,10 +2121,22 @@ public class UILayoutImpl extends SwipeBackLayout implements ILayout, UIViewPage
     public ViewPattern findLastLifecycleViewPattern(final ViewPattern anchor) {
         ViewPattern result = null;
         boolean isFindAnchor = false;//先定位到锚点
+
+        boolean canShowOnDialog = anchor != null && !anchor.mIView.isDialog() && anchor.mIView.showOnDialog();
+
         for (int i = mAttachViews.size() - 1; i >= 0; i--) {
             ViewPattern pattern = mAttachViews.get(i);
 
-            boolean pass = pattern.mIView.isDialog() || pattern.isIViewHide;
+            boolean pass = false;
+            if (pattern.isIViewHide) {
+                pass = true;
+            } else {
+                if (canShowOnDialog) {
+                } else {
+                    pass = pattern.mIView.isDialog();
+                }
+            }
+
             if (anchor == null && !isFindAnchor) {
                 isFindAnchor = true;
                 if (!pass) {
@@ -3146,10 +3158,14 @@ public class UILayoutImpl extends SwipeBackLayout implements ILayout, UIViewPage
                     pattern.interrupt = true;
                     UIParam uiParam = new UIParam(isLast, true, !isLast);
                     uiParam.isFinishBack = !isLast;
-                    isTaskSuspend = true;
                     currentViewTask = new ViewTask(ViewTask.TASK_TYPE_FINISH, pattern.mIView, uiParam);
-                    //addTask(currentViewTask);
-                    finishIViewInner(currentViewTask, pattern, uiParam);
+                    if (isLast) {
+                        addTask(currentViewTask);
+                    } else {
+                        isTaskSuspend = true;
+                        currentViewTask = new ViewTask(ViewTask.TASK_TYPE_FINISH, pattern.mIView, uiParam);
+                        finishIViewInner(currentViewTask, pattern, uiParam);
+                    }
                 }
             }
         }

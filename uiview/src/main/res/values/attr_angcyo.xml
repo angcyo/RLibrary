@@ -123,6 +123,19 @@
         <attr name="r_draw_line_offset_right"/>
     </declare-styleable>
 
+    <declare-styleable name="RConstraintLayout">
+        <attr name="r_background"/>
+        <attr name="r_max_height"/>
+        <attr name="r_width_height_ratio"/>
+
+        <attr name="r_draw_line"/>
+        <attr name="r_draw_dash_line"/>
+        <attr name="r_draw_line_color"/>
+        <attr name="r_draw_line_width"/>
+        <attr name="r_draw_line_offset_left"/>
+        <attr name="r_draw_line_offset_right"/>
+    </declare-styleable>
+
     <declare-styleable name="RGalleryLayout">
         <attr name="r_animator_to_first" format="boolean"/>
         <attr name="r_item_offset_space" format="dimension"/>

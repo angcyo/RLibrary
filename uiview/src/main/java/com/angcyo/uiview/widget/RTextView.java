@@ -127,7 +127,7 @@ public class RTextView extends AppCompatTextView {
     private int tipTextLeftOffset = 0;
     private RectF tipTextRectF = new RectF();
     /**
-     * 是否滚动文本
+     * 是否滚动文本, 会自动设置以下属性
      * android:ellipsize="none"
      * android:singleLine="true"
      */
@@ -139,7 +139,7 @@ public class RTextView extends AppCompatTextView {
     /**
      * 循环绘制文本的间隙
      */
-    private int scrollTextCircleOffset = 0;
+    private int scrollTextCircleOffset = -1;
     private int scrollType = SCROLL_TYPE_DEFAULT;
     /**
      * 使用英文字符数过滤, 一个汉字等于2个英文, 一个emoji表情等于2个汉字
@@ -339,28 +339,41 @@ public class RTextView extends AppCompatTextView {
 
         float drawTextY = getPaddingTop() - mScrollTextPaint.ascent();//getMeasuredHeight() - getPaddingBottom();
 
+        if (isInEditMode()) {
+            scrollCurX = -getMeasuredWidth();
+        }
+
+        float offset = scrollTextCircleOffset;
+        if (scrollTextCircleOffset < 0) {
+            offset = getMeasuredWidth() - textWidth;
+        }
+
         if (scrollType == SCROLL_TYPE_DEFAULT) {
             canvas.drawText(text, getMeasuredWidth() - scrollCurX, drawTextY, mScrollTextPaint);
 
             if (isScrollTextCircle) {
-                canvas.drawText(text, getMeasuredWidth() - scrollCurX + textWidth + scrollTextCircleOffset, drawTextY, mScrollTextPaint);
+                canvas.drawText(text, getMeasuredWidth() - scrollCurX + textWidth + offset, drawTextY, mScrollTextPaint);
             }
         } else if (scrollType == SCROLL_TYPE_START) {
             canvas.drawText(text, -scrollCurX, drawTextY, mScrollTextPaint);
 
             if (isScrollTextCircle) {
-                canvas.drawText(text, -scrollCurX + textWidth + scrollTextCircleOffset, drawTextY, mScrollTextPaint);
+                canvas.drawText(text, -scrollCurX + textWidth + offset, drawTextY, mScrollTextPaint);
             }
         }
 
         scrollCurX += scrollStep;
 
         if (scrollType == SCROLL_TYPE_DEFAULT) {
-            if (scrollCurX >= (getMeasuredWidth() + textWidth + scrollTextCircleOffset)) {
-                scrollCurX = getMeasuredWidth();
+            if (scrollCurX >= (getMeasuredWidth() + textWidth + offset)) {
+                if (isScrollTextCircle) {
+                    scrollCurX = getMeasuredWidth();
+                } else {
+                    scrollCurX = 0;
+                }
             }
         } else if (scrollType == SCROLL_TYPE_START) {
-            if (scrollCurX >= textWidth + scrollTextCircleOffset) {
+            if (scrollCurX >= textWidth + offset) {
                 scrollCurX = 0;
             }
         }

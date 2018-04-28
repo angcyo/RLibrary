@@ -3,6 +3,7 @@ package com.flyco.tablayout.utils;
 
 import android.util.DisplayMetrics;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 
@@ -19,17 +20,19 @@ public class UnreadMsgUtils {
         if (msgView == null) {
             return;
         }
-        RelativeLayout.LayoutParams lp = (RelativeLayout.LayoutParams) msgView.getLayoutParams();
+        ViewGroup.MarginLayoutParams lp = (ViewGroup.MarginLayoutParams) msgView.getLayoutParams();
         DisplayMetrics dm = msgView.getResources().getDisplayMetrics();
-        int margin = (int) (4 * dm.density);
-        lp.setMargins(0, margin, 0, 0);
+        int margin = (int) (8 * dm.density);
+        lp.setMargins(0, margin, margin, 0);
 
         msgView.setVisibility(View.VISIBLE);
+
         if (num <= 0) {//圆点,设置默认宽高
             msgView.setStrokeWidth(0);
             msgView.setText("");
             lp.width = (int) (8 * dm.density);
             lp.height = (int) (8 * dm.density);
+
             msgView.setLayoutParams(lp);
         } else {
             lp.height = (int) (18 * dm.density);
@@ -38,10 +41,13 @@ public class UnreadMsgUtils {
                 msgView.setText(num + "");
             } else if (num > 9 && num < 100) {//圆角矩形,圆角是高度的一半,设置默认padding
                 lp.width = RelativeLayout.LayoutParams.WRAP_CONTENT;
+//                lp.width = (int) (50 * dm.density);
                 msgView.setPadding((int) (6 * dm.density), 0, (int) (6 * dm.density), 0);
                 msgView.setText(num + "");
+//                msgView.setText("99+");
             } else {//数字超过两位,显示99+
                 lp.width = RelativeLayout.LayoutParams.WRAP_CONTENT;
+//                lp.width = (int) (50 * dm.density);
                 msgView.setPadding((int) (6 * dm.density), 0, (int) (6 * dm.density), 0);
                 msgView.setText("99+");
             }
