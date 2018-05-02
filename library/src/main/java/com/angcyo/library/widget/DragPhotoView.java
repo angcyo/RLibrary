@@ -93,6 +93,29 @@ public class DragPhotoView extends PhotoView {
         }
     }
 
+    public static boolean isLargeBitmap(int width, int height) {
+        return width > 4000 || height > 4000;
+    }
+
+    public static float maxScale(Context context, int width, int height) {
+        float maxScale;
+
+        int widthPixels = context.getResources().getDisplayMetrics().widthPixels;
+        int heightPixels = context.getResources().getDisplayMetrics().heightPixels;
+
+        if (width == height) {
+            maxScale = 1f;
+        } else if (width > height) {
+            //宽图
+            maxScale = heightPixels / (widthPixels * 1f / width * height);
+        } else {
+            //长图
+            maxScale = widthPixels / (heightPixels * 1f / height * width);
+        }
+
+        return maxScale;
+    }
+
     @Override
     public void setOnLongClickListener(OnLongClickListener onLongClickListener) {
         mOnLongClickListener = onLongClickListener;
@@ -121,28 +144,20 @@ public class DragPhotoView extends PhotoView {
     public void setImageDrawable(Drawable drawable) {
         super.setImageDrawable(drawable);
         isLargeBitmap = false;
+
         if (drawable != null) {
             int width = drawable.getIntrinsicWidth();
             int height = drawable.getIntrinsicHeight();
-            if (width > 2600 || height > 2600) {
-                isLargeBitmap = true;
-                float maxScale = 8f;
+            if (isLargeBitmap(width, height)) {
 
-                int widthPixels = getResources().getDisplayMetrics().widthPixels;
-                int heightPixels = getResources().getDisplayMetrics().heightPixels;
+                isLargeBitmap = true;
+                float maxScale = maxScale(getContext(), width, height);
 
                 try {
-                    if (width > height) {
-                        //宽图
-                        maxScale = heightPixels / (widthPixels * 1f / width * height);
-                    } else {
-                        //长图
-                        maxScale = widthPixels / (heightPixels * 1f / height * width);
-                    }
-
                     setScaleLevels(1f, /*4.6f*/ maxScale / 2, maxScale);
                 } catch (Exception e) {
-                    setScaleLevels(1f, 4.6f, 8f);
+                    //setScaleLevels(1f, 4.6f, 8f);
+                    //maxScale = 0;
                 }
 
             } else {
@@ -150,7 +165,7 @@ public class DragPhotoView extends PhotoView {
             }
         }
 
-        if (isLargeBitmap) {
+        if (isLargeBitmap && getMaximumScale() > 3f) {
 //            setScaleType(ScaleType.CENTER_CROP);
             //大图默认放大显示
             setScale(getMaximumScale(), getMeasuredWidth() / 2, 0, false);

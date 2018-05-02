@@ -17,7 +17,6 @@ import com.angcyo.uiview.utils.T_;
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.request.target.SimpleTarget;
 import com.bumptech.glide.request.transition.Transition;
-import com.github.chrisbanes.photoview.PhotoView;
 import com.lzy.imagepicker.ImagePicker;
 import com.lzy.imagepicker.R;
 import com.lzy.imagepicker.adapter.ImagePageAdapter;
@@ -37,7 +36,7 @@ public class SavePhotoLongClickListener implements ImagePageAdapter.PhotoViewLon
     }
 
     @Override
-    public void onLongClickListener(PhotoView photoView, int position, final ImageItem item) {
+    public void onLongClickListener(View photoView, int position, final ImageItem item) {
         if (item != null && item.canSave) {
             final UIItemDialog bottomDialog = UIBottomItemDialog.build();
             if (item.canSave) {

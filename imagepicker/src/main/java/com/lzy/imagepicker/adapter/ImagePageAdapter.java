@@ -20,6 +20,8 @@ import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.bumptech.glide.request.RequestOptions;
 import com.bumptech.glide.request.target.SimpleTarget;
 import com.bumptech.glide.request.transition.Transition;
+import com.davemorrissey.labs.subscaleview.ImageSource;
+import com.davemorrissey.labs.subscaleview.SubsamplingScaleImageView;
 import com.github.chrisbanes.photoview.OnPhotoTapListener;
 import com.github.chrisbanes.photoview.PhotoView;
 import com.lzy.imagepicker.ImageDataSource;
@@ -132,6 +134,9 @@ public class ImagePageAdapter extends PagerAdapter {
     public Object instantiateItem(ViewGroup container, final int position) {
         FrameLayout itemLayout = new FrameLayout(mActivity);
 
+        //大图显示的支持
+        final SubsamplingScaleImageView scaleImageView = new SubsamplingScaleImageView(mActivity);
+
         //支持手势的图片
         final DragPhotoView photoView = new DragPhotoView(mActivity);
         photoView.setEnableMoveExit(enableMoveExit);
@@ -227,16 +232,34 @@ public class ImagePageAdapter extends PagerAdapter {
 
                             currentImageView = photoView;
                         } else {
-                            loadImage(photoView, thumbImageView, progressView, imageItem);
+                            loadImage(photoView, thumbImageView, progressView, scaleImageView, imageItem);
                         }
                     } else {
-                        loadImage(photoView, thumbImageView, progressView, imageItem);
+                        loadImage(photoView, thumbImageView, progressView, scaleImageView, imageItem);
                     }
                 }
             }
         }
 
         itemLayout.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (listener != null) listener.OnPhotoTapListener(v, 0, 0);
+            }
+        });
+
+        scaleImageView.setOnLongClickListener(new View.OnLongClickListener() {
+            @Override
+            public boolean onLongClick(View v) {
+                if (mPhotoViewLongClickListener == null) {
+                    return false;
+                } else {
+                    mPhotoViewLongClickListener.onLongClickListener(scaleImageView, position, imageItem);
+                    return false;
+                }
+            }
+        });
+        scaleImageView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 if (listener != null) listener.OnPhotoTapListener(v, 0, 0);
@@ -270,6 +293,7 @@ public class ImagePageAdapter extends PagerAdapter {
 
         itemLayout.addView(thumbImageView, new FrameLayout.LayoutParams(-2, -2, Gravity.CENTER));
         itemLayout.addView(photoView);
+        itemLayout.addView(scaleImageView);
         itemLayout.addView(progressView, new FrameLayout.LayoutParams(-2, -2, Gravity.CENTER));
         container.addView(itemLayout);
         return itemLayout;
@@ -280,7 +304,9 @@ public class ImagePageAdapter extends PagerAdapter {
     }
 
     protected void loadImage(final PhotoView photoView, final ImageView imageView,
-                             final SimpleCircleProgressBar progressView, final ImageItem imageItem) {
+                             final SimpleCircleProgressBar progressView,
+                             final SubsamplingScaleImageView scaleImageView,
+                             final ImageItem imageItem) {
 
         Ok.instance().type(imageItem.url, new Ok.OnImageTypeListener() {
             @Override
@@ -304,6 +330,8 @@ public class ImagePageAdapter extends PagerAdapter {
                                         }
                                         imageView.setVisibility(View.GONE);
                                         progressView.setVisibility(View.GONE);
+                                        scaleImageView.setVisibility(View.GONE);
+
                                         progressView.stop();
 
                                         try {
@@ -322,12 +350,26 @@ public class ImagePageAdapter extends PagerAdapter {
                                 if (progressView == null || photoView == null) {
                                     return;
                                 }
+
                                 imageView.setVisibility(View.GONE);
                                 progressView.setVisibility(View.GONE);
                                 progressView.stop();
-                                photoView.setImageBitmap(resource);
 
-                                currentImageView = photoView;
+                                int width = resource.getWidth();
+                                int height = resource.getHeight();
+
+                                if (DragPhotoView.isLargeBitmap(width, height)) {
+                                    scaleImageView.setImage(ImageSource.bitmap(resource));
+
+                                    scaleImageView.checkAndSetLargeBitmap(width, height);
+
+                                    photoView.setVisibility(View.GONE);
+                                    currentImageView = scaleImageView;
+                                } else {
+                                    scaleImageView.setVisibility(View.GONE);
+                                    photoView.setImageBitmap(resource);
+                                    currentImageView = photoView;
+                                }
                             }
                         });
                     }
@@ -336,6 +378,7 @@ public class ImagePageAdapter extends PagerAdapter {
                     photoView.setImageResource(R.drawable.default_jiazaishibai_pic);
                     //imageView.setImageResource(R.drawable.default_jiazaishibai_pic);
                     imageView.setVisibility(View.GONE);
+                    scaleImageView.setVisibility(View.GONE);
                     progressView.setVisibility(View.GONE);
                     progressView.stop();
                 }
@@ -384,6 +427,6 @@ public class ImagePageAdapter extends PagerAdapter {
     }
 
     public interface PhotoViewLongClickListener {
-        void onLongClickListener(PhotoView photoView, int position, ImageItem item);
+        void onLongClickListener(View photoView, int position, ImageItem item);
     }
 }
