@@ -69,8 +69,21 @@ public class FlatImageView extends AppCompatImageView {
     }
 
     @Override
+    protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
+        super.onMeasure(widthMeasureSpec, heightMeasureSpec);
+    }
+
+    @Override
+    protected void onLayout(boolean changed, int left, int top, int right, int bottom) {
+        super.onLayout(changed, left, top, right, bottom);
+        setRight(drawableWidth());
+        setBottom(drawableHeight());
+    }
+
+    @Override
     protected void onAttachedToWindow() {
         super.onAttachedToWindow();
+        setScaleType(ScaleType.FIT_XY);
     }
 
     @Override
@@ -121,10 +134,11 @@ public class FlatImageView extends AppCompatImageView {
 
         canvas.save();
         canvas.translate(mOverScroller.getCurrX(), mOverScroller.getCurrY());
+                drawable.setBounds(0, 0,
+                drawableWidth(), drawableHeight());
 //        canvas.translate(200, 200);
-        //super.onDraw(canvas);
-        drawable.setBounds(0, 0,
-                drawableWidth(), getMeasuredHeight() /*drawableHeight()*/);
+//        super.onDraw(canvas);
+
         drawable.draw(canvas);
         canvas.restore();
 
