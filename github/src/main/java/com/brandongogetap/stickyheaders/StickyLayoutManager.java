@@ -18,6 +18,10 @@ import java.util.Map;
 
 /**
  * https://github.com/bgogetap/StickyHeaders
+ *
+ * 2018-5-3
+ *
+ * 0.5.0
  */
 public class StickyLayoutManager extends LinearLayoutManager {
 
