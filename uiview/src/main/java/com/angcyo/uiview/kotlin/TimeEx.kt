@@ -35,6 +35,11 @@ fun Long.toHHmmss(showMill: Boolean = false /*显示毫秒*/): String {
     }
 }
 
+/**时间全格式输出*/
+fun Long.fullTime(): String {
+    return RUtils.yyyyMMdd("yyyy-MM-dd HH:mm:ss.SSS", this)
+}
+
 /**将字符串换算成毫秒*/
 fun String.toMillis(pattern: String = "yyyyMMdd"): Long {
     val format: SimpleDateFormat = SimpleDateFormat.getDateInstance() as SimpleDateFormat
