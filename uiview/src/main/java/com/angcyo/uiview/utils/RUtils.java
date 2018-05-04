@@ -1330,7 +1330,7 @@ public class RUtils {
     }
 
     /**
-     * 00:00的格式输出, 如果有小时,01:00:00
+     * 00:00的格式输出, 如果有小时: 01:00:00
      */
     public static String formatTime(long millisecond /*毫秒*/) {
         long mill = millisecond / 1000;

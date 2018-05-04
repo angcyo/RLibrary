@@ -5,5 +5,4 @@ dependencies {
     //api 'com.google.zxing:core:3.3.0'
     api project(':RLibrary:zxingzbar')
     api project(':RLibrary:uiview')
-    compileOnly "org.jetbrains.kotlin:kotlin-stdlib-jre7:$kotlin_version"
 }

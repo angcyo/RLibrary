@@ -1120,30 +1120,46 @@ public class RExTextView extends RTextView {
     /**
      * 普通的文本点击span
      */
-    @Deprecated
     public static class ClickableTextSpan extends ClickableSpan {
 
-        String show, content;
         private int textColor;//文本颜色
+        private int bgColor;//背景颜色
+        private boolean underLine = true;//下划线
 
-        public ClickableTextSpan(String show, String content) {
-            this.show = show;
+        public ClickableTextSpan() {
+            textColor = SkinHelper.getSkin().getThemeSubColor();//默认的文本颜色
+            bgColor = Color.TRANSPARENT;
+        }
 
-            textColor = Color.parseColor("#507daf");//默认的文本颜色
+        public ClickableTextSpan setTextColor(int textColor) {
+            this.textColor = textColor;
+            return this;
+        }
+
+        public ClickableTextSpan setBgColor(int bgColor) {
+            this.bgColor = bgColor;
+            return this;
+        }
+
+        public ClickableTextSpan setUnderLine(boolean underLine) {
+            this.underLine = underLine;
+            return this;
         }
 
         @Override
         public void onClick(View widget) {
-            L.i("onClick @: " + content);
+            L.i("ClickableTextSpan onClick @: ");
         }
 
         @Override
         public void updateDrawState(TextPaint ds) {
+            super.updateDrawState(ds);
             //设置背景色
-            ds.bgColor = SkinHelper.getTranColor(textColor, 0x80);
+            ds.bgColor = bgColor;
             //设置前景色
-            //ds.setColor(getResources().getColor(R.color.theme_color_accent));
             ds.setColor(textColor);
+
+            ds.setUnderlineText(underLine);
         }
     }
 }

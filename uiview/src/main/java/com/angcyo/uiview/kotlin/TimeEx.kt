@@ -1,5 +1,6 @@
 package com.angcyo.uiview.kotlin
 
+import com.angcyo.uiview.utils.RUtils
 import java.text.SimpleDateFormat
 
 /**
@@ -20,6 +21,13 @@ fun Long.toNowDay(): Int {
 
 fun Int.toDay(): Int {
     return this.toLong().toDay()
+}
+
+/**
+ * 00:00的格式输出, 如果有小时: 01:00:00
+ */
+fun Long.toHHmmss(): String {
+    return RUtils.formatTime(this)
 }
 
 /**将字符串换算成毫秒*/

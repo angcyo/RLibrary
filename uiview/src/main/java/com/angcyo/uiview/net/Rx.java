@@ -679,4 +679,8 @@ public class Rx<Rx> extends Observable<Rx> {
             }
         }).compose(com.angcyo.uiview.net.Rx.<T>transformer());
     }
+
+    public static <T> Observable<T> get(final Func<T> doFunc) {
+        return create(doFunc);
+    }
 }

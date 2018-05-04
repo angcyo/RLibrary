@@ -114,7 +114,7 @@ dependencies {
     //implementation project(':RLibrary:imagepicker')
     //implementation 'com.android.support.constraint:constraint-layout:1.0.2'
     //annotationProcessor 'com.jakewharton:butterknife-compiler:8.4.0'
-    implementation "org.jetbrains.kotlin:kotlin-stdlib-jre7:$kotlin_version"
+    //implementation "org.jetbrains.kotlin:kotlin-stdlib-jre7:$kotlin_version"
     //FPS显示库 https://github.com/wasabeef/Takt
     //implementation 'jp.wasabeef:takt:1.0.4'
     //性能检测库 https://github.com/markzhai/AndroidPerformanceMonitor
