@@ -206,6 +206,13 @@ public class JumpAdProgressBar extends View {
         }
     }
 
+    /**
+     * 执行多长时间, 毫秒
+     */
+    public void setAdTime(int adTime) {
+        this.adTime = adTime;
+    }
+
     public interface OnJumpListener {
         void onJump();
     }

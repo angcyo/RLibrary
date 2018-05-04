@@ -359,9 +359,11 @@ public class FDown {
         private Builder(String url) {
             this.url = url;
             tag = url;
-//            fullPath = Environment.getExternalStorageDirectory().getAbsolutePath()
-//                    + File.separator + UUID.randomUUID().toString();
-            fullPath = Environment.getExternalStorageDirectory().getAbsolutePath()
+            fullPath = defaultDownloadPath(url);
+        }
+
+        public static String defaultDownloadPath(String url) {
+            return Environment.getExternalStorageDirectory().getAbsolutePath()
                     + File.separator + getApp().getPackageName() + "/FDown/" + getFileNameFromUrl(url);
         }
 
