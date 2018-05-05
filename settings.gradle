@@ -4,14 +4,15 @@
 include ':RLibrary:uiview'
 include ':RLibrary:library'
 include ':RLibrary:github'
-include ':RLibrary:rcode'
-include ':RLibrary:zxingzbar'
 
 ////可选
 //include ':RLibrary:imagepicker'
 //include ':RLibrary:filedownloader'
 //include ':RLibrary:websocket'
-//
+
+//include ':RLibrary:rcode'
+//include ':RLibrary:zxingzbar'
+
 //allprojects {
 //    repositories {
 //        jcenter()
