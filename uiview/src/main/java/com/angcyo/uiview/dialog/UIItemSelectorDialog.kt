@@ -35,6 +35,8 @@ class UIItemSelectorDialog<T>(val items: List<T>) : UIRecyclerDialog<String, T, 
             super.onBindDataView(holder, posInData, dataBean)
             if (dataBean is String) {
                 holder.tv(R.id.base_text_view).text = dataBean
+            } else if (dataBean is IGetString) {
+                holder.tv(R.id.base_text_view).text = dataBean.getString()
             }
 
             holder.click(R.id.base_item_root_layout) {
@@ -56,5 +58,9 @@ class UIItemSelectorDialog<T>(val items: List<T>) : UIRecyclerDialog<String, T, 
         super.initRecyclerView()
         recyclerView.addItemDecoration(RBaseItemDecoration(getDimensionPixelOffset(R.dimen.base_line),
                 getColor(R.color.base_chat_bg_color)))
+    }
+
+    interface IGetString {
+        fun getString(): String
     }
 }

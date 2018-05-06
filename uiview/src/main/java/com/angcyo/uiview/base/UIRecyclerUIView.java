@@ -16,6 +16,7 @@ import com.angcyo.uiview.recycler.adapter.RExBaseAdapter;
 import com.angcyo.uiview.rsen.BasePointRefreshView;
 import com.angcyo.uiview.rsen.RGestureDetector;
 import com.angcyo.uiview.rsen.RefreshLayout;
+import com.angcyo.uiview.utils.RUtils;
 import com.angcyo.uiview.widget.viewpager.UIViewPager;
 
 import java.util.List;
@@ -301,7 +302,7 @@ public abstract class UIRecyclerUIView<H, T, F> extends UIContentView
      */
     public void onUILoadFinish(List<T> datas) {
         resetUI();
-        if (datas == null || datas.isEmpty()) {
+        if (isUIDataEmpty(page, datas)) {
             if (page <= 1) {
                 onUILoadEmpty();
             } else {
@@ -380,6 +381,10 @@ public abstract class UIRecyclerUIView<H, T, F> extends UIContentView
 
     public boolean isUIHaveLoadMore(List<T> datas) {
         return datas != null && datas.size() >= 20;
+    }
+
+    public boolean isUIDataEmpty(int page, List<T> datas) {
+        return RUtils.isListEmpty(datas);
     }
 
     /**
