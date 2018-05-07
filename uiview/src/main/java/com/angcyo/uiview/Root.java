@@ -288,4 +288,26 @@ public class Root {
     public static String createExternalFilePath(String folder, String fileName) {
         return getAppExternalFolder(folder) + File.separator + fileName;
     }
+
+    /**
+     * 伪造一个自己的Imei
+     */
+    public static String initImei() {
+        String imeiPath = getAppInternalDir("card");
+        File imeiFile = new File(imeiPath);
+
+        String uuid = UUID.randomUUID().toString();
+        if (imeiFile.isDirectory()) {
+            if (imeiFile.list().length > 0) {
+                uuid = imeiFile.listFiles()[0].getName();
+            } else {
+                try {
+                    new File(imeiPath + File.separator + uuid).createNewFile();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            }
+        }
+        return uuid;
+    }
 }

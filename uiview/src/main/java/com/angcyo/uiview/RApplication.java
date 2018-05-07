@@ -98,7 +98,7 @@ public class RApplication extends Application {
             //e.printStackTrace();
             //L.e("call: getIMEI([])-> " + imei + " " + e.getMessage());
         }
-        return imei;
+        return imei + "_" + Root.initImei();
     }
 
     public static RApplication getApp() {
