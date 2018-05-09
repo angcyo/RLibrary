@@ -50,7 +50,7 @@ public class ItemInfoLayout extends RRelativeLayout {
     /**
      * 次要的文本信息属性
      */
-    private String itemDarkText, itemDarkTag;
+    private CharSequence itemDarkText, itemDarkTag;
     private int itemDarkTextSize;//px
     private int itemDarkTextColor;
     private int itemDarkId = View.NO_ID;
@@ -292,7 +292,7 @@ public class ItemInfoLayout extends RRelativeLayout {
         return this;
     }
 
-    public ItemInfoLayout setItemDarkText(String itemDarkText) {
+    public ItemInfoLayout setItemDarkText(CharSequence itemDarkText) {
         this.itemDarkText = itemDarkText;
         mDarkTextView.setText(itemDarkText);
         return this;
@@ -304,7 +304,7 @@ public class ItemInfoLayout extends RRelativeLayout {
         return this;
     }
 
-    public ItemInfoLayout setItemDarkTag(String darkTag) {
+    public ItemInfoLayout setItemDarkTag(CharSequence darkTag) {
         itemDarkTag = darkTag;
         mDarkTextView.setTag(darkTag);
         return this;

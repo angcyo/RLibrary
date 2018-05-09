@@ -104,6 +104,10 @@ public abstract class SingleItem implements Item {
         return null;
     }
 
+    public SingleItem getThisItem() {
+        return this;
+    }
+
     public enum Type {
         /**
          * 距离很大的Line
