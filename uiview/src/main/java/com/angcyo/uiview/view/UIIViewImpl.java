@@ -863,24 +863,56 @@ public abstract class UIIViewImpl implements IView {
     }
 
     public void post(Runnable action) {
+        if (mILayout instanceof View) {
+            ((View) mILayout).post(action);
+
+            //RUtils.saveToSDCard("HnUIMain", "mILayout post." + ((View) mILayout).getParent());
+            return;
+        }
+
         if (mRootView != null) {
             mRootView.post(action);
+
+            //RUtils.saveToSDCard("HnUIMain", "mRootView post." + mRootView.getParent());
+        } else {
+            //RUtils.saveToSDCard("HnUIMain", "mRootView post.jump");
         }
     }
 
     public void postDelayed(Runnable action, long delayMillis) {
+        if (mILayout instanceof View) {
+            ((View) mILayout).postDelayed(action, delayMillis);
+
+            //RUtils.saveToSDCard("HnUIMain", "mILayout postDelayed." + ((View) mILayout).getParent());
+            return;
+        }
+
         if (mRootView != null) {
             mRootView.postDelayed(action, delayMillis);
+
+            //RUtils.saveToSDCard("HnUIMain", "mRootView postDelayed." + mRootView.getParent());
+        } else {
+            //RUtils.saveToSDCard("HnUIMain", "mRootView postDelayed.jump");
         }
     }
 
     public void postDelayed(long delayMillis, Runnable action) {
+        if (mILayout instanceof View) {
+            ((View) mILayout).postDelayed(action, delayMillis);
+            return;
+        }
+
         if (mRootView != null) {
             mRootView.postDelayed(action, delayMillis);
         }
     }
 
     public void removeCallbacks(Runnable action) {
+        if (mILayout instanceof View) {
+            ((View) mILayout).removeCallbacks(action);
+            return;
+        }
+
         if (mRootView != null) {
             mRootView.removeCallbacks(action);
         }

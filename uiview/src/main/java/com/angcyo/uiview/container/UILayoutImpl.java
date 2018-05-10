@@ -38,6 +38,7 @@ import com.angcyo.uiview.kotlin.ViewExKt;
 import com.angcyo.uiview.kotlin.ViewGroupExKt;
 import com.angcyo.uiview.model.ViewPattern;
 import com.angcyo.uiview.model.ViewTask;
+import com.angcyo.uiview.net.Rx;
 import com.angcyo.uiview.resources.AnimUtil;
 import com.angcyo.uiview.rsen.RGestureDetector;
 import com.angcyo.uiview.skin.ISkin;
@@ -278,32 +279,37 @@ public class UILayoutImpl extends SwipeBackLayout implements ILayout, UIViewPage
         }
     }
 
-    public static void saveToSDCard(String data) {
-        try {
-            String saveFolder = Environment.getExternalStorageDirectory().getAbsoluteFile() +
-                    File.separator + Root.APP_FOLDER + File.separator + "log";
-            File folder = new File(saveFolder);
-            if (!folder.exists()) {
-                if (!folder.mkdirs()) {
-                    return;
+    public static void saveToSDCard(final String data) {
+        Rx.back(new Runnable() {
+            @Override
+            public void run() {
+                try {
+                    String saveFolder = Environment.getExternalStorageDirectory().getAbsoluteFile() +
+                            File.separator + Root.APP_FOLDER + File.separator + "log";
+                    File folder = new File(saveFolder);
+                    if (!folder.exists()) {
+                        if (!folder.mkdirs()) {
+                            return;
+                        }
+                    }
+                    String dataTime = RCrashHandler.getDataTime("yyyy-MM-dd_HH-mm-ss-SSS");
+                    File file = new File(saveFolder, /*dataTime + */"ILayout.log");
+                    boolean append = true;
+                    if (file.length() > 1024 * 1024 * 10 /*大于10MB重写*/) {
+                        append = false;
+                    }
+                    PrintWriter pw = new PrintWriter(new BufferedWriter(new FileWriter(file, append)));
+                    pw.println(dataTime);
+                    pw.println(data);
+                    // 导出手机信息
+                    pw.println();
+                    pw.close();
+                } catch (Exception e) {
+                    //e.printStackTrace();
+                    L.e("写入数据失败, 请检查权限:" + e.getMessage());
                 }
             }
-            String dataTime = RCrashHandler.getDataTime("yyyy-MM-dd_HH-mm-ss-SSS");
-            File file = new File(saveFolder, /*dataTime + */"ILayout.log");
-            boolean append = true;
-            if (file.length() > 1024 * 1024 * 10 /*大于10MB重写*/) {
-                append = false;
-            }
-            PrintWriter pw = new PrintWriter(new BufferedWriter(new FileWriter(file, append)));
-            pw.println(dataTime);
-            pw.println(data);
-            // 导出手机信息
-            pw.println();
-            pw.close();
-        } catch (Exception e) {
-            //e.printStackTrace();
-            L.e("写入数据失败, 请检查权限:" + e.getMessage());
-        }
+        });
     }
 
     public static List<Class<? extends IView>> getIViewList(Class<? extends IView>... iViews) {
@@ -492,7 +498,7 @@ public class UILayoutImpl extends SwipeBackLayout implements ILayout, UIViewPage
                 taskBuilder.append(mViewTasks.get(i));
                 taskBuilder.append("\n");
             }
-            L.w(TASK_TAG, taskBuilder.toString());
+            taskLogW(taskBuilder.toString());
         }
     }
 
@@ -510,7 +516,9 @@ public class UILayoutImpl extends SwipeBackLayout implements ILayout, UIViewPage
         boolean taskRunning = isTaskRunning();
 
         //logTaskList("请求执行任务 running:" + taskRunning + " suspend:" + isTaskSuspend + " isAttachedToWindow:" + isAttachedToWindow);
-        L.i(TASK_TAG, "请求执行任务数: " + mViewTasks.size() + " running:" + taskRunning + " suspend:" + isTaskSuspend + " isAttachedToWindow:" + isAttachedToWindow);
+        String log = "请求执行任务数: " + mViewTasks.size() + " running:" + taskRunning + " suspend:" + isTaskSuspend + " isAttachedToWindow:" + isAttachedToWindow;
+        L.i(TASK_TAG, log);
+        saveToSDCard(log);
         if (taskRunning /*||
                 !isAttachedToWindow*/) {
             return;
@@ -522,7 +530,9 @@ public class UILayoutImpl extends SwipeBackLayout implements ILayout, UIViewPage
         if (mViewTasks.isEmpty()) {
             currentViewTask = null;
             isTaskSuspend = false;
-            L.e(TASK_TAG, "startTask([])-> 无任务需要执行");
+            String log = "startTask([])-> 无任务需要执行";
+            L.e(TASK_TAG, log);
+            saveToSDCard(log);
         } else {
             if (isTaskSuspend) {
                 if (mViewTasks.size() > 1) {
@@ -544,13 +554,16 @@ public class UILayoutImpl extends SwipeBackLayout implements ILayout, UIViewPage
             return;
         }
         if (viewTask.isTaskStartRun()) {
-            L.w(TASK_TAG, "正在执行任务: " + viewTask);
+            String log = "正在执行任务: " + viewTask;
+            taskLogW(log);
             return;
         }
 
         viewTask.taskRun = 1;//任务准备执行
 
-        logTaskList("开始分发任务: " + viewTask);
+        String log = "开始分发任务: " + viewTask;
+        logTaskList(log);
+        saveToSDCard(log);
 
         switch (viewTask.taskType) {
             case ViewTask.TASK_TYPE_START:
@@ -598,14 +611,14 @@ public class UILayoutImpl extends SwipeBackLayout implements ILayout, UIViewPage
         iView.onAttachedToILayout(this);
         if (checkInterruptAndRemove(iView) || viewTask.iView.isInterruptTask()) {
             viewTask.iView.setInterruptTask(false);
-            L.w(TASK_TAG, "startTaskType 任务跳过.");
+            taskLogW("startTaskType 任务跳过." + viewTask);
             //中断了当前的任务
             viewTask.taskRun = ViewTask.TASK_RUN_INTERRUPT;
             nextTask(viewTask);
         } else {
             ViewPattern lastViewPattern = getLastViewPattern();
             if (needSuspendTask(lastViewPattern, iView, param)) {
-                L.w(TASK_TAG, "startTaskType 任务暂停.");
+                taskLogW("startTaskType 任务暂停." + viewTask);
                 //没有启动条件, 中断任务执行
                 setTaskSuspendWidth(viewTask, lastViewPattern);
             } else {
@@ -615,7 +628,7 @@ public class UILayoutImpl extends SwipeBackLayout implements ILayout, UIViewPage
                         @Override
                         public void run() {
                             if (checkInterruptAndRemove(iView)) {
-                                L.w(TASK_TAG, "startTaskType 任务中断跳过.");
+                                taskLogW("startTaskType 任务中断跳过." + viewTask);
 
                                 //中断了当前的任务
                                 viewTask.taskRun = ViewTask.TASK_RUN_INTERRUPT;
@@ -637,7 +650,7 @@ public class UILayoutImpl extends SwipeBackLayout implements ILayout, UIViewPage
         final UIParam param = viewTask.param;
         final ViewPattern viewPattern = findViewPatternByIView(iview);
         if (viewPattern == null || viewPattern.mIView == null) {
-            L.w(TASK_TAG, "finishTaskType 任务跳过.");
+            taskLogW("finishTaskType 任务跳过." + viewTask);
             viewTask.taskRun = ViewTask.TASK_RUN_INTERRUPT;
             nextTask(viewTask);
             return;
@@ -668,6 +681,16 @@ public class UILayoutImpl extends SwipeBackLayout implements ILayout, UIViewPage
             return;
         }
         endRunnable.run();
+    }
+
+    private void taskLogW(String log) {
+        L.w(TASK_TAG, log);
+        saveToSDCard(log);
+    }
+
+    private void taskLogE(String log) {
+        L.e(TASK_TAG, log);
+        saveToSDCard(log);
     }
 
     private void showTaskType(final ViewTask viewTask) {
@@ -864,7 +887,7 @@ public class UILayoutImpl extends SwipeBackLayout implements ILayout, UIViewPage
 
     //设置任务被那个IView中断了
     private void setTaskSuspendWidth(final ViewTask viewTask, ViewPattern viewPattern /*被谁中断了*/) {
-        L.w(TASK_TAG, "任务:" + viewTask + " 被暂停.");
+        taskLogW("任务:" + viewTask + " 被暂停.");
 
         isTaskSuspend = true;
         viewTask.taskRun = ViewTask.TASK_RUN_SUSPEND;
