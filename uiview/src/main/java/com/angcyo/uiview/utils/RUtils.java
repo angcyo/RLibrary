@@ -82,6 +82,7 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.io.PrintWriter;
 import java.lang.reflect.Field;
+import java.net.NetworkInterface;
 import java.text.DateFormat;
 import java.text.DecimalFormat;
 import java.text.SimpleDateFormat;
@@ -2486,6 +2487,56 @@ public class RUtils {
         float v = size * 1f / designDpi;
         return (int) (v * ScreenUtil.density);
     }
+
+    /**
+     * 是否正在使用VPN
+     */
+    public static boolean isVpnUsed() {
+        try {
+            Enumeration niList = NetworkInterface.getNetworkInterfaces();
+            if (niList != null) {
+                for (Object o : Collections.list(niList)) {
+                    if (o instanceof NetworkInterface) {
+                        NetworkInterface intf = (NetworkInterface) o;
+                        if (!intf.isUp() || intf.getInterfaceAddresses().size() == 0) {
+                            continue;
+                        }
+                        //Log.d("-----", "isVpnUsed() NetworkInterface Name: " + intf.getName());
+                        if ("tun0".equals(intf.getName()) || "ppp0".equals(intf.getName())) {
+
+                            RUtils.saveToSDCard("proxy.log", "isVpnUsed:" + intf.getName());
+
+                            return true; // The VPN is up
+                        }
+                    }
+                }
+            }
+        } catch (Throwable e) {
+            e.printStackTrace();
+        }
+        return false;
+    }
+
+    /**
+     * 是否使用代理(WiFi状态下的,避免被抓包)
+     */
+    public static boolean isWifiProxy() {
+        final boolean is_ics_or_later = Build.VERSION.SDK_INT >= Build.VERSION_CODES.ICE_CREAM_SANDWICH;
+        String proxyAddress;
+        int proxyPort;
+        if (is_ics_or_later) {
+            proxyAddress = System.getProperty("http.proxyHost");
+            String portstr = System.getProperty("http.proxyPort");
+            proxyPort = Integer.parseInt((portstr != null ? portstr : "-1"));
+        } else {
+            proxyAddress = android.net.Proxy.getHost(RApplication.getApp());
+            proxyPort = android.net.Proxy.getPort(RApplication.getApp());
+        }
+
+        RUtils.saveToSDCard("proxy.log", proxyAddress + " ~port = " + proxyPort);
+        return (!TextUtils.isEmpty(proxyAddress)) && (proxyPort != -1);
+    }
+
 
     interface OnPutValue {
         void onValue(String key, String value);
