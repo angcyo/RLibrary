@@ -6,7 +6,9 @@ import com.angcyo.library.utils.L;
 
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;
+import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
+import java.util.List;
 
 /**
  * Created by angcyo on 2016-11-26.
@@ -180,5 +182,106 @@ public class Reflect {
             e.printStackTrace();
         }
         return obj;
+    }
+
+    /**
+     * 打印对象所有的字段, 和方法, 以及值
+     *
+     * @param onlyPublic 仅输出public 声明的属性
+     */
+    public static String logObject(Object object, boolean onlyPublic) {
+        /*
+         *
+         * getFields()与getDeclaredFields()区别:
+         * getFields()只能访问类中声明为公有的字段,私有的字段它无法访问，能访问从其它类继承来的公有方法.
+         * getDeclaredFields()能访问类中所有的字段,与public,private,protect无关，不能访问从其它类继承来的方法
+
+         * getMethods()与getDeclaredMethods()区别:
+         * getMethods()只能访问类中声明为公有的方法,私有的方法它无法访问,能访问从其它类继承来的公有方法.
+         * getDeclaredFields()能访问类中所有的字段,与public,private,protect无关,不能访问从其它类继承来的方法
+
+         * getConstructors()与getDeclaredConstructors()区别:
+         * getConstructors()只能访问类中声明为public的构造函数.
+         * getDeclaredConstructors()能访问类中所有的构造函数,与public,private,protect无关
+         *
+         * */
+
+        Field[] fields;
+        Method[] methods;
+        if (onlyPublic) {
+            fields = object.getClass().getFields();
+            methods = object.getClass().getMethods();
+        } else {
+            fields = object.getClass().getDeclaredFields();
+            methods = object.getClass().getDeclaredMethods();
+        }
+
+        StringBuilder builder = new StringBuilder();
+        builder.append("\n");
+        builder.append(object.getClass().getSimpleName());
+        builder.append("\n");
+
+        builder.append("字段");
+        builder.append("(");
+        builder.append(fields.length);
+        builder.append("):\n");
+        for (Field f : fields) {
+            builder.append(f.getName());
+            builder.append(":");
+            try {
+                f.setAccessible(true);
+
+                Object value = f.get(object);
+
+                logList(builder, value);
+            } catch (IllegalAccessException e) {
+                e.printStackTrace();
+            }
+            builder.append("\n");
+        }
+
+        builder.append("\n方法");
+        builder.append("(");
+        builder.append(methods.length);
+        builder.append("):\n");
+        for (Method m : methods) {
+            builder.append(m.getName());
+            builder.append(":");
+            try {
+                m.setAccessible(true);
+
+                Class<?>[] parameterTypes = m.getParameterTypes();
+                if (parameterTypes == null || parameterTypes.length <= 0) {
+                    logList(builder, m.invoke(object));
+                } else {
+                    for (int i = 0; i < parameterTypes.length; i++) {
+                        builder.append(i);
+                        builder.append(",");
+                        builder.append(parameterTypes[i].getSimpleName());
+                        builder.append(";");
+                    }
+                }
+            } catch (IllegalAccessException e) {
+                e.printStackTrace();
+            } catch (InvocationTargetException e) {
+                e.printStackTrace();
+            }
+            builder.append("\n");
+        }
+
+        return builder.toString();
+    }
+
+    private static void logList(StringBuilder builder, Object object) {
+        if (object instanceof List) {
+            for (int i = 0; i < ((List) object).size(); i++) {
+                builder.append(i);
+                builder.append(",");
+                builder.append(((List) object).get(i));
+                builder.append(";");
+            }
+        } else {
+            builder.append(object);
+        }
     }
 }

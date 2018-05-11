@@ -15,7 +15,7 @@ import com.angcyo.uiview.recycler.RBaseViewHolder;
  */
 
 public interface Item {
-    void onBindView(@NonNull RBaseViewHolder holder, int posInData, Item dataBean);
+    void onBindView(@NonNull RBaseViewHolder holder, int posInData, Item itemDataBean);
 
     @Deprecated
     void setItemOffsets(Rect rect);

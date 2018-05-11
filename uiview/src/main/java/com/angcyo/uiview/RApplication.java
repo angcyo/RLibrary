@@ -18,6 +18,7 @@ import com.angcyo.github.utilcode.utils.Utils;
 import com.angcyo.library.utils.L;
 import com.angcyo.uiview.manager.RNotifier;
 import com.angcyo.uiview.net.Rx;
+import com.angcyo.uiview.receiver.NetworkStateReceiver;
 import com.angcyo.uiview.skin.SkinHelper;
 import com.angcyo.uiview.utils.Debug;
 import com.angcyo.uiview.utils.ScreenUtil;
@@ -175,6 +176,8 @@ public class RApplication extends Application {
      */
     protected void onInit() {
         initDefaultNotificationChannel();
+
+        NetworkStateReceiver.init(this);//网络状态监听 api>=21
 
         SkinHelper.init(this);
         Utils.init(this);
