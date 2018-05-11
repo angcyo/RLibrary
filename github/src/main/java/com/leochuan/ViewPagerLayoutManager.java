@@ -121,6 +121,8 @@ public abstract class ViewPagerLayoutManager extends LinearLayoutManager {
     }
 
     /**
+     * 虽然是set开头, 但是方法的作用是get, 返回item之间的间隙大小
+     *
      * @return the mInterval of each item's mOffset
      */
     protected abstract float setInterval();
@@ -339,17 +341,17 @@ public abstract class ViewPagerLayoutManager extends LinearLayoutManager {
         //make sure properties are correct while measure more than once
         View scrap = recycler.getViewForPosition(0);
         measureChildWithMargins(scrap, 0, 0);
-        mDecoratedMeasurement = mOrientationHelper.getDecoratedMeasurement(scrap);
-        mDecoratedMeasurementInOther = mOrientationHelper.getDecoratedMeasurementInOther(scrap);
-        mSpaceMain = (mOrientationHelper.getTotalSpace() - mDecoratedMeasurement) / 2;
+        mDecoratedMeasurement = mOrientationHelper.getDecoratedMeasurement(scrap);//view的高度, 处理的margin
+        mDecoratedMeasurementInOther = mOrientationHelper.getDecoratedMeasurementInOther(scrap);//view的宽度
+        mSpaceMain = (mOrientationHelper.getTotalSpace() /*parent可用高度 处理了padding*/ - mDecoratedMeasurement) / 2;//中心点高度
         if (mDistanceToBottom == INVALID_SIZE) {
-            mSpaceInOther = (mOrientationHelper.getTotalSpaceInOther() - mDecoratedMeasurementInOther) / 2;
+            mSpaceInOther = (mOrientationHelper.getTotalSpaceInOther() - mDecoratedMeasurementInOther) / 2; //中心点宽度
         } else {
             mSpaceInOther = mOrientationHelper.getTotalSpaceInOther() - mDecoratedMeasurementInOther - mDistanceToBottom;
         }
 
-        mInterval = setInterval();
-        setUp();
+        mInterval = setInterval();//拿到间隙
+        setUp();//op
         mLeftItems = (int) Math.abs(minRemoveOffset() / mInterval) + 1;
         mRightItems = (int) Math.abs(maxRemoveOffset() / mInterval) + 1;
 
@@ -364,8 +366,8 @@ public abstract class ViewPagerLayoutManager extends LinearLayoutManager {
                     mPendingScrollPosition * -mInterval : mPendingScrollPosition * mInterval;
         }
 
-        detachAndScrapAttachedViews(recycler);
-        layoutItems(recycler);
+        detachAndScrapAttachedViews(recycler);//detach轻量回收所有View
+        layoutItems(recycler);//开始布局
     }
 
     @Override
@@ -564,7 +566,7 @@ public abstract class ViewPagerLayoutManager extends LinearLayoutManager {
     }
 
     private void layoutItems(RecyclerView.Recycler recycler) {
-        detachAndScrapAttachedViews(recycler);
+        detachAndScrapAttachedViews(recycler);//detach轻量回收所有View
         positionCache.clear();
 
         final int itemCount = getItemCount();

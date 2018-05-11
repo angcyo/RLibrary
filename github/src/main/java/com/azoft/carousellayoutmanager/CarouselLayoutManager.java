@@ -37,6 +37,7 @@ import java.util.List;
  * <br />
  *
  * 2018-4-10 https://github.com/Azoft/CarouselLayoutManager
+ * 1.2.1
  */
 @SuppressWarnings({"ClassWithTooManyMethods", "OverlyComplexClass", "unused"})
 public class CarouselLayoutManager extends RecyclerView.LayoutManager implements RecyclerView.SmoothScroller.ScrollVectorProvider {
