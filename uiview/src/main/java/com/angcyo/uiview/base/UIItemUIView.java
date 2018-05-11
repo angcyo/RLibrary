@@ -4,6 +4,8 @@ import android.graphics.Canvas;
 import android.graphics.Rect;
 import android.support.annotation.DrawableRes;
 import android.support.annotation.NonNull;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.text.TextPaint;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
@@ -39,6 +41,7 @@ public abstract class UIItemUIView<T extends Item> extends UIRecyclerUIView<Stri
 
     protected List<T> mItems = new ArrayList<>();
     protected RSoftInputLayout mSoftInputLayout;
+    protected RecyclerView.RecycledViewPool mRecycledViewPool;
 
     public static void baseInitItem(RBaseViewHolder holder, String itemText, final View.OnClickListener onClickListener) {
         ItemInfoLayout infoLayout = holder.v(R.id.base_item_info_layout);
@@ -162,6 +165,10 @@ public abstract class UIItemUIView<T extends Item> extends UIRecyclerUIView<Stri
     public void refreshLayout() {
         mItems.clear();
         createItems(mItems);
+        for (int i = 0; mRecyclerView != null && i < mItems.size(); i++) {
+            //只需要缓存一个就行
+            mRecyclerView.getRecycledViewPool().setMaxRecycledViews(i, 1);
+        }
         if (mExBaseAdapter != null) {
             mExBaseAdapter.notifyDataSetChanged();
         }
@@ -296,5 +303,21 @@ public abstract class UIItemUIView<T extends Item> extends UIRecyclerUIView<Stri
                                 t.draw(canvas, paint, itemView, offsetRect, itemCount, position);
                             }
                         }));
+
+        if (mRecyclerView.getLayoutManager() instanceof LinearLayoutManager) {
+            ((LinearLayoutManager) mRecyclerView.getLayoutManager()).setRecycleChildrenOnDetach(true);
+        }
+        mRecyclerView.setItemViewCacheSize(1);
+        if (mRecycledViewPool != null) {
+            mRecyclerView.setRecycledViewPool(mRecycledViewPool);
+        }
+    }
+
+    public RecyclerView.RecycledViewPool getRecycledViewPool() {
+        return mRecycledViewPool;
+    }
+
+    public void setRecycledViewPool(RecyclerView.RecycledViewPool recycledViewPool) {
+        mRecycledViewPool = recycledViewPool;
     }
 }
