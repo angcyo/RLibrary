@@ -200,7 +200,11 @@ open class CircleImageView(context: Context, attributeSet: AttributeSet? = null)
                         }
 //
                         var save1 = save(canvas)
-                        canvas.clipPath(clipPath, Region.Op.INTERSECT)//交集显示
+                        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+                            canvas.clipOutPath(clipPath)
+                        } else {
+                            canvas.clipPath(clipPath, Region.Op.INTERSECT)//交集显示
+                        }
 
                         //val savePath = canvas.saveLayer(null, null, Canvas.ALL_SAVE_FLAG)
                         //var save2 = save(canvas)
