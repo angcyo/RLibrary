@@ -83,7 +83,7 @@ def apk_time = apkTime()
 android {
 
     compileSdkVersion Integer.parseInt(rootProject.C_SDK)
-    buildToolsVersion rootProject.B_TOOLS
+    //buildToolsVersion rootProject.B_TOOLS
     defaultConfig {
         applicationId "$application_id"
         minSdkVersion Integer.parseInt(rootProject.M_SDK)
