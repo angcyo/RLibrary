@@ -35,8 +35,6 @@ import java.io.InputStreamReader;
 import java.util.Iterator;
 import java.util.List;
 
-import rx.functions.Func1;
-
 /**
  * Created by robi on 2016-06-21 11:24.
  * Copyright (c) 2016, angcyo@126.com All Rights Reserved.
@@ -131,13 +129,12 @@ public class RApplication extends Application {
     protected void onBaseInit() {
         onInit();
 
-        Rx.base(new Func1<String, String>() {
+        Rx.back(new Runnable() {
             @Override
-            public String call(String s) {
+            public void run() {
                 Debug.logTimeStart("RApplication 异步初始化:onAsyncInit()");
                 onAsyncInit();
                 Debug.logTimeEnd("RApplication 异步初始化结束:onAsyncInit()");
-                return null;
             }
         });
     }
