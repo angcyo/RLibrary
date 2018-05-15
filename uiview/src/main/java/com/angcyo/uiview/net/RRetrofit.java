@@ -146,6 +146,7 @@ public class RRetrofit {
 
         //缓存支持,okhttp只会对get请求进行缓存，post请求是不会进行缓存
         okHttpBuilder
+                .retryOnConnectionFailure(false)
                 .addInterceptor(new CacheInterceptor(false))
                 .addNetworkInterceptor(new CacheInterceptor(DEBUG, cacheType))
                 .connectTimeout(DEFAULT_TIMEOUT, TimeUnit.SECONDS)
