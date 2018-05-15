@@ -3,7 +3,6 @@ package com.angcyo.uiview.widget
 import android.content.Context
 import android.graphics.*
 import android.graphics.drawable.Drawable
-import android.os.Build
 import android.support.v7.widget.AppCompatImageView
 import android.util.AttributeSet
 import com.angcyo.uiview.R
@@ -193,18 +192,12 @@ open class CircleImageView(context: Context, attributeSet: AttributeSet? = null)
                         /*DisplayListCanvas */
                         fun save(canvas: Canvas) = if (canvas.javaClass.name.contains("GLES20RecordingCanvas")) {
                             canvas.save()
-                        } else if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-                            canvas.saveLayer(0f, 0f, measuredWidth.toFloat(), measuredHeight.toFloat(), null)
                         } else {
                             canvas.saveLayer(0f, 0f, measuredWidth.toFloat(), measuredHeight.toFloat(), null, Canvas.ALL_SAVE_FLAG)
                         }
 //
                         var save1 = save(canvas)
-                        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-                            canvas.clipPath(clipPath)
-                        } else {
-                            canvas.clipPath(clipPath, Region.Op.INTERSECT)//交集显示
-                        }
+                        canvas.clipPath(clipPath, Region.Op.INTERSECT)//交集显示
 
                         //val savePath = canvas.saveLayer(null, null, Canvas.ALL_SAVE_FLAG)
                         //var save2 = save(canvas)

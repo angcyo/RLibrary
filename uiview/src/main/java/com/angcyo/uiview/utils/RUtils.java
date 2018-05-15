@@ -64,6 +64,7 @@ import com.angcyo.uiview.RApplication;
 import com.angcyo.uiview.RCrashHandler;
 import com.angcyo.uiview.Root;
 import com.angcyo.uiview.accessibility.permission.SettingsCompat;
+import com.angcyo.uiview.net.Rx;
 import com.angcyo.uiview.net.rsa.Base64Utils;
 import com.angcyo.uiview.receiver.NetworkStateReceiver;
 import com.angcyo.uiview.widget.ExEditText;
@@ -1508,58 +1509,69 @@ public class RUtils {
         saveToSDCard("log", fileName, data);
     }
 
-    public static void saveToSDCard(String folderName, String fileName, String data) {
-        try {
-            String saveFolder = Environment.getExternalStorageDirectory().getAbsoluteFile() +
-                    File.separator + Root.APP_FOLDER + File.separator + folderName;
-            File folder = new File(saveFolder);
-            if (!folder.exists()) {
-                if (!folder.mkdirs()) {
-                    return;
+    public static void saveToSDCard(final String folderName, final String fileName, final String data) {
+        Rx.back(new Runnable() {
+            @Override
+            public void run() {
+                try {
+                    String saveFolder = Environment.getExternalStorageDirectory().getAbsoluteFile() +
+                            File.separator + Root.APP_FOLDER + File.separator + folderName;
+                    File folder = new File(saveFolder);
+                    if (!folder.exists()) {
+                        if (!folder.mkdirs()) {
+                            return;
+                        }
+                    }
+                    String dataTime = RCrashHandler.getDataTime("yyyy-MM-dd_HH-mm-ss-SSS");
+                    File file = new File(saveFolder, fileName);
+                    boolean append = true;
+                    if (file.length() > 1024 * 1024 * 1 /*大于10MB重写*/) {
+                        append = false;
+                    }
+                    PrintWriter pw = new PrintWriter(new BufferedWriter(new FileWriter(file, append)));
+                    pw.println(dataTime);
+                    pw.println(data);
+                    //换行
+                    pw.println();
+                    pw.close();
+                } catch (Exception e) {
+                    e.printStackTrace();
                 }
             }
-            String dataTime = RCrashHandler.getDataTime("yyyy-MM-dd_HH-mm-ss-SSS");
-            File file = new File(saveFolder, fileName);
-            boolean append = true;
-            if (file.length() > 1024 * 1024 * 1 /*大于10MB重写*/) {
-                append = false;
-            }
-            PrintWriter pw = new PrintWriter(new BufferedWriter(new FileWriter(file, append)));
-            pw.println(dataTime);
-            pw.println(data);
-            //换行
-            pw.println();
-            pw.close();
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
+        });
     }
 
-    public static void saveToSDCard(String folderName, String fileName, Throwable data) {
-        try {
-            String saveFolder = Environment.getExternalStorageDirectory().getAbsoluteFile() +
-                    File.separator + Root.APP_FOLDER + File.separator + folderName;
-            File folder = new File(saveFolder);
-            if (!folder.exists()) {
-                if (!folder.mkdirs()) {
-                    return;
+    public static void saveToSDCard(final String folderName, final String fileName, final Throwable data) {
+        Rx.back(new Runnable() {
+            @Override
+            public void run() {
+                try {
+                    String saveFolder = Environment.getExternalStorageDirectory().getAbsoluteFile() +
+                            File.separator + Root.APP_FOLDER + File.separator + folderName;
+                    File folder = new File(saveFolder);
+                    if (!folder.exists()) {
+                        if (!folder.mkdirs()) {
+                            return;
+                        }
+                    }
+                    String dataTime = RCrashHandler.getDataTime("yyyy-MM-dd_HH-mm-ss-SSS");
+                    File file = new File(saveFolder, fileName);
+                    boolean append = true;
+                    if (file.length() > 1024 * 1024 * 10 /*大于10MB重写*/) {
+                        append = false;
+                    }
+                    PrintWriter pw = new PrintWriter(new BufferedWriter(new FileWriter(file, append)));
+                    pw.println(dataTime);
+                    data.printStackTrace(pw);
+                    //换行
+                    pw.println();
+                    pw.close();
+                } catch (Exception e) {
+                    e.printStackTrace();
                 }
+
             }
-            String dataTime = RCrashHandler.getDataTime("yyyy-MM-dd_HH-mm-ss-SSS");
-            File file = new File(saveFolder, fileName);
-            boolean append = true;
-            if (file.length() > 1024 * 1024 * 10 /*大于10MB重写*/) {
-                append = false;
-            }
-            PrintWriter pw = new PrintWriter(new BufferedWriter(new FileWriter(file, append)));
-            pw.println(dataTime);
-            data.printStackTrace(pw);
-            //换行
-            pw.println();
-            pw.close();
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
+        });
     }
 
     /**

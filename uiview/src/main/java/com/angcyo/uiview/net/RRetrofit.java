@@ -95,11 +95,16 @@ public class RRetrofit {
 
 //        builder.addConverterFactory(ScalarsConverterFactory.create());
 
-        try {
-            saveToSDCard(cls.getSimpleName());
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
+        Rx.back(new Runnable() {
+            @Override
+            public void run() {
+                try {
+                    saveToSDCard(cls.getSimpleName());
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+            }
+        });
 
         Retrofit retrofit = builder.build();
         return retrofit.create(cls);
