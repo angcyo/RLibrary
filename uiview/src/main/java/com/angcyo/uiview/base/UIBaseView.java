@@ -440,7 +440,7 @@ public abstract class UIBaseView extends UIIViewImpl {
     /**
      * 当布局的显示状态发生了改变
      */
-    protected void onLayoutStateChanged(LayoutState fromState, LayoutState toState) {
+    protected void onLayoutStateChanged(@NonNull LayoutState fromState, @NonNull LayoutState toState) {
         if (fromState == LayoutState.LOAD && mBaseLoadLayout != null) {
         }
         if (toState == LayoutState.LOAD && mBaseLoadLayout != null) {

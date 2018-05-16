@@ -90,7 +90,7 @@ public abstract class UIIViewImpl implements IView {
     public static final int DEFAULT_DIALOG_FINISH_ANIM_TIME = 150;
     public static int DEFAULT_CLICK_DELAY_TIME = RClickListener.Companion.getDEFAULT_DELAY_CLICK_TIME();
     public Activity mActivity;
-    public Runnable onIViewUnload;
+    public Runnable onIViewLoad, onIViewUnload;
     protected ILayout mILayout;
     protected ILayout mParentILayout;//上层ILayout, 用来管理上层IView的生命周期, 如果有值, 会等于mILayout
     protected ILayout mChildILayout;//
@@ -306,6 +306,10 @@ public abstract class UIIViewImpl implements IView {
     public void onViewLoad() {
         L.d(this.getClass().getSimpleName(), "onViewLoad: " + mIViewStatus);
         mIViewStatus = IViewShowState.STATE_VIEW_LOAD;
+
+        if (onIViewLoad != null) {
+            onIViewLoad.run();
+        }
 
         if (mOnUIViewListener != null) {
             mOnUIViewListener.onViewLoad(this);

@@ -30,7 +30,7 @@
     <!--最大录制视频长度-->
     <integer name="max_video_record_length">15</integer>
     <!--视频最大裁剪长度-->
-    <integer name="max_video_edit_record_length">900</integer>
+    <integer name="max_video_edit_record_length">300</integer>
     <!--最大标签选中数量-->
     <integer name="max_tags_count">3</integer>
     <integer name="max_music_name_show_count">20</integer>
