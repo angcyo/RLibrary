@@ -37,6 +37,7 @@ import com.angcyo.uiview.resources.ResUtil;
 import com.angcyo.uiview.skin.ISkin;
 import com.angcyo.uiview.skin.SkinHelper;
 import com.angcyo.uiview.utils.ClipHelper;
+import com.angcyo.uiview.utils.RUtils;
 import com.angcyo.uiview.utils.ScreenUtil;
 import com.angcyo.uiview.view.UIIViewImpl;
 import com.angcyo.uiview.viewgroup.SliderMenuLayout;
@@ -714,21 +715,39 @@ public abstract class UIBaseView extends UIIViewImpl {
     }
 
     public UIBaseView showLoadView() {
-        if (mUITitleBarContainer != null) {
-            mUITitleBarContainer.showLoadView();
-        }
-        if (mOnViewLoadListener != null) {
-            mOnViewLoadListener.onShowLoadView();
+        if (RUtils.isMainThread()) {
+            if (mUITitleBarContainer != null) {
+                mUITitleBarContainer.showLoadView();
+            }
+            if (mOnViewLoadListener != null) {
+                mOnViewLoadListener.onShowLoadView();
+            }
+        } else {
+            runOnUiThread(new Runnable() {
+                @Override
+                public void run() {
+                    showLoadView();
+                }
+            });
         }
         return this;
     }
 
     public UIBaseView hideLoadView() {
-        if (mUITitleBarContainer != null) {
-            mUITitleBarContainer.hideLoadView();
-        }
-        if (mOnViewLoadListener != null) {
-            mOnViewLoadListener.onHideLoadView();
+        if (RUtils.isMainThread()) {
+            if (mUITitleBarContainer != null) {
+                mUITitleBarContainer.hideLoadView();
+            }
+            if (mOnViewLoadListener != null) {
+                mOnViewLoadListener.onHideLoadView();
+            }
+        } else {
+            runOnUiThread(new Runnable() {
+                @Override
+                public void run() {
+                    hideLoadView();
+                }
+            });
         }
         return this;
     }
