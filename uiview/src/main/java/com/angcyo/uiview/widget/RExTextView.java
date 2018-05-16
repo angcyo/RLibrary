@@ -129,6 +129,11 @@ public class RExTextView extends RTextView {
      */
     private boolean needPatternNumberAccount = true;
 
+    /**
+     * 仅仅是展示匹配数据, 不设置touch事件
+     */
+    private boolean onlyShowPattern = false;
+
     public RExTextView(Context context) {
         this(context, null);
     }
@@ -630,12 +635,17 @@ public class RExTextView extends RTextView {
         needPatternNumberAccount = true;
         needPatternUrl = true;
         needPatternUrlCheckHttp = true;
+
         showPatternUrlIco = true;
         showUrlRawText = false;
     }
 
     public boolean isNeedPattern() {
-        return needPatternPhone || needPatternMention || needPatternUrl || needPatternNumberAccount;
+        if (onlyShowPattern) {
+            return false;
+        }
+        return needPatternPhone || needPatternMention ||
+                needPatternUrl || needPatternNumberAccount || needPatternTel;
     }
 
     /**
@@ -649,6 +659,10 @@ public class RExTextView extends RTextView {
         this.needPatternNumberAccount = needPattern;
         setMovementMethod(getDefaultMovementMethod());
         return this;
+    }
+
+    public void setOnlyShowPattern(boolean onlyShowPattern) {
+        this.onlyShowPattern = onlyShowPattern;
     }
 
     public RExTextView setNeedPatternUrl(boolean needPatternUrl) {
@@ -1079,7 +1093,15 @@ public class RExTextView extends RTextView {
                     int top = layout.getLineTop(line);
                     int bottom = layout.getLineTop(line + 1);
                     float left = layout.getPrimaryHorizontal(spanStart);
-                    float right = layout.getPrimaryHorizontal(spanStart + showTextLength);
+                    int rightOffset = spanStart + showTextLength;
+
+                    float right = 0f;
+                    if (rightOffset > buffer.length()) {
+                        //超出了可以显示文本的范围
+                        right = x;
+                    } else {
+                        right = layout.getPrimaryHorizontal(rightOffset);
+                    }
 
                     if (imageTextSpan.isCanClick() && (x >= left && x <= right)   /*(off >= spanStart && off <= spanStart + showTextLength)*/) {
                         if (action == MotionEvent.ACTION_UP) {

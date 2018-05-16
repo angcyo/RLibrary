@@ -13,7 +13,6 @@ import android.util.TypedValue;
 import android.view.Gravity;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ImageView;
 import android.widget.RelativeLayout;
 
 import com.angcyo.uiview.R;
@@ -39,7 +38,7 @@ public class ItemInfoLayout extends RRelativeLayout {
     public static int DEFAULT_TEXT_COLOR = Color.parseColor("#333333");
     public static int DEFAULT_DARK_TEXT_COLOR = Color.parseColor("#999999");
     RTextView mTextView, mDarkTextView;
-    ImageView mImageView;//扩展字段,用来显示一张网络图片 星期二 2017-2-21
+    GlideImageView mImageView;//扩展字段,用来显示一张网络图片 星期二 2017-2-21
     View mLineView;//用来显示底部分割线
     /**
      * 主要的文本信息属性
@@ -156,7 +155,7 @@ public class ItemInfoLayout extends RRelativeLayout {
     private void initLayout() {
         mTextView = new RTextView(getContext());
         mDarkTextView = new RTextView(getContext());
-        mImageView = new ImageView(getContext());
+        mImageView = new GlideImageView(getContext(), null);
         mLineView = new View(getContext());
         mLineView.setVisibility(showLine ? View.VISIBLE : View.GONE);
         mLineView.setBackgroundColor(ContextCompat.getColor(getContext(), R.color.base_chat_bg_color));
@@ -226,7 +225,7 @@ public class ItemInfoLayout extends RRelativeLayout {
         return this;
     }
 
-    public ImageView getImageView() {
+    public GlideImageView getImageView() {
         return mImageView;
     }
 
