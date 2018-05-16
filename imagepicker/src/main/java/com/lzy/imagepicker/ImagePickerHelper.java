@@ -115,7 +115,43 @@ public class ImagePickerHelper {
             if (data != null && requestCode == 100) {
                 ArrayList<ImageItem> images = (ArrayList<ImageItem>) data.getSerializableExtra(ImagePicker.EXTRA_RESULT_ITEMS);
                 for (ImageItem item : images) {
-                    list.add(item.path);
+                    if (item.loadType == ImageDataSource.IMAGE) {
+                        list.add(item.path);
+                    }
+                }
+            } else {
+                Toast.makeText(activity, "没有数据", Toast.LENGTH_SHORT).show();
+            }
+        }
+        return list;
+    }
+
+    public static ArrayList<String> getVideoPaths(Activity activity, int requestCode, int resultCode, Intent data) {
+        ArrayList<String> list = new ArrayList<>();
+        if (resultCode == ImagePicker.RESULT_CODE_ITEMS) {
+            if (data != null && requestCode == 100) {
+                ArrayList<ImageItem> images = (ArrayList<ImageItem>) data.getSerializableExtra(ImagePicker.EXTRA_RESULT_ITEMS);
+                for (ImageItem item : images) {
+                    if (item.loadType == ImageDataSource.VIDEO) {
+                        list.add(item.path);
+                    }
+                }
+            } else {
+                Toast.makeText(activity, "没有数据", Toast.LENGTH_SHORT).show();
+            }
+        }
+        return list;
+    }
+
+    public static ArrayList<ImageItem> getVideos(Activity activity, int requestCode, int resultCode, Intent data) {
+        ArrayList<ImageItem> list = new ArrayList<>();
+        if (resultCode == ImagePicker.RESULT_CODE_ITEMS) {
+            if (data != null && requestCode == 100) {
+                ArrayList<ImageItem> images = (ArrayList<ImageItem>) data.getSerializableExtra(ImagePicker.EXTRA_RESULT_ITEMS);
+                for (ImageItem item : images) {
+                    if (item.loadType == ImageDataSource.VIDEO) {
+                        list.add(item);
+                    }
                 }
             } else {
                 Toast.makeText(activity, "没有数据", Toast.LENGTH_SHORT).show();

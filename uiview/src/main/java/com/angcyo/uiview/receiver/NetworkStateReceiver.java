@@ -98,7 +98,7 @@ public class NetworkStateReceiver extends BroadcastReceiver {
                 @Override
                 public void onCapabilitiesChanged(Network network, NetworkCapabilities networkCapabilities) {
                     super.onCapabilitiesChanged(network, networkCapabilities);
-                    L.e("NetworkStateReceiver: onCapabilitiesChanged([network, networkCapabilities])-> ");
+                    L.e("NetworkStateReceiver: onCapabilitiesChanged([network, networkCapabilities])-> " + networkCapabilities.describeContents());
 
                     sNetworkWrapper.networkCapabilities = networkCapabilities;
                     sNetworkWrapper.network = network;
