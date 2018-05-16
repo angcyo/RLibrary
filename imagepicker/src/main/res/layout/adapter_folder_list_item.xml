@@ -13,13 +13,26 @@
         android:gravity="center_vertical"
         android:orientation="horizontal">
 
-        <ImageView
-            android:id="@+id/iv_cover"
+        <FrameLayout
             android:layout_width="68dp"
             android:layout_height="68dp"
-            android:layout_margin="8dp"
-            android:scaleType="centerCrop"
-            android:src="@mipmap/default_image"/>
+            android:layout_margin="8dp">
+
+            <ImageView
+                android:id="@+id/iv_cover"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:scaleType="centerCrop"
+                android:src="@mipmap/default_image"/>
+
+            <ImageView
+                android:id="@+id/video_ico_view"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:src="@drawable/image_picker_play"
+                android:visibility="invisible"/>
+        </FrameLayout>
 
         <LinearLayout
             android:layout_width="0dp"

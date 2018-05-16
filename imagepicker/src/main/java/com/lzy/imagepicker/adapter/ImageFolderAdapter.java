@@ -96,6 +96,12 @@ public class ImageFolderAdapter extends BaseAdapter {
             holder.folderCheck.setVisibility(View.INVISIBLE);
         }
 
+        if (folder.showVideoIco) {
+            holder.videoIco.setVisibility(View.VISIBLE);
+        } else {
+            holder.videoIco.setVisibility(View.INVISIBLE);
+        }
+
         return convertView;
     }
 
@@ -116,12 +122,14 @@ public class ImageFolderAdapter extends BaseAdapter {
         TextView folderName;
         TextView imageCount;
         ImageView folderCheck;
+        ImageView videoIco;
 
         public ViewHolder(View view) {
-            cover = (ImageView) view.findViewById(R.id.iv_cover);
-            folderName = (TextView) view.findViewById(R.id.tv_folder_name);
-            imageCount = (TextView) view.findViewById(R.id.tv_image_count);
-            folderCheck = (ImageView) view.findViewById(R.id.iv_folder_check);
+            cover = view.findViewById(R.id.iv_cover);
+            folderName = view.findViewById(R.id.tv_folder_name);
+            imageCount = view.findViewById(R.id.tv_image_count);
+            folderCheck = view.findViewById(R.id.iv_folder_check);
+            videoIco = view.findViewById(R.id.video_ico_view);
             view.setTag(this);
         }
     }

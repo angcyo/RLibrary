@@ -36,12 +36,22 @@ public class ImagePickerHelper {
         imagePicker.setImageLoader(new GlideImageLoader());
     }
 
+    /**
+     * 图片视频混合显示选择
+     */
+    public static void startImageVideoPicker(Activity activity, boolean multiMode, int selectLimit, long maxVideoDuration /*允许选择视频的最大长度, -1不限制*/) {
+        startImagePicker(activity, false, true, false,
+                multiMode, selectLimit, maxVideoDuration, ImageDataSource.IMAGE_AND_VIDEO, CropImageView.Style.RECTANGLE);
+    }
+
     public static void startImagePicker(Activity activity, boolean multiMode, int selectLimit, @ImageDataSource.LoaderType int loadType) {
-        startImagePicker(activity, true, true, false, multiMode, selectLimit, loadType, CropImageView.Style.RECTANGLE);
+        startImagePicker(activity, true, true, false,
+                multiMode, selectLimit, -1, loadType, CropImageView.Style.RECTANGLE);
     }
 
     public static void startImagePicker(Activity activity, boolean showCamera, boolean multiMode, int selectLimit, @ImageDataSource.LoaderType int loadType) {
-        startImagePicker(activity, showCamera, true, false, multiMode, selectLimit, loadType, CropImageView.Style.RECTANGLE);
+        startImagePicker(activity, showCamera, true, false,
+                multiMode, selectLimit, -1, loadType, CropImageView.Style.RECTANGLE);
     }
 
     public static void startImagePicker(Activity activity, boolean crop, boolean multiMode, int selectLimit) {
@@ -61,12 +71,13 @@ public class ImagePickerHelper {
     public static void startImagePicker(Activity activity, boolean showCamera,
                                         boolean clear, boolean crop /*裁剪需要关闭多选*/,
                                         boolean multiMode, int selectLimit, CropImageView.Style style) {
-        startImagePicker(activity, showCamera, clear, crop, multiMode, selectLimit, ImageDataSource.IMAGE, style);
+        startImagePicker(activity, showCamera, clear, crop, multiMode, selectLimit, -1, ImageDataSource.IMAGE, style);
     }
 
     public static void startImagePicker(Activity activity, boolean showCamera,
                                         boolean clear, boolean crop,
                                         boolean multiMode, int selectLimit,
+                                        long maxVideoDuration,
                                         @ImageDataSource.LoaderType int loadType,
                                         CropImageView.Style style /*图片剪切框的形状*/) {
         ImagePicker imagePicker = ImagePicker.getInstance();
@@ -83,6 +94,7 @@ public class ImagePickerHelper {
         imagePicker.setStyle(style);
         Intent intent = new Intent(activity, ImageGridActivity.class);
         intent.putExtra(ImageGridActivity.CLEAR_SELECTOR, clear);
+        intent.putExtra(ImageGridActivity.MAX_VIDEO_DURATION, maxVideoDuration);
         activity.startActivityForResult(intent, REQUEST_CODE);
     }
 

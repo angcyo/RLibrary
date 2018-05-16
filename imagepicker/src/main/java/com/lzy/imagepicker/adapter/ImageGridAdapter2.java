@@ -21,12 +21,14 @@ import com.lzy.imagepicker.Utils;
 import com.lzy.imagepicker.bean.ImageItem;
 import com.lzy.imagepicker.ui.ImageBaseActivity;
 import com.lzy.imagepicker.ui.ImageGridActivity;
+import com.lzy.imagepicker.ui.VideoDurationControl;
 import com.lzy.imagepicker.view.ImagePickerImageView;
 import com.lzy.imagepicker.view.RCameraPreview;
 
 import java.lang.ref.WeakReference;
 import java.util.ArrayList;
 
+import static com.lzy.imagepicker.ImageDataSource.IMAGE_AND_VIDEO;
 import static com.lzy.imagepicker.ImageDataSource.VIDEO;
 
 /**
@@ -51,6 +53,7 @@ public class ImageGridAdapter2 extends RecyclerView.Adapter<ImageViewHolder> {
     private int mImageSize;               //每个条目的大小
     private OnImageItemClickListener listener;   //图片被点击的监听
     private int loadType = ImageDataSource.IMAGE;
+    private long maxVideoDuration = -1;
 
     public ImageGridAdapter2(Activity activity, ArrayList<ImageItem> images, int loadType) {
         this.mActivity = activity;
@@ -77,6 +80,9 @@ public class ImageGridAdapter2 extends RecyclerView.Adapter<ImageViewHolder> {
         return builder.toString();
     }
 
+    public void setMaxVideoDuration(long maxVideoDuration) {
+        this.maxVideoDuration = maxVideoDuration;
+    }
 
     public void refreshData(ArrayList<ImageItem> images) {
         if (images == null || images.size() == 0) this.images = new ArrayList<>();
@@ -139,14 +145,15 @@ public class ImageGridAdapter2 extends RecyclerView.Adapter<ImageViewHolder> {
             final CheckBox checkBox = holder.v(R.id.cb_check);
             final View maskView = holder.v(R.id.mask);
             final ImagePickerImageView thumbImageView = holder.v(R.id.iv_thumb);
+            TextView videoDuration = holder.v(R.id.video_duration_view);
 
             thumbImageView.setScaleType(ImageView.ScaleType.CENTER_CROP);
 
-            if (loadType == VIDEO) {
+            if (imageItem.loadType == VIDEO) {
                 //视频类型处理
                 thumbImageView.setPlayDrawable(R.drawable.image_picker_play);
-                TextView textView = holder.v(R.id.video_duration_view);
-                textView.setText(getVideoTime(imageItem.videoDuration / 1000));
+                videoDuration.setVisibility(View.VISIBLE);
+                videoDuration.setText(getVideoTime(imageItem.videoDuration / 1000));
 
                 //创建视频缩略图
                 ThumbLoad.createThumbFile(new WeakReference<>(mActivity), new WeakReference<RecyclerView.Adapter>(this)
@@ -155,6 +162,9 @@ public class ImageGridAdapter2 extends RecyclerView.Adapter<ImageViewHolder> {
                 GlideImageLoader.displayImage(thumbImageView, imageItem.videoThumbPath, R.drawable.image_placeholder_shape); //显示图片
                 //imagePicker.getImageLoader().displayImage(mActivity, imageItem.videoThumbPath, "no", "", thumbImageView, mImageSize, mImageSize);
             } else {
+                thumbImageView.setPlayDrawable(null);
+                videoDuration.setVisibility(View.INVISIBLE);
+
                 GlideImageLoader.displayImage(thumbImageView, imageItem.path, R.drawable.image_placeholder_shape); //显示图片
             }
 
@@ -168,10 +178,17 @@ public class ImageGridAdapter2 extends RecyclerView.Adapter<ImageViewHolder> {
             checkBox.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
+                    if (VideoDurationControl.isVideoDurationLong(maxVideoDuration, imageItem.videoDuration,
+                            loadType, imageItem.loadType)) {
+                        checkBox.setChecked(false);
+                        return;
+                    }
+
                     int selectLimit = imagePicker.getSelectLimit();
                     if (checkBox.isChecked() && mSelectedImages.size() >= selectLimit) {
                         Toast.makeText(mActivity.getApplicationContext(),
-                                mActivity.getString(loadType == VIDEO ? R.string.select_video_limit : R.string.select_limit, selectLimit + ""),
+                                mActivity.getString(loadType == IMAGE_AND_VIDEO ? R.string.select_image_video_limit :
+                                        (loadType == VIDEO ? R.string.select_video_limit : R.string.select_limit), selectLimit + ""),
                                 Toast.LENGTH_SHORT).show();
                         checkBox.setChecked(false);
                         maskView.setVisibility(View.GONE);

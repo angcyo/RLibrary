@@ -42,14 +42,16 @@ public class ImagePreviewActivity extends ImagePreviewBaseActivity implements Im
     private View bottomBar;
 
     private int loadType;
+    private long maxVideoDuration = -1;
 
     public static void launcher(Activity activity, ArrayList<ImageItem> items,
-                                int selectedPosition, boolean isOrigin, int loadType) {
+                                int selectedPosition, boolean isOrigin, int loadType, long maxVideoDuration) {
         Intent intent = new Intent(activity, ImagePreviewActivity.class);
         intent.putExtra(ImagePicker.EXTRA_LOAD_TYPE, loadType);
         intent.putExtra(ImagePicker.EXTRA_SELECTED_IMAGE_POSITION, selectedPosition);
         //intent.putExtra(ImagePicker.EXTRA_IMAGE_ITEMS, items);
         intent.putExtra(ImagePreviewActivity.ISORIGIN, isOrigin);
+        intent.putExtra(ImageGridActivity.MAX_VIDEO_DURATION, maxVideoDuration);
         activity.startActivityForResult(intent, ImagePicker.REQUEST_CODE_PREVIEW);
     }
 
@@ -60,6 +62,8 @@ public class ImagePreviewActivity extends ImagePreviewBaseActivity implements Im
 
         isOrigin = getIntent().getBooleanExtra(ImagePreviewActivity.ISORIGIN, false);
         loadType = getIntent().getIntExtra(ImagePicker.EXTRA_LOAD_TYPE, IMAGE);
+        maxVideoDuration = getIntent().getLongExtra(ImageGridActivity.MAX_VIDEO_DURATION, -1);
+
         imagePicker.addOnImageSelectedListener(this);
 
         mBtnOk = (Button) topBar.findViewById(R.id.btn_ok);
@@ -76,7 +80,7 @@ public class ImagePreviewActivity extends ImagePreviewBaseActivity implements Im
         mCbOrigin.setChecked(isOrigin);
 
 //        if (loadType != IMAGE) {
-            mCbOrigin.setVisibility(View.GONE);
+        mCbOrigin.setVisibility(View.GONE);
 //        }
 
         //初始化当前页面的状态
@@ -101,6 +105,13 @@ public class ImagePreviewActivity extends ImagePreviewBaseActivity implements Im
             @Override
             public void onClick(View v) {
                 ImageItem imageItem = mImageItems.get(mCurrentPosition);
+
+                if (VideoDurationControl.isVideoDurationLong(maxVideoDuration, imageItem.videoDuration,
+                        loadType, imageItem.loadType)) {
+                    mCbCheck.setChecked(false);
+                    return;
+                }
+
                 int selectLimit = imagePicker.getSelectLimit();
                 if (mCbCheck.isChecked() && selectedImages.size() >= selectLimit) {
                     Toast.makeText(ImagePreviewActivity.this,
@@ -120,7 +131,8 @@ public class ImagePreviewActivity extends ImagePreviewBaseActivity implements Im
     @Override
     public void onImageSelected(int position, ImageItem item, boolean isAdd) {
         if (imagePicker.getSelectImageCount() > 0) {
-            mBtnOk.setText(getString(R.string.select_complete, imagePicker.getSelectImageCount(), imagePicker.getSelectLimit()));
+            mBtnOk.setText(getString(R.string.select_complete,
+                    imagePicker.getSelectImageCount() + "", imagePicker.getSelectLimit() + ""));
             mBtnOk.setEnabled(true);
         } else {
             mBtnOk.setText(getString(R.string.complete));

@@ -24,6 +24,7 @@ import android.widget.Button;
 import android.widget.TextView;
 
 import com.angcyo.uiview.recycler.RExItemDecoration;
+import com.angcyo.uiview.utils.Tip;
 import com.lzy.imagepicker.ImageDataSource;
 import com.lzy.imagepicker.ImagePicker;
 import com.lzy.imagepicker.R;
@@ -55,6 +56,10 @@ public class ImageGridActivity extends ImageBaseActivity implements ImageDataSou
      * 清空之前的选择
      */
     public static final String CLEAR_SELECTOR = "clear_selector";
+    /**
+     * 允许选择视频的最大时长, 毫秒
+     */
+    public static final String MAX_VIDEO_DURATION = "max_video_duration";
 
     private ImagePicker imagePicker;
 
@@ -71,6 +76,8 @@ public class ImageGridActivity extends ImageBaseActivity implements ImageDataSou
     private List<ImageFolder> mImageFolders;   //所有的图片文件夹
     //private ImageGridAdapter mImageGridAdapter;  //图片九宫格展示的适配器
     private ImageGridAdapter2 mImageGridAdapter;  //图片九宫格展示的适配器
+
+    private long maxVideoDuration = -1;
 
     @ImageDataSource.LoaderType
     private int loadType;
@@ -104,6 +111,7 @@ public class ImageGridActivity extends ImageBaseActivity implements ImageDataSou
     protected void onPostCreate(@Nullable Bundle savedInstanceState) {
         super.onPostCreate(savedInstanceState);
         final boolean clear = getIntent().getBooleanExtra(CLEAR_SELECTOR, true);
+        maxVideoDuration = getIntent().getLongExtra(MAX_VIDEO_DURATION, -1);
 
         imagePicker = ImagePicker.getInstance();
         loadType = imagePicker.getLoadType();
@@ -156,6 +164,8 @@ public class ImageGridActivity extends ImageBaseActivity implements ImageDataSou
         }
 
         mImageGridAdapter = new ImageGridAdapter2(this, null, loadType);
+        mImageGridAdapter.setMaxVideoDuration(maxVideoDuration);
+
         mImageFolderAdapter = new ImageFolderAdapter(this, null, loadType);
 
         onImageSelected(0, null, false);
@@ -173,9 +183,15 @@ public class ImageGridActivity extends ImageBaseActivity implements ImageDataSou
         if (loadType == ImageDataSource.VIDEO) {
             tv_des.setText("选择视频");
             btn_dir.setText("全部视频");
-        } else {
+        } else if (loadType == ImageDataSource.IMAGE) {
             tv_des.setText("选择图片");
             btn_dir.setText("全部图片");
+        } else if (loadType == ImageDataSource.IMAGE_AND_VIDEO) {
+            tv_des.setText("图片和视频");
+            btn_dir.setText("图片和视频");
+        } else {
+            tv_des.setText("媒体文件");
+            btn_dir.setText("媒体文件");
         }
     }
 
@@ -253,7 +269,7 @@ public class ImageGridActivity extends ImageBaseActivity implements ImageDataSou
                 mFolderPopupWindow.setSelection(index);
             }
         } else if (id == R.id.btn_preview) {
-            ImagePreviewActivity.launcher(this, imagePicker.getSelectedImages(), 0, isOrigin, loadType);
+            ImagePreviewActivity.launcher(this, imagePicker.getSelectedImages(), 0, isOrigin, loadType, maxVideoDuration);
         } else if (id == R.id.btn_back) {
             //点击返回按钮
             finish();
@@ -311,8 +327,14 @@ public class ImageGridActivity extends ImageBaseActivity implements ImageDataSou
         position = imagePicker.isShowCamera() ? position - 1 : position;
         if (imagePicker.isMultiMode()) {
             //如果是多选，点击图片进入预览界面
-            ImagePreviewActivity.launcher(this, imagePicker.getCurrentImageFolderItems(), position, isOrigin, loadType);
+            ImagePreviewActivity.launcher(this, imagePicker.getCurrentImageFolderItems(), position, isOrigin, loadType, maxVideoDuration);
         } else {
+
+            if (VideoDurationControl.isVideoDurationLong(maxVideoDuration, imageItem.videoDuration,
+                    loadType, imageItem.loadType)) {
+                return;
+            }
+
             imagePicker.clearSelectedImages();
             imagePicker.addSelectedImageItem(position, imagePicker.getCurrentImageFolderItems().get(position), true);
             if (imagePicker.isCrop()) {

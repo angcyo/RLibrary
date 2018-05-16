@@ -6,6 +6,7 @@ import android.media.MediaMetadataRetriever;
 import android.os.Bundle;
 import android.provider.MediaStore;
 import android.support.annotation.IntDef;
+import android.support.annotation.NonNull;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.LoaderManager;
 import android.support.v4.content.CursorLoader;
@@ -13,6 +14,7 @@ import android.support.v4.content.Loader;
 import android.widget.Toast;
 
 import com.angcyo.uiview.utils.Debug;
+import com.angcyo.uiview.utils.RUtils;
 import com.lzy.imagepicker.adapter.ThreadExecutor;
 import com.lzy.imagepicker.bean.ImageFolder;
 import com.lzy.imagepicker.bean.ImageItem;
@@ -42,6 +44,7 @@ public class ImageDataSource implements LoaderManager.LoaderCallbacks<Cursor> {
     public static final int IMAGE = 1;//加载类型图片
     public static final int VIDEO = 2;//加载类型视频
     public static final int FILE = 3;//加载类型文件
+    public static final int IMAGE_AND_VIDEO = 4;//加载类型文件
     private final String[] IMAGE_PROJECTION = {     //查询图片需要的数据列
             MediaStore.Images.Media.DISPLAY_NAME,   //图片的显示名称  aaa.jpg
             MediaStore.Images.Media.DATA,           //图片的真实路径  /storage/emulated/0/pp/downloader/wallpaper/aaa.jpg
@@ -97,6 +100,8 @@ public class ImageDataSource implements LoaderManager.LoaderCallbacks<Cursor> {
                 bundle.putString("path", path);
                 loaderManager.initLoader(LOADER_VIDEO_CATEGORY, bundle, this);
             }
+        } else if (loaderType == IMAGE_AND_VIDEO) {
+            loaderManager.initLoader(LOADER_VIDEO_ALL, null, this);//加载所有的图片
         }
     }
 
@@ -190,6 +195,7 @@ public class ImageDataSource implements LoaderManager.LoaderCallbacks<Cursor> {
         if (id == LOADER_ALL)
             cursorLoader = new CursorLoader(activity, MediaStore.Images.Media.EXTERNAL_CONTENT_URI, IMAGE_PROJECTION,
                     null, null, IMAGE_PROJECTION[6] + " DESC");
+
         //扫描某个图片文件夹
         if (id == LOADER_CATEGORY)
             cursorLoader = new CursorLoader(activity, MediaStore.Images.Media.EXTERNAL_CONTENT_URI, IMAGE_PROJECTION,
@@ -208,8 +214,13 @@ public class ImageDataSource implements LoaderManager.LoaderCallbacks<Cursor> {
     }
 
     @Override
-    public void onLoadFinished(Loader<Cursor> loader, Cursor data) {
-        imageFolders.clear();
+    public void onLoadFinished(@NonNull Loader<Cursor> loader, Cursor data) {
+        if (mLoaderType == IMAGE_AND_VIDEO && loader.getId() == LOADER_ALL) {
+            //装载视频和图片时, 第一次加载所有视频, 第二次加载所有图片
+        } else {
+            imageFolders.clear();
+        }
+
         if (data != null) {
             ArrayList<ImageItem> allImages = new ArrayList<>();   //所有图片的集合,不分文件夹
 
@@ -219,15 +230,15 @@ public class ImageDataSource implements LoaderManager.LoaderCallbacks<Cursor> {
                     loadImage(data, allImages);
                 } else if (mLoaderType == VIDEO) {
                     loadVideo(data, allImages);
+                } else if (mLoaderType == IMAGE_AND_VIDEO) {
+                    if (loader.getId() == LOADER_ALL) {
+                        loadImage(data, allImages);
+                    } else if (loader.getId() == LOADER_VIDEO_ALL) {
+                        loadVideo(data, allImages);
+                    }
                 }
             }
             Debug.logTimeEnd("扫描媒体结束:");
-
-//            try {
-//                mediaMetadataRetriever.release();
-//            } catch (Exception e) {
-//                e.printStackTrace();
-//            }
 
             //防止没有图片报异常
             if (data.getCount() > 0 && !allImages.isEmpty()) {
@@ -237,21 +248,41 @@ public class ImageDataSource implements LoaderManager.LoaderCallbacks<Cursor> {
                     allImagesFolder.name = activity.getResources().getString(R.string.all_images);
                 } else if (mLoaderType == VIDEO) {
                     allImagesFolder.name = activity.getResources().getString(R.string.all_videos);
+
+                    allImagesFolder.showVideoIco = true;
                 } else {
                     allImagesFolder.name = "All";
                 }
                 allImagesFolder.path = "/";
                 allImagesFolder.cover = allImages.get(0);
                 allImagesFolder.images = allImages;
-                imageFolders.add(0, allImagesFolder);  //确保第一条是所有图片
+
+                if (mLoaderType == IMAGE_AND_VIDEO) {
+                    if (loader.getId() == LOADER_ALL) {
+                        allImagesFolder.name = "图片和视频";
+                        try {
+                            allImagesFolder.images.addAll(0, imageFolders.get(0).images);//把之前的视频, 添加进来
+                        } catch (Exception e) {
+                            e.printStackTrace();
+                        }
+                        imageFolders.add(0, allImagesFolder);  //确保第一条是所有图片
+                    } else if (loader.getId() == LOADER_VIDEO_ALL) {
+
+                    }
+                } else {
+                    imageFolders.add(0, allImagesFolder);  //确保第一条是所有图片
+                }
+
             } else {
-                Toast.makeText(activity, "没有找到媒体数据", Toast.LENGTH_SHORT).show();
+                if (mLoaderType == IMAGE_AND_VIDEO) {
+                    if (loader.getId() == LOADER_ALL && (RUtils.isListEmpty(imageFolders) || RUtils.isListEmpty(imageFolders.get(0).images))) {
+                        Toast.makeText(activity, "没有找到媒体数据", Toast.LENGTH_SHORT).show();
+                    }
+                } else {
+                    Toast.makeText(activity, "没有找到媒体数据", Toast.LENGTH_SHORT).show();
+                }
             }
         }
-
-        //回调接口，通知图片数据准备完成
-        ImagePicker.getInstance().setImageFolders(imageFolders);
-        loadedListener.onImagesLoaded(imageFolders);
 
         //销毁(onLoadFinished, 会在屏幕灭屏亮屏后再次回调, 然后数据没了)
         LoaderManager loaderManager = activity.getSupportLoaderManager();
@@ -259,6 +290,20 @@ public class ImageDataSource implements LoaderManager.LoaderCallbacks<Cursor> {
         loaderManager.destroyLoader(LOADER_VIDEO_ALL);
         loaderManager.destroyLoader(LOADER_CATEGORY);
         loaderManager.destroyLoader(LOADER_ALL);
+
+        if (mLoaderType == IMAGE_AND_VIDEO) {
+            if (loader.getId() == LOADER_VIDEO_ALL) {
+                loaderManager.initLoader(LOADER_ALL, null, this);//加载所有的图片
+            } else if (loader.getId() == LOADER_ALL) {
+                //回调接口，通知图片数据准备完成
+                ImagePicker.getInstance().setImageFolders(imageFolders);
+                loadedListener.onImagesLoaded(imageFolders);
+            }
+        } else {
+            //回调接口，通知图片数据准备完成
+            ImagePicker.getInstance().setImageFolders(imageFolders);
+            loadedListener.onImagesLoaded(imageFolders);
+        }
     }
 
     private void loadImage(Cursor data, ArrayList<ImageItem> allImages) {
@@ -397,8 +442,14 @@ public class ImageDataSource implements LoaderManager.LoaderCallbacks<Cursor> {
         //根据父路径分类存放图片
         File imageParentFile = imageFile.getParentFile();
         ImageFolder imageFolder = new ImageFolder();
-        imageFolder.name = imageParentFile.getName();
-        imageFolder.path = imageParentFile.getAbsolutePath();
+        if (mLoaderType == IMAGE_AND_VIDEO) {
+            imageFolder.name = "所有视频";
+            imageFolder.path = "/";
+            imageFolder.showVideoIco = true;
+        } else {
+            imageFolder.name = imageParentFile.getName();
+            imageFolder.path = imageParentFile.getAbsolutePath();
+        }
 
         if (!imageFolders.contains(imageFolder)) {
             ArrayList<ImageItem> images = new ArrayList<>();
@@ -436,7 +487,7 @@ public class ImageDataSource implements LoaderManager.LoaderCallbacks<Cursor> {
         return path;
     }
 
-    @IntDef({IMAGE, VIDEO, FILE})
+    @IntDef({IMAGE, VIDEO, FILE, IMAGE_AND_VIDEO})
     @Retention(RetentionPolicy.SOURCE)
     public @interface LoaderType {
     }
