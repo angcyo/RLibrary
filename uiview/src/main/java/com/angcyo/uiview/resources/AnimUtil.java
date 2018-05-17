@@ -761,12 +761,16 @@ public class AnimUtil {
      * 上下移动的循环动画
      */
     public static Animation translateYYAnimation(float toYValue) {
+        return translateYYAnimation(toYValue, 300);
+    }
+
+    public static Animation translateYYAnimation(float toYValue, long durationMillis) {
         TranslateAnimation animation = new TranslateAnimation(Animation.RELATIVE_TO_SELF, 0, Animation.RELATIVE_TO_SELF, 0f,
                 Animation.RELATIVE_TO_SELF, 0f, Animation.RELATIVE_TO_SELF, toYValue);
         animation.setInterpolator(new LinearInterpolator());
         animation.setRepeatCount(Animation.INFINITE);
         animation.setRepeatMode(Animation.REVERSE);
-        animation.setDuration(300);
+        animation.setDuration(durationMillis);
         return animation;
     }
 }

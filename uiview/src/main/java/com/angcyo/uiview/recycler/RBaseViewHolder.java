@@ -172,6 +172,7 @@ public class RBaseViewHolder extends RecyclerView.ViewHolder {
 
     public View invisible(View view) {
         if (view != null) {
+            view.clearAnimation();
             view.setVisibility(View.INVISIBLE);
         }
         return view;
@@ -183,6 +184,7 @@ public class RBaseViewHolder extends RecyclerView.ViewHolder {
 
     public View gone(View view) {
         if (view != null) {
+            view.clearAnimation();
             view.setVisibility(View.GONE);
         }
         return view;

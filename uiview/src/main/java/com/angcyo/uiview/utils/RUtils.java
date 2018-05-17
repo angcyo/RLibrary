@@ -28,6 +28,8 @@ import android.graphics.RectF;
 import android.graphics.drawable.ColorDrawable;
 import android.graphics.drawable.Drawable;
 import android.hardware.Camera;
+import android.location.Criteria;
+import android.location.LocationManager;
 import android.media.AudioFormat;
 import android.media.AudioManager;
 import android.media.AudioRecord;
@@ -2547,6 +2549,20 @@ public class RUtils {
 
         RUtils.saveToSDCard("proxy.log", proxyAddress + " ~port = " + proxyPort);
         return (!TextUtils.isEmpty(proxyAddress)) && (proxyPort != -1);
+    }
+
+    /**
+     * 定位是否可用
+     */
+    public static boolean isLocationEnable(Context context) {
+        LocationManager locationManager = (LocationManager) context.getSystemService(Context.LOCATION_SERVICE);
+        Criteria cri = new Criteria();
+        cri.setAccuracy(Criteria.ACCURACY_COARSE);
+        cri.setAltitudeRequired(false);
+        cri.setBearingRequired(false);
+        cri.setCostAllowed(false);
+        String bestProvider = locationManager.getBestProvider(cri, true);
+        return !TextUtils.isEmpty(bestProvider);
     }
 
 
