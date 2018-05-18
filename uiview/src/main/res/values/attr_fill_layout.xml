@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <declare-styleable name="FillLayout">
+        <!--反向从又向左布局-->
+        <attr name="r_reverse_fill_layout" format="boolean"/>
+    </declare-styleable>
+
+    <declare-styleable name="FillLayout_Layout">
+        <!--需要控制fill的view, 只能声明一个, 声明多个会出现计算问题-->
+        <attr name="r_fill_view" format="boolean"/>
+        <attr name="r_fill_min_width" format="dimension"/>
+        <!--类似LinearLayout 的 weight=1 -->
+        <attr name="r_fill_space" format="boolean"/>
+    </declare-styleable>
+</resources>
