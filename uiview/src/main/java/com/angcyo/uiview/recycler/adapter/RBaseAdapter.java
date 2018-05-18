@@ -341,6 +341,11 @@ public abstract class RBaseAdapter<T> extends RecyclerView.Adapter<RBaseViewHold
      * 结束加载更多的标识, 方便下一次回调
      */
     public void setLoadMoreEnd() {
+        if (mLoadMoreView != null && mLoadState == ILoadMore.NO_MORE) {
+            //如果当前界面上已经是没有更多的状态
+            return;
+        }
+
         mLoadState = ILoadMore.NORMAL;
         if (mAutoEnableLoadMore) {
             setEnableLoadMore(true);
