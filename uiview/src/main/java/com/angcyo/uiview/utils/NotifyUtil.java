@@ -16,6 +16,7 @@ import android.widget.RemoteViews;
 import android.widget.Toast;
 
 import com.angcyo.uiview.RApplication;
+import com.angcyo.uiview.skin.SkinHelper;
 
 import java.util.ArrayList;
 
@@ -117,6 +118,9 @@ public class NotifyUtil {
         }
 
         cBuilder.setDefaults(defaults);
+
+        //可以让small ico 和标题 变颜色
+        cBuilder.setColor(SkinHelper.getSkin().getThemeSubColor());
     }
 
     /**
