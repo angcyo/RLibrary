@@ -27,6 +27,9 @@ public abstract class UIBaseRxView extends UIBaseDataView {
     protected CompositeSubscription mSubscriptions;
 
     public static void add(CompositeSubscription subscriptions, Subscription subscription, boolean checkToken, Runnable onCancel) {
+        if (subscription == null) {
+            return;
+        }
         if (subscriptions != null) {
             subscriptions.add(subscription);
         }
