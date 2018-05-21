@@ -261,7 +261,9 @@ open class CircleImageView(context: Context, attributeSet: AttributeSet? = null)
                             e.printStackTrace()
                         }
                         //canvas.restoreToCount(save2)
-                        canvas.restoreToCount(save1)
+                        if (!isInEditMode) {
+                            canvas.restoreToCount(save1)
+                        }
                     }
                     SCHEME_CANVAS_BITMAP -> {
                         bitmapCanvas?.let {
