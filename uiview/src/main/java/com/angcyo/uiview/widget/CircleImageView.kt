@@ -3,6 +3,7 @@ package com.angcyo.uiview.widget
 import android.content.Context
 import android.graphics.*
 import android.graphics.drawable.Drawable
+import android.graphics.drawable.GradientDrawable
 import android.support.v7.widget.AppCompatImageView
 import android.util.AttributeSet
 import com.angcyo.uiview.R
@@ -25,8 +26,12 @@ open class CircleImageView(context: Context, attributeSet: AttributeSet? = null)
     var showType = NORMAL
         set(value) {
             field = value
+            resetMaskDrawable()
             postInvalidate()
         }
+
+    /**实现圆角的方式*/
+    var schemeVersion = SCHEME_CLIP_PATH
 
     var roundRadius = 0f
 
@@ -68,6 +73,7 @@ open class CircleImageView(context: Context, attributeSet: AttributeSet? = null)
     init {
         val typedArray = context.obtainStyledAttributes(attributeSet, R.styleable.CircleImageView)
         showType = typedArray.getInt(R.styleable.CircleImageView_r_show_type, showType)
+        schemeVersion = typedArray.getInt(R.styleable.CircleImageView_r_scheme_version, SCHEME_CLIP_PATH)
         lineColor = typedArray.getColor(R.styleable.CircleImageView_r_line_color, lineColor)
         roundRadius = typedArray.getDimensionPixelOffset(R.styleable.CircleImageView_r_round_radius, (10 * density).toInt()).toFloat()
         lineWidth = typedArray.getDimensionPixelOffset(R.styleable.CircleImageView_r_line_width, (1 * density).toInt()).toFloat()
@@ -119,10 +125,53 @@ open class CircleImageView(context: Context, attributeSet: AttributeSet? = null)
         }
     }
 
+    var schemeMaskDrawable: Drawable? = null
+    val schemeMaskPaint: Paint by lazy {
+        Paint().apply {
+            isAntiAlias = true
+            isFilterBitmap = true
+            xfermode = PorterDuffXfermode(PorterDuff.Mode.SRC_IN)
+        }
+    }
+
+    private fun resetMaskDrawable() {
+        val drawable = GradientDrawable().apply {
+            shape = GradientDrawable.RECTANGLE//设置形状
+            cornerRadii = radius
+            setColor(Color.WHITE)//请不要用透明颜色试图隐藏solid
+        }
+
+        val size = Math.min(measuredHeight - paddingTop - paddingBottom,
+                measuredWidth - paddingLeft - paddingRight)
+        val cx = paddingLeft + size / 2
+        val cy = paddingTop + size / 2
+        val cr = size / 2
+
+        when (showType) {
+            ROUND -> {
+                drawable.setBounds(cx - cr, cy - cr, cx + cr, cy + cr)
+                schemeMaskDrawable = drawable
+            }
+            ROUND_RECT -> {
+                drawable.setBounds(paddingLeft, paddingTop,
+                        measuredWidth - paddingRight, measuredHeight - paddingBottom)
+                schemeMaskDrawable = drawable
+            }
+            CIRCLE -> {
+                drawable.setBounds(cx - cr, cy - cr, cx + cr, cy + cr)
+                drawable.cornerRadius = 45 * density
+                schemeMaskDrawable = drawable
+            }
+            else -> schemeMaskDrawable = null
+        }
+    }
+
     override fun onSizeChanged(w: Int, h: Int, oldw: Int, oldh: Int) {
         super.onSizeChanged(w, h, oldw, oldh)
         if (schemeVersion == SCHEME_CANVAS_BITMAP) {
             createBitmapCanvas(w, h)
+        } else if (schemeVersion == SCHEME_MASK_DRAWABLE) {
+            resetMaskDrawable()
         }
     }
 
@@ -134,9 +183,6 @@ open class CircleImageView(context: Context, attributeSet: AttributeSet? = null)
             bitmapCanvas = Canvas(bitmapSource)
         }
     }
-
-    /**实现圆角的方式*/
-    var schemeVersion = SCHEME_CLIP_PATH
 
     override fun onDraw(canvas: Canvas) {
         when (showType) {
@@ -227,6 +273,19 @@ open class CircleImageView(context: Context, attributeSet: AttributeSet? = null)
                             canvas.drawBitmap(bitmapSource, 0f, 0f, null)
                         }
                     }
+                    SCHEME_MASK_DRAWABLE -> {
+                        if (schemeMaskDrawable == null) {
+                            super.onDraw(canvas)
+                        } else {
+                            canvas.saveLayer(0f, 0f, width.toFloat(), height.toFloat(), null, Canvas.ALL_SAVE_FLAG)
+                            //schemeMaskDrawable!!.setBounds(0, 0, width, height)
+                            schemeMaskDrawable!!.draw(canvas)
+                            canvas.saveLayer(0f, 0f, width.toFloat(), height.toFloat(), schemeMaskPaint, Canvas.ALL_SAVE_FLAG)
+                            super.onDraw(canvas)
+                            canvas.restore()
+                            canvas.restore()
+                        }
+                    }
                 }
 
                 if (drawBorder) {
@@ -265,6 +324,8 @@ open class CircleImageView(context: Context, attributeSet: AttributeSet? = null)
         const val SCHEME_CLIP_PATH = 1
         /**使用canvas的方式实现圆角*/
         const val SCHEME_CANVAS_BITMAP = 2
+        /**使用mask xf实现*/
+        const val SCHEME_MASK_DRAWABLE = 3
 
         val SHOW_DEBUG = false
     }
