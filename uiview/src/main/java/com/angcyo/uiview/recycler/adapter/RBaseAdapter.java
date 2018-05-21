@@ -187,7 +187,8 @@ public abstract class RBaseAdapter<T> extends RecyclerView.Adapter<RBaseViewHold
     }
 
     @Override
-    public RBaseViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
+    @NonNull
+    public RBaseViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         View itemView = null;
         RBaseViewHolder viewHolder = null;
         int itemLayoutId = -1;
@@ -376,10 +377,16 @@ public abstract class RBaseAdapter<T> extends RecyclerView.Adapter<RBaseViewHold
     }
 
     public boolean isLast(int position) {
+        if (position < 0) {
+            return false;
+        }
         return position == getLastPosition();
     }
 
     public boolean isBaseDataLast(int posInData) {
+        if (posInData < 0) {
+            return false;
+        }
         return posInData == getDataLastPosition();
     }
 

@@ -121,6 +121,11 @@ public abstract class UIItemUIView<T extends Item> extends UIRecyclerUIView<Stri
             }
 
             @Override
+            protected int getDataItemType(int posInData) {
+                return UIItemUIView.this.getDataItemType(posInData);
+            }
+
+            @Override
             public void onScrollStateChanged(RRecyclerView recyclerView, int newState) {
                 super.onScrollStateChanged(recyclerView, newState);
                 UIItemUIView.this.onScrollStateChanged(recyclerView, newState);
@@ -158,6 +163,9 @@ public abstract class UIItemUIView<T extends Item> extends UIRecyclerUIView<Stri
     public void onScrollStateEnd(RRecyclerView rRecyclerView, boolean firstItemVisible, boolean lastItemVisible, boolean topCanScroll, boolean bottomCanScroll) {
     }
 
+    public int getDataItemType(int posInData) {
+        return posInData;
+    }
 
     /**
      * 更新布局, 重新创建了items, 如果item的数量有变化, 建议使用这个方法
