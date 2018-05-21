@@ -159,10 +159,19 @@ public class RefreshLayout extends ViewGroup {
 
     /*当滚动Y值>=topView高度+menuOpenThreshold时, 开始出现menuLayout*/
     private int menuOpenThreshold = (int) (20 * ScreenUtil.density);
+    private int lastTranslationTo = 0;
+    private int startScrollMenuY = 0;//需要从这个值,开始滚动
+    private int startScrollToMenuY = 0;//滚动到目标值, 用来计算比率
+    private int startScrollMenuHeight = 0;//菜单已经滚动了多少值
+    /*滚动到了,需要显示菜单的条件*/
+    private boolean scrollNeedShowMenuLayout = false;
+    /*进入菜单模式*/
+    private boolean scrollShowMenuLayout = false;
 
     public RefreshLayout(Context context) {
         this(context, null);
     }
+
 
     public RefreshLayout(Context context, AttributeSet attrs) {
         super(context, attrs);
@@ -279,8 +288,6 @@ public class RefreshLayout extends ViewGroup {
         }
     }
 
-    private int lastTranslationTo = 0;
-
     /*菜单底部开始, 不要露出的高度*/
     private void layoutMenuView(int translationTo /*当菜单显示到Y坐标, 不受scroll影响的坐标*/) {
         if (menuLayout != null) {
@@ -294,7 +301,6 @@ public class RefreshLayout extends ViewGroup {
             }
         }
     }
-
 
     @Override
     protected void onSizeChanged(int w, int h, int oldw, int oldh) {
@@ -741,7 +747,6 @@ public class RefreshLayout extends ViewGroup {
             if (mCurState == BOTTOM && BOTTOM == state) {
                 refreshBottom();
             }
-            return;
         }
     }
 
@@ -786,10 +791,6 @@ public class RefreshLayout extends ViewGroup {
             }
         }
     }
-
-    private int startScrollMenuY = 0;//需要从这个值,开始滚动
-    private int startScrollToMenuY = 0;//滚动到目标值, 用来计算比率
-    private int startScrollMenuHeight = 0;//菜单已经滚动了多少值
 
     private void scrollToMenu(boolean anim) {
         if (menuLayout != null) {
@@ -940,11 +941,6 @@ public class RefreshLayout extends ViewGroup {
         }
         super.scrollBy(x, y);
     }
-
-    /*滚动到了,需要显示菜单的条件*/
-    private boolean scrollNeedShowMenuLayout = false;
-    /*进入菜单模式*/
-    private boolean scrollShowMenuLayout = false;
 
     /*是否满足进入菜单模式的条件*/
     private boolean isNeedToMenuLayout() {

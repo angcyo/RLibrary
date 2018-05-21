@@ -27,6 +27,7 @@ import android.widget.ImageView;
 
 import com.angcyo.uiview.R;
 import com.angcyo.uiview.RApplication;
+import com.angcyo.uiview.draw.RDrawNoRead;
 
 /**
  * Copyright (C) 2016,深圳市红鸟网络科技股份有限公司 All rights reserved.
@@ -51,6 +52,7 @@ public class RImageView extends CircleImageView {
      * 播放按钮图片
      */
     Drawable mPlayDrawable;
+    RDrawNoRead mDrawNoRead;
     private boolean isAttachedToWindow;
     private boolean mShowMask;//显示click时的蒙层
     /**
@@ -58,19 +60,15 @@ public class RImageView extends CircleImageView {
      */
     private boolean showDrawableAnim = true;
     private Drawable mGifTipDrawable;
-
     /**
      * 用来显示Mask提示的图片
      */
     private Drawable mMaskDrawable;
-
     private int maskGravity = MASK_GRAVITY_LT;
     private float maskScaleX = 1f;
     private float maskScaleY = 1f;
-
     private Rect maskRect = new Rect();
     private float mDensity;
-
     /**
      * 是否显示单击时的遮罩蒙层
      */
@@ -89,6 +87,9 @@ public class RImageView extends CircleImageView {
         maskGravity = typedArray.getInt(R.styleable.RImageView_r_mask_gravity, maskGravity);
         maskScaleX = typedArray.getFloat(R.styleable.RImageView_r_mask_scale_x, maskScaleX);
         maskScaleY = typedArray.getFloat(R.styleable.RImageView_r_mask_scale_y, maskScaleY);
+
+        mDrawNoRead = new RDrawNoRead(this, attrs);
+
         typedArray.recycle();
     }
 
@@ -343,6 +344,12 @@ public class RImageView extends CircleImageView {
         if (mShowClickMask && mShowMask) {
             canvas.drawColor(Color.parseColor("#80000000"));
         }
+
+        mDrawNoRead.onDraw(canvas);
+    }
+
+    public RDrawNoRead getDrawNoRead() {
+        return mDrawNoRead;
     }
 
     private void ensureGifTipDrawable() {

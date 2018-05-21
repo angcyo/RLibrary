@@ -187,7 +187,7 @@ open class UIScanView2 : UIContentView(), IActivity, SurfaceHolder.Callback {
 
     private var hasSurface: Boolean = false
 
-    override fun onViewCreate(rootView: View?, param: UIParam?) {
+    override fun onViewCreate(rootView: View, param: UIParam) {
         super.onViewCreate(rootView, param)
 
         hasSurface = false

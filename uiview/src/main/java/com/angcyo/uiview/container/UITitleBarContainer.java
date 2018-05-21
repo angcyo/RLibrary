@@ -37,6 +37,7 @@ import com.angcyo.uiview.skin.ISkin;
 import com.angcyo.uiview.skin.SkinHelper;
 import com.angcyo.uiview.widget.ImageTextView2;
 import com.angcyo.uiview.widget.LoadingImageView;
+import com.angcyo.uiview.widget.RImageView;
 import com.angcyo.uiview.widget.RTextView;
 import com.angcyo.uiview.widget.RTitleCenterLayout;
 
@@ -438,8 +439,8 @@ public class UITitleBarContainer extends FrameLayout {
 //        }
     }
 
-    private ImageView createImageItem(Drawable drawable) {
-        ImageView item = new ImageView(getContext());
+    private RImageView createImageItem(Drawable drawable) {
+        RImageView item = new RImageView(getContext());
         item.setImageDrawable(drawable);
         item.setScaleType(ImageView.ScaleType.CENTER);
         return item;

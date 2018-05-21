@@ -458,6 +458,9 @@ public class RBaseViewHolder extends RecyclerView.ViewHolder {
                             view.setVisibility(View.VISIBLE);
                         }
                         ((TextView) view).setText(value);
+                    } else if (view instanceof GlideImageView) {
+                        ((GlideImageView) view).reset();
+                        ((GlideImageView) view).setUrl(value);
                     } else if (view instanceof AppCompatImageView) {
 
                     } else if (view instanceof ImageView) {

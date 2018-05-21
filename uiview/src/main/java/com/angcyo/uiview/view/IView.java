@@ -4,6 +4,7 @@ import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.animation.Animation;
@@ -29,13 +30,13 @@ public interface IView {
      * 不需要标题栏,请返回null, 请在实现的时候, 做好缓存
      */
     @Deprecated
-    TitleBarPattern loadTitleBar(Context context);
+    TitleBarPattern loadTitleBar(@NonNull Context context);
 
     /**
      * 生命周期顺序: 1
      * 请在此方法中, 进行xml的inflate操作, 如果使用了ButterKnife, 请在loadContentView方法之后初始化view的相应操作.
      */
-    View inflateContentView(Activity activity, ILayout iLayout, FrameLayout container, LayoutInflater inflater);
+    View inflateContentView(@NonNull Activity activity, @NonNull ILayout iLayout, @NonNull FrameLayout container, @NonNull LayoutInflater inflater);
 
     /**
      * 生命周期顺序: 2
@@ -43,16 +44,16 @@ public interface IView {
      * 请使用{@link #onViewCreate(View, UIParam)}
      */
     @Deprecated
-    void onViewCreate(View rootView);
+    void onViewCreate(@NonNull View rootView);
 
-    void onViewCreate(View rootView, UIParam param);//2017-3-13
+    void onViewCreate(@NonNull View rootView, @NonNull UIParam param);//2017-3-13
 
     /**
      * 生命周期顺序: 3
      * 此方法会在inflateContentView之后, 紧接着执行, ButterKnife在此初始化
      * 请在此方法中, 使用mViewHolder进行视图初始化
      */
-    void loadContentView(View rootView);
+    void loadContentView(@NonNull View rootView);
 
     /**
      * 生命周期顺序: 4
@@ -100,46 +101,46 @@ public interface IView {
     @Deprecated
     void onViewUnloadDelay();//2018-1-23
 
-    void onViewUnloadDelay(UIParam uiParam);//2018-2-28
+    void onViewUnloadDelay(@NonNull UIParam uiParam);//2018-2-28
 
     /**
      * 开始动画
      */
-    Animation loadStartAnimation(AnimParam animParam);
+    Animation loadStartAnimation(@NonNull AnimParam animParam);
 
     /**
      * 结束动画
      */
-    Animation loadFinishAnimation(AnimParam animParam);
+    Animation loadFinishAnimation(@NonNull AnimParam animParam);
 
     /**
      * 显示动画
      */
-    Animation loadShowAnimation(AnimParam animParam);
+    Animation loadShowAnimation(@NonNull AnimParam animParam);
 
     /**
      * 结隐藏动画
      */
-    Animation loadHideAnimation(AnimParam animParam);
+    Animation loadHideAnimation(@NonNull AnimParam animParam);
 
     /**
      * 其他View开始开始, 退出的动画
      */
-    Animation loadOtherExitAnimation(AnimParam animParam);
+    Animation loadOtherExitAnimation(@NonNull AnimParam animParam);
 
     /**
      * 其他View结束, 进入的动画
      */
-    Animation loadOtherEnterAnimation(AnimParam animParam);
+    Animation loadOtherEnterAnimation(@NonNull AnimParam animParam);
 
-    Animation loadOtherHideAnimation(AnimParam animParam);
+    Animation loadOtherHideAnimation(@NonNull AnimParam animParam);
 
-    Animation loadOtherShowAnimation(AnimParam animParam);
+    Animation loadOtherShowAnimation(@NonNull AnimParam animParam);
 
     /**
      * 布局动画
      */
-    Animation loadLayoutAnimation(AnimParam animParam);
+    Animation loadLayoutAnimation(@NonNull AnimParam animParam);
 
     /**
      * 是否是对话框, 对话框显示在对话框层
@@ -191,9 +192,9 @@ public interface IView {
      */
     ILayout getILayout();
 
-    void onShowInPager(UIViewPager viewPager);//2016-11-26
+    void onShowInPager(@NonNull UIViewPager viewPager);//2016-11-26
 
-    void onHideInPager(UIViewPager viewPager);//2016-11-26
+    void onHideInPager(@NonNull UIViewPager viewPager);//2016-11-26
 
     void onActivityResult(int requestCode, int resultCode, Intent data);//2016-12-13
 
@@ -221,7 +222,7 @@ public interface IView {
     /**
      * 会在start iVew 之后, 最先执行
      */
-    void onAttachedToILayout(ILayout iLayout);
+    void onAttachedToILayout(@NonNull ILayout iLayout);
 
     /**
      * 是否可以左边侧滑关闭
@@ -231,7 +232,7 @@ public interface IView {
     /**
      * 当皮肤更改时回调
      */
-    void onSkinChanged(ISkin skin);//星期六 2017-4-1
+    void onSkinChanged(@NonNull ISkin skin);//星期六 2017-4-1
 
     /**
      * 是否需要在对话框上显示
@@ -241,7 +242,7 @@ public interface IView {
     /**
      * 绑定一个其他的ILayout, 用于嵌套使用ILayout
      */
-    IView bindParentILayout(ILayout iLayout);//星期二 2017-5-23
+    IView bindParentILayout(@NonNull ILayout iLayout);//星期二 2017-5-23
 
     boolean haveParentILayout();//星期二 2017-5-23
 

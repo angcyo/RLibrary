@@ -5,6 +5,7 @@ import com.angcyo.uiview.container.ILayout
 import com.angcyo.uiview.container.UIParam
 import com.angcyo.uiview.recycler.RBaseViewHolder
 import com.angcyo.uiview.view.IView
+import rx.Subscription
 
 /**
  * Copyright (C) 2016,深圳市红鸟网络科技股份有限公司 All rights reserved.
@@ -31,4 +32,9 @@ abstract class RExItemHolder<DataType> {
     }
 
     abstract fun onBindItemDataView(holder: RBaseViewHolder, posInData: Int, dataBean: DataType)
+
+    fun add(subscription: Subscription) {
+        exItemUIView?.add(subscription)
+    }
+
 }

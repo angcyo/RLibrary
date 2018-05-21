@@ -256,6 +256,17 @@ public abstract class UIRecyclerUIView<H, T, F> extends UIContentView
     }
 
     /**
+     * 触发刷新控件的刷新
+     */
+    public void refreshUIData() {
+        if (mRefreshLayout == null) {
+            loadData();
+        } else {
+            mRefreshLayout.setRefreshState(RefreshLayout.TOP);
+        }
+    }
+
+    /**
      * 不显示LoadView
      */
     public void loadData() {

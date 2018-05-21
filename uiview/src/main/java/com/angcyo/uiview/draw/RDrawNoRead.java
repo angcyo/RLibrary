@@ -69,23 +69,40 @@ public class RDrawNoRead extends BaseDraw {
         }
     }
 
+    /**
+     * 默认显示在右上角
+     */
     public void setShowNoRead(boolean showNoRead) {
         this.showNoRead = showNoRead;
+        mView.postInvalidate();
     }
 
+    /**
+     * 半径大小
+     */
     public void setNoReadRadius(float noReadRadius) {
         this.noReadRadius = noReadRadius;
+        mView.postInvalidate();
     }
 
+    /**
+     * 右上角的padding
+     */
     public void setNoReadPaddingTop(float noReadPaddingTop) {
         this.noReadPaddingTop = noReadPaddingTop;
+        mView.postInvalidate();
     }
 
+    /**
+     * 右上角的padding
+     */
     public void setNoReadPaddingRight(float noReadPaddingRight) {
         this.noReadPaddingRight = noReadPaddingRight;
+        mView.postInvalidate();
     }
 
     public void setNoReadColor(int noReadColor) {
         this.noReadColor = noReadColor;
+        mView.postInvalidate();
     }
 }

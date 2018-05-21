@@ -61,7 +61,7 @@ open abstract class UIGuideDialogImpl : UIIDialogImpl() {
 
     open fun getFinishButton(): View? = v(R.id.base_finish_view)
 
-    override fun onAttachedToILayout(iLayout: ILayout?) {
+    override fun onAttachedToILayout(iLayout: ILayout) {
         super.onAttachedToILayout(iLayout)
         (iLayout as UILayoutImpl?)?.setInterceptTouchEvent(true)
     }

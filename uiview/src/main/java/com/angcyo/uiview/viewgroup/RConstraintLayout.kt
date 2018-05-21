@@ -1,8 +1,11 @@
 package com.angcyo.uiview.viewgroup
 
 import android.content.Context
+import android.graphics.Canvas
+import android.graphics.drawable.Drawable
 import android.support.constraint.ConstraintLayout
 import android.util.AttributeSet
+import com.angcyo.uiview.R
 import com.angcyo.uiview.draw.RDrawLine
 
 /**
@@ -19,13 +22,29 @@ import com.angcyo.uiview.draw.RDrawLine
 open class RConstraintLayout : ConstraintLayout {
 
     private var drawLine: RDrawLine
+    private var mRBackgroundDrawable: Drawable? = null
 
     constructor(context: Context) : this(context, null)
     constructor(context: Context, attrs: AttributeSet?) : this(context, attrs, 0)
     constructor(context: Context, attrs: AttributeSet?, defStyleAttr: Int) : super(context, attrs, defStyleAttr) {
+        val typedArray = context.obtainStyledAttributes(attrs, R.styleable.RConstraintLayout)
+        mRBackgroundDrawable = typedArray.getDrawable(R.styleable.RConstraintLayout_r_background)
         drawLine = RDrawLine(this, attrs)
+
+        typedArray.recycle()
     }
 
     init {
     }
+
+    override fun draw(canvas: Canvas) {
+        mRBackgroundDrawable?.bounds = canvas.clipBounds
+        mRBackgroundDrawable?.draw(canvas)
+        super.draw(canvas)
+        drawLine.onDraw(canvas)
+//        if (!isEnabled && showNoEnableMark) {
+//            canvas.drawColor(ContextCompat.getColor(context, R.color.default_base_tran_dark2))
+//        }
+    }
+
 }

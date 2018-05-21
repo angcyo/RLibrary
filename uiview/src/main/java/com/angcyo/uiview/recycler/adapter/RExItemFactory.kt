@@ -103,7 +103,10 @@ abstract class RExItemFactory<ItemType, DataType> {
 class RExItem<out ItemType, DataType> {
     val itemType: ItemType
     val layoutId: Int
+
     var itemHolder: Class<out RExItemHolder<DataType>>? = null
+
+    /**可以用已经存在的ItemHolder处理, 否则会根据itemHolder对应的类, 自动实例化一个对象*/
     var itemHolderObj: RExItemHolder<DataType>? = null
 
     constructor(itemType: ItemType, layoutId: Int, itemHolder: Class<out RExItemHolder<DataType>>) {

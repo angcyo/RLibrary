@@ -12,6 +12,13 @@
         <attr name="r_mask_drawable"/>
         <attr name="r_mask_scale_x" format="float"/>
         <attr name="r_mask_scale_y" format="float"/>
+
+        <attr name="r_show_noread"/>
+        <attr name="r_noread_color"/>
+        <attr name="r_noread_radius"/>
+        <attr name="r_noread_padding_top"/>
+        <attr name="r_noread_padding_right"/>
+
     </declare-styleable>
 
     <declare-styleable name="CircleImageView">
