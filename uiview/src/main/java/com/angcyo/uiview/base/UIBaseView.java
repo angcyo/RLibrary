@@ -282,6 +282,14 @@ public abstract class UIBaseView extends UIIViewImpl {
         } else if (state == LayoutState.ERROR) {
             showErrorLayout();
         }
+        onLoadContentViewAfter();
+    }
+
+    /**
+     * 界面xml inflate之后, 可以第一时间用来用处view的数据
+     */
+    protected void onLoadContentViewAfter() {
+
     }
 
     @NonNull
