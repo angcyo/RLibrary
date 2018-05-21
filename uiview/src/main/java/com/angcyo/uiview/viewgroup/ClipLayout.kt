@@ -71,6 +71,15 @@ open class ClipLayout(context: Context, attributeSet: AttributeSet? = null) : Fr
         Paint(Paint.ANTI_ALIAS_FLAG)
     }
 
+    var maskDrawable: Drawable? = null
+    val maskPaint: Paint by lazy {
+        Paint().apply {
+            isAntiAlias = true
+            isFilterBitmap = true
+            xfermode = PorterDuffXfermode(PorterDuff.Mode.SRC_IN)
+        }
+    }
+
     init {
         val typedArray = context.obtainStyledAttributes(attributeSet, R.styleable.ClipLayout)
         clipType = typedArray.getInt(R.styleable.ClipLayout_r_clip_type, clipType)
@@ -82,6 +91,7 @@ open class ClipLayout(context: Context, attributeSet: AttributeSet? = null) : Fr
         rLayoutWidthExclude = typedArray.getDimensionPixelOffset(R.styleable.ClipLayout_r_layout_width_exclude, rLayoutWidthExclude)
         rLayoutHeightExclude = typedArray.getDimensionPixelOffset(R.styleable.ClipLayout_r_layout_height_exclude, rLayoutHeightExclude)
         widthHeightRatio = typedArray.getString(R.styleable.ClipLayout_r_width_height_ratio)
+        maskDrawable = typedArray.getDrawable(R.styleable.ClipLayout_r_mask_drawable)
         typedArray.recycle()
 
         setWillNotDraw(false)
@@ -170,7 +180,18 @@ open class ClipLayout(context: Context, attributeSet: AttributeSet? = null) : Fr
             }
             //canvas.drawColor(Color.RED)
         }
-        super.draw(canvas)
+
+        if (maskDrawable == null) {
+            super.draw(canvas)
+        } else {
+            canvas.saveLayer(0f, 0f, width.toFloat(), height.toFloat(), null, Canvas.ALL_SAVE_FLAG)
+            maskDrawable!!.setBounds(0, 0, width, height) //需要处理padding?
+            maskDrawable!!.draw(canvas)
+            canvas.saveLayer(0f, 0f, width.toFloat(), height.toFloat(), maskPaint, Canvas.ALL_SAVE_FLAG)
+            super.draw(canvas)
+            canvas.restore()
+            canvas.restore()
+        }
     }
 
     private var animator: ValueAnimator? = null

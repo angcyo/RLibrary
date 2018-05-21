@@ -17,5 +17,6 @@
         <attr name="r_layout_width_exclude"/>
         <attr name="r_layout_height_exclude"/>
         <attr name="r_width_height_ratio"/>
+        <attr name="r_mask_drawable"/>
     </declare-styleable>
 </resources>

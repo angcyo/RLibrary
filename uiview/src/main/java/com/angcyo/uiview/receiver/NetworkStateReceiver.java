@@ -57,14 +57,14 @@ public class NetworkStateReceiver extends BroadcastReceiver {
                 @Override
                 public void onAvailable(Network network) {
                     super.onAvailable(network);
-                    L.e("NetworkStateReceiver: onAvailable([network])-> ");
+                    L.w("NetworkStateReceiver: onAvailable([network])-> ");
                     sNetworkWrapper.network = network;
                 }
 
                 @Override
                 public void onLosing(Network network, int maxMsToLive) {
                     super.onLosing(network, maxMsToLive);
-                    L.e("NetworkStateReceiver: onLosing([network, maxMsToLive])-> ");
+                    L.i("NetworkStateReceiver: onLosing([network, maxMsToLive])-> ");
                     //sNetworkWrapper.network = null;
                     //sNetworkWrapper.lostNetwork = network;
                 }
@@ -72,7 +72,7 @@ public class NetworkStateReceiver extends BroadcastReceiver {
                 @Override
                 public void onLost(Network network) {
                     super.onLost(network);
-                    L.e("NetworkStateReceiver: onLost([network])-> ");
+                    L.w("NetworkStateReceiver: onLost([network])-> ");
                     NetworkUtils.NetworkType oldType;
                     if (sNetworkWrapper.network == null) {
                         oldType = NetworkUtils.NetworkType.NETWORK_NO;
@@ -92,13 +92,13 @@ public class NetworkStateReceiver extends BroadcastReceiver {
                 @Override
                 public void onUnavailable() {
                     super.onUnavailable();
-                    L.e("NetworkStateReceiver: onUnavailable([])-> ");
+                    L.i("NetworkStateReceiver: onUnavailable([])-> ");
                 }
 
                 @Override
                 public void onCapabilitiesChanged(Network network, NetworkCapabilities networkCapabilities) {
                     super.onCapabilitiesChanged(network, networkCapabilities);
-                    L.e("NetworkStateReceiver: onCapabilitiesChanged([network, networkCapabilities])-> " + networkCapabilities.describeContents());
+                    L.i("NetworkStateReceiver: onCapabilitiesChanged([network, networkCapabilities])-> " + networkCapabilities.describeContents());
 
                     sNetworkWrapper.networkCapabilities = networkCapabilities;
                     sNetworkWrapper.network = network;
@@ -107,7 +107,7 @@ public class NetworkStateReceiver extends BroadcastReceiver {
                 @Override
                 public void onLinkPropertiesChanged(Network network, LinkProperties linkProperties) {
                     super.onLinkPropertiesChanged(network, linkProperties);
-                    L.e("NetworkStateReceiver: onLinkPropertiesChanged([network, linkProperties])-> ");
+                    L.i("NetworkStateReceiver: onLinkPropertiesChanged([network, linkProperties])-> ");
                     sNetworkWrapper.network = network;
                     sNetworkWrapper.linkProperties = linkProperties;
 

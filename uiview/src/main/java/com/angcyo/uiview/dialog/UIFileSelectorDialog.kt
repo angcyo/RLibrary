@@ -84,7 +84,7 @@ open class UIFileSelectorDialog : UIIDialogImpl {
 
     /*选中的文件*/
     private var selectorFilePath: String = ""
-    private var onFileSelector: ((File) -> Unit)? = null
+    var onFileSelector: ((File) -> Unit)? = null
 
     constructor(initPath: String = "", onFileSelector: ((File) -> Unit)? = null) {
         targetPath = initPath
