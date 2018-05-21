@@ -15,6 +15,7 @@ import android.view.ViewGroup;
 import com.angcyo.library.utils.L;
 import com.angcyo.uiview.R;
 import com.angcyo.uiview.RApplication;
+import com.angcyo.uiview.net.Rx;
 import com.angcyo.uiview.recycler.RBaseViewHolder;
 import com.angcyo.uiview.recycler.RRecyclerView;
 import com.angcyo.uiview.recycler.widget.ILoadMore;
@@ -26,7 +27,10 @@ import com.brandongogetap.stickyheaders.exposed.StickyHeaderHandler;
 import java.util.ArrayList;
 import java.util.List;
 
+import rx.Observer;
+import rx.functions.Action1;
 import rx.functions.Func2;
+import rx.observables.SyncOnSubscribe;
 
 /**
  * Created by angcyo on 16-01-18-018.
@@ -575,13 +579,46 @@ public abstract class RBaseAdapter<T> extends RecyclerView.Adapter<RBaseViewHold
     }
 
     public void resetData(List<T> datas, RDiffCallback<T> diffCallback) {
-        DiffUtil.DiffResult diffResult = DiffUtil.calculateDiff(new RDiffCallback<>(mAllDatas, datas, diffCallback));
-        if (datas == null) {
-            this.mAllDatas = new ArrayList<>();
-        } else {
-            this.mAllDatas = datas;
+        if (RUtils.isListEmpty(datas)) {
+            resetData(datas);
+            return;
         }
+
+        DiffUtil.DiffResult diffResult = DiffUtil.calculateDiff(new RDiffCallback<>(mAllDatas, datas, diffCallback));
+        this.mAllDatas = datas;
         diffResult.dispatchUpdatesTo(this);
+    }
+
+    public void resetDataAsync(final List<T> datas, final RDiffCallback<T> diffCallback) {
+        if (RUtils.isListEmpty(datas)) {
+            resetData(datas);
+            return;
+        }
+
+        Rx.create(new SyncOnSubscribe<Integer, DiffUtil.DiffResult>() {
+            @Override
+            protected Integer generateState() {
+                return 1;
+            }
+
+            @Override
+            protected Integer next(Integer state, Observer<? super DiffUtil.DiffResult> observer) {
+                if (state > 0) {
+                    DiffUtil.DiffResult diffResult = DiffUtil.calculateDiff(new RDiffCallback<>(mAllDatas, datas, diffCallback));
+                    observer.onNext(diffResult);
+                } else {
+                    observer.onCompleted();
+                }
+                return 0;
+            }
+        }).compose(Rx.<DiffUtil.DiffResult>transformer())
+                .subscribe(new Action1<DiffUtil.DiffResult>() {
+                    @Override
+                    public void call(DiffUtil.DiffResult diffResult) {
+                        RBaseAdapter.this.mAllDatas = datas;
+                        diffResult.dispatchUpdatesTo(RBaseAdapter.this);
+                    }
+                });
     }
 
     /**
@@ -805,6 +842,14 @@ public abstract class RBaseAdapter<T> extends RecyclerView.Adapter<RBaseViewHold
          * 如果item不相同, 会先调用 notifyItemRangeRemoved, 再调用 notifyItemRangeInserted
          */
         public boolean areItemsTheSame(@NonNull T oldData, @NonNull T newData) {
+            Class<?> oldClass = oldData.getClass();
+            Class<?> newClass = newData.getClass();
+            if (oldClass.isAssignableFrom(newClass) || newClass.isAssignableFrom(oldClass)) {
+                return true;
+            }
+            if (TextUtils.equals(oldClass.getSimpleName(), newClass.getSimpleName())) {
+                return true;
+            }
             return oldData.equals(newData);
         }
 

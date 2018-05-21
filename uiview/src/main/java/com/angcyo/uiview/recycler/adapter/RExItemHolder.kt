@@ -1,5 +1,6 @@
 package com.angcyo.uiview.recycler.adapter
 
+import android.app.Activity
 import com.angcyo.uiview.base.UIExItemUIView
 import com.angcyo.uiview.container.ILayout
 import com.angcyo.uiview.container.UIParam
@@ -27,14 +28,28 @@ abstract class RExItemHolder<DataType> {
         iLayout?.startIView(iView)
     }
 
+    /**启动一个IView页面*/
     open fun startIView(iView: IView, param: UIParam) {
         iLayout?.startIView(iView, param)
     }
 
+    /**重写此方法, 核心*/
     abstract fun onBindItemDataView(holder: RBaseViewHolder, posInData: Int, dataBean: DataType)
 
     fun add(subscription: Subscription) {
         exItemUIView?.add(subscription)
+    }
+
+    fun cancel() {
+        exItemUIView?.onCancel()
+    }
+
+    fun getActivity(): Activity {
+        return if (exItemUIView == null) {
+            iLayout!!.layout.context as Activity
+        } else {
+            exItemUIView!!.mActivity
+        }
     }
 
 }
