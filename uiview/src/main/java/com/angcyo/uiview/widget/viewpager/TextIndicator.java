@@ -181,4 +181,11 @@ public class TextIndicator extends AppCompatTextView implements ViewPager.OnPage
     public void onPageScrollStateChanged(int state) {
 
     }
+
+    /**
+     * 合法数量
+     */
+    public boolean isInputCountValid() {
+        return currentCount <= maxCount;
+    }
 }

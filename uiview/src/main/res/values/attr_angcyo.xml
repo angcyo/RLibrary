@@ -271,6 +271,7 @@
         <attr name="r_check_input_number" format="boolean"/>
         <attr name="r_use_char_length_filter" format="boolean"/>
         <attr name="r_max_length"/>
+        <attr name="r_allow_input_overflow" format="boolean"/>
     </declare-styleable>
 
     <declare-styleable name="JumpAdProgressBar">

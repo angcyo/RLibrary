@@ -217,6 +217,16 @@ public class ImagePickerHelper {
         selectedImages.addAll(imageItems);
     }
 
+    public static void addSelectedPath2(List<String> imageItems) {
+        List<ImageItem> list = new ArrayList<>(imageItems.size());
+        for (String path : imageItems) {
+            ImageItem imageItem = new ImageItem();
+            imageItem.path = path;
+            list.add(imageItem);
+        }
+        addSelectedPath(list);
+    }
+
     /**
      * 取消选中状态中的图片
      *

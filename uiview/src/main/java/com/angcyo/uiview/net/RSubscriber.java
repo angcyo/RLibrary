@@ -1,5 +1,8 @@
 package com.angcyo.uiview.net;
 
+import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
+
 import com.angcyo.library.utils.L;
 import com.angcyo.uiview.utils.T_;
 import com.fasterxml.jackson.core.JsonParseException;
@@ -145,7 +148,7 @@ public abstract class RSubscriber<T> extends Subscriber<T> {
      * 统一错误处理
      * 不管是成功订阅,还是异常,都会执行的方法
      */
-    public void onEnd(boolean isError, boolean isNoNetwork, RException e) {
+    public void onEnd(boolean isError, boolean isNoNetwork, @Nullable RException e) {
         L.i("订阅结束-> isError:" + isError + " isNoNetwork:" + isNoNetwork + " Throwable:" + e);
     }
 

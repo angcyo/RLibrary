@@ -139,6 +139,11 @@ public class ExEditText extends AppCompatEditText {
      */
     private int maxCharLength = 0;
 
+    /**
+     * 允许输入溢出
+     */
+    private boolean allowInputOverflow = false;
+
     public ExEditText(Context context) {
         super(context);
     }
@@ -276,6 +281,8 @@ public class ExEditText extends AppCompatEditText {
 
         ensurePaint();
         TypedArray typedArray = context.obtainStyledAttributes(attrs, R.styleable.ExEditText);
+
+        allowInputOverflow = typedArray.getBoolean(R.styleable.ExEditText_r_allow_input_overflow, allowInputOverflow);
         setUseCharLengthFilter(typedArray.getBoolean(R.styleable.ExEditText_r_use_char_length_filter, useCharLengthFilter));
 
         if (!useCharLengthFilter) {
@@ -984,6 +991,11 @@ public class ExEditText extends AppCompatEditText {
     public void setMaxLength(int length) {
         maxCharLength = length;
         InputFilter[] filters = getFilters();
+
+        if (allowInputOverflow) {
+            length = Integer.MAX_VALUE;
+        }
+
         if (useCharLengthFilter) {
             boolean have = false;
             CharLengthFilter lengthFilter = new CharLengthFilter(length);

@@ -116,6 +116,10 @@ public class RRelativeLayout extends RelativeLayout {
         mBackgroundDrawable = drawable;
     }
 
+    public RDrawLine getDrawLine() {
+        return mDrawLine;
+    }
+
     public interface onInterceptTouchListener {
         boolean onSingleTapUp(MotionEvent e);
     }

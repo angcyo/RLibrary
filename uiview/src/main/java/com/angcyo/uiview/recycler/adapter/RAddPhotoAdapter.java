@@ -1,6 +1,8 @@
 package com.angcyo.uiview.recycler.adapter;
 
 import android.content.Context;
+import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.View;
@@ -131,9 +133,7 @@ public class RAddPhotoAdapter<T> extends RBaseAdapter<T> {
             deleteView.setImageResource(getDeleteViewImageResource(position));
             imageView.setScaleType(ImageView.ScaleType.CENTER_CROP);
             deleteView.setVisibility(mDeleteModel ? View.VISIBLE : View.GONE);
-            if (mConfigCallback != null) {
-                mConfigCallback.onDisplayImage(imageView, position);
-            }
+
             imageView.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
@@ -153,11 +153,20 @@ public class RAddPhotoAdapter<T> extends RBaseAdapter<T> {
             });
 
             onBindImageView(imageView, position);
+            onBindImageView(imageView, position, bean);
+
+            if (mConfigCallback != null) {
+                mConfigCallback.onDisplayImage(imageView, position);
+            }
         }
 
         deleteView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                if (onDeleteClick(deleteView, position)) {
+                    return;
+                }
+
                 if (mConfigCallback != null) {
                     if (!mConfigCallback.onDeleteClick(deleteView, position)) {
                         deleteItem(bean);
@@ -165,16 +174,41 @@ public class RAddPhotoAdapter<T> extends RBaseAdapter<T> {
                 } else {
                     deleteItem(bean);
                 }
+
+                onDeleteItemAfter();
             }
         });
     }
 
+    @Deprecated
     protected void onBindImageView(GlideImageView imageView, int position) {
 
     }
 
+    protected void onBindImageView(GlideImageView imageView, int position, @Nullable final T bean) {
+        if (bean instanceof String) {
+            imageView.setUrl((String) bean);
+        }
+    }
+
     protected void onBindAddView(GlideImageView imageView) {
 
+    }
+
+    public boolean onDeleteClick(@NonNull View view, int position) {
+        return false;
+    }
+
+    public void onDeleteItemAfter() {
+
+    }
+
+    /**
+     * 排除多少宽度, 不参与计算item的size
+     */
+    public RAddPhotoAdapter setExcludeWidth(int excludeWidth) {
+        this.excludeWidth = excludeWidth;
+        return this;
     }
 
     /**
@@ -223,14 +257,6 @@ public class RAddPhotoAdapter<T> extends RBaseAdapter<T> {
 //        int startPosition = this.mAllDatas.size();
         this.mAllDatas.addAll(datas);
         notifyDataSetChanged();
-    }
-
-    /**
-     * 排除多少宽度, 不参与计算item的size
-     */
-    public RAddPhotoAdapter setExcludeWidth(int excludeWidth) {
-        this.excludeWidth = excludeWidth;
-        return this;
     }
 
     public void setDeleteModel(RecyclerView recyclerView, boolean deleteModel) {

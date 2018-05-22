@@ -27,7 +27,7 @@ public abstract class SingleItem implements Item {
      * 上边留出距离
      */
     protected int topOffset = 0;
-    protected int lineColor = -1;
+    protected int lineColor = 0;//-1是白色 0是透明
     Type mType;
 
     public SingleItem() {
@@ -82,7 +82,7 @@ public abstract class SingleItem implements Item {
 
     @Override
     public void draw(Canvas canvas, TextPaint paint, View itemView, Rect offsetRect, int itemCount, int position) {
-        if (mType == Type.LINE && lineColor != -1) {
+        if (mType == Type.LINE || mType == Type.TOP) {
             paint.setColor(lineColor);
             mDrawRect.set(itemView.getLeft(), itemView.getTop() - offsetRect.top, itemView.getRight(), itemView.getTop());
             canvas.drawRect(mDrawRect, paint);

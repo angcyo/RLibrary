@@ -697,18 +697,21 @@ public class RRecyclerView extends RecyclerView implements StickLayout.CanScroll
             return;
         }
         stopScroll();
+        if (anim) {
+            View view = manager.findViewByPosition(position);
+            if (view != null) {
+                //view已经在界面上显示, 调用smoothScrollToPosition是不会有滚动效果的
+                smoothScrollBy(0, view.getTop());
+            } else {
+                smoothScrollToPosition(position);
+            }
+            return;
+        }
+
         if (manager instanceof LinearLayoutManager) {
-            if (anim) {
-                smoothScrollToPosition(position);
-            } else {
-                ((LinearLayoutManager) manager).scrollToPositionWithOffset(position, 0);
-            }
+            ((LinearLayoutManager) manager).scrollToPositionWithOffset(position, 0);
         } else {
-            if (anim) {
-                smoothScrollToPosition(position);
-            } else {
-                ((StaggeredGridLayoutManager) manager).scrollToPositionWithOffset(position, 0);
-            }
+            ((StaggeredGridLayoutManager) manager).scrollToPositionWithOffset(position, 0);
         }
     }
 
@@ -750,41 +753,45 @@ public class RRecyclerView extends RecyclerView implements StickLayout.CanScroll
         }
         final int position = itemCount - 1;
 
+        if (anim) {
+            View view = manager.findViewByPosition(position);
+            if (view != null) {
+                //view已经在界面上显示, 调用smoothScrollToPosition是不会有滚动效果的
+                smoothScrollBy(0, -view.getTop());
+            } else {
+                smoothScrollToPosition(position);
+            }
+            return;
+        }
+
         if (manager instanceof LinearLayoutManager) {
-            if (anim) {
-                smoothScrollToPosition(position);
-            } else {
-                ((LinearLayoutManager) manager).scrollToPositionWithOffset(position, 0);
-                post(new Runnable() {
-                    @Override
-                    public void run() {
-                        View target = manager.findViewByPosition(position);//然后才能拿到这个View
-                        if (target != null) {
-                            int offset = getMeasuredHeight() - target.getMeasuredHeight();
-                            ((LinearLayoutManager) manager).scrollToPositionWithOffset(position, offset);//滚动偏移到底部
-                            //L.i("滚动至:" + position + " offset:" + offset);
-                        }
+            ((LinearLayoutManager) manager).scrollToPositionWithOffset(position, 0);
+            post(new Runnable() {
+                @Override
+                public void run() {
+                    View target = manager.findViewByPosition(position);//然后才能拿到这个View
+                    if (target != null) {
+                        int offset = getMeasuredHeight() - target.getMeasuredHeight();
+                        ((LinearLayoutManager) manager).scrollToPositionWithOffset(position, offset);//滚动偏移到底部
+                        //L.i("滚动至:" + position + " offset:" + offset);
                     }
-                });
-            }
+                }
+            });
+
         } else {
-            if (anim) {
-                smoothScrollToPosition(position);
-            } else {
-                ((StaggeredGridLayoutManager) manager).scrollToPositionWithOffset(position, 0);
-                post(new Runnable() {
-                    @Override
-                    public void run() {
-                        View target = manager.findViewByPosition(position);//然后才能拿到这个View
-                        if (target != null) {
-                            int offset = getMeasuredHeight() - target.getMeasuredHeight();
-                            ((StaggeredGridLayoutManager) manager).scrollToPositionWithOffset(position,
-                                    offset);//滚动偏移到底部
-                            //L.i("滚动至:" + position + " offset:" + offset);
-                        }
+            ((StaggeredGridLayoutManager) manager).scrollToPositionWithOffset(position, 0);
+            post(new Runnable() {
+                @Override
+                public void run() {
+                    View target = manager.findViewByPosition(position);//然后才能拿到这个View
+                    if (target != null) {
+                        int offset = getMeasuredHeight() - target.getMeasuredHeight();
+                        ((StaggeredGridLayoutManager) manager).scrollToPositionWithOffset(position,
+                                offset);//滚动偏移到底部
+                        //L.i("滚动至:" + position + " offset:" + offset);
                     }
-                });
-            }
+                }
+            });
         }
     }
 
@@ -983,6 +990,10 @@ public class RRecyclerView extends RecyclerView implements StickLayout.CanScroll
         void onFastClick();
     }
 
+    public interface OnSizeChangedListener {
+        void onSizeChanged(int w, int h, int oldw, int oldh);
+    }
+
     /**
      * Touch事件, 触发的Scrolll监听
      */
@@ -1004,9 +1015,5 @@ public class RRecyclerView extends RecyclerView implements StickLayout.CanScroll
         public void onFastScrollToTop(@NonNull RRecyclerView recyclerView) {
 
         }
-    }
-
-    public interface OnSizeChangedListener {
-        void onSizeChanged(int w, int h, int oldw, int oldh);
     }
 }

@@ -4,12 +4,16 @@ import android.content.res.TypedArray;
 import android.graphics.Canvas;
 import android.graphics.DashPathEffect;
 import android.graphics.Paint;
+import android.support.annotation.IntDef;
 import android.support.v4.content.ContextCompat;
 import android.util.AttributeSet;
 import android.view.View;
 
 import com.angcyo.uiview.R;
 import com.angcyo.uiview.utils.ScreenUtil;
+
+import java.lang.annotation.Retention;
+import java.lang.annotation.RetentionPolicy;
 
 /**
  * Created by angcyo on 2018/03/31 08:39
@@ -97,5 +101,14 @@ public class RDrawLine extends BaseDraw {
         }
     }
 
+    public void setDrawLine(@DrawLine int drawLine) {
+        this.drawLine = drawLine;
+        mView.postInvalidate();
+    }
 
+    @IntDef({DRAW_LINE_LEFT, DRAW_LINE_TOP, DRAW_LINE_RIGHT, DRAW_LINE_BOTTOM, DRAW_LINE_BOTTOM_TOP})
+    @Retention(RetentionPolicy.SOURCE)
+    public @interface DrawLine {
+
+    }
 }

@@ -30,9 +30,9 @@ open class UIInputExDialog : UIIDialogImpl {
             return mViewHolder.v(R.id.base_edit_text_view)
         }
 
-    /**标题显示字符串*/
+    /**对话框 标题显示字符串*/
     var inputTitleString = ""
-    /**提示字符串*/
+    /**对话框 提示字符串*/
     var inputTipString = ""
     /**Hint字符串*/
     var inputHintString = "请输入内容..."
@@ -43,6 +43,8 @@ open class UIInputExDialog : UIIDialogImpl {
 
     /**允许输入最大字符串长度, -1不限制*/
     var maxInputLength = -1
+
+    var useCharLengthFilter = false
 
     /**是否是单行输入*/
     var isSingleLine = true
@@ -100,12 +102,14 @@ open class UIInputExDialog : UIIDialogImpl {
                 UI.setViewHeight(it, (80 * density()).toInt())
             }
 
+            it.isUseCharLengthFilter = useCharLengthFilter
+
             if (maxInputLength > 0) {
                 it.setMaxLength(maxInputLength)
 
                 v<TextIndicator>(R.id.base_single_text_indicator_view).apply {
                     visibility = View.VISIBLE
-                    initIndicator(maxInputLength, it)
+                    setupEditText(it)
                 }
             }
         }
