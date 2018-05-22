@@ -25,6 +25,7 @@ abstract class UIExItemUIView<ItemType, DataType> : UIRecyclerUIView<String, Dat
                         }
                     }
                 }
+                this@UIExItemUIView.onItemFactoryInit()
             }
 
             override fun onCreateItemHolder(itemHolder: RExItemHolder<DataType>) {
@@ -54,6 +55,10 @@ abstract class UIExItemUIView<ItemType, DataType> : UIRecyclerUIView<String, Dat
     }
 
     open fun onCreateItemHolder(itemHolder: RExItemHolder<DataType>) {
+
+    }
+
+    open fun onItemFactoryInit() {
 
     }
 

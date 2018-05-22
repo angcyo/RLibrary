@@ -68,7 +68,8 @@ abstract class RExItemFactory<ItemType, DataType> {
 
     /**返回在Adapter中的item type*/
     fun getItemType(data: DataType): Int {
-        val indexOfValue = allItemTypes.indexOfValue(getItemTypeFromData(data))
+        val itemTypeFromData = getItemTypeFromData(data) ?: return NO_SUPPORT_ITEM_TYPE
+        val indexOfValue = allItemTypes.indexOfValue(itemTypeFromData)
         if (indexOfValue == -1) {
             return NO_SUPPORT_ITEM_TYPE
         }

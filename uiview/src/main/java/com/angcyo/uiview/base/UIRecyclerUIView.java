@@ -270,7 +270,11 @@ public abstract class UIRecyclerUIView<H, T, F> extends UIContentView
      * 不显示LoadView
      */
     public void loadData() {
-        loadData("loadData", false);
+        loadData(false);
+    }
+
+    public void loadData(boolean showLoadView) {
+        loadData("loadData", showLoadView);
     }
 
     /**
