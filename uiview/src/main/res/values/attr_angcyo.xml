@@ -347,6 +347,10 @@
 
     <declare-styleable name="TimeTextView">
         <attr name="r_time_pattern" format="string"/>
+        <!--HH:mm-->
+        <attr name="r_shot_time_pattern" format="string"/>
+        <!--yyyy-MM-dd-->
+        <attr name="r_shot_date_pattern" format="string"/>
         <attr name="r_time" format="string"/>
         <attr name="r_show_shot_time" format="boolean"/>
     </declare-styleable>

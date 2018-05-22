@@ -1,6 +1,7 @@
 package com.angcyo.uiview.widget
 
 import android.content.Context
+import android.text.TextUtils
 import android.util.AttributeSet
 import com.angcyo.uiview.R
 import com.angcyo.uiview.kotlin.nowTime
@@ -31,7 +32,11 @@ open class TimeTextView(context: Context, attributeSet: AttributeSet? = null) : 
                 ""
             } else {
                 if (showShotTime) {
-                    RUtils.getShotTimeString(field)
+                    if (TextUtils.isEmpty(datePattern) && TextUtils.isEmpty(timePattern)) {
+                        RUtils.getShotTimeString(field)
+                    } else {
+                        RUtils.getShotTimeString(datePattern, timePattern, field)
+                    }
                 } else {
                     simpleFormat.format(Date(field))
                 }
@@ -40,6 +45,9 @@ open class TimeTextView(context: Context, attributeSet: AttributeSet? = null) : 
 
     /**缩短显示时间*/
     var showShotTime = false
+
+    var datePattern = ""
+    var timePattern = ""
 
     init {
         val array = context.obtainStyledAttributes(attributeSet, R.styleable.TimeTextView)

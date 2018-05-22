@@ -134,6 +134,10 @@ public class TimeUtil {
     }
 
     public static String getTimeShowString(long milliseconds, boolean showToday, boolean abbreviate) {
+        return getTimeShowString("yyyy-MM-dd", "HH:mm", milliseconds, showToday, abbreviate);
+    }
+
+    public static String getTimeShowString(String datePattern, String timePattern, long milliseconds, boolean showToday, boolean abbreviate) {
         String dataString;
         String timeStringBy24;
 
@@ -161,11 +165,11 @@ public class TimeUtil {
         } else if (isSameWeekDates(currentTime, today)) {
             dataString = getWeekOfDate(currentTime);
         } else {
-            SimpleDateFormat dateformatter = new SimpleDateFormat("yyyy-MM-dd", Locale.getDefault());
+            SimpleDateFormat dateformatter = new SimpleDateFormat(datePattern, Locale.getDefault());
             dataString = dateformatter.format(currentTime);
         }
 
-        SimpleDateFormat timeformatter24 = new SimpleDateFormat("HH:mm", Locale.getDefault());
+        SimpleDateFormat timeformatter24 = new SimpleDateFormat(timePattern, Locale.getDefault());
         timeStringBy24 = timeformatter24.format(currentTime);
 
         if (abbreviate) {
@@ -187,6 +191,10 @@ public class TimeUtil {
     }
 
     public static String getTimeShowRentString(long milliseconds) {
+        return getTimeShowRentString("yyyy-MM-dd HH:mm", milliseconds);
+    }
+
+    public static String getTimeShowRentString(String pattern, long milliseconds) {
         String dataString;
         String timeStringBy24;
 
@@ -203,7 +211,7 @@ public class TimeUtil {
         Date last_daybegin = new Date(lastdaybegin.getTime() + 3600 * 24 * 1000);// 大后天
 
 
-        SimpleDateFormat dateformatter2 = new SimpleDateFormat("yyyy-MM-dd HH:mm", Locale.getDefault());
+        SimpleDateFormat dateformatter2 = new SimpleDateFormat(pattern, Locale.getDefault());
         dataString = dateformatter2.format(currentTime);
 
         if (currentTime.after(last_daybegin)) {
@@ -219,7 +227,6 @@ public class TimeUtil {
         }
 
         return dataString /*+ " " + timeStringBy24*/;
-
     }
 
     public static String getTimeShowRentString2(long milliseconds) {

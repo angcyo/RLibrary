@@ -2072,6 +2072,10 @@ public class RUtils {
         return TimeUtil.getTimeShowString(milliseconds, abbreviate);
     }
 
+    public static String getShotTimeString(String datePattern, String timePattern, long milliseconds) {
+        return TimeUtil.getTimeShowString(datePattern, timePattern, milliseconds, true, true);
+    }
+
     /**
      * 获取视频时长 毫秒
      */
