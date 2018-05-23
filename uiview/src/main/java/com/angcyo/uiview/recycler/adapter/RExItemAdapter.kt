@@ -14,15 +14,15 @@ import com.angcyo.uiview.recycler.RBaseViewHolder
  * 修改备注：
  * Version: 1.0.0
  */
-open class RExItemAdapter<ItemType, T> : RExBaseAdapter<String, T, String> {
+open class RExItemAdapter<ItemType, DataType> : RExBaseAdapter<String, DataType, String> {
 
-    var itemFactory: RExItemFactory<ItemType, T>
+    var itemFactory: RExItemFactory<ItemType, DataType>
 
-    constructor(context: Context, itemFactory: RExItemFactory<ItemType, T>) : super(context) {
+    constructor(context: Context, itemFactory: RExItemFactory<ItemType, DataType>) : super(context) {
         this.itemFactory = itemFactory
     }
 
-    constructor(context: Context, datas: List<T>, itemFactory: RExItemFactory<ItemType, T>) : super(context, datas) {
+    constructor(context: Context, datas: List<DataType>, itemFactory: RExItemFactory<ItemType, DataType>) : super(context, datas) {
         this.itemFactory = itemFactory
     }
 
@@ -38,10 +38,13 @@ open class RExItemAdapter<ItemType, T> : RExBaseAdapter<String, T, String> {
         return itemFactory.getItemType(mAllDatas[position])
     }
 
-    override fun onBindDataView(holder: RBaseViewHolder, posInData: Int, dataBean: T) {
+    override fun onBindDataView(holder: RBaseViewHolder, posInData: Int, dataBean: DataType?) {
         super.onBindDataView(holder, posInData, dataBean)
         val itemHolder = itemFactory.getItemLayoutHolder(holder.itemViewType)
         itemHolder.onBindItemDataView(holder, posInData, dataBean)
     }
 
+    open fun getItemHolderByPosition(position: Int): RExItemHolder<DataType> {
+        return itemFactory.getItemLayoutHolder(getItemType(position))
+    }
 }

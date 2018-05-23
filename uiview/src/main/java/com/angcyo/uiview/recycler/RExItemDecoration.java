@@ -40,7 +40,7 @@ public class RExItemDecoration extends RecyclerView.ItemDecoration {
      * 视图靠底边缘
      */
     public static final int EDGE_BOTTOM = 0b1000;
-    TextPaint mTextPaint;
+    public TextPaint mTextPaint;
     ItemDecorationCallback mItemDecorationCallback;
 
     public RExItemDecoration(ItemDecorationCallback itemDecorationCallback) {
@@ -48,11 +48,13 @@ public class RExItemDecoration extends RecyclerView.ItemDecoration {
         mTextPaint = new TextPaint(Paint.ANTI_ALIAS_FLAG);
     }
 
+    public RExItemDecoration() {
+        mTextPaint = new TextPaint(Paint.ANTI_ALIAS_FLAG);
+    }
+
     public static RExItemDecoration build(ItemDecorationCallback itemDecorationCallback) {
         return new RExItemDecoration(itemDecorationCallback);
     }
-
-    //------------------------------------------公共方法---------------------------------
 
     /**
      * 判断 viewLayoutPosition 是否是一排的结束位置 (垂直水平通用)
@@ -60,6 +62,8 @@ public class RExItemDecoration extends RecyclerView.ItemDecoration {
     public static boolean isEndOfGrid(int viewLayoutPosition, int spanCount) {
         return viewLayoutPosition % spanCount == spanCount - 1;
     }
+
+    //------------------------------------------公共方法---------------------------------
 
     /**
      * 判断 viewLayoutPosition 所在的位置,是否是最后一排(垂直水平通用)
@@ -72,7 +76,6 @@ public class RExItemDecoration extends RecyclerView.ItemDecoration {
         }
         return result;
     }
-
 
     public static boolean isLeftEdge(int edge) {
         return (edge & EDGE_LEFT) == EDGE_LEFT;
@@ -88,6 +91,10 @@ public class RExItemDecoration extends RecyclerView.ItemDecoration {
 
     public static boolean isBottomEdge(int edge) {
         return (edge & EDGE_BOTTOM) == EDGE_BOTTOM;
+    }
+
+    public void setItemDecorationCallback(ItemDecorationCallback itemDecorationCallback) {
+        mItemDecorationCallback = itemDecorationCallback;
     }
 
 
