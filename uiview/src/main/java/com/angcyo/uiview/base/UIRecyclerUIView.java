@@ -290,7 +290,7 @@ public abstract class UIRecyclerUIView<H, T, F> extends UIContentView
 
     @Deprecated
     public void onUILoadData(int page) {
-        onUILoadData(page, "");
+
     }
 
     public void onUILoadData(int page, String extend) {

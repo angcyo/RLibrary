@@ -5,7 +5,6 @@ import android.graphics.Canvas
 import android.graphics.drawable.Drawable
 import android.support.constraint.ConstraintLayout
 import android.util.AttributeSet
-import com.angcyo.library.utils.L
 import com.angcyo.uiview.R
 import com.angcyo.uiview.draw.RDrawLine
 
@@ -44,7 +43,7 @@ class RConstraintLayout : ConstraintLayout {
 
         setWillNotDraw(false)
 
-        L.e("call: init -> ")
+        //L.e("call: init -> ")
     }
 
     override fun draw(canvas: Canvas) {
