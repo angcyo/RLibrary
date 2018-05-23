@@ -239,12 +239,12 @@ public class RRecyclerView extends RecyclerView implements StickLayout.CanScroll
     protected void initView(Context context) {
         String tag = (String) this.getTag();
         if (TextUtils.isEmpty(tag) || "V".equalsIgnoreCase(tag)) {
-            layoutManager = new LinearLayoutManager(context, orientation, false);
+            layoutManager = new LinearLayoutManagerWrap(context, orientation, false);
         } else {
             //线性布局管理器
             if ("H".equalsIgnoreCase(tag)) {
-                orientation = LinearLayoutManager.HORIZONTAL;
-                layoutManager = new LinearLayoutManager(context, orientation, false);
+                orientation = LinearLayoutManagerWrap.HORIZONTAL;
+                layoutManager = new LinearLayoutManagerWrap(context, orientation, false);
             } else {
                 //读取其他配置信息(数量和方向)
                 final String type = tag.substring(0, 1);
@@ -262,11 +262,11 @@ public class RRecyclerView extends RecyclerView implements StickLayout.CanScroll
 
                 //交错布局管理器
                 if ("S".equalsIgnoreCase(type)) {
-                    layoutManager = new StaggeredGridLayoutManager(spanCount, orientation);
+                    layoutManager = new StaggeredGridLayoutManagerWrap(spanCount, orientation);
                 }
                 //网格布局管理器
                 else if ("G".equalsIgnoreCase(type)) {
-                    layoutManager = new GridLayoutManager(context, spanCount, orientation, false);
+                    layoutManager = new GridLayoutManagerWrap(context, spanCount, orientation, false);
                 }
             }
         }
@@ -1014,6 +1014,77 @@ public class RRecyclerView extends RecyclerView implements StickLayout.CanScroll
          */
         public void onFastScrollToTop(@NonNull RRecyclerView recyclerView) {
 
+        }
+    }
+
+    public static class LinearLayoutManagerWrap extends LinearLayoutManager {
+
+        public LinearLayoutManagerWrap(Context context) {
+            super(context);
+        }
+
+        public LinearLayoutManagerWrap(Context context, int orientation, boolean reverseLayout) {
+            super(context, orientation, reverseLayout);
+        }
+
+        public LinearLayoutManagerWrap(Context context, AttributeSet attrs, int defStyleAttr, int defStyleRes) {
+            super(context, attrs, defStyleAttr, defStyleRes);
+        }
+
+        @Override
+        public void onLayoutChildren(Recycler recycler, State state) {
+            try {
+                super.onLayoutChildren(recycler, state);
+            } catch (Exception e) {
+                L.e("LinearLayoutManagerWrap onLayoutChildren异常-> " + e.getMessage());
+                e.printStackTrace();
+            }
+        }
+    }
+
+    public static class GridLayoutManagerWrap extends GridLayoutManager {
+
+        public GridLayoutManagerWrap(Context context, AttributeSet attrs, int defStyleAttr, int defStyleRes) {
+            super(context, attrs, defStyleAttr, defStyleRes);
+        }
+
+        public GridLayoutManagerWrap(Context context, int spanCount) {
+            super(context, spanCount);
+        }
+
+        public GridLayoutManagerWrap(Context context, int spanCount, int orientation, boolean reverseLayout) {
+            super(context, spanCount, orientation, reverseLayout);
+        }
+
+        @Override
+        public void onLayoutChildren(Recycler recycler, State state) {
+            try {
+                super.onLayoutChildren(recycler, state);
+            } catch (Exception e) {
+                L.e("GridLayoutManagerWrap onLayoutChildren异常-> " + e.getMessage());
+                e.printStackTrace();
+            }
+        }
+    }
+
+    public static class StaggeredGridLayoutManagerWrap extends StaggeredGridLayoutManager {
+
+        public StaggeredGridLayoutManagerWrap(Context context, AttributeSet attrs, int defStyleAttr, int defStyleRes) {
+            super(context, attrs, defStyleAttr, defStyleRes);
+        }
+
+        public StaggeredGridLayoutManagerWrap(int spanCount, int orientation) {
+            super(spanCount, orientation);
+        }
+
+        @Override
+        public void onLayoutChildren(Recycler recycler, State state) {
+            try {
+                super.onLayoutChildren(recycler, state);
+            } catch (Exception e) {
+                L.e("StaggeredGridLayoutManagerWrap onLayoutChildren异常-> " + e.getMessage());
+                e.printStackTrace();
+            }
         }
     }
 }
