@@ -38,6 +38,45 @@ public class Reflect {
         return result;
     }
 
+    /**
+     * 只判断String类型的字段, 是否相等
+     */
+    public static boolean areContentsTheSame(Object target1, Object target2) {
+        if (target1 == null || target2 == null) {
+            return false;
+        }
+        if (!target1.getClass().isAssignableFrom(target2.getClass()) ||
+                !target2.getClass().isAssignableFrom(target1.getClass())) {
+            return false;
+        }
+
+        boolean result = true;
+        try {
+            Field[] declaredFields1 = target1.getClass().getDeclaredFields();
+            Field[] declaredFields2 = target2.getClass().getDeclaredFields();
+            for (int i = 0; i < declaredFields1.length; i++) {
+                declaredFields1[i].setAccessible(true);
+                Object v1 = declaredFields1[i].get(target1);
+
+                declaredFields2[i].setAccessible(true);
+                Object v2 = declaredFields2[i].get(target2);
+
+                if (v1 instanceof String && v2 instanceof String) {
+                    result = TextUtils.equals(((String) v1), (String) v2);
+                } else {
+                    result = false;
+                }
+
+                if (!result) {
+                    break;
+                }
+            }
+        } catch (Exception e) {
+            L.i("错误: ->" + e.getMessage());
+        }
+        return result;
+    }
+
     public static void setMember(Class<?> cls, Object target, String member, Object value) {
         try {
             Field memberField = cls.getDeclaredField(member);
