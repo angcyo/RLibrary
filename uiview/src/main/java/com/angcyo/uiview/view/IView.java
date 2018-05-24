@@ -337,6 +337,11 @@ public interface IView {
      */
     boolean needHideSoftInputForFinish();
 
+    /**
+     * 点击非EditText外的其他View
+     */
+    boolean onHideSoftInputByTouchDown(@NonNull View touchInView);
+
     enum IViewShowState {
         STATE_NORMAL,
         STATE_VIEW_CREATE,

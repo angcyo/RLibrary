@@ -3055,11 +3055,14 @@ public class UILayoutImpl extends SwipeBackLayout implements ILayout, UIViewPage
                     //L.e("call: onInterceptTouchEvent([ev])-> " + RSoftInputLayout.getSoftKeyboardHeight(this));
                     //L.e("call: onInterceptTouchEvent([ev])-> " + view);
                     if (view != null) {
-                        if (view instanceof EditText || view.getTag() != null) {
-                            L.w("touch on EditText or tag not null");
-
+                        if (lastViewPattern.mIView.onHideSoftInputByTouchDown(view)) {
                         } else {
-                            hideSoftInput();
+                            if (view instanceof EditText || view.getTag() != null) {
+                                L.w("touch on EditText or tag not null");
+
+                            } else {
+                                hideSoftInput();
+                            }
                         }
                     }
                 }

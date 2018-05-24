@@ -64,6 +64,7 @@
     <color name="base_placeholder_color">#EFEFEF</color>
 
     <color name="base_color_disable">#CBCBCB</color>
+    <color name="base_color_disable_enable">#E4E4E4</color>
 
     <color name="base_main_color_bg_color">#F1F1F5</color>
 

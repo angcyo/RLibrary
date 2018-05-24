@@ -1671,6 +1671,12 @@ public abstract class UIIViewImpl implements IView {
         return true;
     }
 
+    @Override
+    public boolean onHideSoftInputByTouchDown(View touchInView) {
+        //让LayoutImpl自动处理
+        return false;
+    }
+
     public interface OnCountDown {
         void onCountDown(int count /*MaxCount 到 0 的值*/);
     }
