@@ -743,8 +743,12 @@ public class AnimUtil {
         return rotateAnimation(false);
     }
 
-    public static Animation rotateAnimation(boolean circle /*循环动画*/) {
-        RotateAnimation animation = new RotateAnimation(0f, 360f,
+    public static Animation rotateAnimation(float toDegrees) {
+        return rotateAnimation(false, toDegrees);
+    }
+
+    public static Animation rotateAnimation(boolean circle /*循环动画*/, float toDegrees) {
+        RotateAnimation animation = new RotateAnimation(0f, toDegrees,
                 Animation.RELATIVE_TO_SELF, 0.5f, Animation.RELATIVE_TO_SELF, 0.5f);
         animation.setInterpolator(new LinearInterpolator());
         animation.setDuration(300);
@@ -755,6 +759,10 @@ public class AnimUtil {
             animation.setDuration(2000);
         }
         return animation;
+    }
+
+    public static Animation rotateAnimation(boolean circle /*循环动画*/) {
+        return rotateAnimation(circle, 360);
     }
 
     /**

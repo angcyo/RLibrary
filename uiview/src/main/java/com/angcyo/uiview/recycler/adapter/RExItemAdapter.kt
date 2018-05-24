@@ -1,7 +1,9 @@
 package com.angcyo.uiview.recycler.adapter
 
 import android.content.Context
+import com.angcyo.uiview.base.UIBaseRxView
 import com.angcyo.uiview.recycler.RBaseViewHolder
+import com.angcyo.uiview.recycler.adapter.RExItemFactory.Companion.NO_ITEM_TYPE
 
 /**
  * Copyright (C) 2016,深圳市红鸟网络科技股份有限公司 All rights reserved.
@@ -26,25 +28,63 @@ open class RExItemAdapter<ItemType, DataType> : RExBaseAdapter<String, DataType,
         this.itemFactory = itemFactory
     }
 
-    init {
-
-    }
-
     override fun getItemLayoutId(viewType: Int): Int {
         return itemFactory.getItemLayoutId(viewType)
     }
 
+    /**必须调用此方法*/
+    open fun initItemFactory(uiview: UIBaseRxView?) {
+        itemFactory.initItemFactory(uiview, this)
+    }
+
     override fun getItemType(position: Int): Int {
+        if (position >= mAllDatas.size) {
+            return NO_ITEM_TYPE
+        }
         return itemFactory.getItemType(mAllDatas[position])
     }
 
     override fun onBindDataView(holder: RBaseViewHolder, posInData: Int, dataBean: DataType?) {
         super.onBindDataView(holder, posInData, dataBean)
         val itemHolder = itemFactory.getItemLayoutHolder(holder.itemViewType)
-        itemHolder.onBindItemDataView(holder, posInData, dataBean)
+        itemHolder?.onBindItemDataView(holder, posInData, dataBean)
     }
 
-    open fun getItemHolderByPosition(position: Int): RExItemHolder<DataType> {
+    /**根据位置, 返回处理的ItemHolder*/
+    open fun getItemHolderByPosition(position: Int): RExItemHolder<DataType>? {
         return itemFactory.getItemLayoutHolder(getItemType(position))
+    }
+
+    /**根据类型, 返回处理的ItemHolder*/
+    fun getItemHolderByItemType(itemType: ItemType): RExItemHolder<DataType>? {
+        var result: RExItemHolder<DataType>? = null
+        mAllDatas.forEachIndexed { index, dataType ->
+            if (itemType == itemFactory.getItemType(dataType)) {
+                result = getItemHolderByPosition(index)
+            }
+        }
+        return result
+    }
+
+    /**根据类型, 返回相同类型对应的数据列表*/
+    fun getDataByItemType(itemType: ItemType): MutableList<DataType> {
+        val result = mutableListOf<DataType>()
+        for (data in mAllDatas) {
+            if (itemType == itemFactory.getItemType(data)) {
+                result.add(data)
+            }
+        }
+        return result
+    }
+
+    /**根据类型, 返回相同类型对应的数据索引列表*/
+    fun getIndexByItemType(itemType: ItemType): MutableList<DataType> {
+        val result = mutableListOf<DataType>()
+        mAllDatas.forEachIndexed { _, dataType ->
+            if (itemType == itemFactory.getItemType(dataType)) {
+                result.add(dataType)
+            }
+        }
+        return result
     }
 }

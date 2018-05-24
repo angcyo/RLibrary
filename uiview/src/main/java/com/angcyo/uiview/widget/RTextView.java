@@ -1006,6 +1006,9 @@ public class RTextView extends AppCompatTextView {
         mDrawNoRead.setNoReadPaddingRight(noReadPaddingRight);
     }
 
+    public RDrawNoRead getDrawNoRead() {
+        return mDrawNoRead;
+    }
 
     public void setAutoFixTextSize(boolean autoFixTextSize) {
         this.autoFixTextSize = autoFixTextSize;

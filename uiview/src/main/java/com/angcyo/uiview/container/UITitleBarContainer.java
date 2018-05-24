@@ -27,6 +27,7 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.angcyo.uiview.R;
+import com.angcyo.uiview.draw.RDrawNoRead;
 import com.angcyo.uiview.kotlin.ViewExKt;
 import com.angcyo.uiview.model.TitleBarItem;
 import com.angcyo.uiview.model.TitleBarPattern;
@@ -42,6 +43,8 @@ import com.angcyo.uiview.widget.RTextView;
 import com.angcyo.uiview.widget.RTitleCenterLayout;
 
 import java.util.ArrayList;
+
+import static com.angcyo.uiview.utils.ScreenUtil.density;
 
 /**
  * 标题栏的封装
@@ -113,10 +116,30 @@ public class UITitleBarContainer extends FrameLayout {
         return (T) view.findViewById(id);
     }
 
+    /**
+     * 显示未读小红点
+     */
+    public static void showNoRead(View view, boolean show) {
+        RDrawNoRead drawNoRead = null;
+        if (view instanceof RImageView) {
+            drawNoRead = ((RImageView) view).getDrawNoRead();
+        } else if (view instanceof RTextView) {
+            drawNoRead = ((RTextView) view).getDrawNoRead();
+        }
+
+        if (drawNoRead != null) {
+            drawNoRead.setShowNoRead(show);
+            drawNoRead.setNoReadRadius(3 * density());
+            drawNoRead.setNoReadPaddingTop(10 * density());
+            drawNoRead.setNoReadPaddingRight(12 * density());
+        }
+    }
 
     public void onAttachToLayout(ILayout container) {
         mILayout = container;
     }
+
+    //----------------------------保护方法-----------------------------
 
     /**
      * 在旧的标题栏上, 应用一个新的标题栏的信息
@@ -129,19 +152,17 @@ public class UITitleBarContainer extends FrameLayout {
         return this;
     }
 
-    //----------------------------保护方法-----------------------------
-
     public UITitleBarContainer showLoadView() {
         mLoadView.setVisibility(VISIBLE);
         return this;
     }
 
+    //----------------------------私有方法-----------------------------
+
     public UITitleBarContainer hideLoadView() {
         mLoadView.setVisibility(GONE);
         return this;
     }
-
-    //----------------------------私有方法-----------------------------
 
     @Override
     protected void onAttachedToWindow() {
@@ -516,6 +537,16 @@ public class UITitleBarContainer extends FrameLayout {
         if (mRightControlLayout.getChildCount() > index) {
             visibleView(mRightControlLayout.getChildAt(index));
         }
+    }
+
+    public void showRightItemNoRead(int index, boolean show) {
+        if (mRightControlLayout.getChildCount() > index) {
+            showNoRead(mRightControlLayout.getChildAt(index), show);
+        }
+    }
+
+    public void showRightItemNoReadById(int id, boolean show) {
+        showNoRead(mRightControlLayout.findViewById(id), show);
     }
 
     public void showRightItemById(int id) {

@@ -18,12 +18,15 @@ import android.widget.EditText
 import android.widget.TextView
 import com.angcyo.github.utilcode.utils.SingleTextWatcher
 import com.angcyo.library.utils.Anim
+import com.angcyo.uiview.draw.RDrawNoRead
 import com.angcyo.uiview.recycler.RRecyclerView
 import com.angcyo.uiview.rsen.RGestureDetector
 import com.angcyo.uiview.utils.ScreenUtil
 import com.angcyo.uiview.utils.ScreenUtil.density
 import com.angcyo.uiview.view.RClickListener
 import com.angcyo.uiview.view.UIIViewImpl
+import com.angcyo.uiview.widget.RImageView
+import com.angcyo.uiview.widget.RTextView
 import com.wangjie.shadowviewhelper.ShadowProperty
 import com.wangjie.shadowviewhelper.ShadowViewDrawable
 import java.util.*
@@ -410,5 +413,25 @@ public val View.valueAnimator: ValueAnimator by lazy {
         repeatMode = ValueAnimator.RESTART
         repeatCount = ValueAnimator.INFINITE
         duration = 1000
+    }
+}
+
+/**显示未读小红点*/
+public fun View.showNoRead(show: Boolean = true,
+                           radius: Float = 3 * density(),
+                           paddTop: Float = 2 * density(),
+                           paddRight: Float = 2 * density()) {
+    var drawNoRead: RDrawNoRead? = null
+    if (this is RImageView) {
+        drawNoRead = this.drawNoRead
+    } else if (this is RTextView) {
+        drawNoRead = this.drawNoRead
+    }
+
+    if (drawNoRead != null) {
+        drawNoRead.setShowNoRead(show)
+        drawNoRead.setNoReadRadius(radius)
+        drawNoRead.setNoReadPaddingTop(paddTop)
+        drawNoRead.setNoReadPaddingRight(paddRight)
     }
 }

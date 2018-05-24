@@ -7,7 +7,6 @@ import android.graphics.Paint
 import android.graphics.Rect
 import android.util.AttributeSet
 import android.view.MotionEvent
-import com.angcyo.library.utils.L
 import com.angcyo.uiview.R
 import com.angcyo.uiview.kotlin.*
 
@@ -94,9 +93,7 @@ class SliderMenuLayout(context: Context, attributeSet: AttributeSet? = null)
         if (event.isDown()) {
             isOldMenuOpen = isMenuOpen()
         }
-        if (canSlider(event)) {
-
-        } else {
+        if (scrollHorizontalDistance == 0 && !canSlider(event)) {
             return
         }
 
@@ -200,7 +197,7 @@ class SliderMenuLayout(context: Context, attributeSet: AttributeSet? = null)
 
     override fun onScrollChange(orientation: ORIENTATION, distance: Float /*瞬时值*/) {
         super.onScrollChange(orientation, distance)
-        L.e("call: onScrollChange -> $orientation $distance")
+        //L.e("call: onScrollChange -> $orientation $distance")
         //refreshMenuLayout(((secondMotionEvent?.x ?: 0f) - (firstMotionEvent?.x ?: 0f)).toInt())
         if (canSlider(firstMotionEvent!!)) {
             if (isHorizontal(orientation)) {
@@ -392,7 +389,7 @@ class SliderMenuLayout(context: Context, attributeSet: AttributeSet? = null)
                     } else {
                         -this.measuredWidth + scrollHorizontalDistance
                     }
-                    L.e("call: menu layout -> left:$left right:${left + this.measuredWidth}")
+                    //L.e("call: menu layout -> left:$left right:${left + this.measuredWidth}")
                     layout(left, 0, left + this.measuredWidth, this.measuredHeight)
                 }
             }
@@ -447,6 +444,14 @@ class SliderMenuLayout(context: Context, attributeSet: AttributeSet? = null)
             return false
         }
         return true
+    }
+
+    fun toggle() {
+        if (isMenuOpen()) {
+            closeMenu()
+        } else {
+            openMenu()
+        }
     }
 
     interface SliderCallback {

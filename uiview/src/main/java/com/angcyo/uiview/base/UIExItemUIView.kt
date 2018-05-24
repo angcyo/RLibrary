@@ -22,14 +22,14 @@ abstract class UIExItemUIView<ItemType, DataType> : UIRecyclerUIView<String, Dat
                 override fun getItemOffsets2(outRect: Rect, position: Int, edge: Int) {
                     //super.getItemOffsets2(outRect, position, edge)
                     exItemAdapter?.let {
-                        it.getItemHolderByPosition(position).getItemOffsets(this@apply, outRect, position, edge)
+                        it.getItemHolderByPosition(position)?.getItemOffsets(this@apply, outRect, position, edge)
                     }
                 }
 
                 override fun draw(canvas: Canvas, paint: TextPaint, itemView: View, offsetRect: Rect, itemCount: Int, position: Int) {
                     //super.draw(canvas, paint, itemView, offsetRect, itemCount, position)
                     exItemAdapter?.let {
-                        it.getItemHolderByPosition(position).draw(this@apply, canvas, paint, itemView, offsetRect, itemCount, position)
+                        it.getItemHolderByPosition(position)?.draw(this@apply, canvas, paint, itemView, offsetRect, itemCount, position)
                     }
                 }
             })
@@ -38,6 +38,7 @@ abstract class UIExItemUIView<ItemType, DataType> : UIRecyclerUIView<String, Dat
 
     override fun createAdapter(): RExBaseAdapter<String, DataType, String> {
         exItemAdapter = RExItemAdapter(mActivity, createItemFactory())
+        exItemAdapter?.initItemFactory(this)
         return exItemAdapter!!
     }
 
@@ -46,13 +47,11 @@ abstract class UIExItemUIView<ItemType, DataType> : UIRecyclerUIView<String, Dat
 
             override fun onItemFactoryInit() {
                 super.onItemFactoryInit()
-                post {
-                    noSupportTypeItem?.let {
-                        it.itemHolderObj?.let {
-                            it.iLayout = mParentILayout
-                            it.exItemUIView = this@UIExItemUIView
-                            it.exItemAdapter = mExBaseAdapter as RExItemAdapter<*, DataType>
-                        }
+                noSupportTypeItem.let {
+                    it.itemHolderObj?.let {
+                        it.iLayout = mParentILayout
+                        it.exUIView = this@UIExItemUIView
+                        it.exItemAdapter = mExBaseAdapter as RExItemAdapter<*, DataType>?
                     }
                 }
                 this@UIExItemUIView.onItemFactoryInit()
@@ -61,11 +60,9 @@ abstract class UIExItemUIView<ItemType, DataType> : UIRecyclerUIView<String, Dat
             override fun onCreateItemHolder(itemHolder: RExItemHolder<DataType>) {
                 super.onCreateItemHolder(itemHolder)
                 itemHolder.iLayout = mParentILayout
-                itemHolder.exItemUIView = this@UIExItemUIView
+                itemHolder.exUIView = this@UIExItemUIView
 
-                post {
-                    itemHolder.exItemAdapter = mExBaseAdapter as RExItemAdapter<*, DataType>
-                }
+                itemHolder.exItemAdapter = mExBaseAdapter as RExItemAdapter<*, DataType>?
 
                 this@UIExItemUIView.onCreateItemHolder(itemHolder)
             }

@@ -7,7 +7,7 @@ import android.graphics.Rect
 import android.support.annotation.ColorRes
 import android.text.TextPaint
 import android.view.View
-import com.angcyo.uiview.base.UIExItemUIView
+import com.angcyo.uiview.base.UIBaseRxView
 import com.angcyo.uiview.container.ILayout
 import com.angcyo.uiview.container.UIParam
 import com.angcyo.uiview.recycler.RBaseViewHolder
@@ -29,7 +29,7 @@ import rx.Subscription
  */
 abstract class RExItemHolder<DataType> {
     var iLayout: ILayout? = null
-    var exItemUIView: UIExItemUIView<*, DataType>? = null
+    var exUIView: UIBaseRxView? = null
     var exItemAdapter: RExItemAdapter<*, DataType>? = null
 
     open fun startIView(iView: IView) {
@@ -41,22 +41,27 @@ abstract class RExItemHolder<DataType> {
         iLayout?.startIView(iView, param)
     }
 
+    /**当创建完之后*/
+    open fun onCreateItemHolderAfter() {
+
+    }
+
     /**重写此方法, 核心*/
     abstract fun onBindItemDataView(holder: RBaseViewHolder, posInData: Int, dataBean: DataType?)
 
     fun add(subscription: Subscription) {
-        exItemUIView?.add(subscription)
+        exUIView?.add(subscription)
     }
 
     fun cancel() {
-        exItemUIView?.onCancel()
+        exUIView?.onCancel()
     }
 
     fun getActivity(): Activity {
-        return if (exItemUIView == null) {
+        return if (exUIView == null) {
             iLayout!!.layout.context as Activity
         } else {
-            exItemUIView!!.mActivity
+            exUIView!!.mActivity
         }
     }
 
@@ -65,7 +70,7 @@ abstract class RExItemHolder<DataType> {
     }
 
     fun getColor(@ColorRes id: Int): Int {
-        return exItemUIView?.getColor(id) ?: Color.TRANSPARENT
+        return exUIView?.getColor(id) ?: Color.TRANSPARENT
     }
 
     /**用来返回 RecyclerView的分割线距离*/
