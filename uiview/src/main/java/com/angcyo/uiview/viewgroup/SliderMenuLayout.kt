@@ -244,10 +244,18 @@ class SliderMenuLayout(context: Context, attributeSet: AttributeSet? = null)
             if (isHorizontal(orientation)) {
                 if (velocity < -2000) {
                     //快速向左
-                    closeMenu()
+                    if (menuSliderGravity == SLIDER_GRAVITY_RIGHT) {
+                        openMenu()
+                    } else {
+                        closeMenu()
+                    }
                 } else if (velocity > 2000) {
                     //快速向右
-                    openMenu()
+                    if (menuSliderGravity == SLIDER_GRAVITY_RIGHT) {
+                        closeMenu()
+                    } else {
+                        openMenu()
+                    }
                 }
             }
         }
