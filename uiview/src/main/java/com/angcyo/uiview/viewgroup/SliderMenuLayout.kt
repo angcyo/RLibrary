@@ -112,7 +112,8 @@ class SliderMenuLayout(context: Context, attributeSet: AttributeSet? = null)
 
             if (isOldMenuOpen) {
                 //打开已经打开
-                if (event.x >= maxMenuWidth) {
+                if ((menuSliderGravity == SLIDER_GRAVITY_LEFT && event.x >= maxMenuWidth) ||
+                        (menuSliderGravity == SLIDER_GRAVITY_RIGHT && event.x <= measuredWidth - maxMenuWidth)) {
                     //点击在内容区域
                     isTouchDownInContentWithMenuOpen = true
                     needInterceptTouchEvent = true
@@ -131,7 +132,8 @@ class SliderMenuLayout(context: Context, attributeSet: AttributeSet? = null)
                 if (isTouchDownInContentWithMenuOpen &&
                         ((touchEventX - touchDownX) == 0f) ||
                         (touchEventY - touchDownY).abs() > (touchEventX - touchDownX).abs()) {
-                    if (event.x >= maxMenuWidth) {
+                    if ((menuSliderGravity == SLIDER_GRAVITY_LEFT && event.x >= maxMenuWidth) ||
+                            (menuSliderGravity == SLIDER_GRAVITY_RIGHT && event.x <= measuredWidth - maxMenuWidth)) {
                         //在菜单打开的情况下,点击了内容区域, 并且没有触发横向滚动
                         closeMenu()
                     } else {
@@ -198,6 +200,7 @@ class SliderMenuLayout(context: Context, attributeSet: AttributeSet? = null)
 
     override fun onScrollChange(orientation: ORIENTATION, distance: Float /*瞬时值*/) {
         super.onScrollChange(orientation, distance)
+        L.e("call: onScrollChange -> $orientation $distance")
         //refreshMenuLayout(((secondMotionEvent?.x ?: 0f) - (firstMotionEvent?.x ?: 0f)).toInt())
         if (canSlider(firstMotionEvent!!)) {
             if (isHorizontal(orientation)) {
@@ -205,16 +208,24 @@ class SliderMenuLayout(context: Context, attributeSet: AttributeSet? = null)
                     if (distance > 0) {
                         //左滑动
                         if (isMenuClose()) {
-
+                            if (menuSliderGravity == SLIDER_GRAVITY_RIGHT) {
+                                needInterceptTouchEvent = true
+                            }
                         } else {
-                            needInterceptTouchEvent = true
+                            if (menuSliderGravity == SLIDER_GRAVITY_LEFT) {
+                                needInterceptTouchEvent = true
+                            }
                         }
                     } else {
-                        //又滑动
+                        //右滑动
                         if (isMenuOpen()) {
-
+                            if (menuSliderGravity == SLIDER_GRAVITY_RIGHT) {
+                                needInterceptTouchEvent = true
+                            }
                         } else {
-                            needInterceptTouchEvent = true
+                            if (menuSliderGravity == SLIDER_GRAVITY_LEFT) {
+                                needInterceptTouchEvent = true
+                            }
                         }
                     }
                 }
@@ -244,7 +255,7 @@ class SliderMenuLayout(context: Context, attributeSet: AttributeSet? = null)
 
     /**菜单是否完全打开*/
     fun isMenuOpen(): Boolean {
-        return scrollHorizontalDistance >= maxMenuWidth
+        return scrollHorizontalDistance.abs() >= maxMenuWidth
     }
 
     /**菜单完全关闭*/
@@ -298,7 +309,11 @@ class SliderMenuLayout(context: Context, attributeSet: AttributeSet? = null)
     /**刷新布局位置*/
     private fun refreshLayout(distanceX: Int /*没次移动的距离*/) {
         //L.e("call: refreshMenuLayout -> $distanceX")
-        refreshContentLayout(clampViewPositionHorizontal(scrollHorizontalDistance - distanceX))
+        refreshContentLayout(clampViewPositionHorizontal(if (menuSliderGravity == SLIDER_GRAVITY_RIGHT) {
+            scrollHorizontalDistance + distanceX
+        } else {
+            scrollHorizontalDistance - distanceX
+        }))
     }
 
     //
@@ -364,7 +379,11 @@ class SliderMenuLayout(context: Context, attributeSet: AttributeSet? = null)
         } else {
             if (childCount > menuViewIndex) {
                 getChildAt(menuViewIndex).apply {
-                    val left = -this.measuredWidth + scrollHorizontalDistance
+                    val left = if (menuSliderGravity == SLIDER_GRAVITY_RIGHT) {
+                        this@SliderMenuLayout.measuredWidth - scrollHorizontalDistance
+                    } else {
+                        -this.measuredWidth + scrollHorizontalDistance
+                    }
                     L.e("call: menu layout -> left:$left right:${left + this.measuredWidth}")
                     layout(left, 0, left + this.measuredWidth, this.measuredHeight)
                 }
@@ -396,10 +415,19 @@ class SliderMenuLayout(context: Context, attributeSet: AttributeSet? = null)
         if (isMenuClose()) {
 
         } else {
-            val layoutLeft = scrollHorizontalDistance
-            debugPaint.color = Color.BLACK.tranColor((255 * (layoutLeft.toFloat() / maxMenuWidth) * 0.4f /*限制一下值*/).toInt())
+            val left = if (menuSliderGravity == SLIDER_GRAVITY_RIGHT) {
+                0
+            } else {
+                scrollHorizontalDistance
+            }
+            var right = if (menuSliderGravity == SLIDER_GRAVITY_RIGHT) {
+                measuredWidth - scrollHorizontalDistance
+            } else {
+                measuredWidth
+            }
+            debugPaint.color = Color.BLACK.tranColor((255 * (scrollHorizontalDistance.toFloat() / maxMenuWidth) * 0.4f /*限制一下值*/).toInt())
             debugPaint.style = Paint.Style.FILL_AND_STROKE
-            maskRect.set(layoutLeft, 0, measuredWidth, measuredHeight)
+            maskRect.set(left, 0, right, measuredHeight)
             canvas.drawRect(maskRect, debugPaint)
         }
     }
