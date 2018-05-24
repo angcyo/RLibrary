@@ -153,12 +153,14 @@ open class TouchLayout(context: Context, attributeSet: AttributeSet? = null) : F
     }
 
     open fun startScroll(dx: Int, dy: Int) {
+        overScroller.abortAnimation()
         overScroller.startScroll(scrollX, scrollY, dx, dy, 300)
         postInvalidate()
     }
 
     /**开始滚动到某个位置*/
     open fun startScrollTo(startX: Int, toX: Int) {
+        overScroller.abortAnimation()
         overScroller.startScroll(startX, scrollY, toX - startX, 0, 300)
         postInvalidate()
     }
@@ -172,6 +174,7 @@ open class TouchLayout(context: Context, attributeSet: AttributeSet? = null) : F
     }
 
     open fun startFling(velocityX: Int, velocityY: Int, maxDx: Int, maxDy: Int) {
+        overScroller.abortAnimation()
         overScroller.fling(scrollX, scrollY, velocityX, velocityY, 0, maxDx, 0, maxDy, measuredWidth, measuredHeight)
         postInvalidate()
     }
