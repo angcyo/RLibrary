@@ -432,6 +432,15 @@ class SliderMenuLayout(context: Context, attributeSet: AttributeSet? = null)
         }
     }
 
+    /**按下返回键, 自动关闭菜单*/
+    fun requestBackPressed(): Boolean {
+        if (isMenuOpen()) {
+            closeMenu()
+            return false
+        }
+        return true
+    }
+
     interface SliderCallback {
 
         /**当前是否可以操作*/
