@@ -3,7 +3,6 @@ package com.angcyo.uiview.recycler.adapter
 import android.content.Context
 import com.angcyo.uiview.base.UIBaseRxView
 import com.angcyo.uiview.recycler.RBaseViewHolder
-import com.angcyo.uiview.recycler.adapter.RExItemFactory.Companion.NO_ITEM_TYPE
 
 /**
  * Copyright (C) 2016,深圳市红鸟网络科技股份有限公司 All rights reserved.
@@ -38,10 +37,13 @@ open class RExItemAdapter<ItemType, DataType> : RExBaseAdapter<String, DataType,
     }
 
     override fun getItemType(position: Int): Int {
-        if (position >= mAllDatas.size) {
-            return NO_ITEM_TYPE
+        val data: DataType? = if (position >= mAllDatas.size) {
+            //return NO_ITEM_TYPE
+            null
+        } else {
+            mAllDatas[position]
         }
-        return itemFactory.getItemType(mAllDatas[position])
+        return itemFactory.getItemType(data, position)
     }
 
     override fun onBindDataView(holder: RBaseViewHolder, posInData: Int, dataBean: DataType?) {
@@ -59,7 +61,7 @@ open class RExItemAdapter<ItemType, DataType> : RExBaseAdapter<String, DataType,
     fun getItemHolderByItemType(itemType: ItemType): RExItemHolder<DataType>? {
         var result: RExItemHolder<DataType>? = null
         mAllDatas.forEachIndexed { index, dataType ->
-            if (itemType == itemFactory.getItemType(dataType)) {
+            if (itemType == itemFactory.getItemType(dataType, index)) {
                 result = getItemHolderByPosition(index)
             }
         }
@@ -69,9 +71,10 @@ open class RExItemAdapter<ItemType, DataType> : RExBaseAdapter<String, DataType,
     /**根据类型, 返回相同类型对应的数据列表*/
     fun getDataByItemType(itemType: ItemType): MutableList<DataType> {
         val result = mutableListOf<DataType>()
-        for (data in mAllDatas) {
-            if (itemType == itemFactory.getItemType(data)) {
-                result.add(data)
+
+        mAllDatas.forEachIndexed { index, dataType ->
+            if (itemType == itemFactory.getItemType(dataType, index)) {
+                result.add(dataType)
             }
         }
         return result
@@ -80,8 +83,8 @@ open class RExItemAdapter<ItemType, DataType> : RExBaseAdapter<String, DataType,
     /**根据类型, 返回相同类型对应的数据索引列表*/
     fun getIndexByItemType(itemType: ItemType): MutableList<DataType> {
         val result = mutableListOf<DataType>()
-        mAllDatas.forEachIndexed { _, dataType ->
-            if (itemType == itemFactory.getItemType(dataType)) {
+        mAllDatas.forEachIndexed { index, dataType ->
+            if (itemType == itemFactory.getItemType(dataType, index)) {
                 result.add(dataType)
             }
         }

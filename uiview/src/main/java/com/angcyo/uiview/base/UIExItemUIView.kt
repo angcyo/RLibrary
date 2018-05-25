@@ -71,8 +71,8 @@ abstract class UIExItemUIView<ItemType, DataType> : UIRecyclerUIView<String, Dat
                 this@UIExItemUIView.registerItems(allRegItems)
             }
 
-            override fun getItemTypeFromData(data: DataType): ItemType {
-                return this@UIExItemUIView.getItemTypeFromData(data)
+            override fun getItemTypeFromData(data: DataType?, position: Int): ItemType? {
+                return this@UIExItemUIView.getItemTypeFromData(data, position)
             }
         }
     }
@@ -85,8 +85,8 @@ abstract class UIExItemUIView<ItemType, DataType> : UIRecyclerUIView<String, Dat
     fun getDataTypeCountByItemType(itemType: ItemType): Int {
         var count = 0
         exItemAdapter?.let {
-            for (itemData in it.allDatas) {
-                if (itemType == getItemTypeFromData(itemData)) {
+            it.allDatas.forEachIndexed { index, dataType ->
+                if (itemType == getItemTypeFromData(dataType, index)) {
                     count++
                 }
             }
@@ -103,5 +103,5 @@ abstract class UIExItemUIView<ItemType, DataType> : UIRecyclerUIView<String, Dat
     }
 
     abstract fun registerItems(allRegItems: ArrayList<RExItem<ItemType, DataType>>)
-    abstract fun getItemTypeFromData(data: DataType): ItemType
+    abstract fun getItemTypeFromData(data: DataType?, position: Int): ItemType?
 }

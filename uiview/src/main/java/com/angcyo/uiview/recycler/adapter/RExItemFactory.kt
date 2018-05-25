@@ -83,8 +83,11 @@ abstract class RExItemFactory<ItemType, DataType> {
     }
 
     /**返回在Adapter中的item type*/
-    fun getItemType(data: DataType): Int {
-        val itemTypeFromData = getItemTypeFromData(data) ?: return NO_SUPPORT_ITEM_TYPE
+    fun getItemType(data: DataType?, position: Int): Int {
+        //不支持的item类型
+        val itemTypeFromData = getItemTypeFromData(data, position) ?: return NO_SUPPORT_ITEM_TYPE
+
+        //获取item type
         val indexOfValue = allItemTypes.indexOfValue(itemTypeFromData)
         if (indexOfValue == -1) {
             return NO_SUPPORT_ITEM_TYPE
@@ -115,8 +118,18 @@ abstract class RExItemFactory<ItemType, DataType> {
     /**注册Items*/
     abstract fun registerItems(allRegItems: ArrayList<RExItem<ItemType, DataType>>)
 
-    /**根据数据, 返回数据对应的ItemType*/
-    abstract fun getItemTypeFromData(data: DataType): ItemType
+    /**根据数据, 返回数据对应的ItemType
+     *
+     * @see getItemTypeFromData(DataType, Int)
+     * */
+    @Deprecated("2018-5-25")
+    open fun getItemTypeFromData(data: DataType?): ItemType? {
+        return null
+    }
+
+    open fun getItemTypeFromData(data: DataType?, position: Int): ItemType? {
+        return getItemTypeFromData(data)
+    }
 }
 
 class RExItem<out ItemType, DataType> {
