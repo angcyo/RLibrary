@@ -159,6 +159,16 @@ public class RBaseViewHolder extends RecyclerView.ViewHolder {
         return view;
     }
 
+    public View invisible(@IdRes int resId, boolean visible) {
+        View view = v(resId);
+        if (visible) {
+            visible(view);
+        } else {
+            invisible(view);
+        }
+        return view;
+    }
+
     public View visible(View view) {
         if (view != null) {
             view.setVisibility(View.VISIBLE);
@@ -250,6 +260,10 @@ public class RBaseViewHolder extends RecyclerView.ViewHolder {
      */
     public CompoundButton cV(@IdRes int resId) {
         return (CompoundButton) v(resId);
+    }
+
+    public CompoundButton cb(@IdRes int resId) {
+        return cV(resId);
     }
 
     public CompoundButton cV(String idName) {

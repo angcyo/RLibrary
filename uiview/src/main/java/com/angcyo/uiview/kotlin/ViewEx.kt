@@ -14,6 +14,7 @@ import android.view.GestureDetector
 import android.view.MotionEvent
 import android.view.View
 import android.view.animation.LinearInterpolator
+import android.widget.CompoundButton
 import android.widget.EditText
 import android.widget.TextView
 import com.angcyo.github.utilcode.utils.SingleTextWatcher
@@ -434,4 +435,11 @@ public fun View.showNoRead(show: Boolean = true,
         drawNoRead.setNoReadPaddingTop(paddTop)
         drawNoRead.setNoReadPaddingRight(paddRight)
     }
+}
+
+public fun CompoundButton.onChecked(listener: (Boolean) -> Unit) {
+    this.setOnCheckedChangeListener { _, isChecked ->
+        listener.invoke(isChecked)
+    }
+    listener.invoke(isChecked)
 }

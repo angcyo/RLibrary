@@ -9,6 +9,7 @@
             <enum name="MASK_GRAVITY_LB" value="4"/>
         </attr>
 
+        <attr name="r_show_mask_drawable" format="boolean"/>
         <attr name="r_mask_drawable"/>
         <attr name="r_mask_scale_x" format="float"/>
         <attr name="r_mask_scale_y" format="float"/>

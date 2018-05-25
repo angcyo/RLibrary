@@ -7,6 +7,7 @@
     android:tag="empty">
 
     <LinearLayout
+        android:id="@+id/base_content_wrap_layout"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="center"

@@ -191,6 +191,17 @@ public abstract class RBaseAdapter<T> extends RecyclerView.Adapter<RBaseViewHold
     }
 
     @Override
+    public void onViewRecycled(@NonNull RBaseViewHolder holder) {
+        super.onViewRecycled(holder);
+        if (holder.getItemViewType() == ITEM_TYPE_LOAD_MORE) {
+            mLoadMoreView = null;
+        }
+        if (holder.getItemViewType() == ITEM_TYPE_SHOW_STATE) {
+            mIShowState = null;
+        }
+    }
+
+    @Override
     @NonNull
     public RBaseViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         View itemView = null;
@@ -239,17 +250,6 @@ public abstract class RBaseAdapter<T> extends RecyclerView.Adapter<RBaseViewHold
     }
 
     @Override
-    public void onViewRecycled(@NonNull RBaseViewHolder holder) {
-        super.onViewRecycled(holder);
-        if (holder.getItemViewType() == ITEM_TYPE_LOAD_MORE) {
-            mLoadMoreView = null;
-        }
-        if (holder.getItemViewType() == ITEM_TYPE_SHOW_STATE) {
-            mIShowState = null;
-        }
-    }
-
-    @Override
     public void onBindViewHolder(RBaseViewHolder holder, int position) {
         //L.e("call: onBindViewHolder([holder, position])-> " + position);
         try {
@@ -285,6 +285,8 @@ public abstract class RBaseAdapter<T> extends RecyclerView.Adapter<RBaseViewHold
 
     /**
      * 不同的状态, 显示不同的布局
+     *
+     * @see R.layout.base_item_show_state_layout
      */
     protected void onBindShowStateView(ItemShowStateLayout showStateLayout, int showState) {
 
@@ -292,6 +294,7 @@ public abstract class RBaseAdapter<T> extends RecyclerView.Adapter<RBaseViewHold
 
     /**
      * @see #onBindLoadMoreView(RBaseViewHolder, int)
+     * @see R.layout.base_item_load_more_layout
      */
     @Deprecated
     private void onBindLoadMore(int position) {
@@ -783,6 +786,63 @@ public abstract class RBaseAdapter<T> extends RecyclerView.Adapter<RBaseViewHold
     @Override
     public List<?> getAdapterData() {
         return mAllDatas;
+    }
+
+    /**
+     * 自动处理分页加载, 和加载更多的数据
+     */
+    public void onUILoadData(int page /*分页*/, int pageSize /*每一页数量*/, List<T> datas /*数据*/) {
+        boolean isDataListEmpty = RUtils.isListEmpty(datas);
+        if (isDataListEmpty) {
+            if (page <= 1) {
+                if (onUILoadDataEmpty()) {
+                    return;
+                }
+            }
+        } else {
+            setShowState(IShowState.NORMAL);
+        }
+
+        if (page <= 1) {
+            resetData(datas);
+
+            if (isDataListEmpty) {
+                setEnableLoadMore(false);
+            } else if (datas.size() >= pageSize) {
+                if (mAutoEnableLoadMore) {
+                    setEnableLoadMore(true);
+                }
+            }
+        } else {
+            if (isDataListEmpty) {
+                if (isEnableLoadMore()) {
+                    setNoMore(true);
+                }
+            } else {
+                appendData(datas);
+                if (datas.size() >= pageSize) {
+                    if (isEnableLoadMore()) {
+                        setLoadMoreEnd();
+                    }
+                } else {
+                    if (isEnableLoadMore()) {
+                        setNoMore(true);
+                    }
+                }
+            }
+        }
+    }
+
+    public boolean onUILoadDataEmpty() {
+        return false;
+    }
+
+
+    /**
+     * 更新所有item
+     */
+    public void updateAllItem() {
+        notifyItemRangeChanged(0, getAllDataCount());
     }
 
     public interface OnAdapterLoadMoreListener {

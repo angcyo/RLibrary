@@ -64,6 +64,7 @@ public class RImageView extends CircleImageView {
      * 用来显示Mask提示的图片
      */
     private Drawable mMaskDrawable;
+    private boolean mShowMaskDrawable = true;
     private int maskGravity = MASK_GRAVITY_LT;
     private float maskScaleX = 1f;
     private float maskScaleY = 1f;
@@ -84,6 +85,8 @@ public class RImageView extends CircleImageView {
 
         TypedArray typedArray = context.obtainStyledAttributes(attrs, R.styleable.RImageView);
         mMaskDrawable = typedArray.getDrawable(R.styleable.RImageView_r_mask_drawable);
+        mShowMaskDrawable = typedArray.getBoolean(R.styleable.RImageView_r_show_mask_drawable, mShowMaskDrawable);
+
         maskGravity = typedArray.getInt(R.styleable.RImageView_r_mask_gravity, maskGravity);
         maskScaleX = typedArray.getFloat(R.styleable.RImageView_r_mask_scale_x, maskScaleX);
         maskScaleY = typedArray.getFloat(R.styleable.RImageView_r_mask_scale_y, maskScaleY);
@@ -317,7 +320,7 @@ public class RImageView extends CircleImageView {
             mGifTipDrawable.draw(canvas);
             canvas.restore();
         }
-        if (mMaskDrawable != null) {
+        if (mShowMaskDrawable && mMaskDrawable != null) {
             int dw = (int) (mMaskDrawable.getIntrinsicWidth() * maskScaleX);
             int dh = (int) (mMaskDrawable.getIntrinsicHeight() * maskScaleX);
 
@@ -468,6 +471,11 @@ public class RImageView extends CircleImageView {
 
     public void setMaskDrawable(Drawable maskDrawable) {
         mMaskDrawable = maskDrawable;
+        postInvalidate();
+    }
+
+    public void setShowMaskDrawable(boolean showMaskDrawable) {
+        mShowMaskDrawable = showMaskDrawable;
         postInvalidate();
     }
 
