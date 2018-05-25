@@ -61,7 +61,7 @@ open class RExItemAdapter<ItemType, DataType> : RExBaseAdapter<String, DataType,
     fun getItemHolderByItemType(itemType: ItemType): RExItemHolder<DataType>? {
         var result: RExItemHolder<DataType>? = null
         mAllDatas.forEachIndexed { index, dataType ->
-            if (itemType == itemFactory.getItemType(dataType, index)) {
+            if (itemType == itemFactory.getItemTypeFromData(dataType, index)) {
                 result = getItemHolderByPosition(index)
             }
         }
@@ -73,7 +73,7 @@ open class RExItemAdapter<ItemType, DataType> : RExBaseAdapter<String, DataType,
         val result = mutableListOf<DataType>()
 
         mAllDatas.forEachIndexed { index, dataType ->
-            if (itemType == itemFactory.getItemType(dataType, index)) {
+            if (itemType == itemFactory.getItemTypeFromData(dataType, index)) {
                 result.add(dataType)
             }
         }
@@ -84,7 +84,7 @@ open class RExItemAdapter<ItemType, DataType> : RExBaseAdapter<String, DataType,
     fun getIndexByItemType(itemType: ItemType): MutableList<DataType> {
         val result = mutableListOf<DataType>()
         mAllDatas.forEachIndexed { index, dataType ->
-            if (itemType == itemFactory.getItemType(dataType, index)) {
+            if (itemType == itemFactory.getItemTypeFromData(dataType, index)) {
                 result.add(dataType)
             }
         }
