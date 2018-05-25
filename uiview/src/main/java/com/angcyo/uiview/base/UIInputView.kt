@@ -68,6 +68,8 @@ abstract class UIInputView : UIItemUIView<SingleItem>() {
     /**输入框 上方的提示文本*/
     open protected fun getTipInputString() = ""
 
+    open protected fun getHintInputString() = "请输入内容"
+
     /**允许输入的最大长度, -1表示不限制*/
     open protected fun getMaxInputLength() = -1
 
@@ -120,6 +122,8 @@ abstract class UIInputView : UIItemUIView<SingleItem>() {
                 maxLines = 1
             }
         }
+
+        editView.hint = getHintInputString()
     }
 
     /**最终结果返回回调*/

@@ -6,6 +6,7 @@ import android.graphics.Paint
 import android.graphics.drawable.Drawable
 import android.text.TextUtils
 import android.util.AttributeSet
+import android.view.inputmethod.EditorInfo
 import com.angcyo.uiview.R
 import com.angcyo.uiview.kotlin.*
 
@@ -41,11 +42,13 @@ class SearchEditText(context: Context, attributeSet: AttributeSet? = null) : ExE
     override fun initView(context: Context, attrs: AttributeSet?) {
         super.initView(context, attrs)
 
+        //默认激活的配置
         setSingleLine(true)
         maxLines = 1
+        imeOptions = EditorInfo.IME_ACTION_SEARCH
+        //end
 
         rawPaddingLeft = paddingLeft
-
 
         val typedArray = context.obtainStyledAttributes(attrs, R.styleable.SearchEditText)
         val drawable = typedArray.getDrawable(R.styleable.SearchEditText_r_search_drawable)
@@ -70,7 +73,8 @@ class SearchEditText(context: Context, attributeSet: AttributeSet? = null) : ExE
 
         typedArray.recycle()
 
-        setPadding((rawPaddingLeft + (searchDrawable?.intrinsicWidth ?: 0) + searchTipTextLeftOffset).toInt(),
+        setPadding((rawPaddingLeft + (searchDrawable?.intrinsicWidth
+                ?: 0) + searchTipTextLeftOffset).toInt(),
                 paddingTop, paddingRight, paddingBottom)
     }
 
@@ -86,7 +90,8 @@ class SearchEditText(context: Context, attributeSet: AttributeSet? = null) : ExE
     private val drawWidth: Float
         get() {
             paint.textSize = searchTipTextSize
-            return (searchDrawable?.intrinsicWidth ?: 0) + searchTipTextLeftOffset + textWidth(paint, searchTipText)
+            return (searchDrawable?.intrinsicWidth
+                    ?: 0) + searchTipTextLeftOffset + textWidth(paint, searchTipText)
         }
 
     private val drawHeight: Float
@@ -125,5 +130,9 @@ class SearchEditText(context: Context, attributeSet: AttributeSet? = null) : ExE
             canvas.drawText(searchTipText, left + searchTipTextLeftOffset, -paint.ascent(), paint)
             canvas.restore()
         }
+    }
+
+    override fun checkNeedDrawRHintText(): Boolean {
+        return super.checkNeedDrawRHintText() && isFocused
     }
 }

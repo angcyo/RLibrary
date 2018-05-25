@@ -372,7 +372,7 @@ public class ExEditText extends AppCompatEditText {
         }
 
         //绘制RHint
-        if (TextUtils.isEmpty(getText()) && TextUtils.isEmpty(getHint()) && !TextUtils.isEmpty(mRHintText)) {
+        if (checkNeedDrawRHintText()) {
             canvas.save();
             final TextPaint textPaint = getPaint();
             textPaint.setColor(getCurrentHintTextColor());
@@ -394,6 +394,10 @@ public class ExEditText extends AppCompatEditText {
             canvas.drawText(mRHintText, x, y, textPaint);
             canvas.restore();
         }
+    }
+
+    protected boolean checkNeedDrawRHintText() {
+        return TextUtils.isEmpty(getText()) && TextUtils.isEmpty(getHint()) && !TextUtils.isEmpty(mRHintText);
     }
 
     private int getInputTipDrawLeft() {
