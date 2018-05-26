@@ -134,7 +134,7 @@ public class AnimUtil {
         setDefaultConfig(animation, true);
         setDefaultConfig(alphaAnimation, true);
 
-        final AnimationSet animationSet = new AnimationSet(false);
+        final AnimationSet animationSet = new AnimationSet(true);
         animationSet.addAnimation(alphaAnimation);
         animationSet.addAnimation(animation);
 
@@ -580,7 +580,7 @@ public class AnimUtil {
 
         animation.setInterpolator(new OvershootInterpolator(2));//先变化到最大值, 还要大, 然后回到最大值.
 
-        AnimationSet animationSet = new AnimationSet(false);
+        AnimationSet animationSet = new AnimationSet(true);
         animationSet.addAnimation(alphaAnimation);
         animationSet.addAnimation(animation);
         return animationSet;
@@ -596,7 +596,7 @@ public class AnimUtil {
 
         animation.setInterpolator(new AnticipateInterpolator(2));//先变大, 后变小
 
-        AnimationSet animationSet = new AnimationSet(false);
+        AnimationSet animationSet = new AnimationSet(true);
         animationSet.addAnimation(alphaAnimation);
         animationSet.addAnimation(animation);
         return animationSet;
@@ -613,7 +613,7 @@ public class AnimUtil {
         setDefaultConfig(animation, false);
         setDefaultConfig(alphaAnimation, false);
 
-        AnimationSet animationSet = new AnimationSet(false);
+        AnimationSet animationSet = new AnimationSet(true);
         animationSet.addAnimation(alphaAnimation);
         animationSet.addAnimation(animation);
         return animationSet;
@@ -633,7 +633,7 @@ public class AnimUtil {
         animation.setDuration(DEFAULT_DIALOG_FINISH_ANIM_TIME);
         alphaAnimation.setDuration(DEFAULT_DIALOG_FINISH_ANIM_TIME);
 
-        AnimationSet animationSet = new AnimationSet(false);
+        AnimationSet animationSet = new AnimationSet(true);
         animationSet.addAnimation(alphaAnimation);
         animationSet.addAnimation(animation);
         return animationSet;
@@ -649,7 +649,7 @@ public class AnimUtil {
         setDefaultConfig(translateAnimation, false);
         setDefaultConfig(alphaAnimation, false);
 
-        AnimationSet animationSet = new AnimationSet(false);
+        AnimationSet animationSet = new AnimationSet(true);
         animationSet.addAnimation(alphaAnimation);
         animationSet.addAnimation(translateAnimation);
         return animationSet;
@@ -668,7 +668,7 @@ public class AnimUtil {
         translateAnimation.setDuration(DEFAULT_DIALOG_FINISH_ANIM_TIME);
         alphaAnimation.setDuration(DEFAULT_DIALOG_FINISH_ANIM_TIME);
 
-        AnimationSet animationSet = new AnimationSet(false);
+        AnimationSet animationSet = new AnimationSet(true);
         animationSet.addAnimation(alphaAnimation);
         animationSet.addAnimation(translateAnimation);
         return animationSet;
@@ -684,7 +684,7 @@ public class AnimUtil {
 
         translateAnimation.setDuration(2 * DEFAULT_DIALOG_FINISH_ANIM_TIME);
 
-        AnimationSet animationSet = new AnimationSet(false);
+        AnimationSet animationSet = new AnimationSet(true);
         animationSet.addAnimation(translateAnimation);
         return animationSet;
     }
@@ -699,7 +699,7 @@ public class AnimUtil {
 
         translateAnimation.setDuration(2 * DEFAULT_DIALOG_FINISH_ANIM_TIME);
 
-        AnimationSet animationSet = new AnimationSet(false);
+        AnimationSet animationSet = new AnimationSet(true);
         animationSet.addAnimation(translateAnimation);
         return animationSet;
     }

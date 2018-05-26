@@ -18,6 +18,7 @@ import com.angcyo.uiview.container.UILayoutImpl;
 import com.angcyo.uiview.container.UIParam;
 import com.angcyo.uiview.model.AnimParam;
 import com.angcyo.uiview.recycler.RBaseViewHolder;
+import com.angcyo.uiview.view.IViewAnimationType;
 import com.angcyo.uiview.view.UIIViewImpl;
 import com.angcyo.uiview.widget.SoftRelativeLayout;
 
@@ -414,6 +415,11 @@ public abstract class UIIDialogImpl extends UIIViewImpl {
     public UIIDialogImpl setOnInitDialogContent(OnInitDialogContent onInitDialogContent) {
         mOnInitDialogContent = onInitDialogContent;
         return this;
+    }
+
+    @Override
+    public UIIDialogImpl setAnimationType(IViewAnimationType animationType) {
+        return (UIIDialogImpl) super.setAnimationType(animationType);
     }
 
     public interface OnDismissListener {

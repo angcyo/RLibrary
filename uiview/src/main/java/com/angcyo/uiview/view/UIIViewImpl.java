@@ -31,7 +31,9 @@ import android.view.Window;
 import android.view.WindowManager;
 import android.view.animation.AccelerateInterpolator;
 import android.view.animation.Animation;
+import android.view.animation.AnticipateInterpolator;
 import android.view.animation.DecelerateInterpolator;
+import android.view.animation.OvershootInterpolator;
 import android.view.animation.TranslateAnimation;
 import android.widget.FrameLayout;
 import android.widget.TextView;
@@ -74,6 +76,9 @@ import rx.functions.Func1;
 import rx.functions.Func2;
 
 import static com.angcyo.uiview.RCrashHandler.getMemoryInfo;
+import static com.angcyo.uiview.view.IViewAnimationType.SCALE_TO_MAX_AND_END_OVERSHOOT;
+import static com.angcyo.uiview.view.IViewAnimationType.SCALE_TO_MAX_AND_TO_MAX_END_OVERSHOOT;
+import static com.angcyo.uiview.view.IViewAnimationType.SCALE_TO_MAX_OVERSHOOT;
 
 /**
  * 接口的实现, 仅处理了一些动画, 其他实现都为空
@@ -486,12 +491,104 @@ public abstract class UIIViewImpl implements IView {
                 return AnimUtil.translateStartAnimation();
             case SCALE_TO_MAX:
             case SCALE_TO_MAX_AND_END:
-                return AnimUtil.scaleMaxAlphaStartAnimation(0.7f);
+            case SCALE_TO_MAX_OVERSHOOT:
+            case SCALE_TO_MAX_AND_END_OVERSHOOT:
+            case SCALE_TO_MAX_AND_TO_MAX_END_OVERSHOOT:
+                Animation animation = AnimUtil.scaleMaxAlphaStartAnimation(0.7f);
+                if (mAnimationType == SCALE_TO_MAX_OVERSHOOT ||
+                        mAnimationType == SCALE_TO_MAX_AND_END_OVERSHOOT ||
+                        mAnimationType == SCALE_TO_MAX_AND_TO_MAX_END_OVERSHOOT) {
+                    animation.setInterpolator(new OvershootInterpolator());
+                }
+                return animation;
             case TRANSLATE_HORIZONTAL:
             default:
                 return defaultLoadStartAnimation(animParam);
         }
     }
+
+    @Override
+    public Animation loadFinishAnimation(@NonNull AnimParam animParam) {
+        L.v(this.getClass().getSimpleName(), "loadFinishAnimation: ");
+        switch (mAnimationType) {
+            case NONE:
+                return null;
+            case ALPHA:
+                return AnimUtil.createAlphaExitAnim(0.2f);
+            case TRANSLATE_VERTICAL:
+                return AnimUtil.translateFinishAnimation();
+            case SCALE_TO_MAX_AND_END:
+            case SCALE_TO_MAX_AND_END_OVERSHOOT:
+                Animation animation = AnimUtil.scaleMaxAlphaFinishAnimation(0.7f);
+                if (mAnimationType == SCALE_TO_MAX_AND_END_OVERSHOOT) {
+                    animation.setInterpolator(new OvershootInterpolator());
+                }
+                return animation;
+            case SCALE_TO_MAX_AND_TO_MAX_END_OVERSHOOT:
+                Animation animation2 = AnimUtil.scaleMaxAlphaFinishAnimation(1.2f);
+                animation2.setInterpolator(new AnticipateInterpolator());
+                return animation2;
+            case SCALE_TO_MAX:
+            case SCALE_TO_MAX_OVERSHOOT:
+            case TRANSLATE_HORIZONTAL:
+            default:
+                return defaultLoadFinishAnimation(animParam);
+        }
+    }
+
+    @Override
+    public Animation loadOtherEnterAnimation(@NonNull AnimParam animParam) {
+        L.v(this.getClass().getSimpleName(), "loadOtherEnterAnimation: ");
+        switch (mAnimationType) {
+            case NONE:
+                return null;
+            case ALPHA:
+                return AnimUtil.createAlphaEnterAnim(0.8f);
+            case TRANSLATE_VERTICAL:
+                return AnimUtil.createAlphaEnterAnim(0.8f);
+            case SCALE_TO_MAX_AND_END:
+            case SCALE_TO_MAX_AND_END_OVERSHOOT:
+            case SCALE_TO_MAX_AND_TO_MAX_END_OVERSHOOT:
+                if (isDialog()) {
+                    return AnimUtil.scaleMaxAlphaStartAnimation(0.7f);
+                } else {
+                    return AnimUtil.createOtherEnterNoAnim();
+                }
+            case SCALE_TO_MAX:
+            case SCALE_TO_MAX_OVERSHOOT:
+            case TRANSLATE_HORIZONTAL:
+            default:
+                return defaultLoadOtherEnterAnimation(animParam);
+        }
+    }
+
+    @Override
+    public Animation loadOtherExitAnimation(@NonNull AnimParam animParam) {
+        L.v(this.getClass().getSimpleName(), "loadOtherExitAnimation: ");
+        switch (mAnimationType) {
+            case NONE:
+                return null;
+            case ALPHA:
+                return AnimUtil.createAlphaExitAnim(0.8f);
+            case TRANSLATE_VERTICAL:
+                return AnimUtil.createAlphaExitAnim(0.8f);
+            case SCALE_TO_MAX_AND_END:
+            case SCALE_TO_MAX_AND_END_OVERSHOOT:
+            case SCALE_TO_MAX_AND_TO_MAX_END_OVERSHOOT:
+            case SCALE_TO_MAX:
+            case SCALE_TO_MAX_OVERSHOOT:
+                if (isDialog()) {
+                    return AnimUtil.scaleMaxAlphaFinishAnimation(0.5f);
+                } else {
+                    return AnimUtil.createOtherExitNoAnim();
+//                    return AnimUtil.scaleMaxAlphaFinishAnimation(0.9f);
+                }
+            case TRANSLATE_HORIZONTAL:
+            default:
+                return defaultLoadOtherExitAnimation(animParam);
+        }
+    }
+
 
     protected Animation defaultLoadStartAnimation(@NonNull AnimParam animParam) {
         TranslateAnimation translateAnimation;
@@ -506,24 +603,6 @@ public abstract class UIIViewImpl implements IView {
         return translateAnimation;
     }
 
-    @Override
-    public Animation loadFinishAnimation(@NonNull AnimParam animParam) {
-        L.v(this.getClass().getSimpleName(), "loadFinishAnimation: ");
-        switch (mAnimationType) {
-            case NONE:
-                return null;
-            case ALPHA:
-                return AnimUtil.createAlphaExitAnim(0.2f);
-            case TRANSLATE_VERTICAL:
-                return AnimUtil.translateFinishAnimation();
-            case SCALE_TO_MAX_AND_END:
-                return AnimUtil.scaleMaxAlphaFinishAnimation(0.7f);
-            case SCALE_TO_MAX:
-            case TRANSLATE_HORIZONTAL:
-            default:
-                return defaultLoadFinishAnimation(animParam);
-        }
-    }
 
     protected Animation defaultLoadFinishAnimation(@NonNull AnimParam animParam) {
         TranslateAnimation translateAnimation = new TranslateAnimation(Animation.RELATIVE_TO_SELF, 0, Animation.RELATIVE_TO_SELF, 1f,
@@ -544,30 +623,6 @@ public abstract class UIIViewImpl implements IView {
         return loadFinishAnimation(animParam);
     }
 
-    @Override
-    public Animation loadOtherExitAnimation(@NonNull AnimParam animParam) {
-        L.v(this.getClass().getSimpleName(), "loadOtherExitAnimation: ");
-        switch (mAnimationType) {
-            case NONE:
-                return null;
-            case ALPHA:
-                return AnimUtil.createAlphaExitAnim(0.8f);
-            case TRANSLATE_VERTICAL:
-                return AnimUtil.createAlphaExitAnim(0.8f);
-            case SCALE_TO_MAX_AND_END:
-            case SCALE_TO_MAX:
-                if (isDialog()) {
-                    return AnimUtil.scaleMaxAlphaFinishAnimation(0.5f);
-                } else {
-                    return AnimUtil.createOtherExitNoAnim();
-//                    return AnimUtil.scaleMaxAlphaFinishAnimation(0.9f);
-                }
-            case TRANSLATE_HORIZONTAL:
-            default:
-                return defaultLoadOtherExitAnimation(animParam);
-        }
-    }
-
     public Animation defaultLoadOtherExitAnimation(@NonNull AnimParam animParam) {
         TranslateAnimation translateAnimation;
         if (mIsRightJumpLeft) {
@@ -586,29 +641,6 @@ public abstract class UIIViewImpl implements IView {
                 Animation.RELATIVE_TO_SELF, 0f, Animation.RELATIVE_TO_SELF, 0f);
         setDefaultConfig(translateAnimation, false);
         return translateAnimation;
-    }
-
-    @Override
-    public Animation loadOtherEnterAnimation(@NonNull AnimParam animParam) {
-        L.v(this.getClass().getSimpleName(), "loadOtherEnterAnimation: ");
-        switch (mAnimationType) {
-            case NONE:
-                return null;
-            case ALPHA:
-                return AnimUtil.createAlphaEnterAnim(0.8f);
-            case TRANSLATE_VERTICAL:
-                return AnimUtil.createAlphaEnterAnim(0.8f);
-            case SCALE_TO_MAX_AND_END:
-                if (isDialog()) {
-                    return AnimUtil.scaleMaxAlphaStartAnimation(0.7f);
-                } else {
-                    return AnimUtil.createOtherEnterNoAnim();
-                }
-            case SCALE_TO_MAX:
-            case TRANSLATE_HORIZONTAL:
-            default:
-                return defaultLoadOtherEnterAnimation(animParam);
-        }
     }
 
     @Override
