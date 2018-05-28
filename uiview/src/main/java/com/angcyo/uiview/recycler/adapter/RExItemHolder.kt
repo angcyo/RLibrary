@@ -89,4 +89,8 @@ abstract class RExItemHolder<DataType> {
     fun drawBottom(canvas: Canvas, paint: TextPaint, itemView: View, offsetRect: Rect) {
         canvas.drawRect(0f, itemView.bottom.toFloat(), itemView.right.toFloat(), itemView.bottom.toFloat() + offsetRect.bottom, paint)
     }
+
+    fun notifyItemChanged(position: Int) {
+        exItemAdapter?.notifyItemChanged(position)
+    }
 }
