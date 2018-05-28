@@ -81,7 +81,7 @@ class SliderMenuLayout(context: Context, attributeSet: AttributeSet? = null)
     override fun onInterceptTouchEvent(ev: MotionEvent): Boolean {
         val intercept = needInterceptTouchEvent
         super.onInterceptTouchEvent(ev)
-        if (scrollHorizontalDistance != 0) {
+        if (scrollHorizontalDistance.abs() in 1..(maxMenuWidth - 1)) {
             return true
         }
         return if (canSlider(ev)) {
