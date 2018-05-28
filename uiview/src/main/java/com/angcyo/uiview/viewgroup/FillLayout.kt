@@ -100,7 +100,9 @@ open class FillLayout : ViewGroup {
 
         fillView?.let {
             val params: LayoutParams = it.layoutParams as LayoutParams
-            if (childMaxWidth > widthSize || params.isFillSpace) {
+            if (params.width == -2 && fillViewWidth + fillMinWidth < widthSize) {
+
+            } else if (childMaxWidth > widthSize || params.isFillSpace) {
 
                 //子View的宽度 超范围了
                 it.measure(exactlyMeasure(widthSize - otherChildWidth - paddingLeft - paddingRight), childHeightMeasure(params))
@@ -112,7 +114,10 @@ open class FillLayout : ViewGroup {
 
         fillMinWidthView?.let {
             val params: LayoutParams = it.layoutParams as LayoutParams
-            if (childMaxWidth > widthSize) {
+            if (params.width == -1 && fillViewWidth + fillMinWidth < widthSize) {
+                it.measure(exactlyMeasure(widthSize - fillViewWidth - paddingLeft - paddingRight), childHeightMeasure(params))
+                resetHeightSize(it.measuredHeight)
+            } else if (childMaxWidth > widthSize) {
                 it.measure(exactlyMeasure(params.fillMinWidth), childHeightMeasure(params))
                 resetHeightSize(it.measuredHeight)
             } else {

@@ -540,6 +540,39 @@ public abstract class RBaseAdapter<T> extends RecyclerView.Adapter<RBaseViewHold
     }
 
     /**
+     * 删除最后一个item
+     */
+    public void deleteLastItem() {
+        if (mAllDatas != null) {
+            int allDataCount = getAllDataCount();
+            if (allDataCount > 0) {
+                deleteItem(allDataCount - 1);
+            }
+        }
+    }
+
+    /**
+     * 获取最后一个Item
+     */
+    public T getLastItem() {
+        T result = null;
+        if (!RUtils.isListEmpty(mAllDatas)) {
+            result = mAllDatas.get(mAllDatas.size() - 1);
+        }
+        return result;
+    }
+
+    public T getItemData(int position) {
+        T result = null;
+        if (!RUtils.isListEmpty(mAllDatas)) {
+            if (mAllDatas.size() > position) {
+                result = mAllDatas.get(position);
+            }
+        }
+        return result;
+    }
+
+    /**
      * 是否可以删除bean
      */
     protected boolean onDeleteItem(int position) {

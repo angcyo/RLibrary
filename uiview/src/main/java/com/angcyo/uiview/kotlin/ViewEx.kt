@@ -11,6 +11,7 @@ import android.support.v4.view.GestureDetectorCompat
 import android.support.v4.view.ViewCompat
 import android.text.TextUtils
 import android.view.GestureDetector
+import android.view.KeyEvent
 import android.view.MotionEvent
 import android.view.View
 import android.view.animation.LinearInterpolator
@@ -268,6 +269,13 @@ public fun View.clickIt(onClick: (View) -> Unit) {
     })
 }
 
+public fun View.longClick(listener: (View) -> Unit) {
+    setOnLongClickListener {
+        listener.invoke(it)
+        true
+    }
+}
+
 /**焦点变化改变监听*/
 public fun EditText.onFocusChange(listener: (Boolean) -> Unit) {
     this.onFocusChangeListener = View.OnFocusChangeListener { _, hasFocus -> listener.invoke(hasFocus) }
@@ -299,6 +307,18 @@ public fun EditText.onTextChanage(listener: (String) -> Unit) {
             }
         }
     })
+}
+
+/**输入框, 按下删除键*/
+public fun EditText.onBackPress(listener: (EditText) -> Unit) {
+    setOnKeyListener { v, keyCode, keyEvent ->
+        return@setOnKeyListener if (keyCode == KeyEvent.KEYCODE_DEL && keyEvent.action == KeyEvent.ACTION_UP) {
+            listener.invoke(v as EditText)
+            true
+        } else {
+            false
+        }
+    }
 }
 
 public fun RRecyclerView.onSizeChanged(listener: (w: Int, h: Int, oldw: Int, oldh: Int) -> Unit) {

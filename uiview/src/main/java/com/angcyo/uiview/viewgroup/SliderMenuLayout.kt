@@ -81,6 +81,9 @@ class SliderMenuLayout(context: Context, attributeSet: AttributeSet? = null)
     override fun onInterceptTouchEvent(ev: MotionEvent): Boolean {
         val intercept = needInterceptTouchEvent
         super.onInterceptTouchEvent(ev)
+        if (scrollHorizontalDistance != 0) {
+            return true
+        }
         return if (canSlider(ev)) {
             intercept
         } else {
@@ -105,7 +108,7 @@ class SliderMenuLayout(context: Context, attributeSet: AttributeSet? = null)
             isTouchDownInContentWithMenuOpen = false
             touchDownX = event.x
             touchDownY = event.y
-            overScroller.abortAnimation()
+            //overScroller.abortAnimation()
 
             if (isOldMenuOpen) {
                 //打开已经打开
@@ -116,7 +119,7 @@ class SliderMenuLayout(context: Context, attributeSet: AttributeSet? = null)
                     needInterceptTouchEvent = true
                 }
             } else {
-                if (contentLayoutLeft in 1..(maxMenuWidth - 1)) {
+                if (scrollHorizontalDistance.abs() in 1..(maxMenuWidth - 1)) {
                     //当菜单滑动到一半, 突然被终止, 又再次点击时
                     needInterceptTouchEvent = true
                 }
@@ -340,7 +343,6 @@ class SliderMenuLayout(context: Context, attributeSet: AttributeSet? = null)
 
     override fun computeScroll() {
         if (overScroller.computeScrollOffset()) {
-            //scrollTo(overScroller.currX, overScroller.currY)
             val currX = overScroller.currX
             if (scrollHorizontalDistance != currX) {
                 refreshContentLayout(currX)
