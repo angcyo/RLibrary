@@ -71,7 +71,6 @@ open class RExItemAdapter<ItemType, DataType> : RExBaseAdapter<String, DataType,
     /**根据类型, 返回相同类型对应的数据列表*/
     fun getDataByItemType(itemType: ItemType): MutableList<DataType> {
         val result = mutableListOf<DataType>()
-
         mAllDatas.forEachIndexed { index, dataType ->
             if (itemType == itemFactory.getItemTypeFromData(dataType, index)) {
                 result.add(dataType)
@@ -81,13 +80,18 @@ open class RExItemAdapter<ItemType, DataType> : RExBaseAdapter<String, DataType,
     }
 
     /**根据类型, 返回相同类型对应的数据索引列表*/
-    fun getIndexByItemType(itemType: ItemType): MutableList<DataType> {
-        val result = mutableListOf<DataType>()
+    fun getIndexByItemType(itemType: ItemType): MutableList<Int> {
+        val result = mutableListOf<Int>()
         mAllDatas.forEachIndexed { index, dataType ->
             if (itemType == itemFactory.getItemTypeFromData(dataType, index)) {
-                result.add(dataType)
+                result.add(index)
             }
         }
         return result
+    }
+
+    /**返回数据在相同类型数据列表中的索引*/
+    fun indexOf(itemType: ItemType, data: DataType): Int {
+        return getDataByItemType(itemType).indexOf(data)
     }
 }

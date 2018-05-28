@@ -3,6 +3,7 @@ package com.angcyo.uiview.utils;
 import android.text.TextUtils;
 
 import com.angcyo.library.utils.L;
+import com.angcyo.uiview.recycler.RBaseViewHolder;
 
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;
@@ -322,5 +323,12 @@ public class Reflect {
         } else {
             builder.append(object);
         }
+    }
+
+    /**
+     * 填充对象
+     */
+    public static void fill(Object from, Object to) {
+        RBaseViewHolder.fill(from, to);
     }
 }

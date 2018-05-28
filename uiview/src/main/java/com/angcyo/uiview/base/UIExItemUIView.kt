@@ -62,7 +62,7 @@ abstract class UIExItemUIView<ItemType, DataType> : UIRecyclerUIView<String, Dat
                 itemHolder.iLayout = mParentILayout
                 itemHolder.exUIView = this@UIExItemUIView
 
-                itemHolder.exItemAdapter = mExBaseAdapter as RExItemAdapter<*, DataType>?
+                itemHolder.exItemAdapter = exItemAdapter
 
                 this@UIExItemUIView.onCreateItemHolder(itemHolder)
             }

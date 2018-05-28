@@ -418,6 +418,10 @@ public abstract class RExBaseAdapter<H, T, F> extends RModelAdapter<T> {
         appendData(allDatas);
     }
 
+    public void appendAllData(int offset, List<T> allDatas) {
+        appendData(offset, allDatas);
+    }
+
     public void appendData(T data) {
         List<T> list = new ArrayList<>();
         list.add(data);
@@ -542,14 +546,24 @@ public abstract class RExBaseAdapter<H, T, F> extends RModelAdapter<T> {
      */
     @Override
     public void appendData(List<T> datas) {
+        appendData(-1, datas);
+    }
+
+    public void appendData(int offset, List<T> datas) {
         if (datas == null || datas.size() == 0) {
             return;
         }
         if (this.mAllDatas == null) {
             this.mAllDatas = new ArrayList<>();
         }
-        int startPosition = this.mAllDatas.size() + getHeaderCount();
-        this.mAllDatas.addAll(datas);
+        int startPosition;
+        if (offset >= 0) {
+            startPosition = this.mAllDatas.size() + getHeaderCount() + offset;
+            this.mAllDatas.addAll(offset, datas);
+        } else {
+            startPosition = this.mAllDatas.size() + getHeaderCount();
+            this.mAllDatas.addAll(datas);
+        }
         notifyItemRangeInserted(startPosition, datas.size());
         notifyItemRangeChanged(startPosition, getItemCount());
 

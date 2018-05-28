@@ -943,7 +943,7 @@ public abstract class RBaseAdapter<T> extends RecyclerView.Adapter<RBaseViewHold
             if (TextUtils.equals(oldClass.getSimpleName(), newClass.getSimpleName())) {
                 return true;
             }
-            return oldData.equals(newData);
+            return false;
         }
 
         /**
@@ -951,7 +951,14 @@ public abstract class RBaseAdapter<T> extends RecyclerView.Adapter<RBaseViewHold
          * 如果内容不相等, 会调用notifyItemRangeChanged
          */
         public boolean areContentsTheSame(@NonNull T oldData, @NonNull T newData) {
-            return oldData.equals(newData);
+            Class<?> oldClass = oldData.getClass();
+            Class<?> newClass = newData.getClass();
+            if (oldClass.isAssignableFrom(newClass) ||
+                    newClass.isAssignableFrom(oldClass) ||
+                    TextUtils.equals(oldClass.getSimpleName(), newClass.getSimpleName())) {
+                return oldData.equals(newData);
+            }
+            return false;
         }
     }
 
