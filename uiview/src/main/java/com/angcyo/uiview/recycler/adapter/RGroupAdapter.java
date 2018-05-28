@@ -289,4 +289,13 @@ public class RGroupAdapter<H, G extends RGroupData, F> extends RExBaseAdapter<H,
             mStickyDataList.addAll(mAllFooterDatas);
         }
     }
+
+    /**
+     * 更新bean对应的item
+     */
+    public void notifyItemUpdate(Object bean) {
+        for (RGroupData groupData : getAllDatas()) {
+            groupData.notifyItemUpdate(this, bean);
+        }
+    }
 }
