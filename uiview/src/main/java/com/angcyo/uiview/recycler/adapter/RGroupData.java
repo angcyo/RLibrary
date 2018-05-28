@@ -138,12 +138,18 @@ public class RGroupData<T> {
     }
 
     public void resetDatas(List<T> allDatas) {
+        if (allDatas == null) {
+            allDatas = new ArrayList<>();
+        }
         mAllDatas = allDatas;
     }
 
     public void appendDatas(List<T> allDatas) {
         if (mAllDatas == null) {
             mAllDatas = new ArrayList<>();
+        }
+        if (allDatas == null) {
+            allDatas = new ArrayList<>();
         }
         mAllDatas.addAll(allDatas);
     }
@@ -155,12 +161,6 @@ public class RGroupData<T> {
         int newSize = RBaseAdapter.getListSize(allDatas);
 
         resetDatas(allDatas);
-
-        if (mAllDatas == null) {
-            this.mAllDatas = new ArrayList<>();
-        } else {
-            this.mAllDatas = allDatas;
-        }
 
         if (oldSize == newSize) {
             int positionFromGroup = groupAdapter.getPositionFromGroup(this);
@@ -182,10 +182,6 @@ public class RGroupData<T> {
 
         appendDatas(allDatas);
 
-        if (this.mAllDatas == null) {
-            this.mAllDatas = new ArrayList<>();
-        }
-
         int startPosition = groupAdapter.getPositionFromGroup(this) + count;
 
         groupAdapter.notifyItemRangeInserted(startPosition, allDatas.size());
@@ -194,9 +190,28 @@ public class RGroupData<T> {
         onDataSizeChanged(groupAdapter);
     }
 
+    /**
+     * 更多所有datas
+     */
     public void notifyItemUpdate(RGroupAdapter groupAdapter) {
         int startPosition = groupAdapter.getPositionFromGroup(this);
         groupAdapter.notifyItemRangeChanged(startPosition, getCount());
+    }
+
+    /**
+     * 更新指定位置item
+     */
+    public void notifyItemUpdate(RGroupAdapter groupAdapter, int posInGroupData) {
+        if (posInGroupData < 0) {
+            return;
+        }
+        int startPosition = groupAdapter.getPositionFromGroup(this) + getGroupCount() + posInGroupData;
+        groupAdapter.notifyItemChanged(startPosition);
+    }
+
+    public void notifyItemUpdate(RGroupAdapter groupAdapter, T data) {
+        int index = getAllDatas().indexOf(data);
+        notifyItemUpdate(groupAdapter, index);
     }
 
     public void localRefresh(RRecyclerView recyclerView, final RGroupAdapter groupAdapter) {

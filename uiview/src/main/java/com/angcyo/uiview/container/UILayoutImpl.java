@@ -2121,6 +2121,15 @@ public class UILayoutImpl extends SwipeBackLayout implements ILayout, UIViewPage
         return null;
     }
 
+    @Override
+    public <T extends IView> T findIViewByClass(Class<T> clz) {
+        ViewPattern viewPatternByClass = findViewPatternByClass(clz);
+        if (viewPatternByClass != null) {
+            return (T) viewPatternByClass.mIView;
+        }
+        return null;
+    }
+
     public ArrayList<ViewPattern> findAllViewPatternByClass(Class<?> clz) {
         ArrayList<ViewPattern> list = new ArrayList<>();
         for (ViewPattern viewPattern : mAttachViews) {

@@ -70,7 +70,7 @@ import static com.angcyo.uiview.view.UIIViewImpl.DEFAULT_DELAY_ANIM_TIME;
  * Created by angcyo on 2016-11-12.
  */
 @Deprecated
-public class UILayoutImpl_old extends SwipeBackLayout implements ILayout, UIViewPager.OnPagerShowListener {
+public abstract class UILayoutImpl_old extends SwipeBackLayout implements ILayout, UIViewPager.OnPagerShowListener {
 
     public static final String TAG_MAIN = "main";
     private static final String TAG = "UILayoutImpl";
@@ -1839,7 +1839,7 @@ public class UILayoutImpl_old extends SwipeBackLayout implements ILayout, UIView
      * 销毁对话框的动画
      */
     private void finishDialogAnim(final ViewPattern dialogPattern, final Animation animation, final Runnable end) {
-          /*是否变暗*/
+        /*是否变暗*/
         if (dialogPattern.mIView.isDimBehind()) {
             AnimUtil.startArgb(dialogPattern.mIView.getDialogDimView(),
                     dialogPattern.mIView.getDimColor(), Color.TRANSPARENT, DEFAULT_ANIM_TIME);
@@ -2551,7 +2551,7 @@ public class UILayoutImpl_old extends SwipeBackLayout implements ILayout, UIView
     }
 
     private void notifyListener() {
-         /*键盘弹出监听事件*/
+        /*键盘弹出监听事件*/
         if (mIWindowInsetsListeners != null) {
             for (IWindowInsetsListener listener : mIWindowInsetsListeners) {
                 listener.onWindowInsets(mInsets[0], mInsets[1], mInsets[2], mInsets[3]);

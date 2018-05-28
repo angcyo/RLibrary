@@ -139,4 +139,5 @@ public interface ILayout {
 
     ViewPattern findViewPatternByClass(Class<?> clz);//2018-03-03
 
+    <T extends IView> T findIViewByClass(Class<T> clz);//2018-5-28
 }
