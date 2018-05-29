@@ -54,7 +54,7 @@ public class RExGroupItemDecoration extends RecyclerView.ItemDecoration {
             if (i == 0) {
                 groupInfo.firstVisibleItemPosition = adapterPosition;
             }
-            mGroupCallBack.onGroupDraw(c, view, groupInfo);
+            mGroupCallBack.onGroupDraw(c, view, adapterPosition, groupInfo);
         }
     }
 
@@ -75,19 +75,41 @@ public class RExGroupItemDecoration extends RecyclerView.ItemDecoration {
             final int adapterPosition = layoutParams.getViewAdapterPosition();
 
             GroupInfo groupInfo = getGroupInfo(adapterPosition);
+            GroupInfo firstGroupInfo = getGroupInfo(groupInfo.groupStartPosition);
+
+            GroupInfo targetGroupInfo = groupInfo;
 
             //分组开头的第一个View的left值
             if (groupInfo.groupStartPosition == adapterPosition) {
+                if (adapterPosition == groupInfo.groupEndPosition) {
+                    //正好又是分组的最后一个
+                    if (groupInfo.isHorizontal()) {
+                        startOffset = (int) Math.min(Math.max(view.getLeft(), 0),
+                                view.getRight() - mGroupCallBack.getGroupTextWidth(adapterPosition, groupInfo));
+                    } else {
+                        startOffset = Math.min(Math.max(view.getTop(), groupInfo.outRect.top), view.getBottom());
+                    }
+                } else {
+                    if (groupInfo.isHorizontal()) {
+                        startOffset = Math.max(view.getLeft(), 0);
+                    } else {
+                        startOffset = Math.max(view.getTop(), groupInfo.outRect.top);
+                    }
+                }
+            } else if (groupInfo.groupEndPosition == groupInfo.firstVisibleItemPosition) {
+                targetGroupInfo = firstGroupInfo;
+                if (targetGroupInfo.isHorizontal()) {
+                    startOffset = (int) Math.min(0,
+                            view.getRight() - mGroupCallBack.getGroupTextWidth(adapterPosition, targetGroupInfo));
+                } else {
+                    startOffset = Math.min(targetGroupInfo.outRect.top, view.getBottom());
+                }
+            } else if (adapterPosition >= groupInfo.groupStartPosition && adapterPosition <= groupInfo.groupEndPosition) {
+                targetGroupInfo = firstGroupInfo;
                 if (groupInfo.isHorizontal()) {
                     startOffset = Math.max(view.getLeft(), 0);
                 } else {
-                    startOffset = Math.max(view.getTop(), groupInfo.outRect.top);
-                }
-            } else if (groupInfo.groupEndPosition == groupInfo.firstVisibleItemPosition) {
-                if (groupInfo.isHorizontal()) {
-                    startOffset = (int) Math.min(0, view.getRight() - mGroupCallBack.getGroupTextWidth(adapterPosition, groupInfo));
-                } else {
-                    startOffset = Math.min(groupInfo.outRect.top, view.getBottom());
+                    startOffset = Math.max(view.getTop(), targetGroupInfo.outRect.top);
                 }
             } else {
                 if (startOffset == -1) {
@@ -99,11 +121,11 @@ public class RExGroupItemDecoration extends RecyclerView.ItemDecoration {
                 }
             }
 
-            groupInfo.groupStartOffset = startOffset;
+            targetGroupInfo.groupStartOffset = startOffset;
 
-            if (!TextUtils.isEmpty(groupInfo.groupText) && !TextUtils.equals(lastGroupText, groupInfo.groupText)) {
-                mGroupCallBack.onGroupOverDraw(c, view, getGroupInfo(adapterPosition));
-                lastGroupText = groupInfo.groupText;
+            if (!TextUtils.isEmpty(targetGroupInfo.groupText) && !TextUtils.equals(lastGroupText, targetGroupInfo.groupText)) {
+                mGroupCallBack.onGroupOverDraw(c, view, adapterPosition, targetGroupInfo);
+                lastGroupText = targetGroupInfo.groupText;
                 startOffset = -1;
             }
         }
@@ -167,14 +189,19 @@ public class RExGroupItemDecoration extends RecyclerView.ItemDecoration {
     public static abstract class GroupCallBack {
 
         protected TextPaint mTextPaint;
-        protected float leftOffset = 0f, bottomOffset = 0f;//偏移距离
+        protected float leftOffset = 0f, bottomOffset = 0f, topOffset;//偏移距离
+        protected int bgColor, textColor;//背景颜色, 文本颜色
 
         public GroupCallBack() {
             mTextPaint = new TextPaint(Paint.ANTI_ALIAS_FLAG);
             mTextPaint.setTextSize(12 * density());
-            mTextPaint.setColor(RApplication.getApp().getResources().getColor(R.color.base_text_color_dark));
 
-            bottomOffset = 4 * density();
+            mTextPaint.setColor(RApplication.getApp().getResources().getColor(R.color.base_text_color_dark));
+            bgColor = RApplication.getApp().getResources().getColor(R.color.base_chat_bg_color);
+            textColor = RApplication.getApp().getResources().getColor(R.color.base_white);
+
+            bottomOffset = 2 * density();
+            topOffset = 4 * density();
             leftOffset = 10 * density();
         }
         /**
@@ -194,28 +221,84 @@ public class RExGroupItemDecoration extends RecyclerView.ItemDecoration {
          * 实现此方法, 可以在2个分组相近是, 出现上一个分组上推的效果
          */
         public float getGroupTextWidth(int position, @NonNull GroupInfo groupInfo) {
-            return mTextPaint.measureText(groupInfo.groupText);
+            if (groupInfo.layoutOrientation == LinearLayoutManager.HORIZONTAL) {
+                return mTextPaint.measureText(getGroupText(position));
+            } else {
+                return mTextPaint.descent() - mTextPaint.ascent();
+            }
         }
 
         /**
          * 绘制分组信息
          */
-        public void onGroupDraw(@NonNull Canvas canvas, @NonNull View view, @NonNull GroupInfo groupInfo) {
+        public void onGroupDraw(@NonNull Canvas canvas, @NonNull View view, int adapterPosition, @NonNull GroupInfo groupInfo) {
+            if (groupInfo.outRect.top <= 0) {
+                //没有绘制距离
+                return;
+            }
 
+            mTextPaint.setColor(bgColor);
+            canvas.drawRect(view.getLeft(), view.getTop() - groupInfo.outRect.top, view.getRight(), view.getTop(), mTextPaint);
+            mTextPaint.setColor(textColor);
+
+            if (groupInfo.isHorizontal()) {
+                canvas.drawText(getGroupText(groupInfo.adapterPosition),
+                        view.getLeft() + leftOffset,
+                        view.getTop() - mTextPaint.descent() - bottomOffset, mTextPaint);
+            } else {
+                canvas.drawText(getGroupText(groupInfo.adapterPosition),
+                        0F + leftOffset,
+                        view.getTop() - mTextPaint.descent() - bottomOffset, mTextPaint);
+            }
         }
 
         /**
-         * 绘制悬浮信息, 相同分组, 只会绘制一次
+         * 绘制悬浮信息, 相同分组, 只会绘制一次,
+         * 默认情况下, 悬停分组和普通的分组绘制, 会在分组第一个重影.
          */
-        public void onGroupOverDraw(@NonNull Canvas canvas, @NonNull View view, @NonNull GroupInfo groupInfo) {
+        public void onGroupOverDraw(@NonNull Canvas canvas, @NonNull View view, int adapterPosition, @NonNull GroupInfo groupInfo) {
+            if (groupInfo.groupStartPosition == adapterPosition) {
+                if (groupInfo.isHorizontal()) {
+                    if (groupInfo.groupStartOffset <= view.getLeft()) {
+                        //只在真正悬停的时候, 才绘制; 去除重影
+                        return;
+                    }
+                } else {
+                    if (groupInfo.groupStartOffset <= view.getTop()) {
+                        return;
+                    }
+                }
+            }
 
+            if (groupInfo.isHorizontal()) {
+                //有点小问题
+//                mTextPaint.setColor(bgColor);
+//                canvas.drawRect(groupInfo.groupStartOffset, view.getTop() - groupInfo.outRect.top,
+//                        groupInfo.groupStartOffset + getGroupTextWidth(groupInfo.adapterPosition, groupInfo), view.getTop(), mTextPaint);
+//                mTextPaint.setColor(textColor);
+
+                canvas.drawText(getGroupText(groupInfo.adapterPosition),
+                        groupInfo.groupStartOffset + leftOffset,
+                        groupInfo.outRect.top - mTextPaint.descent() - bottomOffset, mTextPaint);
+            } else {
+                mTextPaint.setColor(bgColor);
+                canvas.drawRect(view.getLeft(), groupInfo.groupStartOffset - groupInfo.outRect.top, view.getRight(), groupInfo.groupStartOffset, mTextPaint);
+                mTextPaint.setColor(textColor);
+
+                canvas.drawText(getGroupText(groupInfo.adapterPosition),
+                        view.getLeft() + leftOffset,
+                        groupInfo.groupStartOffset - mTextPaint.descent() - bottomOffset, mTextPaint);
+            }
         }
 
         /**
          * 预留位置, 用来绘制分组信息
+         * 默认只有分组的第一个, 才设置距离
          */
         public void onGetItemOffsets(@NonNull Rect outRect, @NonNull GroupInfo groupInfo) {
-
+            if (groupInfo.adapterPosition == groupInfo.groupStartPosition) {
+                outRect.top = (int) (mTextPaint.descent() - mTextPaint.ascent() + bottomOffset + topOffset);
+            }
         }
     }
 
