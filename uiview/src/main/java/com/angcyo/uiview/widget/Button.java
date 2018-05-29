@@ -147,7 +147,7 @@ public class Button extends RTextView {
                     setBackground(
                             ResUtil.generateRippleRoundMaskDrawable(roundRadii,
                                     Color.WHITE, themeDarkColor,
-                                    ContextCompat.getColor(getContext(), R.color.base_color_disable),
+                                    disableColor,
                                     themeSubColor
                             ));
                     break;

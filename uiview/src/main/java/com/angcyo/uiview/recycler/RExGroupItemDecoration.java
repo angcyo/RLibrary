@@ -1,12 +1,20 @@
 package com.angcyo.uiview.recycler;
 
 import android.graphics.Canvas;
+import android.graphics.Paint;
 import android.graphics.Rect;
+import android.support.annotation.NonNull;
 import android.support.v4.util.ArrayMap;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.text.TextPaint;
 import android.text.TextUtils;
 import android.view.View;
+
+import com.angcyo.uiview.R;
+import com.angcyo.uiview.RApplication;
+
+import static com.angcyo.uiview.utils.ScreenUtil.density;
 
 /**
  * 支持分组的ItemDecoration, 暂且只支持LinearLayoutManager
@@ -23,6 +31,15 @@ public class RExGroupItemDecoration extends RecyclerView.ItemDecoration {
         mGroupCallBack = groupCallBack;
     }
 
+    private GroupInfo getGroupInfo(int position) {
+        GroupInfo groupInfo = groupInfoArrayMap.get(position);
+        if (groupInfo == null) {
+            groupInfo = new GroupInfo();
+            groupInfoArrayMap.put(position, groupInfo);
+        }
+        return groupInfo;
+    }
+
     @Override
     public void onDraw(Canvas c, RecyclerView parent, RecyclerView.State state) {
         if (mGroupCallBack == null || parent.getChildCount() <= 0) {
@@ -33,7 +50,7 @@ public class RExGroupItemDecoration extends RecyclerView.ItemDecoration {
             final RecyclerView.LayoutParams layoutParams = (RecyclerView.LayoutParams) view.getLayoutParams();
             final int adapterPosition = layoutParams.getViewAdapterPosition();
 
-            GroupInfo groupInfo = groupInfoArrayMap.get(adapterPosition);
+            GroupInfo groupInfo = getGroupInfo(adapterPosition);
             if (i == 0) {
                 groupInfo.firstVisibleItemPosition = adapterPosition;
             }
@@ -57,7 +74,7 @@ public class RExGroupItemDecoration extends RecyclerView.ItemDecoration {
             final RecyclerView.LayoutParams layoutParams = (RecyclerView.LayoutParams) view.getLayoutParams();
             final int adapterPosition = layoutParams.getViewAdapterPosition();
 
-            GroupInfo groupInfo = groupInfoArrayMap.get(adapterPosition);
+            GroupInfo groupInfo = getGroupInfo(adapterPosition);
 
             //分组开头的第一个View的left值
             if (groupInfo.groupStartPosition == adapterPosition) {
@@ -68,7 +85,7 @@ public class RExGroupItemDecoration extends RecyclerView.ItemDecoration {
                 }
             } else if (groupInfo.groupEndPosition == groupInfo.firstVisibleItemPosition) {
                 if (groupInfo.isHorizontal()) {
-                    startOffset = (int) Math.min(0, view.getRight() - mGroupCallBack.getGroupTextSize(adapterPosition, groupInfo.layoutOrientation));
+                    startOffset = (int) Math.min(0, view.getRight() - mGroupCallBack.getGroupTextWidth(adapterPosition, groupInfo));
                 } else {
                     startOffset = Math.min(groupInfo.outRect.top, view.getBottom());
                 }
@@ -85,7 +102,7 @@ public class RExGroupItemDecoration extends RecyclerView.ItemDecoration {
             groupInfo.groupStartOffset = startOffset;
 
             if (!TextUtils.isEmpty(groupInfo.groupText) && !TextUtils.equals(lastGroupText, groupInfo.groupText)) {
-                mGroupCallBack.onGroupOverDraw(c, view, groupInfoArrayMap.get(adapterPosition));
+                mGroupCallBack.onGroupOverDraw(c, view, getGroupInfo(adapterPosition));
                 lastGroupText = groupInfo.groupText;
                 startOffset = -1;
             }
@@ -107,7 +124,7 @@ public class RExGroupItemDecoration extends RecyclerView.ItemDecoration {
         final int adapterPosition = layoutParams.getViewAdapterPosition();
         String groupText = mGroupCallBack.getGroupText(adapterPosition);
 
-        GroupInfo groupInfo = new GroupInfo();
+        GroupInfo groupInfo = getGroupInfo(adapterPosition);
 
         groupInfo.groupText = groupText;
         groupInfo.adapterPosition = adapterPosition;
@@ -142,13 +159,24 @@ public class RExGroupItemDecoration extends RecyclerView.ItemDecoration {
             }
         }
 
-        groupInfoArrayMap.put(adapterPosition, groupInfo);
         groupInfo.outRect.set(0, 0, 0, 0);
         mGroupCallBack.onGetItemOffsets(groupInfo.outRect, groupInfo);
         outRect.set(groupInfo.outRect);
     }
 
     public static abstract class GroupCallBack {
+
+        protected TextPaint mTextPaint;
+        protected float leftOffset = 0f, bottomOffset = 0f;//偏移距离
+
+        public GroupCallBack() {
+            mTextPaint = new TextPaint(Paint.ANTI_ALIAS_FLAG);
+            mTextPaint.setTextSize(12 * density());
+            mTextPaint.setColor(RApplication.getApp().getResources().getColor(R.color.base_text_color_dark));
+
+            bottomOffset = 4 * density();
+            leftOffset = 10 * density();
+        }
         /**
          * 返回分组的高度, 请使用onGetItemOffsets代替
          */
@@ -165,28 +193,28 @@ public class RExGroupItemDecoration extends RecyclerView.ItemDecoration {
          * <p>
          * 实现此方法, 可以在2个分组相近是, 出现上一个分组上推的效果
          */
-        public float getGroupTextSize(int position, int layoutOrientation) {
-            return 0;
+        public float getGroupTextWidth(int position, @NonNull GroupInfo groupInfo) {
+            return mTextPaint.measureText(groupInfo.groupText);
         }
 
         /**
          * 绘制分组信息
          */
-        public void onGroupDraw(Canvas canvas, View view, GroupInfo groupInfo) {
+        public void onGroupDraw(@NonNull Canvas canvas, @NonNull View view, @NonNull GroupInfo groupInfo) {
 
         }
 
         /**
          * 绘制悬浮信息, 相同分组, 只会绘制一次
          */
-        public void onGroupOverDraw(Canvas canvas, View view, GroupInfo groupInfo) {
+        public void onGroupOverDraw(@NonNull Canvas canvas, @NonNull View view, @NonNull GroupInfo groupInfo) {
 
         }
 
         /**
          * 预留位置, 用来绘制分组信息
          */
-        public void onGetItemOffsets(Rect outRect, GroupInfo groupInfo) {
+        public void onGetItemOffsets(@NonNull Rect outRect, @NonNull GroupInfo groupInfo) {
 
         }
     }

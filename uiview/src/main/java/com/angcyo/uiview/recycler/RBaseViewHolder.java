@@ -176,6 +176,14 @@ public class RBaseViewHolder extends RecyclerView.ViewHolder {
         return view;
     }
 
+    public View enable(@IdRes int resId, boolean enable) {
+        View view = v(resId);
+        if (view != null) {
+            view.setEnabled(enable);
+        }
+        return view;
+    }
+
     public void invisible(@IdRes int resId) {
         invisible(v(resId));
     }

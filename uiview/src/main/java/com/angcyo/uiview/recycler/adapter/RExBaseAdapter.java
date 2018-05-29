@@ -570,6 +570,20 @@ public abstract class RExBaseAdapter<H, T, F> extends RModelAdapter<T> {
         notifySelectorChange();
     }
 
+    public void notifyDataItemChanged(int posInData) {
+        if (posInData < 0) {
+            return;
+        }
+        notifyItemChanged(getHeaderCount() + posInData);
+    }
+
+    public void notifyDataItemChanged(T data) {
+        if (this.mAllDatas == null) {
+            this.mAllDatas = new ArrayList<>();
+        }
+        notifyDataItemChanged(mAllDatas.indexOf(data));
+    }
+
     public interface ObjectEmpty {
         /**
          * 如果想要添加一个空数据的item, 实现此接口返回true
