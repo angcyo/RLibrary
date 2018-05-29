@@ -93,7 +93,7 @@ public interface IView {
     @Deprecated
     void onViewUnload();
 
-    void onViewUnload(UIParam uiParam /*关闭时, 传递过来的参数*/);
+    void onViewUnload(@NonNull UIParam uiParam /*关闭时, 传递过来的参数*/);
 
     /**
      * 当有些界面需要释放很多资源时, 为了界面流畅, 请在此方法中释放

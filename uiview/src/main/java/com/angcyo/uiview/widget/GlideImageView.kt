@@ -142,6 +142,7 @@ open class GlideImageView(context: Context, attributeSet: AttributeSet? = null) 
 
     override fun onSizeChanged(w: Int, h: Int, oldw: Int, oldh: Int) {
         super.onSizeChanged(w, h, oldw, oldh)
+        L.d("onSizeChanged $oldw $oldh -> $w $h")
         startLoadUrl()
     }
 
@@ -182,7 +183,7 @@ open class GlideImageView(context: Context, attributeSet: AttributeSet? = null) 
             } else if (measuredHeight == 0 ||
                     measuredWidth == 0) {
             } else {
-                L.d("startLoadUrl 加载url -> $url")
+                L.d("startLoadUrl 加载url -> $url \n $loadSuccessUrl")
 
                 val file = File(url)
                 if (file.exists()) {
@@ -346,11 +347,13 @@ open class GlideImageView(context: Context, attributeSet: AttributeSet? = null) 
     private fun <T> initListener(request: RequestBuilder<T>) {
         request.listener(object : RequestListener<T> {
             override fun onResourceReady(resource: T?, model: Any?, target: Target<T>?, dataSource: DataSource?, isFirstResource: Boolean): Boolean {
+                L.d("onResourceReady -> \n$model\n$url")
                 loadSuccessUrl = url!!
                 return false
             }
 
             override fun onLoadFailed(e: GlideException?, model: Any?, target: Target<T>?, isFirstResource: Boolean): Boolean {
+                L.d("onLoadFailed -> $url")
                 loadSuccessUrl = ""
                 return false
             }

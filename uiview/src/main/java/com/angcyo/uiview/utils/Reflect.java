@@ -64,6 +64,8 @@ public class Reflect {
 
                 if (v1 instanceof String && v2 instanceof String) {
                     result = TextUtils.equals(((String) v1), (String) v2);
+                } else if (v1 instanceof Number && v2 instanceof Number) {
+                    result = v1 == v2;
                 } else {
                     result = false;
                 }
