@@ -16,10 +16,13 @@ import com.orhanobut.hawk.Hawk;
 public class Api extends RRetrofit {
     public static String API_URL = "http://api.klgwl.com/";
     public static String API_TEST_URL = "http://120.78.182.253:8181/";
+
     public static String OPEN_URL = "http://open.klgwl.com/";
     public static String OPEN_TEST_URL = "http://120.78.182.253:8185/";
+
     public static String SERVICE_URL = "http://service.klgwl.com/";
     public static String SERVICE_TEST_URL = "http://120.78.182.253:80/";
+
     public static String H5_URL = "http://wap.klgwl.com";
     public static String H5_TEST_URL = "http://120.78.182.253:8182";
 
