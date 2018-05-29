@@ -8,6 +8,7 @@
     <integer name="name_count">20</integer>
     <!--名称最大显示长度-->
     <integer name="name_show_count">11</integer>
+    <integer name="name_show_count_char">22</integer>
     <!--签名最大小时长度-->
     <integer name="signature_show_count">18</integer>
     <!--帧动画每帧时间-->
