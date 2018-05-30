@@ -97,7 +97,7 @@ public class MenuBuilder {
                             public void run() {
                                 menuItem.clickListener.onClick(view);
                             }
-                        }, 200);
+                        }, 360);
                     } else {
                         menuItem.clickListener.onClick(view);
                     }
