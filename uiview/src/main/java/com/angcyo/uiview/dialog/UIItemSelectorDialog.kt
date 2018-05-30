@@ -60,7 +60,5 @@ class UIItemSelectorDialog<T>(val items: List<T>) : UIRecyclerDialog<String, T, 
                 getColor(R.color.base_chat_bg_color)))
     }
 
-    interface IGetString {
-        fun getString(): String
-    }
+    interface IGetString : com.angcyo.uiview.github.IGetString
 }

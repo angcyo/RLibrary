@@ -9,6 +9,7 @@ import android.graphics.Paint;
 import android.graphics.Path;
 import android.graphics.RectF;
 import android.os.Build;
+import android.support.annotation.Nullable;
 import android.util.AttributeSet;
 import android.view.MotionEvent;
 import android.view.View;
@@ -36,8 +37,11 @@ public class WaveSideBarView extends View {
     private OnTouchLetterChangeListener listener;
     // 渲染字母表
     private List<String> mLetters;
+    private List<IGetString> mLetters2;
     // 当前选中的位置
     private int mChoose = -1;
+    //需要绘制的位置, 只用来判断是否绘制, 不用来判断是否需要回调
+    private int mDrawChoose = -1;
     // 字母列表画笔
     private Paint mLettersPaint = new Paint();
     // 提示字母画笔
@@ -119,6 +123,13 @@ public class WaveSideBarView extends View {
         mTextPaint.setTextAlign(Paint.Align.CENTER);
     }
 
+    private int getLetterSize() {
+        if (mLetters2 != null) {
+            return mLetters2.size();
+        }
+        return mLetters.size();
+    }
+
     @Override
     public boolean dispatchTouchEvent(MotionEvent event) {
         final float y = event.getY();
@@ -126,7 +137,7 @@ public class WaveSideBarView extends View {
 
         final int oldChoose = mChoose;
 
-        int padding = mHeight - mLetters.size() * mItemHeight;
+        int padding = mHeight - getLetterSize() * mItemHeight;
         float dy = y - padding / 2;
 
 //        if (dy < 0) {
@@ -134,7 +145,7 @@ public class WaveSideBarView extends View {
 //            return true;
 //        }
 //
-//        if (dy > mLetters.size() * mItemHeight) {
+//        if (dy > getLetterSize() * mItemHeight) {
 //            startAnimator(mRatio, 0f);
 //            return true;
 //        }
@@ -143,9 +154,12 @@ public class WaveSideBarView extends View {
 
         if (newChoose < 0) {
             newChoose = 0;
-        } else if(newChoose > mLetters.size() - 1) {
-            newChoose = mLetters.size() - 1;
+        } else if (newChoose > getLetterSize() - 1) {
+            newChoose = getLetterSize() - 1;
         }
+
+        mDrawChoose = newChoose;
+        mCenterY = (int) y;
 
         switch (event.getAction()) {
             case MotionEvent.ACTION_DOWN:
@@ -154,16 +168,19 @@ public class WaveSideBarView extends View {
                     return false;
                 }
                 isTouchDown = true;
+
                 startAnimator(mRatio, 1.0f);
                 break;
             case MotionEvent.ACTION_MOVE:
-
-                mCenterY = (int) y;
                 if (oldChoose != newChoose) {
-                    if (newChoose >= 0 && newChoose < mLetters.size()) {
+                    if (newChoose >= 0 && newChoose < getLetterSize()) {
                         mChoose = newChoose;
                         if (listener != null) {
-                            listener.onLetterChange(mLetters.get(newChoose));
+                            if (mLetters2 == null) {
+                                listener.onLetterChange(null, mLetters.get(newChoose));
+                            } else {
+                                listener.onLetterChange(mLetters2.get(newChoose), mLetters.get(newChoose));
+                            }
                         }
                     }
                 }
@@ -174,6 +191,7 @@ public class WaveSideBarView extends View {
                 isTouchDown = false;
                 startAnimator(mRatio, 0f);
                 mChoose = -1;
+                mDrawChoose = -1;
                 break;
             default:
                 break;
@@ -187,8 +205,8 @@ public class WaveSideBarView extends View {
         mHeight = MeasureSpec.getSize(heightMeasureSpec);
         mWidth = getMeasuredWidth();
         mItemHeight = (int) mTextSize + mPadding;
-        if (mItemHeight * mLetters.size() > mHeight) {
-            mItemHeight = (mHeight - mPadding) / mLetters.size() - 5;// 更改item 大小 ;
+        if (mItemHeight * getLetterSize() > mHeight) {
+            mItemHeight = (mHeight - mPadding) / getLetterSize() - 5;// 更改item 大小 ;
         }
         mPosX = mWidth - 1.6f * mTextSize;
     }
@@ -232,7 +250,7 @@ public class WaveSideBarView extends View {
             canvas.drawRoundRect(rectF, mTextSize, mTextSize, mLettersPaint);
         }
 
-        for (int i = 0; i < mLetters.size(); i++) {
+        for (int i = 0; i < getLetterSize(); i++) {
 
             mLettersPaint.reset();
             mLettersPaint.setColor(mTextColor);
@@ -247,32 +265,39 @@ public class WaveSideBarView extends View {
 
             float centerY = mHeight / 2;
 
-            int centerPos = mLetters.size() / 2;
+            int centerPos = getLetterSize() / 2;
 
             float posY = mItemHeight * (i - centerPos) + centerY;
 
 
-            if (i == mChoose) {
+            if (i == mDrawChoose) {
                 mPosY = posY;
             } else {
-                canvas.drawText(mLetters.get(i), mPosX, posY, mLettersPaint);
+                canvas.drawText(getLetterString(i), mPosX, posY, mLettersPaint);
             }
         }
+    }
 
+    private String getLetterString(int index) {
+        if (mLetters2 != null) {
+            return mLetters2.get(index).getString();
+        }
+        return mLetters.get(index);
     }
 
     private void drawChooseText(Canvas canvas) {
-        if (mChoose != -1) {
+        //L.e("call: drawChooseText([canvas])-> " + mChoose + " " + mPosX + " " + mPosY);
+        if (mDrawChoose != -1) {
             // 绘制右侧选中字符
             mLettersPaint.reset();
             mLettersPaint.setColor(mTextColorChoose);
             mLettersPaint.setTextSize(mTextSize);
             mLettersPaint.setTextAlign(Paint.Align.CENTER);
-            canvas.drawText(mLetters.get(mChoose), mPosX, mPosY, mLettersPaint);
+            canvas.drawText(getLetterString(mDrawChoose), mPosX, mPosY, mLettersPaint);
 
             // 绘制提示字符
             if (mRatio >= 0.9f) {
-                String target = mLetters.get(mChoose);
+                String target = getLetterString(mDrawChoose);
                 Paint.FontMetrics fontMetrics = mTextPaint.getFontMetrics();
                 float baseline = Math.abs(-fontMetrics.bottom - fontMetrics.top);
                 float x = mBallCentreX;
@@ -346,21 +371,38 @@ public class WaveSideBarView extends View {
         mRatioAnimator.start();
     }
 
-
-    public void setOnTouchLetterChangeListener(OnTouchLetterChangeListener listener) {
-        this.listener = listener;
-    }
-
     public List<String> getLetters() {
         return mLetters;
     }
 
+    /**
+     * 设置字母集合
+     */
     public void setLetters(List<String> letters) {
         this.mLetters = letters;
         invalidate();
     }
 
+    public List<IGetString> getLetters2() {
+        return mLetters2;
+    }
+
+    /**
+     * 支持对象数据列表
+     */
+    public void setLetters2(List<IGetString> letters2) {
+        mLetters2 = letters2;
+        invalidate();
+    }
+
+    /**
+     * 字母事件监听
+     */
+    public void setOnTouchLetterChangeListener(OnTouchLetterChangeListener listener) {
+        this.listener = listener;
+    }
+
     public interface OnTouchLetterChangeListener {
-        void onLetterChange(String letter);
+        void onLetterChange(@Nullable IGetString data, String letter);
     }
 }

@@ -11,7 +11,9 @@ import com.angcyo.uiview.skin.SkinHelper
 import com.angcyo.uiview.utils.RUtils
 import com.angcyo.uiview.utils.Reflect
 import com.angcyo.uiview.view.UIIViewImpl
+import com.github.promeg.pinyinhelper.Pinyin
 import java.io.File
+import java.util.regex.Pattern
 
 /**
  * Created by angcyo on ：2017/07/07 16:41
@@ -202,6 +204,19 @@ public fun String.https(): String {
     }
 }
 
+/**返回拼音首字母*/
+public fun String.toPinyin(): String {
+    if (TextUtils.isEmpty(this)) {
+        return ""
+    }
+    return Pinyin.toPinyin(this[0]).toUpperCase()[0].toString()
+}
+
+/**判断字符串是否是纯数字*/
+public fun String.isNumber(): Boolean {
+    val pattern = Pattern.compile("^[-\\+]?[\\d]*$")
+    return pattern.matcher(this).matches()
+}
 
 /**
  * 获取Int对应颜色的透明颜色

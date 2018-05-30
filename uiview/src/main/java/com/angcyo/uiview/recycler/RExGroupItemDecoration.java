@@ -198,7 +198,7 @@ public class RExGroupItemDecoration extends RecyclerView.ItemDecoration {
 
             mTextPaint.setColor(RApplication.getApp().getResources().getColor(R.color.base_text_color_dark));
             bgColor = RApplication.getApp().getResources().getColor(R.color.base_chat_bg_color);
-            textColor = RApplication.getApp().getResources().getColor(R.color.base_white);
+            textColor = RApplication.getApp().getResources().getColor(R.color.base_text_color_dark);
 
             bottomOffset = 2 * density();
             topOffset = 4 * density();

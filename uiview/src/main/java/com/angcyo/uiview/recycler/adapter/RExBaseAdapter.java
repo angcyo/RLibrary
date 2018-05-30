@@ -521,6 +521,14 @@ public abstract class RExBaseAdapter<H, T, F> extends RModelAdapter<T> {
     }
 
     /**
+     * 在调用 {@link #resetAllData(List)} 或 {@link #appendAllData(List)}
+     * 之前回调, 可以用来执行排序等操作
+     */
+    public void onUpdateDataBefore(@NonNull List<T> datas) {
+
+    }
+
+    /**
      * 重置数据
      */
     @Override
@@ -532,6 +540,9 @@ public abstract class RExBaseAdapter<H, T, F> extends RModelAdapter<T> {
         } else {
             this.mAllDatas = datas;
         }
+
+        onUpdateDataBefore(mAllDatas);
+
         if (oldSize == newSize && newSize > 0) {
             notifyItemRangeChanged(getHeaderCount(), oldSize);
         } else {
@@ -564,6 +575,9 @@ public abstract class RExBaseAdapter<H, T, F> extends RModelAdapter<T> {
             startPosition = this.mAllDatas.size() + getHeaderCount();
             this.mAllDatas.addAll(datas);
         }
+
+        onUpdateDataBefore(mAllDatas);
+
         notifyItemRangeInserted(startPosition, datas.size());
         notifyItemRangeChanged(startPosition, getItemCount());
 
