@@ -2,6 +2,7 @@ package com.angcyo.uiview.recycler.adapter;
 
 import android.content.Context;
 import android.support.annotation.NonNull;
+import android.util.SparseArray;
 import android.view.View;
 
 import com.angcyo.uiview.recycler.RBaseViewHolder;
@@ -26,6 +27,8 @@ import java.util.List;
  * Version: 1.0.0
  */
 public abstract class RBaseSwipeAdapter<H, T, F> extends RExBaseAdapter<H, T, F> {
+    private SparseArray<MenuBuilder> menuCache = new SparseArray<>();
+
     public RBaseSwipeAdapter(Context context) {
         super(context);
     }
@@ -56,11 +59,18 @@ public abstract class RBaseSwipeAdapter<H, T, F> extends RExBaseAdapter<H, T, F>
     }
 
     @Override
-    public void onBindViewHolder(RBaseViewHolder holder, int position) {
-        super.onBindViewHolder(holder, position);
+    protected void onBindCommonView(@NonNull RBaseViewHolder holder, int position, T bean) {
+        super.onBindCommonView(holder, position, bean);
 
-        MenuBuilder menuBuilder = new MenuBuilder(mContext);
-        onBindMenuView(menuBuilder, holder.getViewType(), position);
+        MenuBuilder menuBuilder = menuCache.get(position);
+        if (menuBuilder == null) {
+            menuBuilder = new MenuBuilder(mContext);
+            menuCache.put(position, menuBuilder);
+        } else {
+            menuBuilder.clear();
+        }
+
+        onBindMenuView(holder, menuBuilder, holder.getViewType(), position);
         menuBuilder.build((SwipeRecycleViewItemLayout) holder.itemView);
     }
 
@@ -73,11 +83,16 @@ public abstract class RBaseSwipeAdapter<H, T, F> extends RExBaseAdapter<H, T, F>
         }
     }
 
+
+    @Deprecated
+    protected void onBindMenuView(@NonNull MenuBuilder menuBuilder, int viewType, int position) {
+    }
+
     /**
      * 重写此方法, 设置菜单
      */
-    protected void onBindMenuView(@NonNull MenuBuilder menuBuilder, int viewType, int position) {
-
+    protected void onBindMenuView(@NonNull RBaseViewHolder holder, @NonNull MenuBuilder menuBuilder, int viewType, int position) {
+        onBindMenuView(menuBuilder, viewType, position);
     }
 
 }

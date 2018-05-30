@@ -332,6 +332,7 @@ public class RTextView extends AppCompatTextView {
         }
         if (mScrollTextPaint == null) {
             mScrollTextPaint = new TextPaint(getPaint());
+            //mScrollTextPaint.setTextAlign(Paint.Align.LEFT);
         }
         mScrollTextPaint.setColor(getCurrentTextColor());
 
@@ -339,22 +340,26 @@ public class RTextView extends AppCompatTextView {
 
         float drawTextY = getPaddingTop() - mScrollTextPaint.ascent();//getMeasuredHeight() - getPaddingBottom();
 
-        if (isInEditMode()) {
-            scrollCurX = -getMeasuredWidth();
-        }
-
         float offset = scrollTextCircleOffset;
         if (scrollTextCircleOffset < 0) {
             offset = getMeasuredWidth() - textWidth;
         }
 
         if (scrollType == SCROLL_TYPE_DEFAULT) {
+            if (isInEditMode()) {
+                scrollCurX = 100;
+            }
+
             canvas.drawText(text, getMeasuredWidth() - scrollCurX, drawTextY, mScrollTextPaint);
 
             if (isScrollTextCircle) {
                 canvas.drawText(text, getMeasuredWidth() - scrollCurX + textWidth + offset, drawTextY, mScrollTextPaint);
             }
         } else if (scrollType == SCROLL_TYPE_START) {
+            if (isInEditMode()) {
+                scrollCurX = 0;
+            }
+
             canvas.drawText(text, -scrollCurX, drawTextY, mScrollTextPaint);
 
             if (isScrollTextCircle) {

@@ -8,7 +8,11 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 
 import com.angcyo.uiview.R;
+import com.angcyo.uiview.kotlin.ViewExKt;
+import com.angcyo.uiview.view.RClickListener;
 import com.angcyo.uiview.widget.RTextView;
+
+import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -53,10 +57,14 @@ public class MenuBuilder {
         return menu;
     }
 
+    public void clear() {
+        mMenuList.clear();
+    }
+
     /**
      * 此方法自动会处理, 请勿手动调用
      */
-    public void build(SwipeRecycleViewItemLayout itemLayout) {
+    public void build(final SwipeRecycleViewItemLayout itemLayout) {
         int targetMenuSize = mMenuList.size();
         ViewGroup menuLayout = itemLayout.getMenuView();
         int menuSize = menuLayout.getChildCount();
@@ -75,11 +83,31 @@ public class MenuBuilder {
 
         for (int i = 0; i < targetMenuSize; i++) {
             View childAt = menuLayout.getChildAt(i);
-            MenuItem menuItem = mMenuList.get(i);
+            final MenuItem menuItem = mMenuList.get(i);
 
             childAt.setPadding(menuItem.paddLeft, 0, menuItem.paddRight, 0);
 
-            childAt.setOnClickListener(menuItem.clickListener);
+            ViewExKt.setOnRClickListener(childAt, new RClickListener() {
+                @Override
+                public void onRClick(@Nullable final View view) {
+                    if (menuItem.autoCloseMenu) {
+                        itemLayout.close();
+                        itemLayout.postDelayed(new Runnable() {
+                            @Override
+                            public void run() {
+                                menuItem.clickListener.onClick(view);
+                            }
+                        }, 200);
+                    } else {
+                        menuItem.clickListener.onClick(view);
+                    }
+                }
+            });
+
+            if (menuItem.bgResId != -1) {
+                childAt.setBackgroundResource(menuItem.bgResId);
+            }
+
             if (childAt instanceof TextView) {
                 ((TextView) childAt).setText(menuItem.title);
                 ((TextView) childAt).setTextColor(menuItem.textColor);
@@ -94,18 +122,14 @@ public class MenuBuilder {
     public static class MenuItem {
         String title;
         int bgColor, textColor;
+        int bgResId = -1;//背景资源id
         View.OnClickListener clickListener;
         int paddLeft, paddTop, paddBottom, paddRight;
         int gravity;
+
+        /*点击之后, 自动关闭菜单, 如果为true, 会延时clickListener 的回调*/
+        boolean autoCloseMenu = true;
         private Object tag;
-
-        public Object getTag() {
-            return tag;
-        }
-
-        public void setTag(Object tag) {
-            this.tag = tag;
-        }
 
         public MenuItem() {
         }
@@ -118,6 +142,14 @@ public class MenuBuilder {
             this.clickListener = clickListener;
             textColor = Color.WHITE;
             gravity = Gravity.CENTER;
+        }
+
+        public Object getTag() {
+            return tag;
+        }
+
+        public void setTag(Object tag) {
+            this.tag = tag;
         }
 
         public MenuItem setGravity(int gravity) {
@@ -155,6 +187,16 @@ public class MenuBuilder {
             setPaddRight(padd);
             setPaddTop(padd);
             setPaddBottom(padd);
+            return this;
+        }
+
+        public MenuItem setAutoCloseMenu(boolean autoCloseMenu) {
+            this.autoCloseMenu = autoCloseMenu;
+            return this;
+        }
+
+        public MenuItem setBgResId(int bgResId) {
+            this.bgResId = bgResId;
             return this;
         }
 

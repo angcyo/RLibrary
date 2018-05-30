@@ -283,6 +283,10 @@ public abstract class RBaseAdapter<T> extends RecyclerView.Adapter<RBaseViewHold
         }
     }
 
+    public T getDataByIndex(int position) {
+        return getAllDatas().size() > position ? mAllDatas.get(position) : null;
+    }
+
     /**
      * 不同的状态, 显示不同的布局
      *
@@ -674,6 +678,9 @@ public abstract class RBaseAdapter<T> extends RecyclerView.Adapter<RBaseViewHold
     }
 
     public List<T> getAllDatas() {
+        if (this.mAllDatas == null) {
+            this.mAllDatas = new ArrayList<>();
+        }
         return mAllDatas;
     }
 

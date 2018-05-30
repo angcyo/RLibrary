@@ -22,6 +22,7 @@ import android.graphics.drawable.shapes.ArcShape;
 import android.graphics.drawable.shapes.RoundRectShape;
 import android.graphics.drawable.shapes.Shape;
 import android.os.Build;
+import android.support.annotation.ColorRes;
 import android.support.annotation.DrawableRes;
 import android.support.v4.content.ContextCompat;
 import android.support.v4.graphics.drawable.DrawableCompat;
@@ -453,6 +454,10 @@ public class ResUtil {
      */
     public static int getThemeColorAccent(Context context) {
         return getThemeColor(context, "colorAccent");
+    }
+
+    public static int getColor(@ColorRes int id) {
+        return RApplication.getApp().getResources().getColor(id);
     }
 
     /**

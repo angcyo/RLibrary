@@ -228,25 +228,6 @@ public abstract class RExBaseAdapter<H, T, F> extends RModelAdapter<T> {
 
     //------------------------------设置--------------------------------//
 
-
-    public RExBaseAdapter<H, T, F> setAllFooterDatas(List<F> allFooterDatas) {
-        if (mAllFooterDatas == null) {
-            mAllFooterDatas = new ArrayList<>();
-        }
-        mAllFooterDatas.clear();
-        mAllFooterDatas.addAll(allFooterDatas);
-        return this;
-    }
-
-    public RExBaseAdapter<H, T, F> setAllHeaderDatas(List<H> allHeaderDatas) {
-        if (mAllHeaderDatas == null) {
-            mAllHeaderDatas = new ArrayList<>();
-        }
-        mAllHeaderDatas.clear();
-        mAllHeaderDatas.addAll(allHeaderDatas);
-        return this;
-    }
-
     public RExBaseAdapter<H, T, F> setFooterData(F footerData) {
         if (mAllFooterDatas == null) {
             mAllFooterDatas = new ArrayList<>();
@@ -332,6 +313,31 @@ public abstract class RExBaseAdapter<H, T, F> extends RModelAdapter<T> {
         List<H> list = new ArrayList<>();
         list.add(headerData);
         appendHeaderData(list);
+    }
+
+    /**
+     * 更多头部指定位置的索引, 如果索引比数据大, 则自动追加数据
+     */
+    public void updateHeaderData(H headerData, int index) {
+        List<H> headerDatas = getAllHeaderDatas();
+
+        int startPosition = getHeaderCount();
+        if (index >= startPosition) {
+            headerDatas.add(headerData);
+
+            notifyItemInserted(startPosition);
+            notifyItemRangeChanged(startPosition, getItemCount());
+        } else {
+            headerDatas.set(index, headerData);
+            notifyItemChanged(index);
+        }
+    }
+
+    public void notifyHeaderItemRemoved(int posInHeader) {
+        List<H> headerDatas = getAllHeaderDatas();
+        headerDatas.remove(posInHeader);
+        notifyItemRemoved(posInHeader);
+        notifyItemRangeChanged(posInHeader, getItemCount() - posInHeader);
     }
 
     /**
@@ -428,9 +434,6 @@ public abstract class RExBaseAdapter<H, T, F> extends RModelAdapter<T> {
         appendAllData(list);
     }
 
-
-    //-------------------------------操作--------------------------------//
-
     /**
      * 在最后的位置插入数据
      */
@@ -457,6 +460,9 @@ public abstract class RExBaseAdapter<H, T, F> extends RModelAdapter<T> {
             notifyItemChanged(itemCount - 1);//
         }
     }
+
+
+    //-------------------------------操作--------------------------------//
 
     @Override
     public void addFirstItem(T bean) {
@@ -596,6 +602,52 @@ public abstract class RExBaseAdapter<H, T, F> extends RModelAdapter<T> {
             this.mAllDatas = new ArrayList<>();
         }
         notifyDataItemChanged(mAllDatas.indexOf(data));
+    }
+
+    public List<H> getAllHeaderDatas() {
+        if (this.mAllHeaderDatas == null) {
+            this.mAllHeaderDatas = new ArrayList<>();
+        }
+        return mAllHeaderDatas;
+    }
+
+    public RExBaseAdapter<H, T, F> setAllHeaderDatas(List<H> allHeaderDatas) {
+        if (mAllHeaderDatas == null) {
+            mAllHeaderDatas = new ArrayList<>();
+        }
+        mAllHeaderDatas.clear();
+        mAllHeaderDatas.addAll(allHeaderDatas);
+        return this;
+    }
+
+    public List<F> getAllFooterDatas() {
+        if (this.mAllFooterDatas == null) {
+            this.mAllFooterDatas = new ArrayList<>();
+        }
+        return mAllFooterDatas;
+    }
+
+    public RExBaseAdapter<H, T, F> setAllFooterDatas(List<F> allFooterDatas) {
+        if (mAllFooterDatas == null) {
+            mAllFooterDatas = new ArrayList<>();
+        }
+        mAllFooterDatas.clear();
+        mAllFooterDatas.addAll(allFooterDatas);
+        return this;
+    }
+
+    @Override
+    public T getDataByIndex(int position) {
+        return super.getDataByIndex(position - getHeaderCount());
+    }
+
+    public H getHeaderDataByIndex(int position) {
+        return getAllHeaderDatas().size() > position ? mAllHeaderDatas.get(position) : null;
+    }
+
+    public F getFooterDataByIndex(int position) {
+        int index = position - getHeaderCount() - getDataCount();
+        return getAllFooterDatas().size() > index ? mAllFooterDatas.get(index) : null;
     }
 
     public interface ObjectEmpty {
