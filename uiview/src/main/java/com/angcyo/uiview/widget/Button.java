@@ -112,6 +112,12 @@ public class Button extends RTextView {
                                     ResUtil.createDrawable(themeDarkColor, Color.TRANSPARENT, borderWidth, roundRadii),
                                     ResUtil.createDrawable(disableColor, Color.TRANSPARENT, borderWidth, roundRadii)
                             )));
+
+                    if (useSkinStyle) {
+                        int subColor = SkinHelper.getSkin().getThemeSubColor();
+                        setTextColor(ResUtil.generateTextColor(subColor, subColor,
+                                ViewExKt.getColor(this, R.color.base_color_disable_enable), subColor));
+                    }
                     break;
                 case ROUND_BORDER_FILL:
                     int subColor = SkinHelper.getSkin().getThemeSubColor();

@@ -89,7 +89,7 @@ class HaloProgressBar(context: Context, attributeSet: AttributeSet? = null) : Vi
     override fun onDraw(canvas: Canvas) {
         super.onDraw(canvas)
 
-        if (progress < 100) {
+        if (progress < 100 && animator.isStarted) {
             //背景色
             canvas.drawColor(circleBgColor)
 
