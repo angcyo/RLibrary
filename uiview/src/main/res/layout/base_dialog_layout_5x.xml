@@ -22,23 +22,31 @@
         android:textStyle="bold"
         tools:text="对话框标题"/>
 
-    <com.angcyo.uiview.widget.RTextView
-        android:id="@+id/base_dialog_top_content_view"
-        style="@style/BaseDialogTextStyle"
-        android:gravity="left"
-        android:lineSpacingExtra="@dimen/base_ldpi"
-        android:textSize="@dimen/default_text_little_size"
-        android:visibility="gone"
-        tools:text="对话框内容对话框内容对话框内容1"
-        tools:visibility="visible"/>
+    <LinearLayout
+        android:id="@+id/base_content_wrap_layout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="start"
+        android:orientation="vertical">
 
-    <com.angcyo.uiview.widget.RTextView
-        android:id="@+id/base_dialog_content_view"
-        style="@style/BaseDialogTextStyle"
-        android:gravity="left"
-        android:lineSpacingExtra="@dimen/base_ldpi"
-        android:textSize="@dimen/default_text_little_size"
-        tools:text="对话框内容对话框内容对话框内容2"/>
+        <com.angcyo.uiview.widget.RTextView
+            android:id="@+id/base_dialog_top_content_view"
+            style="@style/BaseDialogTextStyle"
+            android:gravity="left"
+            android:lineSpacingExtra="@dimen/base_ldpi"
+            android:textSize="@dimen/default_text_little_size"
+            android:visibility="gone"
+            tools:text="对话框内容对话框内容对话框内容1"
+            tools:visibility="visible"/>
+
+        <com.angcyo.uiview.widget.RTextView
+            android:id="@+id/base_dialog_content_view"
+            style="@style/BaseDialogTextStyle"
+            android:gravity="left"
+            android:lineSpacingExtra="@dimen/base_ldpi"
+            android:textSize="@dimen/default_text_little_size"
+            tools:text="对话框内容对话框内容对话框内容2"/>
+    </LinearLayout>
 
     <com.angcyo.uiview.widget.SimpleProgressBar
         android:id="@+id/progress_bar"

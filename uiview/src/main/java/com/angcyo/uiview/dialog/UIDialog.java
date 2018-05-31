@@ -5,6 +5,7 @@ import android.text.TextUtils;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.FrameLayout;
 import android.widget.LinearLayout;
 import android.widget.TextView;
@@ -66,6 +67,12 @@ public class UIDialog extends UIIDialogImpl {
      */
     @LayoutRes
     private int layoutId = -1;
+
+    /**
+     * 可以用来在原对话框内容布局下面, 追加新布局
+     */
+    @LayoutRes
+    private int appendLayoutId = -1;
 
     private UIDialog() {
         cancelText = RApplication.getApp().getString(R.string.base_cancel);
@@ -167,6 +174,11 @@ public class UIDialog extends UIIDialogImpl {
 
     public UIDialog setLayoutId(int layoutId) {
         this.layoutId = layoutId;
+        return this;
+    }
+
+    public UIDialog setAppendLayoutId(int appendLayoutId) {
+        this.appendLayoutId = appendLayoutId;
         return this;
     }
 
@@ -276,6 +288,11 @@ public class UIDialog extends UIIDialogImpl {
         resetDialogGravity();
 
         mBaseDialogOkView.setTextColor(SkinHelper.getSkin().getThemeSubColor());
+
+        if (appendLayoutId != -1) {
+            ViewGroup contentWrapLayout = rootView.findViewById(R.id.base_content_wrap_layout);
+            LayoutInflater.from(mActivity).inflate(appendLayoutId, contentWrapLayout);
+        }
 
         if (mViewConfig != null) {
             mViewConfig.initOnShowContentLayout(this, mViewHolder);
