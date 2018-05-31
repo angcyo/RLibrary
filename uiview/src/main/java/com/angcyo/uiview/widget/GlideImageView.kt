@@ -146,6 +146,10 @@ open class GlideImageView(context: Context, attributeSet: AttributeSet? = null) 
         startLoadUrl()
     }
 
+    override fun setImageResource(resId: Int) {
+        super.setImageResource(resId)
+    }
+
     final override fun setImageDrawable(drawable: Drawable?) {
         drawable?.let {
             //L.e("call: setImageDrawable -> ${it.javaClass.simpleName} $checkGif $measuredWidth $measuredHeight")
