@@ -17,10 +17,8 @@
 package com.liulishuo.filedownloader.services;
 
 import android.annotation.SuppressLint;
-import android.app.Notification;
 import android.app.Service;
 import android.content.Intent;
-import android.os.Build;
 import android.os.IBinder;
 
 import com.liulishuo.filedownloader.util.FileDownloadHelper;
@@ -62,12 +60,6 @@ public class FileDownloadService extends Service {
         } else {
             handler = new FDServiceSeparateHandler(new WeakReference<>(this), manager);
         }
-
-//        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-//            int NOTIFICATION_ID = (int) (System.currentTimeMillis() % 10000);
-//            startForeground(NOTIFICATION_ID, new Notification.Builder(this, this.getPackageName()).build());
-//            stopForeground(true);
-//        }
     }
 
     @Override

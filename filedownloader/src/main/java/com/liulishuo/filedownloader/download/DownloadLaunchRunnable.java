@@ -27,6 +27,7 @@ import com.liulishuo.filedownloader.exception.FileDownloadGiveUpRetryException;
 import com.liulishuo.filedownloader.exception.FileDownloadHttpException;
 import com.liulishuo.filedownloader.exception.FileDownloadNetworkPolicyException;
 import com.liulishuo.filedownloader.exception.FileDownloadOutOfSpaceException;
+import com.liulishuo.filedownloader.exception.FileDownloadSecurityException;
 import com.liulishuo.filedownloader.model.ConnectionModel;
 import com.liulishuo.filedownloader.model.FileDownloadHeader;
 import com.liulishuo.filedownloader.model.FileDownloadModel;
@@ -306,6 +307,7 @@ public class DownloadLaunchRunnable implements Runnable, ProcessCallback {
 
                 } catch (IOException | IllegalAccessException
                         | InterruptedException | IllegalArgumentException
+                        | FileDownloadSecurityException
                         | FileDownloadGiveUpRetryException e) {
                     if (isRetry(e)) {
                         onRetry(e);
@@ -356,7 +358,8 @@ public class DownloadLaunchRunnable implements Runnable, ProcessCallback {
     }
 
     // the trial connection is for: 1. etag verify; 2. partial support verify.
-    private void trialConnect() throws IOException, RetryDirectly, IllegalAccessException {
+    private void trialConnect() throws IOException, RetryDirectly, IllegalAccessException,
+            FileDownloadSecurityException {
         FileDownloadConnection trialConnection = null;
         try {
             final ConnectionProfile trialConnectionProfile;
@@ -444,7 +447,8 @@ public class DownloadLaunchRunnable implements Runnable, ProcessCallback {
     private void handleTrialConnectResult(Map<String, List<String>> requestHeader,
                                           ConnectTask connectTask,
                                           FileDownloadConnection connection)
-            throws IOException, RetryDirectly, IllegalArgumentException {
+            throws IOException, RetryDirectly, IllegalArgumentException,
+            FileDownloadSecurityException {
         final int id = model.getId();
         final int code = connection.getResponseCode();
 
@@ -452,6 +456,7 @@ public class DownloadLaunchRunnable implements Runnable, ProcessCallback {
         final boolean onlyFromBeginning = (code == HttpURLConnection.HTTP_OK
                 || code == HttpURLConnection.HTTP_CREATED
                 || code == FileDownloadConnection.NO_RESPONSE_CODE);
+        final long totalLength = FileDownloadUtils.findInstanceLengthForTrial(connection);
 
         final String oldEtag = model.getETag();
         String newEtag = FileDownloadUtils.findEtag(id, connection);
@@ -484,10 +489,19 @@ public class DownloadLaunchRunnable implements Runnable, ProcessCallback {
             }
 
             if (code == HTTP_REQUESTED_RANGE_NOT_SATISFIABLE) {
+                if (acceptPartial && totalLength >= 0) {
+                    // there is a special case: the server(such as Ali Cloud) doesn't follow the
+                    // agreement(https://tools.ietf.org/html/rfc7233), so they return a 416
+                    // response with Content-Range
+                    FileDownloadLog.w(this,
+                            "get 416 but the Content-Range is returned, no need to retry");
+                    break;
+                }
                 if (model.getSoFar() > 0) {
                     // On the first connection range not satisfiable, there must something wrong,
                     // so have to retry.
                     isPreconditionFailed = true;
+                    FileDownloadLog.w(this, "get 416, precondition failed and just retry");
                     break;
                 } else {
                     // range is right, but get 416
@@ -496,6 +510,8 @@ public class DownloadLaunchRunnable implements Runnable, ProcessCallback {
                         // discard range on header and try again
                         isNeedForceDiscardRange = true;
                         isPreconditionFailed = true;
+                        FileDownloadLog.w(this, "get 416, precondition failed and need "
+                                + "to retry with discarding range");
                     }
                 }
             }
@@ -537,7 +553,7 @@ public class DownloadLaunchRunnable implements Runnable, ProcessCallback {
 
         redirectedUrl = connectTask.getFinalRedirectedUrl();
         if (acceptPartial || onlyFromBeginning) {
-            final long totalLength = FileDownloadUtils.findInstanceLengthForTrial(connection);
+
 
             // update model
             String fileName = null;

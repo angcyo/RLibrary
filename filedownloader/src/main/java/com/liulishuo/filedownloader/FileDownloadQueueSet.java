@@ -30,6 +30,7 @@ public class FileDownloadQueueSet {
     private FileDownloadListener target;
     private boolean isSerial;
 
+
     private List<BaseDownloadTask.FinishListener> taskFinishListenerList;
     private Integer autoRetryTimes;
     private Boolean syncCallback;

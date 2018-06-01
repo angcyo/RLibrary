@@ -18,7 +18,6 @@ package com.liulishuo.filedownloader;
 import android.app.Notification;
 import android.content.Context;
 import android.content.Intent;
-import android.os.Build;
 
 import com.liulishuo.filedownloader.event.DownloadServiceConnectChangedEvent;
 import com.liulishuo.filedownloader.model.FileDownloadHeader;
@@ -142,13 +141,8 @@ class FileDownloadServiceSharedTransmit implements
                 connectedRunnableList.add(connectedRunnable);
             }
         }
-        Intent intent = new Intent(context, SERVICE_CLASS);
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            //context.startForegroundService(intent);
-            context.startService(intent);
-        } else {
-            context.startService(intent);
-        }
+        Intent i = new Intent(context, SERVICE_CLASS);
+        context.startService(i);
     }
 
     @Override

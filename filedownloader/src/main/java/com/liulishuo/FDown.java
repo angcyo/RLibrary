@@ -41,6 +41,9 @@ import java.util.concurrent.ConcurrentHashMap;
  * <p>
  * 2018-3-26
  * 更新至 1.7.2
+ *
+ * 2018-6-1
+ * 更新至 1.7.4 修复Android O+
  */
 public class FDown {
 

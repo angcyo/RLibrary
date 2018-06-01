@@ -220,6 +220,10 @@ public class RTextView extends AppCompatTextView {
         }
         scrollTextCircleOffset = typedArray.getDimensionPixelOffset(R.styleable.RTextView_r_scroll_text_offset, scrollTextCircleOffset);
 
+        if (scrollType == SCROLL_TYPE_START) {
+            scrollCurX = scrollTextCircleOffset;
+        }
+
         useSkinStyle = typedArray.getBoolean(R.styleable.RTextView_r_use_skin_style, useSkinStyle);
 
         useCharLengthFilter = typedArray.getBoolean(R.styleable.RTextView_r_use_chat_length_filter, useCharLengthFilter);
@@ -356,10 +360,6 @@ public class RTextView extends AppCompatTextView {
                 canvas.drawText(text, getMeasuredWidth() - scrollCurX + textWidth + offset, drawTextY, mScrollTextPaint);
             }
         } else if (scrollType == SCROLL_TYPE_START) {
-            if (isInEditMode()) {
-                scrollCurX = 0;
-            }
-
             canvas.drawText(text, -scrollCurX, drawTextY, mScrollTextPaint);
 
             if (isScrollTextCircle) {

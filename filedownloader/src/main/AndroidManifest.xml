@@ -1,12 +1,11 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-          package="com.liulishuo.filedownloader">
+    package="com.liulishuo.filedownloader">
 
     <application>
-        <service android:name="com.liulishuo.filedownloader.services.FileDownloadService$SharedMainProcessService"/>
+        <service android:name=".services.FileDownloadService$SharedMainProcessService" />
         <service
-            android:name="com.liulishuo.filedownloader.services.FileDownloadService$SeparateProcessService"
-            android:exported="true"
-            android:process=":filedownloader"/>
+            android:name=".services.FileDownloadService$SeparateProcessService"
+            android:process=":filedownloader" />
     </application>
 
 </manifest>
