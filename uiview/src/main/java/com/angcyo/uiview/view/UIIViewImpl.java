@@ -373,7 +373,7 @@ public abstract class UIIViewImpl implements IView {
         }
 
         if (mOnUIViewListener != null) {
-            mOnUIViewListener.onViewShow(this);
+            mOnUIViewListener.onViewShow(this, viewShowCount);
         }
     }
 

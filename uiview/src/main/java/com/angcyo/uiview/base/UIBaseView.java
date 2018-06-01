@@ -477,6 +477,10 @@ public abstract class UIBaseView extends UIIViewImpl {
                 }
             });
         }
+
+        if (mOnUIViewListener != null) {
+            mOnUIViewListener.onLayoutStateChanged(this, mViewHolder, fromState, toState);
+        }
     }
 
     /**

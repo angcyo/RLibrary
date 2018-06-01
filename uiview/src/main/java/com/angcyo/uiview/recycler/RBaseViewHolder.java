@@ -255,6 +255,10 @@ public class RBaseViewHolder extends RecyclerView.ViewHolder {
         return (RExTextView) v(resId);
     }
 
+    public RExTextView extv(@IdRes int resId) {
+        return rxtv(resId);
+    }
+
     public TextView tV(String idName) {
         return (TextView) v(idName);
     }

@@ -32,6 +32,12 @@ abstract class RExItemHolder<DataType> {
     var exUIView: UIBaseRxView? = null
     var exItemAdapter: RExItemAdapter<*, DataType>? = null
 
+    fun init(iLayout: ILayout?, exUIView: UIBaseRxView?, exItemAdapter: RExItemAdapter<*, DataType>?) {
+        this.iLayout = iLayout
+        this.exUIView = exUIView
+        this.exItemAdapter = exItemAdapter
+    }
+
     open fun startIView(iView: IView) {
         iLayout?.startIView(iView)
     }

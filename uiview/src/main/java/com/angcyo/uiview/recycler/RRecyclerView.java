@@ -693,7 +693,7 @@ public class RRecyclerView extends RecyclerView implements StickLayout.CanScroll
      */
     public void scrollTo(int position, boolean anim) {
         LayoutManager manager = getLayoutManager();
-        if (manager == null) {
+        if (manager == null || position < 0) {
             return;
         }
         stopScroll();

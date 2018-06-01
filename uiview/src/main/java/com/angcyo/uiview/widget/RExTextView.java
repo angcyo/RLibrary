@@ -312,6 +312,9 @@ public class RExTextView extends RTextView {
 //        }
     }
 
+    /**
+     * 请在{@link #setText(CharSequence)}之前调用
+     */
     public void setOnImageSpanClick(ImageTextSpan.OnImageSpanClick onImageSpanClick) {
         mOnImageSpanClick = onImageSpanClick;
     }

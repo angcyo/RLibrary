@@ -6,6 +6,7 @@ import android.view.ViewGroup;
 
 import com.angcyo.uiview.container.UILayoutImpl;
 import com.angcyo.uiview.view.IView;
+import com.angcyo.uiview.view.UIIViewImpl;
 
 /**
  * Created by angcyo on 2016-11-26.
@@ -15,7 +16,12 @@ public abstract class UIPagerAdapter extends PagerAdapter {
 
     @Override
     public Object instantiateItem(ViewGroup container, int position) {
-        final UILayoutImpl layout = new UILayoutImpl(container.getContext(), getIView(position));
+        IView iView = getIView(position);
+        if (iView instanceof UIIViewImpl) {
+            ((UIIViewImpl) iView).setShowInViewPager(true);
+        }
+
+        final UILayoutImpl layout = new UILayoutImpl(container.getContext(), iView);
         container.addView(layout);
         return layout;
     }

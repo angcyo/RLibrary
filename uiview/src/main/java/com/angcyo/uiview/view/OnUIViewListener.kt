@@ -1,6 +1,7 @@
 package com.angcyo.uiview.view
 
 import android.view.LayoutInflater
+import com.angcyo.uiview.base.UIBaseView
 import com.angcyo.uiview.container.ContentLayout
 import com.angcyo.uiview.container.UITitleBarContainer
 import com.angcyo.uiview.model.TitleBarPattern
@@ -30,8 +31,13 @@ abstract class OnUIViewListener {
 
     }
 
+    @Deprecated("用下面那个")
     open fun onViewShow(uiview: IView) {
 
+    }
+
+    open fun onViewShow(uiview: IView, viewShowCount: Long) {
+        onViewShow(uiview)
     }
 
     open fun onViewLoadData(page: String?) {
@@ -57,6 +63,11 @@ abstract class OnUIViewListener {
     }
 
     open fun initOnShowContentLayout(uiview: UIIViewImpl, viewHolder: RBaseViewHolder) {
+
+    }
+
+    /**需要继承UIBaseView*/
+    open fun onLayoutStateChanged(uiview: UIBaseView, viewHolder: RBaseViewHolder, fromState: UIBaseView.LayoutState, toState: UIBaseView.LayoutState) {
 
     }
 }

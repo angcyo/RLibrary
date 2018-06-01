@@ -17,6 +17,7 @@
 package com.angcyo.uiview.accessibility.permission;
 
 import android.Manifest;
+import android.app.Activity;
 import android.app.AppOpsManager;
 import android.content.Context;
 import android.content.Intent;
@@ -28,7 +29,11 @@ import android.provider.Settings;
 import android.support.annotation.RequiresApi;
 import android.util.Log;
 
+import com.tbruyelle.rxpermissions.RxPermissions;
+
 import java.lang.reflect.Method;
+
+import rx.functions.Action1;
 
 
 public class SettingsCompat {
@@ -224,8 +229,8 @@ public class SettingsCompat {
     }
 
     // OPPO
-    private static boolean manageDrawOverlaysForOppo(Context context) {
-        Intent intent = new Intent();
+    private static boolean manageDrawOverlaysForOppo(final Context context) {
+        final Intent intent = new Intent();
         intent.putExtra("packageName", context.getPackageName());
         // OPPO A53|5.1.1|2.1
         intent.setAction("com.oppo.safe");
@@ -241,7 +246,25 @@ public class SettingsCompat {
         }
         intent.setAction("com.coloros.safecenter");
         intent.setClassName("com.coloros.safecenter", "com.coloros.safecenter.sysfloatwindow.FloatWindowListActivity");
-        return startSafely(context, intent);
+
+        if (context.getPackageManager().queryIntentActivities(intent, PackageManager.MATCH_DEFAULT_ONLY).size() > 0) {
+            if (context instanceof Activity) {
+                new RxPermissions((Activity) context)
+                        .request("oppo.permission.OPPO_COMPONENT_SAFE")
+                        .subscribe(new Action1<Boolean>() {
+                            @Override
+                            public void call(Boolean aBoolean) {
+                                if (aBoolean) {
+                                    startSafely(context, intent);
+                                }
+                            }
+                        });
+            }
+            //startSafely(context, intent);
+            return false;
+        }
+        return false;
+        //return startSafely(context, intent);
     }
 
     // 魅族
