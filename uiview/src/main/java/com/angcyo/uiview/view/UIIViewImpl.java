@@ -42,6 +42,7 @@ import com.angcyo.library.utils.L;
 import com.angcyo.uiview.R;
 import com.angcyo.uiview.RApplication;
 import com.angcyo.uiview.base.UIBaseView;
+import com.angcyo.uiview.base.UIIDialogImpl;
 import com.angcyo.uiview.base.UILayoutActivity;
 import com.angcyo.uiview.container.ILayout;
 import com.angcyo.uiview.container.UILayoutImpl;
@@ -624,6 +625,10 @@ public abstract class UIIViewImpl implements IView {
     }
 
     public Animation defaultLoadOtherExitAnimation(@NonNull AnimParam animParam) {
+        if (animParam.targetIView.isDialog()) {
+            return UIIDialogImpl.dialogDefaultLoadFinishAnimation();
+        }
+
         TranslateAnimation translateAnimation;
         if (mIsRightJumpLeft) {
             translateAnimation = new TranslateAnimation(Animation.RELATIVE_TO_SELF, 0, Animation.RELATIVE_TO_SELF, 1f,

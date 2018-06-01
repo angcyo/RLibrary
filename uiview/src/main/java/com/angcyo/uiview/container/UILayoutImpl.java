@@ -1626,6 +1626,7 @@ public class UILayoutImpl extends SwipeBackLayout implements ILayout, UIViewPage
      * 顶上视图进入的动画
      */
     private void topViewStart(final ViewTask viewTask, final ViewPattern topViewPattern, final UIParam param) {
+        param.mAnimParam.targetIView = topViewPattern.mIView;
 
         final Animation animation = topViewPattern.mIView.loadStartAnimation(param.mAnimParam);
         if (animation != null) {
@@ -1692,6 +1693,9 @@ public class UILayoutImpl extends SwipeBackLayout implements ILayout, UIViewPage
     private void topViewFinish(final ViewTask viewTask,
                                final ViewPattern bottomViewPattern, final ViewPattern topViewPattern,
                                final UIParam param, final boolean isHideIView) {
+
+        param.mAnimParam.targetIView = topViewPattern.mIView;
+
         final Animation animation = topViewPattern.mIView.loadFinishAnimation(param.mAnimParam);
         if (animation != null) {
             animation.setFillAfter(true);//2017-9-1
@@ -1840,6 +1844,7 @@ public class UILayoutImpl extends SwipeBackLayout implements ILayout, UIViewPage
             if (RApplication.isLowDevice || !param.mAnim || param.isQuiet) {
                 endRunnable.run();
             } else {
+                param.mAnimParam.targetIView = bottomViewPattern.mIView;
                 final Animation animation = topViewPattern.mIView.loadOtherEnterAnimation(param.mAnimParam);
                 if (animation != null) {
                     animation.setFillAfter(false);
@@ -1910,6 +1915,7 @@ public class UILayoutImpl extends SwipeBackLayout implements ILayout, UIViewPage
             checkTaskOnIViewAnimationEnd(viewTask);
         } else {
             if (!RApplication.isLowDevice || param.mAnim) {
+                param.mAnimParam.targetIView = bottomViewPattern.mIView;
                 final Animation animation = topViewPattern.mIView.loadOtherExitAnimation(param.mAnimParam);
                 if (animation != null) {
                     animation.setFillAfter(false);

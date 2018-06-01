@@ -61,7 +61,8 @@ public class UIWindow extends UIIDialogImpl {
     }
 
     public UIWindow show(ILayout iLayout) {
-        return show(iLayout, 0);
+        iLayout.startIView(this);
+        return this;
     }
 
     public UIWindow show(ILayout iLayout, int yoff) {
@@ -75,8 +76,26 @@ public class UIWindow extends UIIDialogImpl {
         return this;
     }
 
+    public UIWindow setOffsetY(int offsetY) {
+        this.offsetY = offsetY;
+        return this;
+    }
+
+    public UIWindow setLayout(@LayoutRes int layoutId) {
+        this.layoutId = layoutId;
+        return this;
+    }
+
     public UIWindow onInitWindow(OnInitWindow initWindow) {
         mOnInitWindow = initWindow;
+        return this;
+    }
+
+    /**
+     * 是否显示三角形
+     */
+    public UIWindow setShowTriangle(boolean showTriangle) {
+        this.showTriangle = showTriangle;
         return this;
     }
 
