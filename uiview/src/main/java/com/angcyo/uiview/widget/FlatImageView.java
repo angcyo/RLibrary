@@ -50,7 +50,7 @@ public class FlatImageView extends AppCompatImageView {
     public void computeScroll() {
         super.computeScroll();
         if (mOverScroller.computeScrollOffset()) {
-            L.e("call: computeScroll([])-> " + mOverScroller.getCurrX() + " : " + mOverScroller.getCurrY() + " : " + targetScrollX);
+            //L.e("call: computeScroll([])-> " + mOverScroller.getCurrX() + " : " + mOverScroller.getCurrY() + " : " + targetScrollX);
 
             postInvalidate();
 
@@ -134,7 +134,7 @@ public class FlatImageView extends AppCompatImageView {
 
         canvas.save();
         canvas.translate(mOverScroller.getCurrX(), mOverScroller.getCurrY());
-                drawable.setBounds(0, 0,
+        drawable.setBounds(0, 0,
                 drawableWidth(), drawableHeight());
 //        canvas.translate(200, 200);
 //        super.onDraw(canvas);
