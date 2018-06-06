@@ -1,5 +1,7 @@
 package com.angcyo.uiview.recycler.adapter;
 
+import android.support.annotation.NonNull;
+
 import com.angcyo.uiview.recycler.RBaseViewHolder;
 import com.angcyo.uiview.recycler.RRecyclerView;
 
@@ -238,7 +240,7 @@ public class RGroupData<T> {
     /**
      * 数据源的数量改变了, 用来支持头部悬停数据更新
      */
-    public void onDataSizeChanged(RGroupAdapter groupAdapter) {
+    public void onDataSizeChanged(@NonNull RGroupAdapter groupAdapter) {
 
     }
 
@@ -265,18 +267,18 @@ public class RGroupData<T> {
     /**
      * @param indexInGroup 在头部数据中, 从0开始的索引
      */
-    protected void onBindGroupView(RBaseViewHolder holder, int position, int indexInGroup) {
+    protected void onBindGroupView(@NonNull RBaseViewHolder holder, int position, int indexInGroup) {
 
     }
 
     /**
      * @param indexInData 在数据中, 从0开始的索引
      */
-    protected void onBindDataView(RBaseViewHolder holder, int position, int indexInData) {
+    protected void onBindDataView(@NonNull RBaseViewHolder holder, int position, int indexInData) {
         onBindDataView(holder, position, indexInData, getAllDatas().size() > indexInData ? getAllDatas().get(indexInData) : null);
     }
 
-    protected void onBindDataView(RBaseViewHolder holder, int position, int indexInData, T dataBean) {
+    protected void onBindDataView(@NonNull RBaseViewHolder holder, int position, int indexInData, T dataBean) {
 
     }
 }
