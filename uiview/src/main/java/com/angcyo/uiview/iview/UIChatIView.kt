@@ -84,10 +84,14 @@ open abstract class UIChatIView<ItemType, DataType> : UIExItemUIView<ItemType, D
         }
     }
 
+    /**
+     * 快速手指向上滑动, 用来在聊天界面显示键盘
+     */
     open fun onFastScrollToTop(recyclerView: RRecyclerView) {
 
     }
 
+    /**RecyclerView 滑动回调*/
     open fun onTouchScroll(recyclerView: RRecyclerView,
                            downX: Float, downY: Float,
                            eventX: Float, eventY: Float,
@@ -97,6 +101,7 @@ open abstract class UIChatIView<ItemType, DataType> : UIExItemUIView<ItemType, D
         }
     }
 
+    /**在  RecyclerView 区域快速点击*/
     open fun onFastClick() {
         onBackPressed()
     }

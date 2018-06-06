@@ -1,0 +1,119 @@
+<?xml version="1.0" encoding="utf-8"?>
+<com.angcyo.uiview.viewgroup.RLinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/base_chat_item_root_layout"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+    tools:background="@color/transparent_dark20">
+
+    <TextView
+        android:id="@+id/base_chat_time_tip_view"
+        style="@style/BaseDarkTextStyle"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center_horizontal"
+        android:layout_marginBottom="@dimen/base_ldpi"
+        android:layout_marginTop="@dimen/base_ldpi"
+        android:background="@drawable/shape_round_dark_color"
+        android:paddingEnd="@dimen/base_ldpi"
+        android:paddingStart="@dimen/base_ldpi"
+        android:textColor="@color/base_white"
+        tools:text="今天 9:00"/>
+
+    <!--正常item包裹-->
+    <com.angcyo.uiview.viewgroup.RConstraintLayout
+        android:id="@+id/base_chat_item_wrap_layout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:padding="@dimen/base_xhdpi">
+
+        <!--头像-->
+        <FrameLayout
+            android:id="@+id/base_chat_avatar_control_layout"
+            android:layout_width="50dp"
+            android:layout_height="50dp"
+            app:layout_constraintRight_toRightOf="parent">
+
+            <com.angcyo.uiview.widget.GlideImageView
+                android:id="@+id/base_chat_avatar_view"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:scaleType="centerCrop"
+                app:r_show_type="CIRCLE"
+                tools:src="@drawable/default_image"/>
+
+        </FrameLayout>
+
+        <!--名称布局控制-->
+        <LinearLayout
+            android:id="@+id/base_chat_name_control_layout"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:paddingEnd="@dimen/base_xhdpi"
+            android:paddingStart="@dimen/base_xhdpi"
+            app:layout_constraintRight_toLeftOf="@id/base_chat_avatar_control_layout"
+            app:layout_constraintTop_toTopOf="@id/base_chat_avatar_control_layout">
+
+            <TextView
+                android:id="@+id/base_chat_name_view"
+                style="@style/BaseMainTextStyle"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                tools:text="用户名"/>
+
+        </LinearLayout>
+
+        <!--内容包裹-->
+        <com.angcyo.uiview.viewgroup.FillLayout
+            android:id="@+id/base_chat_content_control_layout"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintRight_toLeftOf="@id/base_chat_avatar_control_layout"
+            app:layout_constraintTop_toBottomOf="@id/base_chat_name_control_layout"
+            app:r_reverse_fill_layout="true">
+
+            <!--消息体-->
+            <FrameLayout
+                android:id="@+id/base_chat_content_wrap_layout"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                app:r_fill_view="true">
+
+                <!--<TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="阿萨德发送地方撒旦法撒旦123法撒旦飞洒的份上阿萨德发送地方撒旦法撒旦法撒旦飞洒的份上"/>-->
+            </FrameLayout>
+
+            <!--消息状态显示-->
+            <LinearLayout
+                android:id="@+id/base_chat_state_control_layout"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="bottom"
+                android:gravity="right"
+                android:orientation="horizontal">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="发送中"/>
+
+            </LinearLayout>
+        </com.angcyo.uiview.viewgroup.FillLayout>
+    </com.angcyo.uiview.viewgroup.RConstraintLayout>
+
+    <!--全屏item包裹-->
+    <FrameLayout
+        android:id="@+id/base_chat_full_item_wrap_layout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@color/transparent_dark40"
+        tools:layout_height="20dp"/>
+
+</com.angcyo.uiview.viewgroup.RLinearLayout>

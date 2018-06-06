@@ -148,6 +148,10 @@ open class FillLayout : ViewGroup {
 
         for (i in 0 until childCount) {
             val childAt = getChildAt(i)
+            if (childAt.visibility != View.VISIBLE) {
+                continue
+            }
+
             if (childAt is LinearLayout) {
                 childAt.gravity = if (reverseLayout) {
                     Gravity.END

@@ -1,15 +1,23 @@
 <?xml version="1.0" encoding="utf-8"?>
-<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
-             android:layout_width="wrap_content"
-             android:layout_height="wrap_content"
-             android:background="@color/base_chat_bg_color"
-             android:padding="@dimen/base_xhdpi">
+<android.support.v7.widget.CardView
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_margin="@dimen/base_xhdpi"
+    android:background="@color/base_chat_bg_color">
 
-    <TextView
-        android:id="@+id/text_view"
-        style="@style/BaseMainTextStyle"
-        android:layout_width="wrap_content"
+    <FrameLayout
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="[不支持的类型]"/>
+        android:padding="@dimen/base_xhdpi">
 
-</FrameLayout>
+        <TextView
+            android:id="@+id/text_view"
+            style="@style/BaseMainTextStyle"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:text="[不支持的类型]"/>
+
+    </FrameLayout>
+</android.support.v7.widget.CardView>
