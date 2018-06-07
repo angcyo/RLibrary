@@ -771,6 +771,9 @@ public class AnimUtil {
         return rotateAnimation(false, toDegrees);
     }
 
+    /**
+     * 旋转动画
+     */
     public static Animation rotateAnimation(boolean circle /*循环动画*/, float toDegrees) {
         RotateAnimation animation = new RotateAnimation(0f, toDegrees,
                 Animation.RELATIVE_TO_SELF, 0.5f, Animation.RELATIVE_TO_SELF, 0.5f);

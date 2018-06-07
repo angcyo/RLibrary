@@ -144,21 +144,24 @@ public class Luban {
                 .map(new Func1<String, String>() {
                     @Override
                     public String call(String s) {
+                        if (s.startsWith("http")) {
+                            return s;
+                        }
                         return Luban.get(context.getApplicationContext()).thirdCompress(new File(s)).getAbsolutePath();
                     }
                 })
                 .scan(new Func2<String, String, String>() {
                     @Override
                     public String call(String s, String s2) {
-                        return s + ":" + s2;
+                        return s + "|" + s2;
                     }
                 })
                 .last()
                 .map(new Func1<String, ArrayList<String>>() {
                     @Override
                     public ArrayList<String> call(String s) {
-                        ArrayList<String> list = new ArrayList<String>();
-                        String[] split = s.split(":");
+                        ArrayList<String> list = new ArrayList<>();
+                        String[] split = s.split("\\|");
                         for (int i = 0; i < split.length; i++) {
                             list.add(split[i]);
                         }
