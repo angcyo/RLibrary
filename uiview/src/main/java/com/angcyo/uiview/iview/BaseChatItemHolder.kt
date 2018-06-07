@@ -8,9 +8,11 @@ import android.widget.FrameLayout
 import android.widget.LinearLayout
 import android.widget.TextView
 import com.angcyo.uiview.R
+import com.angcyo.uiview.kotlin.nowTime
 import com.angcyo.uiview.recycler.RBaseViewHolder
-import com.angcyo.uiview.recycler.adapter.IExBaseDataType
+import com.angcyo.uiview.recycler.adapter.IChatDataType
 import com.angcyo.uiview.recycler.adapter.RExItemHolder
+import com.angcyo.uiview.utils.RUtils
 import com.angcyo.uiview.viewgroup.FillLayout
 import com.angcyo.uiview.viewgroup.RConstraintLayout
 import com.angcyo.uiview.viewgroup.RLinearLayout
@@ -27,7 +29,13 @@ import com.angcyo.uiview.widget.GlideImageView
  * 修改备注：
  * Version: 1.0.0
  */
-open class BaseChatItemHolder : RExItemHolder<IExBaseDataType>() {
+open class BaseChatItemHolder : RExItemHolder<IChatDataType>() {
+
+    companion object {
+        /**最后一次显示的时间*/
+        var lastShowTime = 0L
+    }
+
     //最根的布局
     lateinit var chatItemRootLayout: RLinearLayout
     //消息顶部的时间
@@ -52,7 +60,7 @@ open class BaseChatItemHolder : RExItemHolder<IExBaseDataType>() {
     //全屏item显示包裹布局
     lateinit var chatFullItemWrapLayout: FrameLayout
 
-    override fun onBindItemDataView(holder: RBaseViewHolder, posInData: Int, dataBean: IExBaseDataType?) {
+    override fun onBindItemDataView(holder: RBaseViewHolder, posInData: Int, dataBean: IChatDataType?) {
         chatItemRootLayout = holder.v(R.id.base_chat_item_root_layout)
         chatTimeTipView = holder.v(R.id.base_chat_time_tip_view)
 
@@ -71,10 +79,11 @@ open class BaseChatItemHolder : RExItemHolder<IExBaseDataType>() {
         chatFullItemWrapLayout = holder.v(R.id.base_chat_full_item_wrap_layout) //全屏内容包裹
 
         initBaseLayout(holder, posInData, dataBean)
+        initShowChatTimeTip(holder, posInData, dataBean)
         onBindChatItemView(holder, posInData, dataBean)
     }
 
-    open fun initBaseLayout(holder: RBaseViewHolder, posInData: Int, dataBean: IExBaseDataType?) {
+    open fun initBaseLayout(holder: RBaseViewHolder, posInData: Int, dataBean: IChatDataType?) {
         if (isFullItemLayout(holder, posInData, dataBean)) {
             //全屏item
             chatItemWrapLayout.visibility = View.GONE
@@ -93,60 +102,121 @@ open class BaseChatItemHolder : RExItemHolder<IExBaseDataType>() {
 
             if (isReceiveItemLayout(holder, posInData, dataBean)) {
                 //收到的消息
-                chatAvatarControlLayout.layoutParams = ConstraintLayout.LayoutParams((50 * density()).toInt(), (50 * density()).toInt()).apply {
+                chatAvatarControlLayout.layoutParams = ConstraintLayout.LayoutParams(
+                        (50 * density()).toInt(), (50 * density()).toInt()).apply {
                     leftToLeft = PARENT_ID
                 }
                 chatNameControlLayout.visibility = View.VISIBLE
-                chatNameControlLayout.layoutParams = ConstraintLayout.LayoutParams(-2, -2).apply {
+                chatNameControlLayout.layoutParams = ConstraintLayout.LayoutParams(
+                        -2, -2).apply {
                     leftToRight = R.id.base_chat_avatar_control_layout
                     topToTop = R.id.base_chat_avatar_control_layout
                 }
                 chatContentControlLayout.reverseLayout = false
-                chatContentControlLayout.layoutParams = ConstraintLayout.LayoutParams(0, -2).apply {
+                chatContentControlLayout.layoutParams = ConstraintLayout.LayoutParams(
+                        0, -2).apply {
                     rightToRight = PARENT_ID
                     leftToRight = R.id.base_chat_avatar_control_layout
                     topToBottom = R.id.base_chat_name_control_layout
+                    leftMargin = (4 * density()).toInt()
                 }
             } else {
                 //发送的消息
-                chatAvatarControlLayout.layoutParams = ConstraintLayout.LayoutParams((50 * density()).toInt(), (50 * density()).toInt()).apply {
+                chatAvatarControlLayout.layoutParams = ConstraintLayout.LayoutParams(
+                        (50 * density()).toInt(), (50 * density()).toInt()).apply {
                     rightToRight = PARENT_ID
                 }
                 chatNameControlLayout.visibility = View.GONE //自动发送的消息, 不显示名称
-                chatNameControlLayout.layoutParams = ConstraintLayout.LayoutParams(-2, -2).apply {
+                chatNameControlLayout.layoutParams = ConstraintLayout.LayoutParams(
+                        -2, -2).apply {
                     rightToLeft = R.id.base_chat_avatar_control_layout
                     topToTop = R.id.base_chat_avatar_control_layout
                 }
                 chatContentControlLayout.reverseLayout = true
-                chatContentControlLayout.layoutParams = ConstraintLayout.LayoutParams(0, -2).apply {
+                chatContentControlLayout.layoutParams = ConstraintLayout.LayoutParams(
+                        0, -2).apply {
                     leftToLeft = PARENT_ID
                     rightToLeft = R.id.base_chat_avatar_control_layout
                     topToBottom = R.id.base_chat_name_control_layout
+                    rightMargin = (4 * density()).toInt()
                 }
             }
         }
     }
 
-    open fun onBindChatItemView(holder: RBaseViewHolder, posInData: Int, dataBean: IExBaseDataType?) {
+    open fun onBindChatItemView(holder: RBaseViewHolder, posInData: Int, dataBean: IChatDataType?) {
 
+    }
+
+    /**是否需要显示tip时间*/
+    open fun initShowChatTimeTip(holder: RBaseViewHolder, posInData: Int, dataBean: IChatDataType?) {
+        if (dataBean == null || posInData < 0) {
+            chatTimeTipView.visibility = View.GONE
+            return
+        }
+        var showTime: Boolean //是否需要显示消息时间
+        if (dataBean.ignoreChatTime()) {
+            showTime = false
+        } else {
+            if (posInData == 0) {
+                showTime = true
+            } else {
+                //判断之前是否都是忽略时间的消息
+                var isAllIgnoreChatTime = true
+                for (i in posInData - 1 downTo 0) {
+                    if (exItemAdapter!!.allDatas[i].ignoreChatTime()) {
+
+                    } else {
+                        isAllIgnoreChatTime = false
+                    }
+                }
+
+                if (isAllIgnoreChatTime) {
+                    showTime = true
+                    lastShowTime = dataBean.chatTime
+                } else {
+                    val prevData = exItemAdapter!!.allDatas[posInData - 1]
+                    val prevTime = prevData.chatTime
+                    if (dataBean.chatTime - prevTime >= 60 * 1000) {
+                        //和之前的时间相隔一分钟
+                        showTime = true
+                        lastShowTime = dataBean.chatTime
+                    } else {
+                        if (lastShowTime <= 0) {
+                            lastShowTime = nowTime()
+                        }
+
+                        //防止一直聊天, 不停止.导致时间一直不显示
+                        showTime = dataBean.chatTime - lastShowTime >= 60 * 1000
+                    }
+                }
+            }
+        }
+
+        if (showTime) {
+            chatTimeTipView.visibility = View.VISIBLE
+            chatTimeTipView.text = RUtils.getShotTimeString(dataBean.chatTime)
+        } else {
+            chatTimeTipView.visibility = View.GONE
+        }
     }
 
     /**内容布局*/
     open fun getChatContentItemLayoutId(): Int {
-        return R.layout.base_text_item_selector_layout
+        return R.layout.base_chat_text_layout
     }
 
     /**
      * 是否需要占满item  (在不需要显示标准的头像布局下使用)
      * */
-    open fun isFullItemLayout(holder: RBaseViewHolder, posInData: Int, dataBean: IExBaseDataType?): Boolean {
+    open fun isFullItemLayout(holder: RBaseViewHolder, posInData: Int, dataBean: IChatDataType?): Boolean {
         return false
     }
 
     /**
      * 是否是接收到的消息, 否则就是自己发送的消息
      * */
-    open fun isReceiveItemLayout(holder: RBaseViewHolder, posInData: Int, dataBean: IExBaseDataType?): Boolean {
+    open fun isReceiveItemLayout(holder: RBaseViewHolder, posInData: Int, dataBean: IChatDataType?): Boolean {
         return true
     }
 

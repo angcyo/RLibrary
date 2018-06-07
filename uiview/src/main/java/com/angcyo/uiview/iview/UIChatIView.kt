@@ -1,12 +1,18 @@
 package com.angcyo.uiview.iview
 
 import android.view.LayoutInflater
+import android.view.View
 import android.widget.FrameLayout
 import com.angcyo.uiview.R
 import com.angcyo.uiview.base.UIExItemUIView
 import com.angcyo.uiview.container.ContentLayout
+import com.angcyo.uiview.kotlin.clickIt
 import com.angcyo.uiview.kotlin.nowTime
+import com.angcyo.uiview.kotlin.onDoubleTap
+import com.angcyo.uiview.kotlin.onEmptyText
 import com.angcyo.uiview.recycler.RRecyclerView
+import com.angcyo.uiview.resources.AnimUtil
+import com.angcyo.uiview.widget.ExEditText
 import com.angcyo.uiview.widget.RSoftInputLayout
 
 /**
@@ -88,7 +94,9 @@ open abstract class UIChatIView<ItemType, DataType> : UIExItemUIView<ItemType, D
      * 快速手指向上滑动, 用来在聊天界面显示键盘
      */
     open fun onFastScrollToTop(recyclerView: RRecyclerView) {
-
+        if (recyclerView.isLastItemVisible) {
+            showSoftInput(chatInputView)
+        }
     }
 
     /**RecyclerView 滑动回调*/
@@ -140,14 +148,57 @@ open abstract class UIChatIView<ItemType, DataType> : UIExItemUIView<ItemType, D
 
     }
 
+
+    lateinit var chatInputView: ExEditText
+    lateinit var chatSendButton: View
+    open fun getInputLayoutId(): Int = R.layout.base_chat_input_layout
+
     /**请根据需求, 填充相应的输入框布局*/
     open fun initInputLayout(chatInputControlFrameLayout: FrameLayout, inflater: LayoutInflater) {
+        inflater.inflate(getInputLayoutId(), chatInputControlFrameLayout).apply {
+            chatInputView = findViewById(R.id.base_input_view)
+            chatSendButton = findViewById(R.id.base_send_button)
 
+            //文本框监听
+            chatInputView.onEmptyText {
+                if (it) {
+                    if (chatSendButton.visibility == View.INVISIBLE) {
+                        return@onEmptyText
+                    }
+                    chatSendButton.isEnabled = false
+                    AnimUtil.scaleToMin(chatSendButton) {
+                        chatSendButton.visibility = View.INVISIBLE
+                    }
+                } else {
+                    if (chatSendButton.visibility == View.VISIBLE) {
+                        return@onEmptyText
+                    }
+                    chatSendButton.isEnabled = true
+                    chatSendButton.visibility = View.VISIBLE
+                    AnimUtil.scaleToMax(chatSendButton)
+                }
+            }
+
+            //双击发送
+            chatInputView.onDoubleTap {
+                onSendButtonClick(chatInputView.string())
+            }
+
+            //发送按钮监听
+            chatSendButton.clickIt {
+                onSendButtonClick(chatInputView.string())
+            }
+        }
+    }
+
+    open fun onSendButtonClick(inputText: String) {
+        //清空输入
+        chatInputView.setInputText("")
     }
 
     protected var lastAddMessageTime = 0L
-    open fun addMessageToLast(dataBea: DataType) {
-        mExBaseAdapter.addLastItem(dataBea)
+    open fun addMessageToLast(dataBean: DataType) {
+        mExBaseAdapter.addLastItem(dataBean)
         val nowTime = nowTime()
         if (nowTime - lastAddMessageTime > 300) {
             scrollToLastBottom(true)

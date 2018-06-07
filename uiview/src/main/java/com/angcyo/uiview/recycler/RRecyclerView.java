@@ -892,7 +892,7 @@ public class RRecyclerView extends RecyclerView implements StickLayout.CanScroll
     /**
      * 最后一个Item是否可见
      */
-    public boolean isLastItemVisible(boolean completelyVisible) {
+    public boolean isLastItemVisible(boolean completelyVisible /*是否需要完全可见*/) {
         boolean visible = false;
 
         Adapter adapter = getAdapter();
@@ -930,6 +930,9 @@ public class RRecyclerView extends RecyclerView implements StickLayout.CanScroll
         return visible;
     }
 
+    /**
+     * 最后一个item是否可见
+     */
     public boolean isLastItemVisible() {
         return isLastItemVisible(false);
     }

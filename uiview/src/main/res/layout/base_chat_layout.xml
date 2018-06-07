@@ -17,7 +17,7 @@
         android:layout_gravity="center_horizontal"
         android:layout_marginBottom="@dimen/base_ldpi"
         android:layout_marginTop="@dimen/base_ldpi"
-        android:background="@drawable/shape_round_dark_color"
+        android:background="@drawable/base_chat_tip_bg"
         android:paddingEnd="@dimen/base_ldpi"
         android:paddingStart="@dimen/base_ldpi"
         android:textColor="@color/base_white"
@@ -97,7 +97,8 @@
                 android:layout_height="wrap_content"
                 android:layout_gravity="bottom"
                 android:gravity="right"
-                android:orientation="horizontal">
+                android:orientation="horizontal"
+                android:visibility="invisible">
 
                 <TextView
                     android:layout_width="wrap_content"
@@ -113,7 +114,7 @@
         android:id="@+id/base_chat_full_item_wrap_layout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:background="@color/transparent_dark40"
+        tools:background="@color/transparent_dark40"
         tools:layout_height="20dp"/>
 
 </com.angcyo.uiview.viewgroup.RLinearLayout>

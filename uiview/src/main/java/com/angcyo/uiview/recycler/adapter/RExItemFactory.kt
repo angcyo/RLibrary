@@ -90,6 +90,16 @@ abstract class RExItemFactory<ItemType, DataType> {
         //获取item type
         val indexOfValue = allItemTypes.indexOfValue(itemTypeFromData)
         if (indexOfValue == -1) {
+            if (itemTypeFromData is String) {
+                //枚举手动匹配一次
+                for (i in 0 until allItemTypes.size()) {
+                    val keyAt = allItemTypes.keyAt(i)
+                    val value = allItemTypes[keyAt]
+                    if (itemTypeFromData == value) {
+                        return i
+                    }
+                }
+            }
             return NO_SUPPORT_ITEM_TYPE
         }
         return indexOfValue

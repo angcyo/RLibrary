@@ -1,5 +1,7 @@
 package com.neovisionaries.ws.client.angcyo;
 
+import android.support.annotation.NonNull;
+
 import com.neovisionaries.ws.client.WebSocket;
 
 /**
@@ -34,7 +36,7 @@ public class RWebSocketListener {
      * WebSocket 连接成功
      */
     @Deprecated
-    public void connectSuccessWebsocket(WebSocket webSocket) {
+    public void connectSuccessWebsocket(@NonNull WebSocket webSocket) {
 
     }
 
@@ -43,14 +45,14 @@ public class RWebSocketListener {
      *
      * @param isReconnect 是否是重连
      */
-    public void connectSuccessWebsocket(WebSocket webSocket, Boolean isReconnect) {
+    public void connectSuccessWebsocket(@NonNull WebSocket webSocket, Boolean isReconnect) {
         connectSuccessWebsocket(webSocket);
     }
 
     /**
      * 主线程回调
      */
-    public void onTextMessage(WebSocket websocket, String data) {
+    public void onTextMessage(@NonNull WebSocket websocket, String data) {
 
     }
 

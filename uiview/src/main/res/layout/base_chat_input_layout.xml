@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:background="@color/base_white"
+    android:orientation="horizontal"
+    android:paddingBottom="@dimen/base_hdpi"
+    android:paddingTop="@dimen/base_hdpi"
+    tools:background="@color/transparent_dark40"
+    tools:layout_height="120dp">
+
+    <com.angcyo.uiview.widget.ExEditText
+        android:id="@+id/base_input_view"
+        style="@style/BaseMainTextStyle"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="@dimen/base_xhdpi"
+        android:layout_weight="1"
+        android:background="@drawable/dark_input_round_selector"
+        android:hint="点击输入发送新消息"
+        android:maxHeight="160dp"
+        android:minHeight="38dp"
+        android:padding="@dimen/base_ldpi"
+        android:textSize="@dimen/default_text_size16"
+        tools:layout_height="100dp"/>
+
+    <FrameLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="bottom">
+
+        <!--发送按钮-->
+        <com.angcyo.uiview.widget.Button
+            android:id="@+id/base_send_button"
+            style="@style/BaseSkinButtonStyle2"
+            android:layout_width="wrap_content"
+            android:layout_height="30dp"
+            android:layout_marginBottom="@dimen/base_ldpi"
+            android:layout_marginEnd="@dimen/base_hdpi"
+            android:layout_marginStart="@dimen/base_hdpi"
+            android:enabled="false"
+            android:text="发送"
+            android:textSize="14dp"
+            android:visibility="invisible"
+            tools:visibility="visible"/>
+    </FrameLayout>
+</LinearLayout>

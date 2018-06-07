@@ -529,6 +529,30 @@ public class AnimUtil {
     }
 
     /**
+     * 从0.2, 线性放大到1f
+     */
+    public static void scaleToMax(View view) {
+        ViewCompat.setScaleX(view, 0.2f);
+        ViewCompat.setScaleY(view, 0.2f);
+        view.animate()
+                .scaleX(1f)
+                .scaleY(1f)
+                .setDuration(300)
+                .start();
+    }
+
+    public static void scaleToMin(View view, Runnable endRunnable) {
+        ViewCompat.setScaleX(view, 1f);
+        ViewCompat.setScaleY(view, 1f);
+        view.animate()
+                .scaleX(0.2f)
+                .scaleY(0.2f)
+                .setDuration(300)
+                .withEndAction(endRunnable)
+                .start();
+    }
+
+    /**
      * 抖动 放大缩小
      */
     public static void scaleBounceView(View view) {
