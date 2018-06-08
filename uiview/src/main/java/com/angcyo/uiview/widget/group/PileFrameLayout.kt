@@ -9,7 +9,7 @@ import com.angcyo.uiview.kotlin.density
 /**
  * Copyright (C) 2016,深圳市红鸟网络科技股份有限公司 All rights reserved.
  * 项目名称：
- * 类的描述：把子View堆起来显示
+ * 类的描述：把子View堆起来显示 叠起来显示
  * 创建人员：Robi
  * 创建时间：2017/12/27 13:37
  * 修改人员：Robi

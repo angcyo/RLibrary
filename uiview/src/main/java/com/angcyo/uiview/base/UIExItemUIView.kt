@@ -44,10 +44,10 @@ abstract class UIExItemUIView<ItemType, DataType> : UIRecyclerUIView<String, Dat
                 super.onScrollStateChanged(recyclerView, newState)
             }
 
-            override fun onScrollStateEnd(rRecyclerView: RRecyclerView,
+            override fun onScrollStateEnd(recyclerView: RRecyclerView,
                                           firstItemVisible: Boolean, lastItemVisible: Boolean,
                                           topCanScroll: Boolean, bottomCanScroll: Boolean) {
-                super.onScrollStateEnd(rRecyclerView, firstItemVisible, lastItemVisible, topCanScroll, bottomCanScroll)
+                super.onScrollStateEnd(recyclerView, firstItemVisible, lastItemVisible, topCanScroll, bottomCanScroll)
             }
 
             override fun onScrolled(recyclerView: RRecyclerView, dx: Int, dy: Int) {
@@ -55,7 +55,7 @@ abstract class UIExItemUIView<ItemType, DataType> : UIRecyclerUIView<String, Dat
                 onRecyclerViewScrolled(recyclerView, dx, dy)
             }
 
-            override fun onScrolledInTouch(recyclerView: RRecyclerView, e1: MotionEvent, e2: MotionEvent,
+            override fun onScrolledInTouch(recyclerView: RRecyclerView, e1: MotionEvent?, e2: MotionEvent?,
                                            distanceX: Float, distanceY: Float) {
                 super.onScrolledInTouch(recyclerView, e1, e2, distanceX, distanceY)
             }

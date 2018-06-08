@@ -471,7 +471,7 @@ public abstract class RBaseAdapter<T> extends RecyclerView.Adapter<RBaseViewHold
     }
 
     public void onScrolledInTouch(@NonNull RRecyclerView recyclerView,
-                                  @NonNull MotionEvent e1, @NonNull MotionEvent e2,
+                                  MotionEvent e1, MotionEvent e2,
                                   float distanceX, float distanceY) {
     }
 

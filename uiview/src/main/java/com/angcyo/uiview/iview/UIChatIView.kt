@@ -122,7 +122,10 @@ open abstract class UIChatIView<ItemType, DataType> : UIExItemUIView<ItemType, D
 
     /**在  RecyclerView 区域快速点击*/
     open fun onFastClick() {
-        onBackPressed()
+        if (softInputLayout.isKeyboardShow) {
+            //只隐藏键盘, 不隐藏emoji
+            onBackPressed()
+        }
     }
 
     override fun afterInflateView(baseContentLayout: ContentLayout) {
