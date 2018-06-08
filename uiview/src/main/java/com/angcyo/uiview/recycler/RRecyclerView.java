@@ -160,6 +160,18 @@ public class RRecyclerView extends RecyclerView implements StickLayout.CanScroll
             }
             return super.onScroll(e1, e2, distanceX, distanceY);
         }
+
+        @Override
+        public boolean onSingleTapConfirmed(MotionEvent e) {
+            return super.onSingleTapConfirmed(e);
+        }
+
+        @Override
+        public boolean onSingleTapUp(MotionEvent e) {
+            //performClick();//模拟了 点击事件
+            callOnClick();//很直接的调用点击listener
+            return super.onSingleTapUp(e);
+        }
     });
     private OnSizeChangedListener mOnSizeChangedListener;
     private OnTouchScrollListener mOnTouchScrollListener;

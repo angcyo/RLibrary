@@ -412,7 +412,14 @@ public class Rx<Rx> extends Observable<Rx> {
 
                                     if (result == 1) {
                                         //请求成功
-                                        String data = jsonObject.getString("data");
+                                        String data = null;
+                                        try {
+                                            data = jsonObject.getString("data");
+                                        } catch (JSONException e) {
+                                            //没有data字段
+                                            //e.printStackTrace();
+                                            data = "";
+                                        }
                                         if (!TextUtils.isEmpty(data)) {
                                             if (type == String.class) {
                                                 bean = (T) data;
@@ -484,7 +491,14 @@ public class Rx<Rx> extends Observable<Rx> {
 
                                     if (result == 0) {
                                         //请求成功
-                                        String data = jsonObject.getString("data");
+                                        String data = null;
+                                        try {
+                                            data = jsonObject.getString("data");
+                                        } catch (JSONException e) {
+                                            //没有data字段
+                                            //e.printStackTrace();
+                                            data = "";
+                                        }
                                         if (!TextUtils.isEmpty(data)) {
                                             bean = Json.from(data, type);
                                             return bean;
@@ -553,7 +567,14 @@ public class Rx<Rx> extends Observable<Rx> {
                                     }
                                     if (result == 1) {
                                         //请求成功
-                                        String data = jsonObject.getString("data");
+                                        String data = null;
+                                        try {
+                                            data = jsonObject.getString("data");
+                                        } catch (JSONException e) {
+                                            //没有data字段
+                                            //e.printStackTrace();
+                                            data = "";
+                                        }
                                         if (!TextUtils.isEmpty(data)) {
                                             bean = Json.from(data, TypeBuilder.newInstance(List.class).addTypeParam(type).build());
                                             return bean;
@@ -622,7 +643,14 @@ public class Rx<Rx> extends Observable<Rx> {
                                     }
                                     if (result == successCode) {
                                         //请求成功
-                                        String data = jsonObject.getString("data");
+                                        String data = null;
+                                        try {
+                                            data = jsonObject.getString("data");
+                                        } catch (JSONException e) {
+                                            //没有data字段
+                                            //e.printStackTrace();
+                                            data = "";
+                                        }
                                         if (!TextUtils.isEmpty(data)) {
                                             bean = Json.from(data, TypeBuilder.newInstance(List.class).addTypeParam(type).build());
                                             return bean;
