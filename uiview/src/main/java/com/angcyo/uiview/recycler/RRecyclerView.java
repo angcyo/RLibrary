@@ -889,10 +889,15 @@ public class RRecyclerView extends RecyclerView implements StickLayout.CanScroll
         return visible;
     }
 
+    public boolean isLastItemVisible(boolean completelyVisible) {
+        return isLastItemVisible(completelyVisible, false);
+    }
+
     /**
      * 最后一个Item是否可见
      */
-    public boolean isLastItemVisible(boolean completelyVisible /*是否需要完全可见*/) {
+    public boolean isLastItemVisible(boolean completelyVisible /*是否需要完全可见*/,
+                                     boolean ignoreChildCount /*当child数量为0时, 是否当作可见*/) {
         boolean visible = false;
 
         Adapter adapter = getAdapter();
@@ -903,6 +908,21 @@ public class RRecyclerView extends RecyclerView implements StickLayout.CanScroll
                 LinearLayoutManager lm = (LinearLayoutManager) layoutManager;
                 int childCount = lm.getChildCount();
                 int count = lm.getItemCount();
+
+                if (ignoreChildCount && childCount == 0 && count != 0) {
+                    //有数据, 但是还没有开始布局, 一般在刚设置adapter或者adapter的data时候出现
+                    return true;
+                }
+
+                //如果触发过RecyclerView的scroll, 这个字段会有值
+                Object member = Reflect.getMember(LinearLayoutManager.class, lm, "mPendingScrollPosition");
+                if (member != null) {
+                    int mPendingScrollPosition = (int) member;
+                    if (mPendingScrollPosition != NO_POSITION) {
+                        return mPendingScrollPosition == adapter.getItemCount() - 1;
+                    }
+                }
+
                 if (completelyVisible) {
                     /**
                      * 最后一个Item完全可见, 顶部和底部 都在屏幕内
@@ -922,6 +942,7 @@ public class RRecyclerView extends RecyclerView implements StickLayout.CanScroll
                 } else {
                     lastVisibleItemPosition = lm.findLastVisibleItemPosition();
                 }
+
                 visible = lastVisibleItemPosition == adapter.getItemCount() - 1;
             } else if (layoutManager instanceof StaggeredGridLayoutManager) {
 

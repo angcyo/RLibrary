@@ -1,5 +1,6 @@
 package com.angcyo.uiview.iview
 
+import android.support.annotation.IntDef
 import android.view.LayoutInflater
 import android.view.View
 import android.widget.FrameLayout
@@ -21,6 +22,12 @@ import com.angcyo.uiview.widget.RSoftInputLayout
  */
 
 open abstract class UIChatIView<ItemType, DataType> : UIExItemUIView<ItemType, DataType>() {
+    companion object {
+        const val AUTO = 0
+        const val FORCE = 1
+        const val CLOSE = -1
+    }
+
     /**键盘标签切换布局*/
     lateinit var softInputLayout: RSoftInputLayout
     /**最顶级的根布局*/
@@ -54,6 +61,10 @@ open abstract class UIChatIView<ItemType, DataType> : UIExItemUIView<ItemType, D
 
     override fun needLoadData(): Boolean {
         return true
+    }
+
+    override fun needForceMeasure(): Boolean {
+        return false
     }
 
     override fun onUILoadEmpty() {
@@ -127,7 +138,12 @@ open abstract class UIChatIView<ItemType, DataType> : UIExItemUIView<ItemType, D
         }
 
         val layoutInflater = LayoutInflater.from(mActivity)
+
+        //覆盖在内容层
+        initContentOverlayLayout(chatContentRootFrameLayout, layoutInflater)
+        //输入框
         initInputLayout(chatInputControlFrameLayout, layoutInflater)
+        //表情
         initEmojiLayout(chatEmojiRootFrameLayout, layoutInflater)
     }
 
@@ -143,9 +159,26 @@ open abstract class UIChatIView<ItemType, DataType> : UIExItemUIView<ItemType, D
         mRecyclerView?.scrollToLastBottom(anim)
     }
 
+    open fun getContentOverlayLayoutId(): Int = -1
+
+    /**请根据需求, 填充相应的覆盖布局*/
+    open fun initContentOverlayLayout(chatContentRootFrameLayout: FrameLayout, inflater: LayoutInflater) {
+        if (getContentOverlayLayoutId() != -1) {
+            inflater.inflate(getContentOverlayLayoutId(), chatContentRootFrameLayout).apply {
+
+            }
+        }
+    }
+
+    open fun getEmojiLayoutId(): Int = -1
+
     /**请根据需求, 填充相应的表情布局*/
     open fun initEmojiLayout(chatEmojiRootFrameLayout: FrameLayout, inflater: LayoutInflater) {
+        if (getEmojiLayoutId() != -1) {
+            inflater.inflate(getEmojiLayoutId(), chatEmojiRootFrameLayout).apply {
 
+            }
+        }
     }
 
 
@@ -161,22 +194,7 @@ open abstract class UIChatIView<ItemType, DataType> : UIExItemUIView<ItemType, D
 
             //文本框监听
             chatInputView.onEmptyText {
-                if (it) {
-                    if (chatSendButton.visibility == View.INVISIBLE) {
-                        return@onEmptyText
-                    }
-                    chatSendButton.isEnabled = false
-                    AnimUtil.scaleToMin(chatSendButton) {
-                        chatSendButton.visibility = View.INVISIBLE
-                    }
-                } else {
-                    if (chatSendButton.visibility == View.VISIBLE) {
-                        return@onEmptyText
-                    }
-                    chatSendButton.isEnabled = true
-                    chatSendButton.visibility = View.VISIBLE
-                    AnimUtil.scaleToMax(chatSendButton)
-                }
+                onInputEmptyText(it)
             }
 
             //双击发送
@@ -191,20 +209,59 @@ open abstract class UIChatIView<ItemType, DataType> : UIExItemUIView<ItemType, D
         }
     }
 
+    open fun onInputEmptyText(empty: Boolean) {
+        if (empty) {
+            if (chatSendButton.visibility == View.INVISIBLE) {
+                return
+            }
+            chatSendButton.isEnabled = false
+            AnimUtil.scaleToMin(chatSendButton) {
+                chatSendButton.visibility = View.INVISIBLE
+            }
+        } else {
+            if (chatSendButton.visibility == View.VISIBLE) {
+                return
+            }
+            chatSendButton.isEnabled = true
+            chatSendButton.visibility = View.VISIBLE
+            AnimUtil.scaleToMax(chatSendButton)
+        }
+    }
+
     open fun onSendButtonClick(inputText: String) {
         //清空输入
         chatInputView.setInputText("")
     }
 
     protected var lastAddMessageTime = 0L
-    open fun addMessageToLast(dataBean: DataType) {
+    open fun addMessageToLast(dataBean: DataType,
+                              @MODE scrollToLast: Int = FORCE, /*0:自动, 1:强制滚动, -1:不滚动*/
+                              anim: Int = AUTO /*0:自动, 1:强制开启, -1:关闭动画*/) {
+        //在未插入数据之前, 优先拿到最后一个item的可见状态
+        val lastItemVisible = mRecyclerView.isLastItemVisible
+
         mExBaseAdapter.addLastItem(dataBean)
         val nowTime = nowTime()
-        if (nowTime - lastAddMessageTime > 300) {
-            scrollToLastBottom(true)
-        } else {
-            scrollToLastBottom(false)
+
+        val needAnim = when (anim) {
+            0 -> nowTime - lastAddMessageTime > 300
+            1 -> true
+            -1 -> false
+            else -> false
         }
+
+        if (scrollToLast == 1) {
+            scrollToLastBottom(needAnim)
+        } else if (scrollToLast == 0) {
+            if (lastItemVisible) {
+                scrollToLastBottom(needAnim)
+            }
+        }
+
         lastAddMessageTime = nowTime
     }
+
+    @IntDef(CLOSE, AUTO, FORCE)
+    @Retention(AnnotationRetention.SOURCE)
+    annotation class MODE
 }

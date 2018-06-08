@@ -6,4 +6,5 @@
     style="@style/BaseMainTextStyle"
     android:layout_width="wrap_content"
     android:layout_height="wrap_content"
+    android:padding="@dimen/base_ldpi"
     tools:text="文本消息文本消息文本消息文本消息文本消息文本消息"/>

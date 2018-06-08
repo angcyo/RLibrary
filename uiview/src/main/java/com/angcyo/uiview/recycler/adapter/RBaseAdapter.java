@@ -464,13 +464,15 @@ public abstract class RBaseAdapter<T> extends RecyclerView.Adapter<RBaseViewHold
 
     //----------------Item 数据的操作-----------------//
 
-    public void onScrollStateChanged(RRecyclerView recyclerView, int newState) {
+    public void onScrollStateChanged(@NonNull RRecyclerView recyclerView, int newState) {
     }
 
-    public void onScrolled(RRecyclerView recyclerView, int dx, int dy) {
+    public void onScrolled(@NonNull RRecyclerView recyclerView, int dx, int dy) {
     }
 
-    public void onScrolledInTouch(RRecyclerView recyclerView, MotionEvent e1, MotionEvent e2, float distanceX, float distanceY) {
+    public void onScrolledInTouch(@NonNull RRecyclerView recyclerView,
+                                  @NonNull MotionEvent e1, @NonNull MotionEvent e2,
+                                  float distanceX, float distanceY) {
     }
 
     /**

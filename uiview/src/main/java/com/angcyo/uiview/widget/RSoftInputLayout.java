@@ -19,6 +19,7 @@ import com.angcyo.library.utils.L;
 import com.angcyo.uiview.utils.ScreenUtil;
 import com.angcyo.uiview.view.ILifecycle;
 import com.angcyo.uiview.view.UIIViewImpl;
+import com.orhanobut.hawk.Hawk;
 
 import java.util.HashSet;
 import java.util.Iterator;
@@ -35,6 +36,8 @@ import java.util.Iterator;
  * Version: 1.0.0
  */
 public class RSoftInputLayout extends FrameLayout implements ILifecycle {
+
+    public static final String KEY_KEYBOARD_HEIGHT = "key_keyboard_height";
 
     private static final String TAG = "Robi";
     View contentLayout;
@@ -138,6 +141,8 @@ public class RSoftInputLayout extends FrameLayout implements ILifecycle {
     @Override
     protected void onAttachedToWindow() {
         super.onAttachedToWindow();
+
+        setKeyboardHeight(Hawk.get(KEY_KEYBOARD_HEIGHT, 0));
 
         if (!isInEditMode() && isEnabled()) {
             setFitsSystemWindows();
@@ -569,6 +574,10 @@ public class RSoftInputLayout extends FrameLayout implements ILifecycle {
 
     private void notifyEmojiLayoutChangeListener(boolean isEmojiShow, boolean isKeyboardShow, int height) {
         L.w(hashCode() + " 表情:" + isEmojiShow + " 键盘:" + isKeyboardShow + " 高度:" + height);
+
+        if (isKeyboardShow) {
+            Hawk.put(KEY_KEYBOARD_HEIGHT, height);
+        }
 
         Iterator<OnEmojiLayoutChangeListener> iterator = mEmojiLayoutChangeListeners.iterator();
         while (iterator.hasNext()) {

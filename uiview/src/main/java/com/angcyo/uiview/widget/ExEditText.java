@@ -1112,6 +1112,8 @@ public class ExEditText extends AppCompatEditText {
                 getText().replace(start, end, text, 0, length);
                 setSelection(start + length, start + length);
             }
+
+            requestFocus();//自动请求焦点
         } catch (Exception e) {
             e.printStackTrace();
         }

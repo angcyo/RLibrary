@@ -95,6 +95,8 @@ open class GlideImageView(context: Context, attributeSet: AttributeSet? = null) 
 
         if (defaultPlaceholderDrawable != null) {
             placeholderDrawable = defaultPlaceholderDrawable
+        } else if (drawable is BitmapDrawable) {
+            placeholderDrawable = drawable
         }
 
         if (noPlaceholderDrawable) {
@@ -135,6 +137,16 @@ open class GlideImageView(context: Context, attributeSet: AttributeSet? = null) 
         mShowGifTip = false
         override = true
         skipMemoryCache = true
+
+        if (defaultPlaceholderDrawable != null) {
+            placeholderDrawable = defaultPlaceholderDrawable
+        }
+
+        if (noPlaceholderDrawable) {
+            defaultPlaceholderDrawable = null
+            placeholderDrawable = null
+        }
+
         placeholderRes = defaultPlaceholderDrawableRes
         animType = AnimType.DEFAULT
         bitmapTransform = null
@@ -174,6 +186,11 @@ open class GlideImageView(context: Context, attributeSet: AttributeSet? = null) 
     //启动加载流程
     private fun startLoadUrl() {
         setShowGifTip(false)
+
+        if (TextUtils.isEmpty(url) && !TextUtils.isEmpty(loadSuccessUrl)) {
+            setImageDrawable(placeholderDrawable)
+        }
+
         if (url == null) {
             setTagUrl("")
         } else if (url.isNullOrEmpty()) {

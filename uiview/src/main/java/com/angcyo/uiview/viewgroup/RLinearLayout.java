@@ -3,11 +3,13 @@ package com.angcyo.uiview.viewgroup;
 import android.content.Context;
 import android.content.res.TypedArray;
 import android.graphics.Canvas;
+import android.graphics.Paint;
 import android.graphics.drawable.ColorDrawable;
 import android.graphics.drawable.Drawable;
 import android.support.annotation.ColorInt;
 import android.support.annotation.Nullable;
 import android.support.v4.content.ContextCompat;
+import android.text.TextPaint;
 import android.text.TextUtils;
 import android.util.AttributeSet;
 import android.view.Gravity;
@@ -20,6 +22,8 @@ import com.angcyo.uiview.draw.RDrawLine;
 import com.angcyo.uiview.kotlin.ExKt;
 import com.angcyo.uiview.kotlin.ViewExKt;
 import com.angcyo.uiview.utils.ScreenUtil;
+
+import static com.angcyo.uiview.resources.ResUtil.getColor;
 
 /**
  * Copyright (C) 2016,深圳市红鸟网络科技股份有限公司 All rights reserved.
@@ -61,6 +65,9 @@ public class RLinearLayout extends LinearLayout {
     private RDrawLine mDrawLine;
 
     private boolean showNoEnableMark = false;
+
+    private String debugInfoString = "";
+    private Paint debugInfoPaint;
 
     public RLinearLayout(Context context) {
         this(context, null);
@@ -255,6 +262,16 @@ public class RLinearLayout extends LinearLayout {
         if (!isEnabled() && showNoEnableMark) {
             canvas.drawColor(ContextCompat.getColor(getContext(), R.color.default_base_tran_dark2));
         }
+
+        if (!TextUtils.isEmpty(debugInfoString)) {
+            if (debugInfoPaint == null) {
+                debugInfoPaint = new TextPaint(Paint.ANTI_ALIAS_FLAG);
+            }
+            debugInfoPaint.setColor(getColor(R.color.base_dark_red));
+            debugInfoPaint.setTextSize(9 * ScreenUtil.density());
+
+            canvas.drawText(debugInfoString, getPaddingStart(), getMeasuredHeight() - debugInfoPaint.descent(), debugInfoPaint);
+        }
     }
 
     public void setRBackgroundDrawable(@ColorInt int color) {
@@ -293,6 +310,11 @@ public class RLinearLayout extends LinearLayout {
 
     public void setDrawLine(int gravity) {
         mDrawLine.drawLine = gravity;
+        postInvalidate();
+    }
+
+    public void setDebugInfoString(String debugInfoString) {
+        this.debugInfoString = debugInfoString;
         postInvalidate();
     }
 }

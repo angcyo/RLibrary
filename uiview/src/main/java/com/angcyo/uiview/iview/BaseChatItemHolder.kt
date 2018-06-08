@@ -1,22 +1,22 @@
 package com.angcyo.uiview.iview
 
-import android.support.constraint.ConstraintLayout
-import android.support.constraint.ConstraintLayout.LayoutParams.PARENT_ID
 import android.view.LayoutInflater
 import android.view.View
 import android.widget.FrameLayout
 import android.widget.LinearLayout
 import android.widget.TextView
+import com.angcyo.uiview.BuildConfig
 import com.angcyo.uiview.R
-import com.angcyo.uiview.kotlin.nowTime
 import com.angcyo.uiview.recycler.RBaseViewHolder
 import com.angcyo.uiview.recycler.adapter.IChatDataType
 import com.angcyo.uiview.recycler.adapter.RExItemHolder
 import com.angcyo.uiview.utils.RUtils
 import com.angcyo.uiview.viewgroup.FillLayout
-import com.angcyo.uiview.viewgroup.RConstraintLayout
 import com.angcyo.uiview.viewgroup.RLinearLayout
 import com.angcyo.uiview.widget.GlideImageView
+import java.text.SimpleDateFormat
+import java.util.*
+import kotlin.math.absoluteValue
 
 /**
  * Copyright (C) 2016,深圳市红鸟网络科技股份有限公司 All rights reserved.
@@ -32,8 +32,7 @@ import com.angcyo.uiview.widget.GlideImageView
 open class BaseChatItemHolder : RExItemHolder<IChatDataType>() {
 
     companion object {
-        /**最后一次显示的时间*/
-        var lastShowTime = 0L
+        val timeFormat = SimpleDateFormat("yyyy-MM-dd_HH:mm", Locale.CHINA)
     }
 
     //最根的布局
@@ -41,7 +40,7 @@ open class BaseChatItemHolder : RExItemHolder<IChatDataType>() {
     //消息顶部的时间
     lateinit var chatTimeTipView: TextView
     //头像, 名称, 内容包裹布局
-    lateinit var chatItemWrapLayout: RConstraintLayout
+    lateinit var chatItemWrapLayout: RLinearLayout
     //用户头像控制
     lateinit var chatAvatarControlLayout: FrameLayout
     //用户头像
@@ -81,6 +80,10 @@ open class BaseChatItemHolder : RExItemHolder<IChatDataType>() {
         initBaseLayout(holder, posInData, dataBean)
         initShowChatTimeTip(holder, posInData, dataBean)
         onBindChatItemView(holder, posInData, dataBean)
+
+        if (BuildConfig.DEBUG) {
+            chatItemRootLayout.setDebugInfoString(this.javaClass.simpleName)
+        }
     }
 
     open fun initBaseLayout(holder: RBaseViewHolder, posInData: Int, dataBean: IChatDataType?) {
@@ -102,44 +105,14 @@ open class BaseChatItemHolder : RExItemHolder<IChatDataType>() {
 
             if (isReceiveItemLayout(holder, posInData, dataBean)) {
                 //收到的消息
-                chatAvatarControlLayout.layoutParams = ConstraintLayout.LayoutParams(
-                        (50 * density()).toInt(), (50 * density()).toInt()).apply {
-                    leftToLeft = PARENT_ID
-                }
-                chatNameControlLayout.visibility = View.VISIBLE
-                chatNameControlLayout.layoutParams = ConstraintLayout.LayoutParams(
-                        -2, -2).apply {
-                    leftToRight = R.id.base_chat_avatar_control_layout
-                    topToTop = R.id.base_chat_avatar_control_layout
-                }
                 chatContentControlLayout.reverseLayout = false
-                chatContentControlLayout.layoutParams = ConstraintLayout.LayoutParams(
-                        0, -2).apply {
-                    rightToRight = PARENT_ID
-                    leftToRight = R.id.base_chat_avatar_control_layout
-                    topToBottom = R.id.base_chat_name_control_layout
-                    leftMargin = (4 * density()).toInt()
-                }
+                chatItemWrapLayout.isReverseLayout = false
+                chatNameControlLayout.visibility = View.VISIBLE
             } else {
                 //发送的消息
-                chatAvatarControlLayout.layoutParams = ConstraintLayout.LayoutParams(
-                        (50 * density()).toInt(), (50 * density()).toInt()).apply {
-                    rightToRight = PARENT_ID
-                }
                 chatNameControlLayout.visibility = View.GONE //自动发送的消息, 不显示名称
-                chatNameControlLayout.layoutParams = ConstraintLayout.LayoutParams(
-                        -2, -2).apply {
-                    rightToLeft = R.id.base_chat_avatar_control_layout
-                    topToTop = R.id.base_chat_avatar_control_layout
-                }
                 chatContentControlLayout.reverseLayout = true
-                chatContentControlLayout.layoutParams = ConstraintLayout.LayoutParams(
-                        0, -2).apply {
-                    leftToLeft = PARENT_ID
-                    rightToLeft = R.id.base_chat_avatar_control_layout
-                    topToBottom = R.id.base_chat_name_control_layout
-                    rightMargin = (4 * density()).toInt()
-                }
+                chatItemWrapLayout.isReverseLayout = true
             }
         }
     }
@@ -154,7 +127,9 @@ open class BaseChatItemHolder : RExItemHolder<IChatDataType>() {
             chatTimeTipView.visibility = View.GONE
             return
         }
-        var showTime: Boolean //是否需要显示消息时间
+        var showTime = false //是否需要显示消息时间
+        val chatTime = dataBean.chatTime
+
         if (dataBean.ignoreChatTime()) {
             showTime = false
         } else {
@@ -164,30 +139,42 @@ open class BaseChatItemHolder : RExItemHolder<IChatDataType>() {
                 //判断之前是否都是忽略时间的消息
                 var isAllIgnoreChatTime = true
                 for (i in posInData - 1 downTo 0) {
+                    //L.e("call: initShowChatTimeTip -> $posInData $i")
+
                     if (exItemAdapter!!.allDatas[i].ignoreChatTime()) {
 
                     } else {
                         isAllIgnoreChatTime = false
+                        break
                     }
                 }
 
                 if (isAllIgnoreChatTime) {
                     showTime = true
-                    lastShowTime = dataBean.chatTime
                 } else {
-                    val prevData = exItemAdapter!!.allDatas[posInData - 1]
+
+                    var prevData = exItemAdapter!!.allDatas[posInData - 1]
+                    //找到之前不需要忽略消息的数据item
+                    for (i in posInData - 1 downTo 0) {
+                        val dataType = exItemAdapter!!.allDatas[i]
+                        if (dataType.ignoreChatTime()) {
+
+                        } else {
+                            prevData = dataType
+                            break
+                        }
+                    }
+
                     val prevTime = prevData.chatTime
-                    if (dataBean.chatTime - prevTime >= 60 * 1000) {
+                    if ((chatTime - prevTime).absoluteValue >= 60 * 1000) {
                         //和之前的时间相隔一分钟
                         showTime = true
-                        lastShowTime = dataBean.chatTime
                     } else {
-                        if (lastShowTime <= 0) {
-                            lastShowTime = nowTime()
+                        if (timeFormat.format(Date(chatTime)) != timeFormat.format(Date(prevTime))) {
+                            //虽然时间间隔可能小于1分钟, 但是时间分钟以上变化了, 也显示时间
+                            //防止一直聊天, 不停止.导致时间一直不显示
+                            showTime = true
                         }
-
-                        //防止一直聊天, 不停止.导致时间一直不显示
-                        showTime = dataBean.chatTime - lastShowTime >= 60 * 1000
                     }
                 }
             }
@@ -195,7 +182,7 @@ open class BaseChatItemHolder : RExItemHolder<IChatDataType>() {
 
         if (showTime) {
             chatTimeTipView.visibility = View.VISIBLE
-            chatTimeTipView.text = RUtils.getShotTimeString(dataBean.chatTime)
+            chatTimeTipView.text = RUtils.getShotTimeString(chatTime)
         } else {
             chatTimeTipView.visibility = View.GONE
         }

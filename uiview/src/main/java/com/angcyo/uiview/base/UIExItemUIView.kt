@@ -4,8 +4,10 @@ import android.graphics.Canvas
 import android.graphics.Rect
 import android.support.v7.widget.RecyclerView
 import android.text.TextPaint
+import android.view.MotionEvent
 import android.view.View
 import com.angcyo.uiview.recycler.RExItemDecoration
+import com.angcyo.uiview.recycler.RRecyclerView
 import com.angcyo.uiview.recycler.adapter.*
 
 /**
@@ -37,9 +39,33 @@ abstract class UIExItemUIView<ItemType, DataType> : UIRecyclerUIView<String, Dat
     }
 
     override fun createAdapter(): RExBaseAdapter<String, DataType, String> {
-        exItemAdapter = RExItemAdapter(mActivity, createItemFactory())
+        exItemAdapter = object : RExItemAdapter<ItemType, DataType>(mActivity, createItemFactory()) {
+            override fun onScrollStateChanged(recyclerView: RRecyclerView, newState: Int) {
+                super.onScrollStateChanged(recyclerView, newState)
+            }
+
+            override fun onScrollStateEnd(rRecyclerView: RRecyclerView,
+                                          firstItemVisible: Boolean, lastItemVisible: Boolean,
+                                          topCanScroll: Boolean, bottomCanScroll: Boolean) {
+                super.onScrollStateEnd(rRecyclerView, firstItemVisible, lastItemVisible, topCanScroll, bottomCanScroll)
+            }
+
+            override fun onScrolled(recyclerView: RRecyclerView, dx: Int, dy: Int) {
+                super.onScrolled(recyclerView, dx, dy)
+                onRecyclerViewScrolled(recyclerView, dx, dy)
+            }
+
+            override fun onScrolledInTouch(recyclerView: RRecyclerView, e1: MotionEvent, e2: MotionEvent,
+                                           distanceX: Float, distanceY: Float) {
+                super.onScrolledInTouch(recyclerView, e1, e2, distanceX, distanceY)
+            }
+        }
         exItemAdapter?.initItemFactory(this)
         return exItemAdapter!!
+    }
+
+    open fun onRecyclerViewScrolled(recyclerView: RRecyclerView, dx: Int, dy: Int) {
+
     }
 
     private fun createItemFactory(): RExItemFactory<ItemType, DataType> {

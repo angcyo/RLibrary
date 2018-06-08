@@ -388,6 +388,10 @@ public fun EditText.setInputText(text: String?) {
     setSelection(text?.length ?: 0)
 }
 
+/**触发删除或回退键*/
+public fun EditText.del() {
+    this.dispatchKeyEvent(KeyEvent(KeyEvent.ACTION_DOWN, KeyEvent.KEYCODE_DEL))
+}
 
 /**取消增益滑动效果*/
 public fun View.setNoOverScroll() {
