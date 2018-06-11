@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical">
+
+    <com.angcyo.uiview.widget.ItemInfoLayout
+        android:id="@+id/base_item_info_layout"
+        style="@style/BaseItemInfoStyle"/>
+
+    <TextView
+        android:id="@+id/base_ex_text_tip_view"
+        style="@style/BaseDarkTextStyle"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:paddingBottom="@dimen/base_ldpi"
+        android:paddingEnd="@dimen/base_xhdpi"
+        android:paddingStart="@dimen/base_xhdpi"
+        android:paddingTop="@dimen/base_ldpi"
+        android:visibility="gone"
+        tools:text="扩展提示文本"
+        tools:visibility="visible"/>
+</LinearLayout>
