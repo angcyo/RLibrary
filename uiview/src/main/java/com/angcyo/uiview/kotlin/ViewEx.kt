@@ -467,3 +467,14 @@ public fun CompoundButton.onChecked(listener: (Boolean) -> Unit) {
     }
     listener.invoke(isChecked)
 }
+
+public fun TextView.addPaintFlags(flag: Int, add: Boolean = true, invalidate: Boolean = true) {
+    if (add) {
+        paint.flags = paint.flags or flag
+    } else {
+        paint.flags = paint.flags and flag.inv()
+    }
+    if (invalidate) {
+        postInvalidate()
+    }
+}

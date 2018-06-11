@@ -2,6 +2,7 @@ package com.angcyo.uiview.dialog;
 
 import android.graphics.Color;
 import android.support.annotation.DrawableRes;
+import android.support.annotation.NonNull;
 import android.text.TextUtils;
 import android.util.TypedValue;
 import android.view.Gravity;
@@ -87,6 +88,11 @@ public class UIItemDialog extends UIIDialogImpl {
     }
 
     public UIItemDialog setItemConfig(ItemConfig itemConfig) {
+        mItemConfig = itemConfig;
+        return this;
+    }
+
+    public UIItemDialog onItemConfig(ItemConfig itemConfig) {
         mItemConfig = itemConfig;
         return this;
     }
@@ -248,9 +254,9 @@ public class UIItemDialog extends UIIDialogImpl {
     }
 
     public interface ItemConfig {
-        void onCreateItem(TextView itemView, int position);
+        void onCreateItem(@NonNull TextView itemView, int position);
 
-        void onLoadContent(UIItemDialog dialog, RBaseViewHolder viewHolder);
+        void onLoadContent(@NonNull UIItemDialog dialog, @NonNull RBaseViewHolder viewHolder);
     }
 
     public static class ItemInfo {

@@ -407,4 +407,11 @@
         <item name="android:textColor">@color/base_text_color</item>
         <item name="textAllCaps">false</item>
     </style>
+
+    <style name="BaseItemPadding">
+        <item name="android:paddingBottom">@dimen/base_hdpi</item>
+        <item name="android:paddingEnd">@dimen/base_xhdpi</item>
+        <item name="android:paddingStart">@dimen/base_xhdpi</item>
+        <item name="android:paddingTop">@dimen/base_hdpi</item>
+    </style>
 </resources>
