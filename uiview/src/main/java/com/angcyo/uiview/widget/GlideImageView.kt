@@ -103,8 +103,8 @@ open class GlideImageView(context: Context, attributeSet: AttributeSet? = null) 
             defaultPlaceholderDrawable = null
             placeholderDrawable = null
         } else {
-            if (defaultPlaceholderDrawable != null) {
-                setImageDrawable(defaultPlaceholderDrawable)
+            if (placeholderDrawable != null) {
+                setImageDrawable(placeholderDrawable)
             }
         }
 
