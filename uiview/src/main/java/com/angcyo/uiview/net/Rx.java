@@ -390,8 +390,8 @@ public class Rx<Rx> extends Observable<Rx> {
                         .map(new Func1<ResponseBody, T>() {
                             @Override
                             public T call(ResponseBody stringResponse) {
-                                T bean;
-                                String body;
+                                T bean = null;
+                                String body = null;
                                 try {
                                     body = stringResponse.string();
 
@@ -405,7 +405,7 @@ public class Rx<Rx> extends Observable<Rx> {
                                     } catch (Exception e) {
                                         //兼容资讯API
                                         result = jsonObject.getInt("code");
-                                        if (result == 200) {
+                                        if (result == 200 || result == 0) {
                                             result = 1;//资讯接口没有此字段
                                         }
                                     }
@@ -453,6 +453,9 @@ public class Rx<Rx> extends Observable<Rx> {
                                     //throw new RException(-1000, "服务器数据异常.", e.getMessage());
                                 }
                                 //throw new NullPointerException("无数据.");
+                                if (bean instanceof String) {
+                                    return (T) body;
+                                }
                                 return null;
                             }
                         })
@@ -561,7 +564,7 @@ public class Rx<Rx> extends Observable<Rx> {
                                     } catch (Exception e) {
                                         ////兼容资讯API
                                         result = jsonObject.getInt("code");
-                                        if (result == 200) {
+                                        if (result == 200 || result == 0) {
                                             result = 1;//资讯接口没有此字段
                                         }
                                     }
@@ -637,7 +640,7 @@ public class Rx<Rx> extends Observable<Rx> {
                                     } catch (Exception e) {
                                         ////兼容资讯API
                                         result = jsonObject.getInt("code");
-                                        if (result == 200) {
+                                        if (result == 200 || result == 0) {
                                             result = successCode;//资讯接口没有此字段
                                         }
                                     }
