@@ -218,6 +218,10 @@ public fun String.isNumber(): Boolean {
     return pattern.matcher(this).matches()
 }
 
+public fun String.equ(char: CharSequence): Boolean {
+    return TextUtils.equals(this, char)
+}
+
 /**
  * 获取Int对应颜色的透明颜色
  * @param alpha [0..255] 值越小,越透明
