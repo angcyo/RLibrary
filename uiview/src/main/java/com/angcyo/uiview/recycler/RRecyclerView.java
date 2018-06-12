@@ -52,7 +52,7 @@ import java.lang.reflect.Constructor;
 public class RRecyclerView extends RecyclerView implements StickLayout.CanScrollUpCallBack {
     public static final long AUTO_SCROLL_TIME = 1500;
 
-    protected LayoutManager layoutManager;
+    protected LayoutManager mBaseLayoutManager;
     protected int spanCount = 2;
     protected int orientation = LinearLayout.VERTICAL;
     protected Class<? extends AnimationAdapter> animatorAdapter;
@@ -249,14 +249,24 @@ public class RRecyclerView extends RecyclerView implements StickLayout.CanScroll
     }
 
     protected void initView(Context context) {
+        resetLayoutManager(context);
+
+        setItemAnim(mItemAnim);
+        //clearOnScrollListeners();
+        removeOnScrollListener(mScrollListener);
+        //添加滚动事件监听
+        addOnScrollListener(mScrollListener);
+    }
+
+    protected void resetLayoutManager(Context context) {
         String tag = (String) this.getTag();
         if (TextUtils.isEmpty(tag) || "V".equalsIgnoreCase(tag)) {
-            layoutManager = new LinearLayoutManagerWrap(context, orientation, false);
+            mBaseLayoutManager = new LinearLayoutManagerWrap(context, orientation, false);
         } else {
             //线性布局管理器
             if ("H".equalsIgnoreCase(tag)) {
                 orientation = LinearLayoutManagerWrap.HORIZONTAL;
-                layoutManager = new LinearLayoutManagerWrap(context, orientation, false);
+                mBaseLayoutManager = new LinearLayoutManagerWrap(context, orientation, false);
             } else {
                 //读取其他配置信息(数量和方向)
                 final String type = tag.substring(0, 1);
@@ -274,25 +284,19 @@ public class RRecyclerView extends RecyclerView implements StickLayout.CanScroll
 
                 //交错布局管理器
                 if ("S".equalsIgnoreCase(type)) {
-                    layoutManager = new StaggeredGridLayoutManagerWrap(spanCount, orientation);
+                    mBaseLayoutManager = new StaggeredGridLayoutManagerWrap(spanCount, orientation);
                 }
                 //网格布局管理器
                 else if ("G".equalsIgnoreCase(type)) {
-                    layoutManager = new GridLayoutManagerWrap(context, spanCount, orientation, false);
+                    mBaseLayoutManager = new GridLayoutManagerWrap(context, spanCount, orientation, false);
                 }
             }
         }
 
-        if (layoutManager instanceof LinearLayoutManager) {
-            ((LinearLayoutManager) layoutManager).setRecycleChildrenOnDetach(true);
+        if (mBaseLayoutManager instanceof LinearLayoutManager) {
+            ((LinearLayoutManager) mBaseLayoutManager).setRecycleChildrenOnDetach(true);
         }
-        this.setLayoutManager(layoutManager);
-
-        setItemAnim(mItemAnim);
-        //clearOnScrollListeners();
-        removeOnScrollListener(mScrollListener);
-        //添加滚动事件监听
-        addOnScrollListener(mScrollListener);
+        this.setLayoutManager(mBaseLayoutManager);
     }
 
     //----------------end--------------------//
@@ -330,7 +334,7 @@ public class RRecyclerView extends RecyclerView implements StickLayout.CanScroll
     @Override
     public void setTag(Object tag) {
         super.setTag(tag);
-        initView(getContext());
+        resetLayoutManager(getContext());
     }
 
     @Override

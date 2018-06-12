@@ -13,7 +13,7 @@ import java.util.List;
 /**
  * Copyright (C) 2016,深圳市红鸟网络科技股份有限公司 All rights reserved.
  * 项目名称：
- * 类的描述：无限循环的RecyclerView, 换一个高级的实现方式
+ * 类的描述：无限循环的RecyclerView, 换一个高级的实现方式 {@link RExLoopRecyclerView}
  * 创建人员：Robi
  * 创建时间：2017/03/01 11:58
  * 修改人员：Robi

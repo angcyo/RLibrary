@@ -12,6 +12,7 @@ import android.view.ViewGroup;
 import com.leochuan.ViewPagerLayoutManager;
 
 /**
+ * 使用LoopLayoutManager实现的高级无限滚动,
  * Created by angcyo on 2018-03-07.
  */
 
@@ -67,6 +68,11 @@ public class RExLoopRecyclerView extends RRecyclerView {
                 }
             }
         }).attachToRecyclerView(this);
+    }
+
+    @Override
+    protected void resetLayoutManager(Context context) {
+        //super.resetLayoutManager(context);
     }
 
     @Override
