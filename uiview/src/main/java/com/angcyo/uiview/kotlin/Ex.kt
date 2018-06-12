@@ -222,6 +222,10 @@ public fun String.equ(char: CharSequence): Boolean {
     return TextUtils.equals(this, char)
 }
 
+public fun String.toFloatNumber(): Float {
+    return this.toFloatOrNull() ?: 0f
+}
+
 /**
  * 获取Int对应颜色的透明颜色
  * @param alpha [0..255] 值越小,越透明
