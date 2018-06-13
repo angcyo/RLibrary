@@ -39,7 +39,9 @@ import rx.schedulers.Schedulers;
 
 import static com.angcyo.uiview.github.luban.Preconditions.checkNotNull;
 
-
+/**
+ * https://github.com/Curzibn/Luban
+ */
 public class Luban {
 
     public static final int THIRD_GEAR = 3;
