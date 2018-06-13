@@ -74,6 +74,7 @@ open class GlideImageView(context: Context, attributeSet: AttributeSet? = null) 
             }
         }
 
+    /**最终设置使用的占位资源*/
     var placeholderDrawable: Drawable? = null
 
     var override = true
@@ -96,6 +97,7 @@ open class GlideImageView(context: Context, attributeSet: AttributeSet? = null) 
         if (defaultPlaceholderDrawable != null) {
             placeholderDrawable = defaultPlaceholderDrawable
         } else if (drawable is BitmapDrawable) {
+            defaultPlaceholderDrawable = drawable
             placeholderDrawable = drawable
         }
 
@@ -124,7 +126,7 @@ open class GlideImageView(context: Context, attributeSet: AttributeSet? = null) 
         setImageDrawable(null)
         if (!noPlaceholderDrawable && defaultPlaceholderDrawable != null) {
             placeholderDrawable = defaultPlaceholderDrawable
-            setImageDrawable(defaultPlaceholderDrawable)
+            setImageDrawable(placeholderDrawable)
         }
         url = ""
     }
@@ -138,16 +140,17 @@ open class GlideImageView(context: Context, attributeSet: AttributeSet? = null) 
         override = true
         skipMemoryCache = true
 
-        if (defaultPlaceholderDrawable != null) {
-            placeholderDrawable = defaultPlaceholderDrawable
-        }
-
         if (noPlaceholderDrawable) {
-            defaultPlaceholderDrawable = null
             placeholderDrawable = null
+            placeholderRes = -1
+        } else {
+            if (defaultPlaceholderDrawable != null) {
+                placeholderDrawable = defaultPlaceholderDrawable
+            } else {
+                placeholderRes = defaultPlaceholderDrawableRes
+            }
         }
 
-        placeholderRes = defaultPlaceholderDrawableRes
         animType = AnimType.DEFAULT
         bitmapTransform = null
     }
@@ -218,11 +221,11 @@ open class GlideImageView(context: Context, attributeSet: AttributeSet? = null) 
 
     @SuppressLint("CheckResult")
     protected open fun defaultConfig(isGif: Boolean): RequestOptions {
-        val requestOptions = if (noPlaceholderDrawable) {
+        val requestOptions = if (noPlaceholderDrawable || placeholderDrawable == null) {
             RequestOptions()
         } else {
-            RequestOptions.placeholderOf(placeholderRes)
-                    .error(placeholderRes)
+            RequestOptions.placeholderOf(placeholderDrawable)
+                    .error(placeholderDrawable)
         }
         requestOptions.skipMemoryCache(skipMemoryCache)
 

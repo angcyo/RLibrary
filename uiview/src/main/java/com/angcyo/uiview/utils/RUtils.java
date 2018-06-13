@@ -2149,6 +2149,10 @@ public class RUtils {
         return list == null || list.isEmpty();
     }
 
+    public static int listSize(List<?> list) {
+        return list == null ? 0 : list.size();
+    }
+
     public static boolean isRectEmpty(Rect rect) {
         return rect == null || rect.isEmpty();
     }

@@ -303,6 +303,9 @@ public class RecyclerViewPager extends RRecyclerView {
     }
 
     public void addOnViewPagerListener(OnViewPagerListener listener) {
+        if (mViewPagerListeners.contains(listener)) {
+            return;
+        }
         mViewPagerListeners.add(listener);
     }
 

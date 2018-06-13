@@ -5,6 +5,7 @@ import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.text.TextUtils;
 import android.util.AttributeSet;
 import android.view.View;
 import android.view.ViewGroup;
@@ -19,10 +20,7 @@ import com.leochuan.ViewPagerLayoutManager;
 public class RExLoopRecyclerView extends RRecyclerView {
 
     private LoopLayoutManager mLoopLayoutManager;
-    /**
-     * 无限循环
-     */
-    private boolean mInfinite = true;
+
     private RPagerSnapHelper.OnPageListener mOnPageListener;
 
     public RExLoopRecyclerView(Context context) {
@@ -54,8 +52,8 @@ public class RExLoopRecyclerView extends RRecyclerView {
             }
         };
 
-        mLoopLayoutManager = new LoopLayoutManager(getContext(), ViewPagerLayoutManager.HORIZONTAL, false);
-        setInfinite(mInfinite);
+        mLoopLayoutManager = new LoopLayoutManager(getContext(), getLoopOrientation(), false);
+        setInfinite(mInfiniteLoop);
         setLayoutManager(mLoopLayoutManager);
 
         new RExLoopRecyclerView.LoopSnapHelper().setOnPageListener(new RPagerSnapHelper.OnPageListener() {
@@ -68,6 +66,26 @@ public class RExLoopRecyclerView extends RRecyclerView {
                 }
             }
         }).attachToRecyclerView(this);
+    }
+
+    private int getLoopOrientation() {
+        String tag = (String) this.getTag();
+        if (!TextUtils.isEmpty(tag) && "V".equalsIgnoreCase(tag)) {
+            return ViewPagerLayoutManager.VERTICAL;
+        }
+        return ViewPagerLayoutManager.HORIZONTAL;
+    }
+
+    @Override
+    public void setTag(Object tag) {
+        super.setTag(tag);
+        setOrientation(getLoopOrientation());
+    }
+
+    @Override
+    public void setAdapter(Adapter adapter) {
+        super.setAdapter(adapter);
+        mRDrawIndicator.setupRExLoopRecyclerView(this);
     }
 
     @Override
@@ -87,7 +105,7 @@ public class RExLoopRecyclerView extends RRecyclerView {
      * 打开无限循环
      */
     public void setInfinite(boolean enable) {
-        mInfinite = enable;
+        mInfiniteLoop = enable;
         if (mLoopLayoutManager != null) {
             mLoopLayoutManager.setInfinite(enable);
         }

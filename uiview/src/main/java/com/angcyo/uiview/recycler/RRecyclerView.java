@@ -28,6 +28,7 @@ import android.widget.OverScroller;
 import com.angcyo.library.utils.L;
 import com.angcyo.uiview.R;
 import com.angcyo.uiview.design.StickLayout;
+import com.angcyo.uiview.draw.RDrawIndicator;
 import com.angcyo.uiview.kotlin.ViewExKt;
 import com.angcyo.uiview.recycler.adapter.RBaseAdapter;
 import com.angcyo.uiview.recycler.recyclerview.adapters.AnimationAdapter;
@@ -99,12 +100,17 @@ public class RRecyclerView extends RecyclerView implements StickLayout.CanScroll
             }
         }
     };
+    /**
+     * 无限循环
+     */
+    protected boolean mInfiniteLoop = true;
     OnTouchListener mInterceptTouchListener;
     OnFastTouchListener mOnFastTouchListener;
     OnFlingEndListener mOnFlingEndListener;
     boolean isAutoStart = false;
     float fastDownX, fastDownY, lastMoveX, lastMoveY;
     long fastDownTime = 0L;
+    RDrawIndicator mRDrawIndicator;
     private OnScrollListener mScrollListener = new OnScrollListener() {
         @Override
         public void onScrollStateChanged(RecyclerView recyclerView, int newState) {
@@ -140,7 +146,7 @@ public class RRecyclerView extends RecyclerView implements StickLayout.CanScroll
     private int mLastScrollOffset;
     private boolean isFling;
     /**
-     * 当onAttachedToWindow时, 是否自动滚动到onDetachedFromWindow时的位置
+     * 当onAttachedToWindow时, 是否自动滚动到 {@link #onDetachedFromWindow()}时的位置
      */
     private boolean autoScrollToLastPosition = false;
     /**
@@ -195,6 +201,11 @@ public class RRecyclerView extends RecyclerView implements StickLayout.CanScroll
         widthHeightRatio = typedArray.getString(R.styleable.RRecyclerView_r_width_height_ratio);
         equWidth = typedArray.getBoolean(R.styleable.RRecyclerView_r_is_aeq_width, equWidth);
         supportsChangeAnimations = typedArray.getBoolean(R.styleable.RRecyclerView_r_supports_change_animations, supportsChangeAnimations);
+        mInfiniteLoop = typedArray.getBoolean(R.styleable.RRecyclerView_r_loop_scroll, mInfiniteLoop);
+
+        mRDrawIndicator = new RDrawIndicator(this, attrs);
+        mRDrawIndicator.setShowIndicator(typedArray.getBoolean(R.styleable.RRecyclerView_r_show_indicator, false));
+        setWillNotDraw(false);
 
         typedArray.recycle();
 
@@ -814,6 +825,8 @@ public class RRecyclerView extends RecyclerView implements StickLayout.CanScroll
     @Override
     public void draw(Canvas c) {
         super.draw(c);
+
+        mRDrawIndicator.onDraw(c);
     }
 
     @Override
@@ -1008,6 +1021,10 @@ public class RRecyclerView extends RecyclerView implements StickLayout.CanScroll
 
     public void setOnTouchScrollListener(OnTouchScrollListener onTouchScrollListener) {
         mOnTouchScrollListener = onTouchScrollListener;
+    }
+
+    public RDrawIndicator getRDrawIndicator() {
+        return mRDrawIndicator;
     }
 
     /**

@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <attr name="r_focus_color" format="color"/>
+    <attr name="r_default_color" format="color"/>
+    <!--直径-->
+    <attr name="r_circle_size" format="dimension"/>
+    <attr name="r_circle_space" format="dimension"/>
+    <attr name="r_indicator_offset_y" format="dimension"/>
+    <!--是否显示指示器-->
+    <attr name="r_show_indicator" format="boolean"/>
+
+    <!--统一属性获取-->
+    <declare-styleable name="RDrawIndicator">
+        <attr name="r_show_indicator"/>
+        <attr name="r_indicator_offset_y"/>
+        <attr name="r_focus_color"/>
+        <attr name="r_default_color"/>
+        <!--直径-->
+        <attr name="r_circle_size"/>
+        <attr name="r_circle_space"/>
+    </declare-styleable>
+</resources>

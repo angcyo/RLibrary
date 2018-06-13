@@ -144,15 +144,29 @@
     </declare-styleable>
 
     <declare-styleable name="RRecyclerView">
-        <!--是否激活自动滚动-->
+        <!--是否激活自动滚动, 需要先激活滚动-->
         <attr name="r_enable_auto_start_scroll" format="boolean"/>
+        <!--滚动的前提-->
         <attr name="r_enable_scroll" format="boolean"/>
+        <!--无限循环滚动-->
+        <attr name="r_loop_scroll" format="boolean"/>
+        <!--detach的时候, 会保存最后一个可见位置, 下次attach时, 是否恢复-->
         <attr name="r_auto_scroll_to_last_position" format="boolean"/>
         <attr name="r_auto_scroll_time_interval" format="integer"/>
+
         <attr name="r_width_height_ratio"/>
         <attr name="r_is_aeq_width"/>
 
         <attr name="r_supports_change_animations" format="boolean"/>
+
+        <!--指示器属性-->
+        <attr name="r_show_indicator"/>
+        <attr name="r_indicator_offset_y"/>
+        <attr name="r_focus_color"/>
+        <attr name="r_default_color"/>
+        <!--直径-->
+        <attr name="r_circle_size"/>
+        <attr name="r_circle_space"/>
     </declare-styleable>
 
     <declare-styleable name="RefreshLayout">

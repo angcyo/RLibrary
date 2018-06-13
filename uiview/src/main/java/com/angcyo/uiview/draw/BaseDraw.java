@@ -1,6 +1,7 @@
 package com.angcyo.uiview.draw;
 
 import android.content.Context;
+import android.content.res.Resources;
 import android.graphics.Canvas;
 import android.util.AttributeSet;
 import android.view.View;
@@ -19,6 +20,9 @@ import android.view.View;
 public abstract class BaseDraw {
     protected View mView;
 
+    /**
+     * 请注意, 需要在继承类 中手动调用 {@link #initAttribute(AttributeSet)} 方法
+     */
     public BaseDraw(View view, AttributeSet attr) {
         mView = view;
         //initAttribute(attr);//父类当中调用此方法初始化子类的成员, 会导致被覆盖的BUG
@@ -31,6 +35,46 @@ public abstract class BaseDraw {
 
     protected Context getContext() {
         return mView.getContext();
+    }
+
+    protected Resources getResources() {
+        return getContext().getResources();
+    }
+
+    protected boolean isInEditMode() {
+        return mView.isInEditMode();
+    }
+
+    protected void postInvalidate() {
+        mView.postInvalidate();
+    }
+
+    protected int getPaddingBottom() {
+        return mView.getPaddingBottom();
+    }
+
+    protected int getPaddingRight() {
+        return mView.getPaddingRight();
+    }
+
+    protected int getPaddingLeft() {
+        return mView.getPaddingLeft();
+    }
+
+    protected int getPaddingTop() {
+        return mView.getPaddingTop();
+    }
+
+    protected int getViewWidth() {
+        return mView.getMeasuredWidth();
+    }
+
+    protected int getViewHeight() {
+        return mView.getMeasuredHeight();
+    }
+
+    protected void requestLayout() {
+        mView.requestLayout();
     }
 
     public void onDraw(Canvas canvas) {
