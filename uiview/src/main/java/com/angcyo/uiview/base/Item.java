@@ -15,6 +15,8 @@ import com.angcyo.uiview.recycler.RBaseViewHolder;
  */
 
 public interface Item {
+    String getTag();//唯一标识item, 用来notify changed
+
     void onBindView(@NonNull RBaseViewHolder holder, int posInData, Item itemDataBean);
 
     @Deprecated

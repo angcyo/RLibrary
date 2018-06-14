@@ -7,6 +7,7 @@ import android.support.annotation.NonNull;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.text.TextPaint;
+import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
@@ -212,6 +213,21 @@ public abstract class UIItemUIView<T extends Item> extends UIRecyclerUIView<Stri
     public void notifyItemChanged(int position) {
         if (mExBaseAdapter != null) {
             mExBaseAdapter.notifyItemChanged(position);
+        }
+    }
+
+    /**
+     * 通过Tag, 刷新指定Item
+     */
+    public void notifyItemChangedByTag(String tag) {
+        if (mExBaseAdapter != null) {
+            for (int i = 0; i < mItems.size(); i++) {
+                T item = mItems.get(i);
+                if (TextUtils.equals(item.getTag(), tag)) {
+                    notifyItemChanged(i);
+                    break;
+                }
+            }
         }
     }
 

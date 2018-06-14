@@ -171,7 +171,9 @@ public class RBaseViewHolder extends RecyclerView.ViewHolder {
 
     public View visible(View view) {
         if (view != null) {
-            view.setVisibility(View.VISIBLE);
+            if (view.getVisibility() != View.VISIBLE) {
+                view.setVisibility(View.VISIBLE);
+            }
         }
         return view;
     }
@@ -179,7 +181,9 @@ public class RBaseViewHolder extends RecyclerView.ViewHolder {
     public View enable(@IdRes int resId, boolean enable) {
         View view = v(resId);
         if (view != null) {
-            view.setEnabled(enable);
+            if (view.isEnabled() != enable) {
+                view.setEnabled(enable);
+            }
         }
         return view;
     }
@@ -190,8 +194,10 @@ public class RBaseViewHolder extends RecyclerView.ViewHolder {
 
     public View invisible(View view) {
         if (view != null) {
-            view.clearAnimation();
-            view.setVisibility(View.INVISIBLE);
+            if (view.getVisibility() != View.INVISIBLE) {
+                view.clearAnimation();
+                view.setVisibility(View.INVISIBLE);
+            }
         }
         return view;
     }
@@ -202,8 +208,10 @@ public class RBaseViewHolder extends RecyclerView.ViewHolder {
 
     public View gone(View view) {
         if (view != null) {
-            view.clearAnimation();
-            view.setVisibility(View.GONE);
+            if (view.getVisibility() != View.GONE) {
+                view.clearAnimation();
+                view.setVisibility(View.GONE);
+            }
         }
         return view;
     }

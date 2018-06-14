@@ -30,8 +30,15 @@ public abstract class SingleItem implements Item {
     protected int lineColor = 0;//-1是白色 0是透明
     Type mType;
 
+    String mTag = "";
+
     public SingleItem() {
 
+    }
+
+    public SingleItem(Type type, String tag) {
+        this(type);
+        mTag = tag;
     }
 
     public SingleItem(Type type) {
@@ -106,6 +113,11 @@ public abstract class SingleItem implements Item {
 
     public SingleItem getThisItem() {
         return this;
+    }
+
+    @Override
+    public String getTag() {
+        return mTag;
     }
 
     public enum Type {
