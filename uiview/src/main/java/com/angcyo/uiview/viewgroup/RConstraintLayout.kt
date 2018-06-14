@@ -70,5 +70,8 @@ class RConstraintLayout : ConstraintLayout {
         postInvalidate()
     }
 
+    fun getRDrawLine(): RDrawLine {
+        return drawLine
+    }
 
 }

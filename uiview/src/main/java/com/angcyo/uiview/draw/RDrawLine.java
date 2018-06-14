@@ -20,6 +20,7 @@ import java.lang.annotation.RetentionPolicy;
  */
 public class RDrawLine extends BaseDraw {
 
+    public static final int DRAW_NONE = 0;
     public static final int DRAW_LINE_LEFT = 1;
     public static final int DRAW_LINE_TOP = 2;
     public static final int DRAW_LINE_RIGHT = 3;
@@ -106,7 +107,7 @@ public class RDrawLine extends BaseDraw {
         mView.postInvalidate();
     }
 
-    @IntDef({DRAW_LINE_LEFT, DRAW_LINE_TOP, DRAW_LINE_RIGHT, DRAW_LINE_BOTTOM, DRAW_LINE_BOTTOM_TOP})
+    @IntDef({DRAW_NONE, DRAW_LINE_LEFT, DRAW_LINE_TOP, DRAW_LINE_RIGHT, DRAW_LINE_BOTTOM, DRAW_LINE_BOTTOM_TOP})
     @Retention(RetentionPolicy.SOURCE)
     public @interface DrawLine {
 
