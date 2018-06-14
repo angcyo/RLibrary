@@ -352,7 +352,10 @@ public class RBaseViewHolder extends RecyclerView.ViewHolder {
     }
 
     public void longClick(@IdRes int id, final View.OnClickListener listener) {
-        View view = v(id);
+        longClick(v(id), listener);
+    }
+
+    public void longClick(View view, final View.OnClickListener listener) {
         if (view != null) {
             view.setOnLongClickListener(new View.OnLongClickListener() {
                 @Override
@@ -362,6 +365,10 @@ public class RBaseViewHolder extends RecyclerView.ViewHolder {
                 }
             });
         }
+    }
+
+    public void longItem(final View.OnClickListener listener) {
+        longClick(itemView, listener);
     }
 
     public void click(View view, final View.OnClickListener listener) {

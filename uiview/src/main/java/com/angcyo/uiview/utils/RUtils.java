@@ -53,6 +53,7 @@ import android.util.LruCache;
 import android.view.View;
 import android.view.WindowManager;
 
+import com.angcyo.github.utilcode.utils.ClipboardUtils;
 import com.angcyo.github.utilcode.utils.CmdUtil;
 import com.angcyo.github.utilcode.utils.FileUtils;
 import com.angcyo.github.utilcode.utils.ImageUtils;
@@ -1708,7 +1709,7 @@ public class RUtils {
                 parrern.append(bitNum);
                 parrern.append("f");
                 int pow = (int) Math.pow(10, bitNum);
-                return String.format(Locale.CHINA, parrern.toString(), ((int) (pow * value)) / (pow * 1f));
+                return String.format(Locale.CHINA, parrern.toString(), pow * value / (pow * 1f));
 //                return String.valueOf(((int) (Math.pow(10, bitNum) * value)) / Math.pow(10, bitNum));
             } else if (bitNum == 0) {
                 String valueString = String.valueOf(value);
@@ -1870,6 +1871,13 @@ public class RUtils {
             e.printStackTrace();
         }
         return false;
+    }
+
+    /**
+     * 复制文本
+     */
+    public static void copyText(CharSequence charSequence) {
+        ClipboardUtils.copyText(charSequence);
     }
 
     /**

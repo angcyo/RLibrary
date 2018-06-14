@@ -1190,6 +1190,11 @@ public abstract class UIIViewImpl implements IView {
         return getIViewShowState() == IViewShowState.STATE_VIEW_SHOW;
     }
 
+    public boolean isIViewUnload() {
+        return getIViewShowState() == IViewShowState.STATE_NORMAL ||
+                getIViewShowState() == IViewShowState.STATE_VIEW_UNLOAD;
+    }
+
     public <T extends View> T v(@IdRes int id) {
         if (mViewHolder == null) {
             return null;

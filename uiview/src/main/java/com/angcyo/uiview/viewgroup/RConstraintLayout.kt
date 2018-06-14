@@ -2,7 +2,9 @@ package com.angcyo.uiview.viewgroup
 
 import android.content.Context
 import android.graphics.Canvas
+import android.graphics.drawable.ColorDrawable
 import android.graphics.drawable.Drawable
+import android.support.annotation.ColorInt
 import android.support.constraint.ConstraintLayout
 import android.util.AttributeSet
 import com.angcyo.uiview.R
@@ -58,5 +60,15 @@ class RConstraintLayout : ConstraintLayout {
 //            canvas.drawColor(ContextCompat.getColor(context, R.color.default_base_tran_dark2))
 //        }
     }
+
+    fun setRBackgroundDrawable(@ColorInt color: Int) {
+        setRBackgroundDrawable(ColorDrawable(color))
+    }
+
+    fun setRBackgroundDrawable(drawable: Drawable) {
+        mRBackgroundDrawable = drawable
+        postInvalidate()
+    }
+
 
 }

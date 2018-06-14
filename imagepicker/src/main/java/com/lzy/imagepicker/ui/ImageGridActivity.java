@@ -24,7 +24,6 @@ import android.widget.Button;
 import android.widget.TextView;
 
 import com.angcyo.uiview.recycler.RExItemDecoration;
-import com.angcyo.uiview.utils.Tip;
 import com.lzy.imagepicker.ImageDataSource;
 import com.lzy.imagepicker.ImagePicker;
 import com.lzy.imagepicker.R;
@@ -362,8 +361,9 @@ public class ImageGridActivity extends ImageBaseActivity implements ImageDataSou
             mBtnPre.setEnabled(false);
         }
         mBtnPre.setText(getResources().getString(R.string.preview_count, imagePicker.getSelectImageCount() + ""));
-//        mImageGridAdapter.notifyDataSetChanged();
+        //mImageGridAdapter.notifyDataSetChanged();
         mImageGridAdapter.notifyItemChanged(position);
+//        mImageGridAdapter.localRefresh(mRecyclerView, position);
     }
 
     @Override

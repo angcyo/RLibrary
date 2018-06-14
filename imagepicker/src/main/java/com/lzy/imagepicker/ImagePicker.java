@@ -339,8 +339,11 @@ public class ImagePicker {
     }
 
     public void addSelectedImageItem(int position, ImageItem item, boolean isAdd) {
-        if (isAdd) mSelectedImages.add(item);
-        else mSelectedImages.remove(item);
+        if (isAdd) {
+            if (!mSelectedImages.contains(item)) {
+                mSelectedImages.add(item);
+            }
+        } else mSelectedImages.remove(item);
         notifyImageSelectedChanged(position, item, isAdd);
     }
 

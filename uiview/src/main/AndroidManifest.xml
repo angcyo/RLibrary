@@ -51,7 +51,13 @@
         <!-- 全面屏配置 -->
         <meta-data
             android:name="android.max_aspect"
-            android:value="2.1"/>
+            android:value="2.4"/>
+        <meta-data
+            android:name="android.vendor.full_screen"
+            android:value="true"/>
+        <meta-data
+            android:name="android.notch_support"
+            android:value="true "/>
 
         <!--MainActivity配置-->
         <!--<activity-->

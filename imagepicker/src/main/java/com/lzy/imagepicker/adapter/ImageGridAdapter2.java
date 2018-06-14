@@ -3,6 +3,7 @@ package com.lzy.imagepicker.adapter;
 import android.Manifest;
 import android.app.Activity;
 import android.support.v4.app.ActivityCompat;
+import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.TextureView;
@@ -227,6 +228,22 @@ public class ImageGridAdapter2 extends RecyclerView.Adapter<ImageViewHolder> {
             return images.get(position - 1);
         } else {
             return images.get(position);
+        }
+    }
+
+
+    public void localRefresh(RecyclerView recyclerView, int position) {
+        RecyclerView.LayoutManager layoutManager = recyclerView.getLayoutManager();
+        if (layoutManager instanceof LinearLayoutManager) {
+            int firstVisibleItemPosition = ((LinearLayoutManager) layoutManager).findFirstVisibleItemPosition();
+            for (int i = 0; i < layoutManager.getChildCount(); i++) {
+                int pos = firstVisibleItemPosition + i;
+                if (pos == position) {
+                    ImageViewHolder vh = (ImageViewHolder) recyclerView.findViewHolderForAdapterPosition(position);
+                    onBindViewHolder(vh, position);
+                    vh.itemView.postInvalidate();
+                }
+            }
         }
     }
 
