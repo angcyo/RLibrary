@@ -620,6 +620,14 @@ public abstract class RBaseAdapter<T> extends RecyclerView.Adapter<RBaseViewHold
         }
     }
 
+    public void resetData(boolean async, List<T> datas, RDiffCallback<T> diffCallback) {
+        if (async) {
+            resetDataAsync(datas, diffCallback);
+        } else {
+            resetData(datas, diffCallback);
+        }
+    }
+
     public void resetData(List<T> datas, RDiffCallback<T> diffCallback) {
         if (RUtils.isListEmpty(datas)) {
             resetData(datas);
