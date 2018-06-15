@@ -1,0 +1,25 @@
+package com.angcyo.picker.media.bean
+
+/**
+ * Copyright (C) 2016,深圳市红鸟网络科技股份有限公司 All rights reserved.
+ * 项目名称：
+ * 类的描述：加载媒体的一些配置参数
+ * 创建人员：Robi
+ * 创建时间：2018/06/15 14:05
+ * 修改人员：Robi
+ * 修改时间：2018/06/15 14:05
+ * 修改备注：
+ * Version: 1.0.0
+ */
+class MediaLoaderConfig {
+    companion object {
+        //图片和视频, (音频要不要支持呢?)
+        const val LOADER_TYPE_ALL = 1
+        const val LOADER_TYPE_IMAGE = 2
+        const val LOADER_TYPE_VIDEO = 3
+        const val LOADER_TYPE_AUDIO = 4
+        const val LOADER_TYPE_IMAGE_VIDEO = 5
+    }
+
+    var mediaLoaderType = LOADER_TYPE_IMAGE
+}

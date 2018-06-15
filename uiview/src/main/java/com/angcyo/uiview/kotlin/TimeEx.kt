@@ -19,6 +19,7 @@ fun Long.toNowDay(): Int {
     return (this - nowTime()).toDay()
 }
 
+/**返回毫秒对应的天数*/
 fun Int.toDay(): Int {
     return this.toLong().toDay()
 }
@@ -38,6 +39,11 @@ fun Long.toHHmmss(showMill: Boolean = false /*显示毫秒*/): String {
 /**时间全格式输出*/
 fun Long.fullTime(): String {
     return RUtils.yyyyMMdd("yyyy-MM-dd HH:mm:ss.SSS", this)
+}
+
+/**格式化时间输出*/
+fun Long.toTime(pattern: String = "yyyy-MM-dd HH:mm"): String {
+    return RUtils.yyyyMMdd(pattern, this)
 }
 
 /**将字符串换算成毫秒*/

@@ -1,39 +1,55 @@
 <?xml version="1.0" encoding="utf-8"?>
-<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
-             xmlns:tools="http://schemas.android.com/tools"
-             android:layout_width="match_parent"
-             android:layout_height="match_parent"
-             android:orientation="vertical">
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical">
 
-    <com.lzy.imagepicker.view.ImagePickerImageView
-        android:id="@+id/iv_thumb"
+    <com.angcyo.uiview.widget.GlideImageView
+        android:layout_width="100dp"
+        android:layout_height="100dp"
+        android:scaleType="centerCrop"
+        app:r_show_type="ROUND_RECT"
+        app:r_url="/storage/emulated/0/DCIM/Camera/VID_20180612_151614.mp4"/>
+
+    <FrameLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:scaleType="fitCenter"
-        android:src="@drawable/image_placeholder_shape"/>
+        android:orientation="vertical">
 
-    <TextView
-        android:id="@+id/video_duration_view"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_gravity="end|bottom"
-        android:padding="4dp"
-        android:textColor="@android:color/white"
-        tools:text="00:00"/>
+        <com.lzy.imagepicker.view.ImagePickerImageView
+            android:id="@+id/iv_thumb"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:scaleType="fitCenter"
+            android:src="@drawable/image_placeholder_shape"/>
 
-    <View
-        android:id="@+id/mask"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:background="#88000000"
-        android:visibility="gone"/>
+        <TextView
+            android:id="@+id/video_duration_view"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="end|bottom"
+            android:padding="4dp"
+            android:textColor="@android:color/white"
+            tools:text="00:00"/>
 
-    <com.lzy.imagepicker.view.SuperCheckBox
-        android:id="@+id/cb_check"
-        style="@style/SuperCheckboxTheme"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_gravity="top|right"
-        android:paddingEnd="10dp"
-        android:paddingTop="20dp"/>
-</FrameLayout>
+        <View
+            android:id="@+id/mask"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:background="#88000000"
+            android:visibility="gone"/>
+
+        <com.lzy.imagepicker.view.SuperCheckBox
+            android:id="@+id/cb_check"
+            style="@style/SuperCheckboxTheme"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="top|right"
+            android:paddingEnd="10dp"
+            android:paddingTop="20dp"/>
+    </FrameLayout>
+
+</LinearLayout>

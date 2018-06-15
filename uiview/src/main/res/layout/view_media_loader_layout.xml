@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.constraint.ConstraintLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <com.angcyo.uiview.recycler.RRecyclerView
+        android:id="@+id/base_recycler_view"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:overScrollMode="never"
+        android:paddingBottom="40dp"
+        android:tag="GV4"/>
+
+    <LinearLayout
+        android:id="@+id/base_bottom_control_layout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="#303030"
+        android:gravity="center_vertical"
+        android:minHeight="40dp"
+        app:layout_constraintBottom_toBottomOf="parent">
+
+        <TextView
+            android:id="@+id/base_folder_selector"
+            style="@style/BaseMainTextStyle"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:drawableRight="@drawable/base_icon_yulan_kuozhan"
+            android:padding="@dimen/base_xhdpi"
+            android:textColor="@color/base_white"
+            tools:text="图片和视频"/>
+
+        <CheckBox
+            android:id="@+id/base_origin_box"
+            style="@style/BaseMainTextStyle"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:button="@drawable/base_media_round_selector"
+            android:layout_marginStart="@dimen/base_xxxhdpi"
+            android:layout_weight="1"
+            android:text="原图"
+            android:textColor="@color/base_white"/>
+
+        <TextView
+            android:id="@+id/base_preview_selector"
+            style="@style/BaseMainTextStyle"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:padding="@dimen/base_xhdpi"
+            android:text="预览"
+            android:textColor="@color/base_white"/>
+
+    </LinearLayout>
+
+
+</android.support.constraint.ConstraintLayout>

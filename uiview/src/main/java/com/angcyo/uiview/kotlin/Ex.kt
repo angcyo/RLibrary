@@ -175,9 +175,21 @@ public fun <T> Class<T>.newObject(): T {
     return Reflect.newObject<T>(this)
 }
 
-/**缩短显示*/
+/**大数字 缩短显示*/
 public fun String.shortString(): String {
     return RUtils.getShortString(this, "", true)
+}
+
+public fun String.isVideoMimeType(): Boolean {
+    return this.startsWith("video", true)
+}
+
+public fun String.isAudioMimeType(): Boolean {
+    return this.startsWith("audio", true)
+}
+
+public fun String.isImageMimeType(): Boolean {
+    return this.startsWith("image", true)
 }
 
 public fun String.http(): String {

@@ -9,6 +9,7 @@ import android.support.constraint.ConstraintLayout
 import android.util.AttributeSet
 import com.angcyo.uiview.R
 import com.angcyo.uiview.draw.RDrawLine
+import com.angcyo.uiview.kotlin.exactlyMeasure
 
 /**
  * Copyright (C) 2016,深圳市红鸟网络科技股份有限公司 All rights reserved.
@@ -26,11 +27,16 @@ class RConstraintLayout : ConstraintLayout {
     private var drawLine: RDrawLine
     private var mRBackgroundDrawable: Drawable? = null
 
+    /**高度等于宽度*/
+    protected var equWidth: Boolean = false
+
     constructor(context: Context) : this(context, null)
     constructor(context: Context, attrs: AttributeSet?) : this(context, attrs, 0)
     constructor(context: Context, attrs: AttributeSet?, defStyleAttr: Int) : super(context, attrs, defStyleAttr) {
         val typedArray = context.obtainStyledAttributes(attrs, R.styleable.RConstraintLayout)
         mRBackgroundDrawable = typedArray.getDrawable(R.styleable.RConstraintLayout_r_background)
+        equWidth = typedArray.getBoolean(R.styleable.RConstraintLayout_r_equ_width, equWidth)
+
         drawLine = RDrawLine(this, attrs)
 
         typedArray.recycle()
@@ -46,6 +52,13 @@ class RConstraintLayout : ConstraintLayout {
         setWillNotDraw(false)
 
         //L.e("call: init -> ")
+    }
+
+    override fun onMeasure(widthMeasureSpec: Int, heightMeasureSpec: Int) {
+        super.onMeasure(widthMeasureSpec, heightMeasureSpec)
+        if (equWidth) {
+            super.onMeasure(widthMeasureSpec, exactlyMeasure(measuredWidth))
+        }
     }
 
     override fun draw(canvas: Canvas) {

@@ -38,7 +38,7 @@ import java.io.File
 /**
  * Copyright (C) 2016,深圳市红鸟网络科技股份有限公司 All rights reserved.
  * 项目名称：
- * 类的描述：支持文件/网络图片加载, 支持动态检查gif, 支持显示gif提示, 支持动画
+ * 类的描述：支持文件/网络图片加载, 支持动态检查gif, 支持显示gif提示, 支持动画, 支持直接加载视频文件
  * 创建人员：Robi
  * 创建时间：2017/07/04 11:11
  * 修改人员：Robi
@@ -89,6 +89,13 @@ open class GlideImageView(context: Context, attributeSet: AttributeSet? = null) 
 
     var noPlaceholderDrawable = false
 
+    /**需要加载的图片地址, 优先判断是否是本地File*/
+    open var url: String? = null
+        set(value) {
+            field = value
+            startLoadUrl()
+        }
+
     init {
         val typedArray = context.obtainStyledAttributes(attributeSet, R.styleable.GlideImageView)
         defaultPlaceholderDrawable = typedArray.getDrawable(R.styleable.GlideImageView_r_placeholder_drawable)
@@ -110,15 +117,13 @@ open class GlideImageView(context: Context, attributeSet: AttributeSet? = null) 
             }
         }
 
+        val loadUrl = typedArray.getString(R.styleable.GlideImageView_r_url)
+        if (!loadUrl.isNullOrEmpty()) {
+            url = loadUrl
+        }
+
         typedArray.recycle()
     }
-
-    /**需要加载的图片地址, 优先判断是否是本地File*/
-    open var url: String? = null
-        set(value) {
-            field = value
-            startLoadUrl()
-        }
 
     /**重置,并清理界面数据*/
     fun clear() {

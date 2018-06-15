@@ -60,5 +60,6 @@
     <declare-styleable name="GlideImageView">
         <attr name="r_placeholder_drawable" format="reference"/>
         <attr name="r_no_placeholder_drawable" format="boolean"/>
+        <attr name="r_url" format="string"/>
     </declare-styleable>
 </resources>

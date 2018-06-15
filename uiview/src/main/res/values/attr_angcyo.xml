@@ -130,6 +130,9 @@
         <attr name="r_max_height"/>
         <attr name="r_width_height_ratio"/>
 
+        <!--高度等于宽度-->
+        <attr name="r_equ_width"/>
+
         <attr name="r_draw_line"/>
         <attr name="r_draw_dash_line"/>
         <attr name="r_draw_line_color"/>

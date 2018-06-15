@@ -64,6 +64,11 @@ public class RBaseItemDecoration extends RecyclerView.ItemDecoration {
         RBaseItemDecoration.dividerColor = dividerColor;
     }
 
+    public void setColor(int dividerColor) {
+        mDividerDrawableV = new ColorDrawable(dividerColor);
+        mDividerDrawableH = mDividerDrawableV;
+    }
+
     public RBaseItemDecoration setDrawLastLine(boolean drawLastLine) {
         this.drawLastVLine = drawLastLine;
         this.drawLastHLine = drawLastLine;

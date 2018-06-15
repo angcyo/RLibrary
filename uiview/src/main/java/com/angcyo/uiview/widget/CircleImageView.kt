@@ -66,6 +66,8 @@ open class CircleImageView(context: Context, attributeSet: AttributeSet? = null)
 
     /**高度等于宽度*/
     protected var equWidth: Boolean = false
+
+    /**宽度等于高度*/
     protected var equHeight: Boolean = false
 
     var widthHeightRatio: String? = null

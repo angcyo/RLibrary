@@ -1190,6 +1190,15 @@ public abstract class UIIViewImpl implements IView {
         return getIViewShowState() == IViewShowState.STATE_VIEW_SHOW;
     }
 
+    /**
+     * 界面显示过
+     */
+    public boolean isIViewShowOver() {
+        return getIViewShowState() == IViewShowState.STATE_VIEW_SHOW ||
+                getIViewShowState() == IViewShowState.STATE_VIEW_HIDE ||
+                getIViewShowState() == IViewShowState.STATE_VIEW_UNLOAD;
+    }
+
     public boolean isIViewUnload() {
         return getIViewShowState() == IViewShowState.STATE_NORMAL ||
                 getIViewShowState() == IViewShowState.STATE_VIEW_UNLOAD;
