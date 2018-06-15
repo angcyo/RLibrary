@@ -71,11 +71,11 @@ class RMediaLoaderUIView : UIBaseView() {
         super.initOnShowContentLayout()
         mViewHolder.rv(R.id.base_recycler_view).apply {
             adapter = mediaAdapter
-            addItemDecoration(RBaseItemDecoration((2 * density()).toInt()).apply {
-                //                setDrawLastLine(true)
-//                setDrawFirstLine(true)
-                setColor(Color.TRANSPARENT)
-            })
+//            addItemDecoration(RBaseItemDecoration((2 * density()).toInt()).apply {
+//                //                setDrawLastLine(true)
+////                setDrawFirstLine(true)
+//                setColor(Color.TRANSPARENT)
+//            })
         }
         view(R.id.base_bottom_control_layout).setBackgroundColor(titleBarBGColor)
     }
