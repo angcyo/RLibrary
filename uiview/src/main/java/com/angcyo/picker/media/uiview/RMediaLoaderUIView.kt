@@ -52,7 +52,7 @@ class RMediaLoaderUIView : UIBaseView() {
     }
 
     override fun getTitleBarBGColor(): Int {
-        return Color.parseColor("#303030")
+        return getColor(R.color.base_wx_dark)
     }
 
     override fun getDefaultBackgroundColor(): Int {
@@ -71,9 +71,9 @@ class RMediaLoaderUIView : UIBaseView() {
         super.initOnShowContentLayout()
         mViewHolder.rv(R.id.base_recycler_view).apply {
             adapter = mediaAdapter
-            addItemDecoration(RBaseItemDecoration(2 * density().toInt()).apply {
-                setDrawLastLine(true)
-                setDrawFirstLine(true)
+            addItemDecoration(RBaseItemDecoration((2 * density()).toInt()).apply {
+                //                setDrawLastLine(true)
+//                setDrawFirstLine(true)
                 setColor(Color.TRANSPARENT)
             })
         }
@@ -123,7 +123,7 @@ class RMediaLoaderUIView : UIBaseView() {
                 }
 
                 holder.visible(R.id.base_video_time_view, bean.mimeType.isVideoMimeType() || bean.mimeType.isAudioMimeType())
-                holder.tv(R.id.base_video_time_view).text = bean.duration.toHHmmss() + if (bean.mimeType.isAudioMimeType()) "MP3" else ""
+                holder.tv(R.id.base_video_time_view).text = bean.duration.toHHmmss() + if (bean.mimeType.isAudioMimeType()) " MP3" else ""
             }
         }
 

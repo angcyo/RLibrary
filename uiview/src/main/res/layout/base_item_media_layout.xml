@@ -11,13 +11,13 @@
         android:id="@+id/base_image_view"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
+        app:r_placeholder_drawable="@color/base_wx_dark"
         android:scaleType="centerCrop"/>
 
     <CheckBox
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:button="@drawable/base_media_rect_selector"
-        android:padding="@dimen/base_hdpi"
         app:layout_constraintRight_toRightOf="parent"/>
 
     <View
