@@ -22,9 +22,11 @@ import java.util.concurrent.TimeUnit;
 import okhttp3.Cache;
 import okhttp3.CacheControl;
 import okhttp3.Call;
+import okhttp3.FormBody;
 import okhttp3.Interceptor;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
+import okhttp3.RequestBody;
 import okhttp3.Response;
 import retrofit2.Converter;
 import retrofit2.Retrofit;
@@ -266,11 +268,6 @@ public class RRetrofit {
 
             Request request = chain.request();
 
-            String data = "请求URL:" + request.method() + ":" + request.url().url().toString();
-            if (log) {
-                L.d(data);
-            }
-
 //            if ("GET" == request.method() || "POST" == request.method()) {
 //                L.e("开始拦截:" + request.url().url().toString());
 //                Response.Builder builder = new Response.Builder();
@@ -283,7 +280,38 @@ public class RRetrofit {
 //            }
 
             try {
-                saveToSDCard(data);
+                StringBuilder dataBuilder = new StringBuilder("请求URL:");
+                dataBuilder.append(request.method());
+                dataBuilder.append(":");
+                dataBuilder.append(request.url().url().toString());
+                dataBuilder.append("\nbody:");
+
+                RequestBody requestBody = request.body();
+                if (requestBody == null) {
+                    dataBuilder.append("null");
+                } else {
+                    dataBuilder.append(requestBody.toString());
+                    dataBuilder.append("\n");
+                    dataBuilder.append(requestBody.contentType());
+                    dataBuilder.append(";");
+                    dataBuilder.append(requestBody.contentLength());
+                    dataBuilder.append("\n");
+
+                    if (requestBody instanceof FormBody) {
+                        for (int i = 0; i < ((FormBody) requestBody).size(); i++) {
+                            dataBuilder.append(((FormBody) requestBody).encodedName(i));
+                            dataBuilder.append("->");
+                            dataBuilder.append(((FormBody) requestBody).encodedValue(i));
+                            dataBuilder.append("\n");
+                        }
+                    }
+                }
+
+                if (log) {
+                    L.d(dataBuilder.toString());
+                }
+
+                saveToSDCard(dataBuilder.toString());
             } catch (Exception e) {
                 e.printStackTrace();
             }
