@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <attr name="r_draw_gravity" format="enum">
+        <enum name="CENTER" value="0"/>
+        <enum name="LEFT" value="1"/>
+        <enum name="TOP" value="2"/>
+        <enum name="RIGHT" value="3"/>
+        <enum name="BOTTOM" value="4"/>
+    </attr>
+
+    <!--半径-->
+    <attr name="r_draw_radius" format="dimension"/>
+    <attr name="r_draw_color" format="color"/>
+
+    <!--边框显示-->
+    <attr name="r_draw_show_border" format="boolean"/>
+    <attr name="r_draw_border_color" format="color"/>
+    <attr name="r_draw_border_width" format="dimension"/>
+    <attr name="r_draw_num" format="string"/>
+
+    <!--统一属性获取-->
+    <declare-styleable name="RDrawNumCheck">
+        <attr name="r_draw_gravity"/>
+        <attr name="r_draw_color"/>
+        <attr name="r_draw_radius"/>
+        <attr name="r_draw_show_border"/>
+        <attr name="r_draw_border_width"/>
+        <attr name="r_draw_border_color"/>
+        <attr name="r_draw_num"/>
+    </declare-styleable>
+
+    <declare-styleable name="NumCheckView">
+        <attr name="r_draw_gravity"/>
+        <attr name="r_draw_color"/>
+        <attr name="r_draw_radius"/>
+        <attr name="r_draw_show_border"/>
+        <attr name="r_draw_border_width"/>
+        <attr name="r_draw_border_color"/>
+        <attr name="r_draw_num"/>
+    </declare-styleable>
+</resources>

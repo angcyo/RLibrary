@@ -10,14 +10,17 @@ import com.angcyo.picker.media.ThumbLoad
 import com.angcyo.picker.media.bean.MediaFolder
 import com.angcyo.picker.media.bean.MediaItem
 import com.angcyo.picker.media.bean.MediaLoaderConfig
+import com.angcyo.picker.media.widget.NumCheckView
 import com.angcyo.uiview.R
 import com.angcyo.uiview.base.UIBaseView
 import com.angcyo.uiview.container.ContentLayout
+import com.angcyo.uiview.kotlin.clickIt
 import com.angcyo.uiview.kotlin.isAudioMimeType
 import com.angcyo.uiview.kotlin.isVideoMimeType
 import com.angcyo.uiview.kotlin.toHHmmss
 import com.angcyo.uiview.recycler.RBaseViewHolder
-import com.angcyo.uiview.recycler.adapter.RBaseAdapter
+import com.angcyo.uiview.recycler.adapter.RExBaseAdapter
+import com.angcyo.uiview.recycler.adapter.RExBaseAdapter.localRefresh
 import com.angcyo.uiview.utils.RUtils
 import com.angcyo.uiview.widget.RTextView
 import java.lang.ref.WeakReference
@@ -113,12 +116,24 @@ class RMediaLoaderUIView : UIBaseView() {
         }
     }
 
-    inner class MediaAdapter : RBaseAdapter<MediaItem>(mActivity) {
+    //选中的媒体列表
+    private var selectorMediaList = mutableListOf<MediaItem>()
+
+    inner class MediaAdapter : RExBaseAdapter<String, MediaItem, String>(mActivity) {
         override fun getItemLayoutId(viewType: Int): Int {
+            if (isHeaderItemType(viewType)) {
+
+            }
             return R.layout.base_item_media_layout
         }
 
-        override fun onBindView(holder: RBaseViewHolder, position: Int, bean: MediaItem?) {
+        override fun onBindHeaderView(holder: RBaseViewHolder, posInHeader: Int, headerBean: String?) {
+            super.onBindHeaderView(holder, posInHeader, headerBean)
+            //摄像头, 拍照item
+
+        }
+
+        override fun onBindDataView(holder: RBaseViewHolder, posInData: Int, bean: MediaItem?) {
             bean?.let {
                 //L.e("call: onBindView -> ${bean.path}")
 
@@ -143,6 +158,9 @@ class RMediaLoaderUIView : UIBaseView() {
                                 url = bean.path
                             }
                         }
+
+                        //蒙层
+                        mDrawMaskColor.drawMaskColorShow = selectorMediaList.indexOf(bean) > -1
                     }
                 }
 
@@ -152,9 +170,38 @@ class RMediaLoaderUIView : UIBaseView() {
                     RTextView.setLeftIco(this, if (bean.mimeType.isAudioMimeType()) R.drawable.base_audio_ico else R.drawable.base_video_icon)
                     text = bean.duration.toHHmmss()
                 }
+
+                val numCheckView: NumCheckView = holder.v(R.id.base_num_check_view)
+                numCheckView.apply {
+                    setNum(selectorMediaList.indexOf(bean) + 1)
+
+                    clickIt {
+                        if (isChecked()) {
+                            selectorMediaList.remove(bean)
+                            holder.giv(R.id.base_image_view).mDrawMaskColor.drawMaskColorShow = false
+                        } else {
+                            selectorMediaList.add(bean)
+                            holder.giv(R.id.base_image_view).mDrawMaskColor.drawMaskColorShow = true
+                        }
+
+                        updateNumCheck()
+                    }
+                }
             }
         }
 
+        /**更新数字*/
+        private fun updateNumCheck() {
+            localRefresh(mViewHolder.rv(R.id.base_recycler_view)) { viewHolder, position ->
+                viewHolder?.let {
+                    val numCheckView: NumCheckView? = viewHolder.v(R.id.base_num_check_view)
+
+                    numCheckView?.let {
+                        it.setNum(selectorMediaList.indexOf(mediaAdapter.getDataByIndex(position)) + 1)
+                    }
+                }
+            }
+        }
     }
 
 }

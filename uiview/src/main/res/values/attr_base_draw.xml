@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!--是否绘制蒙层-->
+    <attr name="r_draw_mask_color_show" format="boolean"/>
+    <!--蒙层的颜色-->
+    <attr name="r_draw_mask_color_color" format="color"/>
+
+    <declare-styleable name="RDrawMaskColor">
+        <attr name="r_draw_mask_color_show"/>
+        <attr name="r_draw_mask_color_color"/>
+    </declare-styleable>
+</resources>

@@ -2,7 +2,10 @@ package com.angcyo.uiview.draw;
 
 import android.content.Context;
 import android.content.res.Resources;
+import android.content.res.TypedArray;
 import android.graphics.Canvas;
+import android.graphics.Paint;
+import android.support.annotation.NonNull;
 import android.util.AttributeSet;
 import android.view.View;
 
@@ -19,12 +22,18 @@ import android.view.View;
  */
 public abstract class BaseDraw {
     protected View mView;
+    protected Paint mBasePaint;
 
     /**
      * 请注意, 需要在继承类 中手动调用 {@link #initAttribute(AttributeSet)} 方法
      */
     public BaseDraw(View view, AttributeSet attr) {
         mView = view;
+        mBasePaint = new Paint(Paint.ANTI_ALIAS_FLAG);
+        mBasePaint.setFilterBitmap(true);
+        mBasePaint.setStyle(Paint.Style.FILL);
+        mBasePaint.setTextSize(12 * density());
+
         //initAttribute(attr);//父类当中调用此方法初始化子类的成员, 会导致被覆盖的BUG
         //所以此方法, 请在子类当中触发
     }
@@ -65,6 +74,14 @@ public abstract class BaseDraw {
         return mView.getPaddingTop();
     }
 
+    protected int getViewDrawWidth() {
+        return getViewWidth() - getPaddingLeft() - getPaddingRight();
+    }
+
+    protected int getViewDrawHeight() {
+        return getViewHeight() - getPaddingTop() - getPaddingBottom();
+    }
+
     protected int getViewWidth() {
         return mView.getMeasuredWidth();
     }
@@ -77,8 +94,12 @@ public abstract class BaseDraw {
         mView.requestLayout();
     }
 
-    public void onDraw(Canvas canvas) {
+    public void onDraw(@NonNull Canvas canvas) {
 
+    }
+
+    protected TypedArray obtainStyledAttributes(AttributeSet set, int[] attrs) {
+        return getContext().obtainStyledAttributes(set, attrs);
     }
 
     protected abstract void initAttribute(AttributeSet attr);

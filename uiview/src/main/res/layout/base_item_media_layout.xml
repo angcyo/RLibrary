@@ -15,11 +15,14 @@
         android:scaleType="centerCrop"
         app:r_placeholder_drawable="@color/base_wx_dark"/>
 
-    <CheckBox
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:button="@drawable/base_media_rect_selector"
-        app:layout_constraintRight_toRightOf="parent"/>
+    <com.angcyo.picker.media.widget.NumCheckView
+        android:id="@+id/base_num_check_view"
+        android:layout_width="30dp"
+        android:layout_height="30dp"
+        app:layout_constraintRight_toRightOf="parent"
+        app:r_draw_radius="12dp"
+        tools:r_draw_color="@color/base_red"
+        tools:r_draw_num="999"/>
 
     <TextView
         android:id="@+id/base_video_time_view"

@@ -283,6 +283,9 @@ public abstract class RBaseAdapter<T> extends RecyclerView.Adapter<RBaseViewHold
         }
     }
 
+    /**
+     * 直接从data 列表索引拿数据
+     */
     public T getDataByIndex(int position) {
         return getAllDatas().size() > position ? mAllDatas.get(position) : null;
     }

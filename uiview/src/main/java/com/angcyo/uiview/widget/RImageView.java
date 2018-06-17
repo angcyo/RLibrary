@@ -27,6 +27,7 @@ import android.widget.ImageView;
 
 import com.angcyo.uiview.R;
 import com.angcyo.uiview.RApplication;
+import com.angcyo.uiview.draw.RDrawMaskColor;
 import com.angcyo.uiview.draw.RDrawNoRead;
 
 /**
@@ -75,6 +76,8 @@ public class RImageView extends CircleImageView {
      */
     private boolean mShowClickMask = true;
 
+    public RDrawMaskColor mDrawMaskColor;
+
     public RImageView(Context context) {
         this(context, null);
     }
@@ -92,6 +95,7 @@ public class RImageView extends CircleImageView {
         maskScaleY = typedArray.getFloat(R.styleable.RImageView_r_mask_scale_y, maskScaleY);
 
         mDrawNoRead = new RDrawNoRead(this, attrs);
+        mDrawMaskColor = new RDrawMaskColor(this, attrs);
 
         typedArray.recycle();
     }
@@ -349,6 +353,7 @@ public class RImageView extends CircleImageView {
         }
 
         mDrawNoRead.onDraw(canvas);
+        mDrawMaskColor.onDraw(canvas);
     }
 
     public RDrawNoRead getDrawNoRead() {
