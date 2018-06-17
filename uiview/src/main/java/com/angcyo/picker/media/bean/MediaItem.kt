@@ -32,7 +32,9 @@ open class MediaItem {
     var duration = 0L
     //end...
 
-    var addTimeString = ""
+    var addTimeString = "" //年月日的时间格式
+    var videoThumbPath = ""//视频截帧图片 根据md5 值创建路径
+    var thumbPath = "" //图片缩略图路径
 
     override fun toString(): String {
         val builder = StringBuilder("{")
@@ -77,6 +79,14 @@ open class MediaItem {
         builder.append("\n\t")
         builder.append("duration:")
         builder.append(duration)
+
+        builder.append("\n\t")
+        builder.append("videoThumbPath:")
+        builder.append(videoThumbPath)
+
+        builder.append("\n\t")
+        builder.append("thumbPath:")
+        builder.append(thumbPath)
 
         builder.append("\n}")
         return builder.toString()

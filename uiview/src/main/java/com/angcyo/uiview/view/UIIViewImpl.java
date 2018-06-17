@@ -1218,6 +1218,13 @@ public abstract class UIIViewImpl implements IView {
         return mViewHolder.tv(id);
     }
 
+    public RRecyclerView rv(@IdRes int id) {
+        if (mViewHolder == null) {
+            return null;
+        }
+        return mViewHolder.rv(id);
+    }
+
     public View view(@IdRes int id) {
         if (mViewHolder == null) {
             return null;

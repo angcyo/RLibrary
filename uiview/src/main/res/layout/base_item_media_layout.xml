@@ -21,17 +21,12 @@
         android:button="@drawable/base_media_rect_selector"
         app:layout_constraintRight_toRightOf="parent"/>
 
-    <View
-        android:layout_width="match_parent"
-        android:layout_height="30dp"
-        android:background="@drawable/base_tran_gradient_from_bottom"
-        app:layout_constraintBottom_toBottomOf="parent"/>
-
     <TextView
         android:id="@+id/base_video_time_view"
         style="@style/BaseMainTextStyle"
-        android:layout_width="wrap_content"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:background="@drawable/base_tran_gradient_from_bottom"
         android:drawableLeft="@drawable/base_video_icon"
         android:drawablePadding="@dimen/base_ldpi"
         android:padding="@dimen/base_ldpi"

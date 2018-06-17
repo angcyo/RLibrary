@@ -22,4 +22,7 @@ class MediaLoaderConfig {
     }
 
     var mediaLoaderType = LOADER_TYPE_IMAGE
+
+    /**是否显示原图按钮, 如果支持就打开, 否则关闭*/
+    var showOriginButton = false
 }

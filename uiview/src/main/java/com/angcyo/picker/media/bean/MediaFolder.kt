@@ -14,6 +14,9 @@ import com.angcyo.uiview.utils.RUtils
  * Version: 1.0.0
  */
 class MediaFolder {
+    //文件夹包含哪些媒体类型
+    var mediaFolderType = MediaLoaderConfig.LOADER_TYPE_ALL
+
     //文件夹名
     var folderName = ""
     //文件夹路径

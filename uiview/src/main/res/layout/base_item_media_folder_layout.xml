@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="utf-8"?>
+<com.angcyo.uiview.viewgroup.RConstraintLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:background="@drawable/base_bg_selector_v21"
+    android:paddingBottom="@dimen/base_hdpi"
+    android:paddingEnd="@dimen/base_xhdpi"
+    android:paddingStart="@dimen/base_xhdpi"
+    android:paddingTop="@dimen/base_hdpi"
+    app:r_background="@color/base_white"
+    app:r_draw_line="BOTTOM"
+    app:r_draw_line_offset_left="@dimen/base_xhdpi"
+    tools:background="@color/transparent_dark20">
+
+    <com.angcyo.uiview.widget.GlideImageView
+        android:id="@+id/base_image_view"
+        android:layout_width="60dp"
+        android:layout_height="60dp"
+        android:scaleType="centerCrop"
+        tools:src="@color/base_wx_dark"/>
+
+    <LinearLayout
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="@dimen/base_hdpi"
+        android:orientation="vertical"
+        app:layout_constraintBottom_toBottomOf="@id/base_image_view"
+        app:layout_constraintLeft_toRightOf="@id/base_image_view"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintTop_toTopOf="@id/base_image_view">
+
+        <TextView
+            android:id="@+id/base_name_view"
+            style="@style/BaseMainTextStyle"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            tools:text="angcyo"/>
+
+        <TextView
+            android:id="@+id/base_tip_view"
+            style="@style/BaseDarkTextStyle"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            tools:text="angcyo"/>
+
+    </LinearLayout>
+
+    <RadioButton
+        android:id="@+id/base_radio_button"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="@dimen/base_xhdpi"
+        android:button="@drawable/base_media_round_selector"
+        android:checked="true"
+        android:visibility="invisible"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        tools:visibility="visible"/>
+
+
+</com.angcyo.uiview.viewgroup.RConstraintLayout>

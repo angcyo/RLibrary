@@ -8,6 +8,7 @@ import android.support.v4.app.LoaderManager
 import android.support.v4.content.CursorLoader
 import android.support.v4.content.Loader
 import android.text.TextUtils
+import com.angcyo.github.utilcode.utils.MD5
 import com.angcyo.library.utils.L
 import com.angcyo.picker.media.bean.MediaFolder
 import com.angcyo.picker.media.bean.MediaItem
@@ -88,6 +89,31 @@ class RMediaLoader(private val activity: FragmentActivity,
                         + " AND "
                         + DURATION + ">0")
 
+        /**音频 选择*/
+        private const val AUDIO_SELECTION = (
+                MediaStore.Files.FileColumns.MEDIA_TYPE + "="
+                        + MediaStore.Files.FileColumns.MEDIA_TYPE_AUDIO
+                        + " AND "
+                        + MediaStore.Files.FileColumns.SIZE + ">0"
+                        + " AND "
+                        + DURATION + ">0")
+
+        /**视频 选择*/
+        private const val VIDEO_SELECTION = (
+                MediaStore.Files.FileColumns.MEDIA_TYPE + "="
+                        + MediaStore.Files.FileColumns.MEDIA_TYPE_VIDEO
+                        + " AND "
+                        + MediaStore.Files.FileColumns.SIZE + ">0"
+                        + " AND "
+                        + DURATION + ">0")
+
+        /**图片 选择*/
+        private const val IMAGE_SELECTION = (
+                MediaStore.Files.FileColumns.MEDIA_TYPE + "="
+                        + MediaStore.Files.FileColumns.MEDIA_TYPE_IMAGE
+                        + " AND "
+                        + MediaStore.Files.FileColumns.SIZE + ">0")
+
         private fun createMediaFolder(path: String, folderList: MutableList<MediaFolder>): MediaFolder {
             val file = File(path)
 
@@ -114,22 +140,41 @@ class RMediaLoader(private val activity: FragmentActivity,
         activity.supportLoaderManager.initLoader(loaderConfig.mediaLoaderType,
                 null, object : LoaderManager.LoaderCallbacks<Cursor> {
             override fun onCreateLoader(id: Int, args: Bundle?): Loader<Cursor> {
-                return when (id) {
-                    MediaLoaderConfig.LOADER_TYPE_ALL -> CursorLoader(activity, ALL_QUERY_URI, ALL_PROJECTION,
-                            ALL_SELECTION, null, MediaStore.Files.FileColumns.DATE_ADDED + " DESC")
-                    else -> {
-                        CursorLoader(activity, ALL_QUERY_URI, ALL_PROJECTION,
-                                ALL_SELECTION, null, MediaStore.Files.FileColumns.DATE_ADDED + " DESC")
-                    }
+                val selection = when (id) {
+                    MediaLoaderConfig.LOADER_TYPE_ALL -> ALL_SELECTION
+                    MediaLoaderConfig.LOADER_TYPE_IMAGE_VIDEO -> ALL_IMAGE_VIDEO_SELECTION
+                    MediaLoaderConfig.LOADER_TYPE_IMAGE -> IMAGE_SELECTION
+                    MediaLoaderConfig.LOADER_TYPE_VIDEO -> VIDEO_SELECTION
+                    MediaLoaderConfig.LOADER_TYPE_AUDIO -> AUDIO_SELECTION
+                    else -> ALL_SELECTION
                 }
+                return CursorLoader(activity, ALL_QUERY_URI, ALL_PROJECTION,
+                        selection, null, MediaStore.Files.FileColumns.DATE_ADDED + " DESC")
             }
 
             override fun onLoadFinished(loader: Loader<Cursor>, data: Cursor?) {
                 val allFolderList = mutableListOf<MediaFolder>()
-                val mainMediaFolder = MediaFolder()
+                val mainMediaFolder = MediaFolder().apply {
+                    mediaFolderType = loader.id
+                }
+                val audioMediaFolder = MediaFolder().apply {
+                    mediaFolderType = MediaLoaderConfig.LOADER_TYPE_AUDIO
+                    folderName = "所有音频"
+                    folderPath = "audio"
+                }
+                val videoMediaFolder = MediaFolder().apply {
+                    mediaFolderType = MediaLoaderConfig.LOADER_TYPE_VIDEO
+                    folderName = "所有视频"
+                    folderPath = "video"
+                }
+                val imageMediaFolder = MediaFolder().apply {
+                    mediaFolderType = MediaLoaderConfig.LOADER_TYPE_IMAGE
+                    folderName = "所有图片"
+                    folderPath = "image"
+                }
 
                 if (data != null && data.count > 0) {
-                    L.e("call: onLoadFinished -> ${data.count}")
+                    //L.e("call: onLoadFinished -> ${data.count}")
                     data.moveToFirst()
                     do {
                         try {
@@ -163,9 +208,35 @@ class RMediaLoader(private val activity: FragmentActivity,
                                 }
 
                                 mainMediaFolder.mediaItemList.add(mediaItem)
-                                createMediaFolder(path, allFolderList).mediaItemList.add(mediaItem)
+                                if (mediaItem.mimeType.isAudioMimeType()) {
+                                    //音频item
+                                    audioMediaFolder.mediaItemList.add(mediaItem)
 
-                                L.i("call: onLoadFinished -> $mediaItem")
+                                    if (loader.id == MediaLoaderConfig.LOADER_TYPE_AUDIO) {
+                                        val mediaFolder = createMediaFolder(path, allFolderList)
+                                        mediaFolder.mediaFolderType = MediaLoaderConfig.LOADER_TYPE_AUDIO
+                                        mediaFolder.mediaItemList.add(mediaItem)
+                                    }
+                                } else if (mediaItem.mimeType.isVideoMimeType()) {
+                                    //视频item
+                                    videoMediaFolder.mediaItemList.add(mediaItem)
+                                    mediaItem.videoThumbPath = activity.getExternalFilesDir("video_thumb").absolutePath + File.separator + MD5.getStreamMD5(mediaItem.path)
+
+                                    if (loader.id == MediaLoaderConfig.LOADER_TYPE_VIDEO) {
+                                        val mediaFolder = createMediaFolder(path, allFolderList)
+                                        mediaFolder.mediaFolderType = MediaLoaderConfig.LOADER_TYPE_VIDEO
+                                        mediaFolder.mediaItemList.add(mediaItem)
+                                    }
+                                } else {
+                                    //其他 也就是图片
+                                    imageMediaFolder.mediaItemList.add(mediaItem)
+
+                                    val mediaFolder = createMediaFolder(path, allFolderList)
+                                    mediaFolder.mediaFolderType = MediaLoaderConfig.LOADER_TYPE_IMAGE
+                                    mediaFolder.mediaItemList.add(mediaItem)
+                                }
+
+                                //L.i("call: onLoadFinished -> $mediaItem")
                             }
                         } catch (e: Exception) {
                             e.printStackTrace()
@@ -179,11 +250,28 @@ class RMediaLoader(private val activity: FragmentActivity,
                             mainMediaFolder.folderPath = "all"
 
                             allFolderList.add(0, mainMediaFolder)
+
+                            if (audioMediaFolder.mediaCount > 0) {
+                                allFolderList.add(1, audioMediaFolder)
+                            }
+                            if (videoMediaFolder.mediaCount > 0) {
+                                allFolderList.add(1, videoMediaFolder)
+                            }
                         } else if (loader.id == MediaLoaderConfig.LOADER_TYPE_IMAGE_VIDEO) {
                             mainMediaFolder.folderName = "图片和视频"
                             mainMediaFolder.folderPath = "image_video"
 
                             allFolderList.add(0, mainMediaFolder)
+
+                            if (videoMediaFolder.mediaCount > 0) {
+                                allFolderList.add(1, videoMediaFolder)
+                            }
+                        } else if (loader.id == MediaLoaderConfig.LOADER_TYPE_IMAGE) {
+                            allFolderList.add(0, imageMediaFolder)
+                        } else if (loader.id == MediaLoaderConfig.LOADER_TYPE_VIDEO) {
+                            allFolderList.add(0, videoMediaFolder)
+                        } else if (loader.id == MediaLoaderConfig.LOADER_TYPE_AUDIO) {
+                            allFolderList.add(0, audioMediaFolder)
                         }
                     }
                 }
