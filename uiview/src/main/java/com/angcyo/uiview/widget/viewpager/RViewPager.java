@@ -2,6 +2,7 @@ package com.angcyo.uiview.widget.viewpager;
 
 import android.content.Context;
 import android.support.v4.view.GestureDetectorCompat;
+import android.support.v4.view.PagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.util.AttributeSet;
 import android.view.GestureDetector;
@@ -61,6 +62,24 @@ public class RViewPager extends ViewPager {
 
     public void setOrientation(int orientation) {
         mOrientation = orientation;
+    }
+
+    public void resetItem(int position) {
+        PagerAdapter adapter = getAdapter();
+        if (adapter != null) {
+            adapter.destroyItem(this, position, getChildAt(position));
+            adapter.instantiateItem(this, position);
+        }
+//        if (adapter instanceof RPagerAdapter) {
+//            WeakReference<View> viewWeakReference = ((RPagerAdapter) adapter).mViewCache.get(position);
+//            View view = null;
+//            if (viewWeakReference != null) {
+//                view = viewWeakReference.get();
+//            }
+//            if (view != null) {
+//                ((RPagerAdapter) adapter).initItemView(view, position);
+//            }
+//        }
     }
 
     @Override

@@ -3,13 +3,10 @@ package com.angcyo.picker.media.uiview
 import android.view.LayoutInflater
 import android.view.View
 import android.widget.FrameLayout
-import android.widget.ImageView
 import com.angcyo.picker.media.bean.MediaFolder
 import com.angcyo.picker.media.bean.MediaLoaderConfig
 import com.angcyo.uiview.R
 import com.angcyo.uiview.base.UIIDialogImpl
-import com.angcyo.uiview.kotlin.isAudioMimeType
-import com.angcyo.uiview.kotlin.isVideoMimeType
 import com.angcyo.uiview.recycler.RBaseViewHolder
 import com.angcyo.uiview.recycler.adapter.RBaseAdapter
 
@@ -37,25 +34,10 @@ class MediaFolderSelectorUIDialog(val mediaFolderList: List<MediaFolder>, val cu
 
                 //封面加载
                 holder.giv(R.id.base_image_view).apply {
-                    reset()
-                    when {
-                        bean.mediaItemList.first().mimeType.isAudioMimeType() -> {
-                            scaleType = ImageView.ScaleType.CENTER
-                            setImageResource(R.drawable.base_audio_tip_ico)
-                        }
-                        bean.mediaItemList.first().mimeType.isVideoMimeType() -> {
-                            scaleType = ImageView.ScaleType.CENTER_CROP
-                            url = bean.mediaItemList.first().videoThumbPath
-                        }
-                        else -> {
-                            scaleType = ImageView.ScaleType.CENTER_CROP
-                            url = bean.mediaItemList.first().path
-                        }
-                    }
+                    BaseMediaUIView.loadImageView(this, bean.mediaItemList.first())
 
                     //视频 / 音频 特殊提示
-                    if (bean.mediaFolderType == MediaLoaderConfig.LOADER_TYPE_VIDEO /*||
-                            bean.mediaFolderType == MediaLoaderConfig.LOADER_TYPE_AUDIO*/) {
+                    if (bean.mediaFolderType == MediaLoaderConfig.LOADER_TYPE_VIDEO) {
                         setPlayDrawable(getDrawable(R.drawable.base_play_png))
                     } else {
                         setPlayDrawable(null)

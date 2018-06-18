@@ -147,19 +147,19 @@ open class RFrameLayout(context: Context, attributeSet: AttributeSet? = null) : 
         if (!isEnabled && showNoEnableMark) {
             canvas.drawColor(ContextCompat.getColor(context, R.color.default_base_tran_dark2))
         }
-    }
-
-    override fun onDraw(canvas: Canvas?) {
-        super.onDraw(canvas)
 
         if (showInnerBorder) {
             innerBorderPaint.strokeWidth = innerBorderWidth.toFloat()
             innerBorderPaint.color = innerBorderColor
             val l2 = innerBorderWidth * 1f / 2
-            canvas?.drawRect(l2 + innerBorderOffset, l2 + innerBorderOffset,
+            canvas.drawRect(l2 + innerBorderOffset, l2 + innerBorderOffset,
                     measuredWidth - l2 - innerBorderOffset, measuredHeight - l2 - innerBorderOffset,
                     innerBorderPaint)
         }
+    }
+
+    override fun onDraw(canvas: Canvas) {
+        super.onDraw(canvas)
     }
 
     private fun resetMaxHeight() {

@@ -1,21 +1,47 @@
 package com.angcyo.picker.media.uiview
 
 import android.graphics.Color
+import android.widget.ImageView
 import android.widget.TextView
 import com.angcyo.picker.media.bean.MediaItem
 import com.angcyo.picker.media.bean.MediaLoaderConfig
 import com.angcyo.uiview.R
 import com.angcyo.uiview.base.UIBaseView
+import com.angcyo.uiview.kotlin.isAudioMimeType
+import com.angcyo.uiview.kotlin.isVideoMimeType
 import com.angcyo.uiview.model.TitleBarItem
 import com.angcyo.uiview.model.TitleBarPattern
 import com.angcyo.uiview.skin.SkinHelper
 import com.angcyo.uiview.utils.RUtils
 import com.angcyo.uiview.utils.T_
+import com.angcyo.uiview.widget.GlideImageView
 
 /**
  * Created by angcyo on 2018/06/18 07:25
  */
 abstract class BaseMediaUIView : UIBaseView() {
+
+    companion object {
+        fun loadImageView(imageView: GlideImageView, mediaItem: MediaItem) {
+            imageView.apply {
+                reset()
+                when {
+                    mediaItem.mimeType.isAudioMimeType() -> {
+                        scaleType = ImageView.ScaleType.CENTER
+                        setImageResource(R.drawable.base_audio_tip_ico)
+                    }
+                    mediaItem.mimeType.isVideoMimeType() -> {
+                        scaleType = ImageView.ScaleType.CENTER_CROP
+                        url = mediaItem.videoThumbPath
+                    }
+                    else -> {
+                        scaleType = ImageView.ScaleType.CENTER_CROP
+                        url = mediaItem.path
+                    }
+                }
+            }
+        }
+    }
 
     //选中的媒体列表
     protected var selectorMediaList = mutableListOf<MediaItem>()
@@ -33,7 +59,9 @@ abstract class BaseMediaUIView : UIBaseView() {
                     if (!RUtils.isListEmpty(selectorMediaList)) {
                         onSelectorButtonClick()
                     }
-                }.setId(R.id.base_send_button).setTextColor(SkinHelper.getSkin().themeSubColor))
+                }.setId(R.id.base_send_button)
+                        .setTextColor(SkinHelper.getSkin().themeSubColor)
+                        .setTextSize(12 * density()))
     }
 
     override fun getDefaultLayoutState(): LayoutState {

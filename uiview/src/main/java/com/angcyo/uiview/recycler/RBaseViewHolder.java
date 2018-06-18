@@ -31,6 +31,7 @@ import com.angcyo.uiview.widget.RExTextView;
 import com.angcyo.uiview.widget.RImageView;
 import com.angcyo.uiview.widget.RTextView;
 import com.angcyo.uiview.widget.TimeTextView;
+import com.angcyo.uiview.widget.viewpager.RViewPager;
 
 import java.lang.ref.WeakReference;
 import java.lang.reflect.Field;
@@ -226,6 +227,10 @@ public class RBaseViewHolder extends RecyclerView.ViewHolder {
     }
 
     public ViewPager pager(@IdRes int resId) {
+        return v(resId);
+    }
+
+    public RViewPager rpager(@IdRes int resId) {
         return v(resId);
     }
 

@@ -3,7 +3,6 @@ package com.angcyo.picker.media.uiview
 import android.os.Bundle
 import android.support.v4.app.FragmentActivity
 import android.view.LayoutInflater
-import android.widget.ImageView
 import com.angcyo.picker.media.RMediaLoader
 import com.angcyo.picker.media.ThumbLoad
 import com.angcyo.picker.media.bean.MediaFolder
@@ -59,9 +58,21 @@ class RMediaLoaderUIView : BaseMediaUIView() {
         click(R.id.base_preview_selector) {
             if (RUtils.isListEmpty(selectorMediaList)) {
             } else {
-                startIView(RMediaPagerUIView(mediaLoaderConfig, selectorMediaList.filter { true }, selectorMediaList))
+                startMediaPager(selectorMediaList.filter { true }, selectorMediaList)
             }
         }
+    }
+
+    private fun startMediaPager(allMediaList: List<MediaItem> /*总共的媒体*/,
+                                selectorMediaList: MutableList<MediaItem> /*选中的媒体*/,
+                                position: Int = 0 /*总媒体中的索引*/) {
+        startIView(RMediaPagerUIView(mediaLoaderConfig, allMediaList, selectorMediaList, position).apply {
+            onIViewUnload = Runnable {
+                updateNumCheck(true)
+                updatePreviewText()
+                updateSendButtonText()
+            }
+        })
     }
 
     override fun onViewShowFirst(bundle: Bundle?) {
@@ -104,10 +115,31 @@ class RMediaLoaderUIView : BaseMediaUIView() {
 
     override fun onSelectorMediaItem(mediaItem: MediaItem, selector: Boolean) {
         super.onSelectorMediaItem(mediaItem, selector)
+        updatePreviewText()
+    }
+
+    private fun updatePreviewText() {
         if (RUtils.isListEmpty(selectorMediaList)) {
             tv(R.id.base_preview_selector).text = "预览"
         } else {
             tv(R.id.base_preview_selector).text = "预览(${RUtils.listSize(selectorMediaList)})"
+        }
+    }
+
+    /**更新数字*/
+    private fun updateNumCheck(updateMaskColor: Boolean = false) {
+        localRefresh(mViewHolder.rv(R.id.base_recycler_view)) { viewHolder, position ->
+            viewHolder?.let {
+                val numCheckView: NumCheckView? = viewHolder.v(R.id.base_num_check_view)
+
+                numCheckView?.let {
+                    it.setNum(selectorMediaList.indexOf(mediaAdapter.getDataByIndex(position)) + 1)
+
+                    if (updateMaskColor) {
+                        viewHolder.giv(R.id.base_image_view).mDrawMaskColor.drawMaskColorShow = it.isChecked()
+                    }
+                }
+            }
         }
     }
 
@@ -132,27 +164,23 @@ class RMediaLoaderUIView : BaseMediaUIView() {
                 if (isIViewShowOver) {
                     //加载完全显示后, 加载图片耗时操作
                     holder.giv(R.id.base_image_view).apply {
-                        reset()
-                        when {
-                            bean.mimeType.isAudioMimeType() -> {
-                                scaleType = ImageView.ScaleType.CENTER
-                                setImageResource(R.drawable.base_audio_tip_ico)
-                            }
-                            bean.mimeType.isVideoMimeType() -> {
-                                scaleType = ImageView.ScaleType.CENTER_CROP
-                                url = bean.videoThumbPath
-
-                                //创建视频缩略图
-                                ThumbLoad.createThumbFile(WeakReference(mActivity), WeakReference(this@MediaAdapter), bean)
-                            }
-                            else -> {
-                                scaleType = ImageView.ScaleType.CENTER_CROP
-                                url = bean.path
-                            }
+                        loadImageView(this, bean)
+                        if (bean.mimeType.isVideoMimeType()) {
+                            //创建视频缩略图
+                            ThumbLoad.createThumbFile(WeakReference(mActivity), WeakReference(this@MediaAdapter), bean)
                         }
 
                         //蒙层
                         mDrawMaskColor.drawMaskColorShow = selectorMediaList.indexOf(bean) > -1
+                    }
+                }
+
+                holder.click(R.id.base_image_view) {
+                    if (mediaLoaderConfig.selectorModel == MediaLoaderConfig.SELECTOR_MODEL_MULTI) {
+                        startMediaPager(allDatas, selectorMediaList, posInData)
+                    } else {
+                        selectorMediaList.add(bean)
+                        onSelectorButtonClick()
                     }
                 }
 
@@ -174,19 +202,6 @@ class RMediaLoaderUIView : BaseMediaUIView() {
 
                             updateNumCheck()
                         }
-                    }
-                }
-            }
-        }
-
-        /**更新数字*/
-        private fun updateNumCheck() {
-            localRefresh(mViewHolder.rv(R.id.base_recycler_view)) { viewHolder, position ->
-                viewHolder?.let {
-                    val numCheckView: NumCheckView? = viewHolder.v(R.id.base_num_check_view)
-
-                    numCheckView?.let {
-                        it.setNum(selectorMediaList.indexOf(mediaAdapter.getDataByIndex(position)) + 1)
                     }
                 }
             }

@@ -22,8 +22,13 @@
         <com.angcyo.uiview.recycler.RRecyclerView
             android:id="@+id/base_recycler_view"
             android:layout_width="match_parent"
-            android:layout_height="60dp"
+            android:layout_height="80dp"
             android:tag="H"/>
+
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/base_line"
+            android:background="@color/default_base_bg_press"/>
 
         <FrameLayout
             android:layout_width="match_parent"
