@@ -15,6 +15,7 @@ import com.angcyo.uiview.model.TitleBarItem
 import com.angcyo.uiview.model.TitleBarPattern
 import com.angcyo.uiview.recycler.RBaseViewHolder
 import com.angcyo.uiview.recycler.adapter.RBaseAdapter
+import com.angcyo.uiview.resources.AnimUtil
 import com.angcyo.uiview.skin.SkinHelper
 import com.angcyo.uiview.utils.RPlayer
 import com.angcyo.uiview.utils.RUtils
@@ -119,16 +120,29 @@ class RMediaPagerUIView(mediaLoaderConfig: MediaLoaderConfig,
                 }
 
                 holder.clickItem {
+
+                    val rViewPager = mViewHolder.rpager(R.id.base_view_pager)
+                    val rPagerAdapter: RPagerAdapter = rViewPager.adapter as RPagerAdapter
+
                     val indexOf = allMediaList.indexOf(bean).minValue(0)
                     val preIndex = if (indexOf == 0) {
                         indexOf + 1
-                    } else {
+                    } else if (indexOf == allMediaList.size - 1) {
                         indexOf - 1
+                    } else {
+                        //取相同type的索引item
+                        val itemType = rPagerAdapter.getItemType(indexOf)
+                        val itemTypeNext = rPagerAdapter.getItemType(indexOf + 1)
+                        if (itemType == itemTypeNext) {
+                            indexOf + 1
+                        } else {
+                            indexOf - 1
+                        }
                     }
 
-                    mViewHolder.rpager(R.id.base_view_pager).apply {
+                    rViewPager.apply {
                         //在没有动画滚动的情况下, 直接滚动到指定位置会出现 黑屏的BUG, 所以先滚动到邻居的位置,再滚动到真实的位置
-                        if ((adapter as RPagerAdapter).getCacheView(indexOf) == null) {
+                        if (rPagerAdapter.getCacheView(indexOf) == null) {
                             setCurrentItem(preIndex, false)
                             postDelayed(16) {
                                 setCurrentItem(indexOf, false)
@@ -146,6 +160,7 @@ class RMediaPagerUIView(mediaLoaderConfig: MediaLoaderConfig,
     inner class MediaPagerAdapter : RPagerAdapter() {
 
         private var playVideoView: VideoView? = null
+        private var animView: View? = null
         private var playPosition = -1
 
         private val rPlayer = RPlayer()
@@ -189,9 +204,18 @@ class RMediaPagerUIView(mediaLoaderConfig: MediaLoaderConfig,
                     rootView.findViewById<ImageView>(R.id.base_play_view).apply {
                         clickIt {
                             //RUtils.openFile(mActivity, File(mediaItem.path))
-                            playPosition = position
 
-                            rPlayer.startPlay(mediaItem.path)
+                            if (rPlayer.isPlaying()) {
+                                playPosition = -1
+                                animView = null
+                                it.clearAnimation()
+                                rPlayer.pausePlay()
+                            } else {
+                                playPosition = position
+                                it.startAnimation(AnimUtil.rotateAnimation(true))
+                                animView = it
+                                rPlayer.startPlay(mediaItem.path)
+                            }
                         }
                     }
                     rootView.findViewById<TextView>(R.id.base_time_view).text = mediaItem.duration.toHHmmss()
@@ -279,6 +303,7 @@ class RMediaPagerUIView(mediaLoaderConfig: MediaLoaderConfig,
                 playVideoView = null
                 playPosition = -1
 
+                animView?.clearAnimation()
                 rPlayer.pausePlay()
 
                 uiTitleBarContainer.show(true)
