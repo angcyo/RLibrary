@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.constraint.ConstraintLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <com.angcyo.uiview.widget.viewpager.RViewPager
+        android:id="@+id/base_view_pager"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"/>
+
+    <LinearLayout
+        android:id="@+id/base_bottom_control_layout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="#303030"
+        android:orientation="vertical"
+        app:layout_constraintBottom_toBottomOf="parent">
+
+        <com.angcyo.uiview.recycler.RRecyclerView
+            android:id="@+id/base_recycler_view"
+            android:layout_width="match_parent"
+            android:layout_height="60dp"
+            android:tag="H"/>
+
+        <FrameLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:minHeight="40dp">
+
+            <TextView
+                android:id="@+id/base_edit_media"
+                style="@style/BaseMainTextStyle"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="start|center_vertical"
+                android:background="@drawable/base_bg_selector_v21"
+                android:padding="@dimen/base_xhdpi"
+                android:text="编辑"
+                android:textColor="@color/base_white"/>
+
+            <CheckBox
+                android:id="@+id/base_origin_box"
+                style="@style/BaseMainTextStyle"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:button="@drawable/base_media_round_selector"
+                android:paddingStart="@dimen/base_ldpi"
+                android:text="原图"
+                android:textColor="@color/base_white"/>
+
+            <CheckBox
+                android:id="@+id/base_check_button"
+                style="@style/BaseMainTextStyle"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_vertical|end"
+                android:button="@drawable/base_media_rect_selector"
+                android:paddingEnd="@dimen/base_xhdpi"
+                android:paddingStart="@dimen/base_ldpi"
+                android:text="选择"
+                android:textColor="@color/base_white"/>
+
+        </FrameLayout>
+
+    </LinearLayout>
+</android.support.constraint.ConstraintLayout>

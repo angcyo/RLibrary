@@ -478,3 +478,55 @@ public fun TextView.addPaintFlags(flag: Int, add: Boolean = true, invalidate: Bo
         postInvalidate()
     }
 }
+
+public fun View.hideFromBottom(anim: Boolean = true) {
+    if (this.translationY == 0f) {
+        //是显示状态
+        if (anim) {
+            this.animate().setDuration(300)
+                    .translationY((this.measuredHeight).toFloat())
+                    .start()
+        } else {
+            ViewCompat.setTranslationY(this, (this.measuredHeight).toFloat())
+        }
+    }
+}
+
+public fun View.showFromBottom(anim: Boolean = true) {
+    if (this.translationY == (this.measuredHeight).toFloat()) {
+        //是隐藏状态
+        if (anim) {
+            this.animate().setDuration(300)
+                    .translationY(0f)
+                    .start()
+        } else {
+            ViewCompat.setTranslationY(this, 0f)
+        }
+    }
+}
+
+public fun View.hideFromTop(anim: Boolean = true) {
+    if (this.translationY == 0f) {
+        //是显示状态
+        if (anim) {
+            this.animate().setDuration(300)
+                    .translationY((-this.measuredHeight).toFloat())
+                    .start()
+        } else {
+            ViewCompat.setTranslationY(this, (-this.measuredHeight).toFloat())
+        }
+    }
+}
+
+public fun View.showFromTop(anim: Boolean = true) {
+    if (this.translationY == (-this.measuredHeight).toFloat()) {
+        //是隐藏状态
+        if (anim) {
+            this.animate().setDuration(300)
+                    .translationY(0f)
+                    .start()
+        } else {
+            ViewCompat.setTranslationY(this, 0f)
+        }
+    }
+}

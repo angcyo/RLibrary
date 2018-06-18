@@ -431,7 +431,9 @@ public class UITitleBarContainer extends FrameLayout {
                 view.setTag(item.tag);
             }
 
-            ViewExKt.setOnRClickListener(view, item.listener);
+            if (item.isClickable) {
+                ViewExKt.setOnRClickListener(view, item.listener);
+            }
             view.setBackgroundResource(R.drawable.base_bg2_selector_v21);
 
             view.setVisibility(item.visibility);
@@ -643,9 +645,13 @@ public class UITitleBarContainer extends FrameLayout {
         }
     }
 
+    public boolean isTitleBarShow() {
+        return getTranslationY() == 0;
+    }
+
     public void hide(boolean anim) {
         if (getTranslationY() == 0) {
-            //已经是显示状态
+            //是显示状态
             if (anim) {
                 animate().setDuration(300)
                         .translationY(-getMeasuredHeight())
@@ -658,7 +664,7 @@ public class UITitleBarContainer extends FrameLayout {
 
     public void show(boolean anim) {
         if (getTranslationY() == -getMeasuredHeight()) {
-            //已经是显示状态
+            //是隐藏状态
             if (anim) {
                 animate().setDuration(300)
                         .translationY(0)

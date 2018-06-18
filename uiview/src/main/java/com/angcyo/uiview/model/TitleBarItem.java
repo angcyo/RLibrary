@@ -48,8 +48,10 @@ public class TitleBarItem {
 
     public OnItemInitListener mOnItemInitListener;
 
-    TitleBarItem() {
+    public boolean isClickable = true;
 
+    TitleBarItem() {
+        text = "";
     }
 
     public TitleBarItem(String text, View.OnClickListener listener) {
@@ -100,6 +102,11 @@ public class TitleBarItem {
         } else {
             setIcoDrawable(ContextCompat.getDrawable(RApplication.getApp(), res));
         }
+        return this;
+    }
+
+    public TitleBarItem setClickable(boolean clickable) {
+        isClickable = clickable;
         return this;
     }
 

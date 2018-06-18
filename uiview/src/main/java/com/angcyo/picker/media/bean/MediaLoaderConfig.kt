@@ -19,10 +19,21 @@ class MediaLoaderConfig {
         const val LOADER_TYPE_VIDEO = 3
         const val LOADER_TYPE_AUDIO = 4
         const val LOADER_TYPE_IMAGE_VIDEO = 5
+
+        /**单选*/
+        const val SELECTOR_MODEL_SINGLE = 1
+        /**多选*/
+        const val SELECTOR_MODEL_MULTI = 2
     }
 
     var mediaLoaderType = LOADER_TYPE_IMAGE
 
     /**是否显示原图按钮, 如果支持就打开, 否则关闭*/
     var showOriginButton = false
+
+    /**最大选择数量*/
+    var maxSelectorLimit = 9
+
+    /**选择模式*/
+    var selectorModel = SELECTOR_MODEL_MULTI
 }

@@ -1,6 +1,5 @@
 package com.angcyo.picker.media.uiview
 
-import android.graphics.Color
 import android.os.Bundle
 import android.support.v4.app.FragmentActivity
 import android.view.LayoutInflater
@@ -12,7 +11,6 @@ import com.angcyo.picker.media.bean.MediaItem
 import com.angcyo.picker.media.bean.MediaLoaderConfig
 import com.angcyo.picker.media.widget.NumCheckView
 import com.angcyo.uiview.R
-import com.angcyo.uiview.base.UIBaseView
 import com.angcyo.uiview.container.ContentLayout
 import com.angcyo.uiview.kotlin.clickIt
 import com.angcyo.uiview.kotlin.isAudioMimeType
@@ -28,7 +26,7 @@ import java.lang.ref.WeakReference
 /**
  * Copyright (C) 2016,深圳市红鸟网络科技股份有限公司 All rights reserved.
  * 项目名称：
- * 类的描述：
+ * 类的描述：媒体选择界面
  * 创建人员：Robi
  * 创建时间：2018/06/15 16:08
  * 修改人员：Robi
@@ -36,7 +34,7 @@ import java.lang.ref.WeakReference
  * 修改备注：
  * Version: 1.0.0
  */
-class RMediaLoaderUIView : UIBaseView() {
+class RMediaLoaderUIView : BaseMediaUIView() {
 
     override fun getTitleShowString(): String {
         return when (mediaLoaderConfig.mediaLoaderType) {
@@ -52,30 +50,18 @@ class RMediaLoaderUIView : UIBaseView() {
         inflate(R.layout.view_media_loader_layout)
     }
 
-    override fun getDefaultLayoutState(): LayoutState {
-        return LayoutState.CONTENT
-    }
-
-    override fun getTitleBarBGColor(): Int {
-        return getColor(R.color.base_wx_dark)
-    }
-
-    override fun getDefaultBackgroundColor(): Int {
-        return Color.parseColor("#191919")
-    }
-
-    /**
-     * 配置信息
-     * */
-    var mediaLoaderConfig = MediaLoaderConfig().apply {
-        mediaLoaderType = MediaLoaderConfig.LOADER_TYPE_ALL
-    }
-
     val mediaAdapter = MediaAdapter()
     override fun initOnShowContentLayout() {
         super.initOnShowContentLayout()
         mViewHolder.rv(R.id.base_recycler_view).adapter = mediaAdapter
         view(R.id.base_bottom_control_layout).setBackgroundColor(titleBarBGColor)
+
+        click(R.id.base_preview_selector) {
+            if (RUtils.isListEmpty(selectorMediaList)) {
+            } else {
+                startIView(RMediaPagerUIView(mediaLoaderConfig, selectorMediaList.filter { true }, selectorMediaList))
+            }
+        }
     }
 
     override fun onViewShowFirst(bundle: Bundle?) {
@@ -116,8 +102,14 @@ class RMediaLoaderUIView : UIBaseView() {
         }
     }
 
-    //选中的媒体列表
-    private var selectorMediaList = mutableListOf<MediaItem>()
+    override fun onSelectorMediaItem(mediaItem: MediaItem, selector: Boolean) {
+        super.onSelectorMediaItem(mediaItem, selector)
+        if (RUtils.isListEmpty(selectorMediaList)) {
+            tv(R.id.base_preview_selector).text = "预览"
+        } else {
+            tv(R.id.base_preview_selector).text = "预览(${RUtils.listSize(selectorMediaList)})"
+        }
+    }
 
     inner class MediaAdapter : RExBaseAdapter<String, MediaItem, String>(mActivity) {
         override fun getItemLayoutId(viewType: Int): Int {
@@ -176,15 +168,12 @@ class RMediaLoaderUIView : UIBaseView() {
                     setNum(selectorMediaList.indexOf(bean) + 1)
 
                     clickIt {
-                        if (isChecked()) {
-                            selectorMediaList.remove(bean)
-                            holder.giv(R.id.base_image_view).mDrawMaskColor.drawMaskColorShow = false
-                        } else {
-                            selectorMediaList.add(bean)
-                            holder.giv(R.id.base_image_view).mDrawMaskColor.drawMaskColorShow = true
-                        }
+                        if (isChecked() || !checkMaxLimit()) {
+                            onSelectorMediaItem(bean, !isChecked())
+                            holder.giv(R.id.base_image_view).mDrawMaskColor.drawMaskColorShow = !isChecked()
 
-                        updateNumCheck()
+                            updateNumCheck()
+                        }
                     }
                 }
             }

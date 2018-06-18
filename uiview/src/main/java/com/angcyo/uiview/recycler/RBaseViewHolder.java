@@ -6,6 +6,7 @@ package com.angcyo.uiview.recycler;
 
 import android.content.Context;
 import android.support.annotation.IdRes;
+import android.support.v4.view.ViewPager;
 import android.support.v7.widget.AppCompatImageView;
 import android.support.v7.widget.RecyclerView;
 import android.text.TextUtils;
@@ -222,6 +223,10 @@ public class RBaseViewHolder extends RecyclerView.ViewHolder {
 
     public RRecyclerView rv(@IdRes int resId) {
         return reV(resId);
+    }
+
+    public ViewPager pager(@IdRes int resId) {
+        return v(resId);
     }
 
     public RLoopRecyclerView loopV(@IdRes int resId) {
