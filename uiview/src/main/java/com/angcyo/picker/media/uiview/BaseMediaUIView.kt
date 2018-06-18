@@ -14,6 +14,7 @@ import com.angcyo.uiview.model.TitleBarPattern
 import com.angcyo.uiview.skin.SkinHelper
 import com.angcyo.uiview.utils.RUtils
 import com.angcyo.uiview.utils.T_
+import com.angcyo.uiview.view.IViewAnimationType
 import com.angcyo.uiview.widget.GlideImageView
 
 /**
@@ -41,6 +42,10 @@ abstract class BaseMediaUIView : UIBaseView() {
                 }
             }
         }
+    }
+
+    init {
+        mAnimationType = IViewAnimationType.TRANSLATE_VERTICAL
     }
 
     //选中的媒体列表

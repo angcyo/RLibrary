@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+             xmlns:app="http://schemas.android.com/apk/res-auto"
+             xmlns:tools="http://schemas.android.com/tools"
+             android:layout_width="match_parent"
+             android:layout_height="match_parent"
+             tools:background="@color/transparent_dark40">
+
+    <ImageView
+        android:id="@+id/base_play_view"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:src="@drawable/base_audio_tip_ico"/>
+
+    <LinearLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="bottom"
+        android:layout_marginBottom="125dp"
+        android:orientation="vertical">
+
+        <TextView
+            android:id="@+id/base_name_view"
+            style="@style/BaseMainTextStyle"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:drawablePadding="@dimen/base_ldpi"
+            android:paddingStart="@dimen/base_ldpi"
+            android:textColor="@color/base_white"
+            android:textSize="10dp"
+            tools:text="00:20"/>
+
+        <TextView
+            android:id="@+id/base_time_view"
+            style="@style/BaseMainTextStyle"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:drawableLeft="@drawable/base_video_icon"
+            android:drawablePadding="@dimen/base_ldpi"
+            android:paddingStart="@dimen/base_ldpi"
+            android:textColor="@color/base_white"
+            android:textSize="10dp"
+            tools:text="00:20"/>
+
+    </LinearLayout>
+</FrameLayout>

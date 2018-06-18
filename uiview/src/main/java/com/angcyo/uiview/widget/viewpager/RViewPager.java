@@ -1,6 +1,7 @@
 package com.angcyo.uiview.widget.viewpager;
 
 import android.content.Context;
+import android.support.annotation.Nullable;
 import android.support.v4.view.GestureDetectorCompat;
 import android.support.v4.view.PagerAdapter;
 import android.support.v4.view.ViewPager;
@@ -128,6 +129,14 @@ public class RViewPager extends ViewPager {
         event.setLocation(swappedX, swappedY);
 
         return event;
+    }
+
+    @Override
+    public void setAdapter(@Nullable PagerAdapter adapter) {
+        super.setAdapter(adapter);
+        if (adapter instanceof RPagerAdapter) {
+            addOnPageChangeListener((OnPageChangeListener) adapter);
+        }
     }
 
     public interface OnPagerEndListener {

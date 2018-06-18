@@ -5,19 +5,18 @@ import android.view.LayoutInflater
 import android.view.View
 import android.widget.ImageView
 import android.widget.TextView
+import android.widget.VideoView
 import com.angcyo.picker.media.bean.MediaItem
 import com.angcyo.picker.media.bean.MediaLoaderConfig
 import com.angcyo.uiview.R
 import com.angcyo.uiview.container.ContentLayout
-import com.angcyo.uiview.kotlin.clickIt
-import com.angcyo.uiview.kotlin.hideFromBottom
-import com.angcyo.uiview.kotlin.minValue
-import com.angcyo.uiview.kotlin.showFromBottom
+import com.angcyo.uiview.kotlin.*
 import com.angcyo.uiview.model.TitleBarItem
 import com.angcyo.uiview.model.TitleBarPattern
 import com.angcyo.uiview.recycler.RBaseViewHolder
 import com.angcyo.uiview.recycler.adapter.RBaseAdapter
 import com.angcyo.uiview.skin.SkinHelper
+import com.angcyo.uiview.utils.RPlayer
 import com.angcyo.uiview.utils.RUtils
 import com.angcyo.uiview.viewgroup.RFrameLayout
 import com.angcyo.uiview.widget.viewpager.RPagerAdapter
@@ -47,42 +46,16 @@ class RMediaPagerUIView(mediaLoaderConfig: MediaLoaderConfig,
         inflate(R.layout.view_media_pager_layout)
     }
 
-    private val mediaSmallPreviewAdapter = MediaSmallPreviewAdapter()
+    private lateinit var mediaSmallPreviewAdapter: MediaSmallPreviewAdapter
     override fun initOnShowContentLayout() {
         super.initOnShowContentLayout()
+        mediaSmallPreviewAdapter = MediaSmallPreviewAdapter()
 
         view(R.id.base_bottom_control_layout).setBackgroundColor(SkinHelper.getTranColor(titleBarBGColor, 180))
 
         mViewHolder.pager(R.id.base_view_pager).apply {
             offscreenPageLimit = 2
-            adapter = object : RPagerAdapter() {
-                override fun getLayoutId(position: Int): Int {
-                    return R.layout.pager_image_layout
-                }
-
-                override fun initItemView(rootView: View, position: Int) {
-                    super.initItemView(rootView, position)
-
-                    rootView.findViewById<ImageView>(R.id.base_image_view).apply {
-                        Glide.with(mActivity).load(allMediaList[position].path).into(this)
-
-                        clickIt {
-                            if (uiTitleBarContainer.isTitleBarShow) {
-                                uiTitleBarContainer.hide(true)
-                                view(R.id.base_bottom_control_layout).hideFromBottom()
-                            } else {
-                                uiTitleBarContainer.show(true)
-                                view(R.id.base_bottom_control_layout).showFromBottom()
-                            }
-                        }
-                    }
-                }
-
-                override fun getCount(): Int {
-                    return allMediaList.size
-                }
-            }
-
+            adapter = MediaPagerAdapter()
             setCurrentItem(position, false)
 
             addOnPageChangeListener(object : ViewPager.SimpleOnPageChangeListener() {
@@ -126,6 +99,7 @@ class RMediaPagerUIView(mediaLoaderConfig: MediaLoaderConfig,
         mViewHolder.visible(R.id.base_recycler_view, !RUtils.isListEmpty(selectorMediaList))
     }
 
+    /**选中 小图预览*/
     inner class MediaSmallPreviewAdapter : RBaseAdapter<MediaItem>(mActivity, selectorMediaList) {
         override fun getItemLayoutId(viewType: Int): Int {
             return R.layout.base_item_media_small_preview_layout
@@ -135,7 +109,8 @@ class RMediaPagerUIView(mediaLoaderConfig: MediaLoaderConfig,
             bean?.let {
                 holder.giv(R.id.base_image_view).apply {
                     reset()
-                    url = bean.path
+
+                    BaseMediaUIView.loadImageView(this, bean)
                 }
 
                 if (holder.itemView is RFrameLayout) {
@@ -163,6 +138,151 @@ class RMediaPagerUIView(mediaLoaderConfig: MediaLoaderConfig,
                         }
                     }
                 }
+            }
+        }
+    }
+
+    /**大图预览*/
+    inner class MediaPagerAdapter : RPagerAdapter() {
+
+        private var playVideoView: VideoView? = null
+        private var playPosition = -1
+
+        private val rPlayer = RPlayer()
+
+        override fun getItemType(position: Int): Int {
+            val mediaItem = allMediaList[position]
+            return when {
+                mediaItem.mimeType.isAudioMimeType() -> {
+                    MediaLoaderConfig.LOADER_TYPE_AUDIO
+                }
+                mediaItem.mimeType.isVideoMimeType() -> {
+                    MediaLoaderConfig.LOADER_TYPE_VIDEO
+                }
+                else -> {
+                    MediaLoaderConfig.LOADER_TYPE_IMAGE
+                }
+            }
+        }
+
+        override fun getLayoutId(position: Int, itemType: Int): Int {
+            return when (itemType) {
+                MediaLoaderConfig.LOADER_TYPE_AUDIO -> {
+                    R.layout.pager_audio_layout
+                }
+                MediaLoaderConfig.LOADER_TYPE_VIDEO -> {
+                    R.layout.pager_video_layout
+                }
+                else -> {
+                    R.layout.pager_image_layout
+                }
+            }
+        }
+
+        override fun initItemView(rootView: View, position: Int, itemType: Int) {
+            super.initItemView(rootView, position, itemType)
+
+            val mediaItem = allMediaList[position]
+
+            when (itemType) {
+                MediaLoaderConfig.LOADER_TYPE_AUDIO -> {
+                    rootView.findViewById<ImageView>(R.id.base_play_view).apply {
+                        clickIt {
+                            //RUtils.openFile(mActivity, File(mediaItem.path))
+                            playPosition = position
+
+                            rPlayer.startPlay(mediaItem.path)
+                        }
+                    }
+                    rootView.findViewById<TextView>(R.id.base_time_view).text = mediaItem.duration.toHHmmss()
+                    rootView.findViewById<TextView>(R.id.base_name_view).text = mediaItem.displayName
+                }
+                MediaLoaderConfig.LOADER_TYPE_VIDEO -> {
+                    rootView.findViewById<TextView>(R.id.base_time_view).text = mediaItem.duration.toHHmmss()
+                    rootView.findViewById<TextView>(R.id.base_name_view).text = mediaItem.displayName
+
+                    val playView = rootView.findViewById<ImageView>(R.id.base_play_view)
+                    val videoView = rootView.findViewById<VideoView>(R.id.base_video_view)
+
+                    videoView.apply {
+                        setVideoPath(mediaItem.path)
+                        setOnPreparedListener {
+                            start()
+                            post { pause() }
+                        }
+
+                        clickIt {
+                            pause()
+                            playView.visibility = View.VISIBLE
+
+                            playVideoView = null
+                            playPosition = -1
+
+                            uiTitleBarContainer.show(true)
+                            view(R.id.base_bottom_control_layout).showFromBottom()
+                        }
+                    }
+                    playView.apply {
+                        clickIt {
+                            videoView.apply {
+                                if (isPlaying) {
+                                    pause()
+                                } else {
+                                    playVideoView = videoView
+                                    playPosition = position
+
+                                    start()
+                                    playView.visibility = View.INVISIBLE
+
+                                    uiTitleBarContainer.hide(true)
+                                    view(R.id.base_bottom_control_layout).hideFromBottom()
+                                }
+                            }
+                        }
+                    }
+                }
+                else -> {
+                    rootView.findViewById<ImageView>(R.id.base_image_view).apply {
+                        Glide.with(mActivity).load(mediaItem.path).into(this)
+
+                        clickIt {
+                            if (uiTitleBarContainer.isTitleBarShow) {
+                                uiTitleBarContainer.hide(true)
+                                view(R.id.base_bottom_control_layout).hideFromBottom()
+                            } else {
+                                uiTitleBarContainer.show(true)
+                                view(R.id.base_bottom_control_layout).showFromBottom()
+                            }
+                        }
+                    }
+                }
+            }
+        }
+
+        override fun onItemDestroy(rootView: View, itemType: Int) {
+            super.onItemDestroy(rootView, itemType)
+            if (itemType == MediaLoaderConfig.LOADER_TYPE_VIDEO) {
+                rootView.findViewById<VideoView>(R.id.base_video_view).apply {
+                    stopPlayback()
+                }
+            }
+        }
+
+        override fun getCount(): Int {
+            return allMediaList.size
+        }
+
+        override fun onPageSelected(position: Int) {
+            super.onPageSelected(position)
+            if (playPosition != position) {
+                playVideoView?.stopPlayback()
+                playVideoView = null
+                playPosition = -1
+
+                rPlayer.pausePlay()
+
+                uiTitleBarContainer.show(true)
+                view(R.id.base_bottom_control_layout).showFromBottom()
             }
         }
     }
