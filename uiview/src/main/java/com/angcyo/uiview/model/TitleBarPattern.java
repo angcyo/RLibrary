@@ -277,6 +277,11 @@ public class TitleBarPattern {
         return this;
     }
 
+    public TitleBarPattern addRightItem(int index, TitleBarItem rightItem) {
+        mRightItems.add(index, rightItem);
+        return this;
+    }
+
     public TitleBarPattern setTitleGravity(int titleGravity) {
         this.titleGravity = titleGravity;
         return this;

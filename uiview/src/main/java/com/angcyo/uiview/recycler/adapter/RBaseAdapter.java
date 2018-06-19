@@ -833,6 +833,11 @@ public abstract class RBaseAdapter<T> extends RecyclerView.Adapter<RBaseViewHold
         }
     }
 
+    public void notifyItemInsertedAndUpdate(int position) {
+        notifyItemInserted(position);
+        notifyItemRangeChanged(position, getItemCount());
+    }
+
     /**
      * Item悬停库的支持
      */
@@ -889,7 +894,6 @@ public abstract class RBaseAdapter<T> extends RecyclerView.Adapter<RBaseViewHold
     public boolean onUILoadDataEmpty() {
         return false;
     }
-
 
     /**
      * 更新所有item

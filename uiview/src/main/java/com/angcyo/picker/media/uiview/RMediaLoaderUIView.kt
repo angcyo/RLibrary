@@ -1,9 +1,12 @@
 package com.angcyo.picker.media.uiview
 
+import android.app.Activity
+import android.content.Intent
 import android.os.Bundle
 import android.support.v4.app.FragmentActivity
 import android.view.LayoutInflater
 import com.angcyo.picker.media.RMediaLoader
+import com.angcyo.picker.media.TakeUtils
 import com.angcyo.picker.media.ThumbLoad
 import com.angcyo.picker.media.bean.MediaFolder
 import com.angcyo.picker.media.bean.MediaItem
@@ -49,6 +52,17 @@ class RMediaLoaderUIView : BaseMediaUIView() {
         inflate(R.layout.view_media_loader_layout)
     }
 
+    override fun onSelectorButtonClick() {
+        super.onSelectorButtonClick()
+        if (RUtils.isListEmpty(selectorMediaList)) {
+            finishIView()
+        } else {
+            finishIView {
+                onMediaSelectorObserver?.onMediaSelector(selectorMediaList)
+            }
+        }
+    }
+
     private lateinit var mediaAdapter: MediaAdapter
     override fun initOnShowContentLayout() {
         super.initOnShowContentLayout()
@@ -60,21 +74,62 @@ class RMediaLoaderUIView : BaseMediaUIView() {
         click(R.id.base_preview_selector) {
             if (RUtils.isListEmpty(selectorMediaList)) {
             } else {
-                startMediaPager(selectorMediaList.filter { true }, selectorMediaList)
+                startMediaPager(selectorMediaList.filter { true } as MutableList<MediaItem>, selectorMediaList)
             }
         }
     }
 
-    private fun startMediaPager(allMediaList: List<MediaItem> /*总共的媒体*/,
+    private fun startMediaPager(allMediaList: MutableList<MediaItem> /*总共的媒体*/,
                                 selectorMediaList: MutableList<MediaItem> /*选中的媒体*/,
                                 position: Int = 0 /*总媒体中的索引*/) {
         startIView(RMediaPagerUIView(mediaLoaderConfig, allMediaList, selectorMediaList, position).apply {
+            this.onMediaSelectorObserver = this@RMediaLoaderUIView.onMediaSelectorObserver
+
             onIViewUnload = Runnable {
                 updateNumCheck(true)
                 updatePreviewText()
                 updateSendButtonText()
             }
+
+            onImageEditObserver = { mediaItem ->
+                onMediaItemAdd(mediaItem)
+            }
         })
+    }
+
+    /**添加一个新的item到视图*/
+    private fun onMediaItemAdd(mediaItem: MediaItem, addInFirst: Boolean = false) {
+        folderList?.forEach {
+            if (folderList!![curFolderPosition] != it) {
+
+                if (mediaItem.isImageItem()) {
+                    if (it.folderPath == MediaLoaderConfig.FOLDER_PATH_IMAGE ||
+                            it.folderPath == MediaLoaderConfig.FOLDER_PATH_ALL ||
+                            it.folderPath == MediaLoaderConfig.FOLDER_PATH_IMAGE_VIDEO) {
+                        if (addInFirst) {
+                            it.mediaItemList.add(0, mediaItem)
+                        } else {
+                            it.mediaItemList.add(mediaItem)
+                        }
+                    }
+                } else {
+                    if (it.folderPath == MediaLoaderConfig.FOLDER_PATH_VIDEO ||
+                            it.folderPath == MediaLoaderConfig.FOLDER_PATH_ALL ||
+                            it.folderPath == MediaLoaderConfig.FOLDER_PATH_IMAGE_VIDEO) {
+                        if (addInFirst) {
+                            it.mediaItemList.add(0, mediaItem)
+                        } else {
+                            it.mediaItemList.add(mediaItem)
+                        }
+                    }
+                }
+            }
+        }
+        if (addInFirst) {
+            mediaAdapter.notifyItemInsertedAndUpdate(mediaAdapter.headerCount)
+        } else {
+            mediaAdapter.notifyItemInsertedAndUpdate(mediaAdapter.headerCount + mediaAdapter.dataCount - 1)
+        }
     }
 
     override fun onViewShowFirst(bundle: Bundle?) {
@@ -90,6 +145,13 @@ class RMediaLoaderUIView : BaseMediaUIView() {
         super.onLoadContentViewAfter()
         RMediaLoader(mActivity as FragmentActivity, mediaLoaderConfig) {
             folderList = it
+
+            //之前拍照的item
+            takeFileMediaItem?.let {
+                folderList!![curFolderPosition].mediaItemList.add(0, it)
+                onMediaItemAdd(it, true)
+            }
+
             onFolderSelector(curFolderPosition)
 
             if (RUtils.isListEmpty(folderList)) {
@@ -104,14 +166,34 @@ class RMediaLoaderUIView : BaseMediaUIView() {
         }.startLoadMedia()
     }
 
+    private fun resetScanMedia() {
+        (mActivity as FragmentActivity).supportLoaderManager.destroyLoader(mediaLoaderConfig.mediaLoaderType)
+        postDelayed(160) {
+            onLoadContentViewAfter()
+        }
+    }
+
     /**选择文件夹*/
     private fun onFolderSelector(position: Int) {
         if (RUtils.listSize(folderList) <= position) {
 
         } else {
-            curFolderPosition = position
-            tv(R.id.base_folder_selector).text = folderList?.get(position)?.folderName
-            mediaAdapter.resetData(folderList?.get(position)?.mediaItemList)
+            val mediaFolder = folderList?.get(position)
+            mediaFolder?.let {
+                if (mediaLoaderConfig.enableCamera &&
+                        (it.folderPath == MediaLoaderConfig.FOLDER_PATH_IMAGE ||
+                                it.folderPath == MediaLoaderConfig.FOLDER_PATH_VIDEO ||
+                                it.folderPath == MediaLoaderConfig.FOLDER_PATH_ALL ||
+                                it.folderPath == MediaLoaderConfig.FOLDER_PATH_IMAGE_VIDEO)) {
+                    mediaAdapter.resetHeaderData("enableCamera")
+                } else {
+                    mediaAdapter.resetHeaderData(mutableListOf())
+                }
+
+                curFolderPosition = position
+                tv(R.id.base_folder_selector).text = it.folderName
+                mediaAdapter.resetData(it.mediaItemList)
+            }
         }
     }
 
@@ -125,6 +207,18 @@ class RMediaLoaderUIView : BaseMediaUIView() {
             tv(R.id.base_preview_selector).text = "预览"
         } else {
             tv(R.id.base_preview_selector).text = "预览(${RUtils.listSize(selectorMediaList)})"
+        }
+    }
+
+    /**拍照, 录制之后, 重新扫描一下*/
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        super.onActivityResult(requestCode, resultCode, data)
+        if (resultCode == Activity.RESULT_OK) {
+            takeFileMediaItem?.let {
+                RUtils.scanFile(mActivity, it.path)
+            }
+        } else {
+            takeFileMediaItem = null
         }
     }
 
@@ -145,10 +239,13 @@ class RMediaLoaderUIView : BaseMediaUIView() {
         }
     }
 
+    /**拍摄的文件路径*/
+    private var takeFileMediaItem: MediaItem? = null
+
     inner class MediaAdapter : RExBaseAdapter<String, MediaItem, String>(mActivity) {
         override fun getItemLayoutId(viewType: Int): Int {
             if (isHeaderItemType(viewType)) {
-
+                return R.layout.base_item_camera_preview
             }
             return R.layout.base_item_media_layout
         }
@@ -156,7 +253,29 @@ class RMediaLoaderUIView : BaseMediaUIView() {
         override fun onBindHeaderView(holder: RBaseViewHolder, posInHeader: Int, headerBean: String?) {
             super.onBindHeaderView(holder, posInHeader, headerBean)
             //摄像头, 拍照item
-
+            if (mediaLoaderConfig.mediaLoaderType == MediaLoaderConfig.LOADER_TYPE_VIDEO) {
+                holder.tv(R.id.base_text_view).text = "拍摄视频"
+                holder.clickItem {
+                    TakeUtils.recordVideo(mActivity, MediaLoaderConfig.LOADER_TYPE_VIDEO)?.let {
+                        takeFileMediaItem = MediaItem().apply {
+                            path = it.absolutePath
+                            displayName = it.name
+                            mimeType = "video/mp4"
+                        }
+                    }
+                }
+            } else {
+                holder.tv(R.id.base_text_view).text = "拍摄照片"
+                holder.clickItem {
+                    TakeUtils.takePicture(mActivity, MediaLoaderConfig.LOADER_TYPE_IMAGE)?.let {
+                        takeFileMediaItem = MediaItem().apply {
+                            path = it.absolutePath
+                            displayName = it.name
+                            mimeType = "image/png"
+                        }
+                    }
+                }
+            }
         }
 
         override fun onBindDataView(holder: RBaseViewHolder, posInData: Int, bean: MediaItem?) {

@@ -2,7 +2,6 @@
 <android.support.constraint.ConstraintLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
@@ -64,8 +63,10 @@
                 android:layout_height="wrap_content"
                 android:layout_gravity="center_vertical|end"
                 android:button="@drawable/base_media_rect_selector"
+                android:paddingBottom="@dimen/base_xhdpi"
                 android:paddingEnd="@dimen/base_xhdpi"
                 android:paddingStart="@dimen/base_ldpi"
+                android:paddingTop="@dimen/base_xhdpi"
                 android:text="选择"
                 android:textColor="@color/base_white"/>
 

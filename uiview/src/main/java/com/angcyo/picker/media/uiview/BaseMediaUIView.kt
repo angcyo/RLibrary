@@ -3,6 +3,7 @@ package com.angcyo.picker.media.uiview
 import android.graphics.Color
 import android.widget.ImageView
 import android.widget.TextView
+import com.angcyo.picker.media.OnMediaSelectorObserver
 import com.angcyo.picker.media.bean.MediaItem
 import com.angcyo.picker.media.bean.MediaLoaderConfig
 import com.angcyo.uiview.R
@@ -47,6 +48,9 @@ abstract class BaseMediaUIView : UIBaseView() {
     init {
         mAnimationType = IViewAnimationType.TRANSLATE_VERTICAL
     }
+
+    /**回调监听*/
+    var onMediaSelectorObserver: OnMediaSelectorObserver? = null
 
     //选中的媒体列表
     protected var selectorMediaList = mutableListOf<MediaItem>()
@@ -118,7 +122,7 @@ abstract class BaseMediaUIView : UIBaseView() {
         }
     }
 
-    protected fun onSelectorButtonClick() {
+    open protected fun onSelectorButtonClick() {
 
     }
 }

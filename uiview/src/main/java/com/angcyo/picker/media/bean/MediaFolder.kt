@@ -15,7 +15,7 @@ import com.angcyo.uiview.utils.RUtils
  */
 class MediaFolder {
     //文件夹包含哪些媒体类型
-    var mediaFolderType = MediaLoaderConfig.LOADER_TYPE_ALL
+    var mediaFolderType = 0 //MediaLoaderConfig.LOADER_TYPE_ALL 默认为0
 
     //文件夹名
     var folderName = ""

@@ -24,6 +24,12 @@ class MediaLoaderConfig {
         const val SELECTOR_MODEL_SINGLE = 1
         /**多选*/
         const val SELECTOR_MODEL_MULTI = 2
+
+        const val FOLDER_PATH_AUDIO = "audio"
+        const val FOLDER_PATH_IMAGE = "image"
+        const val FOLDER_PATH_VIDEO = "video"
+        const val FOLDER_PATH_ALL = "all"
+        const val FOLDER_PATH_IMAGE_VIDEO = "image_video"
     }
 
     var mediaLoaderType = LOADER_TYPE_IMAGE
@@ -39,4 +45,11 @@ class MediaLoaderConfig {
 
     /**是否显示编辑按钮, 目前只支持图片编辑*/
     var enableImageEdit = true
+
+    /**显示拍照按钮*/
+    var enableCamera = true
+
+    /**指定输出图片的宽度/高度*/
+    var outputImageWidth = 0
+    var outputImageHeight = 0
 }

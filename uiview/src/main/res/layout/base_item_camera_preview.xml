@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="utf-8"?>
+<com.angcyo.uiview.viewgroup.RFrameLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    app:r_is_aeq_width="true">
+
+    <com.angcyo.picker.media.widget.RCameraPreview
+        android:id="@+id/base_camera_preview"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"/>
+
+    <TextView
+        android:id="@+id/base_text_view"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerInParent="true"
+        android:layout_gravity="center"
+        android:drawablePadding="6dp"
+        android:drawableTop="@drawable/base_grid_camera"
+        android:gravity="center"
+        android:text="拍摄照片"
+        android:textColor="#CDCECE"
+        android:textSize="14dp"/>
+
+</com.angcyo.uiview.viewgroup.RFrameLayout>

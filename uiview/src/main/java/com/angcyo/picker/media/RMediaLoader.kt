@@ -8,7 +8,6 @@ import android.support.v4.app.LoaderManager
 import android.support.v4.content.CursorLoader
 import android.support.v4.content.Loader
 import android.text.TextUtils
-import com.angcyo.github.utilcode.utils.MD5
 import com.angcyo.library.utils.L
 import com.angcyo.picker.media.bean.MediaFolder
 import com.angcyo.picker.media.bean.MediaItem
@@ -164,17 +163,17 @@ class RMediaLoader(private val activity: FragmentActivity,
                     val audioMediaFolder = MediaFolder().apply {
                         mediaFolderType = MediaLoaderConfig.LOADER_TYPE_AUDIO
                         folderName = "所有音频"
-                        folderPath = "audio"
+                        folderPath = MediaLoaderConfig.FOLDER_PATH_AUDIO
                     }
                     val videoMediaFolder = MediaFolder().apply {
                         mediaFolderType = MediaLoaderConfig.LOADER_TYPE_VIDEO
                         folderName = "所有视频"
-                        folderPath = "video"
+                        folderPath = MediaLoaderConfig.FOLDER_PATH_VIDEO
                     }
                     val imageMediaFolder = MediaFolder().apply {
                         mediaFolderType = MediaLoaderConfig.LOADER_TYPE_IMAGE
                         folderName = "所有图片"
-                        folderPath = "image"
+                        folderPath = MediaLoaderConfig.FOLDER_PATH_IMAGE
                     }
 
                     Debug.logTimeStart("开始扫描媒体:")
@@ -226,15 +225,15 @@ class RMediaLoader(private val activity: FragmentActivity,
                                         //视频item
                                         videoMediaFolder.mediaItemList.add(mediaItem)
 
-                                        val pathBuilder = StringBuilder()
-                                        pathBuilder.append(activity.getExternalFilesDir("video_thumb").absolutePath)
-                                        pathBuilder.append(File.separator)
-
-                                        //因为MD5获取太慢, 改为文件名和最后一次修改时间作为缩略图路径
-                                        val file = File(mediaItem.path)
-                                        pathBuilder.append(MD5.getStringMD5(file.name + file.lastModified()))
-
-                                        mediaItem.videoThumbPath = pathBuilder.toString()
+//                                        val pathBuilder = StringBuilder()
+//                                        pathBuilder.append(activity.getExternalFilesDir("video_thumb").absolutePath)
+//                                        pathBuilder.append(File.separator)
+//
+//                                        //因为MD5获取太慢, 改为文件名和最后一次修改时间作为缩略图路径
+//                                        val file = File(mediaItem.path)
+//                                        pathBuilder.append(MD5.getStringMD5(file.name + file.lastModified()))
+//
+//                                        mediaItem.videoThumbPath = pathBuilder.toString()
 
 //                                        Rx.back {
 //                                            mediaItem.videoThumbPath = activity.getExternalFilesDir("video_thumb").absolutePath + File.separator + MD5.getStreamMD5(mediaItem.path)
@@ -266,7 +265,7 @@ class RMediaLoader(private val activity: FragmentActivity,
                         if (!allFolderList.isEmpty()) {
                             if (loader.id == MediaLoaderConfig.LOADER_TYPE_ALL) {
                                 mainMediaFolder.folderName = "所有媒体"
-                                mainMediaFolder.folderPath = "all"
+                                mainMediaFolder.folderPath = MediaLoaderConfig.FOLDER_PATH_ALL
 
                                 allFolderList.add(0, mainMediaFolder)
 
@@ -278,7 +277,7 @@ class RMediaLoader(private val activity: FragmentActivity,
                                 }
                             } else if (loader.id == MediaLoaderConfig.LOADER_TYPE_IMAGE_VIDEO) {
                                 mainMediaFolder.folderName = "图片和视频"
-                                mainMediaFolder.folderPath = "image_video"
+                                mainMediaFolder.folderPath = MediaLoaderConfig.FOLDER_PATH_IMAGE_VIDEO
 
                                 allFolderList.add(0, mainMediaFolder)
 
@@ -295,6 +294,8 @@ class RMediaLoader(private val activity: FragmentActivity,
                         }
                     }
                 }, {
+                    //销毁之后 没有缓存加速了
+                    //activity.supportLoaderManager.destroyLoader(loader.id)
                     observer.invoke(allFolderList)
                 })
             }

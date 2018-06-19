@@ -29,7 +29,7 @@ import com.bumptech.glide.Glide
  * 媒体大图预览选择界面
  */
 class RMediaPagerUIView(mediaLoaderConfig: MediaLoaderConfig,
-                        val allMediaList: List<MediaItem> /*总共的媒体*/,
+                        val allMediaList: MutableList<MediaItem> /*总共的媒体*/,
                         selectorMediaList: MutableList<MediaItem> /*选中的媒体*/,
                         var position: Int = 0 /*总媒体中的索引*/) : BaseMediaUIView() {
     init {
@@ -46,6 +46,18 @@ class RMediaPagerUIView(mediaLoaderConfig: MediaLoaderConfig,
 
     override fun inflateContentLayout(baseContentLayout: ContentLayout, inflater: LayoutInflater) {
         inflate(R.layout.view_media_pager_layout)
+    }
+
+    override fun onSelectorButtonClick() {
+        super.onSelectorButtonClick()
+        if (RUtils.isListEmpty(selectorMediaList)) {
+            finishIView()
+        } else {
+            mParentILayout.finishIView(RMediaLoaderUIView::class.java)
+            finishIView {
+                onMediaSelectorObserver?.onMediaSelector(selectorMediaList)
+            }
+        }
     }
 
     private lateinit var mediaSmallPreviewAdapter: MediaSmallPreviewAdapter
@@ -85,6 +97,9 @@ class RMediaPagerUIView(mediaLoaderConfig: MediaLoaderConfig,
         }
     }
 
+    /**图片编辑完成*/
+    var onImageEditObserver: ((MediaItem) -> Unit)? = null
+
     private fun onPageSelected(position: Int) {
         this.position = position
         uiTitleBarContainer.getLeftViewById<TextView>(R.id.base_text_view).text = "${position + 1}/${allMediaList.size}"
@@ -107,7 +122,16 @@ class RMediaPagerUIView(mediaLoaderConfig: MediaLoaderConfig,
         if (mediaLoaderConfig.enableImageEdit) {
             mViewHolder.invisible(R.id.base_edit_media, mediaPagerAdapter.getItemType(position) == MediaLoaderConfig.LOADER_TYPE_IMAGE)
             click(R.id.base_edit_media) {
+                startIView(UCropEditUIView(mediaLoaderConfig, allMediaList[position]).apply {
+                    this.onImageEditObserver = {
+                        //编辑之后产生的新图片
+                        allMediaList.add(it)
+                        mediaPagerAdapter.notifyDataSetChanged()
+                        mViewHolder.rpager(R.id.base_view_pager).currentItem = allMediaList.size - 1
 
+                        this@RMediaPagerUIView.onImageEditObserver?.invoke(it)
+                    }
+                })
             }
         } else {
             mViewHolder.invisible(R.id.base_edit_media)
@@ -119,6 +143,17 @@ class RMediaPagerUIView(mediaLoaderConfig: MediaLoaderConfig,
 
         mediaSmallPreviewAdapter.resetData(selectorMediaList)
         mViewHolder.visible(R.id.base_recycler_view, !RUtils.isListEmpty(selectorMediaList))
+
+        if (selector) {
+            //小图预览自动滚动到选中的那个item
+            selectorMediaList.indexOf(mediaItem).let {
+                if (it > -1) {
+                    post {
+                        mViewHolder.rv(R.id.base_recycler_view).smoothScrollToPosition(it)
+                    }
+                }
+            }
+        }
     }
 
     override fun onViewUnload(uiParam: UIParam) {

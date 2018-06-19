@@ -41,4 +41,5 @@ apply plugin: 'kotlin-android'
 dependencies {
     api project(':RLibrary:library')
     api project(':RLibrary:github')
+    api project(':RLibrary:ucrop')
 }

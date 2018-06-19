@@ -1,0 +1,6 @@
+apply from: '../lib.gradle'
+
+dependencies {
+    api 'com.android.support:exifinterface:' + rootProject.S_VER
+    api project(':RLibrary:library')
+}

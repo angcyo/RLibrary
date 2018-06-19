@@ -1845,6 +1845,16 @@ public class RUtils {
     }
 
     /**
+     * 扫描文件
+     */
+    public static void scanFile(Context context, File file) {
+        Intent mediaScanIntent = new Intent(Intent.ACTION_MEDIA_SCANNER_SCAN_FILE);
+        Uri contentUri = Uri.fromFile(file);
+        mediaScanIntent.setData(contentUri);
+        context.sendBroadcast(mediaScanIntent);
+    }
+
+    /**
      * 将文件复制到相册目录, 系统相册就会自动扫描
      *
      * @param filePath 需要复制的文件全路径
