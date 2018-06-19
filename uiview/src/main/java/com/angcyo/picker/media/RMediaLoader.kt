@@ -16,6 +16,8 @@ import com.angcyo.picker.media.bean.MediaLoaderConfig
 import com.angcyo.uiview.kotlin.isAudioMimeType
 import com.angcyo.uiview.kotlin.isImageMimeType
 import com.angcyo.uiview.kotlin.isVideoMimeType
+import com.angcyo.uiview.net.Rx
+import com.angcyo.uiview.utils.Debug
 import java.io.File
 
 /**
@@ -154,129 +156,147 @@ class RMediaLoader(private val activity: FragmentActivity,
 
             override fun onLoadFinished(loader: Loader<Cursor>, data: Cursor?) {
                 val allFolderList = mutableListOf<MediaFolder>()
-                val mainMediaFolder = MediaFolder().apply {
-                    mediaFolderType = loader.id
-                }
-                val audioMediaFolder = MediaFolder().apply {
-                    mediaFolderType = MediaLoaderConfig.LOADER_TYPE_AUDIO
-                    folderName = "所有音频"
-                    folderPath = "audio"
-                }
-                val videoMediaFolder = MediaFolder().apply {
-                    mediaFolderType = MediaLoaderConfig.LOADER_TYPE_VIDEO
-                    folderName = "所有视频"
-                    folderPath = "video"
-                }
-                val imageMediaFolder = MediaFolder().apply {
-                    mediaFolderType = MediaLoaderConfig.LOADER_TYPE_IMAGE
-                    folderName = "所有图片"
-                    folderPath = "image"
-                }
 
-                if (data != null && data.count > 0) {
-                    //L.e("call: onLoadFinished -> ${data.count}")
-                    data.moveToFirst()
-                    do {
-                        try {
-                            val mimeType = data.getString(data.getColumnIndexOrThrow(ALL_PROJECTION[4]))
+                Rx.base({
+                    val mainMediaFolder = MediaFolder().apply {
+                        mediaFolderType = loader.id
+                    }
+                    val audioMediaFolder = MediaFolder().apply {
+                        mediaFolderType = MediaLoaderConfig.LOADER_TYPE_AUDIO
+                        folderName = "所有音频"
+                        folderPath = "audio"
+                    }
+                    val videoMediaFolder = MediaFolder().apply {
+                        mediaFolderType = MediaLoaderConfig.LOADER_TYPE_VIDEO
+                        folderName = "所有视频"
+                        folderPath = "video"
+                    }
+                    val imageMediaFolder = MediaFolder().apply {
+                        mediaFolderType = MediaLoaderConfig.LOADER_TYPE_IMAGE
+                        folderName = "所有图片"
+                        folderPath = "image"
+                    }
 
-                            if (mimeType.isImageMimeType() ||
-                                    mimeType.isAudioMimeType() ||
-                                    mimeType.isVideoMimeType()) {
+                    Debug.logTimeStart("开始扫描媒体:")
+                    if (data != null && data.count > 0) {
+                        L.e("call: onLoadFinished -> ${data.count}")
+                        data.moveToFirst()
+                        do {
+                            try {
+                                val mimeType = data.getString(data.getColumnIndexOrThrow(ALL_PROJECTION[4]))
 
-                                val path = data.getString(data.getColumnIndexOrThrow(ALL_PROJECTION[1]))
-                                val displayName = data.getString(data.getColumnIndexOrThrow(ALL_PROJECTION[2]))
-                                val addTime = data.getLong(data.getColumnIndexOrThrow(ALL_PROJECTION[3]))
-                                val size = data.getLong(data.getColumnIndexOrThrow(ALL_PROJECTION[5]))
-                                val width = data.getInt(data.getColumnIndexOrThrow(ALL_PROJECTION[6]))
-                                val height = data.getInt(data.getColumnIndexOrThrow(ALL_PROJECTION[7]))
-                                val latitude = data.getDouble(data.getColumnIndexOrThrow(ALL_PROJECTION[8]))
-                                val longitude = data.getDouble(data.getColumnIndexOrThrow(ALL_PROJECTION[9]))
-                                val duration = data.getLong(data.getColumnIndexOrThrow(ALL_PROJECTION[10]))
+                                if (mimeType.isImageMimeType() ||
+                                        mimeType.isAudioMimeType() ||
+                                        mimeType.isVideoMimeType()) {
 
-                                val mediaItem = MediaItem().apply {
-                                    this.path = path ?: ""
-                                    this.displayName = displayName ?: ""
-                                    this.addTime = addTime
-                                    this.mimeType = mimeType ?: ""
-                                    this.size = size
-                                    this.width = width
-                                    this.height = height
-                                    this.latitude = latitude
-                                    this.longitude = longitude
-                                    this.duration = duration
-                                }
+                                    val path = data.getString(data.getColumnIndexOrThrow(ALL_PROJECTION[1]))
+                                    val displayName = data.getString(data.getColumnIndexOrThrow(ALL_PROJECTION[2]))
+                                    val addTime = data.getLong(data.getColumnIndexOrThrow(ALL_PROJECTION[3]))
+                                    val size = data.getLong(data.getColumnIndexOrThrow(ALL_PROJECTION[5]))
+                                    val width = data.getInt(data.getColumnIndexOrThrow(ALL_PROJECTION[6]))
+                                    val height = data.getInt(data.getColumnIndexOrThrow(ALL_PROJECTION[7]))
+                                    val latitude = data.getDouble(data.getColumnIndexOrThrow(ALL_PROJECTION[8]))
+                                    val longitude = data.getDouble(data.getColumnIndexOrThrow(ALL_PROJECTION[9]))
+                                    val duration = data.getLong(data.getColumnIndexOrThrow(ALL_PROJECTION[10]))
 
-                                mainMediaFolder.mediaItemList.add(mediaItem)
-                                if (mediaItem.mimeType.isAudioMimeType()) {
-                                    //音频item
-                                    audioMediaFolder.mediaItemList.add(mediaItem)
+                                    val mediaItem = MediaItem().apply {
+                                        this.path = path ?: ""
+                                        this.displayName = displayName ?: ""
+                                        this.addTime = addTime
+                                        this.mimeType = mimeType ?: ""
+                                        this.size = size
+                                        this.width = width
+                                        this.height = height
+                                        this.latitude = latitude
+                                        this.longitude = longitude
+                                        this.duration = duration
+                                    }
 
-                                    if (loader.id == MediaLoaderConfig.LOADER_TYPE_AUDIO) {
+                                    mainMediaFolder.mediaItemList.add(mediaItem)
+                                    if (mediaItem.mimeType.isAudioMimeType()) {
+                                        //音频item
+                                        audioMediaFolder.mediaItemList.add(mediaItem)
+
+                                        if (loader.id == MediaLoaderConfig.LOADER_TYPE_AUDIO) {
+                                            val mediaFolder = createMediaFolder(path, allFolderList)
+                                            mediaFolder.mediaFolderType = MediaLoaderConfig.LOADER_TYPE_AUDIO
+                                            mediaFolder.mediaItemList.add(mediaItem)
+                                        }
+                                    } else if (mediaItem.mimeType.isVideoMimeType()) {
+                                        //视频item
+                                        videoMediaFolder.mediaItemList.add(mediaItem)
+
+                                        val pathBuilder = StringBuilder()
+                                        pathBuilder.append(activity.getExternalFilesDir("video_thumb").absolutePath)
+                                        pathBuilder.append(File.separator)
+
+                                        //因为MD5获取太慢, 改为文件名和最后一次修改时间作为缩略图路径
+                                        val file = File(mediaItem.path)
+                                        pathBuilder.append(MD5.getStringMD5(file.name + file.lastModified()))
+
+                                        mediaItem.videoThumbPath = pathBuilder.toString()
+
+//                                        Rx.back {
+//                                            mediaItem.videoThumbPath = activity.getExternalFilesDir("video_thumb").absolutePath + File.separator + MD5.getStreamMD5(mediaItem.path)
+//                                        }
+
+                                        if (loader.id == MediaLoaderConfig.LOADER_TYPE_VIDEO) {
+                                            val mediaFolder = createMediaFolder(path, allFolderList)
+                                            mediaFolder.mediaFolderType = MediaLoaderConfig.LOADER_TYPE_VIDEO
+                                            mediaFolder.mediaItemList.add(mediaItem)
+                                        }
+                                    } else {
+                                        //其他 也就是图片
+                                        imageMediaFolder.mediaItemList.add(mediaItem)
+
                                         val mediaFolder = createMediaFolder(path, allFolderList)
-                                        mediaFolder.mediaFolderType = MediaLoaderConfig.LOADER_TYPE_AUDIO
+                                        mediaFolder.mediaFolderType = MediaLoaderConfig.LOADER_TYPE_IMAGE
                                         mediaFolder.mediaItemList.add(mediaItem)
                                     }
-                                } else if (mediaItem.mimeType.isVideoMimeType()) {
-                                    //视频item
-                                    videoMediaFolder.mediaItemList.add(mediaItem)
-                                    mediaItem.videoThumbPath = activity.getExternalFilesDir("video_thumb").absolutePath + File.separator + MD5.getStreamMD5(mediaItem.path)
 
-                                    if (loader.id == MediaLoaderConfig.LOADER_TYPE_VIDEO) {
-                                        val mediaFolder = createMediaFolder(path, allFolderList)
-                                        mediaFolder.mediaFolderType = MediaLoaderConfig.LOADER_TYPE_VIDEO
-                                        mediaFolder.mediaItemList.add(mediaItem)
-                                    }
-                                } else {
-                                    //其他 也就是图片
-                                    imageMediaFolder.mediaItemList.add(mediaItem)
-
-                                    val mediaFolder = createMediaFolder(path, allFolderList)
-                                    mediaFolder.mediaFolderType = MediaLoaderConfig.LOADER_TYPE_IMAGE
-                                    mediaFolder.mediaItemList.add(mediaItem)
+                                    //L.i("call: onLoadFinished -> $mediaItem")
                                 }
-
-                                //L.i("call: onLoadFinished -> $mediaItem")
+                            } catch (e: Exception) {
+                                e.printStackTrace()
                             }
-                        } catch (e: Exception) {
-                            e.printStackTrace()
-                        }
 
-                    } while (data.moveToNext())
+                        } while (data.moveToNext())
+                        Debug.logTimeEnd("扫描媒体结束:")
 
-                    if (!allFolderList.isEmpty()) {
-                        if (loader.id == MediaLoaderConfig.LOADER_TYPE_ALL) {
-                            mainMediaFolder.folderName = "所有媒体"
-                            mainMediaFolder.folderPath = "all"
+                        if (!allFolderList.isEmpty()) {
+                            if (loader.id == MediaLoaderConfig.LOADER_TYPE_ALL) {
+                                mainMediaFolder.folderName = "所有媒体"
+                                mainMediaFolder.folderPath = "all"
 
-                            allFolderList.add(0, mainMediaFolder)
+                                allFolderList.add(0, mainMediaFolder)
 
-                            if (audioMediaFolder.mediaCount > 0) {
-                                allFolderList.add(1, audioMediaFolder)
+                                if (audioMediaFolder.mediaCount > 0) {
+                                    allFolderList.add(1, audioMediaFolder)
+                                }
+                                if (videoMediaFolder.mediaCount > 0) {
+                                    allFolderList.add(1, videoMediaFolder)
+                                }
+                            } else if (loader.id == MediaLoaderConfig.LOADER_TYPE_IMAGE_VIDEO) {
+                                mainMediaFolder.folderName = "图片和视频"
+                                mainMediaFolder.folderPath = "image_video"
+
+                                allFolderList.add(0, mainMediaFolder)
+
+                                if (videoMediaFolder.mediaCount > 0) {
+                                    allFolderList.add(1, videoMediaFolder)
+                                }
+                            } else if (loader.id == MediaLoaderConfig.LOADER_TYPE_IMAGE) {
+                                allFolderList.add(0, imageMediaFolder)
+                            } else if (loader.id == MediaLoaderConfig.LOADER_TYPE_VIDEO) {
+                                allFolderList.add(0, videoMediaFolder)
+                            } else if (loader.id == MediaLoaderConfig.LOADER_TYPE_AUDIO) {
+                                allFolderList.add(0, audioMediaFolder)
                             }
-                            if (videoMediaFolder.mediaCount > 0) {
-                                allFolderList.add(1, videoMediaFolder)
-                            }
-                        } else if (loader.id == MediaLoaderConfig.LOADER_TYPE_IMAGE_VIDEO) {
-                            mainMediaFolder.folderName = "图片和视频"
-                            mainMediaFolder.folderPath = "image_video"
-
-                            allFolderList.add(0, mainMediaFolder)
-
-                            if (videoMediaFolder.mediaCount > 0) {
-                                allFolderList.add(1, videoMediaFolder)
-                            }
-                        } else if (loader.id == MediaLoaderConfig.LOADER_TYPE_IMAGE) {
-                            allFolderList.add(0, imageMediaFolder)
-                        } else if (loader.id == MediaLoaderConfig.LOADER_TYPE_VIDEO) {
-                            allFolderList.add(0, videoMediaFolder)
-                        } else if (loader.id == MediaLoaderConfig.LOADER_TYPE_AUDIO) {
-                            allFolderList.add(0, audioMediaFolder)
                         }
                     }
-                }
-
-                observer.invoke(allFolderList)
+                }, {
+                    observer.invoke(allFolderList)
+                })
             }
 
             override fun onLoaderReset(loader: Loader<Cursor>) {

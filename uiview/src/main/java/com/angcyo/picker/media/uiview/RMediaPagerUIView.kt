@@ -10,6 +10,7 @@ import com.angcyo.picker.media.bean.MediaItem
 import com.angcyo.picker.media.bean.MediaLoaderConfig
 import com.angcyo.uiview.R
 import com.angcyo.uiview.container.ContentLayout
+import com.angcyo.uiview.container.UIParam
 import com.angcyo.uiview.kotlin.*
 import com.angcyo.uiview.model.TitleBarItem
 import com.angcyo.uiview.model.TitleBarPattern
@@ -48,15 +49,17 @@ class RMediaPagerUIView(mediaLoaderConfig: MediaLoaderConfig,
     }
 
     private lateinit var mediaSmallPreviewAdapter: MediaSmallPreviewAdapter
+    private lateinit var mediaPagerAdapter: MediaPagerAdapter
     override fun initOnShowContentLayout() {
         super.initOnShowContentLayout()
         mediaSmallPreviewAdapter = MediaSmallPreviewAdapter()
+        mediaPagerAdapter = MediaPagerAdapter()
 
         view(R.id.base_bottom_control_layout).setBackgroundColor(SkinHelper.getTranColor(titleBarBGColor, 180))
 
         mViewHolder.pager(R.id.base_view_pager).apply {
             offscreenPageLimit = 2
-            adapter = MediaPagerAdapter()
+            adapter = mediaPagerAdapter
             setCurrentItem(position, false)
 
             addOnPageChangeListener(object : ViewPager.SimpleOnPageChangeListener() {
@@ -98,6 +101,12 @@ class RMediaPagerUIView(mediaLoaderConfig: MediaLoaderConfig,
 
         mediaSmallPreviewAdapter.resetData(selectorMediaList)
         mViewHolder.visible(R.id.base_recycler_view, !RUtils.isListEmpty(selectorMediaList))
+    }
+
+    override fun onViewUnload(uiParam: UIParam) {
+        super.onViewUnload(uiParam)
+        mediaPagerAdapter.releaseVideo()
+        mediaPagerAdapter.releaseAudio()
     }
 
     /**选中 小图预览*/
@@ -227,6 +236,28 @@ class RMediaPagerUIView(mediaLoaderConfig: MediaLoaderConfig,
 
                     val playView = rootView.findViewById<ImageView>(R.id.base_play_view)
                     val videoView = rootView.findViewById<VideoView>(R.id.base_video_view)
+                    val clickView = rootView.findViewById<View>(R.id.base_click_view)
+
+                    fun playEnd() {
+                        playView.visibility = View.VISIBLE
+
+                        playVideoView = null
+                        playPosition = -1
+
+                        uiTitleBarContainer.show(true)
+                        view(R.id.base_bottom_control_layout).showFromBottom()
+                    }
+
+                    fun playStart() {
+                        playVideoView = videoView
+                        playPosition = position
+
+                        videoView.start()
+                        playView.visibility = View.INVISIBLE
+
+                        uiTitleBarContainer.hide(true)
+                        view(R.id.base_bottom_control_layout).hideFromBottom()
+                    }
 
                     videoView.apply {
                         setVideoPath(mediaItem.path)
@@ -234,34 +265,17 @@ class RMediaPagerUIView(mediaLoaderConfig: MediaLoaderConfig,
                             start()
                             post { pause() }
                         }
-
-                        clickIt {
-                            pause()
-                            playView.visibility = View.VISIBLE
-
-                            playVideoView = null
-                            playPosition = -1
-
-                            uiTitleBarContainer.show(true)
-                            view(R.id.base_bottom_control_layout).showFromBottom()
+                        setOnCompletionListener {
+                            playEnd()
                         }
                     }
-                    playView.apply {
-                        clickIt {
-                            videoView.apply {
-                                if (isPlaying) {
-                                    pause()
-                                } else {
-                                    playVideoView = videoView
-                                    playPosition = position
 
-                                    start()
-                                    playView.visibility = View.INVISIBLE
-
-                                    uiTitleBarContainer.hide(true)
-                                    view(R.id.base_bottom_control_layout).hideFromBottom()
-                                }
-                            }
+                    clickView.clickIt {
+                        if (videoView.isPlaying) {
+                            videoView.pause()
+                            playEnd()
+                        } else {
+                            playStart()
                         }
                     }
                 }
@@ -286,9 +300,9 @@ class RMediaPagerUIView(mediaLoaderConfig: MediaLoaderConfig,
         override fun onItemDestroy(rootView: View, itemType: Int) {
             super.onItemDestroy(rootView, itemType)
             if (itemType == MediaLoaderConfig.LOADER_TYPE_VIDEO) {
-                rootView.findViewById<VideoView>(R.id.base_video_view).apply {
-                    stopPlayback()
-                }
+                releaseVideo()
+            } else if (itemType == MediaLoaderConfig.LOADER_TYPE_AUDIO) {
+                releaseAudio()
             }
         }
 
@@ -296,15 +310,23 @@ class RMediaPagerUIView(mediaLoaderConfig: MediaLoaderConfig,
             return allMediaList.size
         }
 
+        fun releaseVideo() {
+            playVideoView?.stopPlayback()
+            playVideoView = null
+            playPosition = -1
+        }
+
+        fun releaseAudio() {
+            animView?.clearAnimation()
+            rPlayer.pausePlay()
+        }
+
         override fun onPageSelected(position: Int) {
             super.onPageSelected(position)
             if (playPosition != position) {
-                playVideoView?.stopPlayback()
-                playVideoView = null
-                playPosition = -1
+                releaseVideo()
 
-                animView?.clearAnimation()
-                rPlayer.pausePlay()
+                releaseAudio()
 
                 uiTitleBarContainer.show(true)
                 view(R.id.base_bottom_control_layout).showFromBottom()

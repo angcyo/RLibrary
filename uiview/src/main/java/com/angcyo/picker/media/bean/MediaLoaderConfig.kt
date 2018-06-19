@@ -36,4 +36,6 @@ class MediaLoaderConfig {
 
     /**选择模式*/
     var selectorModel = SELECTOR_MODEL_MULTI
+
+    /***/
 }

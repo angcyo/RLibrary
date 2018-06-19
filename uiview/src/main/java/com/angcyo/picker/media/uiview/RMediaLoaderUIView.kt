@@ -49,9 +49,11 @@ class RMediaLoaderUIView : BaseMediaUIView() {
         inflate(R.layout.view_media_loader_layout)
     }
 
-    val mediaAdapter = MediaAdapter()
+    private lateinit var mediaAdapter: MediaAdapter
     override fun initOnShowContentLayout() {
         super.initOnShowContentLayout()
+
+        mediaAdapter = MediaAdapter()
         mViewHolder.rv(R.id.base_recycler_view).adapter = mediaAdapter
         view(R.id.base_bottom_control_layout).setBackgroundColor(titleBarBGColor)
 
