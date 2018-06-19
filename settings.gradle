@@ -4,6 +4,7 @@
 include ':RLibrary:uiview'
 include ':RLibrary:library'
 include ':RLibrary:github'
+include ':RLibrary:ucrop'
 
 ////可选
 //include ':RLibrary:imagepicker'
