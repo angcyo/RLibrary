@@ -37,5 +37,6 @@ class MediaLoaderConfig {
     /**选择模式*/
     var selectorModel = SELECTOR_MODEL_MULTI
 
-    /***/
+    /**是否显示编辑按钮, 目前只支持图片编辑*/
+    var enableImageEdit = true
 }

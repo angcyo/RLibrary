@@ -74,6 +74,15 @@ class RMediaPagerUIView(mediaLoaderConfig: MediaLoaderConfig,
         mViewHolder.visible(R.id.base_recycler_view, !RUtils.isListEmpty(selectorMediaList))
 
         onPageSelected(position)
+
+        //小图预览自动滚动到选中的那个item
+        selectorMediaList.indexOf(allMediaList[position]).let {
+            if (it > -1) {
+                post {
+                    mViewHolder.rv(R.id.base_recycler_view).smoothScrollToPosition(it)
+                }
+            }
+        }
     }
 
     private fun onPageSelected(position: Int) {
@@ -94,6 +103,15 @@ class RMediaPagerUIView(mediaLoaderConfig: MediaLoaderConfig,
         }
 
         mediaSmallPreviewAdapter.updateAllItem()
+
+        if (mediaLoaderConfig.enableImageEdit) {
+            mViewHolder.invisible(R.id.base_edit_media, mediaPagerAdapter.getItemType(position) == MediaLoaderConfig.LOADER_TYPE_IMAGE)
+            click(R.id.base_edit_media) {
+
+            }
+        } else {
+            mViewHolder.invisible(R.id.base_edit_media)
+        }
     }
 
     override fun onSelectorMediaItem(mediaItem: MediaItem, selector: Boolean) {
@@ -125,7 +143,12 @@ class RMediaPagerUIView(mediaLoaderConfig: MediaLoaderConfig,
 
                 if (holder.itemView is RFrameLayout) {
                     holder.itemView.innerBorderColor = SkinHelper.getSkin().themeSubColor
-                    holder.itemView.showInnerBorder = bean == allMediaList[this@RMediaPagerUIView.position]
+                    if (bean == allMediaList[this@RMediaPagerUIView.position]) {
+                        holder.itemView.showInnerBorder = true
+                        mViewHolder.rv(R.id.base_recycler_view).smoothScrollToPosition(position)
+                    } else {
+                        holder.itemView.showInnerBorder = false
+                    }
                 }
 
                 holder.clickItem {
