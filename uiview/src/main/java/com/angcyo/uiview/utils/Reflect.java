@@ -232,6 +232,9 @@ public class Reflect {
      * @param onlyPublic 仅输出public 声明的属性
      */
     public static String logObject(Object object, boolean onlyPublic) {
+        if (object == null) {
+            return "";
+        }
         /*
          *
          * getFields()与getDeclaredFields()区别:
@@ -269,7 +272,7 @@ public class Reflect {
         builder.append("):\n");
         for (Field f : fields) {
             builder.append(f.getName());
-            builder.append(":");
+            builder.append("->");
             try {
                 f.setAccessible(true);
 
@@ -288,17 +291,18 @@ public class Reflect {
         builder.append("):\n");
         for (Method m : methods) {
             builder.append(m.getName());
-            builder.append(":");
+            builder.append("->");
             try {
                 m.setAccessible(true);
 
+                //参数列表
                 Class<?>[] parameterTypes = m.getParameterTypes();
                 if (parameterTypes == null || parameterTypes.length <= 0) {
                     logList(builder, m.invoke(object));
                 } else {
                     for (int i = 0; i < parameterTypes.length; i++) {
                         builder.append(i);
-                        builder.append(",");
+                        builder.append(".");
                         builder.append(parameterTypes[i].getSimpleName());
                         builder.append(";");
                     }

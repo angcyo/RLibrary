@@ -162,7 +162,7 @@ open class GlideImageView(context: Context, attributeSet: AttributeSet? = null) 
 
     override fun onSizeChanged(w: Int, h: Int, oldw: Int, oldh: Int) {
         super.onSizeChanged(w, h, oldw, oldh)
-        L.d("onSizeChanged $oldw $oldh -> $w $h")
+        //L.d("onSizeChanged $oldw $oldh -> $w $h")
         startLoadUrl()
     }
 
