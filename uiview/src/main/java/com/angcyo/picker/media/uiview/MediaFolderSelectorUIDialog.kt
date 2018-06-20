@@ -37,7 +37,7 @@ class MediaFolderSelectorUIDialog(val mediaFolderList: List<MediaFolder>, val cu
                     BaseMediaUIView.loadImageView(this, bean.mediaItemList.first())
 
                     //视频 / 音频 特殊提示
-                    if (bean.mediaFolderType == MediaLoaderConfig.LOADER_TYPE_VIDEO) {
+                    if (bean.folderPath == MediaLoaderConfig.FOLDER_PATH_VIDEO) {
                         setPlayDrawable(getDrawable(R.drawable.base_play_png))
                     } else {
                         setPlayDrawable(null)

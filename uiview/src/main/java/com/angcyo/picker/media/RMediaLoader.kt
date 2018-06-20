@@ -150,7 +150,8 @@ class RMediaLoader(private val activity: FragmentActivity,
                     else -> ALL_SELECTION
                 }
                 return CursorLoader(activity, ALL_QUERY_URI, ALL_PROJECTION,
-                        selection, null, MediaStore.Files.FileColumns.DATE_ADDED + " DESC")
+                        selection + loaderConfig.getFileSelectorSelection(),
+                        null, MediaStore.Files.FileColumns.DATE_ADDED + " DESC")
             }
 
             override fun onLoadFinished(loader: Loader<Cursor>, data: Cursor?) {

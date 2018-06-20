@@ -12,6 +12,7 @@ import com.angcyo.picker.media.bean.MediaFolder
 import com.angcyo.picker.media.bean.MediaItem
 import com.angcyo.picker.media.bean.MediaLoaderConfig
 import com.angcyo.picker.media.widget.NumCheckView
+import com.angcyo.uiview.BuildConfig
 import com.angcyo.uiview.R
 import com.angcyo.uiview.container.ContentLayout
 import com.angcyo.uiview.kotlin.clickIt
@@ -253,7 +254,8 @@ class RMediaLoaderUIView : BaseMediaUIView() {
         override fun onBindHeaderView(holder: RBaseViewHolder, posInHeader: Int, headerBean: String?) {
             super.onBindHeaderView(holder, posInHeader, headerBean)
             //摄像头, 拍照item
-            if (mediaLoaderConfig.mediaLoaderType == MediaLoaderConfig.LOADER_TYPE_VIDEO) {
+            if (mediaLoaderConfig.mediaLoaderType == MediaLoaderConfig.LOADER_TYPE_VIDEO ||
+                    folderList!![curFolderPosition].folderPath == MediaLoaderConfig.FOLDER_PATH_VIDEO) {
                 holder.tv(R.id.base_text_view).text = "拍摄视频"
                 holder.clickItem {
                     TakeUtils.recordVideo(mActivity, MediaLoaderConfig.LOADER_TYPE_VIDEO)?.let {
@@ -317,13 +319,26 @@ class RMediaLoaderUIView : BaseMediaUIView() {
                     setNum(selectorMediaList.indexOf(bean) + 1)
 
                     clickIt {
-                        if (isChecked() || !checkMaxLimit()) {
-                            onSelectorMediaItem(bean, !isChecked())
-                            holder.giv(R.id.base_image_view).mDrawMaskColor.drawMaskColorShow = !isChecked()
-
-                            updateNumCheck()
+                        if (isChecked()) {
+                            //取消选中
+                            onSelectorMediaItem(bean, false)
+                            holder.giv(R.id.base_image_view).mDrawMaskColor.drawMaskColorShow = true
+                        } else if (checkMaxLimit() || !mediaLoaderConfig.canSelectorFile(bean.size)) {
+                            //不能选中
+                            holder.giv(R.id.base_image_view).mDrawMaskColor.drawMaskColorShow = false
+                        } else {
+                            //选中
+                            onSelectorMediaItem(bean, true)
+                            holder.giv(R.id.base_image_view).mDrawMaskColor.drawMaskColorShow = true
                         }
+
+                        updateNumCheck()
                     }
+                }
+
+                if (BuildConfig.DEBUG || mediaLoaderConfig.limitFileSizeModel == MediaLoaderConfig.SIZE_MODEL_SELECTOR) {
+                    holder.visible(R.id.base_file_size_view)
+                    holder.tv(R.id.base_file_size_view).text = RUtils.formatFileSize(bean.size) /*+ "\n${bean.size}"*/
                 }
             }
         }

@@ -109,10 +109,15 @@ class RMediaPagerUIView(mediaLoaderConfig: MediaLoaderConfig,
 
             clickIt {
                 val contains = selectorMediaList.contains(allMediaList[position])
-                if (contains || !checkMaxLimit()) {
-                    onSelectorMediaItem(allMediaList[position], !contains)
-                } else {
+                if (contains) {
+                    //取消选择
+                    onSelectorMediaItem(allMediaList[position], false)
+                } else if (checkMaxLimit() || !mediaLoaderConfig.canSelectorFile(allMediaList[position].size)) {
+                    //不能选中
                     isChecked = false
+                } else {
+                    //选中
+                    onSelectorMediaItem(allMediaList[position], true)
                 }
             }
         }

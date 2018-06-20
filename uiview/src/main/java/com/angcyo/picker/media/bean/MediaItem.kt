@@ -34,6 +34,17 @@ open class MediaItem {
     // image/png video/mp4
     var mimeType = ""
     var size = 0L
+        get() {
+            if (field <= 0) {
+                File(path).let {
+                    if (it.exists()) {
+                        field = it.length()
+                    }
+                }
+            }
+            return field
+        }
+
     var width = 0
     var height = 0
     var latitude = 0.0
