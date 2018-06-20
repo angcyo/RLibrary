@@ -138,8 +138,9 @@ class UCropEditUIView(mediaLoaderConfig: MediaLoaderConfig, private val mediaIte
         //关闭手势旋转, 采用按钮旋转
         mGestureCropImageView.isRotateEnabled = false
 
-        if (mediaLoaderConfig.outputImageWidth > 10 &&
-                mediaLoaderConfig.outputImageHeight > 10) {
+        val minSize = 10
+        if (mediaLoaderConfig.outputImageWidth > minSize &&
+                mediaLoaderConfig.outputImageHeight > minSize) {
 
             //设置裁剪区域的比例 (宽度/高度)
             mGestureCropImageView.targetAspectRatio = mediaLoaderConfig.outputImageWidth * 1f / mediaLoaderConfig.outputImageHeight
@@ -147,7 +148,18 @@ class UCropEditUIView(mediaLoaderConfig: MediaLoaderConfig, private val mediaIte
             mGestureCropImageView.setMaxResultImageSizeX(mediaLoaderConfig.outputImageWidth)
             mGestureCropImageView.setMaxResultImageSizeY(mediaLoaderConfig.outputImageHeight)
         } else {
-            mGestureCropImageView.targetAspectRatio = 1f
+
+            if (mediaItem.width > minSize && mediaItem.height > minSize) {
+                mGestureCropImageView.targetAspectRatio = mediaItem.width * 1f / mediaItem.height
+            } else {
+                val imageSize = RUtils.getImageSize(mediaItem.path)
+
+                if (imageSize[0] > minSize && imageSize[1] > minSize) {
+                    mGestureCropImageView.targetAspectRatio = imageSize[0] * 1f / imageSize[1]
+                } else {
+                    mGestureCropImageView.targetAspectRatio = 1f
+                }
+            }
         }
     }
 
