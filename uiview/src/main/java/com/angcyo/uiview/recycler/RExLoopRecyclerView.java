@@ -263,7 +263,7 @@ public class RExLoopRecyclerView extends RRecyclerView {
                 offsetPosition = -1;
             }
 
-            final int currentPosition = layoutManager.getCurrentPosition();
+            final int currentPosition = layoutManager.getCurrentPosition();//mCurrentPosition
             if ((orientation == ViewPagerLayoutManager.VERTICAL
                     && Math.abs(velocityY) > minFlingVelocity) || (orientation == ViewPagerLayoutManager.HORIZONTAL
                     && Math.abs(velocityX) > minFlingVelocity)) {
