@@ -5,9 +5,15 @@ import android.content.res.Resources;
 import android.content.res.TypedArray;
 import android.graphics.Canvas;
 import android.graphics.Paint;
+import android.support.annotation.ColorRes;
 import android.support.annotation.NonNull;
+import android.support.v4.content.ContextCompat;
 import android.util.AttributeSet;
 import android.view.View;
+import android.view.ViewGroup;
+
+import com.angcyo.uiview.R;
+import com.angcyo.uiview.skin.SkinHelper;
 
 /**
  * Copyright (C) 2016,深圳市红鸟网络科技股份有限公司 All rights reserved.
@@ -33,6 +39,11 @@ public abstract class BaseDraw {
         mBasePaint.setFilterBitmap(true);
         mBasePaint.setStyle(Paint.Style.FILL);
         mBasePaint.setTextSize(12 * density());
+        if (isInEditMode()) {
+            mBasePaint.setColor(getColor(R.color.base_dark_red));
+        } else {
+            mBasePaint.setColor(SkinHelper.getSkin().getThemeSubColor());
+        }
 
         //initAttribute(attr);//父类当中调用此方法初始化子类的成员, 会导致被覆盖的BUG
         //所以此方法, 请在子类当中触发
@@ -50,12 +61,24 @@ public abstract class BaseDraw {
         return getContext().getResources();
     }
 
+    protected int getColor(@ColorRes int id) {
+        return ContextCompat.getColor(getContext(), id);
+    }
+
     protected boolean isInEditMode() {
         return mView.isInEditMode();
     }
 
     protected void postInvalidate() {
         mView.postInvalidate();
+    }
+
+    protected void postInvalidateOnAnimation() {
+        mView.postInvalidateOnAnimation();
+    }
+
+    protected void scrollTo(int x, int y) {
+        mView.scrollTo(x, y);
     }
 
     protected int getPaddingBottom() {
@@ -92,6 +115,18 @@ public abstract class BaseDraw {
 
     protected void requestLayout() {
         mView.requestLayout();
+    }
+
+    protected int getChildCount() {
+        return ((ViewGroup) mView).getChildCount();
+    }
+
+    protected View getChildAt(int index) {
+        return ((ViewGroup) mView).getChildAt(index);
+    }
+
+    public void draw(@NonNull Canvas canvas) {
+
     }
 
     public void onDraw(@NonNull Canvas canvas) {

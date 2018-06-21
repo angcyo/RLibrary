@@ -2,13 +2,15 @@ package com.angcyo.uiview.viewgroup
 
 import android.content.Context
 import android.graphics.Canvas
+import android.support.v4.view.ViewPager
 import android.util.AttributeSet
 import android.view.GestureDetector
 import android.view.MotionEvent
+import android.view.View
 import android.view.ViewGroup
 import android.widget.FrameLayout
 import android.widget.OverScroller
-import com.angcyo.library.utils.L
+import com.angcyo.uiview.draw.RTabIndicator
 import com.angcyo.uiview.kotlin.*
 
 /**
@@ -24,11 +26,105 @@ import com.angcyo.uiview.kotlin.*
  */
 class RTabLayout(context: Context, attributeSet: AttributeSet? = null) : ViewGroup(context, attributeSet) {
 
+    var tabIndicator: RTabIndicator
+    var onTabLayoutListener: OnTabLayoutListener? = null
+    private var currentItem = -1
+
     init {
         setWillNotDraw(false)
+        tabIndicator = RTabIndicator(this, attributeSet)
     }
 
+    override fun addView(child: View?, index: Int, params: LayoutParams?) {
+        super.addView(child, index, params)
+        child?.apply {
+            val indexOfChild = indexOfChild(this)
+
+            clickIt {
+                setCurrentItem(indexOfChild(it))
+            }
+
+            if (indexOfChild == currentItem) {
+                onTabLayoutListener?.onSelectorItemView(this@RTabLayout, this, indexOfChild)
+            } else {
+                onTabLayoutListener?.onUnSelectorItemView(this@RTabLayout, this, indexOfChild)
+            }
+        }
+    }
+
+    /**请调用此方法 设置tab index*/
+    fun setCurrentItem(index: Int, notify: Boolean = true) {
+        val oldIndex = currentItem
+        currentItem = index
+        tabIndicator.curIndex = index
+
+        if (oldIndex == index) {
+            if (notify) {
+                onTabLayoutListener?.onTabReSelector(this, getChildAt(oldIndex), oldIndex)
+            }
+        } else {
+            if (oldIndex in 0 until childCount) {
+                onTabLayoutListener?.onUnSelectorItemView(this, getChildAt(oldIndex), oldIndex)
+            }
+            if (index in 0 until childCount) {
+                onTabLayoutListener?.onSelectorItemView(this, getChildAt(index), index)
+            }
+            if (notify) {
+                onTabLayoutListener?.onTabSelector(this, oldIndex, index)
+            }
+        }
+    }
+
+    /**ViewPager 滚动监听*/
+    fun onPageScrolled(position: Int, positionOffset: Float, positionOffsetPixels: Int) {
+        tabIndicator.pagerPosition = position
+        tabIndicator.pagerPositionOffset = positionOffset
+
+        onTabLayoutListener?.let {
+            if (currentItem == position) {
+                //view pager 往下一页滚
+                it.onPageScrolled(this, getChildAt(currentItem), getChildAt(currentItem + 1), positionOffset)
+            } else {
+                //往上一页滚
+                it.onPageScrolled(this, getChildAt(currentItem), getChildAt(position), 1f - positionOffset)
+            }
+        }
+    }
+
+    private var isViewPagerDragging = false
+
+    /**自动关联ViewPager*/
+    fun setupViewPager(viewPager: ViewPager) {
+        viewPager.addOnPageChangeListener(object : ViewPager.SimpleOnPageChangeListener() {
+            override fun onPageScrollStateChanged(state: Int) {
+                super.onPageScrollStateChanged(state)
+                //L.e("call: onPageScrollStateChanged -> $state")
+                if (state == ViewPager.SCROLL_STATE_DRAGGING) {
+                    isViewPagerDragging = true
+                } else if (state == ViewPager.SCROLL_STATE_IDLE) {
+                    isViewPagerDragging = false
+                }
+            }
+
+            override fun onPageScrolled(position: Int, positionOffset: Float, positionOffsetPixels: Int) {
+                super.onPageScrolled(position, positionOffset, positionOffsetPixels)
+                if (isViewPagerDragging) {
+                    this@RTabLayout.onPageScrolled(position, positionOffset, positionOffsetPixels)
+                }
+            }
+
+            override fun onPageSelected(position: Int) {
+                super.onPageSelected(position)
+                //setCurrentItem(position, false)
+                setCurrentItem(position, false)
+            }
+        })
+    }
+
+
+    /**以下方法不必关注*/
     private var childMaxWidth = 0
+
     override fun onMeasure(widthMeasureSpec: Int, heightMeasureSpec: Int) {
         //super.onMeasure(widthMeasureSpec, heightMeasureSpec)
         var widthSize = MeasureSpec.getSize(widthMeasureSpec)
@@ -82,14 +178,19 @@ class RTabLayout(context: Context, attributeSet: AttributeSet? = null) : ViewGro
                     top + childView.measuredHeight)
             left += childView.measuredWidth + lp.rightMargin
         }
+        if (changed) {
+            tabIndicator.curIndex = currentItem
+        }
     }
 
     override fun draw(canvas: Canvas) {
         super.draw(canvas)
+        tabIndicator.draw(canvas)
     }
 
     override fun onDraw(canvas: Canvas) {
         super.onDraw(canvas)
+        tabIndicator.onDraw(canvas)
     }
 
 
@@ -105,7 +206,7 @@ class RTabLayout(context: Context, attributeSet: AttributeSet? = null) : ViewGro
     private val overScroller = OverScroller(context)
     private val gestureDetector = GestureDetector(context, object : GestureDetector.SimpleOnGestureListener() {
         override fun onFling(e1: MotionEvent?, e2: MotionEvent?, velocityX: Float, velocityY: Float): Boolean {
-            L.e("call: onFling -> \n$e1 \n$e2 \n$velocityX $velocityY")
+            //L.e("call: onFling -> \n$e1 \n$e2 \n$velocityX $velocityY")
 
             val absX = Math.abs(velocityX)
             val absY = Math.abs(velocityY)
@@ -124,7 +225,7 @@ class RTabLayout(context: Context, attributeSet: AttributeSet? = null) : ViewGro
         }
 
         override fun onScroll(e1: MotionEvent?, e2: MotionEvent?, distanceX: Float, distanceY: Float): Boolean {
-            L.e("call: onScroll -> \n$e1 \n$e2 \n$distanceX $distanceY")
+            //L.e("call: onScroll -> \n$e1 \n$e2 \n$distanceX $distanceY")
 
             val absX = Math.abs(distanceX)
             val absY = Math.abs(distanceY)
@@ -144,32 +245,15 @@ class RTabLayout(context: Context, attributeSet: AttributeSet? = null) : ViewGro
 
     })
 
-    override fun onInterceptTouchEvent(ev: MotionEvent?): Boolean {
+    override fun onInterceptTouchEvent(ev: MotionEvent): Boolean {
         return gestureDetector.onTouchEvent(ev)
     }
 
     override fun onTouchEvent(event: MotionEvent): Boolean {
         gestureDetector.onTouchEvent(event)
         if (isTouchFinish(event)) {
-//            val ix = scrollX + measuredWidth / 2 //中点目标位置
-//            var index = curSelectIndex
-//            var dx = measuredWidth
-//
-//            for (i in 0 until childCount) {
-//                val childAt = getChildAt(i)
-//                val cx = childAt.left + childAt.measuredWidth / 2
-//                val abs = Math.abs(cx - ix)
-//                if (abs < dx) {
-//                    //计算离中心点最近的child
-//                    dx = abs
-//                    index = i
-//                }
-//            }
-//            selectIndex(index)
-//            //L.e("call: onTouchEvent -> ")
             parent.requestDisallowInterceptTouchEvent(false)
         } else if (event.isDown()) {
-
         }
         return true
     }
@@ -194,7 +278,6 @@ class RTabLayout(context: Context, attributeSet: AttributeSet? = null) : ViewGro
             postInvalidate()
         }
     }
-
 
     /**Scroll操作的处理方法*/
     fun onScrollChange(orientation: TouchLayout.ORIENTATION, distance: Float) {
@@ -231,5 +314,45 @@ class RTabLayout(context: Context, attributeSet: AttributeSet? = null) : ViewGro
     fun startScroll(dx: Int, dy: Int = 0) {
         overScroller.startScroll(scrollX, scrollY, dx, dy, 300)
         postInvalidate()
+    }
+
+    /**事件监听*/
+    open class OnTabLayoutListener {
+
+        /**ViewPager滚动回调*/
+        open fun onPageScrolled(tabLayout: RTabLayout, currentView: View?, nextView: View?, positionOffset: Float) {
+            //positionOffset 距离到达 nextView 的百分比; 1f 表示已经到达nextView
+//            if (currentView is TextView) {
+//                currentView.setTextSizeDp(14 + 4 * (1 - positionOffset))
+//            }
+//
+//            if (nextView is TextView) {
+//                nextView.setTextSizeDp(14 + 4 * positionOffset)
+//            }
+        }
+
+        /**某个Item选中, 可以自定义样式*/
+        open fun onSelectorItemView(tabLayout: RTabLayout, itemView: View, index: Int) {
+//            if (itemView is TextView) {
+//                itemView.setTextSizeDp(14 + 4f)
+//            }
+        }
+
+        /**取消Item选中*/
+        open fun onUnSelectorItemView(tabLayout: RTabLayout, itemView: View, index: Int) {
+//            if (itemView is TextView) {
+//                itemView.setTextSizeDp(14f)
+//            }
+        }
+
+        /**选中某个tab*/
+        open fun onTabSelector(tabLayout: RTabLayout, fromIndex: Int, toIndex: Int) {
+
+        }
+
+        /**重复选中*/
+        open fun onTabReSelector(tabLayout: RTabLayout, itemView: View, index: Int) {
+
+        }
     }
 }
