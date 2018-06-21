@@ -39,14 +39,18 @@ public abstract class BaseDraw {
         mBasePaint.setFilterBitmap(true);
         mBasePaint.setStyle(Paint.Style.FILL);
         mBasePaint.setTextSize(12 * density());
-        if (isInEditMode()) {
-            mBasePaint.setColor(getColor(R.color.base_dark_red));
-        } else {
-            mBasePaint.setColor(SkinHelper.getSkin().getThemeSubColor());
-        }
+        mBasePaint.setColor(getBaseColor());
 
         //initAttribute(attr);//父类当中调用此方法初始化子类的成员, 会导致被覆盖的BUG
         //所以此方法, 请在子类当中触发
+    }
+
+    protected int getBaseColor() {
+        if (isInEditMode()) {
+            return getColor(R.color.base_dark_red);
+        } else {
+            return SkinHelper.getSkin().getThemeSubColor();
+        }
     }
 
     protected float density() {

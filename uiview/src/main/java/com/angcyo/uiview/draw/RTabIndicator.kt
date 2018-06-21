@@ -7,7 +7,7 @@ import android.graphics.RectF
 import android.util.AttributeSet
 import android.view.View
 import android.view.animation.OvershootInterpolator
-import com.angcyo.library.utils.L
+import com.angcyo.uiview.R
 import com.angcyo.uiview.resources.RAnimListener
 
 /**
@@ -22,13 +22,53 @@ import com.angcyo.uiview.resources.RAnimListener
  * Version: 1.0.0
  */
 class RTabIndicator(view: View, attributeSet: AttributeSet? = null) : BaseDraw(view, attributeSet) {
+    companion object {
+        //无样式
+        const val INDICATOR_TYPE_NONE = 0
+        //底部一根线
+        const val INDICATOR_TYPE_BOTTOM_LINE = 1
+        //圆角矩形块状
+        const val INDICATOR_TYPE_ROUND_RECT_BLOCK = 2
+    }
+
+    /**指示器的样式*/
+    var indicatorType = INDICATOR_TYPE_BOTTOM_LINE
+
+    /**指示器的颜色*/
+    var indicatorColor = -1
+
+    /**如果未指定指示器的宽度, 那么就用对应child的宽度*/
+    var indicatorWidth = 0
+    var indicatorHeight: Int = (4 * density()).toInt()
+
+    /**偏移距离, 不能用paddingBottom*/
+    var indicatorOffsetY: Int = (2 * density()).toInt()
+    /**宽度 修正量*/
+    var indicatorWidthOffset: Int = (4 * density()).toInt()
+    var indicatorHeightOffset: Int = (4 * density()).toInt()
+
+    /**圆角大小*/
+    var indicatorRoundSize: Int = (10 * density()).toInt()
+
     init {
         initAttribute(attributeSet)
     }
 
     override fun initAttribute(attr: AttributeSet?) {
+        val typedArray = obtainStyledAttributes(attr, R.styleable.RTabIndicator)
+        indicatorType = typedArray.getInt(R.styleable.RTabIndicator_r_indicator_type, INDICATOR_TYPE_BOTTOM_LINE)
+        indicatorColor = baseColor
+        indicatorColor = typedArray.getColor(R.styleable.RTabIndicator_r_indicator_color, indicatorColor)
+        indicatorWidth = typedArray.getDimensionPixelOffset(R.styleable.RTabIndicator_r_indicator_width, indicatorWidth)
+        indicatorHeight = typedArray.getDimensionPixelOffset(R.styleable.RTabIndicator_r_indicator_height, indicatorHeight)
+        indicatorOffsetY = typedArray.getDimensionPixelOffset(R.styleable.RTabIndicator_r_indicator_offset_y, indicatorOffsetY)
+        indicatorWidthOffset = typedArray.getDimensionPixelOffset(R.styleable.RTabIndicator_r_indicator_offset_width, indicatorWidthOffset)
+        indicatorHeightOffset = typedArray.getDimensionPixelOffset(R.styleable.RTabIndicator_r_indicator_offset_height, indicatorHeightOffset)
+        indicatorRoundSize = typedArray.getDimensionPixelOffset(R.styleable.RTabIndicator_r_indicator_round_size, indicatorRoundSize)
 
+        typedArray.recycle()
     }
+
 
     private var animStartCenterX = -1
     private var animEndCenterX = -1
@@ -68,18 +108,6 @@ class RTabIndicator(view: View, attributeSet: AttributeSet? = null) : BaseDraw(v
                 postInvalidate()
             }
         }
-
-    /**如果未指定指示器的宽度, 那么就用对应child的宽度*/
-    var indicatorWidth = 0
-    var indicatorHeight = 4 * density()
-
-    /**偏移距离, 不能用paddingBottom*/
-    var indicatorOffsetY = 2 * density()
-    /**宽度 修正量*/
-    var indicatorWidthOffset = -4 * density()
-
-    /**圆角大小*/
-    var indicatorRoundSize = 10 * density()
 
     /**ViewPager滚动相关*/
     var pagerPositionOffset = 0f
@@ -142,10 +170,12 @@ class RTabIndicator(view: View, attributeSet: AttributeSet? = null) : BaseDraw(v
         }
     }
 
-    override fun draw(canvas: Canvas) {
-        super.draw(canvas)
+    override fun onDraw(canvas: Canvas) {
+        super.onDraw(canvas)
         if (curIndex in 0..(childCount - 1)) {
             //安全的index
+
+            val childView = getChildAt(curIndex)
 
             //指示器的宽度
             val indicatorDrawWidth = if (animatorValueInterpolator != -1f) {
@@ -163,11 +193,31 @@ class RTabIndicator(view: View, attributeSet: AttributeSet? = null) : BaseDraw(v
 
             //L.e("RTabIndicator: draw ->$viewWidth $childCenter $indicatorDrawWidth $curIndex $animatorValueInterpolator")
 
-            indicatorDrawRect.set((childCenter - indicatorDrawWidth / 2).toFloat(),
-                    viewHeight - indicatorOffsetY - indicatorHeight,
-                    (childCenter + indicatorDrawWidth / 2).toFloat(),
-                    viewHeight - indicatorOffsetY)
-            canvas.drawRoundRect(indicatorDrawRect, indicatorRoundSize, indicatorRoundSize, mBasePaint)
+            val left = (childCenter - indicatorDrawWidth / 2 - indicatorWidthOffset / 2).toFloat()
+            val right = (childCenter + indicatorDrawWidth / 2 + indicatorWidthOffset / 2).toFloat()
+
+            when (indicatorType) {
+                INDICATOR_TYPE_NONE -> {
+                }
+                INDICATOR_TYPE_BOTTOM_LINE -> {
+                    indicatorDrawRect.set(left,
+                            (viewHeight - indicatorOffsetY - indicatorHeight).toFloat(),
+                            right,
+                            (viewHeight - indicatorOffsetY).toFloat())
+
+                    mBasePaint.color = indicatorColor
+                    canvas.drawRoundRect(indicatorDrawRect, indicatorRoundSize.toFloat(), indicatorRoundSize.toFloat(), mBasePaint)
+                }
+                INDICATOR_TYPE_ROUND_RECT_BLOCK -> {
+                    indicatorDrawRect.set(left,
+                            (childView.top - indicatorHeightOffset / 2).toFloat(),
+                            right,
+                            (childView.bottom + indicatorHeightOffset / 2).toFloat())
+
+                    mBasePaint.color = indicatorColor
+                    canvas.drawRoundRect(indicatorDrawRect, indicatorRoundSize.toFloat(), indicatorRoundSize.toFloat(), mBasePaint)
+                }
+            }
         }
     }
 

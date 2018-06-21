@@ -536,3 +536,12 @@ public fun View.showFromTop(anim: Boolean = true) {
         }
     }
 }
+
+/**布局中心的坐标*/
+public fun View.layoutCenterX(): Int {
+    return left + measuredWidth / 2
+}
+
+public fun View.layoutCenterY(): Int {
+    return top + measuredHeight / 2
+}

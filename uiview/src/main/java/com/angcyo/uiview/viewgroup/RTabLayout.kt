@@ -185,12 +185,16 @@ class RTabLayout(context: Context, attributeSet: AttributeSet? = null) : ViewGro
 
     override fun draw(canvas: Canvas) {
         super.draw(canvas)
-        tabIndicator.draw(canvas)
+        if (tabIndicator.indicatorType == RTabIndicator.INDICATOR_TYPE_BOTTOM_LINE) {
+            tabIndicator.onDraw(canvas)
+        }
     }
 
     override fun onDraw(canvas: Canvas) {
         super.onDraw(canvas)
-        tabIndicator.onDraw(canvas)
+        if (tabIndicator.indicatorType == RTabIndicator.INDICATOR_TYPE_ROUND_RECT_BLOCK) {
+            tabIndicator.onDraw(canvas)
+        }
     }
 
 
