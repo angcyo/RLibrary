@@ -99,7 +99,7 @@ public class DeviceUtils {
         try {
             WifiManager wifi = (WifiManager) Utils.getContext().getSystemService(Context.WIFI_SERVICE);
             if (wifi != null) {
-                WifiInfo info = wifi.getConnectionInfo();
+                @SuppressLint("MissingPermission") WifiInfo info = wifi.getConnectionInfo();
                 if (info != null) return info.getMacAddress();
             }
         } catch (Exception e) {

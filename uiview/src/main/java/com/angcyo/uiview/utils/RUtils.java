@@ -36,6 +36,7 @@ import android.media.AudioRecord;
 import android.media.MediaMetadataRetriever;
 import android.media.MediaRecorder;
 import android.media.MediaScannerConnection;
+import android.net.ConnectivityManager;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Environment;
@@ -942,7 +943,13 @@ public class RUtils {
             String[] split = str.split(":");
             if (split.length >= 2) {
                 String first = split[0];
-                onPutValue.onValue(first, str.substring(first.length() + 1));
+                if (TextUtils.isEmpty(split[1])) {
+                    onPutValue.onRemove(split[0]);
+                } else {
+                    onPutValue.onValue(first, str.substring(first.length() + 1));
+                }
+            } else if (split.length == 1) {
+                onPutValue.onRemove(split[0]);
             }
         }
     }
@@ -2591,6 +2598,19 @@ public class RUtils {
         return !TextUtils.isEmpty(bestProvider);
     }
 
+    /**
+     * 无网络
+     */
+    public static boolean isNoNet() {
+        return NetworkUtil.getNetType(RApplication.getApp()) == -1;
+    }
+
+    /**
+     * 手机网络
+     */
+    public static boolean isMobile() {
+        return NetworkUtil.getNetType(RApplication.getApp()) == ConnectivityManager.TYPE_MOBILE;
+    }
 
     interface OnPutValue {
         void onValue(String key, String value);
