@@ -40,7 +40,7 @@ import java.util.List;
 
 public abstract class UIItemUIView<T extends Item> extends UIRecyclerUIView<String, T, String> {
 
-    protected List<T> mItems = new ArrayList<>();
+    protected List<T> mItems = new ArrayList<>(getItemsInitialSize());
     protected RSoftInputLayout mSoftInputLayout;
     protected RecyclerView.RecycledViewPool mRecycledViewPool;
 
@@ -84,6 +84,10 @@ public abstract class UIItemUIView<T extends Item> extends UIRecyclerUIView<Stri
                 }
             }
         });
+    }
+
+    protected int getItemsInitialSize() {
+        return 10;
     }
 
     @NonNull

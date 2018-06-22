@@ -1,14 +1,24 @@
 package com.angcyo.uiview.utils;
 
+import android.graphics.Color;
+import android.text.SpannableStringBuilder;
 import android.text.TextUtils;
 
+import com.angcyo.github.utilcode.utils.SpannableStringUtils;
 import com.angcyo.library.utils.L;
 import com.angcyo.uiview.recycler.RBaseViewHolder;
 
+import java.lang.annotation.Annotation;
+import java.lang.reflect.AccessibleObject;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Member;
 import java.lang.reflect.Method;
+import java.lang.reflect.Modifier;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 
 /**
@@ -231,9 +241,9 @@ public class Reflect {
      *
      * @param onlyPublic 仅输出public 声明的属性
      */
-    public static String logObject(Object object, boolean onlyPublic) {
+    public static SpannableStringBuilder logObject(Object object, boolean onlyPublic) {
         if (object == null) {
-            return "";
+            return new SpannableStringBuilder();
         }
         /*
          *
@@ -261,75 +271,209 @@ public class Reflect {
             methods = object.getClass().getDeclaredMethods();
         }
 
-        StringBuilder builder = new StringBuilder();
-        builder.append("\n");
-        builder.append(object.getClass().getSimpleName());
-        builder.append("\n");
+        SpannableStringUtils.Builder spanBuilder = SpannableStringUtils.getBuilder("");
 
-        builder.append("字段");
-        builder.append("(");
-        builder.append(fields.length);
-        builder.append("):\n");
-        for (Field f : fields) {
-            builder.append(f.getName());
-            builder.append("->");
-            try {
-                f.setAccessible(true);
+        spanBuilder.append("\n");
+        spanBuilder.append(object.getClass().getSimpleName())
+                .setBold()
+                .setForegroundColor(Color.parseColor("#C26B2E"));
+        spanBuilder.append("\n");
 
-                Object value = f.get(object);
+        spanBuilder.append("字段").setBoldItalic();
+        spanBuilder.append("(");
+        spanBuilder.append(fields.length + "");
+        spanBuilder.append("):\n");
+        logMembers(spanBuilder, object, fields, onlyPublic);
 
-                logList(builder, value);
-            } catch (IllegalAccessException e) {
-                e.printStackTrace();
+        spanBuilder.append("\n方法").setBoldItalic();
+        spanBuilder.append("(");
+        spanBuilder.append(methods.length + "");
+        spanBuilder.append("):\n");
+        logMembers(spanBuilder, object, methods, onlyPublic);
+
+        //return builder.toString();
+        return spanBuilder.create();
+    }
+
+    private static void logMembers(SpannableStringUtils.Builder spanBuilder, Object object, Member[] members, boolean onlyPublic) {
+        List<Member> memberList = Arrays.asList(members);
+        Collections.sort(memberList, new Comparator<Member>() {
+            @Override
+            public int compare(Member o1, Member o2) {
+                return o1.getName().compareToIgnoreCase(o2.getName());
             }
-            builder.append("\n");
-        }
+        });
 
-        builder.append("\n方法");
-        builder.append("(");
-        builder.append(methods.length);
-        builder.append("):\n");
-        for (Method m : methods) {
-            builder.append(m.getName());
-            builder.append("->");
+        for (Member member : memberList) {
+            //注解
+            if (onlyPublic) {
+                if (member instanceof AccessibleObject) {
+                    logAnnotation(spanBuilder, ((AccessibleObject) member).getAnnotations());
+                }
+            } else {
+                if (member instanceof AccessibleObject) {
+                    logAnnotation(spanBuilder, ((AccessibleObject) member).getDeclaredAnnotations());
+                }
+            }
+
+            //修饰
+            logModify(spanBuilder, member);
+
+            String returnType = null;
+            //类型
+            if (member instanceof Field) {
+                spanBuilder.append(((Field) member).getType().getSimpleName());
+            } else if (member instanceof Method) {
+                returnType = ((Method) member).getReturnType().getSimpleName();
+                spanBuilder.append(((Method) member).getReturnType().getSimpleName());
+            }
+            spanBuilder.append(" ");
+
+            //名
+            spanBuilder.append(member.getName())
+                    .setForegroundColor(Color.parseColor("#96696E"));
+
             try {
-                m.setAccessible(true);
 
-                //参数列表
-                Class<?>[] parameterTypes = m.getParameterTypes();
-                if (parameterTypes == null || parameterTypes.length <= 0) {
-                    logList(builder, m.invoke(object));
-                } else {
-                    for (int i = 0; i < parameterTypes.length; i++) {
-                        builder.append(i);
-                        builder.append(".");
-                        builder.append(parameterTypes[i].getSimpleName());
-                        builder.append(";");
+                if (member instanceof AccessibleObject) {
+                    ((AccessibleObject) member).setAccessible(true);
+
+                    if (member instanceof Field) {
+                        //字段值
+                        spanBuilder.append("\n");
+                        Object value = ((Field) member).get(object);
+                        logObject(spanBuilder, value);
+                    } else if (member instanceof Method) {
+                        //参数列表
+
+                        spanBuilder.append("(");
+                        Class<?>[] parameterTypes = ((Method) member).getParameterTypes();
+                        if (parameterTypes == null || parameterTypes.length <= 0) {
+                            spanBuilder.append(")\n");
+
+                            if ("void".equalsIgnoreCase(returnType)) {
+
+                            } else {
+                                //返回值
+                                try {
+                                    Object invoke = ((Method) member).invoke(object);
+                                    logObject(spanBuilder, invoke);
+                                } catch (Exception e) {
+                                    String message = e.getMessage();
+                                    if (TextUtils.isEmpty(message)) {
+                                        if (e instanceof InvocationTargetException) {
+                                            message = ((InvocationTargetException) e).getTargetException().getMessage();
+                                        }
+                                        if (TextUtils.isEmpty(message)) {
+                                            message = e.toString();
+                                        }
+                                    }
+                                    spanBuilder.append(message);
+                                }
+                            }
+                            spanBuilder.append("\n");
+                        } else {
+                            for (int i = 0; i < parameterTypes.length; i++) {
+                                spanBuilder.append(parameterTypes[i].getSimpleName())
+                                        .setForegroundColor(Color.parseColor("#C26B2E"));
+                                if (i != parameterTypes.length - 1) {
+                                    spanBuilder.append(",");
+                                }
+                            }
+                            spanBuilder.append(")\n");
+                        }
                     }
                 }
-            } catch (IllegalAccessException e) {
-                e.printStackTrace();
-            } catch (InvocationTargetException e) {
+            } catch (Exception e) {
                 e.printStackTrace();
             }
-            builder.append("\n");
+            spanBuilder.append("\n\n");
         }
-
-        return builder.toString();
     }
 
-    private static void logList(StringBuilder builder, Object object) {
+    private static void logModify(SpannableStringUtils.Builder spanBuilder, Member member) {
+        int modifiers = member.getModifiers();
+        int modifyColor = Color.parseColor("#C26B2E");
+
+        if (Modifier.isPrivate(modifiers)) {
+            spanBuilder.append("private ")
+                    .setForegroundColor(modifyColor);
+        }
+        if (Modifier.isPublic(modifiers)) {
+            spanBuilder.append("public ")
+                    .setForegroundColor(modifyColor);
+        }
+        if (Modifier.isProtected(modifiers)) {
+            spanBuilder.append("protected ")
+                    .setForegroundColor(modifyColor);
+        }
+        if (Modifier.isStatic(modifiers)) {
+            spanBuilder.append("static ")
+                    .setForegroundColor(modifyColor);
+        }
+        if (Modifier.isFinal(modifiers)) {
+            spanBuilder.append("final ")
+                    .setForegroundColor(modifyColor);
+        }
+        if (Modifier.isSynchronized(modifiers)) {
+            spanBuilder.append("synchronized ")
+                    .setForegroundColor(modifyColor);
+        }
+        if (Modifier.isInterface(modifiers)) {
+            spanBuilder.append("interface ")
+                    .setForegroundColor(modifyColor);
+        }
+        if (Modifier.isAbstract(modifiers)) {
+            spanBuilder.append("abstract ")
+                    .setForegroundColor(modifyColor);
+        }
+        if (Modifier.isVolatile(modifiers)) {
+            spanBuilder.append("volatile ")
+                    .setForegroundColor(modifyColor);
+        }
+        if (Modifier.isStrict(modifiers)) {
+            spanBuilder.append("strict ")
+                    .setForegroundColor(modifyColor);
+        }
+        if (Modifier.isNative(modifiers)) {
+            spanBuilder.append("native ")
+                    .setForegroundColor(modifyColor);
+        }
+        if (Modifier.isTransient(modifiers)) {
+            spanBuilder.append("transient ")
+                    .setForegroundColor(modifyColor);
+        }
+    }
+
+    private static void logObject(SpannableStringUtils.Builder spanBuilder, Object object) {
         if (object instanceof List) {
             for (int i = 0; i < ((List) object).size(); i++) {
-                builder.append(i);
-                builder.append(",");
-                builder.append(((List) object).get(i));
-                builder.append(";");
+                spanBuilder.append(i + "");
+                spanBuilder.append(",");
+                logObject(spanBuilder, ((List) object).get(i));
+                spanBuilder.append(";");
             }
         } else {
-            builder.append(object);
+            if (object == null) {
+                spanBuilder.append("null");
+            } else {
+                spanBuilder.append(object.toString());
+            }
         }
     }
+
+    private static void logAnnotation(SpannableStringUtils.Builder spanBuilder, Annotation[] annotations) {
+        if (annotations != null) {
+            for (Annotation annotation : annotations) {
+                spanBuilder.append("@" + annotation.annotationType().getSimpleName())
+                        .setForegroundColor(Color.parseColor("#BBB529"));
+            }
+            if (annotations.length > 0) {
+                spanBuilder.append("\n");
+            }
+        }
+    }
+
 
     /**
      * 填充对象
