@@ -126,7 +126,7 @@ public class Reflect {
         }
 
         Class<?> clazz = obj.getClass();
-        return invokeMethod(clazz, methodName, methodName, params);
+        return invokeMethod(clazz, obj, methodName, params);
     }
 
     public static Object invokeMethod(Object obj, String methodName, Class<?>[] paramTypes, Object... params) {
@@ -148,7 +148,19 @@ public class Reflect {
             if (params != null && params.length > 0) {
                 paramTypes = new Class[params.length];
                 for (int i = 0; i < params.length; ++i) {
-                    paramTypes[i] = params[i].getClass();
+                    Class<?> pClass = params[i].getClass();
+
+                    if (pClass.getName().contains("Integer")) {
+                        paramTypes[i] = int.class;
+                    } else if (pClass.getName().contains("Long")) {
+                        paramTypes[i] = long.class;
+                    } else if (pClass.getName().contains("Float")) {
+                        paramTypes[i] = float.class;
+                    } else if (pClass.getName().contains("Double")) {
+                        paramTypes[i] = double.class;
+                    } else {
+                        paramTypes[i] = pClass;
+                    }
                 }
             }
             Method method = cls.getDeclaredMethod(methodName, paramTypes);
@@ -157,6 +169,7 @@ public class Reflect {
             return invoke;
         } catch (Exception e) {
             L.e("错误:" + e.getMessage());
+            e.printStackTrace();
         }
         return null;
     }
@@ -253,7 +266,7 @@ public class Reflect {
 
          * getMethods()与getDeclaredMethods()区别:
          * getMethods()只能访问类中声明为公有的方法,私有的方法它无法访问,能访问从其它类继承来的公有方法.
-         * getDeclaredFields()能访问类中所有的字段,与public,private,protect无关,不能访问从其它类继承来的方法
+         * getDeclaredMethods()能访问类中所有的字段,与public,private,protect无关,不能访问从其它类继承来的方法
 
          * getConstructors()与getDeclaredConstructors()区别:
          * getConstructors()只能访问类中声明为public的构造函数.
@@ -359,16 +372,7 @@ public class Reflect {
                                     Object invoke = ((Method) member).invoke(object);
                                     logObject(spanBuilder, invoke);
                                 } catch (Exception e) {
-                                    String message = e.getMessage();
-                                    if (TextUtils.isEmpty(message)) {
-                                        if (e instanceof InvocationTargetException) {
-                                            message = ((InvocationTargetException) e).getTargetException().getMessage();
-                                        }
-                                        if (TextUtils.isEmpty(message)) {
-                                            message = e.toString();
-                                        }
-                                    }
-                                    spanBuilder.append(message);
+                                    spanBuilder.append(logException(e));
                                 }
                             }
                             spanBuilder.append("\n");
@@ -390,6 +394,18 @@ public class Reflect {
             spanBuilder.append("\n\n");
         }
     }
+
+    public static String logException(Exception e) {
+        String message = e.getMessage();
+        if (e instanceof InvocationTargetException) {
+            message = ((InvocationTargetException) e).getTargetException().getMessage();
+        }
+        if (TextUtils.isEmpty(message)) {
+            message = e.toString();
+        }
+        return message;
+    }
+
 
     private static void logModify(SpannableStringUtils.Builder spanBuilder, Member member) {
         int modifiers = member.getModifiers();
