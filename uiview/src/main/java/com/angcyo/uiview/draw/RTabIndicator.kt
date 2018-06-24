@@ -3,11 +3,13 @@ package com.angcyo.uiview.draw
 import android.animation.Animator
 import android.animation.ObjectAnimator
 import android.graphics.Canvas
+import android.graphics.Color
 import android.graphics.RectF
 import android.util.AttributeSet
 import android.view.View
 import android.view.animation.OvershootInterpolator
 import com.angcyo.uiview.R
+import com.angcyo.uiview.kotlin.abs
 import com.angcyo.uiview.resources.RAnimListener
 
 /**
@@ -44,11 +46,17 @@ class RTabIndicator(view: View, attributeSet: AttributeSet? = null) : BaseDraw(v
     /**偏移距离, 不能用paddingBottom*/
     var indicatorOffsetY: Int = (2 * density()).toInt()
     /**宽度 修正量*/
-    var indicatorWidthOffset: Int = (4 * density()).toInt()
-    var indicatorHeightOffset: Int = (4 * density()).toInt()
+    var indicatorWidthOffset: Int = 0
+    var indicatorHeightOffset: Int = 0
 
     /**圆角大小*/
     var indicatorRoundSize: Int = (10 * density()).toInt()
+
+    /**激活指示器滚动动画*/
+    var enableIndicatorAnim = true
+
+    /**激活动画的差值器*/
+    var enableOvershoot = true
 
     init {
         initAttribute(attributeSet)
@@ -65,6 +73,9 @@ class RTabIndicator(view: View, attributeSet: AttributeSet? = null) : BaseDraw(v
         indicatorWidthOffset = typedArray.getDimensionPixelOffset(R.styleable.RTabIndicator_r_indicator_offset_width, indicatorWidthOffset)
         indicatorHeightOffset = typedArray.getDimensionPixelOffset(R.styleable.RTabIndicator_r_indicator_offset_height, indicatorHeightOffset)
         indicatorRoundSize = typedArray.getDimensionPixelOffset(R.styleable.RTabIndicator_r_indicator_round_size, indicatorRoundSize)
+
+        enableIndicatorAnim = typedArray.getBoolean(R.styleable.RTabIndicator_r_indicator_enable_anim, enableIndicatorAnim)
+        enableOvershoot = typedArray.getBoolean(R.styleable.RTabIndicator_r_indicator_enable_anim_overshoot, enableOvershoot)
 
         typedArray.recycle()
     }
@@ -172,6 +183,10 @@ class RTabIndicator(view: View, attributeSet: AttributeSet? = null) : BaseDraw(v
 
     override fun onDraw(canvas: Canvas) {
         super.onDraw(canvas)
+        if (isInEditMode) {
+            curIndex = 0
+        }
+
         if (curIndex in 0..(childCount - 1)) {
             //安全的index
 
@@ -181,7 +196,7 @@ class RTabIndicator(view: View, attributeSet: AttributeSet? = null) : BaseDraw(v
             val indicatorDrawWidth = if (animatorValueInterpolator != -1f) {
                 (animStartWidth + (animEndWidth - animStartWidth) * animatorValueInterpolator + indicatorWidthOffset).toInt()
             } else {
-                getIndicatorWidth(curIndex)
+                getIndicatorWidth(curIndex) + indicatorWidthOffset
             }
 
             //child横向中心x坐标
@@ -193,8 +208,8 @@ class RTabIndicator(view: View, attributeSet: AttributeSet? = null) : BaseDraw(v
 
             //L.e("RTabIndicator: draw ->$viewWidth $childCenter $indicatorDrawWidth $curIndex $animatorValueInterpolator")
 
-            val left = (childCenter - indicatorDrawWidth / 2 - indicatorWidthOffset / 2).toFloat()
-            val right = (childCenter + indicatorDrawWidth / 2 + indicatorWidthOffset / 2).toFloat()
+            val left = (childCenter - indicatorDrawWidth / 2).toFloat()
+            val right = (childCenter + indicatorDrawWidth / 2).toFloat()
 
             when (indicatorType) {
                 INDICATOR_TYPE_NONE -> {
@@ -241,8 +256,6 @@ class RTabIndicator(view: View, attributeSet: AttributeSet? = null) : BaseDraw(v
         }
     }
 
-    /**激活指示器滚动动画*/
-    var enableIndicatorAnim = true
     private var animatorValue = -1f
         set(value) {
             field = value
@@ -261,7 +274,11 @@ class RTabIndicator(view: View, attributeSet: AttributeSet? = null) : BaseDraw(v
             duration = 300
             addUpdateListener {
                 animatorValue = it.animatedValue as Float
-                animatorValueInterpolator = overshootInterpolator.getInterpolation(animatorValue)
+                if (enableOvershoot) {
+                    animatorValueInterpolator = overshootInterpolator.getInterpolation(animatorValue)
+                } else {
+                    animatorValueInterpolator = animatorValue
+                }
                 //L.e("call: $animatorValue -> ")
                 postInvalidateOnAnimation()
             }

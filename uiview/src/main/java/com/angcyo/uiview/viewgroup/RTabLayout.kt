@@ -10,6 +10,8 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.FrameLayout
 import android.widget.OverScroller
+import com.angcyo.uiview.R
+import com.angcyo.uiview.draw.RDrawBorder
 import com.angcyo.uiview.draw.RTabIndicator
 import com.angcyo.uiview.kotlin.*
 
@@ -27,27 +29,30 @@ import com.angcyo.uiview.kotlin.*
 class RTabLayout(context: Context, attributeSet: AttributeSet? = null) : ViewGroup(context, attributeSet) {
 
     var tabIndicator: RTabIndicator
+    var drawBorder: RDrawBorder
     var onTabLayoutListener: OnTabLayoutListener? = null
+        set(value) {
+            field = value
+            resetItemStyle()
+        }
     private var currentItem = -1
+    var itemEquWidth = false
 
     init {
+        val typedArray = context.obtainStyledAttributes(attributeSet, R.styleable.RTabLayout)
+        itemEquWidth = typedArray.getBoolean(R.styleable.RTabLayout_r_item_equ_width, itemEquWidth)
+        typedArray.recycle()
+
         setWillNotDraw(false)
         tabIndicator = RTabIndicator(this, attributeSet)
+        drawBorder = RDrawBorder(this, attributeSet)
     }
 
     override fun addView(child: View?, index: Int, params: LayoutParams?) {
         super.addView(child, index, params)
         child?.apply {
-            val indexOfChild = indexOfChild(this)
-
             clickIt {
                 setCurrentItem(indexOfChild(it))
-            }
-
-            if (indexOfChild == currentItem) {
-                onTabLayoutListener?.onSelectorItemView(this@RTabLayout, this, indexOfChild)
-            } else {
-                onTabLayoutListener?.onUnSelectorItemView(this@RTabLayout, this, indexOfChild)
             }
         }
     }
@@ -121,6 +126,19 @@ class RTabLayout(context: Context, attributeSet: AttributeSet? = null) : ViewGro
         })
     }
 
+    /**重置每个Item的样式*/
+    fun resetItemStyle() {
+        onTabLayoutListener?.let {
+            for (i in 0 until childCount) {
+                if (i == currentItem) {
+                    it.onSelectorItemView(this@RTabLayout, getChildAt(i), i)
+                } else {
+                    it.onUnSelectorItemView(this@RTabLayout, getChildAt(i), i)
+                }
+            }
+        }
+    }
+
 
     /**以下方法不必关注*/
     private var childMaxWidth = 0
@@ -150,13 +168,17 @@ class RTabLayout(context: Context, attributeSet: AttributeSet? = null) : ViewGro
             lp.topMargin = 0
             lp.bottomMargin = 0
 
-            childView.measure(atmostMeasure(widthSize - paddingLeft - paddingRight), heightSpec)
+            if (itemEquWidth) {
+                childView.measure(exactlyMeasure((widthSize - paddingLeft - paddingRight) / childCount), heightSpec)
+            } else {
+                childView.measure(atmostMeasure(widthSize - paddingLeft - paddingRight), heightSpec)
+            }
 
             childMaxWidth += childView.measuredWidth + lp.leftMargin + lp.rightMargin
         }
 
         if (widthMode != MeasureSpec.EXACTLY) {
-            widthSize = (childMaxWidth + paddingLeft + paddingTop).maxValue(widthSize)
+            widthSize = (childMaxWidth + paddingLeft + paddingRight).maxValue(widthSize)
         }
 
         setMeasuredDimension(widthSize, heightSize)
@@ -192,6 +214,8 @@ class RTabLayout(context: Context, attributeSet: AttributeSet? = null) : ViewGro
 
     override fun onDraw(canvas: Canvas) {
         super.onDraw(canvas)
+        drawBorder.onDraw(canvas)
+
         if (tabIndicator.indicatorType == RTabIndicator.INDICATOR_TYPE_ROUND_RECT_BLOCK) {
             tabIndicator.onDraw(canvas)
         }
