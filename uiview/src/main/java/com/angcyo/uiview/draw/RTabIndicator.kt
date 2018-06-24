@@ -5,6 +5,7 @@ import android.animation.ObjectAnimator
 import android.graphics.Canvas
 import android.graphics.Color
 import android.graphics.RectF
+import android.graphics.drawable.Drawable
 import android.util.AttributeSet
 import android.view.View
 import android.view.animation.OvershootInterpolator
@@ -32,6 +33,8 @@ class RTabIndicator(view: View, attributeSet: AttributeSet? = null) : BaseDraw(v
         //圆角矩形块状
         const val INDICATOR_TYPE_ROUND_RECT_BLOCK = 2
     }
+
+    var indicatorDrawable: Drawable? = null
 
     /**指示器的样式*/
     var indicatorType = INDICATOR_TYPE_BOTTOM_LINE
@@ -77,6 +80,7 @@ class RTabIndicator(view: View, attributeSet: AttributeSet? = null) : BaseDraw(v
         enableIndicatorAnim = typedArray.getBoolean(R.styleable.RTabIndicator_r_indicator_enable_anim, enableIndicatorAnim)
         enableOvershoot = typedArray.getBoolean(R.styleable.RTabIndicator_r_indicator_enable_anim_overshoot, enableOvershoot)
 
+        indicatorDrawable = typedArray.getDrawable(R.styleable.RTabIndicator_r_indicator_drawable)
         typedArray.recycle()
     }
 
@@ -210,27 +214,38 @@ class RTabIndicator(view: View, attributeSet: AttributeSet? = null) : BaseDraw(v
 
             val left = (childCenter - indicatorDrawWidth / 2).toFloat()
             val right = (childCenter + indicatorDrawWidth / 2).toFloat()
+            val top = when (indicatorType) {
+                INDICATOR_TYPE_BOTTOM_LINE -> (viewHeight - indicatorOffsetY - indicatorHeight).toFloat()
+                INDICATOR_TYPE_ROUND_RECT_BLOCK -> (childView.top - indicatorHeightOffset / 2).toFloat()
+                else -> 0f
+            }
+            val bottom = when (indicatorType) {
+                INDICATOR_TYPE_BOTTOM_LINE -> (viewHeight - indicatorOffsetY).toFloat()
+                INDICATOR_TYPE_ROUND_RECT_BLOCK -> (childView.bottom + indicatorHeightOffset / 2).toFloat()
+                else -> 0f
+            }
+            indicatorDrawRect.set(left, top, right, bottom)
 
-            when (indicatorType) {
-                INDICATOR_TYPE_NONE -> {
+            if (indicatorDrawable == null) {
+                when (indicatorType) {
+                    INDICATOR_TYPE_NONE -> {
+                    }
+                    INDICATOR_TYPE_BOTTOM_LINE -> {
+                        mBasePaint.color = indicatorColor
+                        canvas.drawRoundRect(indicatorDrawRect, indicatorRoundSize.toFloat(), indicatorRoundSize.toFloat(), mBasePaint)
+                    }
+                    INDICATOR_TYPE_ROUND_RECT_BLOCK -> {
+                        mBasePaint.color = indicatorColor
+                        canvas.drawRoundRect(indicatorDrawRect, indicatorRoundSize.toFloat(), indicatorRoundSize.toFloat(), mBasePaint)
+                    }
                 }
-                INDICATOR_TYPE_BOTTOM_LINE -> {
-                    indicatorDrawRect.set(left,
-                            (viewHeight - indicatorOffsetY - indicatorHeight).toFloat(),
-                            right,
-                            (viewHeight - indicatorOffsetY).toFloat())
-
-                    mBasePaint.color = indicatorColor
-                    canvas.drawRoundRect(indicatorDrawRect, indicatorRoundSize.toFloat(), indicatorRoundSize.toFloat(), mBasePaint)
-                }
-                INDICATOR_TYPE_ROUND_RECT_BLOCK -> {
-                    indicatorDrawRect.set(left,
-                            (childView.top - indicatorHeightOffset / 2).toFloat(),
-                            right,
-                            (childView.bottom + indicatorHeightOffset / 2).toFloat())
-
-                    mBasePaint.color = indicatorColor
-                    canvas.drawRoundRect(indicatorDrawRect, indicatorRoundSize.toFloat(), indicatorRoundSize.toFloat(), mBasePaint)
+            } else {
+                indicatorDrawable?.let {
+                    it.setBounds(indicatorDrawRect.left.toInt(),
+                            indicatorDrawRect.top.toInt(),
+                            indicatorDrawRect.right.toInt(),
+                            indicatorDrawRect.bottom.toInt())
+                    it.draw(canvas)
                 }
             }
         }

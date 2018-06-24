@@ -15,6 +15,7 @@ import com.angcyo.uiview.skin.SkinHelper
 class RDrawBorder(view: View, attributeSet: AttributeSet? = null) : BaseDraw(view, attributeSet) {
     var drawBorder = false
     var borderColor: Int = Color.TRANSPARENT
+    var borderFillColor: Int = Color.TRANSPARENT
     var borderRoundSize: Float = 45 * density()
     var borderWidth: Float = 2 * density()
 
@@ -33,6 +34,7 @@ class RDrawBorder(view: View, attributeSet: AttributeSet? = null) : BaseDraw(vie
         }
 
         borderColor = typedArray.getColor(R.styleable.RDrawBorder_r_border_color, borderColor)
+        borderFillColor = typedArray.getColor(R.styleable.RDrawBorder_r_border_fill_color, borderFillColor)
         borderRoundSize = typedArray.getDimensionPixelOffset(R.styleable.RDrawBorder_r_border_round_size, borderRoundSize.toInt()).toFloat()
         borderWidth = typedArray.getDimensionPixelOffset(R.styleable.RDrawBorder_r_border_width, borderWidth.toInt()).toFloat()
 
@@ -46,8 +48,14 @@ class RDrawBorder(view: View, attributeSet: AttributeSet? = null) : BaseDraw(vie
     override fun onDraw(canvas: Canvas) {
         super.onDraw(canvas)
         if (drawBorder) {
+
             borderDrawRect.set(paddingLeft + borderWidth / 2, paddingTop + borderWidth / 2,
                     viewWidth - paddingRight - borderWidth, viewHeight - paddingBottom - borderWidth / 2)
+            if (borderFillColor != 0) {
+                mBasePaint.style = Paint.Style.FILL
+                mBasePaint.color = borderFillColor
+                canvas.drawRoundRect(borderDrawRect, borderRoundSize, borderRoundSize, mBasePaint)
+            }
 
             mBasePaint.strokeWidth = borderWidth
             mBasePaint.style = Paint.Style.STROKE
