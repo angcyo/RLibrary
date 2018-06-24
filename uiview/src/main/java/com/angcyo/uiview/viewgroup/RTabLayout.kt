@@ -2,6 +2,7 @@ package com.angcyo.uiview.viewgroup
 
 import android.content.Context
 import android.graphics.Canvas
+import android.graphics.Paint
 import android.support.v4.view.ViewPager
 import android.util.AttributeSet
 import android.view.GestureDetector
@@ -34,6 +35,10 @@ class RTabLayout(context: Context, attributeSet: AttributeSet? = null) : ViewGro
         set(value) {
             field = value
             resetItemStyle()
+
+            if (currentItem >= 0) {
+                field?.onTabSelector(this, currentItem, currentItem)
+            }
         }
     private var currentItem = -1
     var itemEquWidth = false
@@ -41,11 +46,14 @@ class RTabLayout(context: Context, attributeSet: AttributeSet? = null) : ViewGro
     init {
         val typedArray = context.obtainStyledAttributes(attributeSet, R.styleable.RTabLayout)
         itemEquWidth = typedArray.getBoolean(R.styleable.RTabLayout_r_item_equ_width, itemEquWidth)
+        currentItem = typedArray.getInt(R.styleable.RTabLayout_r_current_item, currentItem)
         typedArray.recycle()
 
         setWillNotDraw(false)
         tabIndicator = RTabIndicator(this, attributeSet)
         drawBorder = RDrawBorder(this, attributeSet)
+
+        tabIndicator.curIndex = currentItem
     }
 
     override fun addView(child: View?, index: Int, params: LayoutParams?) {
@@ -124,6 +132,10 @@ class RTabLayout(context: Context, attributeSet: AttributeSet? = null) : ViewGro
                 setCurrentItem(position, false)
             }
         })
+
+        if (currentItem >= 0) {
+            viewPager.setCurrentItem(currentItem, false)
+        }
     }
 
     /**重置每个Item的样式*/

@@ -52,6 +52,7 @@
 
     <declare-styleable name="RTabLayout">
         <attr name="r_item_equ_width" />
+        <attr name="r_current_item" format="integer" />
 
         <attr name="r_indicator_drawable" />
         <attr name="r_indicator_type" />

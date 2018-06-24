@@ -96,7 +96,8 @@ class RTabIndicator(view: View, attributeSet: AttributeSet? = null) : BaseDraw(v
         set(value) {
             if (viewWidth == 0 || viewHeight == 0) {
                 field = value
-            } else if (field == value) {
+            } else if (field == value || value == -1 || isInEditMode) {
+                field = value
                 scrollTabLayoutToCenter()
                 postInvalidate()
             } else if (pagerPositionOffset == 0f) {
@@ -187,7 +188,7 @@ class RTabIndicator(view: View, attributeSet: AttributeSet? = null) : BaseDraw(v
 
     override fun onDraw(canvas: Canvas) {
         super.onDraw(canvas)
-        if (isInEditMode) {
+        if (isInEditMode && curIndex < 0) {
             curIndex = 0
         }
 

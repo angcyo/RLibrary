@@ -51,6 +51,7 @@ class RDrawBorder(view: View, attributeSet: AttributeSet? = null) : BaseDraw(vie
 
             borderDrawRect.set(paddingLeft + borderWidth / 2, paddingTop + borderWidth / 2,
                     viewWidth - paddingRight - borderWidth, viewHeight - paddingBottom - borderWidth / 2)
+
             if (borderFillColor != 0) {
                 mBasePaint.style = Paint.Style.FILL
                 mBasePaint.color = borderFillColor
