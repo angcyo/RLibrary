@@ -1,9 +1,11 @@
 package com.angcyo.uiview.widget.viewpager;
 
 import android.content.Context;
+import android.support.annotation.NonNull;
 import android.view.View;
 
 import com.angcyo.uiview.container.UILayoutImpl;
+import com.angcyo.uiview.container.UIParam;
 import com.angcyo.uiview.view.IView;
 import com.angcyo.uiview.view.UIIViewImpl;
 
@@ -14,12 +16,22 @@ public abstract class UIPagerAdapter extends RPagerAdapter {
 
     @Override
     protected View createView(Context context, int position, int itemType) {
-        IView iView = getIView(position, itemType);
-        if (iView instanceof UIIViewImpl) {
-            ((UIIViewImpl) iView).setShowInViewPager(true);
-        }
-        final UILayoutImpl layout = new UILayoutImpl(context, iView);
+        final UILayoutImpl layout = new UILayoutImpl(context);
         return layout;
+    }
+
+    @Override
+    protected void initItemView(@NonNull View rootView, int position, int itemType) {
+        super.initItemView(rootView, position, itemType);
+        if (rootView instanceof UILayoutImpl) {
+            IView iView = getIView(position, itemType);
+            if (iView instanceof UIIViewImpl) {
+                ((UIIViewImpl) iView).setShowInViewPager(true);
+            }
+
+            ((UILayoutImpl) rootView).startIView(iView,
+                    UIParam.get().setAnim(false).setAsync(false));
+        }
     }
 
     @Deprecated

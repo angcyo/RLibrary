@@ -92,7 +92,9 @@ class RTabIndicator(view: View, attributeSet: AttributeSet? = null) : BaseDraw(v
     /**当前指示那个位置*/
     var curIndex = 0
         set(value) {
-            if (viewWidth == 0 || viewHeight == 0) {
+            if (isNoIndicator()) {
+                field = value
+            } else if (viewWidth == 0 || viewHeight == 0) {
                 field = value
             } else if (field == value || value == -1 || isInEditMode) {
                 field = value
@@ -126,7 +128,7 @@ class RTabIndicator(view: View, attributeSet: AttributeSet? = null) : BaseDraw(v
         set(value) {
             field = value
 
-            if (isAnimStart()) {
+            if (isNoIndicator() || isAnimStart()) {
                 return
             }
 
@@ -188,6 +190,10 @@ class RTabIndicator(view: View, attributeSet: AttributeSet? = null) : BaseDraw(v
 
     override fun onDraw(canvas: Canvas) {
         super.onDraw(canvas)
+        if (isNoIndicator()) {
+            return
+        }
+
         if (isInEditMode && curIndex < 0) {
             curIndex = 0
         }
@@ -271,6 +277,9 @@ class RTabIndicator(view: View, attributeSet: AttributeSet? = null) : BaseDraw(v
             }
         }
     }
+
+    /**没有指示器*/
+    fun isNoIndicator() = indicatorType == INDICATOR_TYPE_NONE
 
     private var animatorValue = -1f
         set(value) {
