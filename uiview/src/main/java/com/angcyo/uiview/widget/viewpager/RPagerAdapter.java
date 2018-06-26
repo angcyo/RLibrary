@@ -32,7 +32,7 @@ public abstract class RPagerAdapter extends PagerAdapter implements ViewPager.On
             if (layoutId != -1) {
                 view = LayoutInflater.from(context).inflate(layoutId, container, false);
             } else {
-                view = createView(context, position);
+                view = createView(context, position, itemType);
             }
         }
 
@@ -45,7 +45,6 @@ public abstract class RPagerAdapter extends PagerAdapter implements ViewPager.On
         }
 
         initItemView(view, position, itemType);
-
 
         return view;
     }
@@ -67,8 +66,13 @@ public abstract class RPagerAdapter extends PagerAdapter implements ViewPager.On
         return -1;
     }
 
+    @Deprecated
     protected View createView(Context context, int position) {
         return null;
+    }
+
+    protected View createView(Context context, int position, int itemType) {
+        return createView(context, position);
     }
 
     protected void initItemView(@NonNull View rootView, int position, int itemType) {

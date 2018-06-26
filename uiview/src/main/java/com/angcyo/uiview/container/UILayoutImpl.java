@@ -1059,7 +1059,7 @@ public class UILayoutImpl extends SwipeBackLayout implements ILayout, UIViewPage
                 @Override
                 public void run() {
                     setIViewNeedLayout(topViewPattern.mView, true);
-                    topViewPattern.mIView.onViewShow(param.getBundle());
+                    topViewPattern.mIView.onViewShow(param.getBundle(), null);
                     topViewPattern.mIView.onViewReShow(param.getBundle());
                     viewTask.taskRun--;
                     checkTaskOnIViewAnimationEnd(viewTask);
@@ -1969,7 +1969,7 @@ public class UILayoutImpl extends SwipeBackLayout implements ILayout, UIViewPage
         saveToSDCard(name(viewPattern.mIView) + " onViewShow()" + bundle);
 //        viewPattern.mView.setVisibility(VISIBLE);
 //        viewPattern.mView.bringToFront();
-        viewPattern.mIView.onViewShow(bundle);
+        //viewPattern.mIView.onViewShow(bundle);
         viewPattern.mIView.onViewShow(bundle, fromClz);
 
         if (viewPattern.mIView.isDialog()) {
@@ -2801,6 +2801,12 @@ public class UILayoutImpl extends SwipeBackLayout implements ILayout, UIViewPage
      * 重新设置View的显示状态
      */
     private void resetChildState() {
+        if (!isAttachedToWindow ||
+                getMeasuredWidth() == 0 ||
+                getMeasuredHeight() == 0) {
+            return;
+        }
+
         int childCount = getChildCount();
 
         for (int i = 0; i < childCount; i++) {
@@ -2851,8 +2857,8 @@ public class UILayoutImpl extends SwipeBackLayout implements ILayout, UIViewPage
 
 //                        topViewPattern.mIView.onViewCreate(topViewPattern.mView);
 //                        topViewPattern.mIView.loadContentView(topViewPattern.mView);
-                        topViewPattern.mIView.onViewLoad();
-                        topViewPattern.mIView.onViewShow(null);
+                        //topViewPattern.mIView.onViewLoad();
+                        topViewPattern.mIView.onViewShow(null, null);
 
                         setIViewNeedLayout(topViewPattern.mView, true);
                         postDelayed(new Runnable() {

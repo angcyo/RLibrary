@@ -213,7 +213,7 @@ public fun View.calcWidthHeightRatio(widthHeightRatio: String?): IntArray? {
 
 /**用屏幕宽高, 计算View的宽高*/
 public fun View.calcLayoutWidthHeight(rLayoutWidth: String?, rLayoutHeight: String?, rLayoutWidthExclude: Int = 0, rLayoutHeightExclude: Int = 0): IntArray {
-    return calcLayoutWidthHeight(rLayoutWidth, rLayoutHeight, 0, 0, rLayoutWidthExclude, rLayoutHeightExclude)
+    return calcLayoutWidthHeight(rLayoutWidth, rLayoutHeight, measuredWidth, measuredHeight, rLayoutWidthExclude, rLayoutHeightExclude)
 }
 
 public fun View.calcLayoutWidthHeight(rLayoutWidth: String?, rLayoutHeight: String?,

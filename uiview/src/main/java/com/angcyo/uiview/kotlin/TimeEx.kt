@@ -36,6 +36,10 @@ fun Long.toHHmmss(showMill: Boolean = false /*显示毫秒*/): String {
     }
 }
 
+fun Long.toFullDate(): String {
+    return this.fullTime()
+}
+
 /**时间全格式输出*/
 fun Long.fullTime(): String {
     return RUtils.yyyyMMdd("yyyy-MM-dd HH:mm:ss.SSS", this)

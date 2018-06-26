@@ -336,6 +336,7 @@ public abstract class UIIViewImpl implements IView {
             className = fromClz.getSimpleName();
         }
         L.d(this.getClass().getSimpleName(), "onViewShow: " + mIViewStatus + " from:" + className);
+        onViewShow(bundle);
     }
 
     @CallSuper

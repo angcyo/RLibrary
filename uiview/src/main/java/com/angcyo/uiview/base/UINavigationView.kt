@@ -35,6 +35,7 @@ abstract class UINavigationView : UIIViewImpl() {
     /**默认选择的页面*/
     var selectorPosition = 0
         set(value) {
+            field = value
             touchMoveGroupLayout?.selectorPosition = selectorPosition
         }
 
@@ -60,7 +61,6 @@ abstract class UINavigationView : UIIViewImpl() {
     /**用来管理子页面的ILayout*/
     val mainLayoutImpl: UILayoutImpl? by lazy {
         val impl = mViewHolder.v<UILayoutImpl>(R.id.main_layout_imp)
-        setChildILayout(impl)
         impl
     }
 
@@ -127,7 +127,10 @@ abstract class UINavigationView : UIIViewImpl() {
 
     override fun onViewLoad() {
         super.onViewLoad()
-        mainLayoutImpl?.setEnableSwipeBack(false)//关闭侧滑
+        mainLayoutImpl?.let {
+            it.setEnableSwipeBack(false)//关闭侧滑
+            parentILayout.setChildILayout(it)
+        }
         createPages(pages)
         onCreatePages()
         onCreatePagesEnd()
@@ -205,7 +208,7 @@ abstract class UINavigationView : UIIViewImpl() {
     open fun onSelectorPosition(targetView: TouchMoveView, position: Int) {
         L.i("UINavigationView 选择 -> 位置:$position IView:${UILayoutImpl.name(pages[position].iview)}")
         mainLayoutImpl?.startIView(pages[position].iview.setIsRightJumpLeft(lastIndex > position),
-                UIParam(lastIndex != position).setLaunchMode(UIParam.SINGLE_TOP))
+                UIParam(lastIndex != position).setAsync(false).setLaunchMode(UIParam.SINGLE_TOP))
 
         lastIndex = position
     }

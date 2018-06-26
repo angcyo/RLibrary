@@ -3,14 +3,12 @@ package com.angcyo.uiview.draw
 import android.animation.Animator
 import android.animation.ObjectAnimator
 import android.graphics.Canvas
-import android.graphics.Color
 import android.graphics.RectF
 import android.graphics.drawable.Drawable
 import android.util.AttributeSet
 import android.view.View
 import android.view.animation.OvershootInterpolator
 import com.angcyo.uiview.R
-import com.angcyo.uiview.kotlin.abs
 import com.angcyo.uiview.resources.RAnimListener
 
 /**
@@ -99,7 +97,6 @@ class RTabIndicator(view: View, attributeSet: AttributeSet? = null) : BaseDraw(v
             } else if (field == value || value == -1 || isInEditMode) {
                 field = value
                 scrollTabLayoutToCenter()
-                postInvalidate()
             } else if (pagerPositionOffset == 0f) {
 
                 animStartCenterX = getChildCenter(field)
@@ -116,12 +113,11 @@ class RTabIndicator(view: View, attributeSet: AttributeSet? = null) : BaseDraw(v
                 } else {
                     indicatorAnimator.cancel()
                     scrollTabLayoutToCenter()
-                    postInvalidate()
                 }
             } else {
                 field = value
-                scrollTabLayoutToCenter()
-                postInvalidate()
+                //scrollTabLayoutToCenter()
+                //postInvalidate()
             }
         }
 
@@ -129,6 +125,10 @@ class RTabIndicator(view: View, attributeSet: AttributeSet? = null) : BaseDraw(v
     var pagerPositionOffset = 0f
         set(value) {
             field = value
+
+            if (isAnimStart()) {
+                return
+            }
 
             if (field > 0f) {
                 if (curIndex == pagerPosition) {
@@ -198,14 +198,14 @@ class RTabIndicator(view: View, attributeSet: AttributeSet? = null) : BaseDraw(v
             val childView = getChildAt(curIndex)
 
             //指示器的宽度
-            val indicatorDrawWidth = if (animatorValueInterpolator != -1f) {
+            val indicatorDrawWidth = if (isAnimStart()) {
                 (animStartWidth + (animEndWidth - animStartWidth) * animatorValueInterpolator + indicatorWidthOffset).toInt()
             } else {
                 getIndicatorWidth(curIndex) + indicatorWidthOffset
             }
 
             //child横向中心x坐标
-            val childCenter: Int = if (animatorValueInterpolator != -1f) {
+            val childCenter: Int = if (isAnimStart()) {
                 (animStartCenterX + (animEndCenterX - animStartCenterX) * animatorValueInterpolator).toInt()
             } else {
                 getChildCenter(curIndex)
@@ -257,7 +257,7 @@ class RTabIndicator(view: View, attributeSet: AttributeSet? = null) : BaseDraw(v
         if (curIndex in 0..(childCount - 1)) {
 
             //child横向中心x坐标
-            val childCenter: Int = if (animatorValueInterpolator != -1f) {
+            val childCenter: Int = if (isAnimStart()) {
                 (animStartCenterX + (animEndCenterX - animStartCenterX) * animatorValue).toInt()
             } else {
                 getChildCenter(curIndex)
@@ -282,6 +282,8 @@ class RTabIndicator(view: View, attributeSet: AttributeSet? = null) : BaseDraw(v
 
     /**用此成员变量判断动画开始和结束*/
     private var animatorValueInterpolator = -1f
+
+    private fun isAnimStart() = animatorValueInterpolator != -1f
 
     private val overshootInterpolator: OvershootInterpolator by lazy { OvershootInterpolator() }
 

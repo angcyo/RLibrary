@@ -2,13 +2,9 @@ package com.angcyo.uiview.viewgroup
 
 import android.content.Context
 import android.graphics.Canvas
-import android.graphics.Paint
 import android.support.v4.view.ViewPager
 import android.util.AttributeSet
-import android.view.GestureDetector
-import android.view.MotionEvent
-import android.view.View
-import android.view.ViewGroup
+import android.view.*
 import android.widget.FrameLayout
 import android.widget.OverScroller
 import com.angcyo.uiview.R
@@ -56,11 +52,18 @@ class RTabLayout(context: Context, attributeSet: AttributeSet? = null) : ViewGro
         tabIndicator.curIndex = currentItem
     }
 
-    override fun addView(child: View?, index: Int, params: LayoutParams?) {
+    override fun addView(child: View?, index: Int, params: ViewGroup.LayoutParams?) {
         super.addView(child, index, params)
         child?.apply {
             clickIt {
-                setCurrentItem(indexOfChild(it))
+                val toIndex = indexOfChild(it)
+
+                if (onTabLayoutListener?.canSelectorTab(this@RTabLayout, currentItem, toIndex) == false) {
+                } else {
+                    setCurrentItem(toIndex)
+//                    this@RTabLayout.scrollTo(0, 0)
+
+                }
             }
         }
     }
@@ -128,7 +131,6 @@ class RTabLayout(context: Context, attributeSet: AttributeSet? = null) : ViewGro
 
             override fun onPageSelected(position: Int) {
                 super.onPageSelected(position)
-                //setCurrentItem(position, false)
                 setCurrentItem(position, false)
             }
         })
@@ -175,15 +177,27 @@ class RTabLayout(context: Context, attributeSet: AttributeSet? = null) : ViewGro
         childMaxWidth = 0
         for (i in 0 until childCount) {
             val childView = getChildAt(i)
-            val lp = childView.layoutParams as FrameLayout.LayoutParams
+            val lp = childView.layoutParams as LayoutParams
             //不支持竖向margin支持
             lp.topMargin = 0
             lp.bottomMargin = 0
 
-            if (itemEquWidth) {
-                childView.measure(exactlyMeasure((widthSize - paddingLeft - paddingRight) / childCount), heightSpec)
+            val widthHeight = calcLayoutWidthHeight(lp.layoutWidth, lp.layoutHeight,
+                    widthSize, heightSize, 0, 0)
+            val childHeightSpec = if (widthHeight[1] > 0) {
+                exactlyMeasure(widthHeight[1])
             } else {
-                childView.measure(atmostMeasure(widthSize - paddingLeft - paddingRight), heightSpec)
+                heightSpec
+            }
+
+            if (itemEquWidth) {
+                childView.measure(exactlyMeasure((widthSize - paddingLeft - paddingRight) / childCount), childHeightSpec)
+            } else {
+                if (widthHeight[0] > 0) {
+                    childView.measure(exactlyMeasure(widthHeight[0]), childHeightSpec)
+                } else {
+                    childView.measure(atmostMeasure(widthSize - paddingLeft - paddingRight), childHeightSpec)
+                }
             }
 
             childMaxWidth += childView.measuredWidth + lp.leftMargin + lp.rightMargin
@@ -200,11 +214,15 @@ class RTabLayout(context: Context, attributeSet: AttributeSet? = null) : ViewGro
         var left = paddingLeft
         for (i in 0 until childCount) {
             val childView = getChildAt(i)
-            val lp = childView.layoutParams as FrameLayout.LayoutParams
+            val lp = childView.layoutParams as LayoutParams
 
             left += lp.leftMargin
 
-            val top = paddingTop + (measuredHeight - paddingTop - paddingBottom) / 2 - childView.measuredHeight / 2
+            val top = if (lp.gravity.have(Gravity.CENTER_VERTICAL)) {
+                measuredHeight / 2 - childView.measuredHeight / 2
+            } else {
+                paddingTop + (measuredHeight - paddingTop - paddingBottom) / 2 - childView.measuredHeight / 2
+            }
 
             /*默认垂直居中显示*/
             childView.layout(left, top,
@@ -235,11 +253,11 @@ class RTabLayout(context: Context, attributeSet: AttributeSet? = null) : ViewGro
 
 
     override fun generateDefaultLayoutParams(): LayoutParams {
-        return FrameLayout.LayoutParams(LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT)
+        return LayoutParams(FrameLayout.LayoutParams.WRAP_CONTENT, FrameLayout.LayoutParams.WRAP_CONTENT)
     }
 
     override fun generateLayoutParams(attrs: AttributeSet?): LayoutParams {
-        return FrameLayout.LayoutParams(context, attrs)
+        return LayoutParams(context, attrs)
     }
 
     /**滚动支持*/
@@ -282,11 +300,15 @@ class RTabLayout(context: Context, attributeSet: AttributeSet? = null) : ViewGro
 
             return true
         }
-
     })
 
+    private var interceptTouchEvent = false
     override fun onInterceptTouchEvent(ev: MotionEvent): Boolean {
-        return gestureDetector.onTouchEvent(ev)
+        if (ev.isDown()) {
+            interceptTouchEvent = canScroll()
+        }
+        val result = gestureDetector.onTouchEvent(ev)
+        return result && interceptTouchEvent
     }
 
     override fun onTouchEvent(event: MotionEvent): Boolean {
@@ -294,11 +316,13 @@ class RTabLayout(context: Context, attributeSet: AttributeSet? = null) : ViewGro
         if (isTouchFinish(event)) {
             parent.requestDisallowInterceptTouchEvent(false)
         } else if (event.isDown()) {
+            overScroller.abortAnimation()
         }
         return true
     }
 
     override fun scrollTo(x: Int, y: Int) {
+        //L.e("call: scrollTo -> $x")
         val maxScrollX = childMaxWidth - measuredWidth + paddingLeft + paddingRight
         when {
             x > maxScrollX -> super.scrollTo(maxScrollX, y)
@@ -316,6 +340,9 @@ class RTabLayout(context: Context, attributeSet: AttributeSet? = null) : ViewGro
         if (overScroller.computeScrollOffset()) {
             scrollTo(overScroller.currX, overScroller.currY)
             postInvalidate()
+            if (overScroller.currX < 0 || overScroller.currX > childMaxWidth - measuredWidth) {
+                overScroller.abortAnimation()
+            }
         }
     }
 
@@ -334,7 +361,7 @@ class RTabLayout(context: Context, attributeSet: AttributeSet? = null) : ViewGro
     open fun onFlingChange(orientation: TouchLayout.ORIENTATION, velocity: Float /*瞬时值*/) {
         if (canScroll()) {
             if (orientation == TouchLayout.ORIENTATION.LEFT) {
-                startFlingX(-velocity.toInt(), childMaxWidth - scrollX)
+                startFlingX(-velocity.toInt(), childMaxWidth)
             } else if (orientation == TouchLayout.ORIENTATION.RIGHT) {
                 startFlingX(-velocity.toInt(), scrollX)
             }
@@ -354,6 +381,23 @@ class RTabLayout(context: Context, attributeSet: AttributeSet? = null) : ViewGro
     fun startScroll(dx: Int, dy: Int = 0) {
         overScroller.startScroll(scrollX, scrollY, dx, dy, 300)
         postInvalidate()
+    }
+
+    class LayoutParams : FrameLayout.LayoutParams {
+        var layoutWidth = ""
+        var layoutHeight = ""
+
+        constructor(c: Context, attrs: AttributeSet?) : super(c, attrs) {
+            val a = c.obtainStyledAttributes(attrs, R.styleable.RTabLayout_Layout)
+            layoutWidth = a.getString(R.styleable.RTabLayout_Layout_r_layout_width) ?: ""
+            layoutHeight = a.getString(R.styleable.RTabLayout_Layout_r_layout_height) ?: ""
+            a.recycle()
+        }
+
+        constructor(width: Int, height: Int) : super(width, height)
+        constructor(width: Int, height: Int, gravity: Int) : super(width, height, gravity)
+        constructor(source: ViewGroup.LayoutParams?) : super(source)
+        constructor(source: MarginLayoutParams?) : super(source)
     }
 
     /**事件监听*/
@@ -383,6 +427,11 @@ class RTabLayout(context: Context, attributeSet: AttributeSet? = null) : ViewGro
 //            if (itemView is TextView) {
 //                itemView.setTextSizeDp(14f)
 //            }
+        }
+
+        /**是否可以选中tab*/
+        open fun canSelectorTab(tabLayout: RTabLayout, fromIndex: Int, toIndex: Int): Boolean {
+            return true
         }
 
         /**选中某个tab*/
