@@ -33,6 +33,14 @@ abstract class RAnimListener : AnimatorListenerAdapter() {
         }
     }
 
+    final override fun onAnimationEnd(animation: Animator?, isReverse: Boolean) {
+        super.onAnimationEnd(animation, isReverse)
+    }
+
+    override fun onAnimationStart(animation: Animator?, isReverse: Boolean) {
+        super.onAnimationStart(animation, isReverse)
+    }
+
     final override fun onAnimationCancel(animation: Animator?) {
         super.onAnimationCancel(animation)
         isCancel = true

@@ -128,7 +128,7 @@ class RTabIndicator(view: View, attributeSet: AttributeSet? = null) : BaseDraw(v
         set(value) {
             field = value
 
-            if (isNoIndicator() || isAnimStart()) {
+            if (isNoIndicator()) {
                 return
             }
 
@@ -310,8 +310,8 @@ class RTabIndicator(view: View, attributeSet: AttributeSet? = null) : BaseDraw(v
                 postInvalidateOnAnimation()
             }
             addListener(object : RAnimListener() {
-                override fun onAnimationEnd(animation: Animator?, isReverse: Boolean) {
-                    super.onAnimationEnd(animation, isReverse)
+                override fun onAnimationFinish(animation: Animator?, cancel: Boolean) {
+                    super.onAnimationFinish(animation, cancel)
                     animatorValueInterpolator = -1f
                 }
             })
