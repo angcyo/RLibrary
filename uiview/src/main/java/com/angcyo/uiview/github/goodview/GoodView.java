@@ -82,6 +82,10 @@ public class GoodView extends PopupWindow implements IGoodView {
         goodView.show(view);
     }
 
+    public static void showIt(@NonNull View view) {
+        build(view);
+    }
+
     public static void release() {
         goodView = null;
     }

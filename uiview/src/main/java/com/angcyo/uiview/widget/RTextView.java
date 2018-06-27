@@ -282,6 +282,7 @@ public class RTextView extends AppCompatTextView {
         if (drawable != null) {
             drawable.setBounds(0, 0, drawable.getIntrinsicWidth(), drawable.getIntrinsicHeight());
             textLeftDrawable = drawable;
+            postInvalidate();
         }
     }
 

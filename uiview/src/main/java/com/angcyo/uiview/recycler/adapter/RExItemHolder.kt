@@ -99,4 +99,8 @@ abstract class RExItemHolder<DataType> {
     fun notifyItemChanged(position: Int) {
         exItemAdapter?.notifyItemChanged(position)
     }
+
+    fun notifyItemChanged(bean: DataType) {
+        exItemAdapter?.notifyItemChanged(bean)
+    }
 }
