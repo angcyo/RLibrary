@@ -37,14 +37,14 @@ abstract class UIBaseTabPagerView : UIIViewImpl() {
             viewPager.setParentUIView(this@UIBaseTabPagerView)
 
             initTabLayout(tablayout, viewPager)
-            initAfterInflateView()
+            initAfterInflateView(container)
         }
     }
 
     open fun getBaseLayoutId(): Int = R.layout.base_uiview_tab_pager_layout
 
     @CallSuper
-    open fun initAfterInflateView() {
+    open fun initAfterInflateView(container: FrameLayout) {
 
     }
 
@@ -55,6 +55,11 @@ abstract class UIBaseTabPagerView : UIIViewImpl() {
     @CallSuper
     open fun initTabLayout(tabLayout: RTabLayout, viewPager: UIViewPager) {
         viewPager.adapter = object : UIPagerAdapter() {
+
+            override fun getItemType(position: Int): Int {
+                return this@UIBaseTabPagerView.getItemType(position)
+            }
+
             override fun getCount(): Int {
                 return this@UIBaseTabPagerView.getPagerCount()
             }
@@ -121,4 +126,8 @@ abstract class UIBaseTabPagerView : UIIViewImpl() {
 
     abstract fun getPagerIView(position: Int, itemType: Int): IView
     abstract fun getPagerCount(): Int
+
+    open fun getItemType(position: Int): Int {
+        return 1
+    }
 }

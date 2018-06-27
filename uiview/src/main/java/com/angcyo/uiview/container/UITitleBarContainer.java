@@ -72,7 +72,6 @@ public class UITitleBarContainer extends FrameLayout {
 
     private int mStatusBarHeight;
     private boolean mLayoutFullscreen;
-    private OnClickListener mOnBackListener;
     private Drawable mBackgroundDrawable;
     /**
      * 显示底部的横线
@@ -233,13 +232,6 @@ public class UITitleBarContainer extends FrameLayout {
         setWillNotDraw(false);
     }
 
-    /**
-     * 返回按钮事件设置
-     */
-    public void setOnBackListener(OnClickListener onBackListener) {
-        mOnBackListener = onBackListener;
-    }
-
     public void onSkinChanged(ISkin skin) {
 
     }
@@ -278,8 +270,8 @@ public class UITitleBarContainer extends FrameLayout {
             mBackImageView.setOnClickListener(new OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    if (mOnBackListener != null) {
-                        mOnBackListener.onClick(v);
+                    if (mTitleBarPattern.mOnBackListener != null) {
+                        mTitleBarPattern.mOnBackListener.onClick(v);
                     }
                 }
             });
@@ -393,6 +385,18 @@ public class UITitleBarContainer extends FrameLayout {
         for (View view : leftViews) {
             leftControlLayout.removeView(view);
         }
+    }
+
+    public void addLeftItemView(TitleBarItem item) {
+        ArrayList<TitleBarItem> items = new ArrayList<>();
+        items.add(item);
+        fillViews(mLeftControlLayout, items, mLeftViews);
+    }
+
+    public void addRightItemView(TitleBarItem item) {
+        ArrayList<TitleBarItem> items = new ArrayList<>();
+        items.add(item);
+        fillViews(mRightControlLayout, items, mRightViews);
     }
 
     /**

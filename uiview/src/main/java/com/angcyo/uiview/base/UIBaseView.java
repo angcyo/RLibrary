@@ -171,13 +171,13 @@ public abstract class UIBaseView extends UIIViewImpl {
             mUITitleBarContainer.setId(mUITitleBarId);
             mUITitleBarContainer.setTitleBarPattern(titleBarPattern);
             mUITitleBarContainer.onAttachToLayout(mILayout);//note
-            mUITitleBarContainer.setOnBackListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    UIBaseView.this.onTitleBackListener();
-//                    mILayout.requestBackPressed();
-                }
-            });
+//            mUITitleBarContainer.setOnBackListener(new View.OnClickListener() {
+//                @Override
+//                public void onClick(View v) {
+//                    UIBaseView.this.onTitleBackListener();
+////                    mILayout.requestBackPressed();
+//                }
+//            });
             //标题栏底部横线
             mUITitleBarContainer.setShowBottomLine(titleBarPattern.showTitleBarBottomLine);
             //标题栏底部渐变阴影
@@ -404,11 +404,11 @@ public abstract class UIBaseView extends UIIViewImpl {
         return createTitleBarPattern();
     }
 
+    @Override
     public TitleBarPattern createTitleBarPattern() {
-        return TitleBarPattern.build(getTitleResource() == View.NO_ID ?
+        return super.createTitleBarPattern().setTitleString(getTitleResource() == View.NO_ID ?
                 getTitleString() : mActivity.getResources().getString(getTitleResource()))
-                .setTitleBarBGColor(getTitleBarBGColor())
-                .setShowBackImageView(!haveParentILayout() && ((UILayoutImpl) mILayout).getValidAttachViewSize() >= 1);
+                .setTitleBarBGColor(getTitleBarBGColor());
     }
 
     protected int getTitleBarBGColor() {
@@ -906,7 +906,7 @@ public abstract class UIBaseView extends UIIViewImpl {
     /**
      * 标题栏中, 点击了返回按钮
      */
-    protected boolean onTitleBackListener() {
+    public boolean onTitleBackListener() {
         if (mEnableClip && enableExitClip()) {
             if (mClipMode == ClipMode.CLIP_EXIT) {
                 mBaseRootLayout.setEnableClip(true);

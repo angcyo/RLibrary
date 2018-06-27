@@ -416,9 +416,16 @@ public abstract class UIRecyclerUIView<H, T, F> extends UIContentView
     @Override
     public void onViewShowFirst(Bundle bundle) {
         super.onViewShowFirst(bundle);
+        if (getDefaultLayoutState() == LayoutState.CONTENT) {
+            onLoadDefaultDataFirst();
+        }
         if (needLoadData() && !isShowInViewPager()) {
             onBaseLoadData("onViewShowFirst", true);
         }
+    }
+
+    public void onLoadDefaultDataFirst() {
+
     }
 
     @Override

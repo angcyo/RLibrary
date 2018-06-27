@@ -52,6 +52,8 @@ open class TimeTextView(context: Context, attributeSet: AttributeSet? = null) : 
     init {
         val array = context.obtainStyledAttributes(attributeSet, R.styleable.TimeTextView)
         val pattern = array.getString(R.styleable.TimeTextView_r_time_pattern)
+        datePattern = array.getString(R.styleable.TimeTextView_r_shot_date_pattern) ?: ""
+        timePattern = array.getString(R.styleable.TimeTextView_r_shot_time_pattern) ?: ""
         val timeString = array.getString(R.styleable.TimeTextView_r_time)
         showShotTime = array.getBoolean(R.styleable.TimeTextView_r_show_shot_time, showShotTime)
         pattern?.let {

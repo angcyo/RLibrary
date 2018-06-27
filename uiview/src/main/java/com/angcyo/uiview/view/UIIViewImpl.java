@@ -1736,6 +1736,23 @@ public abstract class UIIViewImpl implements IView {
         return false;
     }
 
+    public TitleBarPattern createTitleBarPattern() {
+        return TitleBarPattern.build()
+                .setTitleBarBGColor(SkinHelper.getSkin().getThemeSubColor())
+                .setShowBackImageView(!haveParentILayout() && ((UILayoutImpl) mILayout).getValidAttachViewSize() >= 1)
+                .setOnBackListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        if (UIIViewImpl.this instanceof UIBaseView) {
+                            ((UIBaseView) UIIViewImpl.this).onTitleBackListener();
+                        } else {
+                            UIIViewImpl.this.requestBackPressed();
+                        }
+                    }
+                })
+                ;
+    }
+
     public interface OnCountDown {
         void onCountDown(int count /*MaxCount 到 0 的值*/);
     }

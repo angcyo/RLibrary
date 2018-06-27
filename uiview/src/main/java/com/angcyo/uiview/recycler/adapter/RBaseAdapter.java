@@ -78,7 +78,6 @@ public abstract class RBaseAdapter<T> extends RecyclerView.Adapter<RBaseViewHold
      */
     boolean animToShowState = false;
 
-
     public RBaseAdapter(Context context) {
         mAllDatas = new ArrayList<>();
         this.mContext = context;
@@ -295,7 +294,7 @@ public abstract class RBaseAdapter<T> extends RecyclerView.Adapter<RBaseViewHold
      *
      * @see R.layout.base_item_show_state_layout
      */
-    protected void onBindShowStateView(ItemShowStateLayout showStateLayout, int showState) {
+    protected void onBindShowStateView(@NonNull ItemShowStateLayout showStateLayout, int showState) {
 
     }
 

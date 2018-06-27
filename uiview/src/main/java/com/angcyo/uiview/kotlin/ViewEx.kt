@@ -28,6 +28,7 @@ import com.angcyo.uiview.utils.ScreenUtil
 import com.angcyo.uiview.utils.ScreenUtil.density
 import com.angcyo.uiview.view.RClickListener
 import com.angcyo.uiview.view.UIIViewImpl
+import com.angcyo.uiview.widget.RExTextView
 import com.angcyo.uiview.widget.RImageView
 import com.angcyo.uiview.widget.RTextView
 import com.wangjie.shadowviewhelper.ShadowProperty
@@ -155,6 +156,14 @@ public fun TextView.drawPadding(padding: Float) {
 /**设置文本大小 dp单位*/
 public fun TextView.setTextSizeDp(sizeDp: Float) {
     setTextSize(TypedValue.COMPLEX_UNIT_PX, sizeDp * ScreenUtil.density())
+}
+
+public fun TextView.setRightIco(id: Int) {
+    RExTextView.setRightIco(this, id)
+}
+
+public fun TextView.setLeftIco(id: Int) {
+    RExTextView.setLeftIco(this, id)
 }
 
 public fun View.getColor(id: Int): Int = ContextCompat.getColor(context, id)

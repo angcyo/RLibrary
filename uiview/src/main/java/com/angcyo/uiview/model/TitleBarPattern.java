@@ -128,6 +128,11 @@ public class TitleBarPattern {
      */
     public RGestureDetector.OnDoubleTapListener mOnTitleDoubleTapListener;
 
+    /**
+     * 返回按钮的事件
+     */
+    public View.OnClickListener mOnBackListener;
+
     private TitleBarPattern(String titleString) {
         mTitleString = titleString;
     }
@@ -321,6 +326,11 @@ public class TitleBarPattern {
         mLeftItems.clear();
         mRightItems.clear();
         mOnInitTitleLayout = null;
+    }
+
+    public TitleBarPattern setOnBackListener(View.OnClickListener onBackListener) {
+        mOnBackListener = onBackListener;
+        return this;
     }
 
     public TitleBarPattern setTitleBarBGDrawable(Drawable titleBarBGDrawable) {

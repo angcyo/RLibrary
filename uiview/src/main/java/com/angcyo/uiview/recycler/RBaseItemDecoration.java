@@ -33,8 +33,8 @@ public class RBaseItemDecoration extends RecyclerView.ItemDecoration {
     boolean drawLastVLine = false;//LinearLayoutManager.VERTICAL 时使用
     boolean drawLastHLine = false;//LinearLayoutManager.HORIZONTAL 时使用
 
-    boolean drawFirstVLine = false;//
-    boolean drawFirstHLine = false;//
+    boolean drawFirstVLine = false;//LinearLayoutManager.VERTICAL 时使用
+    boolean drawFirstHLine = false;//LinearLayoutManager.HORIZONTAL 时使用
 
     public RBaseItemDecoration() {
         this(1);
