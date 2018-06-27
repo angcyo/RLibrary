@@ -35,14 +35,14 @@ abstract class UIBaseTabView : UIIViewImpl() {
             tablayout = findViewById(R.id.base_tab_layout)
 
             initTabLayout(tablayout, iViews)
-            initAfterInflateView()
+            initAfterInflateView(container)
         }
     }
 
     open fun getBaseLayoutId(): Int = R.layout.base_uiview_tab_layout
 
     @CallSuper
-    open fun initAfterInflateView() {
+    open fun initAfterInflateView(container: FrameLayout) {
         parentILayout.setChildILayout(subUILayoutImpl)
         setChildILayout(subUILayoutImpl)
     }
