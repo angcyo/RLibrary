@@ -127,8 +127,9 @@ dependencies {
 
     //https://developer.android.google.cn/topic/libraries/support-library/features.html
     //https://developer.android.google.cn/reference/android/support/constraint/ConstraintLayout.html
-    api 'com.android.support.constraint:constraint-layout:1.1.0'
+    api 'com.android.support.constraint:constraint-layout:1.1.2'
 
     //kotlin 支持
-    api "org.jetbrains.kotlin:kotlin-stdlib-jdk7:$kotlin_version"
+    //api "org.jetbrains.kotlin:kotlin-stdlib-jdk7:$kotlin_version"
+    api "org.jetbrains.kotlin:kotlin-stdlib-jre7:$kotlin_version"
 }
