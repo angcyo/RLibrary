@@ -73,9 +73,20 @@ class RMediaLoaderUIView : BaseMediaUIView() {
         view(R.id.base_bottom_control_layout).setBackgroundColor(titleBarBGColor)
 
         click(R.id.base_preview_selector) {
-            if (RUtils.isListEmpty(selectorMediaList)) {
+
+            if (mediaLoaderConfig.isMultiModel()) {
+                if (RUtils.isListEmpty(selectorMediaList)) {
+                } else {
+                    startMediaPager(selectorMediaList.filter { true } as MutableList<MediaItem>, selectorMediaList)
+                }
             } else {
-                startMediaPager(selectorMediaList.filter { true } as MutableList<MediaItem>, selectorMediaList)
+                //单选模式
+                if (RUtils.isListEmpty(folderList) ||
+                        RUtils.isListEmpty(folderList!![curFolderPosition].mediaItemList)) {
+
+                } else {
+                    startMediaPager(folderList!![curFolderPosition].mediaItemList, selectorMediaList, 0)
+                }
             }
         }
     }
@@ -149,8 +160,16 @@ class RMediaLoaderUIView : BaseMediaUIView() {
 
             //之前拍照的item
             takeFileMediaItem?.let {
-                folderList!![curFolderPosition].mediaItemList.add(0, it)
+                val mediaItemList = folderList!![curFolderPosition].mediaItemList
+                mediaItemList.add(0, it)
                 onMediaItemAdd(it, true)
+
+                if (mediaLoaderConfig.isMultiModel()) {
+
+                } else {
+                    //单选, 大图滚动到对应位置
+                    startMediaPager(mediaItemList, selectorMediaList, 0)
+                }
             }
 
             onFolderSelector(curFolderPosition)
@@ -292,18 +311,17 @@ class RMediaLoaderUIView : BaseMediaUIView() {
                             //创建视频缩略图
                             ThumbLoad.createThumbFile(WeakReference(mActivity), WeakReference(this@MediaAdapter), bean)
                         }
-
                         //蒙层
                         mDrawMaskColor.drawMaskColorShow = selectorMediaList.indexOf(bean) > -1
                     }
                 }
 
                 holder.click(R.id.base_image_view) {
-                    if (mediaLoaderConfig.selectorModel == MediaLoaderConfig.SELECTOR_MODEL_MULTI) {
+                    if (mediaLoaderConfig.isMultiModel()) {
                         startMediaPager(allDatas, selectorMediaList, posInData)
                     } else {
                         selectorMediaList.add(bean)
-                        onSelectorButtonClick()
+                        checkSendObserver()
                     }
                 }
 
@@ -314,6 +332,7 @@ class RMediaLoaderUIView : BaseMediaUIView() {
                     text = bean.duration.toHHmmss()
                 }
 
+                holder.visible(R.id.base_num_check_view, mediaLoaderConfig.isMultiModel())
                 val numCheckView: NumCheckView = holder.v(R.id.base_num_check_view)
                 numCheckView.apply {
                     setNum(selectorMediaList.indexOf(bean) + 1)
@@ -336,7 +355,9 @@ class RMediaLoaderUIView : BaseMediaUIView() {
                     }
                 }
 
-                if (BuildConfig.DEBUG || mediaLoaderConfig.limitFileSizeModel == MediaLoaderConfig.SIZE_MODEL_SELECTOR) {
+                if (BuildConfig.DEBUG ||
+                        mediaLoaderConfig.limitFileSizeModel == MediaLoaderConfig.SIZE_MODEL_SELECTOR ||
+                        mediaLoaderConfig.showFileSize) {
                     holder.visible(R.id.base_file_size_view)
                     holder.tv(R.id.base_file_size_view).text = RUtils.formatFileSize(bean.size) /*+ "\n${bean.size}"*/
                 }

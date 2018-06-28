@@ -95,6 +95,21 @@ class RMediaPagerUIView(mediaLoaderConfig: MediaLoaderConfig,
                 }
             }
         }
+
+        if (!mediaLoaderConfig.isMultiModel()) {
+            //大图界面放出 发送 按钮
+            uiTitleBarContainer.getRightViewById<View>(R.id.base_send_button).visibility = View.VISIBLE
+
+            //隐藏 选择 按钮
+            mViewHolder.invisible(R.id.base_check_button)
+        }
+    }
+
+    override fun checkSendObserver() {
+        if (!mediaLoaderConfig.isMultiModel()) {
+            selectorMediaList.add(allMediaList[position])
+        }
+        super.checkSendObserver()
     }
 
     /**图片编辑完成*/

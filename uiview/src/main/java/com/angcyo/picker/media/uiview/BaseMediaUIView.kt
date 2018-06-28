@@ -1,6 +1,7 @@
 package com.angcyo.picker.media.uiview
 
 import android.graphics.Color
+import android.view.View
 import android.widget.ImageView
 import android.widget.TextView
 import com.angcyo.picker.media.OnMediaSelectorObserver
@@ -52,7 +53,6 @@ abstract class BaseMediaUIView : UIBaseView() {
         }
     }
 
-
     /**回调监听*/
     var onMediaSelectorObserver: OnMediaSelectorObserver? = null
     var onSendButtonClickObserver: OnSendButtonClickObserver? = null
@@ -73,17 +73,15 @@ abstract class BaseMediaUIView : UIBaseView() {
 
     override fun getTitleBar(): TitleBarPattern {
         return super.getTitleBar()
-                .addRightItem(TitleBarItem.build("发送") {
-                    if (!RUtils.isListEmpty(selectorMediaList)) {
-
-                        if (onSendButtonClickObserver?.onSendButtonClick(this, selectorMediaList) == true) {
-                        } else {
-                            onSelectorButtonClick()
+                .addRightItem(TitleBarItem
+                        .build("发送") {
+                            checkSendObserver()
                         }
-                    }
-                }.setId(R.id.base_send_button)
+                        .setId(R.id.base_send_button)
                         .setTextColor(SkinHelper.getSkin().themeSubColor)
-                        .setTextSize(12 * density()))
+                        .setTextSize(12 * density())
+                        .setVisibility(if (mediaLoaderConfig.isMultiModel()) View.VISIBLE else View.INVISIBLE)
+                )
     }
 
     override fun getDefaultLayoutState(): LayoutState {
@@ -101,6 +99,7 @@ abstract class BaseMediaUIView : UIBaseView() {
     override fun onShowContentLayout() {
         super.onShowContentLayout()
         mViewHolder.visible(R.id.base_origin_box, mediaLoaderConfig.showOriginButton)
+
         updateSendButtonText()
     }
 
@@ -153,6 +152,7 @@ abstract class BaseMediaUIView : UIBaseView() {
         return true
     }
 
+    /**选择媒体文件, 防止重复添加*/
     open protected fun onSelectorMediaItem(mediaItem: MediaItem, selector: Boolean = true) {
         if (selector) {
             if (selectorMediaList.contains(mediaItem)) {
@@ -167,7 +167,12 @@ abstract class BaseMediaUIView : UIBaseView() {
         updateSendButtonText()
     }
 
+    /**更新右上角发送按钮文本*/
     protected fun updateSendButtonText() {
+        if (!mediaLoaderConfig.isMultiModel()) {
+            return
+        }
+
         if (RUtils.isListEmpty(selectorMediaList)) {
             uiTitleBarContainer.getRightViewById<TextView>(R.id.base_send_button).text = "发送"
         } else {
@@ -187,6 +192,17 @@ abstract class BaseMediaUIView : UIBaseView() {
         }
     }
 
+    /**点击发送按钮后的处理*/
+    open protected fun checkSendObserver() {
+        if (!RUtils.isListEmpty(selectorMediaList)) {
+            if (onSendButtonClickObserver?.onSendButtonClick(this, selectorMediaList) == true) {
+            } else {
+                onSelectorButtonClick()
+            }
+        }
+    }
+
+    /**默认发送按钮事件处理*/
     open protected fun onSelectorButtonClick() {
 
     }

@@ -71,6 +71,9 @@ class MediaLoaderConfig {
     //kb
     var limitFileMaxSize = 0f
 
+    /**显示文件大小*/
+    var showFileSize = false
+
 
     /**
      * 混合选择模式
@@ -85,6 +88,9 @@ class MediaLoaderConfig {
     /**非混合模式下, 可以选择视频的数量*/
     var maxSelectorVideoLimit = 1
     var maxSelectorAudioLimit = 1
+
+    /**是否是多选模式*/
+    fun isMultiModel(): Boolean = selectorModel == SELECTOR_MODEL_MULTI
 
     /**是否可以选中文件*/
     fun canSelectorFile(fileSize: Long): Boolean {
