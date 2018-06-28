@@ -58,6 +58,7 @@ abstract class UIBaseTabView : UIIViewImpl() {
     /**重写此方法,设置界面*/
     @CallSuper
     open fun initTabLayout(tabLayout: RTabLayout /*添加tab item*/, iViews: MutableList<IView> /*对应的界面*/) {
+        /*如果设置了默认位置, 请将super调用放在 后面执行*/
         tablayout.onTabLayoutListener = object : RTabLayout.OnTabLayoutListener() {
             override fun onPageScrolled(tabLayout: RTabLayout, currentView: View?, nextView: View?, positionOffset: Float) {
                 this@UIBaseTabView.onPageScrolled(tabLayout, currentView, nextView, positionOffset)
