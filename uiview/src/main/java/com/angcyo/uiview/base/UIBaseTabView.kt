@@ -39,6 +39,7 @@ abstract class UIBaseTabView : UIIViewImpl() {
         }
     }
 
+    /**重写此方法, 自定义布局*/
     open fun getBaseLayoutId(): Int = R.layout.base_uiview_tab_layout
 
     @CallSuper
@@ -54,6 +55,7 @@ abstract class UIBaseTabView : UIIViewImpl() {
         }
     }
 
+    /**重写此方法,设置界面*/
     @CallSuper
     open fun initTabLayout(tabLayout: RTabLayout /*添加tab item*/, iViews: MutableList<IView> /*对应的界面*/) {
         tablayout.onTabLayoutListener = object : RTabLayout.OnTabLayoutListener() {
