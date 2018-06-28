@@ -323,7 +323,7 @@ class RMediaLoaderUIView : BaseMediaUIView() {
                             //取消选中
                             onSelectorMediaItem(bean, false)
                             holder.giv(R.id.base_image_view).mDrawMaskColor.drawMaskColorShow = true
-                        } else if (checkMaxLimit() || !mediaLoaderConfig.canSelectorFile(bean.size)) {
+                        } else if (!canSelectorItem(bean)) {
                             //不能选中
                             holder.giv(R.id.base_image_view).mDrawMaskColor.drawMaskColorShow = false
                         } else {

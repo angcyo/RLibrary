@@ -112,7 +112,7 @@ class RMediaPagerUIView(mediaLoaderConfig: MediaLoaderConfig,
                 if (contains) {
                     //取消选择
                     onSelectorMediaItem(allMediaList[position], false)
-                } else if (checkMaxLimit() || !mediaLoaderConfig.canSelectorFile(allMediaList[position].size)) {
+                } else if (!canSelectorItem(allMediaList[position])) {
                     //不能选中
                     isChecked = false
                 } else {

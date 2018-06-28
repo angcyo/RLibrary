@@ -85,6 +85,13 @@ open class MediaItem {
         return mimeType.isAudioMimeType()
     }
 
+    /**类型是否相同*/
+    fun isMimeTypeEqu(item: MediaItem): Boolean {
+        return (isVideoItem() && item.isVideoItem()) ||
+                (isImageItem() && item.isImageItem()) ||
+                (isAudioItem() && item.isAudioItem())
+    }
+
     override fun toString(): String {
         val builder = StringBuilder("{")
         builder.append("\n\t")

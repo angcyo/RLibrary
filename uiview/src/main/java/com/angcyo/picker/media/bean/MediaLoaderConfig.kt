@@ -71,6 +71,21 @@ class MediaLoaderConfig {
     //kb
     var limitFileMaxSize = 0f
 
+
+    /**
+     * 混合选择模式
+     *
+     * LOADER_TYPE_ALL     --都能选
+     * LOADER_TYPE_IMAGE   --主要选择图片, 其他只能选择单个
+     * LOADER_TYPE_VIDEO   --主要选择视频, 其他只能选择单个
+     * LOADER_TYPE_AUDIO   --主要选择音频, 其他只能选择单个
+     * LOADER_TYPE_IMAGE_VIDEO  --图片和视频都能选, 其他只能选择单个
+     * */
+    var mixSelectorModel = LOADER_TYPE_ALL
+    /**非混合模式下, 可以选择视频的数量*/
+    var maxSelectorVideoLimit = 1
+    var maxSelectorAudioLimit = 1
+
     /**是否可以选中文件*/
     fun canSelectorFile(fileSize: Long): Boolean {
         if (limitFileSizeModel == SIZE_MODEL_SELECTOR) {
