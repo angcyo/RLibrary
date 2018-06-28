@@ -20,6 +20,7 @@ import android.support.annotation.DrawableRes;
 import android.support.annotation.IdRes;
 import android.support.annotation.IntegerRes;
 import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 import android.support.annotation.StringRes;
 import android.support.v4.content.ContextCompat;
 import android.support.v4.view.ViewPager;
@@ -330,7 +331,7 @@ public abstract class UIIViewImpl implements IView {
     }
 
     @Override
-    public void onViewShow(Bundle bundle, Class<?> fromClz) {
+    public void onViewShow(@Nullable Bundle bundle, @Nullable Class<?> fromClz) {
         String className = "null";
         if (fromClz != null) {
             className = fromClz.getSimpleName();
@@ -341,7 +342,7 @@ public abstract class UIIViewImpl implements IView {
 
     @CallSuper
     @Override
-    public void onViewShow(Bundle bundle) {
+    public void onViewShow(@Nullable Bundle bundle) {
         //L.d(this.getClass().getSimpleName(), "onViewShow: " + mIViewStatus);
         mIViewStatus = IViewShowState.STATE_VIEW_SHOW;
         long lastShowTime = mLastShowTime;
@@ -385,11 +386,11 @@ public abstract class UIIViewImpl implements IView {
         }
     }
 
-    public void onViewShowFirst(Bundle bundle) {
+    public void onViewShowFirst(@Nullable Bundle bundle) {
         L.v(this.getClass().getSimpleName(), "onViewShowFirst: ");
     }
 
-    public void onViewShowNotFirst(Bundle bundle) {
+    public void onViewShowNotFirst(@Nullable Bundle bundle) {
         L.v(this.getClass().getSimpleName(), "onViewShowNotFirst: ");
     }
 
@@ -400,7 +401,7 @@ public abstract class UIIViewImpl implements IView {
 
     @CallSuper
     @Override
-    public void onViewReShow(Bundle bundle) {
+    public void onViewReShow(@Nullable Bundle bundle) {
         L.d(this.getClass().getSimpleName(), "onViewReShow: " + mIViewStatus);
         mIViewStatus = IViewShowState.STATE_VIEW_SHOW;
 

@@ -9,6 +9,7 @@ import com.angcyo.picker.media.bean.MediaItem
 import com.angcyo.picker.media.bean.MediaLoaderConfig
 import com.angcyo.uiview.R
 import com.angcyo.uiview.base.UIBaseView
+import com.angcyo.uiview.container.ILayout
 import com.angcyo.uiview.kotlin.isAudioMimeType
 import com.angcyo.uiview.kotlin.isVideoMimeType
 import com.angcyo.uiview.model.TitleBarItem
@@ -43,6 +44,11 @@ abstract class BaseMediaUIView : UIBaseView() {
                     }
                 }
             }
+        }
+
+        fun finish(iLayout: ILayout) {
+            iLayout.finishIView(RMediaLoaderUIView::class.java)
+            iLayout.finishIView(RMediaPagerUIView::class.java)
         }
     }
 

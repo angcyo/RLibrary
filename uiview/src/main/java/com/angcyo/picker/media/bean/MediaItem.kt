@@ -49,6 +49,8 @@ open class MediaItem {
     var height = 0
     var latitude = 0.0
     var longitude = 0.0
+
+    /**毫秒*/
     var duration = 0L
     //end...
 
