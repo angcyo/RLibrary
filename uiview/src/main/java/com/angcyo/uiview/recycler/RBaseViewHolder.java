@@ -151,24 +151,24 @@ public class RBaseViewHolder extends RecyclerView.ViewHolder {
         return visible(v(resId));
     }
 
-    public View visible(@IdRes int resId, boolean visible) {
+    public RBaseViewHolder visible(@IdRes int resId, boolean visible) {
         View view = v(resId);
         if (visible) {
             visible(view);
         } else {
             gone(view);
         }
-        return view;
+        return this;
     }
 
-    public View invisible(@IdRes int resId, boolean visible) {
+    public RBaseViewHolder invisible(@IdRes int resId, boolean visible) {
         View view = v(resId);
         if (visible) {
             visible(view);
         } else {
             invisible(view);
         }
-        return view;
+        return this;
     }
 
     public View visible(View view) {
@@ -180,14 +180,14 @@ public class RBaseViewHolder extends RecyclerView.ViewHolder {
         return view;
     }
 
-    public View enable(@IdRes int resId, boolean enable) {
+    public RBaseViewHolder enable(@IdRes int resId, boolean enable) {
         View view = v(resId);
         if (view != null) {
             if (view.isEnabled() != enable) {
                 view.setEnabled(enable);
             }
         }
-        return view;
+        return this;
     }
 
     public void invisible(@IdRes int resId) {
@@ -208,14 +208,14 @@ public class RBaseViewHolder extends RecyclerView.ViewHolder {
         gone(v(resId));
     }
 
-    public View gone(View view) {
+    public RBaseViewHolder gone(View view) {
         if (view != null) {
             if (view.getVisibility() != View.GONE) {
                 view.clearAnimation();
                 view.setVisibility(View.GONE);
             }
         }
-        return view;
+        return this;
     }
 
     public RRecyclerView reV(@IdRes int resId) {

@@ -2,6 +2,7 @@ package com.angcyo.uiview.kotlin
 
 import android.app.Activity
 import android.graphics.Rect
+import android.support.annotation.LayoutRes
 import android.support.v7.widget.RecyclerView
 import android.view.*
 import android.widget.EditText
@@ -217,6 +218,15 @@ public fun ViewGroup.childs(map: (Int, View) -> Unit) {
         val childAt = getChildAt(i)
         map.invoke(i, childAt)
     }
+}
+
+public fun ViewGroup.show(@LayoutRes layoutId: Int): View {
+    val viewWithTag = findViewWithTag<View>(layoutId)
+    if (viewWithTag == null) {
+        val inflate = LayoutInflater.from(context).inflate(layoutId, this)
+        return inflate
+    }
+    return viewWithTag
 }
 
 abstract class OnAddViewCallback<T> {
