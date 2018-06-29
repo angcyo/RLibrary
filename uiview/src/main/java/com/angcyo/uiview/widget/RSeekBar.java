@@ -127,6 +127,7 @@ public class RSeekBar extends View {
         mTrackHeight = typedArray.getDimensionPixelOffset(R.styleable.RSeekBar_r_track_height, mTrackHeight);
         mThumbHeight = typedArray.getDimensionPixelOffset(R.styleable.RSeekBar_r_thumb_height, mThumbHeight);
         mThumbWidth = typedArray.getDimensionPixelOffset(R.styleable.RSeekBar_r_thumb_width, mThumbWidth);
+        mThumbRadius = typedArray.getDimensionPixelOffset(R.styleable.RSeekBar_r_thumb_circle_size, 0);
         mThumbRoundSize = typedArray.getDimensionPixelOffset(R.styleable.RSeekBar_r_thumb_round_size, mThumbRoundSize);
         mTrackRadius = typedArray.getDimensionPixelOffset(R.styleable.RSeekBar_r_track_round_size, 0);
         curProgress = typedArray.getInteger(R.styleable.RSeekBar_r_cur_progress, curProgress);
@@ -137,7 +138,9 @@ public class RSeekBar extends View {
         typedArray.recycle();
 
         if (thumbType == THUMB_CIRCLE) {
-            mThumbRadius = Math.min(mThumbWidth, mThumbHeight);
+            if (mThumbRadius == 0) {
+                mThumbRadius = Math.min(mThumbWidth, mThumbHeight);
+            }
             mThumbWidth = mThumbHeight = mThumbRadius;
         }
 

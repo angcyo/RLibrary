@@ -14,6 +14,7 @@
         <attr name="r_thumb_width" format="dimension"/>
         <attr name="r_thumb_height" format="dimension"/>
         <attr name="r_thumb_round_size" format="dimension"/>
+        <attr name="r_thumb_circle_size" format="dimension"/>
         <attr name="r_track_round_size" format="dimension"/>
         <attr name="r_track_height" format="dimension"/>
     </declare-styleable>

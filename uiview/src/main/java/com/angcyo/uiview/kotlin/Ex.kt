@@ -52,14 +52,14 @@ public fun Float.max0() = Math.max(0f, this)
 public fun Int.max0() = Math.max(0, this)
 
 /**目标值的最小值是自己,  目标值必须超过自己*/
-public fun Float.minValue(value: Float) = Math.max(value, this)
+public fun Float.minValue(value: Float /*允许的最小值*/) = Math.max(value, this)
 
 public fun Float.minValue(value: Int) = Math.max(value.toFloat(), this)
 
 public fun Int.minValue(value: Int) = Math.max(value, this)
 
 /**目标值的最大值是自己,  目标值不能超过自己*/
-public fun Float.maxValue(value: Float) = Math.min(value, this)
+public fun Float.maxValue(value: Float /*允许的最大值*/) = Math.min(value, this)
 
 public fun Int.maxValue(value: Int) = Math.min(value, this)
 
