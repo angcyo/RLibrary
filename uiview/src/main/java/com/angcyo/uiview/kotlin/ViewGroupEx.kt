@@ -223,10 +223,23 @@ public fun ViewGroup.childs(map: (Int, View) -> Unit) {
 public fun ViewGroup.show(@LayoutRes layoutId: Int): View {
     val viewWithTag = findViewWithTag<View>(layoutId)
     if (viewWithTag == null) {
-        val inflate = LayoutInflater.from(context).inflate(layoutId, this)
-        return inflate
+        LayoutInflater.from(context).inflate(layoutId, this)
+        val newView = getChildAt(childCount - 1)
+        newView.tag = layoutId
+        return newView
     }
     return viewWithTag
+}
+
+public fun ViewGroup.hide(@LayoutRes layoutId: Int) {
+    val viewWithTag = findViewWithTag<View>(layoutId)
+    if (viewWithTag == null || viewWithTag.parent == null) {
+    } else {
+        val parent = viewWithTag.parent
+        if (parent is ViewGroup) {
+            parent.removeView(viewWithTag)
+        }
+    }
 }
 
 abstract class OnAddViewCallback<T> {
