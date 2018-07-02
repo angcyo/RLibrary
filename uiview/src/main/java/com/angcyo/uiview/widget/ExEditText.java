@@ -1075,8 +1075,12 @@ public class ExEditText extends AppCompatEditText {
 
         if (auto) {
             if (isContains(mention)) {
-                if ('@' == getText().charAt(start - 1)) {
-                    deleteLast(start);
+                try {
+                    if ('@' == getText().charAt(start - 1)) {
+                        deleteLast(start);
+                    }
+                } catch (Exception e) {
+                    e.printStackTrace();
                 }
             } else {
                 mAllMention.add(mention);

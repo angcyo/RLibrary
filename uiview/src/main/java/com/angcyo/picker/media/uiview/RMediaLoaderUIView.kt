@@ -96,6 +96,7 @@ class RMediaLoaderUIView : BaseMediaUIView() {
                                 position: Int = 0 /*总媒体中的索引*/) {
         startIView(RMediaPagerUIView(mediaLoaderConfig, allMediaList, selectorMediaList, position).apply {
             this.onMediaSelectorObserver = this@RMediaLoaderUIView.onMediaSelectorObserver
+            this.onSendButtonClickObserver = this@RMediaLoaderUIView.onSendButtonClickObserver
 
             onIViewUnload = Runnable {
                 updateNumCheck(true)
