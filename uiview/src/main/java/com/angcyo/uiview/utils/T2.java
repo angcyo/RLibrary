@@ -13,6 +13,7 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.angcyo.library.utils.L;
 import com.angcyo.uiview.R;
 import com.angcyo.uiview.skin.SkinHelper;
 
@@ -42,6 +43,11 @@ public class T2 {
     }
 
     public static void show(Context context, CharSequence charSequence, int type, int gravity) {
+        if (!RUtils.isMainThread()) {
+            L.e("试图在子线程显示Toast.");
+            return;
+        }
+
         View layout;
         if (toast == null) {
             toast = Toast.makeText(context, "", Toast.LENGTH_SHORT);
