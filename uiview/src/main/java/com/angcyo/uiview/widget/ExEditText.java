@@ -1666,24 +1666,39 @@ public class ExEditText extends AppCompatEditText {
             this.maxLen = maxLen;
         }
 
+        /**
+         * 将 dest 字符中, 的dstart 位置到 dend 位置的字符串,
+         * 替换成 source 字符中, 的start 位置到 end 对应的字符串
+         */
         @Override
         public CharSequence filter(CharSequence source, int start, int end, Spanned dest, int dstart, int dend) {
             int dindex = 0;
             int count = 0;
+            int dcount = 0;//dest 中, 需要替换掉多少个char
 
+            //当前已经存在char数量
             while (count <= maxLen && dindex < dest.length()) {
                 char c = dest.charAt(dindex++);
                 if (c <= MAX_CHAR) {
                     count = count + 1;
+                    if (dindex >= dstart && dindex < dend) {
+                        dcount += 1;
+                    }
                 } else {
+                    if (dindex >= dstart && dindex < dend) {
+                        dcount += 1;
+                    }
                     count = count + 2;
                 }
             }
+
+            count -= dcount;
 
             if (count > maxLen) {
                 return dest.subSequence(0, dindex - 1);
             }
 
+            //本次需要输入的char数量
             int sindex = 0;
             while (count <= maxLen && sindex < source.length()) {
                 char c = source.charAt(sindex++);
@@ -1695,10 +1710,15 @@ public class ExEditText extends AppCompatEditText {
             }
 
             if (count > maxLen) {
-                sindex--;
-            }
+                //已经存在的char长度, + 输入的char长度, 大于限制长度
 
-            return source.subSequence(0, sindex);
+                //越界
+                sindex--;
+                return source.subSequence(0, sindex);
+            } else {
+                // keep original
+                return null;
+            }
         }
 
         public int getMaxLen() {
