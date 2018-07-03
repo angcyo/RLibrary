@@ -181,7 +181,8 @@ public class RExGroupItemDecoration extends RecyclerView.ItemDecoration {
             }
         }
 
-        groupInfo.outRect.set(0, 0, 0, 0);
+        outRect.set(0, 0, 0, 0);
+        //groupInfo.outRect.set(0, 0, 0, 0);
         mGroupCallBack.onGetItemOffsets(groupInfo.outRect, groupInfo);
         outRect.set(groupInfo.outRect);
     }
@@ -200,8 +201,9 @@ public class RExGroupItemDecoration extends RecyclerView.ItemDecoration {
             bgColor = RApplication.getApp().getResources().getColor(R.color.base_chat_bg_color);
             textColor = RApplication.getApp().getResources().getColor(R.color.base_text_color_dark);
 
+            /*默认居中绘制分组文本信息*/
             bottomOffset = 2 * density();
-            topOffset = 4 * density();
+            topOffset = 2 * density();
             leftOffset = 10 * density();
         }
         /**
@@ -232,7 +234,11 @@ public class RExGroupItemDecoration extends RecyclerView.ItemDecoration {
          * 绘制分组信息
          */
         public void onGroupDraw(@NonNull Canvas canvas, @NonNull View view, int adapterPosition, @NonNull GroupInfo groupInfo) {
-            if (groupInfo.outRect.top <= 0) {
+            if (groupInfo.outRect.top <= 0 && groupInfo.isVertical()) {
+                //没有绘制距离
+                return;
+            }
+            if (groupInfo.outRect.left <= 0 && groupInfo.isHorizontal()) {
                 //没有绘制距离
                 return;
             }
@@ -248,7 +254,7 @@ public class RExGroupItemDecoration extends RecyclerView.ItemDecoration {
             } else {
                 canvas.drawText(getGroupText(groupInfo.adapterPosition),
                         0F + leftOffset,
-                        view.getTop() - mTextPaint.descent() - bottomOffset, mTextPaint);
+                        view.getTop() - groupInfo.outRect.top / 2 + mTextPaint.descent() - bottomOffset + topOffset, mTextPaint);
             }
         }
 
@@ -287,7 +293,7 @@ public class RExGroupItemDecoration extends RecyclerView.ItemDecoration {
 
                 canvas.drawText(getGroupText(groupInfo.adapterPosition),
                         view.getLeft() + leftOffset,
-                        groupInfo.groupStartOffset - mTextPaint.descent() - bottomOffset, mTextPaint);
+                        groupInfo.groupStartOffset - groupInfo.outRect.top / 2 + mTextPaint.descent() - bottomOffset + topOffset, mTextPaint);
             }
         }
 
@@ -334,6 +340,10 @@ public class RExGroupItemDecoration extends RecyclerView.ItemDecoration {
          */
         public boolean isHorizontal() {
             return layoutOrientation == LinearLayoutManager.HORIZONTAL;
+        }
+
+        public boolean isVertical() {
+            return layoutOrientation == LinearLayoutManager.VERTICAL;
         }
     }
 

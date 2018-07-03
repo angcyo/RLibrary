@@ -18,9 +18,9 @@ import java.util.Map;
 
 /**
  * https://github.com/bgogetap/StickyHeaders
- *
- * 2018-5-3
- *
+ * <p>
+ * 2018-5-3  RecyclerView 需要被FragmentLayout 包裹
+ * <p>
  * 0.5.0
  */
 public class StickyLayoutManager extends LinearLayoutManager {
