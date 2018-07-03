@@ -1,5 +1,7 @@
 package com.angcyo.uiview.net;
 
+import android.support.annotation.NonNull;
+
 import java.io.Serializable;
 
 /**
@@ -12,7 +14,8 @@ public interface RObserver<T> extends Serializable {
     /**
      * 通知产生后的回调函数
      *
-     * @param t 事件参数
+     * @param event 事件参数
+     * @param data  附加数据, 可以存放状态码之类的数据
      */
-    public void onEvent(T t);
+    public void onEvent(@NonNull String data, T event);
 }
