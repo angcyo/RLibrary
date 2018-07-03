@@ -54,6 +54,10 @@ public class RBaseItemDecoration extends RecyclerView.ItemDecoration {
         mDividerDrawableH = mDividerDrawableV;
     }
 
+    public RBaseItemDecoration(float dividerSize, int dividerColor) {
+        this(((int) dividerSize), dividerColor);
+    }
+
     public RBaseItemDecoration(Drawable drawable, int dividerSize) {
         mDividerSize = dividerSize;
         mDividerDrawableV = drawable;

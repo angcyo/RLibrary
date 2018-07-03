@@ -263,9 +263,11 @@ public class RExItemDecoration extends RecyclerView.ItemDecoration {
          */
         protected void drawTopLine(@NonNull Canvas canvas, @NonNull TextPaint paint,
                                    @NonNull View itemView, @NonNull Rect offsetRect, int itemCount, int position) {
-            paint.setColor(getPaintColor(itemView.getContext()));
-            offsetRect.set(0, itemView.getTop() - offsetRect.top, itemView.getRight(), itemView.getTop());
-            canvas.drawRect(offsetRect, paint);
+            if (offsetRect.top > 0) {
+                paint.setColor(getPaintColor(itemView.getContext(), position));
+                offsetRect.set(0, itemView.getTop() - offsetRect.top, itemView.getRight(), itemView.getTop());
+                canvas.drawRect(offsetRect, paint);
+            }
         }
 
         /**
@@ -273,9 +275,11 @@ public class RExItemDecoration extends RecyclerView.ItemDecoration {
          */
         protected void drawBottomLine(@NonNull Canvas canvas, @NonNull TextPaint paint,
                                       @NonNull View itemView, @NonNull Rect offsetRect, int itemCount, int position) {
-            paint.setColor(getPaintColor(itemView.getContext()));
-            offsetRect.set(0, itemView.getBottom(), itemView.getRight(), itemView.getBottom() + offsetRect.bottom);
-            canvas.drawRect(offsetRect, paint);
+            if (offsetRect.bottom > 0) {
+                paint.setColor(getPaintColor(itemView.getContext(), position));
+                offsetRect.set(0, itemView.getBottom(), itemView.getRight(), itemView.getBottom() + offsetRect.bottom);
+                canvas.drawRect(offsetRect, paint);
+            }
         }
 
         /**
@@ -283,7 +287,7 @@ public class RExItemDecoration extends RecyclerView.ItemDecoration {
          */
         protected void drawRightLine(@NonNull Canvas canvas, @NonNull TextPaint paint,
                                      @NonNull View itemView, @NonNull Rect offsetRect, int itemCount, int position) {
-            paint.setColor(getPaintColor(itemView.getContext()));
+            paint.setColor(getPaintColor(itemView.getContext(), position));
             offsetRect.set(itemView.getRight(), 0, itemView.getRight() + offsetRect.right, itemView.getBottom());
             canvas.drawRect(offsetRect, paint);
         }
@@ -293,7 +297,7 @@ public class RExItemDecoration extends RecyclerView.ItemDecoration {
          */
         protected void drawLeftLine(@NonNull Canvas canvas, @NonNull TextPaint paint,
                                     @NonNull View itemView, @NonNull Rect offsetRect, int itemCount, int position) {
-            paint.setColor(getPaintColor(itemView.getContext()));
+            paint.setColor(getPaintColor(itemView.getContext(), position));
             offsetRect.set(itemView.getLeft() - offsetRect.left, 0, itemView.getLeft(), itemView.getBottom());
             canvas.drawRect(offsetRect, paint);
         }
@@ -303,9 +307,11 @@ public class RExItemDecoration extends RecyclerView.ItemDecoration {
          */
         protected void drawBottomMarginLine(@NonNull Canvas canvas, @NonNull TextPaint paint,
                                             @NonNull View itemView, @NonNull Rect offsetRect, int itemCount, int position, int leftMargin, int rightMargin) {
-            paint.setColor(getPaintColor(itemView.getContext()));
-            offsetRect.set(leftMargin, itemView.getBottom(), itemView.getRight() - rightMargin, itemView.getBottom() + offsetRect.bottom);
-            canvas.drawRect(offsetRect, paint);
+            if (offsetRect.bottom > 0) {
+                paint.setColor(getPaintColor(itemView.getContext(), position));
+                offsetRect.set(leftMargin, itemView.getBottom(), itemView.getRight() - rightMargin, itemView.getBottom() + offsetRect.bottom);
+                canvas.drawRect(offsetRect, paint);
+            }
         }
 
         /**
@@ -313,7 +319,7 @@ public class RExItemDecoration extends RecyclerView.ItemDecoration {
          */
         protected void drawLeftTopLine(@NonNull Canvas canvas, @NonNull TextPaint paint,
                                        @NonNull View itemView, @NonNull Rect offsetRect, int itemCount, int position) {
-            paint.setColor(getOffsetPaintColor(itemView.getContext()));
+            paint.setColor(getOffsetPaintColor(itemView.getContext(), position));
             offsetRect.set(0, itemView.getTop() - offsetRect.top, getLeftOffset(itemView.getContext()), itemView.getTop());
             canvas.drawRect(offsetRect, paint);
         }
@@ -323,17 +329,29 @@ public class RExItemDecoration extends RecyclerView.ItemDecoration {
          */
         protected void drawLeftBottomLine(@NonNull Canvas canvas, @NonNull TextPaint paint,
                                           @NonNull View itemView, @NonNull Rect offsetRect, int itemCount, int position) {
-            paint.setColor(getOffsetPaintColor(itemView.getContext()));
-            offsetRect.set(0, itemView.getBottom(), getLeftOffset(itemView.getContext()), itemView.getBottom() + offsetRect.bottom);
-            canvas.drawRect(offsetRect, paint);
+            if (offsetRect.bottom > 0) {
+                paint.setColor(getOffsetPaintColor(itemView.getContext(), position));
+                offsetRect.set(0, itemView.getBottom(), getLeftOffset(itemView.getContext()), itemView.getBottom() + offsetRect.bottom);
+                canvas.drawRect(offsetRect, paint);
+            }
         }
 
+        @Deprecated
         protected int getPaintColor(Context context) {
             return ContextCompat.getColor(context, R.color.base_chat_bg_color);
         }
 
+        @Deprecated
         protected int getOffsetPaintColor(Context context) {
             return Color.WHITE;
+        }
+
+        protected int getPaintColor(Context context, int position) {
+            return getPaintColor(context);
+        }
+
+        protected int getOffsetPaintColor(Context context, int position) {
+            return getOffsetPaintColor(context);
         }
 
         protected int getLeftOffset(Context context) {
