@@ -1,6 +1,7 @@
 package com.angcyo.uiview.recycler.adapter
 
 import android.content.Context
+import android.view.View
 import com.angcyo.uiview.base.UIBaseRxView
 import com.angcyo.uiview.recycler.RBaseViewHolder
 
@@ -31,13 +32,28 @@ open class RExItemAdapter<ItemType, DataType> : RExBaseAdapter<String, DataType,
         return itemFactory.getItemLayoutId(viewType)
     }
 
+    override fun onChildViewAttachedToWindow(view: View, adapterPosition: Int, layoutPosition: Int) {
+        super.onChildViewAttachedToWindow(view, adapterPosition, layoutPosition)
+        getItemHolderByPosition(adapterPosition - headerCount)?.let {
+            it.onChildViewAttachedToWindow(view, adapterPosition, layoutPosition)
+        }
+    }
+
+    override fun onChildViewDetachedFromWindow(view: View, adapterPosition: Int, layoutPosition: Int) {
+        super.onChildViewDetachedFromWindow(view, adapterPosition, layoutPosition)
+        getItemHolderByPosition(adapterPosition - headerCount)?.let {
+            it.onChildViewDetachedFromWindow(view, adapterPosition, layoutPosition)
+        }
+    }
+
     /**必须调用此方法*/
     open fun initItemFactory(uiview: UIBaseRxView?) {
         itemFactory.initItemFactory(uiview, this)
     }
 
+    /**根据position, 返回Adapter对应的item类型*/
     override fun getItemType(position: Int): Int {
-        val data: DataType? = if (position >= mAllDatas.size) {
+        val data: DataType? = if (position >= mAllDatas.size || position < 0) {
             //return NO_ITEM_TYPE
             null
         } else {

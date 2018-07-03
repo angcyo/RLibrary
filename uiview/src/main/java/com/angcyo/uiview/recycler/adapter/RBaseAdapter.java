@@ -752,7 +752,7 @@ public abstract class RBaseAdapter<T> extends RecyclerView.Adapter<RBaseViewHold
     }
 
     @Override
-    public void onChildViewAttachedToWindow(View view) {
+    public void onChildViewAttachedToWindow(@NonNull View view) {
         ViewGroup.LayoutParams layoutParams = view.getLayoutParams();
         if (layoutParams instanceof RecyclerView.LayoutParams) {
             int viewAdapterPosition = ((RecyclerView.LayoutParams) layoutParams).getViewAdapterPosition();
@@ -762,7 +762,7 @@ public abstract class RBaseAdapter<T> extends RecyclerView.Adapter<RBaseViewHold
     }
 
     @Override
-    public void onChildViewDetachedFromWindow(View view) {
+    public void onChildViewDetachedFromWindow(@NonNull View view) {
         ViewGroup.LayoutParams layoutParams = view.getLayoutParams();
         if (layoutParams instanceof RecyclerView.LayoutParams) {
             int viewAdapterPosition = ((RecyclerView.LayoutParams) layoutParams).getViewAdapterPosition();
@@ -771,11 +771,11 @@ public abstract class RBaseAdapter<T> extends RecyclerView.Adapter<RBaseViewHold
         }
     }
 
-    protected void onChildViewAttachedToWindow(View view, int adapterPosition, int layoutPosition) {
+    protected void onChildViewAttachedToWindow(@NonNull View view, int adapterPosition, int layoutPosition) {
         //L.v("call: onChildViewAttachedToWindow -> " + adapterPosition + " " + layoutPosition + " " + view);
     }
 
-    protected void onChildViewDetachedFromWindow(View view, int adapterPosition, int layoutPosition) {
+    protected void onChildViewDetachedFromWindow(@NonNull View view, int adapterPosition, int layoutPosition) {
         //L.v("call: onChildViewDetachedFromWindow -> " + adapterPosition + " " + layoutPosition + " " + view);
     }
 

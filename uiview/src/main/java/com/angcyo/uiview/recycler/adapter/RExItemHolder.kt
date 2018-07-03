@@ -52,8 +52,14 @@ abstract class RExItemHolder<DataType> {
 
     }
 
-    /**重写此方法, 核心*/
+    /**重写此方法, 核心, onBindItemDataView 会优先 onChildViewAttachedToWindow 调用*/
     abstract fun onBindItemDataView(holder: RBaseViewHolder, posInData: Int, dataBean: DataType?)
+
+    open fun onChildViewAttachedToWindow(view: View, adapterPosition: Int, layoutPosition: Int) {
+    }
+
+    open fun onChildViewDetachedFromWindow(view: View, adapterPosition: Int, layoutPosition: Int) {
+    }
 
     fun add(subscription: Subscription) {
         exUIView?.add(subscription)
@@ -96,8 +102,20 @@ abstract class RExItemHolder<DataType> {
         canvas.drawRect(0f, itemView.bottom.toFloat(), itemView.right.toFloat(), itemView.bottom.toFloat() + offsetRect.bottom, paint)
     }
 
+    fun deleteItem(position: Int) {
+        exItemAdapter?.deleteItem(position)
+    }
+
+    fun deleteItem(data: DataType) {
+        exItemAdapter?.deleteItem(data)
+    }
+
     fun notifyItemChanged(position: Int) {
         exItemAdapter?.notifyItemChanged(position)
+    }
+
+    fun notifyItemRangeChanged(position: Int, itemCount: Int) {
+        exItemAdapter?.notifyItemRangeChanged(position, itemCount)
     }
 
     fun notifyItemChanged(bean: DataType) {

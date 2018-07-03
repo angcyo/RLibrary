@@ -15,6 +15,7 @@ import android.os.Bundle;
 import android.os.Environment;
 import android.support.v4.view.ViewCompat;
 import android.support.v4.widget.ViewDragHelper;
+import android.support.v7.widget.RecyclerView;
 import android.text.TextUtils;
 import android.util.AttributeSet;
 import android.view.LayoutInflater;
@@ -3059,6 +3060,11 @@ public class UILayoutImpl extends SwipeBackLayout implements ILayout, UIViewPage
                         builder.append("#");
                         if (view instanceof TextView) {
                             builder.append(((TextView) view).getText());
+                            builder.append("#");
+                        } else if (view instanceof RecyclerView) {
+                            builder.append(((RecyclerView) view).getAdapter());
+                            builder.append("#");
+                            builder.append(((RecyclerView) view).getLayoutManager());
                             builder.append("#");
                         }
                         if (view.hasOnClickListeners()) {
