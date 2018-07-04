@@ -308,7 +308,7 @@ public fun EditText.onEmptyText(listener: (Boolean) -> Unit) {
     listener.invoke(TextUtils.isEmpty(this.text))
 }
 
-public fun EditText.onTextChanage(listener: (String) -> Unit) {
+public fun EditText.onTextChange(listener: (String) -> Unit) {
     this.addTextChangedListener(object : SingleTextWatcher() {
         var lastText: String? = null
 
@@ -319,6 +319,35 @@ public fun EditText.onTextChanage(listener: (String) -> Unit) {
             } else {
                 listener.invoke(text)
                 lastText = text
+            }
+        }
+    })
+}
+
+public fun EditText.onTextChangeFilter(listener: (String) -> Unit) {
+    this.addTextChangedListener(object : SingleTextWatcher() {
+        var lastText: String? = null
+        var text: String? = null
+        var lastTime = -1L
+
+        val notify = Runnable {
+            val text = this.text ?: ""
+            listener.invoke(text)
+            lastText = text
+        }
+
+        override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
+            super.onTextChanged(s, start, before, count)
+            text = s?.toString() ?: ""
+            if (!lastText.isNullOrEmpty() && TextUtils.equals(lastText, text)) {
+            } else {
+                //val time = nowTime()
+                removeCallbacks(notify)
+//                if (lastTime == -1L || (time - lastTime) < 300L) {
+//                    //延迟300毫秒通知一次
+//                }
+                //必定300毫秒通知一次
+                postDelayed(notify, 300L)
             }
         }
     })

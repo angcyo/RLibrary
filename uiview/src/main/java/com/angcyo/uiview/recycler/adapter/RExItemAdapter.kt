@@ -4,6 +4,7 @@ import android.content.Context
 import android.view.View
 import com.angcyo.uiview.base.UIBaseRxView
 import com.angcyo.uiview.recycler.RBaseViewHolder
+import com.angcyo.uiview.utils.RUtils
 
 /**
  * Copyright (C) 2016,深圳市红鸟网络科技股份有限公司 All rights reserved.
@@ -109,5 +110,15 @@ open class RExItemAdapter<ItemType, DataType> : RExBaseAdapter<String, DataType,
     /**返回数据在相同类型数据列表中的索引*/
     fun indexOf(itemType: ItemType, data: DataType): Int {
         return getDataByItemType(itemType).indexOf(data)
+    }
+
+    fun removeDataByItemType(itemType: ItemType) {
+        if (!RUtils.isListEmpty(mAllDatas)) {
+            for (index in mAllDatas.size - 1 downTo 0) {
+                if (itemType == itemFactory.getItemTypeFromData(mAllDatas[index], index)) {
+                    deleteItem(index)
+                }
+            }
+        }
     }
 }

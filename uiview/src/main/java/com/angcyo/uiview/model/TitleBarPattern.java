@@ -5,6 +5,7 @@ import android.graphics.Color;
 import android.graphics.drawable.Drawable;
 import android.support.annotation.ColorInt;
 import android.support.annotation.DrawableRes;
+import android.support.annotation.LayoutRes;
 import android.support.annotation.StringRes;
 import android.text.TextUtils;
 import android.util.TypedValue;
@@ -132,6 +133,14 @@ public class TitleBarPattern {
      * 返回按钮的事件
      */
     public View.OnClickListener mOnBackListener;
+
+    /**
+     * 完全自定义TitleBar的布局
+     */
+    @LayoutRes
+    public int customLayoutId = -1;
+
+    public OnInitCustomTitleLayout mOnInitCustomTitleLayout;
 
     private TitleBarPattern(String titleString) {
         mTitleString = titleString;
@@ -345,6 +354,12 @@ public class TitleBarPattern {
 
     public TitleBarPattern setShowTitleBarBottomShadow(boolean showBottomShadow) {
         this.showBottomShadow = showBottomShadow;
+        return this;
+    }
+
+    public TitleBarPattern setCustomLayoutId(int customLayoutId, OnInitCustomTitleLayout onInitCustomTitleLayout) {
+        this.customLayoutId = customLayoutId;
+        mOnInitCustomTitleLayout = onInitCustomTitleLayout;
         return this;
     }
 }

@@ -534,6 +534,22 @@ public class RNineImageLayout extends RelativeLayout implements View.OnClickList
         return mRPaddingBottom;
     }
 
+    public void setRPaddingLeft(int RPaddingLeft) {
+        mRPaddingLeft = RPaddingLeft;
+    }
+
+    public void setRPaddingRight(int RPaddingRight) {
+        mRPaddingRight = RPaddingRight;
+    }
+
+    public void setRPaddingTop(int RPaddingTop) {
+        mRPaddingTop = RPaddingTop;
+    }
+
+    public void setRPaddingBottom(int RPaddingBottom) {
+        mRPaddingBottom = RPaddingBottom;
+    }
+
     /**
      * 设置间隙大小
      */

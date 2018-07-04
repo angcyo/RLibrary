@@ -152,14 +152,18 @@ public class UITitleBarContainer extends FrameLayout {
     }
 
     public UITitleBarContainer showLoadView() {
-        mLoadView.setVisibility(VISIBLE);
+        if (mLoadView != null) {
+            mLoadView.setVisibility(VISIBLE);
+        }
         return this;
     }
 
     //----------------------------私有方法-----------------------------
 
     public UITitleBarContainer hideLoadView() {
-        mLoadView.setVisibility(GONE);
+        if (mLoadView != null) {
+            mLoadView.setVisibility(GONE);
+        }
         return this;
     }
 
@@ -184,32 +188,33 @@ public class UITitleBarContainer extends FrameLayout {
     }
 
     private void initTitleBar(Context context, TitleBarPattern titleBarPattern) {
-//        if (context instanceof Activity) {
-//            if (ResUtil.isLayoutFullscreen((Activity) context)) {
-//                setPadding(getPaddingLeft(),
-//                        getPaddingTop() + getResources().getDimensionPixelSize(R.dimen.status_bar_height),
-//                        getPaddingRight(), getPaddingBottom());
-//            }
-//        }
         final View root;
-        if (titleBarPattern.titleGravity == Gravity.LEFT) {
-            root = LayoutInflater.from(context).inflate(R.layout.base_title_layout_left, this);
+        if (titleBarPattern.customLayoutId != -1) {
+            //自定义标题栏
+            root = LayoutInflater.from(context).inflate(R.layout.base_title_custom_layout, this);
+            mBaseViewHolder = new RBaseViewHolder(root);
+            mTitleBarLayout = find(root, R.id.base_title_bar_layout);
+
+            LayoutInflater.from(context).inflate(titleBarPattern.customLayoutId, mTitleBarLayout);
         } else {
-            root = LayoutInflater.from(context).inflate(R.layout.base_title_layout, this);
-        }
+            if (titleBarPattern.titleGravity == Gravity.LEFT) {
+                root = LayoutInflater.from(context).inflate(R.layout.base_title_layout_left, this);
+            } else {
+                root = LayoutInflater.from(context).inflate(R.layout.base_title_layout, this);
+            }
+            mBaseViewHolder = new RBaseViewHolder(root);
+            mTitleBarLayout = find(root, R.id.base_title_bar_layout);
+            mLeftControlLayout = find(root, R.id.base_left_control_layout);
+            mCenterControlLayout = find(root, R.id.base_center_control_layout);
+            mRightControlLayout = find(root, R.id.base_right_control_layout);
+            mBackImageView = find(root, R.id.base_back_image_view);
+            mTitleView = find(root, R.id.base_title_view);
+            mLoadView = mBaseViewHolder.v(R.id.base_load_view);
 
-        mBaseViewHolder = new RBaseViewHolder(root);
-        mTitleBarLayout = find(root, R.id.base_title_bar_layout);
-        mLeftControlLayout = find(root, R.id.base_left_control_layout);
-        mCenterControlLayout = find(root, R.id.base_center_control_layout);
-        mRightControlLayout = find(root, R.id.base_right_control_layout);
-        mBackImageView = find(root, R.id.base_back_image_view);
-        mTitleView = find(root, R.id.base_title_view);
-        mLoadView = mBaseViewHolder.v(R.id.base_load_view);
-
-        if (titleBarPattern.isShowBackImageView) {
-            if (mLoadView instanceof LoadingImageView && titleBarPattern.showDarkLoading) {
-                ((LoadingImageView) mLoadView).setImageResource(R.drawable.loading_dark);
+            if (titleBarPattern.isShowBackImageView) {
+                if (mLoadView instanceof LoadingImageView && titleBarPattern.showDarkLoading) {
+                    ((LoadingImageView) mLoadView).setImageResource(R.drawable.loading_dark);
+                }
             }
         }
 
@@ -225,6 +230,8 @@ public class UITitleBarContainer extends FrameLayout {
 //                ViewGroup.LayoutParams layoutParams = mTitleBarLayout.getLayoutParams();
 //                layoutParams.height += mStatusBarHeight;
 //                mTitleBarLayout.setLayoutParams(layoutParams);
+
+                /*padding top 处理状态栏*/
                 setPadding(0, mStatusBarHeight, 0, 0);
             }
         }
@@ -236,20 +243,26 @@ public class UITitleBarContainer extends FrameLayout {
 
     }
 
+    /**
+     * title bar 处理开始的地方
+     */
     private void loadTitleBar() {
         if (mTitleBarPattern == null) {
-            mLeftControlLayout.removeAllViews();
-            mRightControlLayout.removeAllViews();
+            if (mLeftControlLayout != null) {
+                mLeftControlLayout.removeAllViews();
+            }
+            if (mRightControlLayout != null) {
+                mRightControlLayout.removeAllViews();
+            }
 //            mCenterControlLayout.removeAllViews();
             setVisibility(GONE);
             return;
         }
 
+        setVisibility(VISIBLE);
         if (getChildCount() == 0) {
             initTitleBar(getContext(), mTitleBarPattern);
         }
-
-        setVisibility(VISIBLE);
 
         int itemSize = getResources().getDimensionPixelSize(R.dimen.base_title_bar_item_size);
         int animTime = 300;
@@ -260,70 +273,80 @@ public class UITitleBarContainer extends FrameLayout {
             setBackground(mTitleBarPattern.mTitleBarBGDrawable);
         }
 
-        /*返回按钮*/
-        if (mTitleBarPattern.isShowBackImageView) {
-            mBackImageView.setVisibility(VISIBLE);
-            mBackImageView.setShowText(mTitleBarPattern.backImageString);
-            if (mTitleBarPattern.backImageRes != 0) {
-                mBackImageView.setImageResource(mTitleBarPattern.backImageRes);
+        if (mTitleBarPattern.customLayoutId != -1) {
+            //自定义的标题栏
+
+            if (mTitleBarPattern.mOnInitCustomTitleLayout != null) {
+                mTitleBarPattern.mOnInitCustomTitleLayout.onInitLayout(this, mBaseViewHolder, mLayoutFullscreen, mStatusBarHeight);
             }
-            mBackImageView.setOnClickListener(new OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    if (mTitleBarPattern.mOnBackListener != null) {
-                        mTitleBarPattern.mOnBackListener.onClick(v);
-                    }
+        } else {
+            /*返回按钮*/
+            if (mTitleBarPattern.isShowBackImageView) {
+                mBackImageView.setVisibility(VISIBLE);
+                mBackImageView.setShowText(mTitleBarPattern.backImageString);
+                if (mTitleBarPattern.backImageRes != 0) {
+                    mBackImageView.setImageResource(mTitleBarPattern.backImageRes);
                 }
-            });
+                mBackImageView.setOnClickListener(new OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        if (mTitleBarPattern.mOnBackListener != null) {
+                            mTitleBarPattern.mOnBackListener.onClick(v);
+                        }
+                    }
+                });
 //            ViewCompat.animate(mBackImageView).rotation(360)
 //                    .setInterpolator(new DecelerateInterpolator())
 //                    .setDuration(animTime).start();
-        } else {
-            mBackImageView.setVisibility(GONE);
-        }
-        /*标题字体大小限制*/
-        mTitleView.setTextSize(TypedValue.COMPLEX_UNIT_PX, SkinHelper.getSkin().getMainTextSize());
-        mTitleBarPattern.setTextViewSize(mTitleView);
-        /*标题长度显示*/
-        if (mTitleBarPattern.mTitleStringLength > 0) {
-            mTitleView.setMaxLength(mTitleBarPattern.mTitleStringLength);
-        }
-        /*标题*/
-        mTitleView.setText(mTitleBarPattern.mTitleString);
-        mTitleView.setTextColor(mTitleBarPattern.mTitleTextColor);
+            } else {
+                mBackImageView.setVisibility(GONE);
+            }
+            /*标题字体大小限制*/
+            mTitleView.setTextSize(TypedValue.COMPLEX_UNIT_PX, SkinHelper.getSkin().getMainTextSize());
+            mTitleBarPattern.setTextViewSize(mTitleView);
+            /*标题长度显示*/
+            if (mTitleBarPattern.mTitleStringLength > 0) {
+                mTitleView.setMaxLength(mTitleBarPattern.mTitleStringLength);
+            }
+            /*标题*/
+            mTitleView.setText(mTitleBarPattern.mTitleString);
+            mTitleView.setTextColor(mTitleBarPattern.mTitleTextColor);
 
-        if (mTitleBarPattern.titleHide) {
-            mTitleView.setVisibility(GONE);
-        }
+            if (mTitleBarPattern.titleHide) {
+                mTitleView.setVisibility(GONE);
+            }
 
-        if (mTitleBarPattern.mOnTitleDoubleTapListener != null) {
-            mTitleView.setClickable(true);
-            RGestureDetector.onDoubleTap(mTitleView, mTitleBarPattern.mOnTitleDoubleTapListener);
-        }
+            //双击标题
+            if (mTitleBarPattern.mOnTitleDoubleTapListener != null) {
+                mTitleView.setClickable(true);
+                RGestureDetector.onDoubleTap(mTitleView, mTitleBarPattern.mOnTitleDoubleTapListener);
+            }
 
-        if (!TextUtils.isEmpty(mTitleBarPattern.mTitleString) && mTitleBarPattern.titleAnim) {
+            if (!TextUtils.isEmpty(mTitleBarPattern.mTitleString) && mTitleBarPattern.titleAnim) {
 //            ViewCompat.setTranslationY(mTitleView, -itemSize);
 //            ViewCompat.animate(mTitleView).translationY(0)
 //                    .setInterpolator(new DecelerateInterpolator())
 //                    .setDuration(animTime).start();
+            }
+
+            clearViews(mLeftControlLayout, mLeftViews);
+            clearViews(mRightControlLayout, mRightViews);
+
+            /*左边控制按钮*/
+            fillViews(mLeftControlLayout, mTitleBarPattern.mLeftItems, mLeftViews);
+            /*右边控制按钮*/
+            fillViews(mRightControlLayout, mTitleBarPattern.mRightItems, mRightViews);
+
+            if (mTitleBarPattern.mOnInitTitleLayout != null) {
+                mTitleBarPattern.mOnInitTitleLayout.onInitLayout((RTitleCenterLayout) mCenterControlLayout);
+                mTitleBarPattern.mOnInitTitleLayout.onInitLayout(this, mLayoutFullscreen, mStatusBarHeight);
+            }
+
+            /*控制按钮的动画*/
+            //animViews(mLeftViews, true);
+            //animViews(mRightViews, false);
         }
 
-        clearViews(mLeftControlLayout, mLeftViews);
-        clearViews(mRightControlLayout, mRightViews);
-
-        /*左边控制按钮*/
-        fillViews(mLeftControlLayout, mTitleBarPattern.mLeftItems, mLeftViews);
-        /*右边控制按钮*/
-        fillViews(mRightControlLayout, mTitleBarPattern.mRightItems, mRightViews);
-
-        if (mTitleBarPattern.mOnInitTitleLayout != null) {
-            mTitleBarPattern.mOnInitTitleLayout.onInitLayout((RTitleCenterLayout) mCenterControlLayout);
-            mTitleBarPattern.mOnInitTitleLayout.onInitLayout(this, mLayoutFullscreen, mStatusBarHeight);
-        }
-
-        /*控制按钮的动画*/
-        //animViews(mLeftViews, true);
-        //animViews(mRightViews, false);
     }
 
     public void evaluateBackgroundColor(int scrollY) {
@@ -548,13 +571,13 @@ public class UITitleBarContainer extends FrameLayout {
      * 显示右边第几个Item的View, 从0开始
      */
     public void showRightItem(int index) {
-        if (mRightControlLayout.getChildCount() > index) {
+        if (mRightControlLayout != null && mRightControlLayout.getChildCount() > index) {
             visibleView(mRightControlLayout.getChildAt(index));
         }
     }
 
     public void showRightItemNoRead(int index, boolean show) {
-        if (mRightControlLayout.getChildCount() > index) {
+        if (mRightControlLayout != null && mRightControlLayout.getChildCount() > index) {
             showNoRead(mRightControlLayout.getChildAt(index), show);
         }
     }
@@ -605,7 +628,7 @@ public class UITitleBarContainer extends FrameLayout {
      * 请注意,左边有一个返回按钮
      */
     public void showLeftItem(int index) {
-        if (mLeftControlLayout.getChildCount() > index) {
+        if (mLeftControlLayout != null && mLeftControlLayout.getChildCount() > index) {
             visibleView(mLeftControlLayout.getChildAt(index));
         }
     }
@@ -614,7 +637,7 @@ public class UITitleBarContainer extends FrameLayout {
      * 请注意,左边有一个返回按钮
      */
     public void hideLeftItem(int index) {
-        if (mLeftControlLayout.getChildCount() > index) {
+        if (mLeftControlLayout != null && mLeftControlLayout.getChildCount() > index) {
             goneView(mLeftControlLayout.getChildAt(index));
         }
     }

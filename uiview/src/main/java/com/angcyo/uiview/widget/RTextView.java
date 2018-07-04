@@ -917,7 +917,7 @@ public class RTextView extends AppCompatTextView {
         setHighlightWord(word, false);
     }
 
-    public void setHighlightWord(String word, boolean first) {
+    public void setHighlightWord(String word, boolean first /*是否只显示找到的第一个*/) {
         CharSequence text = getText();
         if (TextUtils.isEmpty(text) || TextUtils.isEmpty(word)) {
             return;
