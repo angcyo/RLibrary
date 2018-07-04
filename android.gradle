@@ -1,3 +1,5 @@
+apply from: '../RLibrary/groovy.gradle'
+
 def getBuildTime() {
     return new Date().format("yyyy-MM-dd HH:mm:ss.sss")
 }
@@ -80,14 +82,4 @@ dependencies {
         }
     }
     println("查找结束.")
-}
-
-task logProperty {
-    println "-------------------开始打印 Property:"
-
-    def stringWriter = new StringWriter()
-    System.getProperties().list(new PrintWriter(stringWriter))
-    println stringWriter.toString()
-
-    println "-------------------结束打印 Property."
 }

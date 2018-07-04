@@ -1,0 +1,64 @@
+task demo {
+    println "-------------------start demo"
+
+    //原始列表
+    def originList = new ArrayList()
+    originList.add(3)
+    originList.add(6)
+    originList.add(7)
+    originList.add(9)
+    originList.add(10)
+    originList.add(2)
+    originList.add(4)
+    originList.add(8)
+    originList.add(16)
+    originList.add(5)
+
+    //偶数列表
+    def oList = new ArrayList()
+    //基数列表
+    def jList = new ArrayList()
+
+    for (i in originList) {
+        if (i % 2 == 0) {
+            oList.add(i)
+        } else {
+            jList.add(i)
+        }
+    }
+
+    println "偶数列表:" + oList
+    println "基数列表:" + jList
+
+    //排序
+    oList.sort()
+    jList.sort()
+
+    println "排序后:" + oList
+    println "排序后:" + jList
+
+    def resultList = new ArrayList()
+    //输出, 偶数逆序, 基数正序
+    for (int i = 0; i < originList.size(); i++) {
+        if (i < oList.size()) {
+            resultList.add(oList.get(oList.size() - 1 - i))
+        } else {
+            resultList.add(jList.get(i - oList.size()))
+        }
+    }
+
+    println "结果:" + resultList
+    println "原始:" + originList
+
+    println "-------------------end demo"
+}
+
+task logProperty {
+    println "-------------------开始打印 Property:"
+
+    def stringWriter = new StringWriter()
+    System.getProperties().list(new PrintWriter(stringWriter))
+    println stringWriter.toString()
+
+    println "-------------------结束打印 Property."
+}
