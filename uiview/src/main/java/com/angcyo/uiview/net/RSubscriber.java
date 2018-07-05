@@ -148,8 +148,8 @@ public abstract class RSubscriber<T> extends Subscriber<T> {
      * 统一错误处理
      * 不管是成功订阅,还是异常,都会执行的方法
      */
-    public void onEnd(boolean isError, boolean isNoNetwork, @Nullable RException e) {
-        L.i("订阅结束-> isError:" + isError + " isNoNetwork:" + isNoNetwork + " Throwable:" + e);
+    public void onEnd(boolean isError, boolean isNoNetwork, @Nullable RException error) {
+        L.i("订阅结束-> isError:" + isError + " isNoNetwork:" + isNoNetwork + " Throwable:" + error);
     }
 
 //    public void onEnd(boolean isError, int errorCode, boolean isNoNetwork, RException e) {

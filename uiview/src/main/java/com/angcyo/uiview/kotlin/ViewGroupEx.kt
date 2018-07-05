@@ -196,7 +196,7 @@ public fun <T> ViewGroup.addView(datas: List<T>, onAddViewCallback: OnAddViewCal
 }
 
 public fun <T> ViewGroup.addView(size: Int, datas: List<T>, onAddViewCallback: OnAddViewCallback<T>) {
-    this.resetChildCount(size, {
+    this.resetChildCount(size) {
         val layoutId = onAddViewCallback.getLayoutId()
         val childView = if (layoutId > 0) {
             LayoutInflater.from(context).inflate(layoutId, this, false)
@@ -205,7 +205,7 @@ public fun <T> ViewGroup.addView(size: Int, datas: List<T>, onAddViewCallback: O
         onAddViewCallback.onCreateView(childView)
 
         childView
-    })
+    }
 
     for (i in 0 until size) {
         onAddViewCallback.onInitView(getChildAt(i), if (i < datas.size) datas[i] else null, i)
