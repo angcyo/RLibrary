@@ -1,6 +1,7 @@
 package com.angcyo.uiview.widget;
 
 import android.content.Context;
+import android.content.res.TypedArray;
 import android.graphics.Color;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.widget.AppCompatTextView;
@@ -32,12 +33,24 @@ public class RTextCheckView extends AppCompatTextView implements View.OnClickLis
      */
     boolean enableCheck = true;
 
+    /**
+     * 当选中后, 是否可以通过点击事件取消选择
+     */
+    boolean cancelCheck = true;
+    boolean useSkinStyle = false;
+
     public RTextCheckView(Context context) {
         this(context, null);
     }
 
     public RTextCheckView(Context context, AttributeSet attrs) {
         super(context, attrs);
+
+        TypedArray typedArray = context.obtainStyledAttributes(attrs, R.styleable.RTextCheckView);
+        useSkinStyle = typedArray.getBoolean(R.styleable.RTextCheckView_r_use_skin_style, getTag().toString().contains("skin"));
+        cancelCheck = typedArray.getBoolean(R.styleable.RTextCheckView_r_can_cancel_check, cancelCheck);
+        typedArray.recycle();
+
         initView();
     }
 
@@ -49,12 +62,7 @@ public class RTextCheckView extends AppCompatTextView implements View.OnClickLis
             setTextSize(TypedValue.COMPLEX_UNIT_PX, SkinHelper.getSkin().getMainTextSize());
         }
 
-        if (getTag() == null) {
-            float density = getResources().getDisplayMetrics().density;
-            int paddStart = (int) (density * 20);
-            int paddTop = (int) (density * 10);
-            setPadding(paddStart, paddTop, paddStart, paddTop);
-        } else if (getTag().toString().contains("skin")) {
+        if (useSkinStyle) {
             float density = ViewExKt.getDensity(this);
             if (isInEditMode()) {
                 setBackground(ResUtil.selector(
@@ -72,6 +80,11 @@ public class RTextCheckView extends AppCompatTextView implements View.OnClickLis
                 ));
             }
             setTextColor(ResUtil.generateTextColor(Color.WHITE, Color.WHITE, Color.BLACK));
+        } else if (getTag() == null) {
+            float density = getResources().getDisplayMetrics().density;
+            int paddStart = (int) (density * 10);
+            int paddTop = (int) (density * 4);
+            setPadding(paddStart, paddTop, paddStart, paddTop);
         }
     }
 
@@ -133,7 +146,12 @@ public class RTextCheckView extends AppCompatTextView implements View.OnClickLis
     @Override
     public void onClick(View v) {
         if (enableCheck) {
-            setChecked(!isChecked());
+            boolean checked = isChecked();
+            if (checked && !cancelCheck) {
+
+            } else {
+                setChecked(!checked);
+            }
         }
         if (mOnClickListener != null) {
             mOnClickListener.onClick(v);

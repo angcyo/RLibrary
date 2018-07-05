@@ -267,6 +267,11 @@
         <attr name="r_show_fold_text" format="string"/>
     </declare-styleable>
 
+    <declare-styleable name="RTextCheckView">
+        <attr name="r_can_cancel_check" format="boolean"/>
+        <attr name="r_use_skin_style"/>
+    </declare-styleable>
+
     <declare-styleable name="ExEditText">
         <attr name="r_left_text"/>
         <attr name="r_hint_text"/>
