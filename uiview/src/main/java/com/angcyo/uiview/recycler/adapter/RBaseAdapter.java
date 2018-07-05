@@ -145,13 +145,13 @@ public abstract class RBaseAdapter<T> extends RecyclerView.Adapter<RBaseViewHold
         boolean loadMore = mEnableLoadMore;
         mEnableLoadMore = enableLoadMore;
 
-        if (isStateLayout()) {
+        if (isStateLayout() || loadMore == enableLoadMore) {
             return;
         }
 
-        if (enableLoadMore && !loadMore) {
+        if (enableLoadMore) {
             notifyItemInserted(getLastPosition());
-        } else if (!enableLoadMore && loadMore) {
+        } else {
             notifyItemRemoved(getLastPosition());
         }
     }
