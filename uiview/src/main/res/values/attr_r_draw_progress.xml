@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <attr name="r_progress_round_radius" format="dimension"/>
+    <attr name="r_incertitude_progress" format="boolean"/>
+
+    <attr name="r_progress_bar_type" format="enum">
+        <enum name="TYPE_CIRCLE" value="1"/>
+        <enum name="TYPE_RECT" value="2"/>
+        <enum name="TYPE_ROUND" value="3"/>
+        <!--使用 r_incertitude_progress 属性替代-->
+        <!--<enum name="TYPE_CIRCLE_INCERTITUDE" value="4"/>-->
+        <!--<enum name="TYPE_RECT_INCERTITUDE" value="5"/>-->
+        <!--<enum name="TYPE_ROUND_INCERTITUDE" value="6"/>-->
+    </attr>
+
+    <attr name="r_draw_bg_on_no_progress" format="boolean"/>
+    <attr name="r_draw_progress_text" format="boolean"/>
+
+    <attr name="r_progress_text_color" format="color"/>
+    <attr name="r_progress_text_size" format="dimension"/>
+
+    <declare-styleable name="RDrawProgress">
+        <attr name="r_progress_bg_color"/>
+        <attr name="r_progress_color"/>
+        <attr name="r_second_progress_color"/>
+        <!--此属性, 只在圆形样式下有效-->
+        <attr name="r_progress_width"/>
+        <attr name="r_progress_round_radius"/>
+        <attr name="r_progress_bar_type"/>
+        <attr name="r_incertitude_progress"/>
+
+        <attr name="r_cur_progress"/>
+        <attr name="r_max_progress"/>
+        <attr name="r_second_progress"/>
+        <attr name="r_draw_bg_on_no_progress"/>
+        <attr name="r_progress_text_size"/>
+        <attr name="r_progress_text_color"/>
+        <attr name="r_draw_progress_text"/>
+    </declare-styleable>
+
+    <declare-styleable name="RProgressBar">
+        <attr name="r_progress_bg_color"/>
+        <attr name="r_progress_color"/>
+        <attr name="r_second_progress_color"/>
+        <!--此属性, 只在圆形样式下有效-->
+        <attr name="r_progress_width"/>
+        <attr name="r_incertitude_progress"/>
+        <attr name="r_progress_round_radius"/>
+        <attr name="r_progress_bar_type"/>
+        <attr name="r_cur_progress"/>
+        <attr name="r_max_progress"/>
+        <attr name="r_second_progress"/>
+        <attr name="r_draw_bg_on_no_progress"/>
+        <attr name="r_progress_text_size"/>
+        <attr name="r_progress_text_color"/>
+        <attr name="r_draw_progress_text"/>
+    </declare-styleable>
+</resources>

@@ -27,8 +27,12 @@ import com.angcyo.uiview.skin.SkinHelper;
  * Version: 1.0.0
  */
 public abstract class BaseDraw {
+    public Paint mBasePaint;
     protected View mView;
-    protected Paint mBasePaint;
+
+    public BaseDraw(View view) {
+        this(view, null);
+    }
 
     /**
      * 请注意, 需要在继承类 中手动调用 {@link #initAttribute(AttributeSet)} 方法
@@ -127,6 +131,19 @@ public abstract class BaseDraw {
 
     protected View getChildAt(int index) {
         return ((ViewGroup) mView).getChildAt(index);
+    }
+
+    public void onLayout(boolean changed, int left, int top, int right, int bottom) {
+    }
+
+    public void onSizeChanged(int w, int h, int oldw, int oldh) {
+    }
+
+    public void onDetachedFromWindow() {
+    }
+
+    public void onAttachedToWindow() {
+
     }
 
     public void draw(@NonNull Canvas canvas) {

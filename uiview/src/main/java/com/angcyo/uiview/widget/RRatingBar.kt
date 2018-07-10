@@ -9,6 +9,7 @@ import android.util.AttributeSet
 import android.view.MotionEvent
 import android.view.View
 import com.angcyo.uiview.R
+import com.angcyo.uiview.draw.BaseDraw
 import com.angcyo.uiview.kotlin.*
 import kotlin.properties.ReadWriteProperty
 import kotlin.reflect.KProperty

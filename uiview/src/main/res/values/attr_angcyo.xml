@@ -307,10 +307,10 @@
 
     <declare-styleable name="SimpleProgressBar">
         <attr name="r_progress_bg_color"/>
-        <attr name="r_progress_text_color" format="color"/>
-        <attr name="r_progress_text_size" format="dimension"/>
+        <attr name="r_progress_text_color"/>
+        <attr name="r_progress_text_size"/>
         <attr name="r_progress_width"/>
-        <attr name="r_incertitude_progress" format="boolean"/>
+        <attr name="r_incertitude_progress"/>
         <attr name="r_progress_style" format="enum">
             <enum name="RECT" value="1"/>
             <enum name="CIRCLE" value="2"/>
