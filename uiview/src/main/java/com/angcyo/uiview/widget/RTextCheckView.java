@@ -47,7 +47,12 @@ public class RTextCheckView extends AppCompatTextView implements View.OnClickLis
         super(context, attrs);
 
         TypedArray typedArray = context.obtainStyledAttributes(attrs, R.styleable.RTextCheckView);
-        useSkinStyle = typedArray.getBoolean(R.styleable.RTextCheckView_r_use_skin_style, getTag().toString().contains("skin"));
+        Object tag = getTag();
+        boolean skinStyle = false;
+        if (tag != null && tag.toString().contains("skin")) {
+            skinStyle = true;
+        }
+        useSkinStyle = typedArray.getBoolean(R.styleable.RTextCheckView_r_use_skin_style, skinStyle);
         cancelCheck = typedArray.getBoolean(R.styleable.RTextCheckView_r_can_cancel_check, cancelCheck);
         typedArray.recycle();
 
@@ -160,6 +165,11 @@ public class RTextCheckView extends AppCompatTextView implements View.OnClickLis
 
     public void setEnableCheck(boolean enableCheck) {
         this.enableCheck = enableCheck;
+    }
+
+    public void setUseSkinStyle(boolean useSkinStyle) {
+        this.useSkinStyle = useSkinStyle;
+        initView();
     }
 
     public interface OnCheckedChangeListener {
