@@ -7,9 +7,9 @@ import android.util.AttributeSet
 import android.view.View
 import android.view.animation.LinearInterpolator
 import com.angcyo.uiview.R
-import com.angcyo.uiview.kotlin.getDrawCenterTextCx
-import com.angcyo.uiview.kotlin.getDrawCenterTextCy
 import com.angcyo.uiview.kotlin.maxValue
+import com.angcyo.uiview.kotlin.textDrawCx
+import com.angcyo.uiview.kotlin.textDrawCy
 import com.angcyo.uiview.skin.SkinHelper
 import com.angcyo.uiview.utils.ScreenUtil.density
 import kotlin.properties.ReadWriteProperty
@@ -116,6 +116,11 @@ class RDrawProgress(view: View, attributeSet: AttributeSet? = null) : BaseDraw(v
 
     override fun onDraw(canvas: Canvas) {
         super.onDraw(canvas)
+        if (isInEditMode && curProgress <= 0) {
+            curProgress = 50
+            secondProgress = 80
+        }
+
         canvas.save()
         canvas.translate(viewDrawRect.left.toFloat(), viewDrawRect.top.toFloat())
         when (progressBarType) {
@@ -123,8 +128,8 @@ class RDrawProgress(view: View, attributeSet: AttributeSet? = null) : BaseDraw(v
             PROGRESS_TYPE_RECT -> drawRect(canvas, isIncertitudeProgress)
             PROGRESS_TYPE_ROUND -> drawRound(canvas, isIncertitudeProgress)
         }
-        drawProgressText(canvas)
         canvas.restore()
+        drawProgressText(canvas)
     }
 
     val tempRectF by lazy {
@@ -271,9 +276,13 @@ class RDrawProgress(view: View, attributeSet: AttributeSet? = null) : BaseDraw(v
             mBasePaint.color = mProgressTextColor
             mBasePaint.strokeWidth = 1f
             val text = "$curProgress%"
+//            canvas.drawText(text,
+//                    mView.getDrawCenterTextCx(mBasePaint, text),
+//                    mView.getDrawCenterTextCy(mBasePaint),
+//                    mBasePaint)
             canvas.drawText(text,
-                    mView.getDrawCenterTextCx(mBasePaint, text),
-                    mView.getDrawCenterTextCy(mBasePaint),
+                    viewDrawRect.centerX() - mBasePaint.textDrawCx(text),
+                    viewDrawRect.centerY() - mBasePaint.textDrawCy(),
                     mBasePaint)
         }
     }

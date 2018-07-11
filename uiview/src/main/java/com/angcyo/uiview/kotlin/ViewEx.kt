@@ -97,12 +97,21 @@ public fun View.getGlobalVisibleRect(): Rect {
 /**返回居中绘制文本的y坐标*/
 public fun View.getDrawCenterTextCy(paint: Paint): Float {
     val rawHeight = measuredHeight - paddingTop - paddingBottom
-    return paddingTop + rawHeight / 2 + (paint.descent() - paint.ascent()) / 2 - paint.descent()
+    return paddingTop + rawHeight / 2 + paint.textDrawCy()
 }
 
 public fun View.getDrawCenterTextCx(paint: Paint, text: String): Float {
     val rawWidth = measuredWidth - paddingLeft - paddingRight
-    return paddingLeft + rawWidth / 2 - paint.measureText(text) / 2
+    return paddingLeft + rawWidth / 2 - paint.textDrawCx(text)
+}
+
+public fun Paint.textDrawCx(text: String): Float {
+    return measureText(text) / 2
+}
+
+/**文本绘制时候 的中点y坐标*/
+public fun Paint.textDrawCy(): Float {
+    return (descent() - ascent()) / 2 - descent()
 }
 
 public fun View.centerX(): Int {

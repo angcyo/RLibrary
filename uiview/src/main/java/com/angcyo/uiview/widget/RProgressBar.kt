@@ -6,6 +6,7 @@ import android.graphics.Color
 import android.graphics.Paint
 import android.util.AttributeSet
 import android.view.View
+import com.angcyo.uiview.R
 import com.angcyo.uiview.draw.RDrawProgress
 import com.angcyo.uiview.kotlin.density
 import com.angcyo.uiview.kotlin.exactlyMeasure
@@ -24,6 +25,13 @@ import com.angcyo.uiview.kotlin.exactlyMeasure
 open class RProgressBar(context: Context, attributeSet: AttributeSet? = null) : View(context, attributeSet) {
 
     var rDrawProgress: RDrawProgress = RDrawProgress(this, attributeSet)
+    var equWidth = false
+
+    init {
+        val typedArray = context.obtainStyledAttributes(attributeSet, R.styleable.RProgressBar)
+        equWidth = typedArray.getBoolean(R.styleable.RProgressBar_r_equ_width, equWidth)
+        typedArray.recycle()
+    }
 
     var maxProgress: Int = 0
         get() = rDrawProgress.maxProgress
@@ -46,23 +54,27 @@ open class RProgressBar(context: Context, attributeSet: AttributeSet? = null) : 
         var heightSize = View.MeasureSpec.getSize(heightMeasureSpec)
         val heightMode = View.MeasureSpec.getMode(heightMeasureSpec)
 
-        if (widthMode != MeasureSpec.EXACTLY) {
-            widthSize = if (rDrawProgress.progressBarType != RDrawProgress.PROGRESS_TYPE_CIRCLE) {
-                (100 * density).toInt()
-            } else {
-                (30 * density).toInt()
-            } + paddingLeft + paddingRight
-        }
+        if (equWidth) {
+            super.onMeasure(widthMeasureSpec, widthMeasureSpec)
+        } else {
+            if (widthMode != MeasureSpec.EXACTLY) {
+                widthSize = if (rDrawProgress.progressBarType != RDrawProgress.PROGRESS_TYPE_CIRCLE) {
+                    (100 * density).toInt()
+                } else {
+                    (30 * density).toInt()
+                } + paddingLeft + paddingRight
+            }
 
-        if (heightMode != MeasureSpec.EXACTLY) {
-            heightSize = if (rDrawProgress.progressBarType != RDrawProgress.PROGRESS_TYPE_CIRCLE) {
-                (10 * density).toInt()
-            } else {
-                (30 * density).toInt()
-            } + paddingTop + paddingBottom
-        }
+            if (heightMode != MeasureSpec.EXACTLY) {
+                heightSize = if (rDrawProgress.progressBarType != RDrawProgress.PROGRESS_TYPE_CIRCLE) {
+                    (10 * density).toInt()
+                } else {
+                    (30 * density).toInt()
+                } + paddingTop + paddingBottom
+            }
 
-        super.onMeasure(exactlyMeasure(widthSize), exactlyMeasure(heightSize))
+            super.onMeasure(exactlyMeasure(widthSize), exactlyMeasure(heightSize))
+        }
     }
 
     override fun onLayout(changed: Boolean, left: Int, top: Int, right: Int, bottom: Int) {

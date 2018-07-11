@@ -54,5 +54,7 @@
         <attr name="r_progress_text_size"/>
         <attr name="r_progress_text_color"/>
         <attr name="r_draw_progress_text"/>
+
+        <attr name="r_equ_width"/>
     </declare-styleable>
 </resources>
