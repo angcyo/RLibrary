@@ -890,6 +890,34 @@ public abstract class RBaseAdapter<T> extends RecyclerView.Adapter<RBaseViewHold
         }
     }
 
+    public void onUILoadDataSet(int page /*分页*/, int pageSize /*每一页数量*/, int datasSize /*数据数量*/) {
+        if (page <= 1) {
+            if (datasSize < pageSize) {
+                setEnableLoadMore(false);
+            } else if (datasSize >= pageSize) {
+                if (mAutoEnableLoadMore) {
+                    setEnableLoadMore(true);
+                }
+            }
+        } else {
+            if (datasSize < pageSize) {
+                if (isEnableLoadMore()) {
+                    setNoMore(true);
+                }
+            } else {
+                if (datasSize >= pageSize) {
+                    if (isEnableLoadMore()) {
+                        setLoadMoreEnd();
+                    }
+                } else {
+                    if (isEnableLoadMore()) {
+                        setNoMore(true);
+                    }
+                }
+            }
+        }
+    }
+
     public boolean onUILoadDataEmpty() {
         return false;
     }

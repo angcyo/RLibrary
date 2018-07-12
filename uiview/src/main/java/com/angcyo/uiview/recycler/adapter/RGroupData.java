@@ -156,6 +156,12 @@ public class RGroupData<T> {
         mAllDatas.addAll(allDatas);
     }
 
+    public void appendData(T data) {
+        if (mAllDatas == null) {
+            mAllDatas = new ArrayList<>();
+        }
+        mAllDatas.add(data);
+    }
 
     public void resetDatas(RGroupAdapter groupAdapter, List<T> allDatas) {
 

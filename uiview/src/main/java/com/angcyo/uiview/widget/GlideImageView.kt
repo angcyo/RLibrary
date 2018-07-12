@@ -246,12 +246,6 @@ open class GlideImageView(context: Context, attributeSet: AttributeSet? = null) 
             requestOptions.diskCacheStrategy(DiskCacheStrategy.ALL).priority(Priority.NORMAL)
         }
 
-        if (bitmapTransform != null) {
-            requestOptions.transform(bitmapTransform!!)
-        } else {
-            requestOptions.dontTransform()
-        }
-
         when (scaleType) {
             ScaleType.CENTER_CROP -> requestOptions.centerCrop()
             ScaleType.CENTER_INSIDE -> requestOptions.centerInside()
@@ -265,6 +259,12 @@ open class GlideImageView(context: Context, attributeSet: AttributeSet? = null) 
                 //requestOptions //默认就是这个动画
             }
         }
+
+        if (bitmapTransform != null) {
+            requestOptions.transform(bitmapTransform!!)
+        } /*else {
+            requestOptions.dontTransform()
+        }*/
 
         return requestOptions
     }

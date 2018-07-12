@@ -117,7 +117,6 @@ public class TimeUtil {
         return formatter.format(date);
     }
 
-
     public static String getFavoriteCollectTime(long milliseconds) {
         String showDataString = "";
         Date today = new Date();

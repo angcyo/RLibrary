@@ -12,6 +12,13 @@ public class GlideBlurTransformation extends BitmapTransformation {
 
     private int mRadius = 20;
 
+    public GlideBlurTransformation() {
+    }
+
+    public GlideBlurTransformation(int radius) {
+        mRadius = radius;
+    }
+
     public String getId() {
         return "GlideBlurTransformation(radius=" + mRadius + ")";
     }
