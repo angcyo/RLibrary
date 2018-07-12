@@ -27,12 +27,15 @@ class RTabLayout(context: Context, attributeSet: AttributeSet? = null) : ViewGro
 
     var tabIndicator: RTabIndicator
     var drawBorder: RDrawBorder
+
+    var firstNotifyListener = true
+
     var onTabLayoutListener: OnTabLayoutListener? = null
         set(value) {
             field = value
             resetItemStyle()
 
-            if (currentItem >= 0) {
+            if (currentItem >= 0 && firstNotifyListener) {
                 field?.onTabSelector(this, currentItem, currentItem)
             }
         }
@@ -42,6 +45,7 @@ class RTabLayout(context: Context, attributeSet: AttributeSet? = null) : ViewGro
     init {
         val typedArray = context.obtainStyledAttributes(attributeSet, R.styleable.RTabLayout)
         itemEquWidth = typedArray.getBoolean(R.styleable.RTabLayout_r_item_equ_width, itemEquWidth)
+        firstNotifyListener = typedArray.getBoolean(R.styleable.RTabLayout_r_first_notify_listener, firstNotifyListener)
         currentItem = typedArray.getInt(R.styleable.RTabLayout_r_current_item, currentItem)
         typedArray.recycle()
 

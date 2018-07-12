@@ -268,10 +268,27 @@ public class SettingsCompat {
     }
 
     // 魅族
-    private static boolean manageDrawOverlaysForFlyme(Context context) {
-        Intent intent = new Intent("com.meizu.safe.security.SHOW_APPSEC");
+    private static boolean manageDrawOverlaysForFlyme(final Context context) {
+        final Intent intent = new Intent("com.meizu.safe.security.SHOW_APPSEC");
         intent.setClassName("com.meizu.safe", "com.meizu.safe.security.AppSecActivity");
         intent.putExtra("packageName", context.getPackageName());
+
+        if (context.getPackageManager().queryIntentActivities(intent, PackageManager.MATCH_DEFAULT_ONLY).size() > 0) {
+            if (context instanceof Activity) {
+                new RxPermissions((Activity) context)
+                        .request("com.meizu.safe.security.SHOW_APPSEC")
+                        .subscribe(new Action1<Boolean>() {
+                            @Override
+                            public void call(Boolean aBoolean) {
+                                if (aBoolean) {
+                                    startSafely(context, intent);
+                                }
+                            }
+                        });
+            }
+            //startSafely(context, intent);
+            return false;
+        }
         return startSafely(context, intent);
     }
 

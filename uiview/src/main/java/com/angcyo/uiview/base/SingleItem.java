@@ -41,6 +41,10 @@ public abstract class SingleItem implements Item {
         mTag = tag;
     }
 
+    public SingleItem(String tag) {
+        mTag = tag;
+    }
+
     public SingleItem(Type type) {
         mType = type;
         switch (mType) {

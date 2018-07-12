@@ -109,6 +109,13 @@ public abstract class UIRecyclerUIView<H, T, F> extends UIContentView
     }
 
     /**
+     * 滚动过程是否控制标题文本的显示
+     */
+    protected boolean hasScrollVisibleTitle() {
+        return true;
+    }
+
+    /**
      * 双击自动自动滚动置顶
      */
     public void onDoubleScrollToTop() {
@@ -133,7 +140,11 @@ public abstract class UIRecyclerUIView<H, T, F> extends UIContentView
                 @Override
                 public void onScrolled(RecyclerView recyclerView, int dx, int dy) {
                     if (mUITitleBarContainer != null) {
-                        mUITitleBarContainer.evaluateBackgroundColorSelf(recyclerView.computeVerticalScrollOffset());
+                        if (hasScrollVisibleTitle()) {
+                            mUITitleBarContainer.evaluateBackgroundColorSelf(recyclerView.computeVerticalScrollOffset());
+                        } else {
+                            mUITitleBarContainer.evaluateBackgroundColor(recyclerView.computeVerticalScrollOffset(), null);
+                        }
                     }
                 }
             });

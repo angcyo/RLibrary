@@ -51,6 +51,8 @@
     </declare-styleable>
 
     <declare-styleable name="RTabLayout">
+        <!--首次设置tabLayoutListener时, 是否通知回调-->
+        <attr name="r_first_notify_listener" format="boolean"/>
         <attr name="r_item_equ_width"/>
         <attr name="r_current_item" format="integer"/>
 

@@ -27,6 +27,14 @@ public fun String.createFile() {
     }
 }
 
+/**删除文件*/
+public fun String.deleteFile() {
+    val file = File(this)
+    if (file.exists()) {
+        file.delete()
+    }
+}
+
 /**将字符串写入文件*/
 public fun String.saveToFile(data: String, append: Boolean = true) {
     FileUtils.writeFileFromString(this, data, append)

@@ -43,6 +43,10 @@ public abstract class UIItemUIView<T extends Item> extends UIRecyclerUIView<Stri
     protected List<T> mItems = new ArrayList<>(getItemsInitialSize());
     protected RSoftInputLayout mSoftInputLayout;
     protected RecyclerView.RecycledViewPool mRecycledViewPool;
+    /**
+     * 每次调用{@link #refreshLayout()}, 如果item类型有改变, 左移此条目, 必须是高四位开始
+     */
+    protected int itemTypeStart = 0x1_0000;
 
     public static void baseInitItem(RBaseViewHolder holder, String itemText, final View.OnClickListener onClickListener) {
         ItemInfoLayout infoLayout = holder.v(R.id.base_item_info_layout);
@@ -169,17 +173,36 @@ public abstract class UIItemUIView<T extends Item> extends UIRecyclerUIView<Stri
     }
 
     public int getDataItemType(int posInData) {
-        return posInData;
+        if (areItemTypeTheSame()) {
+            return posInData;
+        }
+        return itemTypeStart + posInData;
+    }
+
+    /**
+     * 如果item 类型会变化, 则返回false, 否则item type不会变化, 返回 true
+     */
+    protected boolean areItemTypeTheSame() {
+        return true;
     }
 
     /**
      * 更新布局, 重新创建了items, 如果item的数量有变化, 建议使用这个方法
+     * 请在post方法中调用
      */
     public void refreshLayout() {
         mItems.clear();
         createItems(mItems);
+        if (!areItemTypeTheSame()) {
+            itemTypeStart = itemTypeStart << 1;
+
+            if (itemTypeStart > 0x1000_0000) {
+                itemTypeStart = 0x1_0000;
+            }
+        }
         for (int i = 0; mRecyclerView != null && i < mItems.size(); i++) {
             //只需要缓存一个就行
+            mRecyclerView.getRecycledViewPool().clear();
             mRecyclerView.getRecycledViewPool().setMaxRecycledViews(i, 1);
         }
         if (mExBaseAdapter != null) {
