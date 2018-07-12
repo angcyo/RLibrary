@@ -52,6 +52,12 @@ public class ImageItem implements Parcelable {
         this(ImageDataSource.IMAGE);
     }
 
+    public ImageItem(String path) {
+        this.url = path;
+        this.path = path;
+        this.thumbPath = path;
+    }
+
     /**
      * 图片的路径和创建时间相同就认为是同一张图片
      */
