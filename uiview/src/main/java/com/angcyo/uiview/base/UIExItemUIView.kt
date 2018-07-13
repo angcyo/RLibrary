@@ -21,7 +21,7 @@ abstract class UIExItemUIView<ItemType, DataType> : UIRecyclerUIView<String, Dat
 
     override fun createItemDecoration(): RecyclerView.ItemDecoration {
         return RExItemDecoration().apply {
-            setItemDecorationCallback(object : RExItemDecoration.SingleItemCallback() {
+            itemDecorationCallback = object : RExItemDecoration.SingleItemCallback() {
                 override fun getItemOffsets2(outRect: Rect, position: Int, edge: Int) {
                     //super.getItemOffsets2(outRect, position, edge)
                     exItemAdapter?.let {
@@ -35,7 +35,7 @@ abstract class UIExItemUIView<ItemType, DataType> : UIRecyclerUIView<String, Dat
                         it.getItemHolderByPosition(position)?.draw(this@apply, canvas, paint, itemView, offsetRect, itemCount, position)
                     }
                 }
-            })
+            }
         }
     }
 
@@ -127,7 +127,7 @@ abstract class UIExItemUIView<ItemType, DataType> : UIRecyclerUIView<String, Dat
         //默认的分割线实现
         recyclerView?.let {
             RExItemDecoration().apply {
-                setItemDecorationCallback(object : RExItemDecoration.SingleItemCallback() {
+                itemDecorationCallback = object : RExItemDecoration.SingleItemCallback() {
                     override fun getItemOffsets2(outRect: Rect, position: Int, edge: Int) {
                         //super.getItemOffsets2(outRect, position, edge)
                         exItemAdapter?.let {
@@ -141,7 +141,7 @@ abstract class UIExItemUIView<ItemType, DataType> : UIRecyclerUIView<String, Dat
                             it.getItemHolderByPosition(position)?.draw(this@apply, canvas, paint, itemView, offsetRect, itemCount, position)
                         }
                     }
-                })
+                }
 
                 //
                 it.addItemDecoration(this)
