@@ -16,6 +16,7 @@ import android.text.TextPaint;
 import android.view.View;
 
 import com.angcyo.uiview.R;
+import com.angcyo.uiview.RApplication;
 
 /**
  * 自定制超强的分割线
@@ -216,6 +217,10 @@ public class RExItemDecoration extends RecyclerView.ItemDecoration {
         outRect.set(offsets.left, offsets.top, offsets.right, offsets.bottom);
     }
 
+    public ItemDecorationCallback getItemDecorationCallback() {
+        return mItemDecorationCallback;
+    }
+
     public interface ItemDecorationCallback {
         /**
          * 返回需要腾出的空间大小
@@ -231,9 +236,13 @@ public class RExItemDecoration extends RecyclerView.ItemDecoration {
     public static abstract class SingleItemCallback implements ItemDecorationCallback {
 
         Rect mRect;
+        int lineColor;
+        int offsetLeftColor;
 
         public SingleItemCallback() {
             mRect = new Rect();
+            lineColor = ContextCompat.getColor(RApplication.getApp(), R.color.base_chat_bg_color);
+            offsetLeftColor = Color.WHITE;
         }
 
         @Override
@@ -261,8 +270,8 @@ public class RExItemDecoration extends RecyclerView.ItemDecoration {
         /**
          * 简单的在顶部绘制一根线
          */
-        protected void drawTopLine(@NonNull Canvas canvas, @NonNull TextPaint paint,
-                                   @NonNull View itemView, @NonNull Rect offsetRect, int itemCount, int position) {
+        public void drawTopLine(@NonNull Canvas canvas, @NonNull TextPaint paint,
+                                @NonNull View itemView, @NonNull Rect offsetRect, int itemCount, int position) {
             if (offsetRect.top > 0) {
                 paint.setColor(getPaintColor(itemView.getContext(), position));
                 offsetRect.set(0, itemView.getTop() - offsetRect.top, itemView.getRight(), itemView.getTop());
@@ -273,8 +282,8 @@ public class RExItemDecoration extends RecyclerView.ItemDecoration {
         /**
          * 简单的在底部绘制一根线
          */
-        protected void drawBottomLine(@NonNull Canvas canvas, @NonNull TextPaint paint,
-                                      @NonNull View itemView, @NonNull Rect offsetRect, int itemCount, int position) {
+        public void drawBottomLine(@NonNull Canvas canvas, @NonNull TextPaint paint,
+                                   @NonNull View itemView, @NonNull Rect offsetRect, int itemCount, int position) {
             if (offsetRect.bottom > 0) {
                 paint.setColor(getPaintColor(itemView.getContext(), position));
                 offsetRect.set(0, itemView.getBottom(), itemView.getRight(), itemView.getBottom() + offsetRect.bottom);
@@ -285,8 +294,8 @@ public class RExItemDecoration extends RecyclerView.ItemDecoration {
         /**
          * 绘制右边竖线
          */
-        protected void drawRightLine(@NonNull Canvas canvas, @NonNull TextPaint paint,
-                                     @NonNull View itemView, @NonNull Rect offsetRect, int itemCount, int position) {
+        public void drawRightLine(@NonNull Canvas canvas, @NonNull TextPaint paint,
+                                  @NonNull View itemView, @NonNull Rect offsetRect, int itemCount, int position) {
             paint.setColor(getPaintColor(itemView.getContext(), position));
             offsetRect.set(itemView.getRight(), 0, itemView.getRight() + offsetRect.right, itemView.getBottom());
             canvas.drawRect(offsetRect, paint);
@@ -295,8 +304,8 @@ public class RExItemDecoration extends RecyclerView.ItemDecoration {
         /**
          * 绘制左边竖线
          */
-        protected void drawLeftLine(@NonNull Canvas canvas, @NonNull TextPaint paint,
-                                    @NonNull View itemView, @NonNull Rect offsetRect, int itemCount, int position) {
+        public void drawLeftLine(@NonNull Canvas canvas, @NonNull TextPaint paint,
+                                 @NonNull View itemView, @NonNull Rect offsetRect, int itemCount, int position) {
             paint.setColor(getPaintColor(itemView.getContext(), position));
             offsetRect.set(itemView.getLeft() - offsetRect.left, 0, itemView.getLeft(), itemView.getBottom());
             canvas.drawRect(offsetRect, paint);
@@ -305,8 +314,8 @@ public class RExItemDecoration extends RecyclerView.ItemDecoration {
         /**
          * 在底部绘制一根线, 可以控制左右偏移的线
          */
-        protected void drawBottomMarginLine(@NonNull Canvas canvas, @NonNull TextPaint paint,
-                                            @NonNull View itemView, @NonNull Rect offsetRect, int itemCount, int position, int leftMargin, int rightMargin) {
+        public void drawBottomMarginLine(@NonNull Canvas canvas, @NonNull TextPaint paint,
+                                         @NonNull View itemView, @NonNull Rect offsetRect, int itemCount, int position, int leftMargin, int rightMargin) {
             if (offsetRect.bottom > 0) {
                 paint.setColor(getPaintColor(itemView.getContext(), position));
                 offsetRect.set(leftMargin, itemView.getBottom(), itemView.getRight() - rightMargin, itemView.getBottom() + offsetRect.bottom);
@@ -317,8 +326,8 @@ public class RExItemDecoration extends RecyclerView.ItemDecoration {
         /**
          * 在顶部左边绘制一个偏移距离的线
          */
-        protected void drawLeftTopLine(@NonNull Canvas canvas, @NonNull TextPaint paint,
-                                       @NonNull View itemView, @NonNull Rect offsetRect, int itemCount, int position) {
+        public void drawLeftTopLine(@NonNull Canvas canvas, @NonNull TextPaint paint,
+                                    @NonNull View itemView, @NonNull Rect offsetRect, int itemCount, int position) {
             paint.setColor(getOffsetPaintColor(itemView.getContext(), position));
             offsetRect.set(0, itemView.getTop() - offsetRect.top, getLeftOffset(itemView.getContext()), itemView.getTop());
             canvas.drawRect(offsetRect, paint);
@@ -327,8 +336,8 @@ public class RExItemDecoration extends RecyclerView.ItemDecoration {
         /**
          * 在底部左边绘制一个偏移距离的线
          */
-        protected void drawLeftBottomLine(@NonNull Canvas canvas, @NonNull TextPaint paint,
-                                          @NonNull View itemView, @NonNull Rect offsetRect, int itemCount, int position) {
+        public void drawLeftBottomLine(@NonNull Canvas canvas, @NonNull TextPaint paint,
+                                       @NonNull View itemView, @NonNull Rect offsetRect, int itemCount, int position) {
             if (offsetRect.bottom > 0) {
                 paint.setColor(getOffsetPaintColor(itemView.getContext(), position));
                 offsetRect.set(0, itemView.getBottom(), getLeftOffset(itemView.getContext()), itemView.getBottom() + offsetRect.bottom);
@@ -336,14 +345,22 @@ public class RExItemDecoration extends RecyclerView.ItemDecoration {
             }
         }
 
+        public void setLineColor(int lineColor) {
+            this.lineColor = lineColor;
+        }
+
+        public void setOffsetLeftColor(int offsetLeftColor) {
+            this.offsetLeftColor = offsetLeftColor;
+        }
+
         @Deprecated
         protected int getPaintColor(Context context) {
-            return ContextCompat.getColor(context, R.color.base_chat_bg_color);
+            return lineColor;
         }
 
         @Deprecated
         protected int getOffsetPaintColor(Context context) {
-            return Color.WHITE;
+            return offsetLeftColor;
         }
 
         protected int getPaintColor(Context context, int position) {

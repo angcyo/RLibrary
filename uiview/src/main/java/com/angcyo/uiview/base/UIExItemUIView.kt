@@ -6,6 +6,7 @@ import android.support.v7.widget.RecyclerView
 import android.text.TextPaint
 import android.view.MotionEvent
 import android.view.View
+import com.angcyo.uiview.container.ContentLayout
 import com.angcyo.uiview.recycler.RExItemDecoration
 import com.angcyo.uiview.recycler.RRecyclerView
 import com.angcyo.uiview.recycler.adapter.*
@@ -118,6 +119,34 @@ abstract class UIExItemUIView<ItemType, DataType> : UIRecyclerUIView<String, Dat
             }
         }
         return count
+    }
+
+    override fun initRecyclerView(recyclerView: RRecyclerView?, baseContentLayout: ContentLayout?) {
+        super.initRecyclerView(recyclerView, baseContentLayout)
+
+        //默认的分割线实现
+        recyclerView?.let {
+            RExItemDecoration().apply {
+                setItemDecorationCallback(object : RExItemDecoration.SingleItemCallback() {
+                    override fun getItemOffsets2(outRect: Rect, position: Int, edge: Int) {
+                        //super.getItemOffsets2(outRect, position, edge)
+                        exItemAdapter?.let {
+                            it.getItemHolderByPosition(position)?.getItemOffsets(this@apply, outRect, position, edge)
+                        }
+                    }
+
+                    override fun draw(canvas: Canvas, paint: TextPaint, itemView: View, offsetRect: Rect, itemCount: Int, position: Int) {
+                        //super.draw(canvas, paint, itemView, offsetRect, itemCount, position)
+                        exItemAdapter?.let {
+                            it.getItemHolderByPosition(position)?.draw(this@apply, canvas, paint, itemView, offsetRect, itemCount, position)
+                        }
+                    }
+                })
+
+                //
+                it.addItemDecoration(this)
+            }
+        }
     }
 
     open fun onCreateItemHolder(itemHolder: RExItemHolder<DataType>) {
