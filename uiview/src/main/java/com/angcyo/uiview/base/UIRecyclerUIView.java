@@ -139,16 +139,23 @@ public abstract class UIRecyclerUIView<H, T, F> extends UIContentView
             mRecyclerView.addOnScrollListener(new RecyclerView.OnScrollListener() {
                 @Override
                 public void onScrolled(RecyclerView recyclerView, int dx, int dy) {
+                    int verticalScrollOffset = recyclerView.computeVerticalScrollOffset();
+                    onRecyclerViewScrolled(recyclerView, dx, dy, verticalScrollOffset);
+
                     if (mUITitleBarContainer != null) {
                         if (hasScrollVisibleTitle()) {
-                            mUITitleBarContainer.evaluateBackgroundColorSelf(recyclerView.computeVerticalScrollOffset());
+                            mUITitleBarContainer.evaluateBackgroundColorSelf(verticalScrollOffset);
                         } else {
-                            mUITitleBarContainer.evaluateBackgroundColor(recyclerView.computeVerticalScrollOffset(), null);
+                            mUITitleBarContainer.evaluateBackgroundColor(verticalScrollOffset, null);
                         }
                     }
                 }
             });
         }
+    }
+
+    protected void onRecyclerViewScrolled(@NonNull RecyclerView recyclerView, int dx, int dy, int verticalScrollOffset) {
+
     }
 
     /**
