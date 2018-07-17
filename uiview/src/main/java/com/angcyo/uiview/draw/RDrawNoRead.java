@@ -79,9 +79,8 @@ public class RDrawNoRead extends BaseDraw {
             mPaint.setStyle(Paint.Style.FILL);
             mPaint.setColor(noReadColor);
 
-            float cx = 0;
-            float cy = 0;
-
+            float cx = noReadRadius;
+            float cy = noReadRadius;
 
             if (noreadGravity == CENTER) {
                 cx = ViewExKt.getDrawCenterCx(mView) + noReadPaddingRight;
@@ -107,7 +106,6 @@ public class RDrawNoRead extends BaseDraw {
                 }
             }
 
-            //默认位置在右上角
             canvas.drawCircle(cx, cy, noReadRadius, mPaint);
         }
     }

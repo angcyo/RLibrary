@@ -131,7 +131,7 @@ public class UITitleBarContainer extends FrameLayout {
             drawNoRead.setNoreadGravity(RDrawNoRead.CENTER);
             drawNoRead.setNoReadRadius(3 * density());
             drawNoRead.setNoReadPaddingTop(-10 * density());
-            drawNoRead.setNoReadPaddingRight(15 * density());
+            drawNoRead.setNoReadPaddingRight(12 * density());
         }
     }
 
