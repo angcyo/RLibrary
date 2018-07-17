@@ -358,16 +358,6 @@ public class UILayoutImpl extends SwipeBackLayout implements ILayout, UIViewPage
     }
 
     /**
-     * 获取屏幕方向
-     *
-     * @see android.content.res.Configuration#ORIENTATION_LANDSCAPE
-     * @see android.content.res.Configuration#ORIENTATION_PORTRAIT
-     */
-    public int getScreenOrientation() {
-        return getResources().getConfiguration().orientation;
-    }
-
-    /**
      * 滑动返回处理
      */
     @Override

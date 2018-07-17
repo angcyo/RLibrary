@@ -209,7 +209,7 @@ public abstract class SwipeBackLayout extends TouchLayout {
         dimWidth = (int) (20 * getResources().getDisplayMetrics().density);
 
         //状态栏遮罩
-        setDimStatusBar(false);
+        setDimStatusBar(mDimStatusBar);
     }
 
     @Override
@@ -396,6 +396,16 @@ public abstract class SwipeBackLayout extends TouchLayout {
             mStatusPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
             mStatusPaint.setColor(ContextCompat.getColor(getContext(), R.color.base_status_bar_dim));
         }
+    }
+
+    /**
+     * 获取屏幕方向
+     *
+     * @see android.content.res.Configuration#ORIENTATION_LANDSCAPE
+     * @see android.content.res.Configuration#ORIENTATION_PORTRAIT
+     */
+    public int getScreenOrientation() {
+        return getResources().getConfiguration().orientation;
     }
 
     protected void onViewDragStateChanged(int state) {
