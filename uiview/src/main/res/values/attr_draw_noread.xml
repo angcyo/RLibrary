@@ -6,9 +6,20 @@
     <attr name="r_noread_padding_right" format="dimension"/>
     <attr name="r_noread_color" format="color"/>
 
+    <attr name="r_noread_gravity" format="integer">
+        <flag name="LEFT" value="0x01"/>
+        <flag name="TOP" value="0x02"/>
+        <flag name="RIGHT" value="0x04"/>
+        <flag name="BOTTOM" value="0x08"/>
+        <flag name="CENTER_VERTICAL" value="0x10"/>
+        <flag name="CENTER_HORIZONTAL" value="0x20"/>
+        <flag name="CENTER" value="0x30"/>
+    </attr>
+
     <declare-styleable name="RDrawNoread">
         <attr name="r_show_noread"/>
         <attr name="r_noread_radius"/>
+        <attr name="r_noread_gravity"/>
         <attr name="r_noread_padding_top"/>
         <attr name="r_noread_padding_right"/>
         <attr name="r_noread_color"/>

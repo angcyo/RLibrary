@@ -8,6 +8,8 @@ import android.util.AttributeSet;
 import android.view.View;
 
 import com.angcyo.uiview.R;
+import com.angcyo.uiview.kotlin.ExKt;
+import com.angcyo.uiview.kotlin.ViewExKt;
 
 /**
  * Copyright (C) 2016,深圳市红鸟网络科技股份有限公司 All rights reserved.
@@ -21,6 +23,15 @@ import com.angcyo.uiview.R;
  * Version: 1.0.0
  */
 public class RDrawNoRead extends BaseDraw {
+
+    public static final int LEFT = 0x01;
+    public static final int TOP = 0x02;
+    public static final int RIGHT = 0x04;
+    public static final int BOTTOM = 0x08;
+    public static final int CENTER_VERTICAL = 0x10;
+    public static final int CENTER_HORIZONTAL = 0x20;
+    public static final int CENTER = 0x30;
+
     /**
      * 是否显示 未读小红点
      */
@@ -29,12 +40,14 @@ public class RDrawNoRead extends BaseDraw {
      * 小红点半径
      */
     private float noReadRadius = 4 * density();
-    private float noReadPaddingTop = 2 * density();
-    private float noReadPaddingRight = 2 * density();
+    private float noReadPaddingTop = 0 * density();
+    private float noReadPaddingRight = 0 * density();
 
     private int noReadColor = Color.RED;
 
     private Paint mPaint;
+
+    private int noreadGravity = TOP | RIGHT;
 
     public RDrawNoRead(View view, AttributeSet attr) {
         super(view, attr);
@@ -46,6 +59,7 @@ public class RDrawNoRead extends BaseDraw {
         TypedArray typedArray = getContext().obtainStyledAttributes(attr, R.styleable.RDrawNoread);
         showNoRead = typedArray.getBoolean(R.styleable.RDrawNoread_r_show_noread, showNoRead);
         noReadRadius = typedArray.getDimensionPixelOffset(R.styleable.RDrawNoread_r_noread_radius, (int) noReadRadius);
+        noreadGravity = typedArray.getInt(R.styleable.RDrawNoread_r_noread_gravity, noreadGravity);
         noReadPaddingRight = typedArray.getDimensionPixelOffset(R.styleable.RDrawNoread_r_noread_padding_right, (int) noReadPaddingRight);
         noReadPaddingTop = typedArray.getDimensionPixelOffset(R.styleable.RDrawNoread_r_noread_padding_top, (int) noReadPaddingTop);
         noReadColor = typedArray.getColor(R.styleable.RDrawNoread_r_noread_color, noReadColor);
@@ -64,8 +78,37 @@ public class RDrawNoRead extends BaseDraw {
             }
             mPaint.setStyle(Paint.Style.FILL);
             mPaint.setColor(noReadColor);
+
+            float cx = 0;
+            float cy = 0;
+
+
+            if (noreadGravity == CENTER) {
+                cx = ViewExKt.getDrawCenterCx(mView) + noReadPaddingRight;
+                cy = ViewExKt.getDrawCenterCy(mView) + noReadPaddingTop;
+            } else {
+                if (ExKt.have(noreadGravity, CENTER_HORIZONTAL)) {
+                    cx = ViewExKt.getDrawCenterCx(mView) + noReadPaddingRight;
+                }
+                if (ExKt.have(noreadGravity, CENTER_VERTICAL)) {
+                    cy = ViewExKt.getDrawCenterCy(mView) + noReadPaddingTop;
+                }
+                if (ExKt.have(noreadGravity, LEFT)) {
+                    cx = noReadRadius + noReadPaddingRight;
+                }
+                if (ExKt.have(noreadGravity, RIGHT)) {
+                    cx = getViewWidth() - noReadRadius + noReadPaddingRight;
+                }
+                if (ExKt.have(noreadGravity, TOP)) {
+                    cy = noReadRadius + noReadPaddingTop;
+                }
+                if (ExKt.have(noreadGravity, BOTTOM)) {
+                    cy = getViewHeight() - noReadRadius + noReadPaddingTop;
+                }
+            }
+
             //默认位置在右上角
-            canvas.drawCircle(mView.getMeasuredWidth() - noReadPaddingRight - noReadRadius, noReadPaddingTop + noReadRadius, noReadRadius, mPaint);
+            canvas.drawCircle(cx, cy, noReadRadius, mPaint);
         }
     }
 
@@ -74,7 +117,7 @@ public class RDrawNoRead extends BaseDraw {
      */
     public void setShowNoRead(boolean showNoRead) {
         this.showNoRead = showNoRead;
-        mView.postInvalidate();
+        postInvalidate();
     }
 
     /**
@@ -82,7 +125,7 @@ public class RDrawNoRead extends BaseDraw {
      */
     public void setNoReadRadius(float noReadRadius) {
         this.noReadRadius = noReadRadius;
-        mView.postInvalidate();
+        postInvalidate();
     }
 
     /**
@@ -90,7 +133,7 @@ public class RDrawNoRead extends BaseDraw {
      */
     public void setNoReadPaddingTop(float noReadPaddingTop) {
         this.noReadPaddingTop = noReadPaddingTop;
-        mView.postInvalidate();
+        postInvalidate();
     }
 
     /**
@@ -98,11 +141,16 @@ public class RDrawNoRead extends BaseDraw {
      */
     public void setNoReadPaddingRight(float noReadPaddingRight) {
         this.noReadPaddingRight = noReadPaddingRight;
-        mView.postInvalidate();
+        postInvalidate();
     }
 
     public void setNoReadColor(int noReadColor) {
         this.noReadColor = noReadColor;
-        mView.postInvalidate();
+        postInvalidate();
+    }
+
+    public void setNoreadGravity(int noreadGravity) {
+        this.noreadGravity = noreadGravity;
+        postInvalidate();
     }
 }

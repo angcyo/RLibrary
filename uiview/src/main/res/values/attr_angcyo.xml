@@ -72,6 +72,16 @@
     <attr name="r_tip_text_left_offset" format="dimension"/>
     <attr name="r_tip_text_top_offset" format="dimension"/>
 
+    <attr name="r_layout_gravity" format="integer">
+        <flag name="LEFT" value="0x01"/>
+        <flag name="TOP" value="0x02"/>
+        <flag name="RIGHT" value="0x04"/>
+        <flag name="BOTTOM" value="0x08"/>
+        <flag name="CENTER_VERTICAL" value="0x10"/>
+        <flag name="CENTER_HORIZONTAL" value="0x20"/>
+        <flag name="CENTER" value="0x30"/>
+    </attr>
+
     <declare-styleable name="RLinearLayout">
         <attr name="r_background"/>
         <attr name="r_max_height"/>
@@ -224,6 +234,7 @@
         <attr name="r_show_content_menu"/>
 
         <attr name="r_show_noread"/>
+        <attr name="r_noread_gravity"/>
         <attr name="r_noread_color"/>
         <attr name="r_noread_radius"/>
         <attr name="r_noread_padding_top"/>

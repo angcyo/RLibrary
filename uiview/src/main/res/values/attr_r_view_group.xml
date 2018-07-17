@@ -20,15 +20,7 @@
         -->
         <attr name="r_layout_rule" format="string"/>
 
-        <attr name="r_layout_gravity">
-            <flag name="LEFT" value="0x01"/>
-            <flag name="TOP" value="0x02"/>
-            <flag name="RIGHT" value="0x04"/>
-            <flag name="BOTTOM" value="0x08"/>
-            <flag name="CENTER_VERTICAL" value="0x10"/>
-            <flag name="CENTER_HORIZONTAL" value="0x20"/>
-            <flag name="CENTER" value="0x30"/>
-        </attr>
+        <attr name="r_layout_gravity"/>
 
         <!--2sw:2倍的屏幕宽度,0.5sw屏幕宽度的一半,
         2sp:2倍的parent宽度, 0.2sp:0.2倍的parent宽度, 当使用sp时, parent尽量不要用wrap_content-->
