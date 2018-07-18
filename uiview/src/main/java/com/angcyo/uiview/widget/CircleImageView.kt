@@ -195,13 +195,6 @@ open class CircleImageView(context: Context, attributeSet: AttributeSet? = null)
                     onDrawError()
                     e.printStackTrace()
                 }
-                if (drawInnerBorder) {
-                    borderPath.reset()
-                    val l2 = lineWidth * 1f / 2
-                    borderPath.addRect(l2, l2, measuredWidth - l2, measuredHeight - l2, Path.Direction.CW)
-                    paint.color = lineColor
-                    canvas.drawPath(borderPath, paint)
-                }
             }
             ROUND, CIRCLE, ROUND_RECT -> {
                 val size = Math.min(measuredHeight - paddingTop - paddingBottom,
@@ -302,6 +295,14 @@ open class CircleImageView(context: Context, attributeSet: AttributeSet? = null)
                 //canvas.drawCircle(cx, cy, cr, paint)
                 //canvas.restoreToCount(saveLayer)
             }
+        }
+
+        if (drawInnerBorder) {
+            borderPath.reset()
+            val l2 = lineWidth * 1f / 2
+            borderPath.addRect(l2, l2, measuredWidth - l2, measuredHeight - l2, Path.Direction.CW)
+            paint.color = lineColor
+            canvas.drawPath(borderPath, paint)
         }
 
 //        if (SHOW_DEBUG) {
