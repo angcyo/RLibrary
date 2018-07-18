@@ -704,7 +704,10 @@ public class Luban {
         String filePath = toPath;
         File targetFile = file;
         try {
-            filePath += "_s_" + width + "x" + height + "." + FileUtils.getExtensionName(file.getName(), "jpg");
+
+            String exName = FileUtils.getExtensionName(file.getName(), "jpg");
+            filePath = filePath.replaceAll("." + exName, "");//去除扩展名
+            filePath += "_s_" + width + "x" + height + "." + exName;
 
             FileInputStream input = new FileInputStream(file);
             BufferedInputStream inBuff = new BufferedInputStream(input);
