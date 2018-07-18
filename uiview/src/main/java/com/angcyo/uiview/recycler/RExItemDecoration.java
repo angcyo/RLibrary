@@ -94,13 +94,6 @@ public class RExItemDecoration extends RecyclerView.ItemDecoration {
         return (edge & EDGE_BOTTOM) == EDGE_BOTTOM;
     }
 
-    public void setItemDecorationCallback(ItemDecorationCallback itemDecorationCallback) {
-        mItemDecorationCallback = itemDecorationCallback;
-    }
-
-
-    //------------------------------------------私有方法---------------------------------
-
     @Override
     public void onDraw(Canvas c, RecyclerView parent, RecyclerView.State state) {
         final RecyclerView.LayoutManager manager = parent.getLayoutManager();
@@ -116,6 +109,8 @@ public class RExItemDecoration extends RecyclerView.ItemDecoration {
             draw(c, parent, firstItem, layoutManager);
         }
     }
+
+    //------------------------------------------私有方法---------------------------------
 
     private void draw(Canvas c, RecyclerView parent, int firstItem, LayoutManager layoutManager) {
         for (int i = 0; i < layoutManager.getChildCount(); i++) {
@@ -219,6 +214,14 @@ public class RExItemDecoration extends RecyclerView.ItemDecoration {
 
     public ItemDecorationCallback getItemDecorationCallback() {
         return mItemDecorationCallback;
+    }
+
+    public void setItemDecorationCallback(ItemDecorationCallback itemDecorationCallback) {
+        mItemDecorationCallback = itemDecorationCallback;
+    }
+
+    public SingleItemCallback getSingleItemCallback() {
+        return (SingleItemCallback) mItemDecorationCallback;
     }
 
     public interface ItemDecorationCallback {
