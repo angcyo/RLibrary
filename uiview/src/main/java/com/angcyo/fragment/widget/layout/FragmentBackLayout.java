@@ -3,12 +3,17 @@ package com.angcyo.fragment.widget.layout;
 import android.app.Activity;
 import android.content.Context;
 import android.content.res.Configuration;
+import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.FragmentManager;
 import android.util.AttributeSet;
 import android.view.View;
 
+import com.angcyo.fragment.ui.IFragment;
 import com.angcyo.uiview.container.SwipeBackLayout;
+import com.angcyo.uiview.utils.RUtils;
+
+import java.util.List;
 
 /**
  * Copyright (C) 2016,深圳市红鸟网络科技股份有限公司 All rights reserved.
@@ -94,7 +99,7 @@ public class FragmentBackLayout extends SwipeBackLayout {
     }
 
     /**
-     * 滑动中
+     * 开始滚动
      */
     @Override
     protected void onStateDragging() {
@@ -102,10 +107,10 @@ public class FragmentBackLayout extends SwipeBackLayout {
 
         //开始偏移时, 偏移的距离
         mTranslationOffsetX = getMeasuredWidth() * 0.3f;
-        //viewPattern.mView.setTranslationX(-mTranslationOffsetX);
 
         View lastView = getLastTranslationView();
         if (lastView != null) {
+            lastView.setVisibility(View.VISIBLE);
             lastView.setTranslationX(mTranslationOffsetX);
         }
     }
@@ -121,6 +126,24 @@ public class FragmentBackLayout extends SwipeBackLayout {
     protected void finishFragment() {
         FragmentManager fragmentManager = getFragmentManager();
         if (fragmentManager != null) {
+            List<Fragment> fragments = fragmentManager.getFragments();
+            if (!RUtils.isListEmpty(fragments)) {
+                int size = fragments.size();
+
+                //倒数第一个, 需要finish的Fragment, 不需要执行动画
+                Fragment fragment = fragments.get(size - 1);
+                if (fragment instanceof IFragment) {
+                    ((IFragment) fragment).setSwipeBack(true);
+                }
+
+                //倒数第二个, 需要展示的Fragment, 也不需要执行动画
+                if (size > 1) {
+                    Fragment fragment2 = fragments.get(size - 2);
+                    if (fragment2 instanceof IFragment) {
+                        ((IFragment) fragment2).setSwipeBack(true);
+                    }
+                }
+            }
             fragmentManager.popBackStack();
         }
     }

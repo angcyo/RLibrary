@@ -60,6 +60,14 @@ public class FragmentDebugLayout extends FragmentBackLayout {
     }
 
     @Override
+    protected boolean canTryCaptureView(View child) {
+        if (isInDebugLayout) {
+            return false;
+        }
+        return super.canTryCaptureView(child);
+    }
+
+    @Override
     public boolean onInterceptTouchEvent(MotionEvent ev) {
         int actionMasked = ev.getActionMasked();
 
