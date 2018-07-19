@@ -22,6 +22,7 @@ import android.widget.TextView
 import com.angcyo.github.utilcode.utils.SingleTextWatcher
 import com.angcyo.library.utils.Anim
 import com.angcyo.uiview.draw.RDrawNoRead
+import com.angcyo.uiview.recycler.RBaseViewHolder
 import com.angcyo.uiview.recycler.RRecyclerView
 import com.angcyo.uiview.rsen.RGestureDetector
 import com.angcyo.uiview.utils.ScreenUtil
@@ -591,4 +592,8 @@ public fun View.layoutCenterX(): Int {
 
 public fun View.layoutCenterY(): Int {
     return top + measuredHeight / 2
+}
+
+public fun View.onInitView(init: (RBaseViewHolder) -> Unit) {
+    init.invoke(RBaseViewHolder(this))
 }

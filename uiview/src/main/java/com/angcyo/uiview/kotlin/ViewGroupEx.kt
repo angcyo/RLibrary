@@ -5,7 +5,12 @@ import android.graphics.Rect
 import android.support.annotation.LayoutRes
 import android.support.v7.widget.RecyclerView
 import android.view.*
+import android.view.animation.Animation
+import android.view.animation.AnticipateInterpolator
+import android.view.animation.OvershootInterpolator
 import android.widget.EditText
+import com.angcyo.uiview.resources.AnimUtil
+import com.angcyo.uiview.view.IViewAnimationType
 import com.angcyo.uiview.widget.RSoftInputLayout
 
 /**
@@ -221,25 +226,176 @@ public fun ViewGroup.childs(map: (Int, View) -> Unit) {
 }
 
 public fun ViewGroup.show(@LayoutRes layoutId: Int): View {
+    return show(layoutId, null, null)
+}
+
+public fun ViewGroup.show2(@LayoutRes layoutId: Int): View {
+    return show(layoutId, IViewAnimationType.TRANSLATE_HORIZONTAL)
+}
+
+public fun ViewGroup.show(@LayoutRes layoutId: Int, animType: IViewAnimationType): View {
+    var enterAnimation: Animation? = null
+    var otherExitAnimation: Animation? = null
+
+    when (animType) {
+        IViewAnimationType.NONE -> null
+        IViewAnimationType.ALPHA -> {
+            enterAnimation = AnimUtil.createAlphaEnterAnim(0.8f)
+            otherExitAnimation = AnimUtil.createAlphaExitAnim(0.8f)
+        }
+        IViewAnimationType.TRANSLATE_VERTICAL -> {
+            enterAnimation = AnimUtil.translateStartAnimation()
+            otherExitAnimation = AnimUtil.createAlphaExitAnim(0.8f)
+        }
+        IViewAnimationType.SCALE_TO_MAX,
+        IViewAnimationType.SCALE_TO_MAX_AND_END,
+        IViewAnimationType.SCALE_TO_MAX_OVERSHOOT,
+        IViewAnimationType.SCALE_TO_MAX_AND_END_OVERSHOOT,
+        IViewAnimationType.SCALE_TO_MAX_AND_TO_MAX_END_OVERSHOOT -> {
+            val animation = AnimUtil.scaleMaxAlphaStartAnimation(0.7f)
+            if (animType == IViewAnimationType.SCALE_TO_MAX_OVERSHOOT ||
+                    animType == IViewAnimationType.SCALE_TO_MAX_AND_END_OVERSHOOT ||
+                    animType == IViewAnimationType.SCALE_TO_MAX_AND_TO_MAX_END_OVERSHOOT) {
+                animation.interpolator = OvershootInterpolator()
+            }
+            enterAnimation = animation
+
+            otherExitAnimation = AnimUtil.createOtherExitNoAnim()
+        }
+    //默认 IViewAnimationType.TRANSLATE_HORIZONTAL
+        else -> {
+            enterAnimation = AnimUtil.translateXStartAnimation()
+            otherExitAnimation = AnimUtil.translateXOtherFinishAnimation()
+        }
+    }
+
+    return show(layoutId, enterAnimation, otherExitAnimation)
+}
+
+public fun ViewGroup.show(@LayoutRes layoutId: Int, enterAnimation: Animation?, otherExitAnimation: Animation?): View {
     val viewWithTag = findViewWithTag<View>(layoutId)
     if (viewWithTag == null) {
+
+        //之前的view
+        val preView = if (childCount > 0) {
+            getChildAt(childCount - 1)
+        } else {
+            null
+        }
+
         LayoutInflater.from(context).inflate(layoutId, this)
         val newView = getChildAt(childCount - 1)
         newView.tag = layoutId
+
+        newView?.let { view ->
+            enterAnimation?.let {
+                view.startAnimation(it)
+            }
+        }
+
+        preView?.let { view ->
+            otherExitAnimation?.let {
+                view.startAnimation(it)
+            }
+        }
+
         return newView
     }
     return viewWithTag
 }
 
-public fun ViewGroup.hide(@LayoutRes layoutId: Int) {
+public fun ViewGroup.hide(@LayoutRes layoutId: Int): View? {
+    return hide(layoutId, null, null)
+}
+
+public fun ViewGroup.hide2(@LayoutRes layoutId: Int): View? {
+    return hide(layoutId, IViewAnimationType.TRANSLATE_HORIZONTAL)
+}
+
+public fun ViewGroup.hide(@LayoutRes layoutId: Int, animType: IViewAnimationType): View? {
+    var exitAnimation: Animation? = null
+    var otherEnterAnimation: Animation? = null
+
+    when (animType) {
+        IViewAnimationType.NONE -> null
+        IViewAnimationType.ALPHA -> {
+            exitAnimation = AnimUtil.createAlphaExitAnim(0.2f)
+            otherEnterAnimation = AnimUtil.createAlphaEnterAnim(0.8f)
+        }
+        IViewAnimationType.TRANSLATE_VERTICAL -> {
+            exitAnimation = AnimUtil.translateFinishAnimation()
+            otherEnterAnimation = AnimUtil.createAlphaEnterAnim(0.8f)
+        }
+        IViewAnimationType.SCALE_TO_MAX_AND_END,
+        IViewAnimationType.SCALE_TO_MAX_AND_END_OVERSHOOT -> {
+            val animation = AnimUtil.scaleMaxAlphaFinishAnimation(0.7f)
+            if (animType == IViewAnimationType.SCALE_TO_MAX_AND_END_OVERSHOOT) {
+                animation.interpolator = OvershootInterpolator()
+            }
+            exitAnimation = animation
+            otherEnterAnimation = AnimUtil.createOtherEnterNoAnim()
+        }
+        IViewAnimationType.SCALE_TO_MAX_AND_TO_MAX_END_OVERSHOOT -> {
+            val animation2 = AnimUtil.scaleMaxAlphaFinishAnimation(1.2f)
+            animation2.interpolator = AnticipateInterpolator()
+            exitAnimation = animation2
+
+            otherEnterAnimation = AnimUtil.createOtherEnterNoAnim()
+        }
+    //IViewAnimationType.SCALE_TO_MAX,
+    //IViewAnimationType.SCALE_TO_MAX_OVERSHOOT,
+    //IViewAnimationType.TRANSLATE_HORIZONTAL ->
+        else -> {
+            exitAnimation = AnimUtil.translateXFinishAnimation()
+            otherEnterAnimation = AnimUtil.translateXOtherStartAnimation()
+        }
+    }
+
+    return hide(layoutId, exitAnimation, otherEnterAnimation)
+}
+
+public fun ViewGroup.hide(@LayoutRes layoutId: Int, exitAnimation: Animation?, otherEnterAnimation: Animation?): View? {
     val viewWithTag = findViewWithTag<View>(layoutId)
     if (viewWithTag == null || viewWithTag.parent == null) {
     } else {
+
+        //之前的view
+        val preView = if (childCount > 1) {
+            getChildAt(childCount - 2)
+        } else {
+            null
+        }
+
         val parent = viewWithTag.parent
         if (parent is ViewGroup) {
-            parent.removeView(viewWithTag)
+
+            viewWithTag.let { view ->
+                exitAnimation?.let {
+                    it.setAnimationListener(object : Animation.AnimationListener {
+                        override fun onAnimationStart(animation: Animation?) {
+
+                        }
+
+                        override fun onAnimationRepeat(animation: Animation?) {
+
+                        }
+
+                        override fun onAnimationEnd(animation: Animation?) {
+                            parent.removeView(viewWithTag)
+                        }
+                    })
+                    view.startAnimation(it)
+                }
+            }
+
+            preView?.let { view ->
+                otherEnterAnimation?.let {
+                    view.startAnimation(it)
+                }
+            }
         }
     }
+    return viewWithTag
 }
 
 abstract class OnAddViewCallback<T> {

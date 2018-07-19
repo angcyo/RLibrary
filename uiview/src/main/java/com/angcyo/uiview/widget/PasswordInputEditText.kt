@@ -15,6 +15,7 @@ import android.view.MotionEvent
 import android.view.inputmethod.EditorInfo
 import com.angcyo.uiview.R
 import com.angcyo.uiview.kotlin.density
+import com.angcyo.uiview.kotlin.maxValue
 import com.angcyo.uiview.kotlin.textHeight
 import com.angcyo.uiview.kotlin.textWidth
 import com.angcyo.uiview.skin.SkinHelper
@@ -42,6 +43,13 @@ class PasswordInputEditText(context: Context, attributeSet: AttributeSet? = null
     /**密码提示框的大小, 当空隙为0时, 自动层叠边框, 小于等于0时, 自动平分View的宽度*/
     var passwordSize: Float = 30 * density
 
+    /**绘制密码的大小比例*/
+    var passwordDrawSizeScale: Float = 0.6f
+
+    /**拆分成宽度和高度*/
+    var passwordWidth: Float = 30 * density
+    var passwordHeight: Float = 30 * density
+
     var strokeWidth = 2 * density
 
     var passwordHighlightColor = Color.RED
@@ -49,8 +57,9 @@ class PasswordInputEditText(context: Context, attributeSet: AttributeSet? = null
     var passwordBgColor = Color.TRANSPARENT
     /*密码的颜色*/
     var passwordColor = Color.GRAY
+
     /**边框的颜色*/
-    var passwordBorderColor = Color.GRAY
+    var passwordBorderColor = Color.parseColor("#E0E0E0")
 
     /**密码不可见时的提示样式*/
     var passwordTipType = TIP_TYPE_CIRCLE
@@ -89,8 +98,13 @@ class PasswordInputEditText(context: Context, attributeSet: AttributeSet? = null
     init {
         val array = context.obtainStyledAttributes(attributeSet, R.styleable.PasswordInputEditText)
         passwordCount = array.getInt(R.styleable.PasswordInputEditText_r_password_count, passwordCount)
+        passwordDrawSizeScale = array.getFloat(R.styleable.PasswordInputEditText_r_password_draw_size_scale, passwordDrawSizeScale)
         passwordSpace = array.getDimensionPixelOffset(R.styleable.PasswordInputEditText_r_password_space, passwordSpace.toInt()).toFloat()
         passwordSize = array.getDimensionPixelOffset(R.styleable.PasswordInputEditText_r_password_size, passwordSize.toInt()).toFloat()
+
+        passwordHeight = array.getDimensionPixelOffset(R.styleable.PasswordInputEditText_r_password_height, passwordSize.toInt()).toFloat()
+        passwordWidth = array.getDimensionPixelOffset(R.styleable.PasswordInputEditText_r_password_width, passwordSize.toInt()).toFloat()
+
         strokeWidth = array.getDimensionPixelOffset(R.styleable.PasswordInputEditText_r_border_width, strokeWidth.toInt()).toFloat()
 
         if (!isInEditMode) {
@@ -128,25 +142,23 @@ class PasswordInputEditText(context: Context, attributeSet: AttributeSet? = null
         var heightSize = MeasureSpec.getSize(heightMeasureSpec)
         val heightMode = MeasureSpec.getMode(heightMeasureSpec)
 
-        val pSize: Float = if (passwordSize <= 0) {
-            ((widthSize - paddingLeft - paddingRight) / passwordCount).toFloat()
-        } else {
-            passwordSize
+        if (passwordSize <= 0) {
+            passwordWidth = ((widthSize - paddingLeft - paddingRight) / passwordCount).toFloat()
         }
 
         if (widthMode != MeasureSpec.EXACTLY) {
             if (passwordSpace == 0f) {
-                widthSize = (passwordCount * pSize + strokeWidth +
+                widthSize = (passwordCount * passwordWidth + strokeWidth +
                         paddingLeft + paddingRight).toInt()
             } else {
-                widthSize = (passwordCount * (pSize + strokeWidth) +
+                widthSize = (passwordCount * (passwordWidth + strokeWidth) +
                         Math.max(passwordCount - 1, 0) * passwordSpace +
                         paddingLeft + paddingRight).toInt()
             }
         }
 
         if (heightMode != MeasureSpec.EXACTLY) {
-            heightSize = (pSize + strokeWidth + paddingTop + paddingBottom).toInt()
+            heightSize = (passwordHeight + strokeWidth + paddingTop + paddingBottom).toInt()
         }
 
         setMeasuredDimension(widthSize, heightSize)
@@ -177,22 +189,16 @@ class PasswordInputEditText(context: Context, attributeSet: AttributeSet? = null
         paint.strokeWidth = strokeWidth
         highlightRect.setEmpty()
 
-        val pSize: Float = if (passwordSize <= 0) {
-            ((measuredWidth - paddingLeft - paddingRight) / passwordCount).toFloat()
-        } else {
-            passwordSize
-        }
-
         var left: Float
         for (i in 0 until passwordCount) {
             if (passwordSpace == 0f) {
-                left = paddingLeft + pSize * i + strokeWidth / 2
+                left = paddingLeft + passwordWidth * i + strokeWidth / 2
             } else {
-                left = paddingLeft + strokeWidth / 2 + (pSize + strokeWidth) * i + Math.max(i, 0) * passwordSpace
+                left = paddingLeft + strokeWidth / 2 + (passwordWidth + strokeWidth) * i + Math.max(i, 0) * passwordSpace
             }
 
             rect.set(left.toInt(), (paddingTop + strokeWidth / 2).toInt(),
-                    (left + pSize).toInt(), (paddingTop + strokeWidth / 2 + pSize).toInt())
+                    (left + passwordWidth).toInt(), (paddingTop + strokeWidth / 2 + passwordHeight).toInt())
 
             //填充密码框
             paint.style = Paint.Style.FILL_AND_STROKE
@@ -221,11 +227,15 @@ class PasswordInputEditText(context: Context, attributeSet: AttributeSet? = null
 
                 when (passwordTipType) {
                     TIP_TYPE_CIRCLE -> {
-                        canvas.drawCircle(rect.centerX().toFloat(), rect.centerY().toFloat(), pSize * 0.6f / 2, paint)
+                        canvas.drawCircle(rect.centerX().toFloat(), rect.centerY().toFloat(),
+                                passwordWidth.maxValue(passwordHeight) * passwordDrawSizeScale / 2, paint)
                     }
                     TIP_TYPE_RECT -> {
-                        val offset = 4 * density
-                        canvas.drawRect(rect.left + offset, rect.top + offset, rect.right - offset, rect.bottom - offset, paint)
+                        //val offset = 4 * density
+                        val widthOffset = rect.width() * (1 - passwordDrawSizeScale) / 2
+                        val heightOffset = rect.height() * (1 - passwordDrawSizeScale) / 2
+                        canvas.drawRect(rect.left + widthOffset, rect.top + heightOffset,
+                                rect.right - widthOffset, rect.bottom - heightOffset, paint)
                     }
                     TIP_TYPE_RAW -> {
                         val s = text.toString()[i].toString()

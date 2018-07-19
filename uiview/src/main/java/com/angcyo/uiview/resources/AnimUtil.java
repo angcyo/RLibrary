@@ -728,6 +728,54 @@ public class AnimUtil {
         return animationSet;
     }
 
+    public static Animation translateXOtherStartAnimation() {
+        TranslateAnimation translateAnimation = new TranslateAnimation(Animation.RELATIVE_TO_SELF, -1f, Animation.RELATIVE_TO_SELF, 0f,
+                Animation.RELATIVE_TO_SELF, 0f, Animation.RELATIVE_TO_SELF, 0f);
+        setDefaultConfig(translateAnimation, false);
+
+        translateAnimation.setDuration(2 * DEFAULT_DIALOG_FINISH_ANIM_TIME);
+
+        AnimationSet animationSet = new AnimationSet(true);
+        animationSet.addAnimation(translateAnimation);
+        return animationSet;
+    }
+
+    public static Animation translateXFinishAnimation() {
+        TranslateAnimation translateAnimation = new TranslateAnimation(Animation.RELATIVE_TO_SELF, 0, Animation.RELATIVE_TO_SELF, 1f,
+                Animation.RELATIVE_TO_SELF, 0f, Animation.RELATIVE_TO_SELF, 0f);
+        setDefaultConfig(translateAnimation, true);
+
+        translateAnimation.setDuration(2 * DEFAULT_DIALOG_FINISH_ANIM_TIME);
+
+        AnimationSet animationSet = new AnimationSet(true);
+        animationSet.addAnimation(translateAnimation);
+        return animationSet;
+    }
+
+    public static Animation translateXStartAnimation() {
+        TranslateAnimation translateAnimation = new TranslateAnimation(Animation.RELATIVE_TO_SELF, 1f, Animation.RELATIVE_TO_SELF, 0f,
+                Animation.RELATIVE_TO_SELF, 0f, Animation.RELATIVE_TO_SELF, 0f);
+        setDefaultConfig(translateAnimation, false);
+
+        translateAnimation.setDuration(2 * DEFAULT_DIALOG_FINISH_ANIM_TIME);
+
+        AnimationSet animationSet = new AnimationSet(true);
+        animationSet.addAnimation(translateAnimation);
+        return animationSet;
+    }
+
+    public static Animation translateXOtherFinishAnimation() {
+        TranslateAnimation translateAnimation = new TranslateAnimation(Animation.RELATIVE_TO_SELF, 0, Animation.RELATIVE_TO_SELF, -1f,
+                Animation.RELATIVE_TO_SELF, 0f, Animation.RELATIVE_TO_SELF, 0f);
+        setDefaultConfig(translateAnimation, true);
+
+        translateAnimation.setDuration(2 * DEFAULT_DIALOG_FINISH_ANIM_TIME);
+
+        AnimationSet animationSet = new AnimationSet(true);
+        animationSet.addAnimation(translateAnimation);
+        return animationSet;
+    }
+
     public static Animation createClipEnterAnim(float fromAlpha) {
         AlphaAnimation animation = new AlphaAnimation(fromAlpha, 1f);
         setDefaultConfig(animation, false);
