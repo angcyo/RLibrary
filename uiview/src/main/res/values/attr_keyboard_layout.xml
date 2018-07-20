@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <declare-styleable name="KeyboardLayout">
+        <attr name="r_key_height" format="dimension"/>
+        <attr name="r_key_width" format="dimension"/>
+        <attr name="r_key_text_size" format="dimension"/>
+        <attr name="r_key_background" format="reference"/>
+        <attr name="r_background"/>
+        <attr name="r_use_image_key" format="boolean"/>
+    </declare-styleable>
+</resources>

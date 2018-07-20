@@ -8,16 +8,15 @@ import android.graphics.Rect
 import android.support.v7.widget.AppCompatEditText
 import android.text.InputFilter
 import android.text.method.DigitsKeyListener
+import android.text.method.KeyListener
 import android.util.AttributeSet
 import android.util.TypedValue
 import android.view.ContextMenu
 import android.view.MotionEvent
+import android.view.View
 import android.view.inputmethod.EditorInfo
 import com.angcyo.uiview.R
-import com.angcyo.uiview.kotlin.density
-import com.angcyo.uiview.kotlin.maxValue
-import com.angcyo.uiview.kotlin.textHeight
-import com.angcyo.uiview.kotlin.textWidth
+import com.angcyo.uiview.kotlin.*
 import com.angcyo.uiview.skin.SkinHelper
 
 /**
@@ -66,6 +65,24 @@ class PasswordInputEditText(context: Context, attributeSet: AttributeSet? = null
 
     /**是否需要显示高亮框*/
     var showHighlight = true
+
+    private var oldKeyListener: KeyListener? = null
+
+    /**是否激活密码输入*/
+    var enablePasswordInput = true
+        set(value) {
+            field = value
+            if (value) {
+                isEnabled = true
+                oldKeyListener?.let {
+                    this.keyListener = it
+                }
+            } else {
+                isEnabled = false
+                oldKeyListener = keyListener
+                keyListener = null
+            }
+        }
 
     companion object {
         /**画圆*/
@@ -137,16 +154,16 @@ class PasswordInputEditText(context: Context, attributeSet: AttributeSet? = null
     }
 
     override fun onMeasure(widthMeasureSpec: Int, heightMeasureSpec: Int) {
-        var widthSize = MeasureSpec.getSize(widthMeasureSpec)
-        val widthMode = MeasureSpec.getMode(widthMeasureSpec)
-        var heightSize = MeasureSpec.getSize(heightMeasureSpec)
-        val heightMode = MeasureSpec.getMode(heightMeasureSpec)
+        var widthSize = View.MeasureSpec.getSize(widthMeasureSpec)
+        val widthMode = View.MeasureSpec.getMode(widthMeasureSpec)
+        var heightSize = View.MeasureSpec.getSize(heightMeasureSpec)
+        val heightMode = View.MeasureSpec.getMode(heightMeasureSpec)
 
         if (passwordSize <= 0) {
             passwordWidth = ((widthSize - paddingLeft - paddingRight) / passwordCount).toFloat()
         }
 
-        if (widthMode != MeasureSpec.EXACTLY) {
+        if (widthMode != View.MeasureSpec.EXACTLY) {
             if (passwordSpace == 0f) {
                 widthSize = (passwordCount * passwordWidth + strokeWidth +
                         paddingLeft + paddingRight).toInt()
@@ -157,7 +174,7 @@ class PasswordInputEditText(context: Context, attributeSet: AttributeSet? = null
             }
         }
 
-        if (heightMode != MeasureSpec.EXACTLY) {
+        if (heightMode != View.MeasureSpec.EXACTLY) {
             heightSize = (passwordHeight + strokeWidth + paddingTop + paddingBottom).toInt()
         }
 
@@ -271,6 +288,20 @@ class PasswordInputEditText(context: Context, attributeSet: AttributeSet? = null
     fun string(): String {
         val rawText = text.toString().trim()
         return rawText
+    }
+
+    fun delInput() {
+        if (enablePasswordInput) {
+            del()
+        } else {
+            val newText = string()
+            setInputText(newText.subSequence(0, 0.minValue(newText.length - 1)).toString())
+        }
+    }
+
+    fun insertInput(input: String) {
+        val newText = string() + input
+        setInputText(newText.subSequence(0, passwordCount.maxValue(newText.length)).toString())
     }
 
     override fun onTouchEvent(event: MotionEvent?): Boolean {

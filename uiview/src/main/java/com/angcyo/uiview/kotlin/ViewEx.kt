@@ -375,6 +375,11 @@ public fun EditText.onBackPress(listener: (EditText) -> Unit) {
     }
 }
 
+/**发送删除键*/
+public fun EditText.sendDelKey() {
+    this.del()
+}
+
 public fun RRecyclerView.onSizeChanged(listener: (w: Int, h: Int, oldw: Int, oldh: Int) -> Unit) {
     this.setOnSizeChangedListener { w, h, oldw, oldh ->
         listener.invoke(w, h, oldw, oldh)
@@ -479,10 +484,10 @@ public fun View.onSingleTapConfirmed(listener: () -> Boolean) {
                     return listener.invoke()
                 }
             })
-    setOnTouchListener({ _, event ->
+    setOnTouchListener { _, event ->
         gestureDetectorCompat.onTouchEvent(event)
         false
-    })
+    }
 }
 
 /**无限循环, 每秒60帧的速度*/
