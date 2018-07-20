@@ -195,11 +195,6 @@ public fun ViewGroup.resetChildCount(newSize: Int, onAddView: () -> View) {
     }
 }
 
-/**动态添加View, 并初始化 (做了性能优化)*/
-public fun <T> ViewGroup.addView(datas: List<T>, onAddViewCallback: OnAddViewCallback<T>) {
-    addView(datas.size, datas, onAddViewCallback)
-}
-
 public fun <T> ViewGroup.addView(size: Int, datas: List<T>, onAddViewCallback: OnAddViewCallback<T>) {
     this.resetChildCount(size) {
         val layoutId = onAddViewCallback.getLayoutId()
@@ -215,6 +210,12 @@ public fun <T> ViewGroup.addView(size: Int, datas: List<T>, onAddViewCallback: O
     for (i in 0 until size) {
         onAddViewCallback.onInitView(getChildAt(i), if (i < datas.size) datas[i] else null, i)
     }
+}
+
+
+/**动态添加View, 并初始化 (做了性能优化)*/
+public fun <T> ViewGroup.addView(datas: List<T>, onAddViewCallback: OnAddViewCallback<T>) {
+    addView(datas.size, datas, onAddViewCallback)
 }
 
 /**枚举所有child view*/
