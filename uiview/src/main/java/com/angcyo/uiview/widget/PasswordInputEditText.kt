@@ -136,6 +136,8 @@ class PasswordInputEditText(context: Context, attributeSet: AttributeSet? = null
         showHighlight = array.getBoolean(R.styleable.PasswordInputEditText_r_show_highlight, showHighlight)
         passwordTipType = array.getInt(R.styleable.PasswordInputEditText_r_password_tip_type, passwordTipType)
 
+        val enableInput = array.getBoolean(R.styleable.PasswordInputEditText_r_enable_password_input, enablePasswordInput)
+
         array.recycle()
 
         if (passwordTipType == TIP_TYPE_RAW) {
@@ -151,6 +153,10 @@ class PasswordInputEditText(context: Context, attributeSet: AttributeSet? = null
         filters = arrayOf(InputFilter.LengthFilter(passwordCount))
         imeOptions = imeOptions or EditorInfo.IME_FLAG_NO_EXTRACT_UI
         keyListener = DigitsKeyListener.getInstance("1234567890")
+
+        if (!enableInput) {
+            enablePasswordInput = false
+        }
     }
 
     override fun onMeasure(widthMeasureSpec: Int, heightMeasureSpec: Int) {
@@ -300,6 +306,11 @@ class PasswordInputEditText(context: Context, attributeSet: AttributeSet? = null
     }
 
     fun insertInput(input: String) {
+        val oldLength = string().length
+        if (oldLength >= passwordCount) {
+            //已经输入满了密码
+            return
+        }
         val newText = string() + input
         setInputText(newText.subSequence(0, passwordCount.maxValue(newText.length)).toString())
     }

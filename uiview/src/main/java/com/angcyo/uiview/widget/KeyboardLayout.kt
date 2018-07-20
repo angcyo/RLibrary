@@ -10,10 +10,12 @@ import android.util.TypedValue
 import android.view.Gravity
 import android.view.View
 import android.view.ViewGroup
+import android.widget.EditText
 import android.widget.ImageView
 import android.widget.TextView
 import com.angcyo.uiview.R
 import com.angcyo.uiview.kotlin.*
+import com.angcyo.uiview.resources.ResUtil
 import com.angcyo.uiview.utils.ScreenUtil
 import com.angcyo.uiview.utils.UI
 
@@ -75,7 +77,7 @@ class KeyboardLayout(context: Context, attributeSet: AttributeSet? = null) :
             val keyView: View = when (it) {
                 "-1" -> {
                     //删除
-                    imageView(R.drawable.keyboard_del).apply {
+                    imageView(R.drawable.keyboard_del, R.drawable.keyboard_del_press).apply {
                         background = null
                         setBackgroundColor(Color.parseColor("#E2E7ED"))
                     }
@@ -116,9 +118,14 @@ class KeyboardLayout(context: Context, attributeSet: AttributeSet? = null) :
         }
     }
 
-    private fun imageView(res: Int): ImageView {
+    private fun imageView(res: Int, pressRes: Int = -1): ImageView {
         return ImageView(context).apply {
-            setImageResource(res)
+
+            if (pressRes == -1) {
+                setImageResource(res)
+            } else {
+                setImageDrawable(ResUtil.selector(getDrawable(res), getDrawable(pressRes)))
+            }
 
             scaleType = ImageView.ScaleType.CENTER
 
@@ -205,6 +212,28 @@ class KeyboardLayout(context: Context, attributeSet: AttributeSet? = null) :
         mBackgroundDrawable?.bounds = canvas.clipBounds
         mBackgroundDrawable?.draw(canvas)
         super.draw(canvas)
+    }
+
+    fun setupEditText(editText: EditText) {
+        onKeyboardInputListener = object : KeyboardLayout.OnKeyboardInputListener {
+            override fun onKeyboardInput(key: String, isDel: Boolean) {
+                if (isDel) {
+                    if (editText is PasswordInputEditText) {
+                        editText.delInput()
+                    } else {
+                        val newText = editText.string()
+                        editText.setInputText(newText.subSequence(0, 0.minValue(newText.length - 1)).toString())
+                    }
+                } else {
+                    if (editText is PasswordInputEditText) {
+                        editText.insertInput(key)
+                    } else {
+                        val newText = editText.string() + key
+                        //editText.setInputText(newText.subSequence(0, passwordCount.maxValue(newText.length)).toString())
+                    }
+                }
+            }
+        }
     }
 
     interface OnKeyboardInputListener {
