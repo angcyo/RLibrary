@@ -334,9 +334,9 @@ public class UITitleBarContainer extends FrameLayout {
             clearViews(mRightControlLayout, mRightViews);
 
             /*左边控制按钮*/
-            fillViews(mLeftControlLayout, mTitleBarPattern.mLeftItems, mLeftViews);
+            fillViews(mLeftControlLayout, mTitleBarPattern.mLeftItems, mLeftViews, -1);
             /*右边控制按钮*/
-            fillViews(mRightControlLayout, mTitleBarPattern.mRightItems, mRightViews);
+            fillViews(mRightControlLayout, mTitleBarPattern.mRightItems, mRightViews, -1);
 
             if (mTitleBarPattern.mOnInitTitleLayout != null) {
                 mTitleBarPattern.mOnInitTitleLayout.onInitLayout((RTitleCenterLayout) mCenterControlLayout);
@@ -414,19 +414,25 @@ public class UITitleBarContainer extends FrameLayout {
     public void addLeftItemView(TitleBarItem item) {
         ArrayList<TitleBarItem> items = new ArrayList<>();
         items.add(item);
-        fillViews(mLeftControlLayout, items, mLeftViews);
+        fillViews(mLeftControlLayout, items, mLeftViews, -1);
     }
 
     public void addRightItemView(TitleBarItem item) {
         ArrayList<TitleBarItem> items = new ArrayList<>();
         items.add(item);
-        fillViews(mRightControlLayout, items, mRightViews);
+        fillViews(mRightControlLayout, items, mRightViews, -1);
+    }
+
+    public void addRightItemView(int index, TitleBarItem item) {
+        ArrayList<TitleBarItem> items = new ArrayList<>();
+        items.add(item);
+        fillViews(mRightControlLayout, items, mRightViews, index);
     }
 
     /**
      * 填充左右控制按钮
      */
-    private void fillViews(LinearLayout layout, ArrayList<TitleBarItem> items, ArrayList<View> views) {
+    private void fillViews(LinearLayout layout, ArrayList<TitleBarItem> items, ArrayList<View> views, int index) {
         if (items == null || items.isEmpty()) {
             return;
         }
@@ -468,8 +474,14 @@ public class UITitleBarContainer extends FrameLayout {
             LinearLayout.LayoutParams layoutParams = new LinearLayout.LayoutParams(-2, -1);
             layoutParams.setMargins(item.leftMargin, item.topMargin, item.rightMargin, item.bottomMargin);
             view.setTag(R.id.tag, i);//方便之后查找这个view
-            layout.addView(view, layoutParams);
-            views.add(view);
+            if (index >= 0) {
+                int to = index + i;
+                layout.addView(view, to, layoutParams);
+                views.add(to, view);
+            } else {
+                layout.addView(view, layoutParams);
+                views.add(view);
+            }
 
             if (item.mOnItemInitListener != null) {
                 item.mOnItemInitListener.onItemInit(view, item);

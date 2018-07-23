@@ -114,13 +114,12 @@ public class Button extends RTextView {
                             )));
 
                     if (useSkinStyle) {
-                        int subColor = SkinHelper.getSkin().getThemeSubColor();
-                        setTextColor(ResUtil.generateTextColor(subColor, subColor,
-                                ViewExKt.getColor(this, R.color.base_color_disable_enable), subColor));
+                        int subColor = themeSubColor;
+                        setTextColor(ResUtil.generateTextColor(subColor, subColor, disableColor, subColor));
                     }
                     break;
                 case ROUND_BORDER_FILL:
-                    int subColor = SkinHelper.getSkin().getThemeSubColor();
+                    int subColor = themeSubColor;
                     int lineColor = ViewExKt.getColor(this, R.color.default_base_line);
                     if (useSkinStyle) {
                         lineColor = subColor;
