@@ -21,6 +21,7 @@ import android.widget.EditText
 import android.widget.TextView
 import com.angcyo.github.utilcode.utils.SingleTextWatcher
 import com.angcyo.library.utils.Anim
+import com.angcyo.uiview.RApplication
 import com.angcyo.uiview.draw.RDrawNoRead
 import com.angcyo.uiview.recycler.RBaseViewHolder
 import com.angcyo.uiview.recycler.RRecyclerView
@@ -45,6 +46,13 @@ import java.util.*
 public fun <V : View> View.v(id: Int): V? {
     val view: View? = findViewById(id)
     return view as V?
+}
+
+public fun <T> T.getDrawable(resId: Int): Drawable? {
+    if (resId == -1) {
+        return null
+    }
+    return ContextCompat.getDrawable(RApplication.getApp(), resId)
 }
 
 public fun View.getDrawable(resId: Int): Drawable? {

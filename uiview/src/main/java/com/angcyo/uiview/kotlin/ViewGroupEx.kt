@@ -371,6 +371,7 @@ public fun ViewGroup.hide(@LayoutRes layoutId: Int, exitAnimation: Animation?, o
         if (parent is ViewGroup) {
 
             viewWithTag.let { view ->
+
                 exitAnimation?.let {
                     it.setAnimationListener(object : Animation.AnimationListener {
                         override fun onAnimationStart(animation: Animation?) {
@@ -386,6 +387,10 @@ public fun ViewGroup.hide(@LayoutRes layoutId: Int, exitAnimation: Animation?, o
                         }
                     })
                     view.startAnimation(it)
+                }
+
+                if (exitAnimation == null) {
+                    parent.removeView(viewWithTag)
                 }
             }
 

@@ -587,6 +587,10 @@ public class UITitleBarContainer extends FrameLayout {
         showNoRead(mRightControlLayout.findViewById(id), show);
     }
 
+    public void showRightItemNoReadByTag(String tag, boolean show) {
+        showNoRead(mRightControlLayout.findViewWithTag(tag), show);
+    }
+
     public void showRightItemById(int id) {
         visibleView(mRightControlLayout.findViewById(id));
     }
