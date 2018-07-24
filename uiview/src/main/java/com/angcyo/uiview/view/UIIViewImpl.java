@@ -1739,7 +1739,7 @@ public abstract class UIIViewImpl implements IView {
 
     public TitleBarPattern createTitleBarPattern() {
         return TitleBarPattern.build()
-                .setTitleBarBGColor(SkinHelper.getSkin().getThemeSubColor())
+                .setTitleBarBGColor(SkinHelper.getSkin().getThemeColor())
                 .setShowBackImageView(!haveParentILayout() && ((UILayoutImpl) mILayout).getValidAttachViewSize() >= 1)
                 .setOnBackListener(new View.OnClickListener() {
                     @Override
