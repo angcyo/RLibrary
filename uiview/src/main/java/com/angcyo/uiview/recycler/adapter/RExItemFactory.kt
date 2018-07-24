@@ -142,7 +142,7 @@ abstract class RExItemFactory<ItemType, DataType> {
     }
 }
 
-class RExItem<out ItemType, DataType> {
+open class RExItem<out ItemType, DataType> {
     val itemType: ItemType
     val layoutId: Int
 
