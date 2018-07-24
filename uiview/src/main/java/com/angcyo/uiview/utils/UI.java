@@ -3,7 +3,6 @@ package com.angcyo.uiview.utils;
 import android.content.Context;
 import android.graphics.drawable.Drawable;
 import android.support.annotation.DrawableRes;
-import android.support.v4.view.ViewCompat;
 import android.support.v7.widget.RecyclerView;
 import android.text.TextUtils;
 import android.view.View;
@@ -112,11 +111,11 @@ public class UI {
             for (int i = 0; i < vGroup.getChildCount(); i++) {
                 child = vGroup.getChildAt(i);
                 if (child instanceof RecyclerView) {
-                    result = ViewCompat.canScrollVertically(child, direction);
+                    result = child.canScrollVertically(direction);
                 } else if (child instanceof ViewGroup) {
                     result = canChildScroll(child, direction);
-                } else if (child instanceof View) {
-                    result = ViewCompat.canScrollVertically(child, direction);
+                } else if (child != null) {
+                    result = child.canScrollVertically(direction);
                 } else {
                     result = canChildScroll(child, direction);
                 }
@@ -127,7 +126,7 @@ public class UI {
             }
         }
 
-        return ViewCompat.canScrollVertically(view, direction);
+        return view.canScrollVertically(direction);
     }
 
     public static RecyclerView getRecyclerView(ViewGroup parent) {
