@@ -44,9 +44,13 @@ public class RLog {
     public static long maxLogFileSize = 1024 * 1024 * 10;
 
     public static void saveToSDCard(final String data) {
+        saveToSDCard(getLogPath(), data);
+    }
+
+    public static void saveToSDCard(final String logPath, final String data) {
         try {
             String dataTime = getDataTime("yyyy-MM-dd_HH-mm-ss-SSS");
-            PrintWriter pw = createPrintWrite();
+            PrintWriter pw = createPrintWrite(logPath);
             pw.println(dataTime);
             pw.println(data);
             //换行
@@ -76,9 +80,9 @@ public class RLog {
                 File.separator + RApplication.getApp().getPackageName() + File.separator + "rlog";
     }
 
-    private static PrintWriter createPrintWrite() {
+    private static PrintWriter createPrintWrite(final String logPath) {
         try {
-            String saveFolder = getLogPath();
+            String saveFolder = logPath;
 
             File folder = new File(saveFolder);
             if (!folder.exists()) {
