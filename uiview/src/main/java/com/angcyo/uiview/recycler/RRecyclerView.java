@@ -207,6 +207,11 @@ public class RRecyclerView extends RecyclerView implements StickLayout.CanScroll
         mRDrawIndicator.setShowIndicator(typedArray.getBoolean(R.styleable.RRecyclerView_r_show_indicator, false));
         setWillNotDraw(false);
 
+        String layoutMatch = typedArray.getString(R.styleable.RRecyclerView_r_layout_match);
+        if (!TextUtils.isEmpty(layoutMatch)) {
+            resetLayoutManager(context, layoutMatch);
+        }
+
         typedArray.recycle();
 
         initView(context);
@@ -260,7 +265,7 @@ public class RRecyclerView extends RecyclerView implements StickLayout.CanScroll
     }
 
     protected void initView(Context context) {
-        resetLayoutManager(context);
+        resetLayoutManager(context, getTagString());
 
         setItemAnim(mItemAnim);
         //clearOnScrollListeners();
@@ -269,26 +274,25 @@ public class RRecyclerView extends RecyclerView implements StickLayout.CanScroll
         addOnScrollListener(mScrollListener);
     }
 
-    protected void resetLayoutManager(Context context) {
-        String tag = (String) this.getTag();
-        if (TextUtils.isEmpty(tag) || "V".equalsIgnoreCase(tag)) {
+    protected void resetLayoutManager(Context context, String match) {
+        if (TextUtils.isEmpty(match) || "V".equalsIgnoreCase(match)) {
             mBaseLayoutManager = new LinearLayoutManagerWrap(context, orientation, false);
         } else {
             //线性布局管理器
-            if ("H".equalsIgnoreCase(tag)) {
+            if ("H".equalsIgnoreCase(match)) {
                 orientation = LinearLayoutManagerWrap.HORIZONTAL;
                 mBaseLayoutManager = new LinearLayoutManagerWrap(context, orientation, false);
             } else {
                 //读取其他配置信息(数量和方向)
-                final String type = tag.substring(0, 1);
-                if (tag.length() >= 3) {
+                final String type = match.substring(0, 1);
+                if (match.length() >= 3) {
                     try {
-                        spanCount = Integer.valueOf(tag.substring(2));//数量
+                        spanCount = Integer.valueOf(match.substring(2));//数量
                     } catch (Exception e) {
                     }
                 }
-                if (tag.length() >= 2) {
-                    if ("H".equalsIgnoreCase(tag.substring(1, 2))) {
+                if (match.length() >= 2) {
+                    if ("H".equalsIgnoreCase(match.substring(1, 2))) {
                         orientation = StaggeredGridLayoutManager.HORIZONTAL;//方向
                     }
                 }
@@ -345,7 +349,22 @@ public class RRecyclerView extends RecyclerView implements StickLayout.CanScroll
     @Override
     public void setTag(Object tag) {
         super.setTag(tag);
-        resetLayoutManager(getContext());
+        resetLayoutManager(getContext(), getTagString());
+    }
+
+    public void setLayoutMatch(String match) {
+        resetLayoutManager(getContext(), match);
+    }
+
+    private String getTagString() {
+        Object tag = getTag();
+        if (tag == null) {
+            return "";
+        }
+        if (tag instanceof String) {
+            return (String) tag;
+        }
+        return "";
     }
 
     @Override

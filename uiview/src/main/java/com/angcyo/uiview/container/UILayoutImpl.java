@@ -1823,6 +1823,8 @@ public class UILayoutImpl extends SwipeBackLayout implements ILayout, UIViewPage
         }
 
         if (topViewPattern.mIView.isDialog()) {
+            resetUIStatus(bottomViewPattern.mIView);
+
             //对话框结束时, 不执行生命周期
             bottomViewPattern.mIView.onViewShowOnDialogFinish();
             viewTask.taskRun--;
@@ -1962,28 +1964,45 @@ public class UILayoutImpl extends SwipeBackLayout implements ILayout, UIViewPage
 //        viewPattern.mView.bringToFront();
         //viewPattern.mIView.onViewShow(bundle);
         viewPattern.mIView.onViewShow(bundle, fromClz);
-
-        if (viewPattern.mIView.isDialog()) {
-
-        } else {
-            if (viewPattern.mIView instanceof UIIViewImpl) {
-                ((UIIViewImpl) viewPattern.mIView).fullscreen(viewPattern.mIView.isFullScreen());
-                postDelayed(new Runnable() {
-                    @Override
-                    public void run() {
-                        if (viewPattern.mIView instanceof UIIViewImpl && viewPattern.mIView != null) {
-                            ((UIIViewImpl) viewPattern.mIView).lightStatusBar(viewPattern.mIView.isLightStatusBar());
-                        }
-                    }
-                }, 16);
-            }
-        }
+        resetUIStatus(viewPattern.mIView);
 
         for (OnIViewChangedListener listener : mOnIViewChangedListeners) {
             try {
                 listener.onIViewShow(UILayoutImpl.this, viewPattern);
             } catch (Exception e) {
                 e.printStackTrace();
+            }
+        }
+    }
+
+    private void resetUIStatus(final IView mIView) {
+        if (mIView.isDialog()) {
+            if (mIView instanceof UIIViewImpl) {
+                if (mIView.isFullScreen()) {
+                    ((UIIViewImpl) mIView).fullscreen(mIView.isFullScreen());
+                }
+                postDelayed(new Runnable() {
+                    @Override
+                    public void run() {
+                        if (mIView instanceof UIIViewImpl) {
+                            if (mIView.isLightStatusBar()) {
+                                ((UIIViewImpl) mIView).lightStatusBar(mIView.isLightStatusBar());
+                            }
+                        }
+                    }
+                }, 16);
+            }
+        } else {
+            if (mIView instanceof UIIViewImpl) {
+                ((UIIViewImpl) mIView).fullscreen(mIView.isFullScreen());
+                postDelayed(new Runnable() {
+                    @Override
+                    public void run() {
+                        if (mIView instanceof UIIViewImpl) {
+                            ((UIIViewImpl) mIView).lightStatusBar(mIView.isLightStatusBar());
+                        }
+                    }
+                }, 16);
             }
         }
     }
@@ -2151,7 +2170,8 @@ public class UILayoutImpl extends SwipeBackLayout implements ILayout, UIViewPage
         ViewPattern result = null;
         boolean isFindAnchor = false;//先定位到锚点
 
-        boolean canShowOnDialog = anchor != null && !anchor.mIView.isDialog() && anchor.mIView.showOnDialog();
+        boolean canShowOnDialog = anchor != null &&
+                (!anchor.mIView.isDialog() || anchor.mIView.showOnDialog());
 
         for (int i = mAttachViews.size() - 1; i >= 0; i--) {
             ViewPattern pattern = mAttachViews.get(i);

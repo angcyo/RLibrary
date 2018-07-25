@@ -39,7 +39,12 @@ public abstract class RModelAdapter<T> extends RBaseAdapter<T> {
      * 多选
      */
     public static final int MODEL_MULTI = MODEL_SINGLE << 1;
-    private HashSet<Integer> mSelector = new HashSet<>();
+
+    /**
+     * 选中的数据列表
+     */
+    private ArrayList<T> mSelectorList = new ArrayList<>();
+
     @Model
     private int mModel = MODEL_NORMAL;
 
@@ -325,18 +330,12 @@ public abstract class RModelAdapter<T> extends RBaseAdapter<T> {
 
     public void unSelectorAll(boolean refresh) {
         List<Integer> allSelectorList = getAllSelectorList();
-        mSelector.clear();
+        mSelectorList.clear();
 
         if (refresh) {
             //取消选择
             for (int position : allSelectorList) {
-                RBaseViewHolder viewHolder = getViewHolderFromPosition(position);
-                if (viewHolder != null) {
-                    if (!onUnSelectorPosition(viewHolder, position, false)) {
-                        onBindModelView(mModel, false, viewHolder, position,
-                                getAllDatas().size() > position ? getAllDatas().get(position) : null);
-                    }
-                }
+                removeSelectorInner(position);
             }
 
             notifySelectorChange();
@@ -358,9 +357,8 @@ public abstract class RModelAdapter<T> extends RBaseAdapter<T> {
             return;
         }
 
-        for (int i = 0; i < getAllDatas().size(); i++) {
-            mSelector.add(i);
-        }
+        mSelectorList.clear();
+        mSelectorList.addAll(getAllDatas());
 
         boolean notify = false;
 
@@ -406,7 +404,10 @@ public abstract class RModelAdapter<T> extends RBaseAdapter<T> {
         }
 
         for (int i = 0; i < indexList.size(); i++) {
-            mSelector.add(indexList.get(i));
+            T bean = getAllDatas().get(indexList.get(i));
+            if (!mSelectorList.contains(bean)) {
+                mSelectorList.add(bean);
+            }
         }
 
         boolean notify = false;
@@ -457,89 +458,86 @@ public abstract class RModelAdapter<T> extends RBaseAdapter<T> {
         mChangeListeners.remove(listener);
     }
 
-    public HashSet<Integer> getAllSelector() {
-        return mSelector;
-    }
-
     public ArrayList<Integer> getAllSelectorList() {
         ArrayList<Integer> integers = new ArrayList<>();
-        integers.addAll(mSelector);
+        List<T> allDatas = getAllDatas();
+        for (T bean : mSelectorList) {
+            integers.add(allDatas.indexOf(bean));
+        }
         return integers;
     }
 
     public ArrayList<T> getAllSelectorData() {
-        ArrayList<T> datas = new ArrayList<>();
-        final Iterator<Integer> iterator = mSelector.iterator();
-        while (iterator.hasNext()) {
-            Integer next = iterator.next();
-            if (mAllDatas.size() > next) {
-                datas.add(mAllDatas.get(next));
-            }
+        return getAllSelector();
+    }
+
+    public ArrayList<T> getAllSelector() {
+        return mSelectorList;
+    }
+
+    private void addSelectorDataToList(T bean) {
+        if (!mSelectorList.contains(bean)) {
+            mSelectorList.add(bean);
         }
-        return datas;
+    }
+
+    private void addSelectorDataToList(int position) {
+        addSelectorDataToList(getAllDatas().get(position));
     }
 
     /**
      * 返回所有选中的数据
      */
     public List<T> getSelectorData() {
-        if (mAllDatas == null) {
-            return null;
-        }
-        List<T> list = new ArrayList<>();
-        for (int i = 0; i < mAllDatas.size(); i++) {
-            if (mSelector.contains(i)) {
-                list.add(mAllDatas.get(i));
-            }
-        }
-        return list;
+        return getAllSelector();
+    }
+
+    public void addSelectorData(T bean) {
+        addSelectorInner(getAllDatas().indexOf(bean));
+    }
+
+    public void removeSelectorData(T bean) {
+        removeSelectorInner(getAllDatas().indexOf(bean));
     }
 
     /**
      * 互斥的操作, 选择item, 并且自动设置CompoundButton的状态
      */
     public void setSelectorPosition(int position, Object view) {
+        if (mModel == MODEL_NORMAL || !isPositionValid(position)) {
+            return;
+        }
+        setSelectorData(getAllDatas().get(position), view);
+    }
+
+    public void setSelectorData(T data, Object view) {
         if (mModel == MODEL_NORMAL) {
             return;
         }
+        int position = getAllDatas().indexOf(data);
+        if (!isPositionValid(position)) {
+            return;
+        }
+
         RBaseViewHolder viewHolder = getViewHolderFromPosition(position);
-        final boolean selector = isPositionSelector(position);
+        final boolean selector = mSelectorList.contains(data);
 
         if (selector) {
             //之前已经选中了
             if (mModel == MODEL_SINGLE) {
                 return;
             } else {
-                mSelector.remove(position);
-                if (viewHolder != null) {
-                    if (!onUnSelectorPosition(viewHolder, position, false)) {
-                        onBindModelView(mModel, false, viewHolder, position,
-                                getAllDatas().size() > position ? getAllDatas().get(position) : null);
-                    }
-                }
+                removeSelectorInner(position);
             }
         } else {
             if (mModel == MODEL_SINGLE) {
                 List<Integer> allSelectorList = getAllSelectorList();
                 for (Integer pos : allSelectorList) {
-                    RBaseViewHolder holder = getViewHolderFromPosition(pos);
-
-                    if (holder != null) {
-                        if (!onUnSelectorPosition(holder, pos, false)) {
-                            onBindModelView(mModel, false, holder, pos,
-                                    getAllDatas().size() > pos ? getAllDatas().get(pos) : null);
-                        }
-                    }
+                    removeSelectorInner(pos);
                 }
-                mSelector.clear();
+                mSelectorList.clear();
             }
-            mSelector.add(position);
-            if (viewHolder != null) {
-                if (!onSelectorPosition(viewHolder, position, true)) {
-                    onBindModelView(mModel, true, viewHolder, position,
-                            getAllDatas().size() > position ? getAllDatas().get(position) : null);
-                }
-            }
+            addSelectorInner(position);
         }
 
         if (view instanceof Integer) {
@@ -555,8 +553,56 @@ public abstract class RModelAdapter<T> extends RBaseAdapter<T> {
         notifySelectorChange();
     }
 
+    protected void removeSelectorInner(int position) {
+        if (!isPositionValid(position)) {
+            return;
+        }
+
+        RBaseViewHolder viewHolder = getViewHolderFromPosition(position);
+
+        mSelectorList.remove(getAllDatas().get(position));
+        if (viewHolder != null) {
+            if (!onUnSelectorPosition(viewHolder, position, false)) {
+                onBindModelView(mModel, false, viewHolder, position,
+                        getAllDatas().size() > position ? getAllDatas().get(position) : null);
+            }
+        }
+    }
+
+    protected void addSelectorInner(int position) {
+        if (!isPositionValid(position)) {
+            return;
+        }
+
+        RBaseViewHolder viewHolder = getViewHolderFromPosition(position);
+
+        addSelectorDataToList(position);
+        if (viewHolder != null) {
+            if (!onSelectorPosition(viewHolder, position, true)) {
+                onBindModelView(mModel, true, viewHolder, position,
+                        getAllDatas().size() > position ? getAllDatas().get(position) : null);
+            }
+        }
+    }
+
+    /**
+     * 索引是否没有越界
+     */
+    public boolean isPositionValid(int position) {
+        return position >= 0 && position < getAllDatas().size();
+    }
+
     public boolean isPositionSelector(int position) {
-        return mSelector.contains(position);
+        if (!isPositionValid(position)) {
+            return false;
+        }
+
+        T bean = getAllDatas().get(position);
+        if (mSelectorList.contains(bean)) {
+            return true;
+        } else {
+            return false;
+        }
     }
 
     /**
@@ -568,16 +614,16 @@ public abstract class RModelAdapter<T> extends RBaseAdapter<T> {
 
     public void addSelectorPosition(int position, boolean notify) {
         if (mModel == MODEL_SINGLE) {
-            mSelector.clear();
+            mSelectorList.clear();
         }
-        mSelector.add(position);
+        addSelectorDataToList(position);
         if (notify) {
             notifySelectorChange();
         }
     }
 
     public void removeSelectorPosition(int position) {
-        mSelector.remove(position);
+        mSelectorList.remove(getAllDatas().get(position));
         notifySelectorChange();
     }
 
@@ -585,7 +631,7 @@ public abstract class RModelAdapter<T> extends RBaseAdapter<T> {
      * 清空所有选择
      */
     public void clearSelectorPosition() {
-        mSelector.clear();
+        mSelectorList.clear();
         notifySelectorChange();
     }
 
@@ -616,7 +662,7 @@ public abstract class RModelAdapter<T> extends RBaseAdapter<T> {
 
             if (oldMode != MODEL_NORMAL) {
                 //setEnableLoadMore(false);//不关闭
-                mSelector.clear();
+                mSelectorList.clear();
             } else {
 //                setEnableLoadMore(oldLoadMore);
             }
@@ -646,20 +692,7 @@ public abstract class RModelAdapter<T> extends RBaseAdapter<T> {
 
     @Override
     protected boolean onDeleteItem(int position) {
-        mSelector.remove(position);
-        Iterator<Integer> iterator = mSelector.iterator();
-
-        HashSet<Integer> newSelector = new HashSet<>();
-        while (iterator.hasNext()) {
-            Integer next = iterator.next();
-            if (next < position) {
-                newSelector.add(next);
-            } else if (next > position) {
-                newSelector.add(next - 1);
-            }
-        }
-        mSelector.clear();
-        mSelector.addAll(newSelector);
+        mSelectorList.remove(getAllDatas().get(position));
         notifySelectorChange();
         return true;
     }

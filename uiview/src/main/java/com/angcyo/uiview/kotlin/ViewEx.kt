@@ -326,6 +326,7 @@ public fun EditText.onEmptyText(listener: (Boolean) -> Unit) {
     listener.invoke(TextUtils.isEmpty(this.text))
 }
 
+/**只要文本改变就通知*/
 public fun EditText.onTextChange(listener: (String) -> Unit) {
     this.addTextChangedListener(object : SingleTextWatcher() {
         var lastText: String? = null
@@ -342,6 +343,7 @@ public fun EditText.onTextChange(listener: (String) -> Unit) {
     })
 }
 
+/**相同文本不重复通知*/
 public fun EditText.onTextChangeFilter(listener: (String) -> Unit) {
     this.addTextChangedListener(object : SingleTextWatcher() {
         var lastText: String? = null

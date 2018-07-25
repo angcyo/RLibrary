@@ -89,8 +89,8 @@ public class RExLoopRecyclerView extends RRecyclerView {
     }
 
     @Override
-    protected void resetLayoutManager(Context context) {
-        //super.resetLayoutManager(context);
+    protected void resetLayoutManager(Context context, String match) {
+        //super.resetLayoutManager(context, match);
     }
 
     @Override

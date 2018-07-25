@@ -1710,16 +1710,43 @@ public class RUtils {
             DecimalFormat format = new DecimalFormat(parrern.toString());
             return format.format(value);
         } else {
-            StringBuilder parrern = new StringBuilder("%");
+            StringBuilder parrern = new StringBuilder();
+            String valueString = String.valueOf(value);
             if (bitNum > 0) {
-                parrern.append(".");
-                parrern.append(bitNum);
-                parrern.append("f");
-                int pow = (int) Math.pow(10, bitNum);
-                return String.format(Locale.CHINA, parrern.toString(), pow * value / (pow * 1f));
+//                parrern.append(".");
+//                parrern.append(bitNum);
+//                parrern.append("f");
+//                int pow = (int) Math.pow(10, bitNum);
+//                return String.format(Locale.CHINA, parrern.toString(), pow * value / (pow * 1f));
 //                return String.valueOf(((int) (Math.pow(10, bitNum) * value)) / Math.pow(10, bitNum));
+
+                int lastIndexOf = valueString.lastIndexOf(".");
+                if (lastIndexOf == -1) {
+                    parrern.append(valueString);
+                    parrern.append(".");
+
+                    //用0填充
+                    for (int i = 0; i < bitNum; i++) {
+                        parrern.append("0");
+                    }
+                } else {
+                    parrern.append(valueString.substring(0, lastIndexOf));
+                    parrern.append(".");
+
+                    String endString = valueString.substring(lastIndexOf + 1, valueString.length());
+                    int endLength = endString.length();
+                    if (endLength >= bitNum) {
+                        parrern.append(endString.substring(0, bitNum));
+                    } else {
+                        parrern.append(endString);
+                        for (int i = 0; i < bitNum - endLength; i++) {
+                            parrern.append("0");
+                        }
+                    }
+                }
+
+                return parrern.toString();
             } else if (bitNum == 0) {
-                String valueString = String.valueOf(value);
                 int lastIndexOf = valueString.lastIndexOf(".");
                 if (lastIndexOf == -1) {
                     return valueString;

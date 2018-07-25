@@ -180,6 +180,7 @@
         <!--直径-->
         <attr name="r_circle_size"/>
         <attr name="r_circle_space"/>
+        <attr name="r_layout_match" format="string"/>
     </declare-styleable>
 
     <declare-styleable name="RefreshLayout">

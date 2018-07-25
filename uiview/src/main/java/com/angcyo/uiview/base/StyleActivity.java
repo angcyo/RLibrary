@@ -1,5 +1,6 @@
 package com.angcyo.uiview.base;
 
+import android.content.Context;
 import android.content.res.Configuration;
 import android.graphics.Color;
 import android.graphics.PixelFormat;
@@ -7,21 +8,39 @@ import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v7.app.ActionBar;
+import android.view.Gravity;
 import android.view.View;
+import android.view.ViewGroup;
 import android.view.Window;
 import android.view.WindowManager;
+import android.widget.FrameLayout;
+import android.widget.TextView;
 
 import com.angcyo.library.utils.L;
+import com.angcyo.uiview.BuildConfig;
 import com.angcyo.uiview.R;
 import com.angcyo.uiview.dynamicload.ProxyCompatActivity;
 import com.angcyo.uiview.kotlin.ExKt;
 import com.angcyo.uiview.utils.ScreenUtil;
+
+import static com.angcyo.uiview.utils.ScreenUtil.density;
+import static com.angcyo.uiview.utils.ScreenUtil.getNavBarHeight;
 
 /**
  * Created by angcyo on 2016-11-12.
  */
 
 public abstract class StyleActivity extends ProxyCompatActivity {
+
+    public static TextView createClassNameTextView(Context context) {
+        TextView textView = new TextView(context);
+        textView.setTextSize(9);
+        textView.setTextColor(Color.WHITE);
+        float dp2 = 1 * density();
+        //textView.setPadding(0, 80, 0, 0);
+        textView.setShadowLayer(dp2 * 2, dp2, dp2, Color.BLACK);;
+        return textView;
+    }
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -41,6 +60,19 @@ public abstract class StyleActivity extends ProxyCompatActivity {
         super.onPostCreate(savedInstanceState);
 //        onLoadView();//在权限通过后调用
         onCreateView();//2017-12-11  移到onCreate中调用
+
+        if (BuildConfig.DEBUG) {
+            View decorView = getWindow().getDecorView();
+            if (decorView instanceof FrameLayout) {
+                TextView textView = createClassNameTextView(this);
+                textView.setText(this.getClass().getSimpleName());
+
+                FrameLayout.LayoutParams layoutParams = new FrameLayout.LayoutParams(-2, -2);
+                layoutParams.gravity = Gravity.BOTTOM;
+                layoutParams.bottomMargin = getNavBarHeight(this);
+                ((ViewGroup) decorView).addView(textView, layoutParams);
+            }
+        }
     }
 
     protected abstract void onCreateView();
