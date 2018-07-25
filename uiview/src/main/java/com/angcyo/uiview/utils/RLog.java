@@ -63,7 +63,7 @@ public class RLog {
 
     public static void saveToSDCard(Exception exception) {
         try {
-            PrintWriter pw = createPrintWrite();
+            PrintWriter pw = createPrintWrite(getLogPath());
             exception.printStackTrace(pw);
             pw.println();
             pw.close();
