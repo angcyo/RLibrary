@@ -188,9 +188,7 @@ public class UIImagePagerIView extends UIIViewImpl {
             animToMax();
         } else {
             mMRootLayout.setBackgroundColor(Color.BLACK);
-            if (mImageItems.size() > 1) {
-                showIndicator();
-            }
+            showIndicator();
         }
         //startAnimation2();
     }
@@ -402,6 +400,11 @@ public class UIImagePagerIView extends UIIViewImpl {
 
     private void showIndicator() {
         hideIndicator();
+        if (mImageItems.size() <= 0) {
+            return;
+        } else if (mImageItems.size() > 10) {
+            mIndicatorStyle = IndicatorStyle.TEXT;
+        }
         switch (mIndicatorStyle) {
             case CIRCLE:
                 mMCircleIndicator.setVisibility(View.VISIBLE);
@@ -568,9 +571,7 @@ public class UIImagePagerIView extends UIIViewImpl {
                         super.onAnimationFinish(animation, cancel);
 //                        mPreviewImageView.setVisibility(View.GONE);
 //                        mMViewPager.setVisibility(View.VISIBLE);
-                        if (mImageItems.size() > 1) {
-                            showIndicator();
-                        }
+                        showIndicator();
                     }
 
                     @Override

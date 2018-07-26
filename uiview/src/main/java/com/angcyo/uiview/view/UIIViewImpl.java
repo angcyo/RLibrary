@@ -1175,6 +1175,10 @@ public abstract class UIIViewImpl implements IView {
     public void onSkinChanged(ISkin skin) {
         L.v(this.getClass().getSimpleName(), "onSkinChanged: " + skin.skinName());
         notifySkinChanged(mRootView, skin);
+
+//        if (mChildILayout != null && mChildILayout != mParentILayout) {
+//            mChildILayout.onSkinChanged(skin);
+//        }
     }
 
     /**

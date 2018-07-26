@@ -7,6 +7,7 @@ import android.support.annotation.IdRes;
 import android.support.v4.content.ContextCompat;
 import android.view.View;
 
+import com.angcyo.uiview.R;
 import com.angcyo.uiview.RApplication;
 
 public class TitleBarItem {
@@ -24,11 +25,19 @@ public class TitleBarItem {
     public int topMargin = 0;
     public int rightMargin = 0;
     public int bottomMargin = 0;
+
+    public int leftPadding = 0;
+    public int topPadding = 0;
+    public int rightPadding = 0;
+    public int bottomPadding = 0;
     /**
      * 文本id的左图标资源
      */
     public int textLeftRes = -1;
     public int textRightRes = -1;
+
+    public int itemWidth = -2;
+    public int itemHeight = -1;
 
     /**
      * 0表示不透明, 1表示全透明
@@ -50,6 +59,11 @@ public class TitleBarItem {
 
     public boolean isClickable = true;
 
+    /**
+     * 背景资源
+     */
+    public int itemBgResId = -1;
+
     TitleBarItem() {
         text = "";
     }
@@ -57,6 +71,15 @@ public class TitleBarItem {
     public TitleBarItem(String text, View.OnClickListener listener) {
         this.text = text;
         this.listener = listener;
+
+        //默认的 文本 才有的padding
+        if (RApplication.getApp() != null) {
+            int padding = RApplication.getApp()
+                    .getResources()
+                    .getDimensionPixelOffset(R.dimen.base_ldpi);
+            setLeftPadding(padding);
+            setRightPadding(padding);
+        }
     }
 
     public TitleBarItem(@DrawableRes int res, View.OnClickListener listener) {
@@ -182,6 +205,41 @@ public class TitleBarItem {
 
     public TitleBarItem setTextRightRes(int textRightRes) {
         this.textRightRes = textRightRes;
+        return this;
+    }
+
+    public TitleBarItem setItemBgResId(int itemBgResId) {
+        this.itemBgResId = itemBgResId;
+        return this;
+    }
+
+    public TitleBarItem setItemWidth(int itemWidth) {
+        this.itemWidth = itemWidth;
+        return this;
+    }
+
+    public TitleBarItem setItemHeight(int itemHeight) {
+        this.itemHeight = itemHeight;
+        return this;
+    }
+
+    public TitleBarItem setLeftPadding(int leftPadding) {
+        this.leftPadding = leftPadding;
+        return this;
+    }
+
+    public TitleBarItem setTopPadding(int topPadding) {
+        this.topPadding = topPadding;
+        return this;
+    }
+
+    public TitleBarItem setRightPadding(int rightPadding) {
+        this.rightPadding = rightPadding;
+        return this;
+    }
+
+    public TitleBarItem setBottomPadding(int bottomPadding) {
+        this.bottomPadding = bottomPadding;
         return this;
     }
 

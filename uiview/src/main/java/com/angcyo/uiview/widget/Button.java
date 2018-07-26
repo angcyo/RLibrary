@@ -89,13 +89,14 @@ public class Button extends RTextView {
         }
         typedArray.recycle();
 
-        initButton();
+        /*不覆盖系统的background属性*/
+        initButton(getBackground() == null);
     }
 
-    private void initButton() {
+    private void initButton(boolean refreshBg) {
         setTextColor(getTextColors());
 
-        if (getBackground() == null) {
+        if (refreshBg) {
             switch (mButtonStyle) {
                 case ROUND:
                     setBackground(ResUtil.ripple(themeSubColor,
@@ -181,5 +182,14 @@ public class Button extends RTextView {
     @Override
     protected void onDraw(Canvas canvas) {
         super.onDraw(canvas);
+    }
+
+    public void updateStyle() {
+        themeSubColor = SkinHelper.getSkin().getThemeSubColor();
+        themeDarkColor = SkinHelper.getSkin().getThemeDarkColor();
+        disableColor = SkinHelper.getSkin().getThemeDisableColor();
+
+        setBackground(null);
+        initButton(true);
     }
 }

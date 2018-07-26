@@ -457,6 +457,8 @@ public class UITitleBarContainer extends FrameLayout {
                 view.setMinimumWidth(itemSize);
             }
 
+            view.setPadding(item.leftPadding, item.topPadding, item.rightPadding, item.bottomPadding);
+
             if (item.id != -1) {
                 view.setId(item.id);
             }
@@ -468,10 +470,15 @@ public class UITitleBarContainer extends FrameLayout {
             if (item.isClickable) {
                 ViewExKt.setOnRClickListener(view, item.listener);
             }
-            view.setBackgroundResource(R.drawable.base_bg2_selector_v21);
+
+            if (item.itemBgResId == -1) {
+                view.setBackgroundResource(R.drawable.base_bg2_selector_v21);
+            } else {
+                view.setBackgroundResource(item.itemBgResId);
+            }
 
             view.setVisibility(item.visibility);
-            LinearLayout.LayoutParams layoutParams = new LinearLayout.LayoutParams(-2, -1);
+            LinearLayout.LayoutParams layoutParams = new LinearLayout.LayoutParams(item.itemWidth, item.itemHeight);
             layoutParams.setMargins(item.leftMargin, item.topMargin, item.rightMargin, item.bottomMargin);
             view.setTag(R.id.tag, i);//方便之后查找这个view
             if (index >= 0) {
@@ -511,8 +518,6 @@ public class UITitleBarContainer extends FrameLayout {
 
     private RTextView createTextItem(String text, @ColorInt int color) {
         RTextView item = new RTextView(getContext());
-        int padding = getResources().getDimensionPixelOffset(R.dimen.base_ldpi);
-        item.setPadding(padding, 0, padding, 0);
         item.setText(text);
         item.setSingleLine();
         item.setMaxLines(1);

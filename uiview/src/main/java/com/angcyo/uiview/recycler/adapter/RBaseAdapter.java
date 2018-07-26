@@ -329,7 +329,8 @@ public abstract class RBaseAdapter<T> extends RecyclerView.Adapter<RBaseViewHold
         //holder.tv(R.id.base_no_more_tip_view).setText("");
 
         if (TextUtils.equals(RApplication.getApp().getPackageName(), "com.hn.d.valley")) {
-            holder.tv(R.id.base_no_more_tip_view).setText("恐龙君到底啦");
+            holder.tv(R.id.base_no_more_tip_view).setTextSize(12f);
+            holder.tv(R.id.base_no_more_tip_view).setText("到底啦");
         }
     }
 

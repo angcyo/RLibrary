@@ -26,6 +26,8 @@ public interface ISkin {
 
     int getThemeDarkColor();
 
+    int getThemeDisableColor();
+
     int getThemeTranColor(int alpha);
 
     /**

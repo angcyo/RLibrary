@@ -43,4 +43,9 @@ public class BaseSkin extends SkinImpl {
     public int getThemeDarkColor() {
         return ContextCompat.getColor(mContext, R.color.theme_color_primary_dark_tran);
     }
+
+    @Override
+    public int getThemeDisableColor() {
+        return ContextCompat.getColor(mContext, R.color.theme_color_disable);
+    }
 }

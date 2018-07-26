@@ -23,6 +23,7 @@ import com.angcyo.uiview.utils.ScreenUtil;
 import com.angcyo.uiview.view.DelayClick;
 import com.angcyo.uiview.view.RClickListener;
 import com.angcyo.uiview.view.UIIViewImpl;
+import com.angcyo.uiview.widget.Button;
 import com.angcyo.uiview.widget.ExEditText;
 import com.angcyo.uiview.widget.GlideImageView;
 import com.angcyo.uiview.widget.ItemInfoLayout;
@@ -247,6 +248,10 @@ public class RBaseViewHolder extends RecyclerView.ViewHolder {
     }
 
     public ItemInfoLayout item(@IdRes int id) {
+        return v(id);
+    }
+
+    public Button button(@IdRes int id) {
         return v(id);
     }
 

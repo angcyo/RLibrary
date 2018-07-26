@@ -46,6 +46,11 @@ public class SkinImpl implements ISkin {
     }
 
     @Override
+    public int getThemeDisableColor() {
+        return Color.DKGRAY;
+    }
+
+    @Override
     public int getThemeTranColor(int alpha) {
         return SkinHelper.getTranColor(getThemeSubColor(), alpha);
     }
