@@ -195,7 +195,7 @@ open class GlideImageView(context: Context, attributeSet: AttributeSet? = null) 
     private fun startLoadUrl() {
         setShowGifTip(false)
 
-        if (TextUtils.isEmpty(url) && !TextUtils.isEmpty(loadSuccessUrl)) {
+        if (TextUtils.isEmpty(url) /*&& !TextUtils.isEmpty(loadSuccessUrl)*/) {
             setImageDrawable(placeholderDrawable)
         }
 
