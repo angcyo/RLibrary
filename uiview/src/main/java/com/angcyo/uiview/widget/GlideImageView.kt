@@ -163,7 +163,9 @@ open class GlideImageView(context: Context, attributeSet: AttributeSet? = null) 
     override fun onSizeChanged(w: Int, h: Int, oldw: Int, oldh: Int) {
         super.onSizeChanged(w, h, oldw, oldh)
         //L.d("onSizeChanged $oldw $oldh -> $w $h")
-        startLoadUrl()
+        if (!TextUtils.isEmpty(url)) {
+            startLoadUrl()
+        }
     }
 
     override fun setImageResource(resId: Int) {
@@ -196,7 +198,9 @@ open class GlideImageView(context: Context, attributeSet: AttributeSet? = null) 
         setShowGifTip(false)
 
         if (TextUtils.isEmpty(url) /*&& !TextUtils.isEmpty(loadSuccessUrl)*/) {
-            setImageDrawable(placeholderDrawable)
+            placeholderDrawable?.let {
+                setImageDrawable(it)
+            }
         }
 
         if (url == null) {

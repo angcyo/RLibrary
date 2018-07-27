@@ -195,6 +195,7 @@ public class RUtils {
         mFileTypes.put("47494638", "gif");
         mFileTypes.put("49492A00", "tif");
         mFileTypes.put("424D", "bmp");
+        mFileTypes.put("524946", "webp");
         //
         mFileTypes.put("41433130", "dwg"); //CAD
         mFileTypes.put("38425053", "psd");
@@ -230,7 +231,7 @@ public class RUtils {
     public static String getFileType(String filePath) {
         String type = mFileTypes.get(getFileHeader(filePath));
         if (TextUtils.isEmpty(type)) {
-            int indexOf = filePath.lastIndexOf('/');
+            int indexOf = filePath.lastIndexOf('.');
             if (indexOf != -1) {
                 return filePath.substring(indexOf + 1);
             } else {
