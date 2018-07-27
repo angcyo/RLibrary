@@ -305,7 +305,10 @@
         <attr name="r_check_input_number" format="boolean"/>
         <attr name="r_use_char_length_filter" format="boolean"/>
         <attr name="r_max_length"/>
+        <!--限制max时,是否允许溢出输入-->
         <attr name="r_allow_input_overflow" format="boolean"/>
+        <!--获取到焦点时, 光标移至末尾-->
+        <attr name="r_on_focus_selection_last" format="boolean"/>
     </declare-styleable>
 
     <declare-styleable name="JumpAdProgressBar">

@@ -144,6 +144,11 @@ public class ExEditText extends AppCompatEditText {
      */
     private boolean allowInputOverflow = false;
 
+    /**
+     * 收到焦点时, 是否将光标定位到末尾
+     */
+    private boolean onFocusChangedSelectionLast = false;
+
     public ExEditText(Context context) {
         super(context);
     }
@@ -284,6 +289,8 @@ public class ExEditText extends AppCompatEditText {
 
         allowInputOverflow = typedArray.getBoolean(R.styleable.ExEditText_r_allow_input_overflow, allowInputOverflow);
         setUseCharLengthFilter(typedArray.getBoolean(R.styleable.ExEditText_r_use_char_length_filter, useCharLengthFilter));
+
+        onFocusChangedSelectionLast = typedArray.getBoolean(R.styleable.ExEditText_r_on_focus_selection_last, onFocusChangedSelectionLast);
 
         if (!useCharLengthFilter) {
             InputFilter[] filters = getFilters();
@@ -496,7 +503,9 @@ public class ExEditText extends AppCompatEditText {
         }
     }
 
-    /***/
+    /**
+     * 设置输入的文本, 并且自动定位到末尾
+     */
     public void setInputText(String text) {
         setText(text);
         int textLength = getTextLength();//修改文本之后的长度
@@ -568,7 +577,17 @@ public class ExEditText extends AppCompatEditText {
         super.onFocusChanged(focused, direction, previouslyFocusedRect);
         checkEdit(focused);
 
-        if (!focused) {
+        if (focused) {
+//            if (isInputTypeNumber() && showClear) {
+//                //数字输入时, 自动把焦点移植最后
+//                post(new Runnable() {
+//                    @Override
+//                    public void run() {
+//                        setSelectionLast();
+//                    }
+//                });
+//            }
+        } else {
             touchDownWithHandle = 0;
             //没有焦点的时候, 检查自动匹配输入
             if (isInputTipPattern()) {
@@ -674,7 +693,13 @@ public class ExEditText extends AppCompatEditText {
             }
             return true;
         } else {
-            return super.onTouchEvent(event);
+            if (action == MotionEvent.ACTION_DOWN && onFocusChangedSelectionLast && !isFocused()) {
+                showSoftInput();
+                setSelectionLast();
+                return true;
+            } else {
+                return super.onTouchEvent(event);
+            }
         }
     }
 
@@ -695,6 +720,7 @@ public class ExEditText extends AppCompatEditText {
     }
 
     public void checkEdit(boolean focused) {
+        /*是否要显示删除按钮*/
         if (showClear) {
             final Drawable[] compoundDrawables = getCompoundDrawables();
             if (TextUtils.isEmpty(getText()) || !focused) {

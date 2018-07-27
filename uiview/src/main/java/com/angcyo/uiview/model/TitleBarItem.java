@@ -73,13 +73,7 @@ public class TitleBarItem {
         this.listener = listener;
 
         //默认的 文本 才有的padding
-        if (RApplication.getApp() != null) {
-            int padding = RApplication.getApp()
-                    .getResources()
-                    .getDimensionPixelOffset(R.dimen.base_ldpi);
-            setLeftPadding(padding);
-            setRightPadding(padding);
-        }
+        defaultPadding();
     }
 
     public TitleBarItem(@DrawableRes int res, View.OnClickListener listener) {
@@ -111,6 +105,17 @@ public class TitleBarItem {
 
     public static TitleBarItem build() {
         return new TitleBarItem();
+    }
+
+    public TitleBarItem defaultPadding() {
+        if (RApplication.getApp() != null) {
+            int padding = RApplication.getApp()
+                    .getResources()
+                    .getDimensionPixelOffset(R.dimen.base_ldpi);
+            setLeftPadding(padding);
+            setRightPadding(padding);
+        }
+        return this;
     }
 
     public TitleBarItem setText(String text) {
