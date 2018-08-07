@@ -37,8 +37,9 @@ public abstract class StyleActivity extends ProxyCompatActivity {
         textView.setTextSize(9);
         textView.setTextColor(Color.WHITE);
         float dp2 = 1 * density();
-        //textView.setPadding(0, 80, 0, 0);
-        textView.setShadowLayer(dp2 * 2, dp2, dp2, Color.BLACK);;
+        int padding = (int) dp2 * 4;
+        textView.setPadding(padding, padding, padding, padding);
+        textView.setShadowLayer(dp2 * 2, dp2, dp2, Color.BLACK);
         return textView;
     }
 
@@ -69,7 +70,10 @@ public abstract class StyleActivity extends ProxyCompatActivity {
 
                 FrameLayout.LayoutParams layoutParams = new FrameLayout.LayoutParams(-2, -2);
                 layoutParams.gravity = Gravity.BOTTOM;
-                layoutParams.bottomMargin = getNavBarHeight(this);
+                if (decorView.getBottom() > getResources().getDisplayMetrics().heightPixels) {
+                    //显示了导航栏
+                    layoutParams.bottomMargin = getNavBarHeight(this);
+                }
                 ((ViewGroup) decorView).addView(textView, layoutParams);
             }
         }
