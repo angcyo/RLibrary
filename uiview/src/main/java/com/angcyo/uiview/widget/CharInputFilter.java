@@ -28,6 +28,9 @@ public class CharInputFilter implements InputFilter {
     //允许输入Ascii码表的[33-126]的字符
     public static final int MODEL_ASCII_CHAR = 8;
 
+    //callback过滤模式
+    public static final int MODEL_CALLBACK = 16;
+
     //限制输入的最大字符数, 小于0不限制
     private int maxInputLength = -1;
 
@@ -128,9 +131,9 @@ public class CharInputFilter implements InputFilter {
                 append = isAsciiChar(c) || append;
             }
 
-            if (callbacks != null) {
+            if (callbacks != null && (filterModel & MODEL_CALLBACK) == MODEL_CALLBACK) {
                 for (OnFilterCallback callback : callbacks) {
-                    append = callback.onFilterAllow(c) || append;
+                    append = callback.onFilterAllow(source, c, i, dest, dstart, dend) || append;
                 }
             }
 
@@ -152,6 +155,7 @@ public class CharInputFilter implements InputFilter {
     }
 
     public void addFilterCallback(OnFilterCallback callback) {
+        filterModel |= MODEL_CALLBACK;
         if (callbacks == null) {
             callbacks = new ArrayList<>();
         }
@@ -164,6 +168,11 @@ public class CharInputFilter implements InputFilter {
         /**
          * 是否允许输入字符c
          */
-        boolean onFilterAllow(char c);
+        boolean onFilterAllow(CharSequence source,
+                              char c,
+                              int cIndex,
+                              Spanned dest,
+                              int dstart,
+                              int dend);
     }
 }
