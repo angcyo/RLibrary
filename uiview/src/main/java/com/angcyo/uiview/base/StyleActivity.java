@@ -61,18 +61,26 @@ public abstract class StyleActivity extends ProxyCompatActivity {
         super.onPostCreate(savedInstanceState);
 //        onLoadView();//在权限通过后调用
         onCreateView();//2017-12-11  移到onCreate中调用
+    }
 
-        if (BuildConfig.DEBUG) {
-            View decorView = getWindow().getDecorView();
-            if (decorView instanceof FrameLayout) {
-                TextView textView = createClassNameTextView(this);
+    @Override
+    public void onWindowFocusChanged(boolean hasFocus) {
+        super.onWindowFocusChanged(hasFocus);
+        if (hasFocus && BuildConfig.DEBUG) {
+            final View decorView = getWindow().getDecorView();
+            View debugTestView = decorView.findViewWithTag("debugTestView");
+            if (debugTestView == null && decorView instanceof FrameLayout) {
+                View rootView = getWindow().findViewById(Window.ID_ANDROID_CONTENT);
+
+                TextView textView = createClassNameTextView(StyleActivity.this);
                 textView.setText(this.getClass().getSimpleName());
-
+                textView.setTag("debugTestView");
+                
                 FrameLayout.LayoutParams layoutParams = new FrameLayout.LayoutParams(-2, -2);
                 layoutParams.gravity = Gravity.BOTTOM;
-                if (decorView.getBottom() > getResources().getDisplayMetrics().heightPixels) {
+                if (decorView.getBottom() > rootView.getBottom()) {
                     //显示了导航栏
-                    layoutParams.bottomMargin = getNavBarHeight(this);
+                    layoutParams.bottomMargin = getNavBarHeight(StyleActivity.this);
                 }
                 ((ViewGroup) decorView).addView(textView, layoutParams);
             }
