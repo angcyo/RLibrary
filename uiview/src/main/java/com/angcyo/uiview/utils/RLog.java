@@ -80,6 +80,28 @@ public class RLog {
                 File.separator + RApplication.getApp().getPackageName() + File.separator + "rlog";
     }
 
+    public static void setLogFolder(String folderName) {
+        clearLog();
+        logPath = Environment.getExternalStorageDirectory().getAbsoluteFile() +
+                File.separator + folderName + File.separator + "rlog";
+        initPath();
+    }
+
+    private static void initPath() {
+        try {
+            String saveFolder = logPath;
+
+            File folder = new File(saveFolder);
+            if (!folder.exists()) {
+                if (!folder.mkdirs()) {
+
+                }
+            }
+        } catch (Exception e) {
+            //e.printStackTrace();
+        }
+    }
+
     private static PrintWriter createPrintWrite(final String logPath) {
         try {
             String saveFolder = logPath;
