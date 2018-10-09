@@ -32,7 +32,7 @@ public class RecyclerBottomLayout extends FrameLayout {
     @Override
     protected void onLayout(boolean changed, int left, int top, int right, int bottom) {
         final ViewParent parent = getParent();
-        Log.w("angcyo", "layout:" + top + " " + bottom);
+        //Log.w("angcyo", "layout:" + top + " " + bottom);
         boolean callSuper = true;
         if (parent instanceof RecyclerView) {
 
@@ -57,7 +57,7 @@ public class RecyclerBottomLayout extends FrameLayout {
                         post(new Runnable() {
                             @Override
                             public void run() {
-                                Log.e("angcyo", "重置高度:" + layoutParams.height);
+                                //Log.e("angcyo", "重置高度:" + layoutParams.height);
                                 RecyclerView.Adapter adapter = recyclerView.getAdapter();
                                 if (adapter != null) {
                                     adapter.notifyItemChanged(layoutParams.getViewAdapterPosition());
