@@ -2,9 +2,12 @@ package com.angcyo.uiview;
 
 import android.app.Activity;
 import android.content.Context;
+import android.graphics.Point;
 import android.os.Build;
 import android.os.Environment;
 import android.text.TextUtils;
+import android.view.Display;
+import android.view.WindowManager;
 
 import com.angcyo.github.utilcode.utils.AppUtils;
 import com.angcyo.library.utils.L;
@@ -39,7 +42,26 @@ public class Root {
         builder.append(" on ");
         builder.append(ResUtil.getThemeString(RApplication.getApp(), "os_name"));
         builder.append(" ");
-        builder.append(ScreenUtil.screenWidth).append("×").append(ScreenUtil.screenHeight);
+
+        WindowManager windowManager = (WindowManager) activity.getSystemService(Context.WINDOW_SERVICE);
+        Display display = windowManager.getDefaultDisplay();
+        Point point = new Point();
+        display.getSize(point);
+        builder.append(point.x).append("×").append(point.y);
+
+//        builder.append(ScreenUtil.screenWidth).append("×").append(ScreenUtil.screenHeight);
+        builder.append(" \n");
+
+//        display.get();
+
+        display.getRealSize(point);
+
+//        Rect size = new Rect();
+//        display.getRectSize(size);
+
+//        DisplayMetrics displayMetrics = new DisplayMetrics();
+//        display.getMetrics(displayMetrics);
+        builder.append(point.x).append("×").append(point.y);
         builder.append(" ");
         if (activity instanceof Activity) {
             builder.append(((Activity) activity).getWindow().getDecorView().getMeasuredHeight());
@@ -48,7 +70,6 @@ public class Root {
         builder.append(ScreenUtil.densityDpi);
         builder.append(" ");
         builder.append(ScreenUtil.density);
-        builder.append(" \n");
         builder.append("v:").append(Build.MANUFACTURER).append(" ");
         builder.append("m:").append(Build.MODEL).append(" ");
         builder.append("d:").append(Build.DEVICE).append(" ");
