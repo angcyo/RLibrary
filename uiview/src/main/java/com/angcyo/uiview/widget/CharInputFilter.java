@@ -1,4 +1,4 @@
-package com.ps.recycling2c.angcyo.widget;
+package com.angcyo.uiview.widget;
 
 import android.text.InputFilter;
 import android.text.SpannableStringBuilder;
