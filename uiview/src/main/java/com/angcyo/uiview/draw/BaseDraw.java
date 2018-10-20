@@ -8,6 +8,7 @@ import android.graphics.Paint;
 import android.support.annotation.ColorRes;
 import android.support.annotation.NonNull;
 import android.support.v4.content.ContextCompat;
+import android.support.v4.view.ViewCompat;
 import android.util.AttributeSet;
 import android.view.View;
 import android.view.ViewGroup;
@@ -82,7 +83,7 @@ public abstract class BaseDraw {
     }
 
     protected void postInvalidateOnAnimation() {
-        mView.postInvalidateOnAnimation();
+        ViewCompat.postInvalidateOnAnimation(mView);
     }
 
     protected void scrollTo(int x, int y) {
