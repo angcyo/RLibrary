@@ -4,13 +4,12 @@ import android.content.res.TypedArray;
 import android.graphics.Canvas;
 import android.graphics.DashPathEffect;
 import android.graphics.Paint;
+import android.graphics.drawable.Drawable;
 import android.support.annotation.IntDef;
-import android.support.v4.content.ContextCompat;
 import android.util.AttributeSet;
 import android.view.View;
 
 import com.angcyo.uiview.R;
-import com.angcyo.uiview.utils.ScreenUtil;
 
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
@@ -31,12 +30,19 @@ public class RDrawLine extends BaseDraw {
     public int drawLineColor = 0;
     public int drawLineOffsetLeft = 0;//左偏移
     public int drawLineOffsetRight = 0;//右偏移
-    public float drawLineWidth = 1 * ScreenUtil.density();
+    public float drawLineWidth = 1 * density();
     /**
      * 是否是虚线, 蚂蚁线
      */
     public boolean isDashLine = false;
     private Paint linePaint;
+
+    /**
+     * 横竖整体偏移
+     */
+    protected int drawLineOffsetX, drawLineOffsetY;
+
+    protected Drawable lineDrawable;
 
     public RDrawLine(View view, AttributeSet attr) {
         super(view, attr);
@@ -50,9 +56,12 @@ public class RDrawLine extends BaseDraw {
         drawLine = typedArray.getInt(R.styleable.RDrawLine_r_draw_line, drawLine);
         drawLineOffsetLeft = typedArray.getDimensionPixelOffset(R.styleable.RDrawLine_r_draw_line_offset_left, drawLineOffsetLeft);
         drawLineOffsetRight = typedArray.getDimensionPixelOffset(R.styleable.RDrawLine_r_draw_line_offset_right, drawLineOffsetRight);
-        drawLineColor = typedArray.getColor(R.styleable.RDrawLine_r_draw_line_color, ContextCompat.getColor(getContext(), R.color.base_chat_bg_color));
+        drawLineColor = typedArray.getColor(R.styleable.RDrawLine_r_draw_line_color, getBaseColor());
         drawLineWidth = typedArray.getDimensionPixelOffset(R.styleable.RDrawLine_r_draw_line_width, (int) drawLineWidth);
+        drawLineOffsetX = typedArray.getDimensionPixelOffset(R.styleable.RDrawLine_r_draw_line_offset_x, drawLineOffsetX);
+        drawLineOffsetY = typedArray.getDimensionPixelOffset(R.styleable.RDrawLine_r_draw_line_offset_y, drawLineOffsetY);
         isDashLine = typedArray.getBoolean(R.styleable.RDrawLine_r_draw_dash_line, isDashLine);
+        lineDrawable = typedArray.getDrawable(R.styleable.RDrawLine_r_draw_line_drawable);
 
         typedArray.recycle();
     }
@@ -60,44 +69,71 @@ public class RDrawLine extends BaseDraw {
     @Override
     public void onDraw(Canvas canvas) {
         if (drawLine > 0) {
-            if (linePaint == null) {
-                linePaint = new Paint(Paint.ANTI_ALIAS_FLAG);
-                linePaint.setStyle(Paint.Style.FILL_AND_STROKE);
+            if (lineDrawable == null) {
+                if (linePaint == null) {
+                    linePaint = new Paint(Paint.ANTI_ALIAS_FLAG);
+                    linePaint.setStyle(Paint.Style.FILL_AND_STROKE);
 
-                if (isDashLine) {
-                    mView.setLayerType(View.LAYER_TYPE_SOFTWARE, linePaint);
-                    linePaint.setPathEffect(new DashPathEffect(new float[]{4 * ScreenUtil.density, 5 * ScreenUtil.density}, 0));
+                    if (isDashLine) {
+                        mView.setLayerType(View.LAYER_TYPE_SOFTWARE, linePaint);
+                        linePaint.setPathEffect(new DashPathEffect(new float[]{4 * density(), 5 * density()}, 0));
+                    }
                 }
-            }
 
-            linePaint.setStrokeWidth(drawLineWidth);
-            linePaint.setColor(drawLineColor);
+                linePaint.setStrokeWidth(drawLineWidth);
+                linePaint.setColor(drawLineColor);
 
-            switch (drawLine) {
-                case DRAW_LINE_LEFT://L
-                    //暂不支持
-                    break;
-                case DRAW_LINE_TOP://T
-                    canvas.drawLine(drawLineOffsetLeft, drawLineWidth / 2,
-                            mView.getMeasuredWidth() - drawLineOffsetRight, drawLineWidth / 2,
-                            linePaint);
-                    break;
-                case DRAW_LINE_RIGHT://R
-                    //暂不支持
-                    break;
-                case DRAW_LINE_BOTTOM://B
-                    canvas.drawLine(drawLineOffsetLeft, mView.getMeasuredHeight() - drawLineWidth / 2,
-                            mView.getMeasuredWidth() - drawLineOffsetRight, mView.getMeasuredHeight() - drawLineWidth / 2,
-                            linePaint);
-                    break;
-                case DRAW_LINE_BOTTOM_TOP://B+T
-                    canvas.drawLine(drawLineOffsetLeft, drawLineWidth / 2,
-                            mView.getMeasuredWidth() - drawLineOffsetRight, drawLineWidth / 2,
-                            linePaint);
-                    canvas.drawLine(drawLineOffsetLeft, mView.getMeasuredHeight() - drawLineWidth / 2,
-                            mView.getMeasuredWidth() - drawLineOffsetRight, mView.getMeasuredHeight() - drawLineWidth / 2,
-                            linePaint);
-                    break;
+                switch (drawLine) {
+                    case DRAW_LINE_LEFT://L
+                        //暂不支持
+                        break;
+                    case DRAW_LINE_TOP://T
+                        canvas.drawLine(drawLineOffsetLeft + drawLineOffsetX, drawLineWidth / 2 + drawLineOffsetY,
+                                mView.getMeasuredWidth() - drawLineOffsetRight + drawLineOffsetX, drawLineWidth / 2 + drawLineOffsetY,
+                                linePaint);
+                        break;
+                    case DRAW_LINE_RIGHT://R
+                        //暂不支持
+                        break;
+                    case DRAW_LINE_BOTTOM://B
+                        canvas.drawLine(drawLineOffsetLeft + drawLineOffsetX, mView.getMeasuredHeight() - drawLineWidth / 2 + drawLineOffsetY,
+                                mView.getMeasuredWidth() - drawLineOffsetRight + drawLineOffsetX, mView.getMeasuredHeight() - drawLineWidth / 2 + drawLineOffsetY,
+                                linePaint);
+                        break;
+                    case DRAW_LINE_BOTTOM_TOP://B+T
+                        canvas.drawLine(drawLineOffsetLeft + drawLineOffsetX, drawLineWidth / 2 + drawLineOffsetY,
+                                mView.getMeasuredWidth() - drawLineOffsetRight + drawLineOffsetX, drawLineWidth / 2 + drawLineOffsetY,
+                                linePaint);
+                        canvas.drawLine(drawLineOffsetLeft + drawLineOffsetX, mView.getMeasuredHeight() - drawLineWidth / 2 + drawLineOffsetY,
+                                mView.getMeasuredWidth() - drawLineOffsetRight + drawLineOffsetX, mView.getMeasuredHeight() - drawLineWidth / 2 + drawLineOffsetY,
+                                linePaint);
+                        break;
+                    default:
+                        break;
+                }
+            } else {
+                switch (drawLine) {
+                    case DRAW_LINE_LEFT://L
+                        //暂不支持
+                        break;
+                    case DRAW_LINE_TOP://T
+                        lineDrawable.setBounds(drawLineOffsetLeft + drawLineOffsetX, drawLineOffsetY,
+                                mView.getMeasuredWidth() - drawLineOffsetRight + drawLineOffsetX, (int) (drawLineWidth + drawLineOffsetY));
+                        lineDrawable.draw(canvas);
+                        break;
+                    case DRAW_LINE_RIGHT://R
+                        //暂不支持
+                        break;
+                    case DRAW_LINE_BOTTOM://B
+                        lineDrawable.setBounds(drawLineOffsetLeft + drawLineOffsetX, (int) (mView.getMeasuredHeight() - drawLineWidth + drawLineOffsetY),
+                                mView.getMeasuredWidth() - drawLineOffsetRight + drawLineOffsetX, mView.getMeasuredHeight() + drawLineOffsetY);
+                        lineDrawable.draw(canvas);
+                        break;
+                    case DRAW_LINE_BOTTOM_TOP://B+T
+                        break;
+                    default:
+                        break;
+                }
             }
         }
     }

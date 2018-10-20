@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <!--文本颜色, 支持 color list-->
+    <attr name="r_draw_text_color" format="reference" />
+    <!--文本大小,用来测量和绘制-->
+    <attr name="r_draw_text_size" format="dimension" />
+    <!--文本大小, 默认等于r_draw_text_size, 不参与测量, 只参与绘制-->
+    <attr name="r_draw_text_draw_size" format="dimension" />
+    <attr name="r_draw_text_string" format="string" />
+    <attr name="r_draw_text_gravity" format="integer">
+        <flag name="TOP" value="1" />
+        <flag name="LEFT" value="2" />
+        <flag name="RIGHT" value="4" />
+        <flag name="BOTTOM" value="8" />
+        <flag name="CENTER" value="16" />
+        <flag name="CENTER_H" value="32" />
+        <flag name="CENTER_V" value="64" />
+    </attr>
+    <!--文本横向偏移属性, 支持正负.-->
+    <attr name="r_draw_text_offset_x" format="dimension" />
+    <attr name="r_draw_text_offset_y" format="dimension" />
+
+    <declare-styleable name="RDrawText">
+        <attr name="r_draw_text_color" />
+        <attr name="r_draw_text_size" />
+        <attr name="r_draw_text_draw_size" />
+        <attr name="r_draw_text_string" />
+        <attr name="r_draw_text_gravity" />
+        <attr name="r_draw_text_offset_x" />
+        <attr name="r_draw_text_offset_y" />
+    </declare-styleable>
+</resources>

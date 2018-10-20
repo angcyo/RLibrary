@@ -160,4 +160,31 @@ public abstract class BaseDraw {
     }
 
     protected abstract void initAttribute(AttributeSet attr);
+
+    public int measureDrawWidth() {
+        return mView.getMeasuredWidth();
+    }
+
+    public int measureDrawHeight() {
+        return (int) (mBasePaint.descent() - mBasePaint.ascent());
+    }
+
+    public int[] measureDraw(int widthMeasureSpec, int heightMeasureSpec) {
+        //super.onMeasure(widthMeasureSpec, heightMeasureSpec);
+        int widthSize = View.MeasureSpec.getSize(widthMeasureSpec);
+        int widthMode = View.MeasureSpec.getMode(widthMeasureSpec);
+        int heightSize = View.MeasureSpec.getSize(heightMeasureSpec);
+        int heightMode = View.MeasureSpec.getMode(heightMeasureSpec);
+
+        if (widthMode == View.MeasureSpec.AT_MOST) {
+            //wrap_content
+            widthMeasureSpec = View.MeasureSpec.makeMeasureSpec(measureDrawWidth(), View.MeasureSpec.EXACTLY);
+        }
+
+        if (heightMode == View.MeasureSpec.AT_MOST) {
+            heightMeasureSpec = View.MeasureSpec.makeMeasureSpec(measureDrawHeight(), View.MeasureSpec.EXACTLY);
+        }
+
+        return new int[]{widthMeasureSpec, heightMeasureSpec};
+    }
 }
