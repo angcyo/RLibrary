@@ -203,6 +203,12 @@ public class CharInputFilter implements InputFilter {
             }
         }
 
+        if (TextUtils.equals(source, modification)) {
+            //如果输入的字符, 和过滤后的字符无变化, 交给系统处理.
+            // 否则在输入法联想输入的时候会出现错乱输入的BUG
+            return null;
+        }
+
         //返回修改后, 允许输入的字符串. 返回null, 由系统处理.
         return modification;
     }
