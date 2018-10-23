@@ -9,6 +9,7 @@ import android.view.View;
 import com.angcyo.uiview.draw.RDrawLine;
 import com.angcyo.uiview.draw.RDrawText;
 
+
 /**
  * 自绘制的简单文本控件
  * <p>
