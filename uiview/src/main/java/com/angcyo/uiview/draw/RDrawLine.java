@@ -9,6 +9,7 @@ import android.support.annotation.IntDef;
 import android.util.AttributeSet;
 import android.view.View;
 
+
 import com.angcyo.uiview.R;
 
 import java.lang.annotation.Retention;
@@ -35,6 +36,7 @@ public class RDrawLine extends BaseDraw {
      * 是否是虚线, 蚂蚁线
      */
     public boolean isDashLine = false;
+    public boolean drawLineFront = true;
     private Paint linePaint;
 
     /**
@@ -61,6 +63,7 @@ public class RDrawLine extends BaseDraw {
         drawLineOffsetX = typedArray.getDimensionPixelOffset(R.styleable.RDrawLine_r_draw_line_offset_x, drawLineOffsetX);
         drawLineOffsetY = typedArray.getDimensionPixelOffset(R.styleable.RDrawLine_r_draw_line_offset_y, drawLineOffsetY);
         isDashLine = typedArray.getBoolean(R.styleable.RDrawLine_r_draw_dash_line, isDashLine);
+        drawLineFront = typedArray.getBoolean(R.styleable.RDrawLine_r_draw_line_front, drawLineFront);
         lineDrawable = typedArray.getDrawable(R.styleable.RDrawLine_r_draw_line_drawable);
 
         typedArray.recycle();

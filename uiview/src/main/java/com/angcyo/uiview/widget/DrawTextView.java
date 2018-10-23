@@ -9,7 +9,6 @@ import android.view.View;
 import com.angcyo.uiview.draw.RDrawLine;
 import com.angcyo.uiview.draw.RDrawText;
 
-
 /**
  * 自绘制的简单文本控件
  * <p>
@@ -41,12 +40,25 @@ public class DrawTextView extends View {
     @Override
     public void draw(Canvas canvas) {
         super.draw(canvas);
-        drawLine.onDraw(canvas);
+        if (drawLine.drawLineFront) {
+            drawLine.onDraw(canvas);
+        }
     }
 
     @Override
     protected void onDraw(Canvas canvas) {
         super.onDraw(canvas);
+        if (!drawLine.drawLineFront) {
+            drawLine.onDraw(canvas);
+        }
         drawText.onDraw(canvas);
+    }
+
+    public RDrawText getDrawText() {
+        return drawText;
+    }
+
+    public RDrawLine getDrawLine() {
+        return drawLine;
     }
 }

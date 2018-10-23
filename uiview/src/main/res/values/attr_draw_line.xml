@@ -21,6 +21,9 @@
     <attr name="r_draw_line_offset_x" format="dimension" />
     <attr name="r_draw_line_offset_y" format="dimension" />
 
+    <!--请求绘制在最前面, 默认true-->
+    <attr name="r_draw_line_front" format="boolean" />
+
     <!--统一属性获取-->
     <declare-styleable name="RDrawLine">
         <attr name="r_draw_line" />
@@ -32,5 +35,6 @@
         <attr name="r_draw_line_offset_x" />
         <attr name="r_draw_line_offset_y" />
         <attr name="r_draw_line_drawable" />
+        <attr name="r_draw_line_front" />
     </declare-styleable>
 </resources>
