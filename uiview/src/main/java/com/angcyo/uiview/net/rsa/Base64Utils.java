@@ -44,7 +44,7 @@ public class Base64Utils {
      * @throws Exception
      */
     public static byte[] decode(String base64) throws Exception {
-        return Base64.decode(base64.getBytes(), Base64.DEFAULT);
+        return Base64.decode(base64.getBytes(), Base64.NO_WRAP);
     }
 
     /** */
@@ -58,7 +58,8 @@ public class Base64Utils {
      * @throws Exception
      */
     public static String encode(byte[] bytes) throws Exception {
-        return new String(Base64.encode(bytes, Base64.DEFAULT));
+        //return new String(Base64.encode(bytes, Base64.DEFAULT));
+        return Base64.encodeToString(bytes, Base64.NO_WRAP);
     }
 
     /** */

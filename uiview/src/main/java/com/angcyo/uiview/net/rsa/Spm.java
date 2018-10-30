@@ -26,6 +26,12 @@ public class Spm {
         String decode = decode(encode);
         System.out.println("decode : " + decode);
 
+
+        String encode2 = create("123");
+        System.out.println("encode : " + encode2);
+
+        String decode2 = decode(encode2);
+        System.out.println("decode : " + decode2);
     }
 
     public static String create(String value) {
@@ -43,7 +49,7 @@ public class Spm {
             }
             builder.append(valueEncode.substring(i));
         } catch (Exception e) {
-
+            e.printStackTrace();
         }
         return builder.toString().replaceAll("=", "-").replaceAll("\\n", "");
     }
@@ -58,19 +64,17 @@ public class Spm {
             int count = 2 * keyEncode.length();
 
             if (str.length() > count) {
-                String last_str = str.substring(count - 1);
-                for (int i = 0 ; i < count;i += 2) {
+                String lastStr = str.substring(count);
+                for (int i = 0; i < count; i += 2) {
                     builder.append(str.charAt(i));
                 }
-                builder.append(last_str);
-
+                builder.append(lastStr);
             } else {
-                for (int i = 0 ; i < count;i += 2) {
+                for (int i = 0; i < str.length(); i += 2) {
                     builder.append(str.charAt(i));
                 }
             }
             return new String(Base64Utils.decode(builder.toString()));
-
 
 //            byte[] decode = Base64Utils.decode(result);
 //            String value = new String(decode);
