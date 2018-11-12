@@ -37,6 +37,13 @@ public class RetrofitServiceMapping {
     public static Retrofit mapping(@NonNull Retrofit retrofit, @NonNull Class<?> service) {
         if (defaultMap != null && !defaultMap.isEmpty() && enableMapping) {
             configRetrofit(retrofit, service, defaultMap);
+        } else {
+            try {
+                Map<Method, ServiceMethod> serviceMethodCache = (Map<Method, ServiceMethod>) Reflect.getMember(retrofit, "serviceMethodCache");
+                serviceMethodCache.clear();
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
         }
         return retrofit;
     }
