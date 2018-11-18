@@ -353,6 +353,9 @@
         <attr name="r_is_screen_height" format="boolean"/>
     </declare-styleable>
 
+    <!--默认按钮样式-->
+    <attr name="defaultButtonStyle" format="reference"/>
+
     <declare-styleable name="Button">
         <attr name="r_button_style" format="enum">
             <enum name="DEFAULT" value="1"/>

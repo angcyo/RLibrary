@@ -63,7 +63,7 @@ public class Button extends RTextView {
     }
 
     public Button(Context context, AttributeSet attrs) {
-        super(context, attrs);
+        super(context, attrs, R.attr.defaultButtonStyle);
         TypedArray typedArray = context.obtainStyledAttributes(attrs, R.styleable.Button);
         mButtonStyle = typedArray.getInt(R.styleable.Button_r_button_style, DEFAULT);
 
@@ -172,11 +172,11 @@ public class Button extends RTextView {
     @Override
     protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
         super.onMeasure(widthMeasureSpec, heightMeasureSpec);
-        int heightMode = MeasureSpec.getMode(heightMeasureSpec);
-        if ((heightMode == MeasureSpec.AT_MOST || heightMode == MeasureSpec.UNSPECIFIED) &&
-                getPaddingTop() == 0 && getPaddingBottom() == 0 && !aeqWidth) {
-            setMeasuredDimension(getMeasuredWidth(), getResources().getDimensionPixelOffset(R.dimen.base_title_bar_item_size));
-        }
+//        int heightMode = MeasureSpec.getMode(heightMeasureSpec);
+//        if ((heightMode == MeasureSpec.AT_MOST || heightMode == MeasureSpec.UNSPECIFIED) &&
+//                getPaddingTop() == 0 && getPaddingBottom() == 0 && !aeqWidth) {
+//            setMeasuredDimension(getMeasuredWidth(), getResources().getDimensionPixelOffset(R.dimen.base_title_bar_item_size));
+//        }
     }
 
     @Override
