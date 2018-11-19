@@ -177,9 +177,13 @@ public class CharInputFilter implements InputFilter {
                     String oldString = dest.toString();
                     append = (!oldString.contains("x") &&
                             !oldString.contains("X") &&
-                            (c == 'x' || c == 'X')
+                            !oldString.contains("×") &&
+                            (c == 'x' || c == 'X' || c=='×')
                     )
                             || append;
+                    if(append){
+                        c = 'X';
+                    }
                 }
             }
 
