@@ -8,6 +8,10 @@ def osName() {
     return System.getProperty("os.name") + "@" + System.getProperty("os.version")
 }
 
+def userName() {
+    return System.getProperty("user.name")
+}
+
 def releaseTime() {
     return new Date().format("yyyy-MM-dd", TimeZone.getTimeZone("UTC"))
 }
@@ -28,6 +32,7 @@ android {
     defaultConfig {
         resValue "string", "build_time", build_time
         resValue "string", "os_name", osName()
+        resValue "string", "user_name", userName()
         resValue "bool", "SHOW_DEBUG", "true"
     }
 
