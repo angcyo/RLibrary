@@ -1,4 +1,4 @@
-apply from: '../lib.gradle'
+apply from: allGradle.lib_base
 
 def rxlifecycle_version = "1.0"
 def retrofit_version = "2.4.0"
@@ -131,5 +131,5 @@ dependencies {
 
     //kotlin 支持
     //api "org.jetbrains.kotlin:kotlin-stdlib-jdk7:$kotlin_version"
-    api "org.jetbrains.kotlin:kotlin-stdlib-jre7:$kotlin_version"
+    api "org.jetbrains.kotlin:kotlin-stdlib-jdk7:$kotlin_version"
 }

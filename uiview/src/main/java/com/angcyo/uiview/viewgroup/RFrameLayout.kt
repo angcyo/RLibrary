@@ -217,11 +217,11 @@ open class RFrameLayout(context: Context, attributeSet: AttributeSet? = null) : 
 
             override fun onScroll(e1: MotionEvent?, e2: MotionEvent?, distanceX: Float, distanceY: Float): Boolean {
                 //L.e("call: onScroll -> $distanceX $distanceY")
-                if (touchFloatView != null) {
 
-                    touchFloatView!!.setTag(R.id.base_r_layout_is_move, true)
-                    ViewCompat.offsetLeftAndRight(touchFloatView, -distanceX.toInt())
-                    ViewCompat.offsetTopAndBottom(touchFloatView, -distanceY.toInt())
+                touchFloatView?.let {
+                    it.setTag(R.id.base_r_layout_is_move, true)
+                    ViewCompat.offsetLeftAndRight(it, -distanceX.toInt())
+                    ViewCompat.offsetTopAndBottom(it, -distanceY.toInt())
 
                     checkEdge()
                     return true
@@ -235,21 +235,23 @@ open class RFrameLayout(context: Context, attributeSet: AttributeSet? = null) : 
 
     /*边界检查*/
     private fun checkEdge() {
-        touchFloatView?.layoutParams?.let {
-            val param: LayoutParams = it as LayoutParams
-            if (param.isFloatFixRect) {
-                when {
-                    touchViewLeft < 0 -> {
-                        ViewCompat.offsetLeftAndRight(touchFloatView, -touchViewLeft)
-                    }
-                    touchViewRight > measuredWidth -> {
-                        ViewCompat.offsetLeftAndRight(touchFloatView, -(touchViewRight - measuredWidth))
-                    }
-                    touchViewTop < 0 -> {
-                        ViewCompat.offsetTopAndBottom(touchFloatView, -touchViewTop)
-                    }
-                    touchViewBottom > measuredHeight -> {
-                        ViewCompat.offsetTopAndBottom(touchFloatView, -(touchViewBottom - measuredHeight))
+        touchFloatView?.let { touchFloatView ->
+            touchFloatView.layoutParams?.let {
+                val param: LayoutParams = it as LayoutParams
+                if (param.isFloatFixRect) {
+                    when {
+                        touchViewLeft < 0 -> {
+                            ViewCompat.offsetLeftAndRight(touchFloatView, -touchViewLeft)
+                        }
+                        touchViewRight > measuredWidth -> {
+                            ViewCompat.offsetLeftAndRight(touchFloatView, -(touchViewRight - measuredWidth))
+                        }
+                        touchViewTop < 0 -> {
+                            ViewCompat.offsetTopAndBottom(touchFloatView, -touchViewTop)
+                        }
+                        touchViewBottom > measuredHeight -> {
+                            ViewCompat.offsetTopAndBottom(touchFloatView, -(touchViewBottom - measuredHeight))
+                        }
                     }
                 }
             }

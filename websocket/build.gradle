@@ -1,4 +1,4 @@
-apply from: '../lib.gradle'
+apply from: allGradle.lib_base
 
 dependencies {
     //api fileTree(include: ['*.jar'], dir: 'libs')
