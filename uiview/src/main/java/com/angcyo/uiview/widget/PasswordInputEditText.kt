@@ -230,7 +230,7 @@ class PasswordInputEditText(context: Context, attributeSet: AttributeSet? = null
 
             //绘制外框
             paint.style = Paint.Style.STROKE
-            if (isFocused && text.length == i) {
+            if (isFocused && text!!.length == i) {
                 //高亮颜色
                 if (showHighlight) {
                     paint.color = passwordHighlightColor
@@ -244,7 +244,7 @@ class PasswordInputEditText(context: Context, attributeSet: AttributeSet? = null
             canvas.drawRect(rect, paint)
 
             //绘制内框
-            if (text.length > i) {
+            if (text!!.length > i) {
                 paint.style = Paint.Style.FILL_AND_STROKE
                 paint.color = passwordColor
 
@@ -284,7 +284,7 @@ class PasswordInputEditText(context: Context, attributeSet: AttributeSet? = null
         if (text.isNullOrEmpty()) {
             return true
         }
-        if (text.length != passwordCount) {
+        if (text!!.length != passwordCount) {
             return true
         }
 

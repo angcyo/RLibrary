@@ -220,8 +220,8 @@ open class RFrameLayout(context: Context, attributeSet: AttributeSet? = null) : 
                 if (touchFloatView != null) {
 
                     touchFloatView!!.setTag(R.id.base_r_layout_is_move, true)
-                    ViewCompat.offsetLeftAndRight(touchFloatView, -distanceX.toInt())
-                    ViewCompat.offsetTopAndBottom(touchFloatView, -distanceY.toInt())
+                    ViewCompat.offsetLeftAndRight(touchFloatView!!, -distanceX.toInt())
+                    ViewCompat.offsetTopAndBottom(touchFloatView!!, -distanceY.toInt())
 
                     checkEdge()
                     return true
@@ -240,16 +240,16 @@ open class RFrameLayout(context: Context, attributeSet: AttributeSet? = null) : 
             if (param.isFloatFixRect) {
                 when {
                     touchViewLeft < 0 -> {
-                        ViewCompat.offsetLeftAndRight(touchFloatView, -touchViewLeft)
+                        ViewCompat.offsetLeftAndRight(touchFloatView!!, -touchViewLeft)
                     }
                     touchViewRight > measuredWidth -> {
-                        ViewCompat.offsetLeftAndRight(touchFloatView, -(touchViewRight - measuredWidth))
+                        ViewCompat.offsetLeftAndRight(touchFloatView!!, -(touchViewRight - measuredWidth))
                     }
                     touchViewTop < 0 -> {
-                        ViewCompat.offsetTopAndBottom(touchFloatView, -touchViewTop)
+                        ViewCompat.offsetTopAndBottom(touchFloatView!!, -touchViewTop)
                     }
                     touchViewBottom > measuredHeight -> {
-                        ViewCompat.offsetTopAndBottom(touchFloatView, -(touchViewBottom - measuredHeight))
+                        ViewCompat.offsetTopAndBottom(touchFloatView!!, -(touchViewBottom - measuredHeight))
                     }
                 }
             }

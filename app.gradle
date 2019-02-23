@@ -91,12 +91,29 @@ android {
 //    }
 
     /*Gradle3.0 以上的方法*/
+//    applicationVariants.all { variant ->
+//        if (variant.buildType.name != "debug") {
+//            variant.getPackageApplication().outputDirectory = new File(project.rootDir.absolutePath + "/apk")
+//        }
+//
+//        variant.getPackageApplication().outputScope.apkDatas.forEach { apkData ->
+//            apkData.outputFileName = rootProject.name + "-" +
+//                    variant.versionName + "_" +
+//                    apk_time + "_" +
+//                    variant.flavorName + "_" +
+//                    variant.buildType.name + "_" +
+//                    variant.signingConfig.name +
+//                    ".apk"
+//        }
+//    }
+
+    /*Gradle3.3 以上的方法*/
     applicationVariants.all { variant ->
         if (variant.buildType.name != "debug") {
-            variant.getPackageApplication().outputDirectory = new File(project.rootDir.absolutePath + "/apk")
+            variant.getPackageApplicationProvider().get().outputDirectory = new File(project.rootDir.absolutePath + "/apk")
         }
 
-        variant.getPackageApplication().outputScope.apkDatas.forEach { apkData ->
+        variant.getPackageApplicationProvider().get().outputScope.apkDatas.forEach { apkData ->
             apkData.outputFileName = rootProject.name + "-" +
                     variant.versionName + "_" +
                     apk_time + "_" +
